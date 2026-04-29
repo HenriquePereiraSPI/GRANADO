@@ -2233,14 +2233,6 @@ export const SCREENS = {
                 <label class="lbl">ID da Gaiola</label>
                 <input class="inp" value="GAI-2026-0089" readonly style="background:var(--surface2);font-family:var(--font-m);color:var(--verde);font-weight:600">
               </div>
-              <div class="fg" style="max-width:200px">
-                <label class="lbl">Destino</label>
-                <select class="sel"><option>Reator R-01</option><option>Reator R-02</option><option>Reator R-03</option><option>Área de espera Fab.</option></select>
-              </div>
-              <div class="fg">
-                <label class="lbl">Tipo de Container</label>
-                <select class="sel"><option>Gaiola metálica G1 (200kg)</option><option>Gaiola metálica G2 (500kg)</option><option>Pallet plástico</option><option>Saco big bag</option></select>
-              </div>
             </div>
             <div style="margin-top:14px">
               <label class="lbl">Associar MPs à Gaiola — Leitura de Etiquetas Filhas</label>
