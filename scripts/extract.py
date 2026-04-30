@@ -30,10 +30,22 @@ def read_html(src: Path) -> str:
 
 
 def extract_style(html: str) -> str:
-    m = re.search(r"<style>([\s\S]*?)</style>", html)
-    if not m:
-        raise RuntimeError("Bloco <style> nao encontrado.")
-    return m.group(1).strip()
+    """
+    Extrai TODOS os blocos <style> do HTML monolitico, concatenando-os.
+    O HTML original tem multiplos blocos (um geral + um para o "modo TV" dos
+    relatorios) — usar `re.search` (singular) deixava o segundo bloco pra
+    tras e quebrava o CSS das telas de relatorio.
+    """
+    blocks = re.findall(r"<style>([\s\S]*?)</style>", html)
+    if not blocks:
+        raise RuntimeError("Nenhum bloco <style> encontrado.")
+    parts: list[str] = []
+    for i, block in enumerate(blocks):
+        sep = "\n\n/* ========================================================== */\n"
+        sep += f"/* CSS BLOCK #{i + 1} (de {len(blocks)}) */\n"
+        sep += "/* ========================================================== */\n\n"
+        parts.append(sep + block.strip())
+    return "\n\n".join(parts).strip()
 
 
 def extract_scripts(html: str) -> str:
