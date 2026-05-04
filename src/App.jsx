@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Layout from './components/Layout.jsx';
 import LegacyScreen from './components/LegacyScreen.jsx';
 import SinoticoScreen from './components/SinoticoScreen.jsx';
+import ProdCockpitScreen from './components/ProdCockpitScreen.jsx';
 import { ModalProvider, useModal } from './components/ModalProvider.jsx';
 import { injectLegacyScripts, installNavBridges, resolveScreenId } from './lib/legacy-bridge.js';
 import manifest from './legacy/manifest.json';
@@ -53,9 +54,13 @@ export default function App() {
           {/* sinotico expandido (ERU 5.1.55): cobre Producao + Pesagem + Fabricacao */}
           <Route path="/sinotico" element={<SinoticoScreen />} />
 
+          {/* prod-cockpit: wrapper React que injeta o grafico hora-a-hora */}
+          <Route path="/prod-cockpit" element={<ProdCockpitScreen />} />
+
           {/* todas as demais telas extraidas */}
           {manifest.screens.map((id) => {
             if (id === 'sinotico') return null; // ja tratado acima
+            if (id === 'prod-cockpit') return null; // ja tratado acima
             const target = resolveScreenId(id);
             // se ja virou alias, pulamos pra evitar duplicidade
             if (target !== id) return null;
