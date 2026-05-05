@@ -3026,7 +3026,7 @@ export const SCREENS = {
               <td class="mono">280 kg</td>
               <td><span class="bdg bdg-inf">Normal</span></td>
               <td class="mono" style="font-size:11px;color:var(--ouro)">Hoje · ~16:30</td>
-              <td><span class="bdg bdg-alr">🟡 Quase Completo</span></td>
+              <td><span class="bdg bdg-alr">⏳ Pagamento Parcial</span></td>
               <td><button class="btn btn-sm btn-ghost" disabled style="opacity:.5;cursor:not-allowed" title="Aguardando pagamento de 1 MP (Óleo essencial Citronela). Habilita quando 7/7 estiverem pagas.">Aguardando MPs</button></td>
             </tr>
 
