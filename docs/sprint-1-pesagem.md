@@ -8,6 +8,12 @@
 - Mockup HTML monolitico: `MES_Granado_v28_SinoticoMF.html`
 - Telas extraidas: `src/legacy/screens.js` (47 telas, 14 modais)
 
+> **Decisoes registradas (2026-05-05):**
+>
+> 1. A area de Pesagem opera com **15 balancas Toledo PC Link 7** (substitui as referencias antigas a "4 balancas" e "Mettler/Toledo").
+> 2. A Pesagem **NAO integra com LIMS**.
+> 3. O bloco **OEE foi separado em sprint proprio** (PESAGEM-OEE), executado apos a base operacional estar de pe.
+
 
 ## Sumario
 
@@ -255,7 +261,7 @@ OP. Eh o coracao do modulo, com integracao a balancas reais e impressao.
 | ① Sel. MP | Tabela filtrada de MPs da OP | `GET /api/pesagem/sessao/{sid}/mps` |
 | ② Iniciar | Botao + `modal-pes-confirm` | — |
 | ③ Scan Etq. | Input + leitor de codigo | `POST /api/pesagem/scan-etiqueta` |
-| ④ Sel. Bal. | Grid (BAL-01..BAL-04) com capacidade e ultima calibracao | `GET /api/balancas?sala=A` |
+| ④ Sel. Bal. | Grid (BAL-01..BAL-15) com capacidade e ultima calibracao — **15 unidades Toledo PC Link 7** | `GET /api/balancas?sala=A` |
 | ⑤ Pesagem | Display ao vivo (peso + status ▼ X kg ate alvo) | **WS** `/ws/balanca/{id}/leitura` |
 | ⑥ Confirmar | Comparacao alvo × pesado × tolerancia | local + `modal-diverg` se desvio |
 | ⑦ Etq./Gaiola | Gera nº de gaiola sequencial + ZPL | `POST /api/etiquetas/imprimir` + `POST /api/gaiolas/criar` |
@@ -296,6 +302,7 @@ POST   /api/gaiolas/criar                     # nº sequencial + retorna ID
 - [ ] Etiqueta impressa no formato ZPL aceito pela Zebra
 - [ ] Gaiola sequencial sem buracos (ate 999.999)
 - [ ] Cancelamento volta ao step anterior sem perda de dados
+- [ ] Suporta concorrencia das **15 balancas Toledo PC Link 7** sem perda de leituras
 
 ---
 
@@ -507,14 +514,28 @@ GET /api/pesagem/rastreabilidade/export?formato=csv
 | 9 | Bug fixing | Bug fixing |
 | 10 | Demo + retro | Demo + retro |
 
-### Sprint 3 (opcional) — Hardening e Edge Cases
+### Sprint 3 — Hardening e Edge Cases
 
 - Pesagem "Sem Balanca" (fluxo manual com supervisao + assinatura)
 - Multiplas sessoes simultaneas (varios operadores em salas A/B/C)
 - Recuperacao de sessao (operador derruba browser → continua)
 - LGPD / auditoria reforcada (retencao, anonimizacao)
-- Testes de carga: 4 balancas + 1 leitura/100ms simultaneas
+- Testes de carga: 15 balancas Toledo PC Link 7 + 1 leitura/100ms simultaneas (TGRA-034)
 - Reconciliacao com JDE em caso de falha (queue + retry)
+- Integracao Enabley (matriz de capacitacao do operador)
+
+> **FIM do sprint PESAGEM (base operacional).** A partir daqui, o bloco OEE entra em sprint proprio.
+
+### Sprint PESAGEM-OEE (separado, apos a base estar de pe)
+
+O modulo de OEE da Pesagem (32 tarefas, ~476 SP estimados) foi **separado em
+sprint proprio** para nao concorrer com a entrega da base operacional. Inclui:
+
+- **OEE-S1**: Cadastros (tempo padrao granel/MP, motivos parada, turnos, checklists, salas/boxes) + Marcos START/END (granel, scan, etiqueta, fechamento). Itens TGRA-041..TGRA-052.
+- **OEE-S2**: Engines de Performance/Disponibilidade + apontamentos manuais + interlocks. Itens TGRA-053..TGRA-060.
+- **OEE-S3**: Telas (edicao + chao de fabrica) + relatorios + dashboards (operacional + executivo Tati/PCP) + QI/QO/QP + treinamento + BBP. Itens TGRA-061..TGRA-072.
+
+> Pre-requisito do PESAGEM-OEE: base operacional da Pesagem (S1 a S3) concluida e estavel.
 
 
 ## 6. Integracoes Externas
@@ -522,22 +543,27 @@ GET /api/pesagem/rastreabilidade/export?formato=csv
 | Sistema | Tipo | Fluxo | Risco |
 |---|---|---|---|
 | **JDE** | API legacy | Saidas de estoque, devolucoes | Latencia + indisponibilidade |
-| **Balancas Mettler/Toledo** | TCP/IP ou Serial | Stream de peso em tempo real | Driver proprietario |
+| **Balancas Toledo PC Link 7** (15 unidades) | TCP/IP ou Serial | Stream de peso em tempo real | Driver proprietario — POC isolada na 1a semana |
 | **Impressora Zebra** | ZPL via TCP/9100 | Etiqueta filha + mae | Layout vs IN 134/2022 |
-| **LIMS** | REST | Aprovacao de lotes (Pos-Fabricacao) | Fora do escopo do Sprint 1 |
+| **Preactor APS** | REST/integracao | Fila priorizada de OPs (ERU 5.1.50) | Definicao de contrato com PCP |
+| **InBatch / SCADA** | Webhook/evento | Notificacao de gaiola apos Checkout | Definir formato e ack |
+| **Enabley** | Integracao | Matriz de capacitacao do operador | Inicio 2026-05-11 |
 | **SoftExpert (GED)** | REST | Documentos da OP, POPs | Fora do escopo do Sprint 1 |
+
+> **Nota:** A Pesagem **NAO integra com LIMS**. LIMS pode existir em outros modulos do MES Granado, mas nao tem fluxo dentro do modulo de Pesagem.
 
 
 ## 7. Riscos e Mitigacoes
 
 | Risco | Probabilidade | Impacto | Mitigacao |
 |---|---|---|---|
-| Driver da balanca proprietario | Alta | Alto | POC isolada na 1a semana do Sprint 1 |
+| Driver Toledo PC Link 7 (15 balancas) — proprietario | Alta | Alto | POC isolada na 1a semana do Sprint 1 |
 | Layout ZPL nao bate com regulatorio | Media | Alto | Validar com QA + RA antes do Sprint 2 |
 | API JDE lenta | Alta | Medio | Cache local + queue de retry |
 | Pesagem sem balanca exige assinatura digital | Baixa | Alto | Confirmar com Garantia da Qualidade |
 | WebSocket cai em sala industrial | Media | Medio | Fallback automatico para polling 500ms |
 | Operador derruba browser no meio do wizard | Media | Medio | Estado persistido no backend a cada step |
+| Concorrencia entre as 15 balancas em pico | Media | Medio | Pool de conexoes + teste de estresse (TGRA-034) |
 
 
 ## 8. Definition of Done
