@@ -33,8 +33,8 @@ export const MODULES = [
     label: 'Pesagem',
     icon: '⚖️',
     items: [
-      { id: 'pes-ordens',       label: 'Selecao de Ordem' },
       { id: 'pes-planejamento', label: '📋 Planejamento das Ordens' },
+      { id: 'pes-ordens',       label: 'Selecao de Ordem' },
       { id: 'pes-cockpit',      label: 'Cockpit de Pesagem' },
       { id: 'pes-mps',          label: 'MPs Pesadas' },
       { id: 'pes-pendencias',   label: 'Pendencias' },
