@@ -2832,13 +2832,41 @@ export const SCREENS = {
       }
       </script>
         <div class="card-title">Fila de Pesagem — Prioridade</div>
-        <div class="abox info mb14"><span class="ai">ℹ</span><div>O <strong>Pagamento de MP</strong> é processado pelo almoxarifado no JDE, que sincroniza o status com o MES. A ordem só fica liberada para pesagem quando <strong>todas as MPs estão pagas</strong>.</div></div>
+        <div class="abox info mb14"><span class="ai">ℹ</span><div>O <strong>Pagamento de MP</strong> é processado pelo almoxarifado no JDE, que sincroniza o status com o MES. A ordem só fica liberada para pesagem quando <strong>todas as MPs estão pagas</strong>. A coluna <strong>Pesagem</strong> mostra o progresso de MPs já pesadas pelo operador.</div></div>
         <table class="tbl">
-          <thead><tr><th>#</th><th>Ordem</th><th>Produto / Fórmula</th><th>MPs</th><th>Pagamento de MP</th><th>Volume</th><th>Prioridade</th><th>Status da Ordem</th><th></th></tr></thead>
+          <thead><tr><th>#</th><th>Ordem</th><th>Produto / Fórmula</th><th>MPs</th><th>Pagamento de MP</th><th>Pesagem</th><th>Volume</th><th>Prioridade</th><th>Status da Ordem</th><th></th></tr></thead>
           <tbody>
-            <!-- OP-2026-0416 — TODAS as MPs pagas → liberada para pesagem -->
+            <!-- OP-2026-0414 — EM PESAGEM (parcial) → continua de onde parou -->
+            <tr onclick="pesIrCockpit(event)" style="background:var(--inf-p);cursor:pointer">
+              <td class="mono" style="color:var(--inf);font-weight:700">1</td>
+              <td class="mono" style="color:var(--verde)">OP-2026-0414</td>
+              <td style="font-size:12px">Creme Hidratante 150g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-076</span></td>
+              <td class="mono" style="font-weight:700">12 MPs</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--ok);min-width:42px">12/12</span>
+                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
+                    <div style="width:100%;height:100%;background:var(--ok);border-radius:3px"></div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--inf);min-width:42px">7/12</span>
+                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
+                    <div style="width:58%;height:100%;background:var(--inf);border-radius:3px"></div>
+                  </div>
+                </div>
+              </td>
+              <td class="mono">540 kg</td>
+              <td><span class="bdg bdg-inf">Normal</span></td>
+              <td><span class="bdg bdg-inf">🔄 Pesando</span></td>
+              <td><button class="btn btn-sm btn-v" onclick="pesIrCockpit(event)">Continuar</button></td>
+            </tr>
+
+            <!-- OP-2026-0416 — TODAS as MPs pagas, NENHUMA pesada → liberada para iniciar -->
             <tr onclick="pesIrCockpit(event)" style="background:var(--ouro-dim);cursor:pointer">
-              <td class="mono" style="color:var(--ouro);font-weight:700">1</td>
+              <td class="mono" style="color:var(--ouro);font-weight:700">2</td>
               <td class="mono" style="color:var(--verde)">OP-2026-0416</td>
               <td style="font-size:12px">Loção Hidratante Rosa 200ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-089</span></td>
               <td class="mono" style="font-weight:700">12 MPs</td>
@@ -2850,6 +2878,14 @@ export const SCREENS = {
                   </div>
                 </div>
               </td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--text3);min-width:42px">0/12</span>
+                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
+                    <div style="width:0%;height:100%;background:var(--text3);border-radius:3px"></div>
+                  </div>
+                </div>
+              </td>
               <td class="mono">600 kg</td>
               <td><span class="bdg bdg-ouro">🔥 Urgente</span></td>
               <td><span class="bdg bdg-ok">✓ Pronta para Pesagem</span></td>
@@ -2858,7 +2894,7 @@ export const SCREENS = {
 
             <!-- OP-2026-0417 — pagamento parcial → bloqueada -->
             <tr style="opacity:.85">
-              <td class="mono">2</td>
+              <td class="mono">3</td>
               <td class="mono" style="color:var(--verde)">OP-2026-0417</td>
               <td style="font-size:12px">Shampoo Phebo 400ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-112</span></td>
               <td class="mono">9 MPs</td>
@@ -2870,6 +2906,14 @@ export const SCREENS = {
                   </div>
                 </div>
               </td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--text3);min-width:42px">0/9</span>
+                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
+                    <div style="width:0%;height:100%;background:var(--text3);border-radius:3px"></div>
+                  </div>
+                </div>
+              </td>
               <td class="mono">480 kg</td>
               <td><span class="bdg bdg-inf">Normal</span></td>
               <td><span class="bdg bdg-alr">⏳ Pagamento Parcial</span></td>
@@ -2878,7 +2922,7 @@ export const SCREENS = {
 
             <!-- OP-2026-0418 — nenhum pagamento → bloqueada -->
             <tr style="opacity:.85">
-              <td class="mono">3</td>
+              <td class="mono">4</td>
               <td class="mono" style="color:var(--verde)">OP-2026-0418</td>
               <td style="font-size:12px">Polvilho Antisséptico 100g</td>
               <td class="mono">5 MPs</td>
@@ -2890,10 +2934,46 @@ export const SCREENS = {
                   </div>
                 </div>
               </td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--text3);min-width:42px">0/5</span>
+                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
+                    <div style="width:0%;height:100%;background:var(--text3);border-radius:3px"></div>
+                  </div>
+                </div>
+              </td>
               <td class="mono">200 kg</td>
               <td><span class="bdg bdg-ney">Baixa</span></td>
               <td><span class="bdg bdg-per">⏳ Aguardando JDE</span></td>
               <td><button class="btn btn-sm btn-ghost" disabled style="opacity:.5;cursor:not-allowed" title="Almoxarifado ainda não iniciou o pagamento das MPs">Aguardando MPs</button></td>
+            </tr>
+
+            <!-- OP-2026-0413 — FINALIZADA (todas pagas e todas pesadas) -->
+            <tr style="background:var(--ok-p);opacity:.7">
+              <td class="mono" style="color:var(--ok);font-weight:700">5</td>
+              <td class="mono" style="color:var(--verde)">OP-2026-0413</td>
+              <td style="font-size:12px">Sabonete Phebo Glicerinado 90g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-051</span></td>
+              <td class="mono">8 MPs</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--ok);min-width:42px">8/8</span>
+                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
+                    <div style="width:100%;height:100%;background:var(--ok);border-radius:3px"></div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--ok);min-width:42px">8/8</span>
+                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
+                    <div style="width:100%;height:100%;background:var(--ok);border-radius:3px"></div>
+                  </div>
+                </div>
+              </td>
+              <td class="mono">320 kg</td>
+              <td><span class="bdg bdg-ney">Concluída</span></td>
+              <td><span class="bdg bdg-ok">✅ Finalizada</span></td>
+              <td><button class="btn btn-sm btn-ghost" onclick="nav('pes-rastr',null,null)" title="Ver trilha de auditoria desta OP">Detalhes</button></td>
             </tr>
           </tbody>
         </table>
