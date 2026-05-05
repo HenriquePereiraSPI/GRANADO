@@ -30,10 +30,15 @@ export default function LegacyScreen({ id }) {
     ref.current.querySelectorAll('script').forEach((oldScript) => {
       const s = document.createElement('script');
       for (const a of oldScript.attributes) s.setAttribute(a.name, a.value);
-      s.textContent = (oldScript.textContent || '').replace(
-        /document\.addEventListener\(\s*['"]DOMContentLoaded['"]\s*,\s*/g,
-        'setTimeout(',
-      );
+      s.textContent = (oldScript.textContent || '')
+        // Cobre `document.addEventListener('DOMContentLoaded', fn)` e
+        // `window.addEventListener('DOMContentLoaded', fn)`. Sem isso, callbacks
+        // que dependem de DOMContentLoaded nunca disparam (o evento ja passou
+        // ha muito tempo quando a tela monta).
+        .replace(
+          /(document|window)\.addEventListener\(\s*['"]DOMContentLoaded['"]\s*,\s*/g,
+          'setTimeout(',
+        );
       oldScript.replaceWith(s);
     });
 

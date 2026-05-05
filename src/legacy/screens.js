@@ -1424,9 +1424,8 @@ export const SCREENS = {
         <!-- JS render happens via DOMContentLoaded -->
       </div>
 
-      <!-- Layout principal: painel wizard + fila lateral -->
-      <div class="g73">
-        <div>
+      <!-- Layout principal: wizard ocupa toda a largura -->
+      <div>
 
           <!-- ── PAINEL 1: Selecionar MP ── -->
           <div id="pes-panel-1">
@@ -2075,27 +2074,6 @@ export const SCREENS = {
 
         </div>
 
-          <div class="card co">
-          <div class="card-title">Fila de MPs — OP-2026-0416</div>
-          <table class="tbl">
-            <thead><tr><th>#</th><th>Código</th><th>Lote</th><th>Material</th><th>Qtd.</th><th>Status</th></tr></thead>
-            <tbody>
-              <tr style="background:var(--ok-p)"><td class="mono" style="color:var(--ok)">1</td><td class="mono" style="font-size:10px;color:var(--text3)">MP-4821</td><td class="mono" style="font-size:10px;color:var(--text3)">GLI-2026-08</td><td style="font-size:11px;color:var(--ok)">✓ Glicerina USP</td><td class="mono" style="font-size:11px">45,00 kg</td><td><span class="bdg bdg-ok">OK</span></td></tr>
-              <tr style="background:var(--ok-p)"><td class="mono" style="color:var(--ok)">2</td><td class="mono" style="font-size:10px;color:var(--text3)">MP-3307</td><td class="mono" style="font-size:10px;color:var(--text3)">PPG-2026-12</td><td style="font-size:11px;color:var(--ok)">✓ Propilenoglicol</td><td class="mono" style="font-size:11px">18,00 kg</td><td><span class="bdg bdg-ok">OK</span></td></tr>
-              <tr style="background:var(--ok-p)"><td class="mono" style="color:var(--ok)">3</td><td class="mono" style="font-size:10px;color:var(--text3)">MP-0914</td><td class="mono" style="font-size:10px;color:var(--text3)">CAR-2026-05</td><td style="font-size:11px;color:var(--ok)">✓ Carbopol 940</td><td class="mono" style="font-size:11px">2,50 kg</td><td><span class="bdg bdg-ok">OK</span></td></tr>
-              <tr style="background:var(--ok-p)"><td class="mono" style="color:var(--ok)">4</td><td class="mono" style="font-size:10px;color:var(--text3)">MP-2256</td><td class="mono" style="font-size:10px;color:var(--text3)">FEN-2026-03</td><td style="font-size:11px;color:var(--ok)">✓ Fenoxietanol</td><td class="mono" style="font-size:11px">3,00 kg</td><td><span class="bdg bdg-alr">Desvio</span></td></tr>
-              <tr style="background:var(--ok-p)"><td class="mono" style="color:var(--ok)">5</td><td class="mono" style="font-size:10px;color:var(--text3)">MP-5593</td><td class="mono" style="font-size:10px;color:var(--text3)">TEA-2026-07</td><td style="font-size:11px;color:var(--ok)">✓ TEA 99%</td><td class="mono" style="font-size:11px">1,80 kg</td><td><span class="bdg bdg-ok">OK</span></td></tr>
-              <tr style="background:var(--verde-dim);border-left:3px solid var(--verde)"><td class="mono" style="color:var(--verde);font-weight:700">6</td><td class="mono" style="font-size:10px;color:var(--verde)">MP-0001</td><td class="mono" style="font-size:10px;color:var(--verde)">AGUA-2026-03</td><td style="font-size:11px;font-weight:700;color:var(--verde)">→ Aqua (Água Purif.)</td><td class="mono" style="font-size:11px;font-weight:700">412,50 kg</td><td><span class="bdg bdg-alr">Em Andamento</span></td></tr>
-              <tr><td class="mono" style="color:var(--text3)">7</td><td class="mono" style="font-size:10px;color:var(--text3)">MP-7742</td><td class="mono" style="font-size:10px;color:var(--text3)">ERM-2026-01</td><td style="font-size:11px;color:var(--text3)">Extrato Rosa Mosqueta</td><td class="mono" style="font-size:11px;color:var(--text3)">6,00 kg</td><td><span class="bdg bdg-ney">Aguardando</span></td></tr>
-              <tr><td class="mono" style="color:var(--text3)">8</td><td class="mono" style="font-size:10px;color:var(--text3)">MP-0008</td><td class="mono" style="font-size:10px;color:var(--text3)">PAN-2026-04</td><td style="font-size:11px;color:var(--text3)">Pantenol 75%</td><td class="mono" style="font-size:11px;color:var(--text3)">3,00 kg</td><td><span class="bdg bdg-ney">Aguardando</span></td></tr>
-              <tr><td class="mono" style="color:var(--text3)">9</td><td class="mono" style="font-size:10px;color:var(--text3)">MP-6631</td><td class="mono" style="font-size:10px;color:var(--text3)">VTE-2026-02</td><td style="font-size:11px;color:var(--text3)">Vitamina E Acetato</td><td class="mono" style="font-size:11px;color:var(--text3)">1,20 kg</td><td><span class="bdg bdg-ney">Aguardando</span></td></tr>
-              <tr><td class="mono" style="color:var(--text3)">10</td><td class="mono" style="font-size:10px;color:var(--text3)">MP-2089</td><td class="mono" style="font-size:10px;color:var(--text3)">FRG-2026-09</td><td style="font-size:11px;color:var(--text3)">Fragância Rosa</td><td class="mono" style="font-size:11px;color:var(--text3)">4,50 kg</td><td><span class="bdg bdg-ney">Aguardando</span></td></tr>
-              <tr><td class="mono" style="color:var(--text3)">11</td><td class="mono" style="font-size:10px;color:var(--text3)">MP-3374</td><td class="mono" style="font-size:10px;color:var(--text3)">DMD-2026-01</td><td style="font-size:11px;color:var(--text3)">DMDM Hydantoin</td><td class="mono" style="font-size:11px;color:var(--text3)">0,60 kg</td><td><span class="bdg bdg-ney">Aguardando</span></td></tr>
-              <tr><td class="mono" style="color:var(--text3)">12</td><td class="mono" style="font-size:10px;color:var(--text3)">MP-9118</td><td class="mono" style="font-size:10px;color:var(--text3)">COR-2026-15</td><td style="font-size:11px;color:var(--text3)">Corante Rosaline</td><td class="mono" style="font-size:11px;color:var(--text3)">0,15 kg</td><td><span class="bdg bdg-ney">Aguardando</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
 
       <!-- Modal: Confirmar Início de Pesagem -->
       <div id="modal-pes-confirm" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900;align-items:center;justify-content:center">
