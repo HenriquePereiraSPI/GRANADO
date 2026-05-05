@@ -6,7 +6,6 @@
 export const TOP_LINKS = [
   { id: 'sinotico', label: 'Sinotico da Fabrica', icon: '🗺️' },
   { id: 'oee', label: 'OEE Dashboard', icon: '📊' },
-  { id: 'dash-genealogia', label: 'Genealogia de Lote', icon: '🧬' },
 ];
 
 export const MODULES = [
@@ -72,6 +71,7 @@ export const MODULES = [
       // ja existe como TOP_LINK; os Chamados Andon estao no menu Producao.
       // Manter aqui causaria duplo-active na sidebar quando o usuario clicasse.
       { id: 'rel-oee',          label: '📊 OEE Dashboard' },
+      { id: 'dash-genealogia',  label: '🧬 Genealogia de Lote' },
       { id: 'rel-visao-ordens', label: '📋 Visao de Ordens' },
       { id: 'rel-mps',          label: '⚖️ Rel. MPs Pesadas' },
       { id: 'rel-producao',     label: '🏭 Rel. Producao' },

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { DOSSIE } from '../data/dossie-wo-784426.js';
+import EtiquetaImpressa from './EtiquetaImpressa.jsx';
 
 /**
  * Tela "Genealogia de Lote" — Dossie Eletronico de Producao (EBR).
@@ -272,13 +273,40 @@ function RenderConteudoNo({ no, cores }) {
       ]} />;
 
     case 'pesagem':
-      return <TabelaItens dados={no.itens} colunas={[
-        { k: 'cod',      label: 'Código',     style: { fontFamily: 'var(--font-m)', fontWeight: 700, color: 'var(--verde)' } },
-        { k: 'desc',     label: 'Descrição' },
-        { k: 'qtd',      label: 'Qtd.',       style: { fontFamily: 'var(--font-m)' } },
-        { k: 'balanca',  label: 'Balança',    style: { fontFamily: 'var(--font-m)', color: 'var(--text2)' } },
-        { k: 'operador', label: 'Operador' },
-      ]} />;
+      return (
+        <div style={{ marginTop: 12 }}>
+          <TabelaItens dados={no.itens} colunas={[
+            { k: 'cod',      label: 'Código',     style: { fontFamily: 'var(--font-m)', fontWeight: 700, color: 'var(--verde)' } },
+            { k: 'desc',     label: 'Descrição' },
+            { k: 'qtd',      label: 'Qtd.',       style: { fontFamily: 'var(--font-m)' } },
+            { k: 'balanca',  label: 'Balança',    style: { fontFamily: 'var(--font-m)', color: 'var(--text2)' } },
+            { k: 'operador', label: 'Operador' },
+          ]} />
+          <div className="card-title" style={{ marginTop: 14, marginBottom: 10 }}>Etiquetas Filhas Impressas (Zebra)</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
+            {no.itens.map((mp, i) => (
+              <EtiquetaImpressa
+                key={i}
+                tipo="ETIQUETA FILHA · MP"
+                codigo={mp.etqCodigo}
+                cor="verde"
+                fields={[
+                  ['CÓDIGO MP',    mp.cod],
+                  ['DESCRIÇÃO',    mp.desc],
+                  ['LOTE FORN.',   mp.etqLote],
+                  ['QUANTIDADE',   mp.qtd],
+                  ['BALANÇA',      mp.balanca],
+                  ['OPERADOR',     mp.operador],
+                  ['DATA / HORA',  mp.etqHora],
+                  ['WO',           DOSSIE.wo],
+                ]}
+                barcodeValue={mp.barcode}
+                barcodeFormat="Code 128"
+              />
+            ))}
+          </div>
+        </div>
+      );
 
     case 'fabricacao':
       return (
@@ -332,20 +360,26 @@ function RenderConteudoNo({ no, cores }) {
             ]} />
           </div>
           <div>
-            <div className="card-title" style={{ marginBottom: 8 }}>Etiqueta da Fabricação</div>
-            <div style={{ background: 'var(--surface2)', border: '2px dashed var(--ouro-claro)', borderRadius: 6, padding: 12, fontFamily: 'var(--font-m)', fontSize: 11, lineHeight: 1.7 }}>
-              <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--ouro)', marginBottom: 6 }}>Etiqueta de Fabricação</div>
-              <div><strong>CÓDIGO:</strong> {no.etiqueta.codigo}</div>
-              <div><strong>PRODUTO:</strong> {no.etiqueta.produto}</div>
-              <div><strong>LOTE GRANEL:</strong> {no.etiqueta.loteGranel}</div>
-              <div><strong>QTDE:</strong> {no.etiqueta.qtde}</div>
-              <div><strong>DATA PESAGEM:</strong> {no.etiqueta.dataPesagem}</div>
-              <div><strong>VAL. PROD. ACAB.:</strong> {no.etiqueta.validadePA}</div>
-              <div><strong>INÍCIO FAB.:</strong> {no.etiqueta.inicioFab}</div>
-              <div><strong>FIM FAB.:</strong> {no.etiqueta.fimFab}</div>
-              <div><strong>PRAZO ESTOCAGEM:</strong> {no.etiqueta.prazoEstoque}</div>
-              <div><strong>RECIPIENTES:</strong> {no.etiqueta.nRecipientes}</div>
-            </div>
+            <div className="card-title" style={{ marginBottom: 8 }}>Etiqueta de Fabricação (Zebra)</div>
+            <EtiquetaImpressa
+              tipo="ETIQUETA DE FABRICAÇÃO"
+              codigo={no.etiqueta.codigo}
+              cor="ouro"
+              fields={[
+                ['CÓDIGO',          no.etiqueta.codigo],
+                ['PRODUTO',         no.etiqueta.produto],
+                ['LOTE GRANEL',     no.etiqueta.loteGranel],
+                ['QUANTIDADE',      no.etiqueta.qtde],
+                ['DATA PESAGEM',    no.etiqueta.dataPesagem],
+                ['VAL. PROD. ACAB.',no.etiqueta.validadePA],
+                ['INÍCIO FAB.',     no.etiqueta.inicioFab],
+                ['FIM FAB.',        no.etiqueta.fimFab],
+                ['PRAZO ESTOCAGEM', no.etiqueta.prazoEstoque],
+                ['RECIPIENTES',     no.etiqueta.nRecipientes],
+              ]}
+              barcodeValue={`${no.etiqueta.codigo}-${no.etiqueta.loteGranel.replace('/','-')}`}
+              barcodeFormat="Code 128"
+            />
           </div>
         </div>
       );
@@ -472,6 +506,52 @@ function RenderConteudoNo({ no, cores }) {
                   ))}
                 </tbody>
               </table>
+            </>
+          )}
+
+          {no.etiqueta && (
+            <>
+              <div className="card-title" style={{ marginTop: 14, marginBottom: 10 }}>
+                Etiqueta Impressa · {no.etiqueta.format}
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 380px)', gap: 12 }}>
+                {no.id === 'embalagem-ean' ? (
+                  <EtiquetaImpressa
+                    tipo={no.etiqueta.tipo}
+                    codigo={no.etiqueta.codigo}
+                    cor="ouro"
+                    fields={[
+                      ['EAN-13',     no.etiqueta.ean13],
+                      ['PRODUTO',    no.etiqueta.produto],
+                      ['LOTE PA',    no.etiqueta.lote],
+                      ['VALIDADE',   no.etiqueta.validade],
+                      ['WO',         no.etiqueta.wo],
+                      ['DATA IMPR.', no.etiqueta.data],
+                    ]}
+                    barcodeValue={no.etiqueta.ean13}
+                    barcodeFormat={no.etiqueta.format}
+                  />
+                ) : (
+                  <EtiquetaImpressa
+                    tipo={no.etiqueta.tipo}
+                    codigo={no.etiqueta.codigo}
+                    cor="ouro"
+                    fields={[
+                      ['GTIN-14',    no.etiqueta.codigo],
+                      ['GS1 / EAN-128', no.etiqueta.gs1],
+                      ['PRODUTO',    no.etiqueta.produto],
+                      ['LOTE PA',    no.etiqueta.lote],
+                      ['VALIDADE',   no.etiqueta.validade],
+                      ['UNIDADES',   no.etiqueta.unidades],
+                      ['PALETE',     no.etiqueta.palete],
+                      ['WO',         no.etiqueta.wo],
+                      ['DATA IMPR.', no.etiqueta.data],
+                    ]}
+                    barcodeValue={no.etiqueta.codigo}
+                    barcodeFormat={no.etiqueta.format}
+                  />
+                )}
+              </div>
             </>
           )}
         </div>
