@@ -2832,38 +2832,68 @@ export const SCREENS = {
       }
       </script>
         <div class="card-title">Fila de Pesagem — Prioridade</div>
+        <div class="abox info mb14"><span class="ai">ℹ</span><div>O <strong>Pagamento de MP</strong> é processado pelo almoxarifado no JDE, que sincroniza o status com o MES. A ordem só fica liberada para pesagem quando <strong>todas as MPs estão pagas</strong>.</div></div>
         <table class="tbl">
-          <thead><tr><th>#</th><th>Ordem</th><th>Produto / Fórmula</th><th>MPs</th><th>Volume</th><th>Prioridade</th><th>Status</th><th></th></tr></thead>
+          <thead><tr><th>#</th><th>Ordem</th><th>Produto / Fórmula</th><th>MPs</th><th>Pagamento de MP</th><th>Volume</th><th>Prioridade</th><th>Status da Ordem</th><th></th></tr></thead>
           <tbody>
-            <tr onclick="pesIrCockpit(event)" style="background:var(--ouro-dim)">
+            <!-- OP-2026-0416 — TODAS as MPs pagas → liberada para pesagem -->
+            <tr onclick="pesIrCockpit(event)" style="background:var(--ouro-dim);cursor:pointer">
               <td class="mono" style="color:var(--ouro);font-weight:700">1</td>
               <td class="mono" style="color:var(--verde)">OP-2026-0416</td>
               <td style="font-size:12px">Loção Hidratante Rosa 200ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-089</span></td>
               <td class="mono" style="font-weight:700">12 MPs</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--ok);min-width:42px">12/12</span>
+                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
+                    <div style="width:100%;height:100%;background:var(--ok);border-radius:3px"></div>
+                  </div>
+                </div>
+              </td>
               <td class="mono">600 kg</td>
               <td><span class="bdg bdg-ouro">🔥 Urgente</span></td>
-              <td><span class="bdg bdg-alr">Aguardando</span></td>
+              <td><span class="bdg bdg-ok">✓ Pronta para Pesagem</span></td>
               <td><button class="btn btn-sm btn-v" onclick="pesIrCockpit(event)">Pesar</button></td>
             </tr>
-            <tr onclick="nav('pes-cockpit',null,null)">
+
+            <!-- OP-2026-0417 — pagamento parcial → bloqueada -->
+            <tr style="opacity:.85">
               <td class="mono">2</td>
               <td class="mono" style="color:var(--verde)">OP-2026-0417</td>
               <td style="font-size:12px">Shampoo Phebo 400ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-112</span></td>
               <td class="mono">9 MPs</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--alr);min-width:42px">5/9</span>
+                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
+                    <div style="width:55%;height:100%;background:var(--alr);border-radius:3px"></div>
+                  </div>
+                </div>
+              </td>
               <td class="mono">480 kg</td>
               <td><span class="bdg bdg-inf">Normal</span></td>
-              <td><span class="bdg bdg-alr">Aguardando</span></td>
-              <td><button class="btn btn-sm btn-ghost">Detalhes</button></td>
+              <td><span class="bdg bdg-alr">⏳ Pagamento Parcial</span></td>
+              <td><button class="btn btn-sm btn-ghost" disabled style="opacity:.5;cursor:not-allowed" title="Aguardando pagamento das 4 MPs restantes (JDE)">Aguardando MPs</button></td>
             </tr>
-            <tr>
+
+            <!-- OP-2026-0418 — nenhum pagamento → bloqueada -->
+            <tr style="opacity:.85">
               <td class="mono">3</td>
               <td class="mono" style="color:var(--verde)">OP-2026-0418</td>
               <td style="font-size:12px">Polvilho Antisséptico 100g</td>
               <td class="mono">5 MPs</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--per);min-width:42px">0/5</span>
+                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
+                    <div style="width:0%;height:100%;background:var(--per);border-radius:3px"></div>
+                  </div>
+                </div>
+              </td>
               <td class="mono">200 kg</td>
               <td><span class="bdg bdg-ney">Baixa</span></td>
-              <td><span class="bdg bdg-alr">Aguardando</span></td>
-              <td><button class="btn btn-sm btn-ghost">Detalhes</button></td>
+              <td><span class="bdg bdg-per">⏳ Aguardando JDE</span></td>
+              <td><button class="btn btn-sm btn-ghost" disabled style="opacity:.5;cursor:not-allowed" title="Almoxarifado ainda não iniciou o pagamento das MPs">Aguardando MPs</button></td>
             </tr>
           </tbody>
         </table>
