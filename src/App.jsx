@@ -4,6 +4,7 @@ import Layout from './components/Layout.jsx';
 import LegacyScreen from './components/LegacyScreen.jsx';
 import SinoticoScreen from './components/SinoticoScreen.jsx';
 import ProdCockpitScreen from './components/ProdCockpitScreen.jsx';
+import GenealogiaScreen from './components/GenealogiaScreen.jsx';
 import { ModalProvider, useModal } from './components/ModalProvider.jsx';
 import { injectLegacyScripts, installNavBridges, resolveScreenId } from './lib/legacy-bridge.js';
 import manifest from './legacy/manifest.json';
@@ -56,6 +57,9 @@ export default function App() {
 
           {/* prod-cockpit: wrapper React que injeta o grafico hora-a-hora */}
           <Route path="/prod-cockpit" element={<ProdCockpitScreen />} />
+
+          {/* genealogia de lote: dossie eletronico EBR (WO 784426) */}
+          <Route path="/dash-genealogia" element={<GenealogiaScreen />} />
 
           {/* todas as demais telas extraidas */}
           {manifest.screens.map((id) => {

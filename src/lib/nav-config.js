@@ -6,6 +6,7 @@
 export const TOP_LINKS = [
   { id: 'sinotico', label: 'Sinotico da Fabrica', icon: '🗺️' },
   { id: 'oee', label: 'OEE Dashboard', icon: '📊' },
+  { id: 'dash-genealogia', label: 'Genealogia de Lote', icon: '🧬' },
 ];
 
 export const MODULES = [
