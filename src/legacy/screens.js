@@ -1371,7 +1371,7 @@ export const SCREENS = {
         function pesEscolherBalanca(id, nome, cap, ul) {
           PES_BAL_SEL = {id: id, nome: nome, cap: cap, ul: ul};
           // Highlight
-          ['BAL-01','BAL-02','BAL-03','BAL-04'].forEach(function(b){
+          ['BAL-01','BAL-02','BAL-03'].forEach(function(b){
             var el = document.getElementById('bal-btn-' + b);
             if (el) { el.style.border = b === id ? '2px solid var(--verde)' : '2px solid var(--border)'; el.style.background = b === id ? 'var(--verde-dim)' : 'var(--surface2)'; }
           });
@@ -1526,27 +1526,27 @@ export const SCREENS = {
             <div class="card cv mb14" style="border:2px solid var(--ouro)">
               <div class="card-title">④ Selecionar Balança para Pesagem</div>
               <div class="abox inf mb14"><span class="ai">⚖️</span><div>Selecione a balança disponível para esta pesagem. O sistema sugere a balança com maior disponibilidade e capacidade adequada à quantidade alvo (<strong>412,50 kg</strong>).</div></div>
-              <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px">
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px">
 
                 <!-- BAL-01 -->
-                <div id="bal-btn-BAL-01" onclick="pesEscolherBalanca('BAL-01','Balança Mettler Toledo — Bancada A','Cap: 600 kg · Prec: 0,01 kg','20/03/2026')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--surface2);transition:all .18s">
+                <div id="bal-btn-BAL-01" onclick="pesEscolherBalanca('BAL-01','Toledo PC Link 7 — Bancada A','Cap: 600 kg · Prec: 0,01 kg','20/03/2026')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--surface2);transition:all .18s">
                   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
                     <div style="font-family:var(--font-m);font-size:14px;font-weight:700;color:var(--verde)">BAL-01</div>
                     <span class="bdg bdg-ok">Disponível</span>
                   </div>
-                  <div style="font-size:12px;font-weight:700;color:var(--text)">Mettler Toledo — Bancada A</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--text)">Toledo PC Link 7 — Bancada A</div>
                   <div style="font-size:10px;color:var(--text2);margin-top:4px">Cap: 600 kg · Precisão: 0,01 kg</div>
                   <div style="font-size:10px;color:var(--text3);margin-top:2px">Última calibração: 20/03/2026</div>
                   <div style="margin-top:8px;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--verde)">⭐ Sugestão do sistema</div>
                 </div>
 
                 <!-- BAL-02 -->
-                <div id="bal-btn-BAL-02" onclick="pesEscolherBalanca('BAL-02','Balança Mettler Toledo — Bancada B','Cap: 600 kg · Prec: 0,01 kg','18/03/2026')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--surface2);transition:all .18s">
+                <div id="bal-btn-BAL-02" onclick="pesEscolherBalanca('BAL-02','Toledo PC Link 7 — Bancada B','Cap: 600 kg · Prec: 0,01 kg','18/03/2026')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--surface2);transition:all .18s">
                   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
                     <div style="font-family:var(--font-m);font-size:14px;font-weight:700;color:var(--verde)">BAL-02</div>
                     <span class="bdg bdg-ok">Disponível</span>
                   </div>
-                  <div style="font-size:12px;font-weight:700;color:var(--text)">Mettler Toledo — Bancada B</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--text)">Toledo PC Link 7 — Bancada B</div>
                   <div style="font-size:10px;color:var(--text2);margin-top:4px">Cap: 600 kg · Precisão: 0,01 kg</div>
                   <div style="font-size:10px;color:var(--text3);margin-top:2px">Última calibração: 18/03/2026</div>
                 </div>
@@ -1557,20 +1557,9 @@ export const SCREENS = {
                     <div style="font-family:var(--font-m);font-size:14px;font-weight:700;color:var(--per)">BAL-03</div>
                     <span class="bdg bdg-per">Em Uso</span>
                   </div>
-                  <div style="font-size:12px;font-weight:700;color:var(--text)">Mettler Toledo — Bancada C</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--text)">Toledo PC Link 7 — Bancada C</div>
                   <div style="font-size:10px;color:var(--text2);margin-top:4px">Cap: 600 kg · Precisão: 0,01 kg</div>
                   <div style="font-size:10px;color:var(--per);margin-top:2px">Em uso por: M. Oliveira · OP-2026-0417</div>
-                </div>
-
-                <!-- BAL-04 -->
-                <div id="bal-btn-BAL-04" onclick="pesEscolherBalanca('BAL-04','Balança Sartorius — Bancada D (Analítica)','Cap: 30 kg · Prec: 0,001 kg','22/03/2026')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--surface2);transition:all .18s">
-                  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
-                    <div style="font-family:var(--font-m);font-size:14px;font-weight:700;color:var(--ouro)">BAL-04</div>
-                    <span class="bdg bdg-alr">Cap. Reduzida</span>
-                  </div>
-                  <div style="font-size:12px;font-weight:700;color:var(--text)">Sartorius — Bancada D (Analítica)</div>
-                  <div style="font-size:10px;color:var(--text2);margin-top:4px">Cap: 30 kg · Precisão: 0,001 kg</div>
-                  <div style="font-size:10px;color:var(--alr);margin-top:2px">⚠ Capacidade inferior ao alvo (412,50 kg)</div>
                 </div>
 
               </div>
