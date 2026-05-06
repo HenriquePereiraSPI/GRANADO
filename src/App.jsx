@@ -5,6 +5,7 @@ import LegacyScreen from './components/LegacyScreen.jsx';
 import SinoticoScreen from './components/SinoticoScreen.jsx';
 import ProdCockpitScreen from './components/ProdCockpitScreen.jsx';
 import GenealogiaScreen from './components/GenealogiaScreen.jsx';
+import PesagemOeeScreen from './components/PesagemOeeScreen.jsx';
 import { ModalProvider, useModal } from './components/ModalProvider.jsx';
 import { injectLegacyScripts, installNavBridges, resolveScreenId } from './lib/legacy-bridge.js';
 import manifest from './legacy/manifest.json';
@@ -60,6 +61,9 @@ export default function App() {
 
           {/* genealogia de lote: dossie eletronico EBR (WO 784426) */}
           <Route path="/dash-genealogia" element={<GenealogiaScreen />} />
+
+          {/* OEE Pesagem (componente React) */}
+          <Route path="/pes-oee" element={<PesagemOeeScreen />} />
 
           {/* todas as demais telas extraidas */}
           {manifest.screens.map((id) => {

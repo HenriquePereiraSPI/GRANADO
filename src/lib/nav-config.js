@@ -42,6 +42,7 @@ export const MODULES = [
       { id: 'pes-gaiola',       label: 'Gestao de Gaiola' },
       { id: 'pes-devol-mp',     label: 'Devolucao de MP' },
       { id: 'pes-checkout',     label: 'Checkout / Validacao' },
+      { id: 'pes-oee',          label: '📊 OEE Pesagem' },
       { id: 'pes-rastr',        label: '📋 Rastreabilidade' },
     ],
   },
