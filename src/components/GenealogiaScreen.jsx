@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { DOSSIE } from '../data/dossie-wo-784426.js';
+import { useMemo, useState } from 'react';
+import { DOSSIES, findDossie, listarDossies } from '../data/dossie-wo-784426.js';
 import EtiquetaImpressa from './EtiquetaImpressa.jsx';
 
 /**
@@ -21,6 +21,7 @@ const COR_VARS = {
 };
 
 export default function GenealogiaScreen() {
+  const [DOSSIE, setDossie] = useState(DOSSIES[0]);
   const [expandidos, setExpandidos] = useState(() => new Set(['mp', 'fabricacao', 'granel']));
   const toggle = (id) => {
     setExpandidos((s) => {
@@ -48,6 +49,10 @@ export default function GenealogiaScreen() {
           <button className="btn btn-sm btn-v" onClick={() => alert('⬇ Baixando PDF assinado eletronicamente...')}>⬇ Baixar PDF</button>
         </div>
       </div>
+
+      {/* ── Filtro de busca por lote / WO / código ─────────── */}
+      <FiltroDossie atual={DOSSIE} onSelecionar={setDossie} />
+
 
       {/* ── Hero card com resumo da WO ──────────────────────── */}
       <div className="card cv mb14" style={{ padding: 18 }}>
@@ -715,3 +720,167 @@ function Tag({ label, valor, cor }) {
     </div>
   );
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Filtro de busca por lote do granel / WO / codigo / produto
+───────────────────────────────────────────────────────────── */
+
+function FiltroDossie({ atual, onSelecionar }) {
+  const [termo, setTermo] = useState('');
+  const [erro, setErro] = useState(null);
+  const [showSug, setShowSug] = useState(false);
+
+  const lista = useMemo(() => listarDossies(), []);
+  const sugestoes = useMemo(() => {
+    if (!termo.trim()) return lista;
+    const t = termo.trim().toLowerCase();
+    return lista.filter(
+      (d) =>
+        d.lote.toLowerCase().includes(t) ||
+        d.wo.toLowerCase().includes(t) ||
+        d.lotePA.toLowerCase().includes(t) ||
+        d.codigo.toLowerCase().includes(t) ||
+        d.produto.toLowerCase().includes(t),
+    );
+  }, [termo, lista]);
+
+  const buscar = (valor) => {
+    const v = (valor != null ? valor : termo).trim();
+    if (!v) {
+      setErro('Informe um lote, WO ou código de produto.');
+      return;
+    }
+    const d = findDossie(v);
+    if (!d) {
+      setErro(`Nenhum dossiê encontrado para "${v}". Tente um lote (ex.: 2551/2026), WO (ex.: 784426) ou código (ex.: S0815B).`);
+      return;
+    }
+    setErro(null);
+    setShowSug(false);
+    setTermo('');
+    onSelecionar(d);
+  };
+
+  return (
+    <div className="card co mb14" style={{ padding: 14, position: 'relative', borderTop: '3px solid var(--ouro-claro)' }}>
+      <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+        <div style={{ flex: 1, minWidth: 280, position: 'relative' }}>
+          <label className="lbl" style={{ display: 'block', marginBottom: 4 }}>
+            Buscar Dossiê — <span style={{ fontSize: 9, fontWeight: 600, color: 'var(--text3)' }}>por Lote do Granel · WO · Lote PA · Código · Nome do Produto</span>
+          </label>
+          <input
+            className="inp"
+            value={termo}
+            onChange={(e) => { setTermo(e.target.value); setErro(null); setShowSug(true); }}
+            onFocus={() => setShowSug(true)}
+            onBlur={() => setTimeout(() => setShowSug(false), 200)}
+            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); buscar(); } }}
+            placeholder="Ex.: 2551/2026  ·  784426  ·  S0815B  ·  Limão Siciliano"
+            style={{ width: '100%' }}
+          />
+          {showSug && sugestoes.length > 0 && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 'calc(100% + 4px)',
+                left: 0,
+                right: 0,
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
+                borderRadius: 6,
+                boxShadow: 'var(--sh2)',
+                zIndex: 30,
+                maxHeight: 280,
+                overflowY: 'auto',
+              }}
+            >
+              {sugestoes.map((s) => (
+                <button
+                  key={s.wo}
+                  type="button"
+                  onMouseDown={(e) => { e.preventDefault(); buscar(s.lote); }}
+                  style={{
+                    width: '100%',
+                    background: atual.wo === s.wo ? 'var(--verde-dim)' : 'transparent',
+                    border: 'none',
+                    borderBottom: '1px solid var(--border)',
+                    padding: '10px 12px',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    font: 'inherit',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: 12,
+                    alignItems: 'baseline',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--surface2)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = atual.wo === s.wo ? 'var(--verde-dim)' : 'transparent')}
+                >
+                  <div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--verde-esc)' }}>
+                      {s.produto}
+                    </div>
+                    <div style={{ fontSize: 10, color: 'var(--text3)', fontFamily: 'var(--font-m)', marginTop: 2 }}>
+                      <strong style={{ color: 'var(--ouro)' }}>WO {s.wo}</strong> · Granel{' '}
+                      <strong style={{ color: 'var(--verde)' }}>{s.lote}</strong> · PA{' '}
+                      <strong style={{ color: 'var(--verde)' }}>{s.lotePA}</strong> · Cód.{' '}
+                      <strong>{s.codigo}</strong>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 10, color: 'var(--text3)', whiteSpace: 'nowrap', alignSelf: 'center' }}>
+                    {s.inicio.split(' ')[0]}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <button className="btn btn-md btn-v" onClick={() => buscar()} style={{ minWidth: 110 }}>🔍 Buscar</button>
+        <button
+          className="btn btn-md btn-ghost"
+          onClick={() => { setTermo(''); setErro(null); setShowSug(false); onSelecionar(DOSSIES[0]); }}
+        >
+          Limpar
+        </button>
+      </div>
+
+      {erro && (
+        <div className="abox err" style={{ marginTop: 10, marginBottom: 0 }}>
+          <span className="ai">⚠</span>
+          <div>{erro}</div>
+        </div>
+      )}
+
+      {/* Resumo do dossiê atual */}
+      <div
+        style={{
+          marginTop: 10,
+          padding: '8px 12px',
+          background: 'var(--ouro-dim)',
+          border: '1px dashed var(--ouro-claro)',
+          borderRadius: 6,
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: 12,
+          flexWrap: 'wrap',
+          fontSize: 11,
+          color: 'var(--text2)',
+        }}
+      >
+        <div>
+          <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--ouro)', marginRight: 8 }}>
+            Exibindo:
+          </span>
+          <strong style={{ color: 'var(--verde-esc)' }}>{atual.granel}</strong> · WO{' '}
+          <strong style={{ color: 'var(--ouro)', fontFamily: 'var(--font-m)' }}>{atual.wo}</strong> · Lote granel{' '}
+          <strong style={{ color: 'var(--verde)', fontFamily: 'var(--font-m)' }}>{atual.lote}</strong>
+        </div>
+        <div style={{ color: 'var(--text3)', fontFamily: 'var(--font-m)' }}>
+          {DOSSIES.length} dossiês disponíveis nesta base
+        </div>
+      </div>
+    </div>
+  );
+}
+

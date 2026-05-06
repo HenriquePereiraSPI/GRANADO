@@ -283,3 +283,155 @@ export const DOSSIE = {
     },
   ],
 };
+
+/* ═══════════════════════════════════════════════════════════════════
+   DOSSIES ADICIONAIS — variantes para demonstracao da busca
+   Usam clones do dossie principal com overrides no header e em campos
+   visiveis. As secoes detalhadas (etapas/inspecoes/etc) sao reusadas
+   para evitar duplicacao desnecessaria nesta fase de mockup.
+═══════════════════════════════════════════════════════════════════ */
+
+const DOSSIE_2 = {
+  ...DOSSIE,
+  wo: '784301',
+  lote: '2401/2026',
+  lotePA: '261892',
+  produto: 'Sabonete Glicerinado Limão Siciliano · Linha',
+  granel: 'TRANSP GRANADO LIMÃO SICILIANO',
+  codigoProduto: 'S0822B_G',
+  codigoGranel: 'S0822B',
+  batchSize: '5.500 kg',
+  sala: 'MF5_HOMO4',
+  inicio: '08/04/2026 09:14:22',
+  fim: '08/04/2026 12:38:55',
+  validade: '20/04/2029',
+  lider: { nome: 'Daltivo', chapa: '108922' },
+  cqLiberacao: { nome: 'Maicon S. Souza Lima', data: '09/04/2026 14:20' },
+  emitido: '06/05/2026 09:02',
+  cadeia: DOSSIE.cadeia.map((no) => {
+    if (no.id === 'granel') {
+      return {
+        ...no,
+        titulo: 'Granel · S0822B · Lote 2401/2026',
+        subtitulo: '5.503 kg · Rendimento 100,05% ✓',
+        rendimento: { ...no.rendimento, teorico: '5.500,000 kg', real: '5.503,000 kg', calc: '100,05%' },
+        etiqueta: { ...no.etiqueta, codigo: 'S0822B', produto: 'TRANSP GRANADO LIMÃO SICILIANO', loteGranel: '2401/2026', qtde: '5.503,000 kg', dataPesagem: '06/04/2026', validadePA: '04/2029', inicioFab: '08/04/2026', fimFab: '08/04/2026' },
+      };
+    }
+    if (no.id === 'embalagem-ean' && no.etiqueta) {
+      return {
+        ...no,
+        subtitulo: 'OF 784348 · Linha B · MF1 · 44.218 un · 92,8%',
+        info: { ...no.info, of: '784348', inicio: '09/04/2026 08:20', fim: '09/04/2026 18:55' },
+        etiqueta: { ...no.etiqueta, ean13: '7896512908005', codigo: '7896512908005', produto: 'SAB. GLICERINA LIMÃO SICILIANO 90G', lote: '261892', wo: '784348', data: '09/04/2026' },
+      };
+    }
+    if (no.id === 'embalagem-dun' && no.etiqueta) {
+      return {
+        ...no,
+        subtitulo: 'OF 784280 · Encartonamento DUN · MF1 · 614 caixas',
+        info: { ...no.info, of: '784280', inicio: '09/04/2026 13:30', fim: '09/04/2026 18:55' },
+        etiqueta: { ...no.etiqueta, codigo: '27896512908002', gs1: '(01)27896512908002 (10)261892 (15)042029 (37)72', produto: 'SAB. GLICERINA LIMÃO SICILIANO 90G · CX72', lote: '261892', wo: '784280', data: '09/04/2026', palete: 'PLT-2026-0429' },
+      };
+    }
+    return no;
+  }),
+};
+
+const DOSSIE_3 = {
+  ...DOSSIE,
+  wo: '783897',
+  lote: '2298/2026',
+  lotePA: '261104',
+  produto: 'Sabonete Glicerinado Mel · Linha',
+  granel: 'TRANSP GRANADO MEL',
+  codigoProduto: 'S0830B_G',
+  codigoGranel: 'S0830B',
+  batchSize: '4.000 kg',
+  sala: 'MF5_HOMO5',
+  inicio: '28/03/2026 16:02:11',
+  fim: '28/03/2026 19:42:30',
+  validade: '12/04/2029',
+  lider: { nome: 'Geisha', chapa: '103415' },
+  cqLiberacao: { nome: 'Jessica Costa', data: '29/03/2026 11:10' },
+  emitido: '06/05/2026 09:02',
+  cadeia: DOSSIE.cadeia.map((no) => {
+    if (no.id === 'granel') {
+      return {
+        ...no,
+        titulo: 'Granel · S0830B · Lote 2298/2026',
+        subtitulo: '4.012 kg · Rendimento 100,30% ✓',
+        rendimento: { ...no.rendimento, teorico: '4.000,000 kg', real: '4.012,000 kg', calc: '100,30%' },
+        etiqueta: { ...no.etiqueta, codigo: 'S0830B', produto: 'TRANSP GRANADO MEL', loteGranel: '2298/2026', qtde: '4.012,000 kg', dataPesagem: '26/03/2026', validadePA: '04/2029', inicioFab: '28/03/2026', fimFab: '28/03/2026' },
+      };
+    }
+    if (no.id === 'embalagem-ean' && no.etiqueta) {
+      return {
+        ...no,
+        subtitulo: 'OF 783920 · Linha B · MF1 · 32.140 un · 91,7%',
+        info: { ...no.info, of: '783920', inicio: '29/03/2026 09:00', fim: '29/03/2026 17:30' },
+        etiqueta: { ...no.etiqueta, ean13: '7896512911005', codigo: '7896512911005', produto: 'SAB. GLICERINA MEL 90G', lote: '261104', wo: '783920', data: '29/03/2026' },
+      };
+    }
+    if (no.id === 'embalagem-dun' && no.etiqueta) {
+      return {
+        ...no,
+        subtitulo: 'OF 783854 · Encartonamento DUN · MF1 · 446 caixas',
+        info: { ...no.info, of: '783854', inicio: '29/03/2026 13:00', fim: '29/03/2026 17:30' },
+        etiqueta: { ...no.etiqueta, codigo: '27896512911002', gs1: '(01)27896512911002 (10)261104 (15)042029 (37)72', produto: 'SAB. GLICERINA MEL 90G · CX72', lote: '261104', wo: '783854', data: '29/03/2026', palete: 'PLT-2026-0418' },
+      };
+    }
+    return no;
+  }),
+};
+
+/**
+ * Lista todos os dossies disponiveis no MES (mockup). Em producao, isto
+ * seria substituido por uma chamada `GET /api/dossies?...`.
+ */
+export const DOSSIES = [DOSSIE, DOSSIE_2, DOSSIE_3];
+
+/**
+ * Retorna lista resumida (lote, WO, codigo, produto) — util para
+ * autocomplete e sugestoes na barra de busca.
+ */
+export function listarDossies() {
+  return DOSSIES.map((d) => ({
+    wo: d.wo,
+    lote: d.lote,
+    lotePA: d.lotePA,
+    codigo: d.codigoGranel,
+    produto: d.granel,
+    inicio: d.inicio,
+  }));
+}
+
+/**
+ * Busca um dossie pelo termo digitado pelo usuario. Aceita:
+ *   - Lote do granel completo  (ex.: "2551/2026")
+ *   - Lote sem barra            (ex.: "2551 2026" ou "25512026")
+ *   - WO                        (ex.: "784426")
+ *   - Lote PA                   (ex.: "262417")
+ *   - Codigo do granel          (ex.: "S0815B")
+ *   - Nome do produto (parcial) (ex.: "limao")
+ * Retorna o objeto DOSSIE encontrado ou null.
+ */
+export function findDossie(termoRaw) {
+  if (!termoRaw) return null;
+  const t = String(termoRaw).trim().toLowerCase().replace(/\s+/g, ' ');
+  if (!t) return null;
+  const tNoSlash = t.replace(/\//g, '').replace(/\s/g, '');
+  return (
+    DOSSIES.find((d) => {
+      if (d.lote.toLowerCase() === t) return true;
+      if (d.lote.toLowerCase().replace('/', '') === tNoSlash) return true;
+      if (d.wo === t) return true;
+      if (d.lotePA.toLowerCase() === t) return true;
+      if (d.codigoGranel.toLowerCase() === t) return true;
+      if (d.granel.toLowerCase().includes(t)) return true;
+      if (d.produto.toLowerCase().includes(t)) return true;
+      return false;
+    }) || null
+  );
+}
+
