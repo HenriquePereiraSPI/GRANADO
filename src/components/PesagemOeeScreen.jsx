@@ -338,6 +338,45 @@ function CardPerformanceGranel({ calc }) {
           </tr>
         </tfoot>
       </table>
+
+      {/* Legenda — como o Δ é calculado */}
+      <div
+        style={{
+          marginTop: 12,
+          paddingTop: 10,
+          borderTop: '1px dashed var(--border)',
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 16,
+          fontSize: 10.5,
+          color: 'var(--text2)',
+          alignItems: 'center',
+        }}
+      >
+        <div>
+          <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--text3)', marginRight: 8 }}>
+            Cálculo do Δ
+          </span>
+          <span style={{ fontFamily: 'var(--font-m)', fontWeight: 700, color: 'var(--verde-esc)' }}>
+            (Tempo Real − Tempo Padrão) ÷ Tempo Padrão × 100
+          </span>
+        </div>
+
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginLeft: 'auto' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+            <span style={{ width: 9, height: 9, background: 'var(--ok)', borderRadius: 2 }} />
+            Δ ≤ 0% · dentro do padrão
+          </span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+            <span style={{ width: 9, height: 9, background: 'var(--alr)', borderRadius: 2 }} />
+            0% &lt; Δ ≤ 5% · atenção
+          </span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+            <span style={{ width: 9, height: 9, background: 'var(--per)', borderRadius: 2 }} />
+            Δ &gt; 5% · fora do padrão
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
