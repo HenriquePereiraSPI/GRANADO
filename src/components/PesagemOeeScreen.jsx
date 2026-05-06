@@ -251,13 +251,19 @@ function CardPerformanceGranel({ calc }) {
 
   return (
     <div className="card cv">
+      <style>{`
+        .perf-granel-tbl th { padding: 14px 10px; font-size: 11px; }
+        .perf-granel-tbl td { padding: 22px 10px; vertical-align: middle; }
+        .perf-granel-tbl tbody tr { transition: background .15s; }
+        .perf-granel-tbl tbody tr:hover { background: var(--surface2); }
+      `}</style>
       <div className="card-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}>
         <span>Performance · Visão Granel (oficial OEE)</span>
         <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text3)', letterSpacing: '.04em' }}>
           Tempo padrão (cronoanálise) vs Tempo real
         </span>
       </div>
-      <table className="tbl">
+      <table className="tbl perf-granel-tbl" style={{ fontSize: 13 }}>
         <thead>
           <tr>
             <th>Granel</th>
@@ -465,6 +471,14 @@ function CardTempoCicloMP() {
     <div className="card ca">
       <div className="card-title">Tempo de Ciclo por Matéria-Prima · Acompanhamento Operacional</div>
 
+      <style>{`
+        .ciclo-mp-tbl { font-size: 13.5px; }
+        .ciclo-mp-tbl th { padding: 12px 10px; font-size: 11px; }
+        .ciclo-mp-tbl td { padding: 13px 10px; vertical-align: middle; }
+        .ciclo-mp-tbl tbody tr { transition: background .15s; }
+        .ciclo-mp-tbl tbody tr:hover { background: var(--surface2); }
+      `}</style>
+
       <div className="abox info mb14" style={{ marginBottom: 12 }}>
         <span className="ai">ℹ</span>
         <div>
@@ -473,7 +487,7 @@ function CardTempoCicloMP() {
         </div>
       </div>
 
-      <table className="tbl">
+      <table className="tbl ciclo-mp-tbl">
         <thead>
           <tr>
             <th>Código</th>
@@ -495,11 +509,11 @@ function CardTempoCicloMP() {
                 <td>{m.desc}</td>
                 <td className="mono">{m.padrao.toFixed(1)}</td>
                 <td className="mono" style={{ fontWeight: 700, color: corDelta }}>{m.real.toFixed(1)}</td>
-                <td className="mono" style={{ color: 'var(--text3)', fontSize: 11 }}>{m.min.toFixed(1)}</td>
-                <td className="mono" style={{ color: 'var(--text3)', fontSize: 11 }}>{m.max.toFixed(1)}</td>
+                <td className="mono" style={{ color: 'var(--text3)' }}>{m.min.toFixed(1)}</td>
+                <td className="mono" style={{ color: 'var(--text3)' }}>{m.max.toFixed(1)}</td>
                 <td>
                   {/* Mini-barra de min..real..max */}
-                  <div style={{ position: 'relative', height: 14, background: 'var(--bg2)', borderRadius: 7, overflow: 'hidden' }}>
+                  <div style={{ position: 'relative', height: 16, background: 'var(--bg2)', borderRadius: 8, overflow: 'hidden' }}>
                     <div
                       style={{
                         position: 'absolute',
