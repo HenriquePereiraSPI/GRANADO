@@ -90,17 +90,6 @@ export default function PesagemOeeScreen() {
         </div>
       </div>
 
-      {/* ── Aviso explicativo ──────────────────────────────── */}
-      <div className="abox info mb14">
-        <span className="ai">ℹ</span>
-        <div>
-          <strong>OEE Pesagem = Disponibilidade × Performance × Qualidade.</strong>{' '}
-          Os 4 KPIs abaixo são <strong>calculados em runtime</strong> a partir das tabelas desta tela —
-          mude um tempo padrão / real ou uma parada e tudo recalcula. Qualidade fixa em 100% (sem reprovação na pesagem,
-          conforme reunião 30/04/2026).
-        </div>
-      </div>
-
       {/* ── KPIs principais (OEE breakdown) ────────────────── */}
       <div className="g3 mb14">
         <KpiOEE
