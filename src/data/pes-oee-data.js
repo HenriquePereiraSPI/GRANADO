@@ -23,11 +23,30 @@
 export const PESAGEM_OEE = {
   periodo: '2026-05-05 (turno A)',
   modulo: 'MF5',
-  oeeGlobal: 78.4,
-  disponibilidade: 86.2,
-  performance: 90.9,
-  qualidade: 100, // sempre 100% — nao ha reprovacao na pesagem
+
+  // ─── Tempo Total do Turno (em minutos) ───────────────────────
+  // Usado como base do calculo de Disponibilidade. Turno A = 8h
+  // (06:00–14:00 com 1h de refeicao planejada).
+  tempoTotalTurnoMin: 480,
+
+  // ─── Qualidade ───────────────────────────────────────────────
+  // Fixa em 100% — na pesagem nao ha reprovacao (decidido na
+  // reuniao 30/04/2026). Mantida no dataset para que o componente
+  // possa multiplica-la na formula sem hardcode.
+  qualidade: 100,
+
+  // ─── Meta de OEE ─────────────────────────────────────────────
   meta: 85,
+
+  // NOTA: oeeGlobal, disponibilidade e performance NAO entram mais
+  // no dataset — sao calculados em runtime pelo componente
+  // (PesagemOeeScreen.jsx, useMemo) a partir de:
+  //   Disponibilidade = (tempoTotal - paradasProgramadas - paradasNaoProgramadas)
+  //                       / (tempoTotal - paradasProgramadas)
+  //   Performance     = Σ tempoPadrao / Σ tempoReal  (granel)
+  //   Qualidade       = 100% (fixo)
+  //   OEE             = Disp x Perf x Qual
+
   observacoes: 'Cronoanalise por granel · Tempo de ciclo por MP construido por histórico',
 
   // ─── KPIs operacionais do dia ────────────────────────────────

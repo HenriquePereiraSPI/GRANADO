@@ -21,7 +21,49 @@ const COR_STATUS = {
   fora:    { fg: 'var(--per)',  bg: 'var(--per-p)',  bd: 'var(--per-b)',  label: '⚠ Fora do padrão' },
 };
 
+/**
+ * Calcula o OEE da Pesagem em runtime a partir dos dados das tabelas.
+ * Retorna o breakdown completo (numerador/denominador) para que cada
+ * KPI possa exibir sua memoria de calculo na tela.
+ *
+ *   Performance     = Σ tempoPadrao(granel)  /  Σ tempoReal(granel)
+ *   Disponibilidade = TempoOperando  /  TempoDisponivel
+ *                     onde:
+ *                       TempoDisponivel = TempoTotal − ParadasProgramadas
+ *                       TempoOperando   = TempoDisponivel − ParadasNaoProgramadas
+ *   Qualidade       = 100%  (fixo na pesagem — sem reprovacao)
+ *   OEE             = Disp x Perf x Qual
+ */
+function calcularOEE(dados) {
+  // Performance — agregado dos graneis
+  const padraoTotal = dados.performanceGranel.reduce((s, g) => s + g.tempoPadrao, 0);
+  const realTotal   = dados.performanceGranel.reduce((s, g) => s + g.tempoReal,   0);
+  const performance = realTotal > 0 ? (padraoTotal / realTotal) * 100 : 0;
+
+  // Disponibilidade — base no tempo total do turno
+  const tempoTotal      = dados.tempoTotalTurnoMin;
+  const programadas     = dados.paradas.filter((p) => p.tipo === 'programada').reduce((s, p) => s + p.min, 0);
+  const naoProgramadas  = dados.paradas.filter((p) => p.tipo === 'nao-programada').reduce((s, p) => s + p.min, 0);
+  const tempoDisponivel = tempoTotal - programadas;
+  const tempoOperando   = tempoDisponivel - naoProgramadas;
+  const disponibilidade = tempoDisponivel > 0 ? (tempoOperando / tempoDisponivel) * 100 : 0;
+
+  // Qualidade fixa
+  const qualidade = dados.qualidade;
+
+  // OEE
+  const oee = (disponibilidade / 100) * (performance / 100) * (qualidade / 100) * 100;
+
+  return {
+    oee, disponibilidade, performance, qualidade,
+    tempoTotal, programadas, naoProgramadas, tempoDisponivel, tempoOperando,
+    padraoTotal, realTotal,
+  };
+}
+
 export default function PesagemOeeScreen() {
+  const calc = useMemo(() => calcularOEE(D), []);
+
   return (
     <div className="screen active" style={{ display: 'block' }}>
       {/* ── Header ─────────────────────────────────────────── */}
@@ -52,23 +94,44 @@ export default function PesagemOeeScreen() {
       <div className="abox info mb14">
         <span className="ai">ℹ</span>
         <div>
-          <strong>OEE Pesagem = Disponibilidade × Performance.</strong> A Qualidade não entra (sem reprovação na pesagem).{' '}
-          <strong>Performance</strong> é medida pelo <strong>granel</strong> (cronoanálise da fórmula).{' '}
-          O <strong>tempo de ciclo por MP</strong> é um acompanhamento operacional adicional (não compõe o OEE).
+          <strong>OEE Pesagem = Disponibilidade × Performance × Qualidade.</strong>{' '}
+          Os 4 KPIs abaixo são <strong>calculados em runtime</strong> a partir das tabelas desta tela —
+          mude um tempo padrão / real ou uma parada e tudo recalcula. Qualidade fixa em 100% (sem reprovação na pesagem,
+          conforme reunião 30/04/2026).
         </div>
       </div>
 
       {/* ── KPIs principais (OEE breakdown) ────────────────── */}
       <div className="g4 mb14">
-        <KpiOEE label="OEE Global" valor={D.oeeGlobal} unidade="%" meta={D.meta} cor="verde" destaque />
-        <KpiOEE label="Disponibilidade" valor={D.disponibilidade} unidade="%" cor="inf" sub="Sala disponível vs paradas" />
-        <KpiOEE label="Performance" valor={D.performance} unidade="%" cor="ouro" sub="Tempo padrão / tempo real" />
+        <KpiOEE
+          label="OEE Global"
+          valor={calc.oee}
+          unidade="%"
+          meta={D.meta}
+          cor="verde"
+          destaque
+          memoria={`Disp × Perf × Qual = ${calc.disponibilidade.toFixed(1)}% × ${calc.performance.toFixed(1)}% × ${calc.qualidade}%`}
+        />
+        <KpiOEE
+          label="Disponibilidade"
+          valor={calc.disponibilidade}
+          unidade="%"
+          cor="inf"
+          memoria={`${calc.tempoOperando}min operando ÷ ${calc.tempoDisponivel}min disponíveis`}
+        />
+        <KpiOEE
+          label="Performance"
+          valor={calc.performance}
+          unidade="%"
+          cor="ouro"
+          memoria={`Σ padrão (${calc.padraoTotal}min) ÷ Σ real (${calc.realTotal}min)`}
+        />
         <KpiOEE
           label="Qualidade"
-          valor={D.qualidade}
+          valor={calc.qualidade}
           unidade="%"
           cor="ney"
-          sub="Não se aplica — sem reprovação"
+          sub="Fixo — sem reprovação"
         />
       </div>
 
@@ -89,8 +152,8 @@ export default function PesagemOeeScreen() {
 
       {/* ── 2 colunas: Performance Granel + Disponibilidade ─ */}
       <div className="g73 mb14">
-        <CardPerformanceGranel />
-        <CardDisponibilidade />
+        <CardPerformanceGranel calc={calc} />
+        <CardDisponibilidade calc={calc} />
       </div>
 
       {/* ── Tempo de ciclo por MP ──────────────────────────── */}
@@ -108,7 +171,7 @@ export default function PesagemOeeScreen() {
 /* ─────────────────────────────────────────────────────────────
    KPI OEE — usado nos 4 cards do topo
 ───────────────────────────────────────────────────────────── */
-function KpiOEE({ label, valor, unidade = '%', meta, cor = 'verde', sub, destaque }) {
+function KpiOEE({ label, valor, unidade = '%', meta, cor = 'verde', sub, destaque, memoria }) {
   const corMap = {
     verde: 'var(--verde)',
     ouro:  'var(--ouro)',
@@ -164,6 +227,24 @@ function KpiOEE({ label, valor, unidade = '%', meta, cor = 'verde', sub, destaqu
           }}
         />
       </div>
+
+      {/* Memória de cálculo (se fornecida) */}
+      {memoria && (
+        <div
+          style={{
+            fontSize: 9,
+            fontFamily: 'var(--font-m)',
+            color: 'var(--text3)',
+            marginTop: 8,
+            paddingTop: 6,
+            borderTop: '1px dashed var(--border)',
+            letterSpacing: '.02em',
+          }}
+          title="Memória de cálculo"
+        >
+          {memoria}
+        </div>
+      )}
     </div>
   );
 }
@@ -182,7 +263,7 @@ function KpiMini({ label, valor, cor }) {
 /* ─────────────────────────────────────────────────────────────
    Performance — visão Granel (oficial OEE)
 ───────────────────────────────────────────────────────────── */
-function CardPerformanceGranel() {
+function CardPerformanceGranel({ calc }) {
   const dados = D.performanceGranel;
   const maxTempo = useMemo(() => Math.max(...dados.map((d) => Math.max(d.tempoPadrao, d.tempoReal))), [dados]);
 
@@ -261,6 +342,19 @@ function CardPerformanceGranel() {
             );
           })}
         </tbody>
+        <tfoot>
+          <tr style={{ background: 'var(--surface2)', borderTop: '2px solid var(--ouro-claro)' }}>
+            <td colSpan="3" style={{ fontWeight: 700, color: 'var(--verde-esc)', fontSize: 11, padding: '8px 10px' }}>
+              Σ Total — Performance = {calc.padraoTotal}min ÷ {calc.realTotal}min
+            </td>
+            <td className="mono" style={{ fontWeight: 800 }}>{calc.padraoTotal}m</td>
+            <td className="mono" style={{ fontWeight: 800, color: 'var(--ouro)' }}>{calc.realTotal}m</td>
+            <td colSpan="2" style={{ textAlign: 'right', fontFamily: 'var(--font-d)', fontWeight: 700, color: 'var(--ouro)', fontSize: 16 }}>
+              {calc.performance.toFixed(1)}%
+            </td>
+            <td><span className="bdg bdg-ouro" style={{ fontSize: 9 }}>Performance</span></td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   );
@@ -269,11 +363,9 @@ function CardPerformanceGranel() {
 /* ─────────────────────────────────────────────────────────────
    Disponibilidade — paradas
 ───────────────────────────────────────────────────────────── */
-function CardDisponibilidade() {
+function CardDisponibilidade({ calc }) {
   const dados = D.paradas;
   const totalMin = dados.reduce((s, p) => s + p.min, 0);
-  const programada = dados.filter((p) => p.tipo === 'programada').reduce((s, p) => s + p.min, 0);
-  const naoProgramada = totalMin - programada;
 
   const corMap = {
     inf: 'var(--inf)',
@@ -285,7 +377,59 @@ function CardDisponibilidade() {
     <div className="card co">
       <div className="card-title">Disponibilidade · Paradas</div>
 
-      {/* Donut/barra agregada */}
+      {/* Breakdown do tempo (Total → Disponível → Operando) */}
+      <div
+        style={{
+          background: 'var(--surface2)',
+          border: '1px solid var(--border)',
+          borderRadius: 6,
+          padding: '10px 12px',
+          marginBottom: 14,
+          fontSize: 11,
+          fontFamily: 'var(--font-m)',
+        }}
+      >
+        <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 6 }}>
+          Memória de cálculo
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
+          <span style={{ color: 'var(--text2)' }}>Tempo Total do Turno</span>
+          <strong>{calc.tempoTotal} min</strong>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', color: 'var(--inf)' }}>
+          <span>(−) Paradas Programadas</span>
+          <strong>{calc.programadas} min</strong>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderTop: '1px dashed var(--border)' }}>
+          <span style={{ color: 'var(--text2)', fontWeight: 700 }}>= Tempo Disponível</span>
+          <strong style={{ color: 'var(--verde)' }}>{calc.tempoDisponivel} min</strong>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', color: 'var(--alr)' }}>
+          <span>(−) Paradas Não-Programadas</span>
+          <strong>{calc.naoProgramadas} min</strong>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0 3px', borderTop: '1px solid var(--ouro-claro)' }}>
+          <span style={{ color: 'var(--ouro)', fontWeight: 700 }}>= Tempo Operando</span>
+          <strong style={{ color: 'var(--ouro)' }}>{calc.tempoOperando} min</strong>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: '5px 0 0',
+            marginTop: 4,
+            borderTop: '2px solid var(--verde)',
+            fontSize: 12,
+          }}
+        >
+          <span style={{ color: 'var(--verde-esc)', fontWeight: 700 }}>Disponibilidade</span>
+          <strong style={{ color: 'var(--verde)', fontFamily: 'var(--font-d)', fontSize: 14 }}>
+            {calc.disponibilidade.toFixed(1)}%
+          </strong>
+        </div>
+      </div>
+
+      {/* Barra agregada de paradas */}
       <div style={{ marginBottom: 14 }}>
         <div style={{ display: 'flex', height: 14, borderRadius: 7, overflow: 'hidden', border: '1px solid var(--border)' }}>
           {dados.map((p, i) => {
@@ -300,9 +444,9 @@ function CardDisponibilidade() {
           })}
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--text3)', marginTop: 6 }}>
-          <span>Total: <strong>{totalMin} min</strong></span>
-          <span style={{ color: 'var(--inf)' }}>Programada: <strong>{programada}m</strong></span>
-          <span style={{ color: 'var(--alr)' }}>Não-programada: <strong>{naoProgramada}m</strong></span>
+          <span>Total paradas: <strong>{totalMin} min</strong></span>
+          <span style={{ color: 'var(--inf)' }}>Prog: <strong>{calc.programadas}m</strong></span>
+          <span style={{ color: 'var(--alr)' }}>Não-prog: <strong>{calc.naoProgramadas}m</strong></span>
         </div>
       </div>
 
