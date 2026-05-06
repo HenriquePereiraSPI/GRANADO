@@ -266,7 +266,6 @@ function CardPerformanceGranel({ calc }) {
             <th>Padrão</th>
             <th>Real</th>
             <th style={{ minWidth: 200 }}>Comparativo</th>
-            <th>Δ</th>
             <th>Status</th>
           </tr>
         </thead>
@@ -315,10 +314,6 @@ function CardPerformanceGranel({ calc }) {
                     />
                   </div>
                 </td>
-                <td className="mono" style={{ fontWeight: 700, color: d.variancia > 0 ? corS.fg : 'var(--ok)' }}>
-                  {d.variancia > 0 ? '+' : ''}
-                  {d.variancia.toFixed(1)}%
-                </td>
                 <td><span className="bdg" style={{ fontSize: 9, background: corS.bg, color: corS.fg, border: `1px solid ${corS.bd}` }}>{corS.label}</span></td>
               </tr>
             );
@@ -331,52 +326,13 @@ function CardPerformanceGranel({ calc }) {
             </td>
             <td className="mono" style={{ fontWeight: 800 }}>{calc.padraoTotal}m</td>
             <td className="mono" style={{ fontWeight: 800, color: 'var(--ouro)' }}>{calc.realTotal}m</td>
-            <td colSpan="2" style={{ textAlign: 'right', fontFamily: 'var(--font-d)', fontWeight: 700, color: 'var(--ouro)', fontSize: 16 }}>
+            <td style={{ textAlign: 'right', fontFamily: 'var(--font-d)', fontWeight: 700, color: 'var(--ouro)', fontSize: 16 }}>
               {calc.performance.toFixed(1)}%
             </td>
             <td><span className="bdg bdg-ouro" style={{ fontSize: 9 }}>Performance</span></td>
           </tr>
         </tfoot>
       </table>
-
-      {/* Legenda — como o Δ é calculado */}
-      <div
-        style={{
-          marginTop: 12,
-          paddingTop: 10,
-          borderTop: '1px dashed var(--border)',
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: 16,
-          fontSize: 10.5,
-          color: 'var(--text2)',
-          alignItems: 'center',
-        }}
-      >
-        <div>
-          <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--text3)', marginRight: 8 }}>
-            Cálculo do Δ
-          </span>
-          <span style={{ fontFamily: 'var(--font-m)', fontWeight: 700, color: 'var(--verde-esc)' }}>
-            (Tempo Real − Tempo Padrão) ÷ Tempo Padrão × 100
-          </span>
-        </div>
-
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginLeft: 'auto' }}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-            <span style={{ width: 9, height: 9, background: 'var(--ok)', borderRadius: 2 }} />
-            Δ ≤ 0% · dentro do padrão
-          </span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-            <span style={{ width: 9, height: 9, background: 'var(--alr)', borderRadius: 2 }} />
-            0% &lt; Δ ≤ 5% · atenção
-          </span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-            <span style={{ width: 9, height: 9, background: 'var(--per)', borderRadius: 2 }} />
-            Δ &gt; 5% · fora do padrão
-          </span>
-        </div>
-      </div>
     </div>
   );
 }
