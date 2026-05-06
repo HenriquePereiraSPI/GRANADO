@@ -2853,7 +2853,7 @@ export const SCREENS = {
         var eyebrow = document.querySelector('#screen-pes-cockpit .ph-eyebrow');
         if (eyebrow) eyebrow.textContent = 'Pesagem · MF5';
       }
-      function pesIrCockpit(event) {
+      function pesIrCockpit(event, tipo) {
         if (event) event.stopPropagation();
         if (!PES_SALA_SEL) {
           alert('⚠ Selecione a Sala de Pesagem antes de iniciar.');
@@ -2866,7 +2866,61 @@ export const SCREENS = {
             return;
           }
         }
+        // Tipo 'continuar' (OP ja em pesagem) → vai direto pro cockpit.
+        // Tipo 'inicio' (primeira pesagem da OP) → abre checklist da sala.
+        if (tipo === 'continuar') {
+          nav('pes-cockpit', null, null);
+          return;
+        }
+        pesAbrirChecklistSala();
+      }
+      /* ── Checklist obrigatorio da sala — antes do INICIO da pesagem ── */
+      function pesAbrirChecklistSala() {
+        document.querySelectorAll('.pes-cks-item').forEach(function(el){ el.classList.remove('done'); });
+        pesAtualizarChecklistSala();
+        document.getElementById('modal-pes-cks-sala').style.display = 'flex';
+      }
+      function pesTogglarChecklistSala(el) {
+        el.classList.toggle('done');
+        pesAtualizarChecklistSala();
+      }
+      function pesAtualizarChecklistSala() {
+        var total = document.querySelectorAll('.pes-cks-item').length;
+        var done = document.querySelectorAll('.pes-cks-item.done').length;
+        var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+        var bar = document.getElementById('pes-cks-bar');
+        var pctEl = document.getElementById('pes-cks-pct');
+        var txtEl = document.getElementById('pes-cks-txt');
+        var btn = document.getElementById('pes-cks-btn-liberar');
+        if (bar) bar.style.width = pct + '%';
+        if (pctEl) pctEl.textContent = pct + '%';
+        if (txtEl) txtEl.textContent = done + ' de ' + total + ' itens verificados';
+        if (btn) {
+          var ok = done === total;
+          btn.disabled = !ok;
+          btn.style.opacity = ok ? '1' : '.5';
+          btn.style.cursor = ok ? 'pointer' : 'not-allowed';
+          if (ok) {
+            btn.classList.remove('btn-ghost'); btn.classList.add('btn-v');
+          } else {
+            btn.classList.remove('btn-v'); btn.classList.add('btn-ghost');
+          }
+        }
+      }
+      function pesConfirmarChecklistSala() {
+        var total = document.querySelectorAll('.pes-cks-item').length;
+        var done = document.querySelectorAll('.pes-cks-item.done').length;
+        if (done < total) {
+          alert('⚠ Confirme todos os itens do checklist antes de iniciar a pesagem.');
+          return;
+        }
+        document.getElementById('modal-pes-cks-sala').style.display = 'none';
+        var hora = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+        alert('✅ Sala liberada para pesagem!\\nRegistro: CKS-PES-' + hora + ' · Operador: J. Santos\\n\\nIniciando cockpit de pesagem...');
         nav('pes-cockpit', null, null);
+      }
+      function pesFecharChecklistSala() {
+        document.getElementById('modal-pes-cks-sala').style.display = 'none';
       }
       </script>
         <div class="card-title">Fila de Pesagem — Prioridade</div>
@@ -2874,8 +2928,8 @@ export const SCREENS = {
         <table class="tbl">
           <thead><tr><th>#</th><th>Ordem</th><th>Produto / Fórmula</th><th>MPs</th><th>Pagamento de MP</th><th>Pesagem</th><th>Volume</th><th>Prioridade</th><th>Status da Ordem</th><th></th></tr></thead>
           <tbody>
-            <!-- OP-2026-0414 — EM PESAGEM (parcial) → continua de onde parou -->
-            <tr onclick="pesIrCockpit(event)" style="background:var(--inf-p);cursor:pointer">
+            <!-- OP-2026-0414 — EM PESAGEM (parcial) → continua de onde parou (sem checklist) -->
+            <tr onclick="pesIrCockpit(event, 'continuar')" style="background:var(--inf-p);cursor:pointer">
               <td class="mono" style="color:var(--inf);font-weight:700">1</td>
               <td class="mono" style="color:var(--verde)">OP-2026-0414</td>
               <td style="font-size:12px">Creme Hidratante 150g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-076</span></td>
@@ -2899,11 +2953,11 @@ export const SCREENS = {
               <td class="mono">540 kg</td>
               <td><span class="bdg bdg-inf">Normal</span></td>
               <td><span class="bdg bdg-inf">🔄 Pesando</span></td>
-              <td><button class="btn btn-sm btn-v" onclick="pesIrCockpit(event)">Continuar</button></td>
+              <td><button class="btn btn-sm btn-v" onclick="pesIrCockpit(event, 'continuar')">Continuar</button></td>
             </tr>
 
-            <!-- OP-2026-0416 — TODAS as MPs pagas, NENHUMA pesada → liberada para iniciar -->
-            <tr onclick="pesIrCockpit(event)" style="background:var(--ouro-dim);cursor:pointer">
+            <!-- OP-2026-0416 — TODAS as MPs pagas, NENHUMA pesada → INICIO (abre checklist) -->
+            <tr onclick="pesIrCockpit(event, 'inicio')" style="background:var(--ouro-dim);cursor:pointer">
               <td class="mono" style="color:var(--ouro);font-weight:700">2</td>
               <td class="mono" style="color:var(--verde)">OP-2026-0416</td>
               <td style="font-size:12px">Loção Hidratante Rosa 200ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-089</span></td>
@@ -2927,7 +2981,7 @@ export const SCREENS = {
               <td class="mono">600 kg</td>
               <td><span class="bdg bdg-ouro">🔥 Urgente</span></td>
               <td><span class="bdg bdg-ok">✓ Pronta para Pesagem</span></td>
-              <td><button class="btn btn-sm btn-v" onclick="pesIrCockpit(event)">Pesar</button></td>
+              <td><button class="btn btn-sm btn-v" onclick="pesIrCockpit(event, 'inicio')">Pesar</button></td>
             </tr>
 
             <!-- OP-2026-0413 — FINALIZADA (todas pagas e todas pesadas) -->
@@ -2959,6 +3013,94 @@ export const SCREENS = {
             </tr>
           </tbody>
         </table>
+
+      <!-- ── Modal Checklist de Conferência da Sala (POP-PES-001) ── -->
+      <style>
+        .pes-cks-item { display:flex; align-items:center; gap:12px; padding:11px 14px; background:var(--surface2); border:1.5px solid var(--border); border-radius:7px; cursor:pointer; transition:all .15s; }
+        .pes-cks-item:hover { border-color:var(--ouro-claro); background:var(--ouro-dim); }
+        .pes-cks-item .pes-cks-box { width:24px; height:24px; min-width:24px; border:2px solid var(--border2); border-radius:5px; display:flex; align-items:center; justify-content:center; color:transparent; font-size:14px; font-weight:900; transition:all .15s; }
+        .pes-cks-item.done { background:var(--ok-p); border-color:var(--ok-b); }
+        .pes-cks-item.done .pes-cks-box { background:var(--ok); border-color:var(--ok); color:#fff; }
+        .pes-cks-item.done .pes-cks-nome { color:var(--verde-esc); font-weight:600; }
+      </style>
+      <div id="modal-pes-cks-sala" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.45);z-index:900;align-items:center;justify-content:center;backdrop-filter:blur(3px)">
+        <div style="background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--ouro-claro);border-radius:var(--r);padding:28px 30px;width:600px;max-width:96%;box-shadow:var(--sh2);max-height:92vh;overflow-y:auto">
+          <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--ouro);margin-bottom:4px">Antes de iniciar — POP-PES-001</div>
+          <div style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--verde-esc);margin-bottom:6px">Checklist de Conferência da Sala</div>
+          <div style="font-size:11px;color:var(--text2);margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border)">
+            Confirme todos os itens abaixo antes de iniciar a pesagem. Este checklist é obrigatório <strong>uma vez por ordem</strong> — fica registrado no log de auditoria com timestamp e operador.
+          </div>
+
+          <!-- Progresso -->
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;background:var(--surface2);padding:10px 14px;border-radius:7px;border:1px solid var(--border)">
+            <div style="font-family:var(--font-d);font-size:26px;font-weight:700;color:var(--ouro);line-height:1;min-width:54px;text-align:center" id="pes-cks-pct">0%</div>
+            <div style="flex:1">
+              <div style="height:8px;background:var(--bg2);border-radius:4px;overflow:hidden">
+                <div id="pes-cks-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--ouro),var(--ok));border-radius:4px;transition:width .3s"></div>
+              </div>
+              <div id="pes-cks-txt" style="font-size:10px;color:var(--text3);margin-top:4px">0 de 6 itens verificados</div>
+            </div>
+          </div>
+
+          <!-- Itens -->
+          <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:18px">
+            <div class="pes-cks-item" onclick="pesTogglarChecklistSala(this)">
+              <div class="pes-cks-box">✓</div>
+              <div style="flex:1">
+                <div class="pes-cks-nome" style="font-size:13px;color:var(--text)">Sala limpa e livre de resíduos do lote anterior</div>
+                <div style="font-size:10px;color:var(--text3);margin-top:2px">Piso, bancadas e estantes sem material do produto anterior</div>
+              </div>
+              <span class="bdg" style="background:var(--per-p);color:var(--per);border:1px solid var(--per-b);font-size:9px">Crítico</span>
+            </div>
+            <div class="pes-cks-item" onclick="pesTogglarChecklistSala(this)">
+              <div class="pes-cks-box">✓</div>
+              <div style="flex:1">
+                <div class="pes-cks-nome" style="font-size:13px;color:var(--text)">Identificação do granel corresponde à OF</div>
+                <div style="font-size:10px;color:var(--text3);margin-top:2px">Etiqueta da OF confere com o produto a ser pesado</div>
+              </div>
+              <span class="bdg" style="background:var(--per-p);color:var(--per);border:1px solid var(--per-b);font-size:9px">Crítico</span>
+            </div>
+            <div class="pes-cks-item" onclick="pesTogglarChecklistSala(this)">
+              <div class="pes-cks-box">✓</div>
+              <div style="flex:1">
+                <div class="pes-cks-nome" style="font-size:13px;color:var(--text)">Utensílios e bancadas limpos e identificados</div>
+                <div style="font-size:10px;color:var(--text3);margin-top:2px">Bombonas, sacos e recipientes lavados e etiquetados</div>
+              </div>
+              <span class="bdg" style="background:var(--alr-p);color:var(--alr);border:1px solid var(--alr-b);font-size:9px">Obrigatório</span>
+            </div>
+            <div class="pes-cks-item" onclick="pesTogglarChecklistSala(this)">
+              <div class="pes-cks-box">✓</div>
+              <div style="flex:1">
+                <div class="pes-cks-nome" style="font-size:13px;color:var(--text)">Carrinhos / esteiras limpos</div>
+                <div style="font-size:10px;color:var(--text3);margin-top:2px">Sem material remanescente da pesagem anterior</div>
+              </div>
+              <span class="bdg" style="background:var(--alr-p);color:var(--alr);border:1px solid var(--alr-b);font-size:9px">Obrigatório</span>
+            </div>
+            <div class="pes-cks-item" onclick="pesTogglarChecklistSala(this)">
+              <div class="pes-cks-box">✓</div>
+              <div style="flex:1">
+                <div class="pes-cks-nome" style="font-size:13px;color:var(--text)">Sistema de exaustão e pressurização funcionando</div>
+                <div style="font-size:10px;color:var(--text3);margin-top:2px">Pressão negativa em sala de pós · indicadores OK</div>
+              </div>
+              <span class="bdg" style="background:var(--alr-p);color:var(--alr);border:1px solid var(--alr-b);font-size:9px">Obrigatório</span>
+            </div>
+            <div class="pes-cks-item" onclick="pesTogglarChecklistSala(this)">
+              <div class="pes-cks-box">✓</div>
+              <div style="flex:1">
+                <div class="pes-cks-nome" style="font-size:13px;color:var(--text)">Impressora Zebra com etiquetas e ribbon disponíveis</div>
+                <div style="font-size:10px;color:var(--text3);margin-top:2px">Imprimir etiqueta de teste antes de iniciar</div>
+              </div>
+              <span class="bdg" style="background:var(--alr-p);color:var(--alr);border:1px solid var(--alr-b);font-size:9px">Obrigatório</span>
+            </div>
+          </div>
+
+          <!-- Botões -->
+          <div style="display:flex;gap:10px;padding-top:14px;border-top:1px solid var(--border)">
+            <button id="pes-cks-btn-liberar" class="btn btn-md btn-ghost" disabled style="flex:1;opacity:.5;cursor:not-allowed" onclick="pesConfirmarChecklistSala()">✔ Liberar para Pesagem</button>
+            <button class="btn btn-md btn-ghost" onclick="pesFecharChecklistSala()">Cancelar</button>
+          </div>
+        </div>
+      </div>
       `,
   "pes-planejamento": `      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · Planejador</div><div class="ph-title">Planejamento das Ordens</div></div>
