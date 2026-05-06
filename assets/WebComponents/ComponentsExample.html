@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Componentes Granado — Exemplos</title>
+  <script src="./granado-simple-card.js"></script>
+  <script src="./granado-complete-card.js"></script>
+  <script src="./granado-empty-card.js"></script>
+  <script src="./granado-table.js"></script>
+  <script src="./granado-calendar.js"></script>
+  <script src="./granado-checkbox.js"></script>
+  <script src="./granado-dropdown.js"></script>
+  <script src="./granado-input.js"></script>
+  <script src="./granado-radio.js"></script>
+  <script src="./granado-slider.js"></script>
+  <script src="./granado-toggle.js"></script>
+  <script src="./granado-button.js"></script>
+  <script src="./granado-panel.js"></script>
+  <script src="./granado-scroll-panel.js"></script>
+  <script src="./granado-tab.js"></script>
+  <script src="./granado-tabs.js"></script>
+  <script src="./granado-toast.js"></script>
+  <script src="./granado-badge.js"></script>
+  <script src="./granado-chip.js"></script>
+  <script src="./granado-icon.js"></script>
+  <script src="./granado-progress-bar.js"></script>
+</head>
+
+<body style="margin:0;padding:24px;background:#F4EED9;font-family:system-ui,-apple-system,sans-serif;color:#103E20">
+  <h1 style="font-size:20px;font-weight:700;margin:0 0 4px;color:#1C5C31">Componentes Granado</h1>
+  <p style="font-size:12px;color:#5A6B5E;margin:0 0 24px">Exemplos visuais de cada web component da biblioteca.</p>
+
+  <!-- ========== Linha 1 — granado-simple-card ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-simple-card&gt;
+    </h2>
+    <div style="display:flex;gap:12px">
+      <granado-simple-card style="flex:1" title="OP-2025-0042" subtitle="Shampoo Phebo · 5000un">
+      </granado-simple-card>
+
+      <granado-simple-card style="flex:1" title="Linha 03 parada" subtitle="Aguardando troca de formato"
+        color="#C0392B">
+      </granado-simple-card>
+
+      <granado-simple-card style="flex:1" title="Lote aprovado" subtitle="Liberado para envase" color="#9A7B1C">
+      </granado-simple-card>
+
+      <granado-simple-card style="flex:1" title="Clique aqui" subtitle="Card interativo com hover" color="#2C5A8C"
+        onclickevent="alert('Card simples clicado')">
+      </granado-simple-card>
+    </div>
+  </section>
+
+  <!-- ========== Linha 2 — granado-complete-card ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-complete-card&gt;
+    </h2>
+    <div style="display:flex;gap:12px">
+      <granado-complete-card style="flex:1" icon="A" title="Sala A" subtitle="4 Balancas" status="Disponivel">
+      </granado-complete-card>
+
+      <granado-complete-card style="flex:1" icon="B" title="Sala B" subtitle="3 Balancas" color="#9A7B1C"
+        status="1 em uso">
+      </granado-complete-card>
+
+      <granado-complete-card style="flex:1" icon="C" title="Sala C" subtitle="2 Balancas" color="#C0392B"
+        status="Manutencao">
+      </granado-complete-card>
+
+      <granado-complete-card style="flex:1" icon="D" title="Sala D" subtitle="6 Balancas" color="#2C5A8C"
+        status="Reservada" onclickevent="alert('Sala D selecionada')">
+      </granado-complete-card>
+    </div>
+  </section>
+
+  <!-- ========== Linha 3 — granado-empty-card ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-empty-card&gt;
+    </h2>
+    <div style="display:flex;gap:12px">
+      <granado-empty-card title="Resumo do turno">
+        <div style="display:flex;gap:18px">
+          <div style="flex:1">
+            <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E">
+              Pesagens</div>
+            <div style="font-size:26px;font-weight:700;color:#103E20;line-height:1.2">142</div>
+          </div>
+        </div>
+      </granado-empty-card>
+
+      <granado-empty-card title="Resumo do turno">
+        <div style="display:flex;gap:18px">
+          <div style="flex:1">
+            <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E">
+              Pesagens</div>
+            <div style="font-size:26px;font-weight:700;color:#103E20;line-height:1.2">142</div>
+          </div>
+        </div>
+      </granado-empty-card>
+
+      <granado-empty-card title="Resumo do turno">
+        <div style="display:flex;gap:18px">
+          <div style="flex:1">
+            <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E">
+              Pesagens</div>
+            <div style="font-size:26px;font-weight:700;color:#103E20;line-height:1.2">142</div>
+          </div>
+        </div>
+      </granado-empty-card>
+
+      <granado-empty-card title="Resumo do turno">
+        <div style="display:flex;gap:18px">
+          <div style="flex:1">
+            <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E">
+              Pesagens</div>
+            <div style="font-size:26px;font-weight:700;color:#103E20;line-height:1.2">142</div>
+          </div>
+        </div>
+      </granado-empty-card>
+    </div>
+
+  </section>
+
+  <!-- ========== Linha 4 — granado-calendar ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-calendar&gt;
+    </h2>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <granado-calendar
+        mode="date"
+        onchangeevent="console.log('Cal 1 (date PT-BR):', value)">
+      </granado-calendar>
+
+      <granado-calendar
+        mode="date"
+        format="dd/MM/yyyy"
+        placeholder="Escolha uma data..."
+        color="#9A7B1C"
+        onchangeevent="console.log('Cal 2 (dd/MM/yyyy):', value)">
+      </granado-calendar>
+
+      <granado-calendar
+        mode="datetime"
+        value="2026-05-06 14:30:00"
+        color="#2C5A8C"
+        onchangeevent="console.log('Cal 3 (datetime):', value)">
+      </granado-calendar>
+
+      <granado-calendar
+        mode="datetime"
+        lang="en"
+        format="MM/dd/yyyy HH:mm"
+        color="#C0392B"
+        onchangeevent="console.log('Cal 4 (EN datetime):', value)">
+      </granado-calendar>
+    </div>
+  </section>
+
+  <!-- ========== Linha 5 — granado-checkbox ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-checkbox&gt;
+    </h2>
+    <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+      <granado-checkbox
+        label="Aceito os termos"
+        onchangeevent="console.log('aceito?', checked)">
+      </granado-checkbox>
+
+      <granado-checkbox
+        label="Notificacoes por email"
+        checked="true"
+        onchangeevent="console.log('email:', checked)">
+      </granado-checkbox>
+
+      <granado-checkbox
+        label="Cor custom (ouro)"
+        color="#9A7B1C"
+        checked="true"
+        onchangeevent="console.log('ouro:', checked)">
+      </granado-checkbox>
+
+      <granado-checkbox
+        label="Desabilitado"
+        checked="true"
+        disabled="true">
+      </granado-checkbox>
+    </div>
+  </section>
+
+  <!-- ========== Linha 6 — granado-dropdown ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-dropdown&gt;
+    </h2>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <granado-dropdown
+        placeholder="Selecione um operador..."
+        options='["Maria Silva","Joao Santos","Ana Costa","Pedro Lima","Carla Souza"]'
+        onchangeevent="console.log('Operador:', value)">
+      </granado-dropdown>
+
+      <granado-dropdown
+        placeholder="Selecione um material..."
+        searchable="true"
+        color="#9A7B1C"
+        options='[
+          {"value":"GLI","label":"Glicerina USP"},
+          {"value":"FEN","label":"Fenoxietanol"},
+          {"value":"CIT","label":"Acido Citrico"},
+          {"value":"LAU","label":"Lauril Sulfato"},
+          {"value":"CER","label":"Cera de Abelha"},
+          {"value":"OAM","label":"Oleo de Amendoa"},
+          {"value":"KAR","label":"Manteiga de Karite"},
+          {"value":"VIT","label":"Vitamina E"},
+          {"value":"CAM","label":"Extrato de Camomila"},
+          {"value":"MEN","label":"Mentol Cristal"}
+        ]'
+        onchangeevent="console.log('Material:', value, option)">
+      </granado-dropdown>
+
+      <granado-dropdown
+        multi="true"
+        color="#2C5A8C"
+        placeholder="Filtrar status..."
+        value="OK,DEV"
+        options='[
+          {"value":"OK","label":"Aprovado"},
+          {"value":"DEV","label":"Desvio"},
+          {"value":"PEN","label":"Pendente"},
+          {"value":"AGU","label":"Aguardando"}
+        ]'
+        onchangeevent="console.log('Status:', value)">
+      </granado-dropdown>
+
+      <granado-dropdown
+        disabled="true"
+        placeholder="Desabilitado"
+        options='["A","B","C"]'>
+      </granado-dropdown>
+    </div>
+  </section>
+
+  <!-- ========== Linha 7 — granado-input ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-input&gt;
+    </h2>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start">
+      <granado-input style="flex:1;min-width:200px"
+        label="Nome completo"
+        placeholder="Digite seu nome"
+        oninputevent="console.log('Nome:', value)">
+      </granado-input>
+
+      <granado-input style="flex:1;min-width:200px"
+        label="Email"
+        icon="mail"
+        type="email"
+        placeholder="seu@email.com"
+        oninputevent="console.log('Email:', value)">
+      </granado-input>
+
+      <granado-input style="flex:1;min-width:200px"
+        label="CPF"
+        icon="user"
+        mask="999.999.999-99"
+        placeholder="000.000.000-00"
+        oninputevent="console.log('CPF:', value)">
+      </granado-input>
+
+      <granado-input style="flex:1;min-width:200px"
+        label="Senha"
+        icon="lock"
+        ispassword="true"
+        placeholder="Digite sua senha"
+        oninputevent="console.log('Senha:', value)">
+      </granado-input>
+
+      <granado-input style="flex:1;min-width:240px"
+        label="Observacoes"
+        type="textarea"
+        rows="3"
+        placeholder="Descreva o desvio observado..."
+        onchangeevent="console.log('Obs:', value)">
+      </granado-input>
+    </div>
+  </section>
+
+  <!-- ========== Linha 8 — granado-radio ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-radio&gt;
+    </h2>
+    <div style="display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start">
+      <granado-radio
+        options='["Pequeno","Medio","Grande"]'
+        value="Medio"
+        onchangeevent="console.log('Tamanho:', value)">
+      </granado-radio>
+
+      <granado-radio
+        orientation="horizontal"
+        color="#9A7B1C"
+        options='[
+          {"value":"OK","label":"Aprovado"},
+          {"value":"DEV","label":"Desvio"},
+          {"value":"PEN","label":"Pendente"}
+        ]'
+        value="OK"
+        onchangeevent="console.log('Status:', value, option)">
+      </granado-radio>
+
+      <granado-radio
+        color="#2C5A8C"
+        options='[
+          {"value":"manha","label":"Turno Manha"},
+          {"value":"tarde","label":"Turno Tarde"},
+          {"value":"noite","label":"Turno Noite"}
+        ]'
+        value="tarde"
+        onchangeevent="console.log('Turno:', value)">
+      </granado-radio>
+
+      <granado-radio
+        disabled="true"
+        options='["A","B","C"]'
+        value="B">
+      </granado-radio>
+    </div>
+  </section>
+
+  <!-- ========== Linha 9 — granado-slider ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-slider&gt;
+    </h2>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+      <granado-slider style="flex:1;min-width:220px"
+        label="Volume"
+        min="0" max="100" value="40"
+        unit="%"
+        oninputevent="console.log('Volume:', value)">
+      </granado-slider>
+
+      <granado-slider style="flex:1;min-width:220px"
+        label="Temperatura"
+        min="0" max="200" step="5" value="60"
+        unit="C"
+        color="#C0392B"
+        onchangeevent="console.log('Temp final:', value)">
+      </granado-slider>
+
+      <granado-slider style="flex:1;min-width:220px"
+        label="Concentracao"
+        min="0" max="1" step="0.05" value="0.3"
+        color="#2C5A8C"
+        oninputevent="console.log('Conc:', value)">
+      </granado-slider>
+
+      <granado-slider style="flex:1;min-width:220px"
+        label="Desabilitado"
+        min="0" max="100" value="75"
+        disabled="true">
+      </granado-slider>
+    </div>
+  </section>
+
+  <!-- ========== Linha 10 — granado-toggle ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-toggle&gt;
+    </h2>
+    <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+      <granado-toggle
+        label="Notificacoes"
+        onchangeevent="console.log('Notificacoes:', checked)">
+      </granado-toggle>
+
+      <granado-toggle
+        label="Modo escuro"
+        checked="true"
+        color="#2C5A8C"
+        onchangeevent="console.log('Modo escuro:', checked)">
+      </granado-toggle>
+
+      <granado-toggle
+        label="Auto-salvar"
+        labelposition="left"
+        checked="true"
+        color="#9A7B1C"
+        onchangeevent="console.log('Auto-salvar:', checked)">
+      </granado-toggle>
+
+      <granado-toggle
+        label="Bloqueado"
+        checked="true"
+        disabled="true">
+      </granado-toggle>
+    </div>
+  </section>
+
+  <!-- ========== Linha 11 — granado-button ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-button&gt;
+    </h2>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+      <granado-button
+        label="Salvar"
+        icon="save"
+        onclickevent="console.log('Salvar clicado')">
+      </granado-button>
+
+      <granado-button
+        label="Cancelar"
+        variant="secondary"
+        onclickevent="console.log('Cancelar')">
+      </granado-button>
+
+      <granado-button
+        label="Voltar"
+        variant="ghost"
+        icon="arrow-left"
+        onclickevent="console.log('Voltar')">
+      </granado-button>
+
+      <granado-button
+        label="Excluir"
+        icon="trash"
+        color="#C0392B"
+        onclickevent="console.log('Excluir')">
+      </granado-button>
+
+      <granado-button
+        label="Avancar"
+        icon="arrow-right"
+        iconposition="right"
+        color="#2C5A8C"
+        onclickevent="console.log('Avancar')">
+      </granado-button>
+
+      <granado-button
+        label="Bloqueado"
+        icon="lock"
+        disabled="true">
+      </granado-button>
+    </div>
+
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <granado-button label="Pequeno" icon="plus" size="sm"></granado-button>
+      <granado-button label="Medio" icon="plus"></granado-button>
+      <granado-button label="Grande" icon="plus" size="lg"></granado-button>
+      <granado-button icon="settings" variant="ghost"></granado-button>
+      <granado-button icon="refresh" variant="secondary"></granado-button>
+    </div>
+  </section>
+
+  <!-- ========== Linha 12 — granado-panel ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-panel&gt;
+    </h2>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start">
+      <granado-panel style="flex:1;min-width:260px"
+        title="Detalhes da OP"
+        subtitle="OP-2025-0042 · Shampoo Phebo">
+        <p style="margin:0;font-size:13px;color:#103E20;line-height:1.5">
+          Producao prevista de 5000 unidades. Lote em pesagem na Sala A,
+          Balanca B-01. Operador responsavel: Maria Silva.
+        </p>
+      </granado-panel>
+
+      <granado-panel style="flex:1;min-width:260px"
+        title="Filtros avancados"
+        subtitle="Click para expandir/colapsar"
+        collapsible="true"
+        collapsed="true"
+        color="#9A7B1C"
+        oncollapseevent="console.log('Filtros colapsado:', collapsed)">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <granado-input label="Buscar" icon="search" placeholder="Codigo MP..."></granado-input>
+          <granado-checkbox label="Apenas com desvio"></granado-checkbox>
+          <granado-checkbox label="Aprovados nas ultimas 24h" checked="true"></granado-checkbox>
+        </div>
+      </granado-panel>
+    </div>
+  </section>
+
+  <!-- ========== Linha 13 — granado-scroll-panel ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-scroll-panel&gt;
+    </h2>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start">
+      <granado-scroll-panel style="flex:1;min-width:260px"
+        title="Log de eventos"
+        subtitle="Ultimas 30 entradas"
+        maxheight="220px">
+        <ul style="margin:0;padding:0;list-style:none;font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#103E20">
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[08:15] MP-01001 pesado · OK</li>
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[08:24] MP-01002 pesado · DESVIO</li>
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[08:31] MP-01003 pesado · PENDENTE</li>
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[08:42] MP-01004 pesado · APROVADO</li>
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[08:55] MP-01005 pesado · OK</li>
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[09:08] MP-01006 pesado · DESVIO</li>
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[09:21] MP-01007 pesado · OK</li>
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[09:34] MP-01008 pesado · APROVADO</li>
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[09:47] MP-01009 pesado · PENDENTE</li>
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[10:02] MP-01010 pesado · OK</li>
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[10:15] MP-01011 pesado · DESVIO</li>
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[10:28] MP-01012 pesado · OK</li>
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[10:41] MP-01013 pesado · APROVADO</li>
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[10:55] MP-01014 pesado · PENDENTE</li>
+          <li style="padding:6px 0">[11:08] MP-01015 pesado · OK</li>
+        </ul>
+      </granado-scroll-panel>
+
+      <granado-scroll-panel style="flex:1;min-width:260px"
+        title="Materiais cadastrados"
+        maxheight="220px"
+        color="#2C5A8C">
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#103E20">
+          <div>Glicerina USP</div>
+          <div>Fenoxietanol</div>
+          <div>Acido Citrico</div>
+          <div>Lauril Sulfato</div>
+          <div>Cera de Abelha</div>
+          <div>Oleo de Amendoa</div>
+          <div>Manteiga de Karite</div>
+          <div>Vitamina E</div>
+          <div>Extrato de Camomila</div>
+          <div>Mentol Cristal</div>
+          <div>Acido Salicilico</div>
+          <div>Ureia</div>
+          <div>Pantenol</div>
+          <div>Niacinamida</div>
+          <div>Acido Hialuronico</div>
+          <div>Colageno Hidrolisado</div>
+          <div>Aloe Vera</div>
+          <div>Calendula</div>
+          <div>Lavanda</div>
+          <div>Eucalipto</div>
+        </div>
+      </granado-scroll-panel>
+    </div>
+  </section>
+
+  <!-- ========== Linha 14 — granado-tabs ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-tabs&gt;
+    </h2>
+
+    <granado-tabs value="info" onchangeevent="console.log('Tab ativa:', value)">
+      <granado-tab value="info" label="Informacoes" icon="info">
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#103E20">
+          <div><strong>OP:</strong> 2025-0042</div>
+          <div><strong>Produto:</strong> Shampoo Phebo 350ml</div>
+          <div><strong>Quantidade:</strong> 5000 unidades</div>
+          <div><strong>Sala:</strong> A · Balanca B-01</div>
+          <div><strong>Operador:</strong> Maria Silva</div>
+        </div>
+      </granado-tab>
+
+      <granado-tab value="hist" label="Historico" icon="calendar">
+        <ul style="margin:0;padding:0;list-style:none;font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#103E20">
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[08:15] Inicio da pesagem</li>
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[08:24] MP-01001 confirmado · 44983,210 kg</li>
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[08:31] MP-01002 desvio · justificado</li>
+          <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[08:42] MP-01003 confirmado · 12450,000 kg</li>
+          <li style="padding:6px 0">[08:55] MP-01004 confirmado · 8721,640 kg</li>
+        </ul>
+      </granado-tab>
+
+      <granado-tab value="ops" label="Operadores" icon="user">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <granado-checkbox label="Maria Silva" checked="true"></granado-checkbox>
+          <granado-checkbox label="Joao Santos" checked="true"></granado-checkbox>
+          <granado-checkbox label="Ana Costa"></granado-checkbox>
+          <granado-checkbox label="Pedro Lima"></granado-checkbox>
+          <granado-checkbox label="Carla Souza" checked="true"></granado-checkbox>
+        </div>
+      </granado-tab>
+
+      <granado-tab value="conf" label="Configuracoes" icon="settings">
+        <div style="display:flex;flex-direction:column;gap:14px;max-width:340px">
+          <granado-input label="Tolerancia (%)" mask="99" placeholder="5"></granado-input>
+          <granado-toggle label="Notificar desvios por email" checked="true"></granado-toggle>
+          <granado-toggle label="Bloquear envase em desvio"></granado-toggle>
+          <granado-slider label="Tempo limite" min="0" max="60" value="15" unit="min"></granado-slider>
+        </div>
+      </granado-tab>
+
+      <granado-tab value="bloq" label="Auditoria" icon="file" disabled="true">
+        <p style="margin:0;font-size:13px;color:#5A6B5E">Aba indisponivel.</p>
+      </granado-tab>
+    </granado-tabs>
+  </section>
+
+  <!-- ========== Linha 15 — granado-toast ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-toast&gt;
+    </h2>
+    <p style="font-size:11px;color:#5A6B5E;margin:0 0 10px">
+      Click nos botoes para disparar cada variante. API tipica: <code style="background:#F5EFD9;padding:2px 5px;border-radius:3px;font-size:11px">GranadoToast.success('mensagem')</code>
+    </p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <granado-button
+        label="Success"
+        icon="check"
+        onclickevent="GranadoToast.success('Pesagem confirmada com sucesso')">
+      </granado-button>
+
+      <granado-button
+        label="Error"
+        icon="x"
+        color="#C0392B"
+        onclickevent="GranadoToast.error('Falha de comunicacao com a balanca', { heading: 'Erro' })">
+      </granado-button>
+
+      <granado-button
+        label="Warning"
+        variant="secondary"
+        color="#9A5A00"
+        onclickevent="GranadoToast.warning('Lote MP-01002 em desvio', { heading: 'Atencao' })">
+      </granado-button>
+
+      <granado-button
+        label="Info"
+        variant="secondary"
+        color="#2C5A8C"
+        onclickevent="GranadoToast.info('Aguardando aprovacao do supervisor')">
+      </granado-button>
+
+      <granado-button
+        label="Permanente"
+        variant="ghost"
+        onclickevent="GranadoToast.show({ variant:'info', heading:'Conectando', message:'Aguarde...', duration:0 })">
+      </granado-button>
+
+      <granado-button
+        label="Bottom center"
+        variant="ghost"
+        onclickevent="GranadoToast.show({ variant:'success', message:'Toast no rodape', position:'bottom-center' })">
+      </granado-button>
+
+      <granado-button
+        label="Fechar todos"
+        variant="ghost"
+        icon="x"
+        onclickevent="GranadoToast.dismissAll()">
+      </granado-button>
+    </div>
+  </section>
+
+  <!-- ========== Linha 16 — granado-badge ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-badge&gt;
+    </h2>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <granado-badge label="OK" color="#1C7A38"></granado-badge>
+      <granado-badge label="Desvio" color="#9A5A00"></granado-badge>
+      <granado-badge label="Pendente" color="#2C5A8C"></granado-badge>
+      <granado-badge label="Erro" color="#C0392B"></granado-badge>
+
+      <span style="width:1px;height:18px;background:#E5DDC8;margin:0 6px"></span>
+
+      <granado-badge label="OK" color="#1C7A38" variant="soft"></granado-badge>
+      <granado-badge label="Desvio" color="#9A5A00" variant="soft"></granado-badge>
+      <granado-badge label="Pendente" color="#2C5A8C" variant="soft"></granado-badge>
+
+      <span style="width:1px;height:18px;background:#E5DDC8;margin:0 6px"></span>
+
+      <granado-badge label="OK" color="#1C7A38" variant="outline" dot="true"></granado-badge>
+      <granado-badge label="Desvio" color="#9A5A00" variant="outline" dot="true"></granado-badge>
+
+      <span style="width:1px;height:18px;background:#E5DDC8;margin:0 6px"></span>
+
+      <granado-badge label="SM" color="#1C5C31" size="sm"></granado-badge>
+      <granado-badge label="MD" color="#1C5C31"></granado-badge>
+    </div>
+  </section>
+
+  <!-- ========== Linha 17 — granado-chip ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-chip&gt;
+    </h2>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <granado-chip label="Glicerina USP"></granado-chip>
+      <granado-chip label="Lote L24-1001" icon="🏷️"></granado-chip>
+      <granado-chip label="Maria Silva" icon="👤"></granado-chip>
+
+      <span style="width:1px;height:24px;background:#E5DDC8;margin:0 6px"></span>
+
+      <granado-chip label="Aprovado" variant="solid" color="#1C7A38"></granado-chip>
+      <granado-chip label="Desvio" variant="solid" color="#9A5A00"></granado-chip>
+      <granado-chip label="Tag" variant="outline" color="#2C5A8C"></granado-chip>
+
+      <span style="width:1px;height:24px;background:#E5DDC8;margin:0 6px"></span>
+
+      <granado-chip label="Maria Silva" removable="true"
+        onremoveevent="this.remove(); GranadoToast.info('Operador removido')"></granado-chip>
+      <granado-chip label="Joao Santos" removable="true"
+        onremoveevent="this.remove()"></granado-chip>
+
+      <span style="width:1px;height:24px;background:#E5DDC8;margin:0 6px"></span>
+
+      <granado-chip label="Filtrar OK" clickable="true" selected="true" color="#1C7A38"
+        onclickevent="this.selected = !this.selected"></granado-chip>
+      <granado-chip label="Filtrar Desvio" clickable="true" color="#9A5A00"
+        onclickevent="this.selected = !this.selected"></granado-chip>
+      <granado-chip label="Filtrar Pendente" clickable="true" color="#2C5A8C"
+        onclickevent="this.selected = !this.selected"></granado-chip>
+
+      <span style="width:1px;height:24px;background:#E5DDC8;margin:0 6px"></span>
+
+      <granado-chip label="Bloqueado" disabled="true"></granado-chip>
+    </div>
+  </section>
+
+  <!-- ========== Linha 18 — granado-icon ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-icon&gt;
+    </h2>
+
+    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:18px">
+      <granado-icon name="check"></granado-icon>
+      <granado-icon name="alert-triangle" color="#9A5A00"></granado-icon>
+      <granado-icon name="x-circle" color="#C0392B"></granado-icon>
+      <granado-icon name="info" color="#2C5A8C"></granado-icon>
+      <granado-icon name="package" size="28"></granado-icon>
+      <granado-icon name="truck" size="32" color="#9A7B1C"></granado-icon>
+    </div>
+
+    <p style="font-size:11px;color:#5A6B5E;margin:0 0 8px">Com background (estilo val-icon):</p>
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px">
+      <granado-icon name="check" color="#1C7A38" background="true"></granado-icon>
+      <granado-icon name="clock" color="#9A5A00" background="true"></granado-icon>
+      <granado-icon name="x" color="#C0392B" background="true"></granado-icon>
+      <granado-icon name="info" color="#2C5A8C" background="true"></granado-icon>
+      <granado-icon name="user" color="#1C5C31" background="true" bgshape="square"></granado-icon>
+      <granado-icon name="package" color="#9A7B1C" background="true" bgshape="square" size="24"></granado-icon>
+      <granado-icon name="bell" color="#2C5A8C" background="true" size="28"></granado-icon>
+    </div>
+
+    <p style="font-size:11px;color:#5A6B5E;margin:0 0 8px">Galeria completa (<span id="iconCount"></span> icones):</p>
+    <div id="iconGallery" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;background:#FDFAF1;border:1px solid #E5DDC8;border-radius:8px;padding:14px;max-height:340px;overflow-y:auto"></div>
+  </section>
+
+  <!-- ========== Linha 19 — granado-progress-bar ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-progress-bar&gt;
+    </h2>
+
+    <div style="display:flex;flex-direction:column;gap:18px;max-width:560px">
+      <granado-progress-bar label="Eficiencia" value="92"
+        labelposition="left" valueposition="right"
+        color="#1C7A38"></granado-progress-bar>
+
+      <granado-progress-bar value="65" isshowlabel="false" valueposition="right"
+        color="#2C5A8C" pulse="true"></granado-progress-bar>
+
+      <granado-progress-bar value="38" isshowlabel="false" valueposition="down"
+        color="#9A7B1C"></granado-progress-bar>
+    </div>
+  </section>
+
+  <!-- ========== Linha 20 — granado-table ========== -->
+  <section>
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-table&gt;
+    </h2>
+    <granado-table id="tbl" tabletitle="Materias-primas pesadas" isenablepagination="true" pagesize="10">
+    </granado-table>
+  </section>
+
+  <script>
+    (function () {
+      const gallery = document.getElementById('iconGallery');
+      const all = GranadoIcon.list();
+      document.getElementById('iconCount').textContent = all.length;
+      gallery.innerHTML = all.map(name =>
+        `<div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="${name}">
+          <granado-icon name="${name}" size="22" color="#103E20"></granado-icon>
+          <span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">${name}</span>
+        </div>`
+      ).join('');
+    })();
+  </script>
+
+  <script>
+    const rows = [
+      { cod: 'MP-01001', lote: 'L24-1001', mat: 'Glicerina USP',         pesado: '44983,210', balanca: 'B-01', operador: 'Maria Silva',  horario: '08:15', status: 'OK' },
+      { cod: 'MP-01002', lote: 'L24-1002', mat: 'Fenoxietanol',          pesado: '3028,500',  balanca: 'B-02', operador: 'Joao Santos',  horario: '08:24', status: 'Desvio' },
+      { cod: 'MP-01003', lote: 'L24-1003', mat: 'Acido Citrico',         pesado: '12450,000', balanca: 'B-01', operador: 'Ana Costa',    horario: '08:31', status: 'Pendente' },
+      { cod: 'MP-01004', lote: 'L24-1004', mat: 'Lauril Sulfato',        pesado: '8721,640',  balanca: 'B-03', operador: 'Pedro Lima',   horario: '08:42', status: 'Aprovado' },
+      { cod: 'MP-01005', lote: 'L24-1005', mat: 'Cera de Abelha',        pesado: '2100,000',  balanca: 'B-02', operador: 'Carla Souza',  horario: '08:55', status: 'OK' },
+      { cod: 'MP-01006', lote: 'L24-1006', mat: 'Oleo de Amendoa',       pesado: '15890,330', balanca: 'B-04', operador: 'Maria Silva',  horario: '09:08', status: 'Desvio' },
+      { cod: 'MP-01007', lote: 'L24-1007', mat: 'Manteiga de Karite',    pesado: '4567,890',  balanca: 'B-01', operador: 'Joao Santos',  horario: '09:21', status: 'OK' },
+      { cod: 'MP-01008', lote: 'L24-1008', mat: 'Vitamina E',            pesado: '320,150',   balanca: 'B-03', operador: 'Ana Costa',    horario: '09:34', status: 'Aprovado' },
+      { cod: 'MP-01009', lote: 'L24-1009', mat: 'Extrato de Camomila',   pesado: '985,420',   balanca: 'B-02', operador: 'Pedro Lima',   horario: '09:47', status: 'Pendente' },
+      { cod: 'MP-01010', lote: 'L24-1010', mat: 'Mentol Cristal',        pesado: '1240,000',  balanca: 'B-04', operador: 'Carla Souza',  horario: '10:02', status: 'OK' },
+      { cod: 'MP-01011', lote: 'L24-1011', mat: 'Acido Salicilico',      pesado: '670,800',   balanca: 'B-01', operador: 'Maria Silva',  horario: '10:15', status: 'Desvio' },
+      { cod: 'MP-01012', lote: 'L24-1012', mat: 'Ureia',                 pesado: '5430,250',  balanca: 'B-03', operador: 'Joao Santos',  horario: '10:28', status: 'OK' },
+      { cod: 'MP-01013', lote: 'L24-1013', mat: 'Pantenol',              pesado: '1890,470',  balanca: 'B-02', operador: 'Ana Costa',    horario: '10:41', status: 'Aprovado' },
+      { cod: 'MP-01014', lote: 'L24-1014', mat: 'Niacinamida',           pesado: '2230,000',  balanca: 'B-04', operador: 'Pedro Lima',   horario: '10:55', status: 'Pendente' },
+      { cod: 'MP-01015', lote: 'L24-1015', mat: 'Acido Hialuronico',     pesado: '95,780',    balanca: 'B-01', operador: 'Carla Souza',  horario: '11:08', status: 'OK' }
+    ];
+
+    const columns = [
+      { key: 'cod',      label: 'Codigo MP',   align: 'left', width: '100px', mono: true },
+      { key: 'lote',     label: 'Lote',        align: 'left', width: '95px',  mono: true },
+      { key: 'mat',      label: 'Material',    align: 'left', width: '180px' },
+      { key: 'pesado',   label: 'Pesado (kg)', align: 'left', width: '110px', mono: true },
+      { key: 'balanca',  label: 'Balanca',     align: 'left', width: '80px' },
+      { key: 'operador', label: 'Operador',    align: 'left', width: '130px' },
+      { key: 'horario',  label: 'Horario',     align: 'left', width: '85px',  mono: true },
+      { key: 'status',   label: 'Status',      align: 'left', width: '110px' },
+      { key: 'acao',     label: 'Acao',        align: 'left', width: '110px', filterable: false, sortable: false }
+    ];
+
+    const tbl = document.getElementById('tbl');
+    tbl.setAttribute('columns', JSON.stringify(columns));
+    tbl.setAttribute('rows', JSON.stringify(rows));
+    tbl.setAttribute('onrender', `
+      if (col.key === 'status') {
+        var bg = row.status === 'OK' ? '#1C7A38'
+               : row.status === 'Desvio' ? '#9A5A00'
+               : row.status === 'Aprovado' ? '#2C5A8C'
+               : '#6B6B6B';
+        return '<span style="display:inline-block;font-size:9px;font-weight:900;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:' + bg + ';color:#fff">' + cell + '</span>';
+      }
+      if (col.key === 'acao') {
+        return '<button style="font-size:10px;font-weight:700;padding:5px 10px;border:1px solid #1C5C31;background:#FDFAF1;color:#1C5C31;border-radius:4px;cursor:pointer;font-family:inherit" onclick="event.stopPropagation(); alert(\\'Acao em \\' + \\''+ row.cod +'\\')">Detalhes</button>';
+      }
+      return cell;
+    `);
+    tbl.setAttribute('onclickevent', "console.log('linha selecionada', row.cod);");
+    tbl.setAttribute('ondoubleclickevent', "alert('Abrir detalhes de ' + row.cod);");
+  </script>
+</body>
+
+</html>

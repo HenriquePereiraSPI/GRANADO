@@ -1,0 +1,186 @@
+<aside class="sidebar" data-current-screen="{Screen}" data-active-menu="{ActiveMenu}">
+
+    <!-- Ponte: $Context so existe na aba HTML. Exporta pra global para
+         sidebar.js (arquivo externo) conseguir setar outputs. -->
+    <script>
+        if (typeof $Context !== 'undefined') {
+            window.AprisoContext = $Context;
+        }
+    </script>
+
+    <!-- ============ BRAND ============ -->
+    <div class="sb-brand">
+        <div class="sb-brand-top">
+            <div class="sb-mark">G</div>
+            <div>
+                <div class="sb-name">Casa Granado</div>
+                <div class="sb-sub">Pharmacias &middot; Desde 1870</div>
+            </div>
+        </div>
+        <div class="sb-session">
+            <span>&#9679; Online</span> &middot; MES Apriso<br />
+            Turno A &middot; MF5 &middot; <span>J. Santos</span>
+        </div>
+    </div>
+
+    <!-- ============ NAV ============ -->
+    <nav class="sb-nav">
+
+        <!-- ===== MODULO: SINOTICO ===== -->
+        <div class="sb-module" data-mod="mod-sinotico">
+            <div class="sb-module-btn" data-toggle="mod-sinotico" role="button" tabindex="0">
+                <div class="sb-dot"></div>
+                <span class="sb-ico">&#128507;</span> Sinotico da Fabrica
+                <span class="sb-arr">&rsaquo;</span>
+            </div>
+            <div class="sb-sub-list">
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="OPEN_SINOTICO">Sinotico</button>
+            </div>
+        </div>
+
+        <!-- ===== MODULO: OEE ===== -->
+        <div class="sb-module" data-mod="mod-oee">
+            <div class="sb-module-btn" data-toggle="mod-oee" role="button" tabindex="0">
+                <div class="sb-dot"></div>
+                <span class="sb-ico">&#128202;</span> OEE Dashboard
+                <span class="sb-arr">&rsaquo;</span>
+            </div>
+            <div class="sb-sub-list">
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="OPEN_OEE">OEE</button>
+            </div>
+        </div>
+
+        <!-- ===== MODULO: PRODUCAO ===== -->
+        <div class="sb-module" data-mod="mod-prod">
+            <div class="sb-module-btn" data-toggle="mod-prod" role="button" tabindex="0">
+                <div class="sb-dot"></div>
+                <span class="sb-ico">&#127981;</span> Producao
+                <span class="sb-arr">&rsaquo;</span>
+            </div>
+            <div class="sb-sub-list">
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="TESTE_SCREEN1">Ordens de
+                    Producao</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="TESTE_SCREEN2">Materiais da
+                    OP</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="prod-checkin">Check-in de
+                    Operadores</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="prod-iniciar">Iniciar
+                    Ordem</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="prod-finalizar">Finalizar
+                    Ordem</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="prod-paradas">Paradas de
+                    Maquina</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="prod-cockpit">Cockpit de
+                    Execucao</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="prod-qualidade">Qualidade em
+                    Processo</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="prod-docs">Documentos</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action"
+                    value="prod-rastr">Rastreabilidade</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="prod-sinotico">Sinotico da
+                    Fabrica</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="prod-devol">Devolucao de
+                    Embalagens</button>
+            </div>
+        </div>
+
+        <!-- ===== MODULO: PESAGEM ===== -->
+        <div class="sb-module" data-mod="mod-pes">
+            <div class="sb-module-btn" data-toggle="mod-pes" role="button" tabindex="0">
+                <div class="sb-dot"></div>
+                <span class="sb-ico">&#9878;</span> Pesagem
+                <span class="sb-arr">&rsaquo;</span>
+            </div>
+            <div class="sb-sub-list">
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="pes-ordens">Selecao de
+                    Ordem</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="pes-cockpit">Cockpit de
+                    Pesagem</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="pes-mps">MPs Pesadas</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action"
+                    value="pes-pendencias">Pendencias</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="pes-checklist">Checklist
+                    Limpeza</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="pes-gaiola">Gestao de
+                    Gaiola</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="pes-devol-mp">Devolucao de
+                    MP</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="pes-checkout">Checkout /
+                    Validacao</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action"
+                    value="pes-rastr">Rastreabilidade</button>
+            </div>
+        </div>
+
+        <!-- ===== MODULO: FABRICACAO ===== -->
+        <div class="sb-module" data-mod="mod-fab">
+            <div class="sb-module-btn" data-toggle="mod-fab" role="button" tabindex="0">
+                <div class="sb-dot"></div>
+                <span class="sb-ico">&#129514;</span> Fabricacao
+                <span class="sb-arr">&rsaquo;</span>
+            </div>
+            <div class="sb-sub-list">
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="fab-ordens">1. Selecao de
+                    Ordens</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="fab-iniciar">2. Iniciar
+                    Ordem</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="fab-checkin">3. Check-in de
+                    MPs</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="fab-inbatch">4. Fases
+                    InBatch</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="fab-amostras">5. Controle de
+                    Amostras</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="fab-tanque">6. Selecao de
+                    Tanque</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="fab-fechar">7. Fechamento da
+                    Ordem</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action"
+                    value="fab-rastr">Rastreabilidade</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="fab-saldo">Saldo de
+                    Equipamentos</button>
+            </div>
+        </div>
+
+        <!-- ===== MODULO: RELATORIOS ===== -->
+        <div class="sb-module" data-mod="mod-rel">
+            <div class="sb-module-btn" data-toggle="mod-rel" role="button" tabindex="0">
+                <div class="sb-dot"></div>
+                <span class="sb-ico">&#128200;</span> Relatorios
+                <span class="sb-arr">&rsaquo;</span>
+            </div>
+            <div class="sb-sub-list">
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="rel-oee">OEE Dashboard</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="rel-visao-ordens">Visao de
+                    Ordens</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="rel-mps">Rel. MPs
+                    Pesadas</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="rel-producao">Rel.
+                    Producao</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="rel-rastr">Rastreabilidade de
+                    Lote</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="rel-rejeitos">Rejeitos e
+                    Aparas</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="rel-perdas">Perdas de
+                    Processo</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="rel-paradas">Paradas e
+                    Disponib.</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="rel-autonomia">Autonomia de
+                    Linhas</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="rel-insumos">Perdas por
+                    Insumo</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="rel-devolucao">Devolucao de
+                    Materiais</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="rel-auditoria">Trilha de
+                    Auditoria</button>
+            </div>
+        </div>
+
+    </nav>
+
+    <!-- ============ FOOTER ============ -->
+    <div class="sb-footer">
+        <div class="sb-clock">--:--:--</div>
+        <div class="sb-date">--</div>
+    </div>
+
+</aside>

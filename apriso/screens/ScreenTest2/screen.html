@@ -1,0 +1,87 @@
+<div class="grn-screen-test2">
+  <header class="grn-screen-test2__header">
+    <h1 class="grn-screen-test2__title">Tela de Teste 2</h1>
+    <p class="grn-screen-test2__subtitle">Segunda tela generica para validar navegacao</p>
+  </header>
+
+  <section class="grn-panel">
+    <div class="grn-panel__title-row">
+      <h2 class="grn-panel__title">Apontamentos do turno</h2>
+      <span class="grn-tag grn-tag--ok">Em dia</span>
+    </div>
+
+    <table class="grn-table">
+      <thead>
+        <tr>
+          <th>Hora</th>
+          <th>Operador</th>
+          <th>Recurso</th>
+          <th>Quantidade</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>07:12</td>
+          <td>Joao Silva</td>
+          <td>Linha 03</td>
+          <td>120</td>
+          <td><span class="grn-tag grn-tag--ok">OK</span></td>
+        </tr>
+        <tr>
+          <td>09:48</td>
+          <td>Maria Souza</td>
+          <td>Linha 03</td>
+          <td>98</td>
+          <td><span class="grn-tag grn-tag--ok">OK</span></td>
+        </tr>
+        <tr>
+          <td>11:30</td>
+          <td>Carlos Lima</td>
+          <td>Linha 05</td>
+          <td>76</td>
+          <td><span class="grn-tag grn-tag--warn">Revisar</span></td>
+        </tr>
+        <tr>
+          <td>13:05</td>
+          <td>Ana Reis</td>
+          <td>Linha 03</td>
+          <td>134</td>
+          <td><span class="grn-tag grn-tag--ok">OK</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="grn-summary">
+    <div class="grn-summary__item">
+      <span class="grn-summary__label">Total apontado</span>
+      <span class="grn-summary__value">428</span>
+    </div>
+    <div class="grn-summary__item">
+      <span class="grn-summary__label">Em revisao</span>
+      <span class="grn-summary__value grn-summary__value--warn">76</span>
+    </div>
+    <div class="grn-summary__item">
+      <span class="grn-summary__label">Operadores ativos</span>
+      <span class="grn-summary__value">4</span>
+    </div>
+  </section>
+
+  <footer class="grn-screen-test2__actions">
+    <button
+      type="button"
+      class="grn-btn grn-btn--secondary"
+      data-flx-bind="Action"
+      value="Refresh">
+      Atualizar
+    </button>
+    <button
+      type="button"
+      class="grn-btn grn-btn--primary"
+      data-flx-bind="Action"
+      value="OpenTestPopup">
+      Abrir popup
+    </button>
+  </footer>
+</div>

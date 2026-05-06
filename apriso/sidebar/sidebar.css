@@ -1,0 +1,249 @@
+/* === Tokens (mover para CSS externo compartilhado depois) === */
+:root {
+    --grn-verde-esc: #0F3319;
+    --grn-ouro-claro: #C8A85A;
+    --grn-ouro: #9A7520;
+    --grn-surface: #FDFAF1;
+    --grn-font-d: 'Playfair Display', Georgia, serif;
+    --grn-font-b: 'Lato', sans-serif;
+    --grn-font-m: 'DM Mono', monospace;
+}
+
+/* === Sidebar container === */
+.sidebar {
+    width: 230px;
+    height: 100%;
+    flex-shrink: 0;
+    background: var(--grn-verde-esc);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-right: 3px solid var(--grn-ouro-claro);
+    position: relative;
+    z-index: 50;
+    /* Scrollbar (Firefox) */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(200, 168, 75, .25) transparent;
+}
+
+/* Scrollbar minimalista (Chrome / Edge / WebKit) */
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(200, 168, 75, .25);
+    border-radius: 2px;
+    transition: background .2s;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(200, 168, 75, .55);
+}
+
+.sidebar:not(:hover)::-webkit-scrollbar-thumb {
+    background: rgba(200, 168, 75, .12);
+}
+
+/* === Brand === */
+.sb-brand {
+    padding: 18px 16px 14px;
+    border-bottom: 1px solid rgba(200, 168, 75, .25);
+    flex-shrink: 0;
+}
+
+.sb-brand-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.sb-mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 5px;
+    background: var(--grn-ouro-claro);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--grn-font-d);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--grn-verde-esc);
+    border: 1px solid var(--grn-ouro);
+    flex-shrink: 0;
+}
+
+.sb-name {
+    font-family: var(--grn-font-d);
+    font-size: 14px;
+    font-weight: 700;
+    color: #FDFAF1;
+    line-height: 1.2;
+}
+
+.sb-sub {
+    font-size: 8px;
+    font-weight: 300;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--grn-ouro-claro);
+}
+
+.sb-session {
+    font-family: var(--grn-font-m);
+    font-size: 9px;
+    color: rgba(253, 250, 241, .35);
+    line-height: 1.7;
+    border-top: 1px solid rgba(255, 255, 255, .06);
+    padding-top: 8px;
+    margin-top: 2px;
+}
+
+.sb-session span {
+    color: rgba(122, 224, 154, .65);
+}
+
+/* === Nav === */
+.sb-nav {
+    flex: 1;
+    padding: 10px 0;
+}
+
+/* Estilo compartilhado: vale tanto para <button> quanto para <div role="button"> */
+.sb-module-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 16px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    color: rgba(253, 250, 241, .55);
+    font-family: var(--grn-font-b);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    transition: all .18s;
+    text-align: left;
+    position: relative;
+    user-select: none;
+    outline: none;
+}
+
+.sb-module-btn:hover {
+    color: rgba(253, 250, 241, .85);
+    background: rgba(255, 255, 255, .05);
+}
+
+.sb-module-btn:focus-visible {
+    box-shadow: inset 0 0 0 1px rgba(200, 168, 75, .4);
+}
+
+.sb-module-btn.open,
+.sb-module-btn.active {
+    color: #FDFAF1;
+    background: rgba(255, 255, 255, .07);
+}
+
+.sb-module-btn .sb-ico {
+    font-size: 15px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.sb-module-btn .sb-arr {
+    margin-left: auto;
+    font-size: 10px;
+    transition: transform .2s;
+}
+
+.sb-module-btn.open .sb-arr {
+    transform: rotate(90deg);
+}
+
+.sb-module-btn .sb-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--grn-ouro-claro);
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+}
+
+.sb-module-btn.active .sb-dot {
+    display: block;
+}
+
+/* === Sub-items === */
+.sb-sub-list {
+    display: none;
+    background: rgba(0, 0, 0, .15);
+}
+
+.sb-sub-list.open {
+    display: block;
+}
+
+.sb-sub-item {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 9px 16px 9px 38px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: var(--grn-font-b);
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(253, 250, 241, .45);
+    text-align: left !important;
+    transition: all .15s;
+    border-left: 2px solid transparent;
+}
+
+.sb-sub-item:hover {
+    color: rgba(253, 250, 241, .8);
+    background: rgba(255, 255, 255, .04);
+}
+
+.sb-sub-item.active {
+    color: var(--grn-ouro-claro);
+    border-left-color: var(--grn-ouro-claro);
+    background: rgba(200, 168, 75, .08);
+    font-weight: 700;
+}
+
+/* === Footer === */
+.sb-footer {
+    padding: 12px 16px;
+    border-top: 1px solid rgba(255, 255, 255, .08);
+    flex-shrink: 0;
+}
+
+.sb-clock {
+    font-family: var(--grn-font-m);
+    font-size: 18px;
+    color: var(--grn-ouro-claro);
+    letter-spacing: .05em;
+}
+
+.sb-date {
+    font-family: var(--grn-font-b);
+    font-size: 9px;
+    color: rgba(253, 250, 241, .35);
+    margin-top: 2px;
+}

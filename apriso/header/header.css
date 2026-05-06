@@ -1,0 +1,137 @@
+/* === Tokens (mover para CSS externo compartilhado depois) === */
+:root {
+    --grn-surface: #FDFAF1;
+    --grn-surface2: #F4EED9;
+    --grn-border: #D6CDA4;
+    --grn-verde: #1C5C31;
+    --grn-verde-meio: #2A7A44;
+    --grn-text2: #4A6250;
+    --grn-text3: #8A9E8E;
+    --grn-ok: #1C7A38;
+    --grn-ok-p: #D2E8D7;
+    --grn-ok-b: #98C8A8;
+    --grn-per: #8C1A1A;
+    --grn-font-d: 'Playfair Display', Georgia, serif;
+    --grn-font-b: 'Lato', sans-serif;
+    --grn-font-m: 'DM Mono', monospace;
+}
+
+/* === Topbar container === */
+.topbar {
+    height: 56px;
+    width: 100%;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    background: var(--grn-surface);
+    border-bottom: 1px solid var(--grn-border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 24px;
+    box-shadow: 0 1px 6px rgba(28, 92, 49, .06);
+}
+
+/* === Breadcrumb === */
+.topbar-breadcrumb {
+    font-family: var(--grn-font-b);
+    font-size: 11px;
+    color: var(--grn-text3);
+    letter-spacing: .04em;
+}
+
+.tb-section {
+    color: var(--grn-text3);
+}
+
+.tb-page {
+    color: var(--grn-verde);
+    font-weight: 700;
+}
+
+/* === Right group === */
+.topbar-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tb-pill {
+    font-family: var(--grn-font-m);
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--grn-border);
+    color: var(--grn-text2);
+    background: var(--grn-surface2);
+}
+
+.tb-pill.ok {
+    color: var(--grn-ok);
+    border-color: var(--grn-ok-b);
+    background: var(--grn-ok-p);
+}
+
+.tb-op {
+    font-weight: 700;
+    color: var(--grn-text2);
+}
+
+/* === Botoes === */
+.tb-btn {
+    font-family: var(--grn-font-b);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    background: var(--grn-verde);
+    color: #FDFAF1;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background .15s;
+}
+
+.tb-btn:hover {
+    background: var(--grn-verde-meio);
+}
+
+/* Botao Andon (vermelho, pulsante) */
+.tb-btn-andon {
+    position: relative;
+    overflow: hidden;
+    font-family: var(--grn-font-b);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    background: var(--grn-per);
+    color: #fff;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.tb-btn-andon:hover {
+    background: #A93226;
+    transform: scale(1.04);
+}
+
+.tb-btn-andon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 5px;
+    box-shadow: 0 0 0 0 rgba(140, 26, 26, .5);
+    animation: andon-pulse 2s infinite;
+    pointer-events: none;
+}
+
+@keyframes andon-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(140, 26, 26, .45); }
+    70%  { box-shadow: 0 0 0 8px rgba(140, 26, 26, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(140, 26, 26, 0); }
+}

@@ -1,0 +1,67 @@
+<div class="grn-screen-test">
+  <header class="grn-screen-test__header">
+    <h1 class="grn-screen-test__title">Tela de Teste</h1>
+    <p class="grn-screen-test__subtitle">Conteudo generico para simulacao do fluxo</p>
+  </header>
+
+  <section class="grn-screen-test__grid">
+    <article class="grn-card">
+      <span class="grn-card__label">OEE</span>
+      <span class="grn-card__value">87%</span>
+      <span class="grn-card__hint">Meta: 85%</span>
+    </article>
+
+    <article class="grn-card">
+      <span class="grn-card__label">Producao do turno</span>
+      <span class="grn-card__value">1.248</span>
+      <span class="grn-card__hint">pecas</span>
+    </article>
+
+    <article class="grn-card">
+      <span class="grn-card__label">Refugo</span>
+      <span class="grn-card__value">12</span>
+      <span class="grn-card__hint">0,96%</span>
+    </article>
+
+    <article class="grn-card">
+      <span class="grn-card__label">Status da linha</span>
+      <span class="grn-card__value grn-card__value--ok">Em operacao</span>
+      <span class="grn-card__hint">Sem paradas ativas</span>
+    </article>
+  </section>
+
+  <section class="grn-screen-test__list">
+    <h2 class="grn-screen-test__section-title">Ultimas ordens</h2>
+    <ul class="grn-list">
+      <li class="grn-list__item">
+        <span class="grn-list__primary">OP-0001824</span>
+        <span class="grn-list__secondary">Concluida - 14:02</span>
+      </li>
+      <li class="grn-list__item">
+        <span class="grn-list__primary">OP-0001825</span>
+        <span class="grn-list__secondary">Em andamento</span>
+      </li>
+      <li class="grn-list__item">
+        <span class="grn-list__primary">OP-0001826</span>
+        <span class="grn-list__secondary">Aguardando setup</span>
+      </li>
+    </ul>
+  </section>
+
+  <footer class="grn-screen-test__actions">
+    <button
+      type="button"
+      class="grn-btn grn-btn--primary"
+      data-flx-bind="Action"
+      value="OpenTestPopup">
+      Abrir popup
+    </button>
+    <button
+      type="button"
+      class="grn-btn grn-btn--secondary"
+      data-flx-bind="Action"
+      value="Refresh">
+      Atualizar
+    </button>
+  </footer>
+</div>

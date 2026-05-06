@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>granado-table — exemplo 1000 linhas</title>
+  <script src="./granado-table.js"></script>
+</head>
+
+<body style="margin:0;padding:24px;background:#F4EED9;font-family:system-ui,-apple-system,sans-serif">
+  <h1 style="font-size:18px;margin:0 0 6px;color:#1C5C31">granado-table — 1000 linhas</h1>
+  <p style="font-size:12px;color:#5A6B5E;margin:0 0 4px">
+    Click em uma linha = seleciona (log no console). Double click = abre alerta.
+  </p>
+  <p id="status" style="font-size:11px;color:#8A9E8E;margin:0 0 18px">Selecionado: nenhum</p>
+
+  <granado-table id="tbl" color="#1C5C31" isenablepagination="true" pagesize="50" tabletitle="Materias-primas pesadas"></granado-table>
+
+  <script>
+    const STATUSES = ['OK', 'Desvio', 'Pendente', 'Aprovado'];
+    const MATERIAIS = [
+      'Glicerina USP', 'Fenoxietanol', 'Acido Citrico', 'Lauril Sulfato',
+      'Cera de Abelha', 'Oleo de Amendoa', 'Manteiga de Karite', 'Vitamina E',
+      'Extrato de Camomila', 'Mentol Cristal', 'Acido Salicilico', 'Ureia',
+      'Pantenol', 'Niacinamida', 'Acido Hialuronico', 'Colageno Hidrolisado'
+    ];
+
+    const rows = Array.from({ length: 1000 }, (_, i) => {
+      const status = STATUSES[i % STATUSES.length];
+      const mat = MATERIAIS[i % MATERIAIS.length];
+      const cod = 'MP-' + String(1000 + i).padStart(5, '0');
+      const pesado = (Math.random() * 50000).toFixed(3).replace('.', ',');
+      const row = { cod, mat, pesado, status, acao: 'Acoes' };
+      if (status === 'Desvio') row._bg = '#FEF0CC';
+      return row;
+    });
+
+    const columns = [
+      { key: 'cod', label: 'Codigo MP', mono: true, width: '150px' },
+      { key: 'mat', label: 'Material' },
+      { key: 'pesado', label: 'Pesado (kg)', mono: true, },
+      { key: 'status', label: 'Status', align: 'center' },
+      { key: 'acao', label: '', align: 'center' }
+    ];
+
+    const tbl = document.getElementById('tbl');
+    tbl.setAttribute('columns', JSON.stringify(columns));
+    tbl.setAttribute('rows', JSON.stringify(rows));
+    tbl.setAttribute('onrender', `
+        if (col.key === 'status') {
+          var bg = row.status === 'OK' ? '#1C7A38'
+                 : row.status === 'Desvio' ? '#9A5A00'
+                 : row.status === 'Aprovado' ? '#2C5A8C'
+                 : '#6B6B6B';
+          return '<span style="display:inline-block;font-size:9px;font-weight:900;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:' + bg + ';color:#fff">' + cell + '</span>';
+        }
+        if (col.key === 'acao') {
+          return '<button style="font-size:9px;padding:4px 8px;border:1px solid #D6CDA4;background:#FDFAF1;border-radius:4px;cursor:pointer" onclick="event.stopPropagation()">' + cell + '</button>';
+        }
+        return cell;
+      `);
+    tbl.setAttribute('onclickevent', `
+        document.getElementById('status').textContent = 'Selecionado: ' + row.cod + ' (linha ' + rowIndex + ')';
+        console.log('click', row);
+      `);
+    tbl.setAttribute('ondoubleclickevent', `
+        alert('Abrir detalhes de ' + row.cod + '\\n' + row.mat);
+      `);
+  </script>
+</body>
+
+</html>
