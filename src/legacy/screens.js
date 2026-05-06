@@ -6024,7 +6024,26 @@ export const SCREENS = {
         </div>
       </div>
 
-      <!-- Filtros -->
+      <!-- Filtro de Área (chips) — vem antes dos demais filtros -->
+      <style>
+        .tv-area-chips { display:flex; gap:8px; flex-wrap:wrap; padding:14px 28px 0; align-items:center; }
+        .tv-area-lbl { font-size:10px; font-weight:900; letter-spacing:.16em; text-transform:uppercase; color:#5A7A64; margin-right:4px; }
+        .tv-area-chip { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:20px;
+                        font-size:12px; font-weight:700; letter-spacing:.04em;
+                        background:#F0EBE0; border:1.5px solid #C8BFA8; color:#5A7A64;
+                        cursor:pointer; transition:all .15s; font-family:'Lato',sans-serif; }
+        .tv-area-chip:hover { border-color:#9A6E08; color:#1A4731; }
+        .tv-area-chip.active { background:#1A4731; border-color:#1A4731; color:#FFFFFF; box-shadow:0 2px 6px rgba(26,71,49,.22); }
+      </style>
+      <div class="tv-area-chips">
+        <span class="tv-area-lbl">Área</span>
+        <button type="button" class="tv-area-chip active" data-area="todos" onclick="relOeeSetArea(this)">Todas</button>
+        <button type="button" class="tv-area-chip" data-area="pes" onclick="relOeeSetArea(this)">⚖️ Pesagem</button>
+        <button type="button" class="tv-area-chip" data-area="fab" onclick="relOeeSetArea(this)">🧪 Fabricação</button>
+        <button type="button" class="tv-area-chip" data-area="prod" onclick="relOeeSetArea(this)">🏭 Produção</button>
+      </div>
+
+      <!-- Filtros (Período · MF · Linha · SKU · Lote) -->
       <div class="tv-filtros">
         <div class="tv-fg">
           <label class="tv-lbl">Período</label>
@@ -6063,15 +6082,6 @@ export const SCREENS = {
         <div class="tv-fg" style="min-width:160px">
           <label class="tv-lbl">Lote</label>
           <input class="tv-inp" id="oee-f-lote" placeholder="Nº do lote..." oninput="relOeeAplicarFiltro()">
-        </div>
-        <div class="tv-fg">
-          <label class="tv-lbl">Módulo</label>
-          <select class="tv-sel" id="oee-f-modulo" onchange="relOeeAplicarFiltro()">
-            <option value="todos">Todos</option>
-            <option value="prod">Produção</option>
-            <option value="fab">Fabricação</option>
-            <option value="pes">Pesagem</option>
-          </select>
         </div>
       </div>
       <div class="tv-filtro-ativo" id="oee-filtro-ativo"></div>
@@ -6150,21 +6160,30 @@ export const SCREENS = {
         mes:   {oee:78,disp:87,perf:84,qual:97,labels:['S1','S2','S3','S4','Atual'],vals:[80,76,78,79,78]},
         ano:   {oee:81,disp:90,perf:87,qual:98,labels:['Jan','Mar','Mai','Jul','Set'],vals:[79,80,82,81,83]}
       };
+      var OEE_AREA_SEL = 'todos';
+      var AREA_LABELS = { todos:'Todas Áreas', pes:'⚖️ Pesagem', fab:'🧪 Fabricação', prod:'🏭 Produção' };
+      function relOeeSetArea(btn) {
+        document.querySelectorAll('.tv-area-chip').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        OEE_AREA_SEL = btn.getAttribute('data-area');
+        relOeeAplicarFiltro();
+      }
       function relOeeAplicarFiltro() {
         var per=document.getElementById('oee-f-periodo').value;
         var mf=document.getElementById('oee-f-mf').value;
         var linha=document.getElementById('oee-f-linha').value;
         var sku=(document.getElementById('oee-f-sku').value||'').trim();
         var lote=(document.getElementById('oee-f-lote').value||'').trim();
+        var area=OEE_AREA_SEL;
         var d=OEE_DATA[per]||OEE_DATA.dia;
         var periLabels={hora:'Última Hora',dia:'Hoje',semana:'Esta Semana',mes:'Este Mês',ano:'Este Ano'};
-        var adj=(mf==='todas'?-1:0)+(linha==='todas'?0:1)+(sku?2:0)+(lote?1:0);
+        var adj=(mf==='todas'?-1:0)+(linha==='todas'?0:1)+(sku?2:0)+(lote?1:0)+(area!=='todos'?1:0);
         var ov=Math.min(99,d.oee+adj),dv=Math.min(99,d.disp+adj),pv=Math.min(99,d.perf+adj),qv=d.qual;
         document.getElementById('oee-kpi-oee').innerHTML=ov+'<span class="tv-kpi-unit">%</span>';
         document.getElementById('oee-kpi-disp').innerHTML=dv+'<span class="tv-kpi-unit">%</span>';
         document.getElementById('oee-kpi-perf').innerHTML=pv+'<span class="tv-kpi-unit">%</span>';
         document.getElementById('oee-kpi-qual').innerHTML=qv+'<span class="tv-kpi-unit">%</span>';
-        document.getElementById('oee-periodo-label').textContent=periLabels[per]+' · '+(mf==='todas'?'Todas MFs':mf)+(linha!='todas'?' · '+linha:'')+(sku?' · SKU:"'+sku+'"':'')+(lote?' · Lote:"'+lote+'"':'');
+        document.getElementById('oee-periodo-label').textContent=periLabels[per]+' · '+AREA_LABELS[area]+' · '+(mf==='todas'?'Todas MFs':mf)+(linha!='todas'?' · '+linha:'')+(sku?' · SKU:"'+sku+'"':'')+(lote?' · Lote:"'+lote+'"':'');
         d.labels.forEach(function(l,i){
           var v=Math.min(99,Math.max(0,d.vals[i]+adj));
           document.getElementById('oee-evo-l'+(i+1)).textContent=l;
@@ -6174,6 +6193,7 @@ export const SCREENS = {
         var now=new Date();
         document.getElementById('rel-oee-ts').textContent='Atualizado: '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
         var ativos=[];
+        if(area!=='todos') ativos.push('Área: '+AREA_LABELS[area]);
         if(sku) ativos.push('SKU: "'+sku+'"');
         if(lote) ativos.push('Lote: "'+lote+'"');
         document.getElementById('oee-filtro-ativo').textContent=ativos.length?'Filtros ativos: '+ativos.join(' · '):'';

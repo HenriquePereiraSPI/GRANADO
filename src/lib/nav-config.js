@@ -5,7 +5,6 @@
 
 export const TOP_LINKS = [
   { id: 'sinotico', label: 'Sinotico da Fabrica', icon: '🗺️' },
-  { id: 'oee', label: 'OEE Dashboard', icon: '📊' },
 ];
 
 export const MODULES = [
