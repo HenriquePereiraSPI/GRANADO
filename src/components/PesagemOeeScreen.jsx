@@ -498,15 +498,12 @@ function CardTempoCicloMP() {
             <th>Real (min)</th>
             <th>Mín</th>
             <th>Máx</th>
-            <th>Δ</th>
-            <th>Ocorrências</th>
             <th>Faixa</th>
           </tr>
         </thead>
         <tbody>
           {dados.map((m, i) => {
             const corDelta = m.variancia > 5 ? 'var(--per)' : m.variancia > 0 ? 'var(--alr)' : 'var(--ok)';
-            const range = m.max - m.min;
             const rangeMax = 18;
             return (
               <tr key={i}>
@@ -516,11 +513,6 @@ function CardTempoCicloMP() {
                 <td className="mono" style={{ fontWeight: 700, color: corDelta }}>{m.real.toFixed(1)}</td>
                 <td className="mono" style={{ color: 'var(--text3)', fontSize: 11 }}>{m.min.toFixed(1)}</td>
                 <td className="mono" style={{ color: 'var(--text3)', fontSize: 11 }}>{m.max.toFixed(1)}</td>
-                <td className="mono" style={{ fontWeight: 700, color: corDelta }}>
-                  {m.variancia > 0 ? '+' : ''}
-                  {m.variancia.toFixed(1)}%
-                </td>
-                <td className="mono">{m.ocorr}×</td>
                 <td>
                   {/* Mini-barra de min..real..max */}
                   <div style={{ position: 'relative', height: 14, background: 'var(--bg2)', borderRadius: 7, overflow: 'hidden' }}>
