@@ -1208,7 +1208,7 @@ export const SCREENS = {
           <div style="font-size:10px;color:var(--text3)">MPs aprovadas</div>
         </div>
         <div class="card ca" style="text-align:center;padding:14px">
-          <div class="kpi-l">Desvio Justificado</div>
+          <div class="kpi-l">Variância de pesagem Justificada</div>
           <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--alr)">1</div>
           <div style="font-size:10px;color:var(--text3)">Aprovado pelo CQ</div>
         </div>
@@ -1223,7 +1223,7 @@ export const SCREENS = {
         <div class="card-title">Resumo de Pesagens — OP-2026-0416</div>
         <div style="overflow-x:auto">
           <table class="tbl" style="min-width:700px">
-            <thead><tr><th>#</th><th>Código</th><th>Lote</th><th>Material</th><th>Alvo (kg)</th><th>Pesado (kg)</th><th>Desvio</th><th>Status</th></tr></thead>
+            <thead><tr><th>#</th><th>Código</th><th>Lote</th><th>Material</th><th>Alvo (kg)</th><th>Pesado (kg)</th><th>Variância de pesagem</th><th>Status</th></tr></thead>
             <tbody>
               <tr><td class="mono" style="color:var(--ok)">1</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-4821</td><td class="mono" style="font-size:11px;color:var(--text3)">GLI-2026-08</td><td style="font-size:12px">Glicerina USP</td><td class="mono">45,000</td><td class="mono">44,983</td><td class="mono" style="color:var(--ok)">–0,017</td><td><span class="bdg bdg-ok">OK</span></td></tr>
               <tr><td class="mono" style="color:var(--ok)">2</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-3307</td><td class="mono" style="font-size:11px;color:var(--text3)">PPG-2026-12</td><td style="font-size:12px">Propilenoglicol</td><td class="mono">18,000</td><td class="mono">18,005</td><td class="mono" style="color:var(--ok)">+0,005</td><td><span class="bdg bdg-ok">OK</span></td></tr>
@@ -1411,7 +1411,7 @@ export const SCREENS = {
         }
 
         function pesConcluir() {
-          alert('✅ Pesagem concluída!\\nAqua: 411,84 kg · Desvio: –0,66 kg (dentro do limite ±0,5%)\\nEtiqueta ETQ-2026-0416-006 impressa e associada à Gaiola G-003.');
+          alert('✅ Pesagem concluída!\\nAqua: 411,84 kg · Variância de pesagem: –0,66 kg (dentro do limite ±0,5%)\\nEtiqueta ETQ-2026-0416-006 impressa e associada à Gaiola G-003.');
           nav('pes-mps', null, 'mod-pes');
         }
 
@@ -1442,7 +1442,7 @@ export const SCREENS = {
                   <tr data-cod="MP-4821" data-lote="GLI-2026-08" data-mp="Glicerina USP" data-alvo="45,000 kg" data-tol="±0,5%" data-status="pesada" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">1</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-4821</td><td class="mono" style="font-size:11px;color:var(--text2)">GLI-2026-08</td><td style="font-size:12px;color:var(--ok)">✓ Glicerina USP</td><td class="mono">45,000 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-ok">Pesada</span></td><td></td></tr>
                   <tr data-cod="MP-3307" data-lote="PPG-2026-12" data-mp="Propilenoglicol" data-alvo="18,000 kg" data-tol="±0,5%" data-status="pesada" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">2</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-3307</td><td class="mono" style="font-size:11px;color:var(--text2)">PPG-2026-12</td><td style="font-size:12px;color:var(--ok)">✓ Propilenoglicol</td><td class="mono">18,000 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-ok">Pesada</span></td><td></td></tr>
                   <tr data-cod="MP-0914" data-lote="CAR-2026-05" data-mp="Carbopol 940" data-alvo="2,500 kg" data-tol="±0,3%" data-status="pesada" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">3</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-0914</td><td class="mono" style="font-size:11px;color:var(--text2)">CAR-2026-05</td><td style="font-size:12px;color:var(--ok)">✓ Carbopol 940</td><td class="mono">2,500 kg</td><td class="mono">±0,3%</td><td><span class="bdg bdg-ok">Pesada</span></td><td></td></tr>
-                  <tr data-cod="MP-2256" data-lote="FEN-2026-03" data-mp="Fenoxietanol" data-alvo="3,000 kg" data-tol="±0,5%" data-status="desvio" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">4</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-2256</td><td class="mono" style="font-size:11px;color:var(--text2)">FEN-2026-03</td><td style="font-size:12px;color:var(--ok)">✓ Fenoxietanol</td><td class="mono">3,000 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-alr">Com Desvio</span></td><td></td></tr>
+                  <tr data-cod="MP-2256" data-lote="FEN-2026-03" data-mp="Fenoxietanol" data-alvo="3,000 kg" data-tol="±0,5%" data-status="desvio" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">4</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-2256</td><td class="mono" style="font-size:11px;color:var(--text2)">FEN-2026-03</td><td style="font-size:12px;color:var(--ok)">✓ Fenoxietanol</td><td class="mono">3,000 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-alr">Com Variância</span></td><td></td></tr>
                   <tr data-cod="MP-5593" data-lote="TEA-2026-07" data-mp="TEA 99%" data-alvo="1,800 kg" data-tol="±0,5%" data-status="pesada" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">5</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-5593</td><td class="mono" style="font-size:11px;color:var(--text2)">TEA-2026-07</td><td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td><td class="mono">1,800 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-ok">Pesada</span></td><td></td></tr>
                   <tr data-cod="MP-0001" data-lote="AGUA-2026-03" data-mp="Aqua (Água Purificada)" data-alvo="412,500 kg" data-tol="±0,5%" data-status="proxima" style="background:var(--verde-dim);border-left:3px solid var(--verde);cursor:pointer" onclick="pesSetMP(this)">
                     <td class="mono" style="color:var(--verde);font-weight:700">6</td>
@@ -1727,8 +1727,8 @@ export const SCREENS = {
           <div id="pes-panel-6" style="display:none">
             <div class="card cv mb14" style="border:2px solid var(--verde)">
               <div class="card-title">⑥ Confirmação da Pesagem</div>
-              <div class="abox ok mb14"><span class="ai">✅</span><div><strong>Pesagem dentro do limite!</strong> Desvio de –0,66 kg está dentro da tolerância ±0,5% (limite: ±2,06 kg).</div></div>
-              <!-- Linha 1: Qtd. Alvo · Qtd. Pesada · Desvio -->
+              <div class="abox ok mb14"><span class="ai">✅</span><div><strong>Pesagem dentro do limite!</strong> Variância de pesagem de –0,66 kg está dentro da tolerância ±0,5% (limite: ±2,06 kg).</div></div>
+              <!-- Linha 1: Qtd. Alvo · Qtd. Pesada · Variância de pesagem -->
               <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px">
                 <div style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:12px;text-align:center">
                   <div style="font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);margin-bottom:6px">Qtd. Alvo</div>
@@ -1741,7 +1741,7 @@ export const SCREENS = {
                   <div style="font-size:10px;color:var(--verde)">kg</div>
                 </div>
                 <div style="background:var(--ouro-dim);border:1px solid var(--ouro-claro);border-radius:7px;padding:12px;text-align:center">
-                  <div style="font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--ouro);margin-bottom:6px">Desvio</div>
+                  <div style="font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--ouro);margin-bottom:6px">Variância de pesagem</div>
                   <div style="font-family:var(--font-d);font-size:24px;font-weight:700;color:var(--ouro)">–0,660</div>
                   <div style="font-size:10px;color:var(--ouro)">kg (–0,16%)</div>
                 </div>
@@ -2411,11 +2411,11 @@ export const SCREENS = {
         <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Matérias-Primas Pesadas</div></div>
         <div class="ph-actions">
           <div class="screen-meta" style="font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2);text-align:right">OP-2026-0416 · 5 de 12 MPs concluídas</div>
-          <button class="btn btn-sm btn-v" onclick="pesAbrirNovaPS()">+ Nova Pesagem por Desvio</button>
+          <button class="btn btn-sm btn-v" onclick="pesAbrirNovaPS()">+ Nova Pesagem por Variância de pesagem</button>
         </div>
       </div>
 
-      <div class="abox inf mb14"><span class="ai">ℹ️</span><div>Clique em qualquer linha da tabela para adicionar um <strong>Desvio de Pesagem</strong> ou iniciar uma nova pesagem de reprocesso para a MP selecionada.</div></div>
+      <div class="abox inf mb14"><span class="ai">ℹ️</span><div>Clique em qualquer linha da tabela para registrar uma <strong>Variância de pesagem</strong> ou iniciar uma nova pesagem de reprocesso para a MP selecionada.</div></div>
 
       <!-- KPIs topo -->
       <div class="g4 mb14">
@@ -2430,7 +2430,7 @@ export const SCREENS = {
           <div style="font-size:10px;color:var(--text3)">dentro do limite</div>
         </div>
         <div class="card ca" style="text-align:center;padding:14px">
-          <div class="kpi-l">Com Desvio</div>
+          <div class="kpi-l">Com Variância de pesagem</div>
           <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--alr)">1</div>
           <div style="font-size:10px;color:var(--text3)">requer justificativa</div>
         </div>
@@ -2448,7 +2448,7 @@ export const SCREENS = {
           <thead>
             <tr>
               <th>#</th><th>Código MP</th><th>Material</th><th>Lote</th><th>Alvo (kg)</th><th>Pesado (kg)</th>
-              <th>Desvio</th><th>Nº Gaiola</th><th>Cód. Etiqueta</th><th>Operador</th><th>Horário</th><th>Balança</th><th>Status</th><th></th>
+              <th>Variância de pesagem</th><th>Nº Gaiola</th><th>Cód. Etiqueta</th><th>Operador</th><th>Horário</th><th>Balança</th><th>Status</th><th></th>
             </tr>
           </thead>
           <tbody>
@@ -2501,8 +2501,8 @@ export const SCREENS = {
               <td class="mono" style="font-size:10px;color:var(--inf)">563947</td>
               <td class="mono" style="font-size:10px">ETQ-2026-0416-004</td>
               <td style="font-size:11px">J. Santos</td><td class="mono" style="font-size:10px">06:51</td><td class="mono" style="font-size:10px">BAL-01</td>
-              <td><span class="bdg bdg-alr">Com Desvio</span></td>
-              <td><button class="btn btn-sm btn-p" style="font-size:9px" onclick="pesAbrirDesvio({n:'4',mat:'Fenoxietanol',lote:'FEN-2026-03',alvo:'3,000',pesado:'3,028',desv:'+0,028',op:'J. Santos',hr:'06:51',bal:'BAL-01',etq:'ETQ-2026-0416-004',status:'desv'});event.stopPropagation()">⚠ Desvio</button></td>
+              <td><span class="bdg bdg-alr">Com Variância</span></td>
+              <td><button class="btn btn-sm btn-p" style="font-size:9px" onclick="pesAbrirDesvio({n:'4',mat:'Fenoxietanol',lote:'FEN-2026-03',alvo:'3,000',pesado:'3,028',desv:'+0,028',op:'J. Santos',hr:'06:51',bal:'BAL-01',etq:'ETQ-2026-0416-004',status:'desv'});event.stopPropagation()">⚠ Variância de pesagem</button></td>
             </tr>
             <tr style="cursor:pointer" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99%',lote:'TEA-2026-07',alvo:'1,800',pesado:'1,801',desv:'+0,001',op:'J. Santos',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005',status:'ok'})">
               <td class="mono" style="color:var(--ok)">5</td>
@@ -2539,14 +2539,14 @@ export const SCREENS = {
 
           <!-- Abas de ação -->
           <div style="display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:18px" id="mps-popup-tabs">
-            <button onclick="mpsPoupupAba('desvio')" id="mps-tab-desvio" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--verde);border-bottom:3px solid var(--verde);margin-bottom:-2px">⚠ Add Desvio</button>
+            <button onclick="mpsPoupupAba('desvio')" id="mps-tab-desvio" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--verde);border-bottom:3px solid var(--verde);margin-bottom:-2px">⚠ Add Variância de pesagem</button>
             <button onclick="mpsPoupupAba('repesar')" id="mps-tab-repesar" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--text3);border-bottom:3px solid transparent;margin-bottom:-2px">↩ Repesar</button>
             <button onclick="mpsPoupupAba('reimprimir')" id="mps-tab-reimprimir" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--text3);border-bottom:3px solid transparent;margin-bottom:-2px">🖨️ Reimprimir</button>
           </div>
 
           <!-- Aba: Add Desvio -->
           <div id="mps-aba-desvio">
-            <div class="abox inf" style="margin-bottom:14px"><span class="ai">🏷️</span><div>Escaneie a etiqueta da MP que será pesada para registrar o desvio. Confirme os dados antes de prosseguir.</div></div>
+            <div class="abox inf" style="margin-bottom:14px"><span class="ai">🏷️</span><div>Escaneie a etiqueta da MP que será pesada para registrar a variância de pesagem. Confirme os dados antes de prosseguir.</div></div>
             <div class="form-row" style="margin-bottom:12px">
               <div class="fg" style="flex:1">
                 <label class="lbl">Scan da Etiqueta da MP</label>
@@ -2556,19 +2556,19 @@ export const SCREENS = {
             </div>
             <div id="mps-desvio-scan-result"></div>
             <div style="margin-bottom:12px;margin-top:12px">
-              <label class="lbl">Tipo de Desvio</label>
+              <label class="lbl">Tipo de Variância de pesagem</label>
               <select class="sel" id="mps-desvio-tipo">
                 <option value="">Selecione o tipo...</option>
                 <option value="exc">Excesso de pesagem</option>
                 <option value="fal">Falta de material</option>
                 <option value="cont">Contaminação/troca de lote</option>
                 <option value="equip">Falha de equipamento (balança)</option>
-                <option value="proc">Desvio de procedimento</option>
+                <option value="proc">Variância de pesagem de procedimento</option>
                 <option value="outro">Outro</option>
               </select>
             </div>
             <div style="margin-bottom:12px">
-              <label class="lbl">Número do Desvio / Referência</label>
+              <label class="lbl">Número da Variância de pesagem / Referência</label>
               <input class="inp" id="mps-desvio-num" placeholder="Ex: DEV-2026-0041" style="font-family:var(--font-m)">
             </div>
             <div style="margin-bottom:16px">
@@ -2576,7 +2576,7 @@ export const SCREENS = {
               <textarea class="txta" id="mps-desvio-justif" placeholder="Descreva a causa e ação tomada..."></textarea>
             </div>
             <div style="display:flex;gap:10px">
-              <button class="btn btn-md btn-v" style="flex:1" onclick="mpsSalvarDesvio()">✔ Registrar Desvio</button>
+              <button class="btn btn-md btn-v" style="flex:1" onclick="mpsSalvarDesvio()">✔ Registrar Variância de pesagem</button>
               <button class="btn btn-md btn-ghost" onclick="document.getElementById('modal-mps-desvio').style.display='none'">Cancelar</button>
             </div>
           </div>
@@ -2648,7 +2648,7 @@ export const SCREENS = {
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Lote</span><div style="font-family:var(--font-m);font-size:12px;font-weight:700;margin-top:2px">' + d.lote + '</div></div>' +
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Qtd. Alvo</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + d.alvo + ' kg</div></div>' +
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Pesado</span><div style="font-size:12px;font-weight:700;color:var(--verde);margin-top:2px">' + d.pesado + ' kg</div></div>' +
-          '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Desvio</span><div style="font-size:12px;font-weight:700;color:' + (d.status==='desv'?'var(--alr)':'var(--ok)') + ';margin-top:2px">' + d.desv + ' kg</div></div>' +
+          '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Variância de pesagem</span><div style="font-size:12px;font-weight:700;color:' + (d.status==='desv'?'var(--alr)':'var(--ok)') + ';margin-top:2px">' + d.desv + ' kg</div></div>' +
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Etiqueta</span><div style="font-family:var(--font-m);font-size:11px;margin-top:2px">' + d.etq + '</div></div>' +
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Balança</span><div style="font-family:var(--font-m);font-size:12px;margin-top:2px">' + d.bal + '</div></div>';
         // Reset tabs
@@ -2705,10 +2705,10 @@ export const SCREENS = {
         var tipo = document.getElementById('mps-desvio-tipo').value;
         var num = document.getElementById('mps-desvio-num').value.trim() || 'DEV-2026-AUTO';
         var just = document.getElementById('mps-desvio-justif').value.trim();
-        if (!tipo) { alert('⚠ Selecione o tipo de desvio.'); return; }
+        if (!tipo) { alert('⚠ Selecione o tipo de variância de pesagem.'); return; }
         if (!just) { alert('⚠ Preencha a justificativa.'); return; }
         document.getElementById('modal-mps-desvio').style.display = 'none';
-        alert('✅ Desvio registrado com sucesso!\\nNúmero: ' + num + '\\nMP: ' + _mpsSel.mat + '\\nTipo: ' + tipo + '\\nEtiqueta gerada com referência ao desvio.');
+        alert('✅ Variância de pesagem registrada com sucesso!\\nNúmero: ' + num + '\\nMP: ' + _mpsSel.mat + '\\nTipo: ' + tipo + '\\nEtiqueta gerada com referência à variância de pesagem.');
       }
 
       function mpsValidarRepesar() {
@@ -3120,7 +3120,7 @@ export const SCREENS = {
   "pes-pendencias": `      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Pendências de Pesagem</div></div>
         <div class="ph-actions">
-          <button class="btn btn-sm btn-ghost" onclick="openModal('modal-diverg')">⚠ Justificar Desvio</button>
+          <button class="btn btn-sm btn-ghost" onclick="openModal('modal-diverg')">⚠ Justificar Variância de pesagem</button>
           <button class="btn btn-sm btn-v" onclick="openModal('modal-requisitar')">📦 Requisitar Material</button>
         </div>
       </div>
@@ -3158,11 +3158,11 @@ export const SCREENS = {
         <div class="val-item" style="border-color:var(--per-b);background:var(--per-p);margin-bottom:10px">
           <div class="val-icon fail">🔴</div>
           <div style="flex:1">
-            <div class="val-nome">Desvio de Pesagem — Fenoxietanol (MP #4)</div>
-            <div class="val-desc">Pesado: 3,028 kg · Alvo: 3,000 kg · Desvio: +0,028 kg (+0,93%) · Limite: ±0,5%<br>Operador: J. Santos · 06:51 · BAL-01</div>
+            <div class="val-nome">Variância de pesagem — Fenoxietanol (MP #4)</div>
+            <div class="val-desc">Pesado: 3,028 kg · Alvo: 3,000 kg · Variância de pesagem: +0,028 kg (+0,93%) · Limite: ±0,5%<br>Operador: J. Santos · 06:51 · BAL-01</div>
           </div>
           <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-            <span class="bdg bdg-per">Desvio Crítico</span>
+            <span class="bdg bdg-per">Variância Crítica</span>
             <button class="btn btn-sm btn-ghost" onclick="openModal('modal-diverg')">📋 Justificar</button>
           </div>
         </div>
