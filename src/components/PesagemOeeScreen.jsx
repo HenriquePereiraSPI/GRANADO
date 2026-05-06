@@ -102,7 +102,7 @@ export default function PesagemOeeScreen() {
       </div>
 
       {/* ── KPIs principais (OEE breakdown) ────────────────── */}
-      <div className="g4 mb14">
+      <div className="g3 mb14">
         <KpiOEE
           label="OEE Global"
           valor={calc.oee}
@@ -110,7 +110,7 @@ export default function PesagemOeeScreen() {
           meta={D.meta}
           cor="verde"
           destaque
-          memoria={`Disp × Perf × Qual = ${calc.disponibilidade.toFixed(1)}% × ${calc.performance.toFixed(1)}% × ${calc.qualidade}%`}
+          memoria={`Disp × Perf = ${calc.disponibilidade.toFixed(1)}% × ${calc.performance.toFixed(1)}%`}
         />
         <KpiOEE
           label="Disponibilidade"
@@ -125,13 +125,6 @@ export default function PesagemOeeScreen() {
           unidade="%"
           cor="ouro"
           memoria={`Σ padrão (${calc.padraoTotal}min) ÷ Σ real (${calc.realTotal}min)`}
-        />
-        <KpiOEE
-          label="Qualidade"
-          valor={calc.qualidade}
-          unidade="%"
-          cor="ney"
-          sub="Fixo — sem reprovação"
         />
       </div>
 
@@ -486,12 +479,7 @@ function CardTempoCicloMP() {
 
   return (
     <div className="card ca">
-      <div className="card-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}>
-        <span>Tempo de Ciclo por Matéria-Prima · Acompanhamento Operacional</span>
-        <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text3)', letterSpacing: '.04em' }}>
-          NÃO compõe o OEE — visão da Tati / time de melhoria
-        </span>
-      </div>
+      <div className="card-title">Tempo de Ciclo por Matéria-Prima · Acompanhamento Operacional</div>
 
       <div className="abox info mb14" style={{ marginBottom: 12 }}>
         <span className="ai">ℹ</span>
