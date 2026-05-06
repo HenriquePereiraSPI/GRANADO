@@ -138,6 +138,7 @@ export default function GenealogiaScreen() {
             total={DOSSIE.cadeia.length}
             expandido={expandidos.has(no.id)}
             onToggle={() => toggle(no.id)}
+            dossie={DOSSIE}
           />
         ))}
       </div>
@@ -169,7 +170,7 @@ function Kpi({ label, valor, cor, sub }) {
   );
 }
 
-function NoCadeia({ no, ordem, total, expandido, onToggle }) {
+function NoCadeia({ no, ordem, total, expandido, onToggle, dossie }) {
   const cores = COR_VARS[no.cor] || COR_VARS.verde;
   return (
     <div style={{ position: 'relative', marginBottom: 14, paddingLeft: 70, zIndex: 1 }}>
@@ -259,7 +260,7 @@ function NoCadeia({ no, ordem, total, expandido, onToggle }) {
         {/* Body expandido */}
         {expandido && (
           <div style={{ padding: '0 18px 16px', borderTop: `1px solid ${cores.bd}` }}>
-            <RenderConteudoNo no={no} cores={cores} />
+            <RenderConteudoNo no={no} cores={cores} dossie={dossie} />
           </div>
         )}
       </div>
@@ -267,7 +268,7 @@ function NoCadeia({ no, ordem, total, expandido, onToggle }) {
   );
 }
 
-function RenderConteudoNo({ no, cores }) {
+function RenderConteudoNo({ no, cores, dossie }) {
   switch (no.id) {
     case 'mp':
       return <TabelaItens dados={no.itens} colunas={[
@@ -303,7 +304,7 @@ function RenderConteudoNo({ no, cores }) {
                   ['BALANÇA',      mp.balanca],
                   ['OPERADOR',     mp.operador],
                   ['DATA / HORA',  mp.etqHora],
-                  ['WO',           DOSSIE.wo],
+                  ['WO',           dossie.wo],
                 ]}
                 barcodeValue={mp.barcode}
                 barcodeFormat="Code 128"
