@@ -30,47 +30,6 @@ const PERIODO_LABEL = {
    Helpers de UI
 ───────────────────────────────────────────────────────────── */
 
-function KpiCard({ label, valor, unidade, cor, icone, subInfo, deltaInfo, destaque }) {
-  return (
-    <div
-      className={`card ${destaque ? 'cv' : ''}`}
-      style={{
-        padding: 16,
-        borderTop: `3px solid ${cor}`,
-        display: 'flex', flexDirection: 'column', gap: 4,
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 18 }}>{icone}</span>
-        <span style={{
-          fontSize: 9, fontWeight: 900, letterSpacing: '.14em',
-          textTransform: 'uppercase', color: 'var(--text3)',
-        }}>{label}</span>
-      </div>
-      <div style={{ fontFamily: 'var(--font-d)', fontSize: 36, fontWeight: 700, color: cor, lineHeight: 1.05 }}>
-        {valor}
-        {unidade && <span style={{ fontSize: 16, color: 'var(--text3)', marginLeft: 4 }}>{unidade}</span>}
-      </div>
-      {subInfo && <div style={{ fontSize: 10, color: 'var(--text3)' }}>{subInfo}</div>}
-      {deltaInfo}
-    </div>
-  );
-}
-
-function DeltaBadge({ valor, tipo = 'maior-melhor', sufixo = 'pp', referencia }) {
-  if (valor == null) return null;
-  const positivo = valor >= 0;
-  const bom = tipo === 'maior-melhor' ? positivo : !positivo;
-  const cor = bom ? 'var(--ok)' : 'var(--alr)';
-  const seta = positivo ? '↑' : '↓';
-  return (
-    <span style={{ color: cor, fontWeight: 700, fontSize: 11 }}>
-      {seta} {Math.abs(valor).toFixed(1)}{sufixo}
-      {referencia && <span style={{ color: 'var(--text3)', fontWeight: 400, marginLeft: 4 }}>vs {referencia}</span>}
-    </span>
-  );
-}
-
 function StatusPill({ status }) {
   if (status === 'desv') return <span className="bdg bdg-alr" style={{ fontSize: 9 }}>Variância</span>;
   return <span className="bdg bdg-ok" style={{ fontSize: 9 }}>OK</span>;
@@ -101,23 +60,12 @@ export default function PesPerformanceOperadorScreen() {
   const [filtroOrdem, setFiltroOrdem] = useState('todos');
   const [filtroMP, setFiltroMP] = useState('todos');
 
-  // Dados do operador filtrado (KPIs sao sempre referentes a esse operador).
+  // Operador filtrado — usado para destacar a linha no ranking e
+  // para mostrar avatar/nome no cabecalho.
   const operador = useMemo(
     () => OPERADORES.find((o) => o.id === filtroOperador) || OPERADORES[0],
     [filtroOperador]
   );
-  const stats = operador.stats[periodo];
-
-  // Media da equipe no periodo.
-  const mediaEquipe = useMemo(() => {
-    const arr = OPERADORES.map((o) => o.stats[periodo]);
-    return {
-      aderencia:        arr.reduce((s, x) => s + x.aderencia,        0) / arr.length,
-      tempoMedio:       arr.reduce((s, x) => s + x.tempoMedio,       0) / arr.length,
-      mpsHora:          arr.reduce((s, x) => s + x.mpsHora,          0) / arr.length,
-      variancesCriticas: arr.reduce((s, x) => s + x.variancesCriticas, 0) / arr.length,
-    };
-  }, [periodo]);
 
   // Ranking ordenado por aderencia decrescente (sempre full — nao filtrado).
   const ranking = useMemo(() => {
@@ -160,11 +108,6 @@ export default function PesPerformanceOperadorScreen() {
   };
   const algumFiltroAtivo = filtroOperador !== OPERADOR_LOGADO_ID || filtroOrdem !== 'todos' || filtroMP !== 'todos';
 
-  // KPI deltas
-  const deltaAderencia = stats.aderencia - META_ADERENCIA;
-  const deltaTempoMP = ((stats.tempoMedio - stats.padraoMedio) / stats.padraoMedio) * 100;
-  const deltaCriticas = stats.variancesCriticas - mediaEquipe.variancesCriticas;
-
   return (
     <div className="screen active" style={{ display: 'block' }}>
       {/* ── Header ─────────────────────────────────────────── */}
@@ -199,58 +142,6 @@ export default function PesPerformanceOperadorScreen() {
             ))}
           </select>
         </div>
-      </div>
-
-      {/* ── 4 KPIs ─────────────────────────────────────────── */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: 12, marginBottom: 14,
-        }}
-      >
-        <KpiCard
-          label="Aderência ao Padrão"
-          valor={stats.aderencia.toFixed(1)}
-          unidade="%"
-          cor="var(--verde)"
-          icone="🎯"
-          destaque
-          subInfo={`Meta ${META_ADERENCIA}%`}
-          deltaInfo={
-            <DeltaBadge valor={deltaAderencia} tipo="maior-melhor" sufixo="pp" referencia="meta" />
-          }
-        />
-        <KpiCard
-          label="Tempo Médio por MP"
-          valor={stats.tempoMedio.toFixed(1)}
-          unidade="min"
-          cor="var(--ouro)"
-          icone="⏱"
-          subInfo={`Padrão equipe: ${stats.padraoMedio.toFixed(1)} min`}
-          deltaInfo={
-            <DeltaBadge valor={deltaTempoMP} tipo="menor-melhor" sufixo="%" referencia="padrão" />
-          }
-        />
-        <KpiCard
-          label="MPs Pesadas"
-          valor={stats.mpsTotal.toLocaleString('pt-BR')}
-          unidade=""
-          cor="var(--inf)"
-          icone="⚖️"
-          subInfo={`${stats.mpsHora.toFixed(1)} MPs / hora · ${PERIODO_LABEL[periodo].toLowerCase()}`}
-        />
-        <KpiCard
-          label="Variâncias Críticas"
-          valor={stats.variancesCriticas}
-          unidade=""
-          cor={stats.variancesCriticas > mediaEquipe.variancesCriticas ? 'var(--per)' : 'var(--ok)'}
-          icone="⚠"
-          subInfo={`Média da equipe: ${mediaEquipe.variancesCriticas.toFixed(1)}`}
-          deltaInfo={
-            <DeltaBadge valor={deltaCriticas} tipo="menor-melhor" sufixo="" referencia="média" />
-          }
-        />
       </div>
 
       {/* ── Filtros ─────────────────────────────────────────── */}
