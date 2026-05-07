@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Tela: Qualidade > Reconciliacao Tecnica e Liberacao de Lote
@@ -186,7 +187,7 @@ function Campo({ label, value, obrigatorio }) {
    Card de Área (Fabricação / Embalagem / FQ / Micro)
 ───────────────────────────────────────────────────────────── */
 
-function CardArea({ chave, dados, indicadores, onUpdate }) {
+function CardArea({ chave, dados, indicadores, onUpdate, onAbrirGenealogia }) {
   const cor = AREA_COR[chave];
   const handleChange = (campo, valor) => onUpdate({ ...dados, [campo]: valor });
 
@@ -198,17 +199,37 @@ function CardArea({ chave, dados, indicadores, onUpdate }) {
       boxShadow: 'var(--sh)',
       overflow: 'hidden',
     }}>
-      {/* Header colorido */}
-      <div style={{
-        background: cor.bg, color: cor.fg,
-        padding: '10px 14px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      }}>
+      {/* Header colorido — clicavel pra abrir Genealogia */}
+      <button
+        type="button"
+        onClick={onAbrirGenealogia}
+        title="Clique para ver na Genealogia de Lote"
+        style={{
+          background: cor.bg, color: cor.fg,
+          padding: '10px 14px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          width: '100%', border: 'none', cursor: 'pointer', font: 'inherit',
+          gap: 10,
+        }}
+      >
         <div style={{ fontSize: 13, fontWeight: 900, letterSpacing: '.08em', textTransform: 'uppercase' }}>
           {cor.icon} {cor.label}
         </div>
-        <StatusPill status={dados.status} />
-      </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span
+            style={{
+              fontSize: 9, fontWeight: 700, letterSpacing: '.08em',
+              padding: '3px 9px', borderRadius: 12,
+              background: 'rgba(255,255,255,.18)', color: '#fff',
+              border: '1px solid rgba(255,255,255,.35)',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            🧬 Ver Genealogia →
+          </span>
+          <StatusPill status={dados.status} />
+        </div>
+      </button>
 
       {/* Body */}
       <div style={{ padding: 14, display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -296,12 +317,60 @@ function CardArea({ chave, dados, indicadores, onUpdate }) {
    Tela principal
 ───────────────────────────────────────────────────────────── */
 
+/**
+ * Gera um numero de reconciliacao aleatorio no formato JDE (6 digitos).
+ * Em producao, virá da API JDE via integracao.
+ */
+function gerarNumeroReconciliacao() {
+  return String(137000 + Math.floor(Math.random() * 999)).padStart(6, '0');
+}
+
+/** Template de Lote vazio para o modo 'Nova Reconciliacao'. */
+function loteTemplate(numero) {
+  const hoje = new Date().toISOString().split('T')[0];
+  const validade = new Date();
+  validade.setFullYear(validade.getFullYear() + 3);
+  return {
+    numeroReconciliacao: numero,
+    filial: '0015 - Casa Granado',
+    produtoAcabado: '',
+    granel: '',
+    loteFabricacao: '',
+    dataFabricacao: hoje,
+    dataValidade: validade.toISOString().split('T')[0],
+    statusLote: 'Q — Sob Quarentena',
+    statusReconciliacao: '10 — Aberto',
+    statusDocumentacao: '10 — Aberto',
+    areas: {
+      fabricacao:    { rendimentoTeorico: '',  rendimentoReal: '',     perda: '',           responsavel: '', data: '', status: 'PENDENTE', observacoes: '' },
+      embalagem:     { unidadesPlanejadas: '', unidadesProduzidas: '', perda: '',           responsavel: '', data: '', status: 'PENDENTE', observacoes: '' },
+      fisicoQuimico: { ph: '',                umidade: '',             densidade: '',       responsavel: '', data: '', status: 'PENDENTE', observacoes: '' },
+      microbiologia: { contagemTotal: '',     bolorLevedura: '',       patogenos: '',       responsavel: '', data: '', status: 'PENDENTE', observacoes: '' },
+    },
+  };
+}
+
 export default function QualidadeReconciliacaoScreen() {
+  const navigate = useNavigate();
   const [numeroLote, setNumeroLote] = useState('');
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
   const [lote, setLote] = useState(null);
   const [mensagem, setMensagem] = useState('');
+  const [modo, setModo] = useState('analise'); // 'analise' | 'criacao'
+
+  const abrirGenealogia = (chaveArea) => {
+    navigate('/dash-genealogia?area=' + encodeURIComponent(chaveArea));
+  };
+
+  const novaReconciliacao = () => {
+    const numero = gerarNumeroReconciliacao();
+    setNumeroLote('NOVO-' + numero);
+    setLote(loteTemplate(numero));
+    setModo('criacao');
+    setErro('');
+    setMensagem('🆕 Nova Reconciliação iniciada — Nº ' + numero + ' (gerado via integração JDE).');
+  };
 
   const buscarLote = () => {
     setErro('');
@@ -311,6 +380,7 @@ export default function QualidadeReconciliacaoScreen() {
       return;
     }
     setCarregando(true);
+    setModo('analise');
     setTimeout(() => {
       const key = numeroLote.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
       const dados = BASE_MOCK[key];
@@ -382,9 +452,23 @@ export default function QualidadeReconciliacaoScreen() {
           </button>
           <button
             className="btn btn-md btn-ghost"
-            onClick={() => { setNumeroLote(''); setLote(null); setErro(''); setMensagem(''); }}
+            onClick={() => { setNumeroLote(''); setLote(null); setErro(''); setMensagem(''); setModo('analise'); }}
           >
             Limpar
+          </button>
+          <div style={{ width: 1, height: 36, background: 'var(--border)', margin: '0 4px' }} />
+          <button
+            className="btn btn-md"
+            onClick={novaReconciliacao}
+            style={{
+              minWidth: 200,
+              background: 'var(--ouro)',
+              color: '#fff',
+              borderColor: 'var(--ouro)',
+            }}
+            title="Cria uma nova reconciliação com número gerado pelo JDE"
+          >
+            + Nova Reconciliação
           </button>
         </div>
 
@@ -409,9 +493,27 @@ export default function QualidadeReconciliacaoScreen() {
       {/* Lote carregado */}
       {lote && (
         <>
+          {/* Banner de modo Criação */}
+          {modo === 'criacao' && (
+            <div className="abox warn mb14" style={{ borderTopWidth: 3, borderTopStyle: 'solid', borderTopColor: 'var(--ouro)' }}>
+              <span className="ai">🆕</span>
+              <div>
+                <strong>Modo Criação — Nova Reconciliação Nº {lote.numeroReconciliacao}</strong>
+                {' · '}gerado pela integração JDE. Preencha os dados de identificação e as 4 áreas de análise antes de liberar.
+              </div>
+            </div>
+          )}
+
           {/* Identificação */}
           <div className="card mb14" style={{ padding: 16 }}>
-            <div className="card-title" style={{ marginBottom: 12 }}>Identificação do Lote</div>
+            <div className="card-title" style={{ marginBottom: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
+              <span>Identificação do Lote</span>
+              {modo === 'criacao' && (
+                <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--ouro)' }}>
+                  ✏️ Editável (modo criação)
+                </span>
+              )}
+            </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
               <Campo label="Nº Reconciliação" value={lote.numeroReconciliacao} />
               <Campo label="Filial / Fábrica" value={lote.filial} />
@@ -435,6 +537,7 @@ export default function QualidadeReconciliacaoScreen() {
                 { label: 'Perda',         value: lote.areas.fabricacao.perda },
               ]}
               onUpdate={(novo) => atualizarArea('fabricacao', novo)}
+              onAbrirGenealogia={() => abrirGenealogia('fabricacao')}
             />
             <CardArea
               chave="embalagem"
@@ -445,6 +548,7 @@ export default function QualidadeReconciliacaoScreen() {
                 { label: 'Perda',          value: lote.areas.embalagem.perda },
               ]}
               onUpdate={(novo) => atualizarArea('embalagem', novo)}
+              onAbrirGenealogia={() => abrirGenealogia('embalagem')}
             />
             <CardArea
               chave="fisicoQuimico"
@@ -455,6 +559,7 @@ export default function QualidadeReconciliacaoScreen() {
                 { label: 'Densidade', value: lote.areas.fisicoQuimico.densidade },
               ]}
               onUpdate={(novo) => atualizarArea('fisicoQuimico', novo)}
+              onAbrirGenealogia={() => abrirGenealogia('fisicoQuimico')}
             />
             <CardArea
               chave="microbiologia"
@@ -465,6 +570,7 @@ export default function QualidadeReconciliacaoScreen() {
                 { label: 'Patógenos',       value: lote.areas.microbiologia.patogenos },
               ]}
               onUpdate={(novo) => atualizarArea('microbiologia', novo)}
+              onAbrirGenealogia={() => abrirGenealogia('microbiologia')}
             />
           </div>
 

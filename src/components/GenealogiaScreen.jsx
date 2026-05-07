@@ -1,6 +1,22 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { DOSSIES, findDossie, listarDossies } from '../data/dossie-wo-784426.js';
 import EtiquetaImpressa from './EtiquetaImpressa.jsx';
+
+/**
+ * Mapeamento de areas (Reconciliacao da Qualidade) para os nos da
+ * cadeia genealogica. Usado quando a tela eh aberta com ?area=...
+ *   fabricacao    -> fabricacao
+ *   embalagem     -> embalagem-ean
+ *   fisicoQuimico -> lims-granel
+ *   microbiologia -> lims-pa
+ */
+const AREA_PARA_NO = {
+  fabricacao:    'fabricacao',
+  embalagem:     'embalagem-ean',
+  fisicoQuimico: 'lims-granel',
+  microbiologia: 'lims-pa',
+};
 
 /**
  * Tela "Genealogia de Lote" — Dossie Eletronico de Producao (EBR).
@@ -21,8 +37,35 @@ const COR_VARS = {
 };
 
 export default function GenealogiaScreen() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [DOSSIE, setDossie] = useState(DOSSIES[0]);
-  const [expandidos, setExpandidos] = useState(() => new Set(['mp', 'fabricacao', 'granel']));
+
+  // Le ?area=... da URL (vem da tela de Reconciliacao de Qualidade) e
+  // garante que o no correspondente esteja expandido inicialmente.
+  const noAreaInicial = useMemo(() => {
+    const a = searchParams.get('area');
+    return a ? AREA_PARA_NO[a] : null;
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const [expandidos, setExpandidos] = useState(() => {
+    const base = new Set(['mp', 'fabricacao', 'granel']);
+    if (noAreaInicial) base.add(noAreaInicial);
+    return base;
+  });
+
+  // Quando vier de outra tela com ?area=..., faz scroll suave ate o no.
+  useEffect(() => {
+    if (!noAreaInicial) return;
+    const t = setTimeout(() => {
+      const buttons = Array.from(document.querySelectorAll('.screen.active button'));
+      const target = buttons.find((b) => {
+        const cardId = b.getAttribute('data-no-id');
+        return cardId === noAreaInicial;
+      });
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 200);
+    return () => clearTimeout(t);
+  }, [noAreaInicial]);
   const toggle = (id) => {
     setExpandidos((s) => {
       const n = new Set(s);
@@ -211,6 +254,7 @@ function NoCadeia({ no, ordem, total, expandido, onToggle, dossie }) {
         {/* Header clicável */}
         <button
           type="button"
+          data-no-id={no.id}
           onClick={onToggle}
           style={{
             width: '100%',
