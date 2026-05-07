@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 /**
  * Tela: Qualidade > Reconciliacao Tecnica e Liberacao de Lote
@@ -137,32 +137,6 @@ const STATUS_COLOR = {
   APROVADO:  { bg: 'var(--ok-p)',  fg: 'var(--ok)',   bd: 'var(--ok-b)'  },
   REPROVADO: { bg: 'var(--per-p)', fg: 'var(--per)',  bd: 'var(--per-b)' },
   PENDENTE:  { bg: 'var(--alr-p)', fg: 'var(--alr)',  bd: 'var(--alr-b)' },
-};
-
-// ─────────────────────────────────────────────────────────────
-// Fila de Reconciliacoes Pendentes — formato JDE F4108-Z (Lot Master)
-// Lotes "10 — Pronto" sao clicaveis (abrem direto na tela). Os demais
-// (20 / 30) ficam apenas listados para visibilidade do CQ enquanto o
-// processo termina nas etapas anteriores (Embalagem, Fabricacao, LIMS).
-// ─────────────────────────────────────────────────────────────
-const LOTES_FILA = [
-  // ───── 3 lotes PRONTOS para reconciliacao (sincronizados com BASE_MOCK) ─────
-  { linha: 1, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'RECN',  descProcesso: 'Reconciliação Técnica', statusProcesso: '10', descStatus: 'Pronto — Aguardando CQ',  lotePA: '262417', produto: 'Sab. Glicerinado Tradicional 90g',     wo: 'WO 784426', dataAtualizacao: '2026-04-30 08:14' },
-  { linha: 2, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'RECN',  descProcesso: 'Reconciliação Técnica', statusProcesso: '10', descStatus: 'Pronto — Aguardando CQ',  lotePA: '261892', produto: 'Sab. Glicerinado Limão Siciliano 90g', wo: 'WO 784301', dataAtualizacao: '2026-04-22 11:42' },
-  { linha: 3, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'RECN',  descProcesso: 'Reconciliação Técnica', statusProcesso: '10', descStatus: 'Pronto — Aguardando CQ',  lotePA: '261104', produto: 'Sab. Glicerinado Mel 90g',             wo: 'WO 783897', dataAtualizacao: '2026-04-12 16:08' },
-  // ───── 5 fictícios EM PROCESSO (etapas anteriores ainda em curso) ─────
-  { linha: 4, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'EMB',   descProcesso: 'Embalagem em Curso',     statusProcesso: '20', descStatus: 'Em Embalagem',           lotePA: '262455', produto: 'Sab. Glicerinado Verbena 90g',         wo: 'WO 784512', dataAtualizacao: '2026-05-06 14:32' },
-  { linha: 5, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'FAB',   descProcesso: 'Fabricação em Curso',    statusProcesso: '20', descStatus: 'Em Fabricação',          lotePA: '262489', produto: 'Sab. Glicerinado Lavanda 90g',         wo: 'WO 784599', dataAtualizacao: '2026-05-07 09:05' },
-  { linha: 6, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'LIMS',  descProcesso: 'Análise Físico-Química', statusProcesso: '30', descStatus: 'Aguardando F-Q (LIMS)',  lotePA: '262512', produto: 'Sab. Glicerinado Rosa 90g',            wo: 'WO 784620', dataAtualizacao: '2026-05-05 17:20' },
-  { linha: 7, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'MICR',  descProcesso: 'Análise Microbiológica', statusProcesso: '30', descStatus: 'Aguardando Microbiologia', lotePA: '262578', produto: 'Sab. Glicerinado Cedro 90g',         wo: 'WO 784671', dataAtualizacao: '2026-05-04 13:55' },
-  { linha: 8, tipoRelato: 'GRAN', descRelato: 'Lote Granel (Tanque)',  processo: 'PESA',  descProcesso: 'Pesagem de MP',          statusProcesso: '20', descStatus: 'Em Pesagem',             lotePA: '262602', produto: 'Sab. Glicerinado Coco 90g',            wo: 'WO 784712', dataAtualizacao: '2026-05-07 07:48' },
-];
-
-// Cor por codigo de status do processo (alinhado ao estilo JDE).
-const STATUS_PROC_COLOR = {
-  '10': { fg: 'var(--ok)',   bg: 'var(--ok-p)',  bd: 'var(--ok-b)'  }, // Pronto
-  '20': { fg: 'var(--inf)',  bg: 'var(--inf-p)', bd: 'var(--inf-b)' }, // Em curso
-  '30': { fg: 'var(--alr)',  bg: 'var(--alr-p)', bd: 'var(--alr-b)' }, // Aguardando análise
 };
 
 // Opcoes do campo "Status do Lote" (alinhadas a tabela 41/F4108 do JDE).
@@ -411,178 +385,9 @@ function CardArea({ chave, dados, indicadores, onUpdate, onAbrirGenealogia }) {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Fila de Reconciliacoes Pendentes — grid estilo JDE F4108-Z
-   Mostra todos os lotes na fila de Qualidade. Lotes "10 — Pronto"
-   sao clicaveis (abrem direto a reconciliacao). Os demais ficam
-   listados pra visibilidade enquanto a etapa anterior nao termina.
-───────────────────────────────────────────────────────────── */
-function StatusProcPill({ codigo, descricao }) {
-  const c = STATUS_PROC_COLOR[codigo] || STATUS_PROC_COLOR['20'];
-  return (
-    <span
-      style={{
-        display: 'inline-flex', alignItems: 'center', gap: 6,
-        padding: '3px 9px', borderRadius: 12,
-        fontSize: 10, fontWeight: 800, letterSpacing: '.04em',
-        background: c.bg, color: c.fg, border: `1px solid ${c.bd}`,
-        whiteSpace: 'nowrap',
-      }}
-      title={descricao}
-    >
-      <span style={{ fontFamily: 'var(--font-m)', fontWeight: 900 }}>{codigo}</span>
-      <span style={{ opacity: .85 }}>{descricao}</span>
-    </span>
-  );
-}
+/* (A Fila de Reconciliacoes Pendentes virou tela dedicada:
+   /qual-fila — QualidadeFilaReconciliacaoScreen.jsx) */
 
-function FilaReconciliacao({ itens, loteAtivo, onSelecionar }) {
-  const prontos = itens.filter((i) => i.statusProcesso === '10').length;
-  const emProcesso = itens.length - prontos;
-
-  return (
-    <div className="card mb14" style={{ padding: 0, overflow: 'hidden' }}>
-      {/* Header do card */}
-      <div
-        style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          gap: 10, padding: '12px 16px',
-          background: 'var(--surface2)',
-          borderBottom: '1px solid var(--border)',
-          flexWrap: 'wrap',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--text)' }}>
-            📋 Fila de Reconciliações Pendentes
-          </span>
-          <span style={{ fontSize: 10, fontFamily: 'var(--font-m)', color: 'var(--text3)' }}>
-            JDE · F4108-Z (Lot Master Workfile)
-          </span>
-        </div>
-        <div style={{ display: 'flex', gap: 6 }}>
-          <span className="bdg bdg-ok"  style={{ fontSize: 10 }}>{prontos} pronto(s)</span>
-          <span className="bdg bdg-inf" style={{ fontSize: 10 }}>{emProcesso} em processo</span>
-        </div>
-      </div>
-
-      {/* Barra de info estilo JDE — "Registros 1 - N" */}
-      <div
-        style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '6px 14px',
-          background: 'var(--bg)',
-          borderBottom: '1px solid var(--border)',
-          fontSize: 11, color: 'var(--text3)', fontFamily: 'var(--font-m)',
-        }}
-      >
-        <span>Registros 1 - {itens.length}</span>
-        <span style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <span title="Exportar (mock)" style={{ cursor: 'pointer' }}>🡑</span>
-          <span title="Filtros (mock)"  style={{ cursor: 'pointer' }}>⚙</span>
-          <span title="Atualizar (mock)" style={{ cursor: 'pointer' }}>↻</span>
-        </span>
-      </div>
-
-      {/* Tabela em scroll horizontal (replicando o grid JDE da imagem) */}
-      <div style={{ overflowX: 'auto' }}>
-        <table className="tbl" style={{ minWidth: 1180 }}>
-          <thead>
-            <tr>
-              <th style={{ width: 32, textAlign: 'center' }}>
-                <input type="checkbox" disabled style={{ cursor: 'not-allowed' }} />
-              </th>
-              <th style={{ width: 38, textAlign: 'center' }}>🔍</th>
-              <th>Nº<br />Linha</th>
-              <th>Tipo de <span style={{ color: 'var(--per)' }}>★</span><br />Relato</th>
-              <th>Descrição<br />Relato</th>
-              <th>Processo <span style={{ color: 'var(--per)' }}>★</span></th>
-              <th>Descrição<br />Processo</th>
-              <th>Status do <span style={{ color: 'var(--per)' }}>★</span><br />Processo</th>
-              <th>Descrição<br />Status</th>
-              <th>Lote<br />PA</th>
-              <th>Produto</th>
-              <th>Ordem<br />(WO)</th>
-              <th>Última<br />Atualização</th>
-            </tr>
-          </thead>
-          <tbody>
-            {itens.map((item) => {
-              const ehPronto = item.statusProcesso === '10';
-              const ehAtivo = loteAtivo && loteAtivo === item.lotePA;
-              return (
-                <tr
-                  key={item.linha}
-                  onClick={() => onSelecionar(item)}
-                  style={{
-                    cursor: ehPronto ? 'pointer' : 'not-allowed',
-                    background: ehAtivo
-                      ? 'var(--verde-dim)'
-                      : ehPronto ? 'transparent' : 'var(--surface2)',
-                    opacity: ehPronto ? 1 : 0.78,
-                  }}
-                  title={
-                    ehPronto
-                      ? `Clique para abrir a Reconciliação do Lote PA ${item.lotePA}`
-                      : `Lote ${item.lotePA} ainda em processo: ${item.descStatus}`
-                  }
-                >
-                  <td style={{ textAlign: 'center' }} onClick={(e) => e.stopPropagation()}>
-                    <input
-                      type="checkbox"
-                      checked={ehAtivo || false}
-                      readOnly
-                      disabled={!ehPronto}
-                      style={{ cursor: ehPronto ? 'pointer' : 'not-allowed' }}
-                    />
-                  </td>
-                  <td style={{ textAlign: 'center', fontSize: 14 }}>
-                    {ehPronto ? (
-                      <span title="Abrir reconciliação" style={{ color: 'var(--verde)' }}>▶</span>
-                    ) : (
-                      <span title="Em processo" style={{ color: 'var(--text3)' }}>⏳</span>
-                    )}
-                  </td>
-                  <td className="mono">{String(item.linha).padStart(2, '0')}</td>
-                  <td className="mono"><strong>{item.tipoRelato}</strong></td>
-                  <td>{item.descRelato}</td>
-                  <td className="mono"><strong>{item.processo}</strong></td>
-                  <td>{item.descProcesso}</td>
-                  <td><StatusProcPill codigo={item.statusProcesso} descricao={item.descStatus.split(' — ')[0] || item.descStatus} /></td>
-                  <td>{item.descStatus}</td>
-                  <td className="mono" style={{ color: ehPronto ? 'var(--verde)' : 'var(--text)', fontWeight: 800 }}>
-                    {item.lotePA}
-                  </td>
-                  <td style={{ fontSize: 12 }}>{item.produto}</td>
-                  <td className="mono">{item.wo}</td>
-                  <td className="mono" style={{ fontSize: 11, color: 'var(--text3)' }}>{item.dataAtualizacao}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Rodapé com legenda */}
-      <div
-        style={{
-          padding: '8px 14px',
-          background: 'var(--bg)',
-          borderTop: '1px solid var(--border)',
-          fontSize: 10, color: 'var(--text3)',
-          display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'center',
-        }}
-      >
-        <span>
-          <strong style={{ color: 'var(--ok)' }}>10</strong> Pronto · clique para abrir &nbsp;|&nbsp;
-          <strong style={{ color: 'var(--inf)' }}>20</strong> Em curso (Fab/Emb/Pesa) &nbsp;|&nbsp;
-          <strong style={{ color: 'var(--alr)' }}>30</strong> Aguardando análise (LIMS/Micro)
-        </span>
-        <span style={{ marginLeft: 'auto' }}>★ campo obrigatório</span>
-      </div>
-    </div>
-  );
-}
 
 /* ─────────────────────────────────────────────────────────────
    Tela principal
@@ -625,12 +430,27 @@ function loteTemplate(numero) {
 
 export default function QualidadeReconciliacaoScreen() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [numeroLote, setNumeroLote] = useState('');
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
   const [lote, setLote] = useState(null);
   const [mensagem, setMensagem] = useState('');
   const [modo, setModo] = useState('analise'); // 'analise' | 'criacao'
+
+  // Quando aberta a partir da Fila (/qual-fila) com ?lote=<PA>,
+  // mostramos um botao "Voltar para Fila" no header.
+  const veioDaFila = !!searchParams.get('lote');
+
+  // Auto-carrega o lote vindo via URL (?lote=262417) — usado pela Fila
+  // de Reconciliacoes ao clicar numa linha pronta.
+  useEffect(() => {
+    const loteParam = searchParams.get('lote');
+    if (loteParam && loteParam !== numeroLote) {
+      buscarLote(loteParam);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const abrirGenealogia = (chaveArea) => {
     const params = new URLSearchParams();
@@ -675,23 +495,6 @@ export default function QualidadeReconciliacaoScreen() {
     }, 400);
   };
 
-  // Click numa linha da fila: se estiver no status "10 — Pronto",
-  // abre direto a reconciliacao; caso contrario, apenas mostra um
-  // aviso (lote ainda nao concluiu Embalagem/FQ/Micro).
-  const selecionarDaFila = (item) => {
-    if (item.statusProcesso !== '10') {
-      setErro(
-        `Lote PA ${item.lotePA} ainda está em processo: ${item.descStatus}. ` +
-        'Aguarde a conclusão da etapa anterior para iniciar a Reconciliação.'
-      );
-      setMensagem('');
-      // rola pra cima para o usuario ver a mensagem
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-    buscarLote(item.lotePA);
-  };
-
   const atualizarArea = (chave, novoValor) => {
     setLote((prev) => ({ ...prev, areas: { ...prev.areas, [chave]: novoValor } }));
   };
@@ -714,9 +517,21 @@ export default function QualidadeReconciliacaoScreen() {
           <div className="ph-eyebrow">Qualidade · CQ · ERU 6.1.x — Reconciliação Técnica</div>
           <div className="ph-title">Reconciliação Técnica & Liberação de Lote</div>
         </div>
-        <div style={{ textAlign: 'right', fontFamily: 'var(--font-m)', fontSize: 10, color: 'var(--text2)', lineHeight: 1.6 }}>
-          Tela [JPD920-CQ]<br />
-          <span style={{ color: 'var(--verde)', fontWeight: 700 }}>Bárbara C. O. Peixoto</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {veioDaFila && (
+            <button
+              className="btn btn-sm btn-ghost"
+              onClick={() => navigate('/qual-fila')}
+              style={{ borderColor: 'var(--ouro)', color: 'var(--ouro)', fontWeight: 700 }}
+              title="Voltar para a Fila de Reconciliações"
+            >
+              ← Voltar para Fila
+            </button>
+          )}
+          <div style={{ textAlign: 'right', fontFamily: 'var(--font-m)', fontSize: 10, color: 'var(--text2)', lineHeight: 1.6 }}>
+            Tela [JPD920-CQ]<br />
+            <span style={{ color: 'var(--verde)', fontWeight: 700 }}>Bárbara C. O. Peixoto</span>
+          </div>
         </div>
       </div>
 
@@ -742,7 +557,7 @@ export default function QualidadeReconciliacaoScreen() {
           </div>
           <button
             className="btn btn-md btn-v"
-            onClick={buscarLote}
+            onClick={() => buscarLote()}
             disabled={carregando}
             style={{ minWidth: 130 }}
           >
@@ -787,13 +602,6 @@ export default function QualidadeReconciliacaoScreen() {
           </div>
         )}
       </div>
-
-      {/* ───────────── Fila de Reconciliacoes Pendentes (grid JDE F4108-Z) ───────────── */}
-      <FilaReconciliacao
-        itens={LOTES_FILA}
-        loteAtivo={lote?.lotePA}
-        onSelecionar={selecionarDaFila}
-      />
 
       {/* Lote carregado */}
       {lote && (
@@ -954,20 +762,28 @@ export default function QualidadeReconciliacaoScreen() {
       {!lote && !erro && (
         <div
           style={{
-            padding: '10px 14px',
+            padding: '12px 14px',
             background: 'var(--inf-p)',
             border: '1px solid var(--inf-b)',
             borderRadius: 6,
             color: 'var(--inf)',
             fontSize: 12,
-            display: 'flex', gap: 10, alignItems: 'center',
+            display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap',
           }}
         >
           <span style={{ fontSize: 18 }}>💡</span>
-          <span>
-            Selecione um lote <strong>pronto (status 10)</strong> diretamente da fila acima
-            ou informe o Nº Lote PA no campo de busca para iniciar a análise.
+          <span style={{ flex: 1, minWidth: 220 }}>
+            Informe o Nº Lote PA no campo acima para iniciar a análise — ou
+            abra a tela <strong>Fila de Reconciliações</strong> para selecionar um
+            lote pronto diretamente da lista.
           </span>
+          <button
+            className="btn btn-sm btn-ghost"
+            onClick={() => navigate('/qual-fila')}
+            style={{ borderColor: 'var(--inf)', color: 'var(--inf)', fontWeight: 700 }}
+          >
+            📋 Ir para Fila →
+          </button>
         </div>
       )}
     </div>

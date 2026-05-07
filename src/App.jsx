@@ -7,6 +7,7 @@ import ProdCockpitScreen from './components/ProdCockpitScreen.jsx';
 import GenealogiaScreen from './components/GenealogiaScreen.jsx';
 import PesagemOeeScreen from './components/PesagemOeeScreen.jsx';
 import QualidadeReconciliacaoScreen from './components/QualidadeReconciliacaoScreen.jsx';
+import QualidadeFilaReconciliacaoScreen from './components/QualidadeFilaReconciliacaoScreen.jsx';
 import { ModalProvider, useModal } from './components/ModalProvider.jsx';
 import { injectLegacyScripts, installNavBridges, resolveScreenId } from './lib/legacy-bridge.js';
 import manifest from './legacy/manifest.json';
@@ -65,6 +66,9 @@ export default function App() {
 
           {/* OEE Pesagem (componente React) */}
           <Route path="/pes-oee" element={<PesagemOeeScreen />} />
+
+          {/* Qualidade — Fila de Reconciliacoes Pendentes (grid JDE F4108-Z) */}
+          <Route path="/qual-fila" element={<QualidadeFilaReconciliacaoScreen />} />
 
           {/* Qualidade — Reconciliacao Tecnica e Liberacao de Lote */}
           <Route path="/qual-reconciliacao" element={<QualidadeReconciliacaoScreen />} />

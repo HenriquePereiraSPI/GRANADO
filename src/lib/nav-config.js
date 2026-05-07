@@ -66,6 +66,7 @@ export const MODULES = [
     label: 'Qualidade',
     icon: '🔬',
     items: [
+      { id: 'qual-fila',          label: '📋 Fila de Reconciliacoes' },
       { id: 'qual-reconciliacao', label: '✓ Reconciliacao Tec. & Liberacao' },
       { id: 'dash-genealogia',    label: '🧬 Genealogia de Lote' },
     ],
