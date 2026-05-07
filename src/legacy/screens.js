@@ -2933,95 +2933,66 @@ export const SCREENS = {
       }
       </script>
         <div class="card-title">Fila de Pesagem — Prioridade</div>
-        <div class="abox info mb14"><span class="ai">ℹ</span><div>Esta fila mostra <strong>apenas as ordens prontas para pesagem</strong> (com 100% das MPs pagas pelo almoxarifado no JDE). Ordens com pagamento pendente ficam em <a href="#" onclick="nav('pes-planejamento',null,null);return false" style="color:var(--verde);font-weight:700;text-decoration:underline">Planejamento das Ordens</a>. A coluna <strong>Pesagem</strong> mostra o progresso de MPs já pesadas pelo operador.</div></div>
-        <table class="tbl">
-          <thead><tr><th>#</th><th>Ordem</th><th>Produto / Fórmula</th><th>MPs</th><th>Pagamento de MP</th><th>Pesagem</th><th>Volume</th><th>Prioridade</th><th>Status da Ordem</th><th></th></tr></thead>
+        <div class="abox info mb14"><span class="ai">ℹ</span><div>Esta fila mostra <strong>apenas as ordens prontas para pesagem</strong> (com 100% das MPs pagas pelo almoxarifado no JDE).</div></div>
+        <div style="overflow-x:auto">
+        <table class="tbl" style="min-width:1080px">
+          <thead>
+            <tr>
+              <th>Núm. da Ordem</th>
+              <th>Produto / Fórmula</th>
+              <th>Quantidade</th>
+              <th>Status</th>
+              <th>Data Prev.<br/>Fabricação</th>
+              <th>Desvio</th>
+              <th>Sala / Equipamento</th>
+              <th></th>
+            </tr>
+          </thead>
           <tbody>
-            <!-- OP-2026-0414 — EM PESAGEM (parcial) → continua de onde parou (sem checklist) -->
+            <!-- OP-2026-0414 — EM PESAGEM -->
             <tr onclick="pesIrCockpit(event, 'continuar')" style="background:var(--inf-p);cursor:pointer">
-              <td class="mono" style="color:var(--inf);font-weight:700">1</td>
-              <td class="mono" style="color:var(--verde)">OP-2026-0414</td>
+              <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0414</td>
               <td style="font-size:12px">Creme Hidratante 150g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-076</span></td>
-              <td class="mono" style="font-weight:700">12 MPs</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:8px">
-                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--ok);min-width:42px">12/12</span>
-                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
-                    <div style="width:100%;height:100%;background:var(--ok);border-radius:3px"></div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div style="display:flex;align-items:center;gap:8px">
-                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--inf);min-width:42px">7/12</span>
-                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
-                    <div style="width:58%;height:100%;background:var(--inf);border-radius:3px"></div>
-                  </div>
-                </div>
-              </td>
               <td class="mono">540 kg</td>
-              <td><span class="bdg bdg-inf">Normal</span></td>
               <td><span class="bdg bdg-inf">🔄 Pesando</span></td>
+              <td class="mono" style="font-size:11px">17/05/2026</td>
+              <td><span class="bdg bdg-ok" style="font-size:9px">Sem desvio</span></td>
+              <td style="font-size:11px">
+                Sala A
+                <div class="mono" style="font-size:10px;color:var(--text3)">BAL-01</div>
+              </td>
               <td><button class="btn btn-sm btn-v" onclick="pesIrCockpit(event, 'continuar')">Continuar</button></td>
             </tr>
 
-            <!-- OP-2026-0416 — TODAS as MPs pagas, NENHUMA pesada → INICIO (abre checklist) -->
+            <!-- OP-2026-0416 — PRONTA PARA PESAGEM -->
             <tr onclick="pesIrCockpit(event, 'inicio')" style="background:var(--ouro-dim);cursor:pointer">
-              <td class="mono" style="color:var(--ouro);font-weight:700">2</td>
-              <td class="mono" style="color:var(--verde)">OP-2026-0416</td>
+              <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0416</td>
               <td style="font-size:12px">Loção Hidratante Rosa 200ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-089</span></td>
-              <td class="mono" style="font-weight:700">12 MPs</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:8px">
-                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--ok);min-width:42px">12/12</span>
-                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
-                    <div style="width:100%;height:100%;background:var(--ok);border-radius:3px"></div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div style="display:flex;align-items:center;gap:8px">
-                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--text3);min-width:42px">0/12</span>
-                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
-                    <div style="width:0%;height:100%;background:var(--text3);border-radius:3px"></div>
-                  </div>
-                </div>
-              </td>
               <td class="mono">600 kg</td>
-              <td><span class="bdg bdg-ouro">🔥 Urgente</span></td>
               <td><span class="bdg bdg-ok">✓ Pronta para Pesagem</span></td>
+              <td class="mono" style="font-size:11px">18/05/2026</td>
+              <td style="font-size:11px;color:var(--text3)">—</td>
+              <td style="font-size:11px;color:var(--text3)">A definir</td>
               <td><button class="btn btn-sm btn-v" onclick="pesIrCockpit(event, 'inicio')">Pesar</button></td>
             </tr>
 
-            <!-- OP-2026-0413 — FINALIZADA (todas pagas e todas pesadas) -->
-            <tr style="background:var(--ok-p);opacity:.7">
-              <td class="mono" style="color:var(--ok);font-weight:700">3</td>
-              <td class="mono" style="color:var(--verde)">OP-2026-0413</td>
+            <!-- OP-2026-0413 — FINALIZADA -->
+            <tr style="background:var(--ok-p);opacity:.85">
+              <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0413</td>
               <td style="font-size:12px">Sabonete Phebo Glicerinado 90g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-051</span></td>
-              <td class="mono">8 MPs</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:8px">
-                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--ok);min-width:42px">8/8</span>
-                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
-                    <div style="width:100%;height:100%;background:var(--ok);border-radius:3px"></div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div style="display:flex;align-items:center;gap:8px">
-                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--ok);min-width:42px">8/8</span>
-                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
-                    <div style="width:100%;height:100%;background:var(--ok);border-radius:3px"></div>
-                  </div>
-                </div>
-              </td>
               <td class="mono">320 kg</td>
-              <td><span class="bdg bdg-ney">Concluída</span></td>
               <td><span class="bdg bdg-ok">✅ Finalizada</span></td>
+              <td class="mono" style="font-size:11px">14/05/2026</td>
+              <td><span class="bdg bdg-alr" style="font-size:9px" title="Fenoxietanol +0,028 kg">⚠ 1 variância</span></td>
+              <td style="font-size:11px">
+                Sala A
+                <div class="mono" style="font-size:10px;color:var(--text3)">BAL-01</div>
+              </td>
               <td><button class="btn btn-sm btn-ghost" onclick="nav('pes-rastr',null,null)" title="Ver trilha de auditoria desta OP">Detalhes</button></td>
             </tr>
           </tbody>
         </table>
+        </div><!-- /overflow-x:auto -->
 
       <!-- ── Modal Checklist de Conferência da Sala (POP-PES-001) ── -->
       <style>
@@ -3111,163 +3082,6 @@ export const SCREENS = {
         </div>
       </div>
       `,
-  "pes-planejamento": `      <div class="page-header">
-        <div><div class="ph-eyebrow">Pesagem · Planejador</div><div class="ph-title">Planejamento das Ordens</div></div>
-        <div class="ph-actions">
-          <button class="btn btn-sm btn-ghost" onclick="alert('🔄 Sincronizando status de pagamento com o JDE...')">🔄 Sincronizar JDE</button>
-          <button class="btn btn-sm btn-v" onclick="alert('📧 Notificação enviada ao Almoxarifado!\\n\\nMPs pendentes destacadas no relatório.')">📧 Notificar Almoxarifado</button>
-        </div>
-      </div>
-
-      <!-- KPIs específicos do planejamento -->
-      <div class="g4 mb14">
-        <div class="card cp" style="text-align:center"><div style="font-family:var(--font-d);font-size:38px;font-weight:700;color:var(--per)" id="plan-kpi-total">5</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Ordens em Planejamento</div></div>
-        <div class="card cv" style="text-align:center"><div style="font-family:var(--font-d);font-size:38px;font-weight:700;color:var(--ok)" id="plan-kpi-prontas">2</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Prontas para Envio</div></div>
-        <div class="card ca" style="text-align:center"><div style="font-family:var(--font-d);font-size:38px;font-weight:700;color:var(--alr)">14</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">MPs Pendentes (JDE)</div></div>
-        <div class="card co" style="text-align:center"><div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--ouro);margin:9px 0">~02:30h</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Última Sync. JDE</div></div>
-      </div>
-
-      <!-- Aviso -->
-      <div class="abox warn mb14"><span class="ai">⚠</span><div>O <strong>Planejador</strong> decide quais ordens enviar para a fila de pesagem. Apenas ordens com <strong>100% das MPs pagas</strong> podem ser enviadas. Quando enviadas, aparecem em <a href="#" onclick="nav('pes-ordens',null,null);return false" style="color:var(--verde);font-weight:700;text-decoration:underline">Seleção de Ordem</a>.</div></div>
-
-      <!-- Tabela de planejamento -->
-      <div class="card co" style="border:2px solid var(--ouro-claro)">
-        <div class="card-title">Ordens em Planejamento</div>
-        <script>
-        function planEnviarParaPesagem(opId, btn) {
-          if (!confirm('▶ Enviar ' + opId + ' para a fila de Pesagem?\\n\\nA ordem aparecerá em Seleção de Ordem e ficará disponível para os operadores.')) return;
-          // Visual: fade da linha
-          var row = btn.closest('tr');
-          if (row) {
-            row.style.transition = 'opacity .3s, background .3s';
-            row.style.background = 'var(--ok-p)';
-            row.style.opacity = '.4';
-          }
-          alert('✅ ' + opId + ' enviada para Pesagem!\\n\\nDisponível agora em Seleção de Ordem.');
-          setTimeout(function(){ nav('pes-ordens', null, null); }, 600);
-        }
-        </script>
-        <table class="tbl">
-          <thead><tr><th>#</th><th>Ordem</th><th>Fábrica</th><th>Produto / Fórmula</th><th>MPs</th><th>Pagamento de MP</th><th>MPs Pendentes</th><th>Volume</th><th>Prioridade</th><th>Previsão Liberação</th><th>Status da Ordem</th><th>Ação</th></tr></thead>
-          <tbody>
-            <!-- OP-2026-0419 — TODAS PAGAS, aguardando decisão do planejador -->
-            <tr style="background:var(--ok-p)">
-              <td class="mono" style="color:var(--ok);font-weight:700">1</td>
-              <td class="mono" style="color:var(--verde)">OP-2026-0419</td>
-              <td><span class="bdg bdg-inf" style="font-size:10px">MF5</span></td>
-              <td style="font-size:12px">Sabonete Líquido Hidratante 250ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-138</span></td>
-              <td class="mono">11 MPs</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:8px">
-                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--ok);min-width:42px">11/11</span>
-                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
-                    <div style="width:100%;height:100%;background:var(--ok);border-radius:3px"></div>
-                  </div>
-                </div>
-              </td>
-              <td class="mono" style="font-size:11px;color:var(--ok)">— nenhuma —</td>
-              <td class="mono">820 kg</td>
-              <td><span class="bdg bdg-ouro">🔥 Urgente</span></td>
-              <td class="mono" style="font-size:11px;color:var(--ok)">Liberada</td>
-              <td><span class="bdg bdg-ok">✓ Pronta para Envio</span></td>
-              <td><button class="btn btn-sm btn-v" onclick="planEnviarParaPesagem('OP-2026-0419', this)">▶ Enviar para Pesagem</button></td>
-            </tr>
-
-            <!-- OP-2026-0420 — TODAS PAGAS, prioridade normal -->
-            <tr style="background:var(--ok-p)">
-              <td class="mono" style="color:var(--ok);font-weight:700">2</td>
-              <td class="mono" style="color:var(--verde)">OP-2026-0420</td>
-              <td><span class="bdg bdg-inf" style="font-size:10px">MF1</span></td>
-              <td style="font-size:12px">Talco Bebê Phebo 200g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-024</span></td>
-              <td class="mono">6 MPs</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:8px">
-                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--ok);min-width:42px">6/6</span>
-                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
-                    <div style="width:100%;height:100%;background:var(--ok);border-radius:3px"></div>
-                  </div>
-                </div>
-              </td>
-              <td class="mono" style="font-size:11px;color:var(--ok)">— nenhuma —</td>
-              <td class="mono">340 kg</td>
-              <td><span class="bdg bdg-inf">Normal</span></td>
-              <td class="mono" style="font-size:11px;color:var(--ok)">Liberada</td>
-              <td><span class="bdg bdg-ok">✓ Pronta para Envio</span></td>
-              <td><button class="btn btn-sm btn-v" onclick="planEnviarParaPesagem('OP-2026-0420', this)">▶ Enviar para Pesagem</button></td>
-            </tr>
-
-            <!-- OP-2026-0421 — quase pronta (8/9) -->
-            <tr style="opacity:.95">
-              <td class="mono">3</td>
-              <td class="mono" style="color:var(--verde)">OP-2026-0421</td>
-              <td><span class="bdg bdg-inf" style="font-size:10px">MF3</span></td>
-              <td style="font-size:12px">Vela Repelente Citronela<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-198</span></td>
-              <td class="mono">7 MPs</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:8px">
-                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--alr);min-width:42px">6/7</span>
-                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
-                    <div style="width:86%;height:100%;background:var(--alr);border-radius:3px"></div>
-                  </div>
-                </div>
-              </td>
-              <td class="mono" style="font-size:11px;color:var(--alr)"><strong>1 MP</strong><br><span style="font-size:10px;color:var(--text3)">Óleo essencial Citronela</span></td>
-              <td class="mono">280 kg</td>
-              <td><span class="bdg bdg-inf">Normal</span></td>
-              <td class="mono" style="font-size:11px;color:var(--ouro)">Hoje · ~16:30</td>
-              <td><span class="bdg bdg-alr">⏳ Pagamento Parcial</span></td>
-              <td><button class="btn btn-sm btn-ghost" disabled style="opacity:.5;cursor:not-allowed" title="Aguardando pagamento de 1 MP (Óleo essencial Citronela). Habilita quando 7/7 estiverem pagas.">Aguardando MPs</button></td>
-            </tr>
-
-            <!-- OP-2026-0417 — pagamento parcial médio -->
-            <tr style="opacity:.95">
-              <td class="mono">4</td>
-              <td class="mono" style="color:var(--verde)">OP-2026-0417</td>
-              <td><span class="bdg bdg-inf" style="font-size:10px">MF5</span></td>
-              <td style="font-size:12px">Shampoo Phebo 400ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-112</span></td>
-              <td class="mono">9 MPs</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:8px">
-                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--alr);min-width:42px">5/9</span>
-                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
-                    <div style="width:55%;height:100%;background:var(--alr);border-radius:3px"></div>
-                  </div>
-                </div>
-              </td>
-              <td class="mono" style="font-size:11px;color:var(--per)"><strong>4 MPs</strong><br><span style="font-size:10px;color:var(--text3)">SLS · Cocamida · Fragrância · Conservante</span></td>
-              <td class="mono">480 kg</td>
-              <td><span class="bdg bdg-inf">Normal</span></td>
-              <td class="mono" style="font-size:11px;color:var(--ouro)">Hoje · ~14:00</td>
-              <td><span class="bdg bdg-alr">⏳ Pagamento Parcial</span></td>
-              <td><button class="btn btn-sm btn-ghost" disabled style="opacity:.5;cursor:not-allowed" title="Aguardando pagamento de 4 MPs no JDE">Aguardando MPs</button></td>
-            </tr>
-
-            <!-- OP-2026-0418 — nenhum pagamento -->
-            <tr style="opacity:.95">
-              <td class="mono">5</td>
-              <td class="mono" style="color:var(--verde)">OP-2026-0418</td>
-              <td><span class="bdg bdg-inf" style="font-size:10px">MF3</span></td>
-              <td style="font-size:12px">Polvilho Antisséptico 100g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-203</span></td>
-              <td class="mono">5 MPs</td>
-              <td>
-                <div style="display:flex;align-items:center;gap:8px">
-                  <span class="mono" style="font-size:13px;font-weight:700;color:var(--per);min-width:42px">0/5</span>
-                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
-                    <div style="width:0%;height:100%;background:var(--per);border-radius:3px"></div>
-                  </div>
-                </div>
-              </td>
-              <td class="mono" style="font-size:11px;color:var(--per)"><strong>5 MPs</strong><br><span style="font-size:10px;color:var(--text3)">Todas as MPs aguardando JDE</span></td>
-              <td class="mono">200 kg</td>
-              <td><span class="bdg bdg-ney">Baixa</span></td>
-              <td class="mono" style="font-size:11px;color:var(--per)">Amanhã · 08:00</td>
-              <td><span class="bdg bdg-per">⏳ Aguardando JDE</span></td>
-              <td><button class="btn btn-sm btn-ghost" disabled style="opacity:.5;cursor:not-allowed" title="Almoxarifado ainda não iniciou o pagamento das MPs">Aguardando MPs</button></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    `,
   "pes-pendencias": `      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Pendências de Pesagem</div></div>
         <div class="ph-actions">
