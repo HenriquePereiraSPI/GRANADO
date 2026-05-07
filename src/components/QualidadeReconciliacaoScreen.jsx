@@ -139,6 +139,19 @@ const STATUS_COLOR = {
   PENDENTE:  { bg: 'var(--alr-p)', fg: 'var(--alr)',  bd: 'var(--alr-b)' },
 };
 
+// Opcoes do campo "Status do Lote" (alinhadas a tabela 41/F4108 do JDE).
+// O CQ pode alterar manualmente (ex.: Q -> L apos liberacao, Q -> B se
+// for bloqueado). Em producao virá da integracao JDE/Apriso.
+const STATUS_LOTE_OPCOES = [
+  { value: 'Q — Sob Quarentena', cor: 'var(--alr)' },
+  { value: 'A — Em Análise',     cor: 'var(--inf)' },
+  { value: 'L — Liberado',       cor: 'var(--ok)' },
+  { value: 'R — Reprovado',      cor: 'var(--per)' },
+  { value: 'B — Bloqueado',      cor: 'var(--per)' },
+  { value: 'D — Destruído',      cor: 'var(--text3)' },
+  { value: 'E — Expirado',       cor: 'var(--text3)' },
+];
+
 const AREA_COR = {
   fabricacao:    { fg: '#FFFFFF', bg: 'var(--inf)',       label: 'Fabricação',     icon: '🧪' },
   embalagem:     { fg: '#FFFFFF', bg: 'var(--ouro)',      label: 'Embalagem',      icon: '📦' },
@@ -196,6 +209,48 @@ function Campo({ label, value, obrigatorio }) {
       >
         {value || <span style={{ color: 'var(--text3)' }}>—</span>}
       </div>
+    </div>
+  );
+}
+
+/**
+ * Campo de seleção (dropdown) com mesma altura/estilo do Campo readonly.
+ * Cor da fonte dinamica baseada na opcao selecionada (passa cor por opcao).
+ */
+function CampoSelect({ label, value, opcoes, onChange, obrigatorio }) {
+  const sel = opcoes.find((o) => o.value === value);
+  const corValor = sel?.cor || 'var(--text)';
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <label style={{
+        fontSize: 9, fontWeight: 900, letterSpacing: '.12em', textTransform: 'uppercase',
+        color: 'var(--text3)', marginBottom: 4,
+      }}>
+        {label} {obrigatorio && <span style={{ color: 'var(--per)' }}>*</span>}
+      </label>
+      <select
+        value={value || ''}
+        onChange={(e) => onChange(e.target.value)}
+        style={{
+          background: 'var(--surface2)',
+          border: '1px solid var(--border)',
+          borderRadius: 4,
+          padding: '6px 10px',
+          fontSize: 12,
+          color: corValor,
+          minHeight: 32,
+          fontFamily: 'var(--font-m)',
+          fontWeight: 700,
+          cursor: 'pointer',
+          outline: 'none',
+        }}
+        onFocus={(e) => (e.currentTarget.style.borderColor = 'var(--verde)')}
+        onBlur={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
+      >
+        {opcoes.map((o) => (
+          <option key={o.value} value={o.value}>{o.value}</option>
+        ))}
+      </select>
     </div>
   );
 }
@@ -557,7 +612,13 @@ export default function QualidadeReconciliacaoScreen() {
               <Campo label="Lote PA" value={lote.lotePA} obrigatorio />
               <Campo label="Lote Granel" value={lote.loteGranel} />
               <Campo label="Ordem (WO)" value={lote.loteFabricacao} />
-              <Campo label="Status do Lote" value={lote.statusLote} />
+              <CampoSelect
+                label="Status do Lote"
+                value={lote.statusLote}
+                opcoes={STATUS_LOTE_OPCOES}
+                onChange={(v) => setLote({ ...lote, statusLote: v })}
+                obrigatorio
+              />
               <Campo label="Data Fabricação" value={lote.dataFabricacao} />
               <Campo label="Data Validade" value={lote.dataValidade} />
               <Campo label="Status Reconciliação" value={lote.statusReconciliacao} />

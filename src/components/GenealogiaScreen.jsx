@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { DOSSIES, findDossie, listarDossies } from '../data/dossie-wo-784426.js';
 import EtiquetaImpressa from './EtiquetaImpressa.jsx';
 
@@ -37,7 +37,13 @@ const COR_VARS = {
 };
 
 export default function GenealogiaScreen() {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+
+  // Quando a tela eh aberta a partir da Reconciliacao de Qualidade,
+  // a URL traz ?lote= e/ou ?area=. Nesse caso mostramos um botao
+  // "Voltar para Reconciliacao" no header da tela.
+  const veioDeReconciliacao = !!(searchParams.get('lote') || searchParams.get('area'));
 
   // Le ?lote=... e ?area=... da URL (vem da Reconciliacao de Qualidade).
   // Lote (Lote PA, lote granel, WO ou codigo) seleciona o dossie inicial.
@@ -97,6 +103,16 @@ export default function GenealogiaScreen() {
           <div className="ph-title">Genealogia de Lote — {DOSSIE.lote}</div>
         </div>
         <div className="ph-actions">
+          {veioDeReconciliacao && (
+            <button
+              className="btn btn-sm btn-ghost"
+              onClick={() => navigate('/qual-reconciliacao')}
+              style={{ borderColor: 'var(--ouro)', color: 'var(--ouro)', fontWeight: 700 }}
+              title="Voltar para a Reconciliação Técnica"
+            >
+              ← Voltar para Reconciliação
+            </button>
+          )}
           <button className="btn btn-sm btn-ghost" onClick={expandirTodos}>⊕ Expandir tudo</button>
           <button className="btn btn-sm btn-ghost" onClick={colapsarTodos}>⊖ Colapsar tudo</button>
           <button className="btn btn-sm btn-ghost" onClick={() => alert('🖨 Imprimindo dossiê em PDF...')}>🖨 Imprimir</button>
