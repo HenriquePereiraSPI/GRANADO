@@ -26,6 +26,7 @@
   <script src="./granado-chip.js"></script>
   <script src="./granado-icon.js"></script>
   <script src="./granado-progress-bar.js"></script>
+  <script src="./granado-stepper.js"></script>
 </head>
 
 <body style="margin:0;padding:24px;background:#F4EED9;font-family:system-ui,-apple-system,sans-serif;color:#103E20">
@@ -136,31 +137,18 @@
       &lt;granado-calendar&gt;
     </h2>
     <div style="display:flex;gap:12px;flex-wrap:wrap">
-      <granado-calendar
-        mode="date"
-        onchangeevent="console.log('Cal 1 (date PT-BR):', value)">
+      <granado-calendar mode="date" onchangeevent="console.log('Cal 1 (date PT-BR):', value)">
       </granado-calendar>
 
-      <granado-calendar
-        mode="date"
-        format="dd/MM/yyyy"
-        placeholder="Escolha uma data..."
-        color="#9A7B1C"
+      <granado-calendar mode="date" format="dd/MM/yyyy" placeholder="Escolha uma data..." color="#9A7B1C"
         onchangeevent="console.log('Cal 2 (dd/MM/yyyy):', value)">
       </granado-calendar>
 
-      <granado-calendar
-        mode="datetime"
-        value="2026-05-06 14:30:00"
-        color="#2C5A8C"
+      <granado-calendar mode="datetime" value="2026-05-06 14:30:00" color="#2C5A8C"
         onchangeevent="console.log('Cal 3 (datetime):', value)">
       </granado-calendar>
 
-      <granado-calendar
-        mode="datetime"
-        lang="en"
-        format="MM/dd/yyyy HH:mm"
-        color="#C0392B"
+      <granado-calendar mode="datetime" lang="en" format="MM/dd/yyyy HH:mm" color="#C0392B"
         onchangeevent="console.log('Cal 4 (EN datetime):', value)">
       </granado-calendar>
     </div>
@@ -173,28 +161,17 @@
       &lt;granado-checkbox&gt;
     </h2>
     <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
-      <granado-checkbox
-        label="Aceito os termos"
-        onchangeevent="console.log('aceito?', checked)">
+      <granado-checkbox label="Aceito os termos" onchangeevent="console.log('aceito?', checked)">
       </granado-checkbox>
 
-      <granado-checkbox
-        label="Notificacoes por email"
-        checked="true"
-        onchangeevent="console.log('email:', checked)">
+      <granado-checkbox label="Notificacoes por email" checked="true" onchangeevent="console.log('email:', checked)">
       </granado-checkbox>
 
-      <granado-checkbox
-        label="Cor custom (ouro)"
-        color="#9A7B1C"
-        checked="true"
+      <granado-checkbox label="Cor custom (ouro)" color="#9A7B1C" checked="true"
         onchangeevent="console.log('ouro:', checked)">
       </granado-checkbox>
 
-      <granado-checkbox
-        label="Desabilitado"
-        checked="true"
-        disabled="true">
+      <granado-checkbox label="Desabilitado" checked="true" disabled="true">
       </granado-checkbox>
     </div>
   </section>
@@ -206,17 +183,12 @@
       &lt;granado-dropdown&gt;
     </h2>
     <div style="display:flex;gap:12px;flex-wrap:wrap">
-      <granado-dropdown
-        placeholder="Selecione um operador..."
+      <granado-dropdown placeholder="Selecione um operador..."
         options='["Maria Silva","Joao Santos","Ana Costa","Pedro Lima","Carla Souza"]'
         onchangeevent="console.log('Operador:', value)">
       </granado-dropdown>
 
-      <granado-dropdown
-        placeholder="Selecione um material..."
-        searchable="true"
-        color="#9A7B1C"
-        options='[
+      <granado-dropdown placeholder="Selecione um material..." searchable="true" color="#9A7B1C" options='[
           {"value":"GLI","label":"Glicerina USP"},
           {"value":"FEN","label":"Fenoxietanol"},
           {"value":"CIT","label":"Acido Citrico"},
@@ -227,28 +199,18 @@
           {"value":"VIT","label":"Vitamina E"},
           {"value":"CAM","label":"Extrato de Camomila"},
           {"value":"MEN","label":"Mentol Cristal"}
-        ]'
-        onchangeevent="console.log('Material:', value, option)">
+        ]' onchangeevent="console.log('Material:', value, option)">
       </granado-dropdown>
 
-      <granado-dropdown
-        multi="true"
-        color="#2C5A8C"
-        placeholder="Filtrar status..."
-        value="OK,DEV"
-        options='[
+      <granado-dropdown multi="true" color="#2C5A8C" placeholder="Filtrar status..." value="OK,DEV" options='[
           {"value":"OK","label":"Aprovado"},
           {"value":"DEV","label":"Desvio"},
           {"value":"PEN","label":"Pendente"},
           {"value":"AGU","label":"Aguardando"}
-        ]'
-        onchangeevent="console.log('Status:', value)">
+        ]' onchangeevent="console.log('Status:', value)">
       </granado-dropdown>
 
-      <granado-dropdown
-        disabled="true"
-        placeholder="Desabilitado"
-        options='["A","B","C"]'>
+      <granado-dropdown disabled="true" placeholder="Desabilitado" options='["A","B","C"]'>
       </granado-dropdown>
     </div>
   </section>
@@ -260,42 +222,24 @@
       &lt;granado-input&gt;
     </h2>
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start">
-      <granado-input style="flex:1;min-width:200px"
-        label="Nome completo"
-        placeholder="Digite seu nome"
+      <granado-input style="flex:1;min-width:200px" label="Nome completo" placeholder="Digite seu nome"
         oninputevent="console.log('Nome:', value)">
       </granado-input>
 
-      <granado-input style="flex:1;min-width:200px"
-        label="Email"
-        icon="mail"
-        type="email"
-        placeholder="seu@email.com"
+      <granado-input style="flex:1;min-width:200px" label="Email" icon="mail" type="email" placeholder="seu@email.com"
         oninputevent="console.log('Email:', value)">
       </granado-input>
 
-      <granado-input style="flex:1;min-width:200px"
-        label="CPF"
-        icon="user"
-        mask="999.999.999-99"
-        placeholder="000.000.000-00"
-        oninputevent="console.log('CPF:', value)">
+      <granado-input style="flex:1;min-width:200px" label="CPF" icon="user" mask="999.999.999-99"
+        placeholder="000.000.000-00" oninputevent="console.log('CPF:', value)">
       </granado-input>
 
-      <granado-input style="flex:1;min-width:200px"
-        label="Senha"
-        icon="lock"
-        ispassword="true"
-        placeholder="Digite sua senha"
-        oninputevent="console.log('Senha:', value)">
+      <granado-input style="flex:1;min-width:200px" label="Senha" icon="lock" ispassword="true"
+        placeholder="Digite sua senha" oninputevent="console.log('Senha:', value)">
       </granado-input>
 
-      <granado-input style="flex:1;min-width:240px"
-        label="Observacoes"
-        type="textarea"
-        rows="3"
-        placeholder="Descreva o desvio observado..."
-        onchangeevent="console.log('Obs:', value)">
+      <granado-input style="flex:1;min-width:240px" label="Observacoes" type="textarea" rows="3"
+        placeholder="Descreva o desvio observado..." onchangeevent="console.log('Obs:', value)">
       </granado-input>
     </div>
   </section>
@@ -307,39 +251,25 @@
       &lt;granado-radio&gt;
     </h2>
     <div style="display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start">
-      <granado-radio
-        options='["Pequeno","Medio","Grande"]'
-        value="Medio"
+      <granado-radio options='["Pequeno","Medio","Grande"]' value="Medio"
         onchangeevent="console.log('Tamanho:', value)">
       </granado-radio>
 
-      <granado-radio
-        orientation="horizontal"
-        color="#9A7B1C"
-        options='[
+      <granado-radio orientation="horizontal" color="#9A7B1C" options='[
           {"value":"OK","label":"Aprovado"},
           {"value":"DEV","label":"Desvio"},
           {"value":"PEN","label":"Pendente"}
-        ]'
-        value="OK"
-        onchangeevent="console.log('Status:', value, option)">
+        ]' value="OK" onchangeevent="console.log('Status:', value, option)">
       </granado-radio>
 
-      <granado-radio
-        color="#2C5A8C"
-        options='[
+      <granado-radio color="#2C5A8C" options='[
           {"value":"manha","label":"Turno Manha"},
           {"value":"tarde","label":"Turno Tarde"},
           {"value":"noite","label":"Turno Noite"}
-        ]'
-        value="tarde"
-        onchangeevent="console.log('Turno:', value)">
+        ]' value="tarde" onchangeevent="console.log('Turno:', value)">
       </granado-radio>
 
-      <granado-radio
-        disabled="true"
-        options='["A","B","C"]'
-        value="B">
+      <granado-radio disabled="true" options='["A","B","C"]' value="B">
       </granado-radio>
     </div>
   </section>
@@ -351,32 +281,19 @@
       &lt;granado-slider&gt;
     </h2>
     <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
-      <granado-slider style="flex:1;min-width:220px"
-        label="Volume"
-        min="0" max="100" value="40"
-        unit="%"
+      <granado-slider style="flex:1;min-width:220px" label="Volume" min="0" max="100" value="40" unit="%"
         oninputevent="console.log('Volume:', value)">
       </granado-slider>
 
-      <granado-slider style="flex:1;min-width:220px"
-        label="Temperatura"
-        min="0" max="200" step="5" value="60"
-        unit="C"
-        color="#C0392B"
-        onchangeevent="console.log('Temp final:', value)">
+      <granado-slider style="flex:1;min-width:220px" label="Temperatura" min="0" max="200" step="5" value="60" unit="C"
+        color="#C0392B" onchangeevent="console.log('Temp final:', value)">
       </granado-slider>
 
-      <granado-slider style="flex:1;min-width:220px"
-        label="Concentracao"
-        min="0" max="1" step="0.05" value="0.3"
-        color="#2C5A8C"
-        oninputevent="console.log('Conc:', value)">
+      <granado-slider style="flex:1;min-width:220px" label="Concentracao" min="0" max="1" step="0.05" value="0.3"
+        color="#2C5A8C" oninputevent="console.log('Conc:', value)">
       </granado-slider>
 
-      <granado-slider style="flex:1;min-width:220px"
-        label="Desabilitado"
-        min="0" max="100" value="75"
-        disabled="true">
+      <granado-slider style="flex:1;min-width:220px" label="Desabilitado" min="0" max="100" value="75" disabled="true">
       </granado-slider>
     </div>
   </section>
@@ -388,30 +305,18 @@
       &lt;granado-toggle&gt;
     </h2>
     <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
-      <granado-toggle
-        label="Notificacoes"
-        onchangeevent="console.log('Notificacoes:', checked)">
+      <granado-toggle label="Notificacoes" onchangeevent="console.log('Notificacoes:', checked)">
       </granado-toggle>
 
-      <granado-toggle
-        label="Modo escuro"
-        checked="true"
-        color="#2C5A8C"
+      <granado-toggle label="Modo escuro" checked="true" color="#2C5A8C"
         onchangeevent="console.log('Modo escuro:', checked)">
       </granado-toggle>
 
-      <granado-toggle
-        label="Auto-salvar"
-        labelposition="left"
-        checked="true"
-        color="#9A7B1C"
+      <granado-toggle label="Auto-salvar" labelposition="left" checked="true" color="#9A7B1C"
         onchangeevent="console.log('Auto-salvar:', checked)">
       </granado-toggle>
 
-      <granado-toggle
-        label="Bloqueado"
-        checked="true"
-        disabled="true">
+      <granado-toggle label="Bloqueado" checked="true" disabled="true">
       </granado-toggle>
     </div>
   </section>
@@ -423,44 +328,23 @@
       &lt;granado-button&gt;
     </h2>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
-      <granado-button
-        label="Salvar"
-        icon="save"
-        onclickevent="console.log('Salvar clicado')">
+      <granado-button label="Salvar" icon="save" onclickevent="console.log('Salvar clicado')">
       </granado-button>
 
-      <granado-button
-        label="Cancelar"
-        variant="secondary"
-        onclickevent="console.log('Cancelar')">
+      <granado-button label="Cancelar" variant="secondary" onclickevent="console.log('Cancelar')">
       </granado-button>
 
-      <granado-button
-        label="Voltar"
-        variant="ghost"
-        icon="arrow-left"
-        onclickevent="console.log('Voltar')">
+      <granado-button label="Voltar" variant="ghost" icon="arrow-left" onclickevent="console.log('Voltar')">
       </granado-button>
 
-      <granado-button
-        label="Excluir"
-        icon="trash"
-        color="#C0392B"
-        onclickevent="console.log('Excluir')">
+      <granado-button label="Excluir" icon="trash" color="#C0392B" onclickevent="console.log('Excluir')">
       </granado-button>
 
-      <granado-button
-        label="Avancar"
-        icon="arrow-right"
-        iconposition="right"
-        color="#2C5A8C"
+      <granado-button label="Avancar" icon="arrow-right" iconposition="right" color="#2C5A8C"
         onclickevent="console.log('Avancar')">
       </granado-button>
 
-      <granado-button
-        label="Bloqueado"
-        icon="lock"
-        disabled="true">
+      <granado-button label="Bloqueado" icon="lock" disabled="true">
       </granado-button>
     </div>
 
@@ -480,21 +364,15 @@
       &lt;granado-panel&gt;
     </h2>
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start">
-      <granado-panel style="flex:1;min-width:260px"
-        title="Detalhes da OP"
-        subtitle="OP-2025-0042 · Shampoo Phebo">
+      <granado-panel style="flex:1;min-width:260px" title="Detalhes da OP" subtitle="OP-2025-0042 · Shampoo Phebo">
         <p style="margin:0;font-size:13px;color:#103E20;line-height:1.5">
           Producao prevista de 5000 unidades. Lote em pesagem na Sala A,
           Balanca B-01. Operador responsavel: Maria Silva.
         </p>
       </granado-panel>
 
-      <granado-panel style="flex:1;min-width:260px"
-        title="Filtros avancados"
-        subtitle="Click para expandir/colapsar"
-        collapsible="true"
-        collapsed="true"
-        color="#9A7B1C"
+      <granado-panel style="flex:1;min-width:260px" title="Filtros avancados" subtitle="Click para expandir/colapsar"
+        collapsible="true" collapsed="true" color="#9A7B1C"
         oncollapseevent="console.log('Filtros colapsado:', collapsed)">
         <div style="display:flex;flex-direction:column;gap:10px">
           <granado-input label="Buscar" icon="search" placeholder="Codigo MP..."></granado-input>
@@ -512,11 +390,10 @@
       &lt;granado-scroll-panel&gt;
     </h2>
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start">
-      <granado-scroll-panel style="flex:1;min-width:260px"
-        title="Log de eventos"
-        subtitle="Ultimas 30 entradas"
+      <granado-scroll-panel style="flex:1;min-width:260px" title="Log de eventos" subtitle="Ultimas 30 entradas"
         maxheight="220px">
-        <ul style="margin:0;padding:0;list-style:none;font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#103E20">
+        <ul
+          style="margin:0;padding:0;list-style:none;font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#103E20">
           <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[08:15] MP-01001 pesado · OK</li>
           <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[08:24] MP-01002 pesado · DESVIO</li>
           <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[08:31] MP-01003 pesado · PENDENTE</li>
@@ -535,9 +412,7 @@
         </ul>
       </granado-scroll-panel>
 
-      <granado-scroll-panel style="flex:1;min-width:260px"
-        title="Materiais cadastrados"
-        maxheight="220px"
+      <granado-scroll-panel style="flex:1;min-width:260px" title="Materiais cadastrados" maxheight="220px"
         color="#2C5A8C">
         <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#103E20">
           <div>Glicerina USP</div>
@@ -584,7 +459,8 @@
       </granado-tab>
 
       <granado-tab value="hist" label="Historico" icon="calendar">
-        <ul style="margin:0;padding:0;list-style:none;font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#103E20">
+        <ul
+          style="margin:0;padding:0;list-style:none;font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#103E20">
           <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[08:15] Inicio da pesagem</li>
           <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[08:24] MP-01001 confirmado · 44983,210 kg</li>
           <li style="padding:6px 0;border-bottom:1px solid #EEE6CF">[08:31] MP-01002 desvio · justificado</li>
@@ -625,53 +501,35 @@
       &lt;granado-toast&gt;
     </h2>
     <p style="font-size:11px;color:#5A6B5E;margin:0 0 10px">
-      Click nos botoes para disparar cada variante. API tipica: <code style="background:#F5EFD9;padding:2px 5px;border-radius:3px;font-size:11px">GranadoToast.success('mensagem')</code>
+      Click nos botoes para disparar cada variante. API tipica: <code
+        style="background:#F5EFD9;padding:2px 5px;border-radius:3px;font-size:11px">GranadoToast.success('mensagem')</code>
     </p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-      <granado-button
-        label="Success"
-        icon="check"
+      <granado-button label="Success" icon="check"
         onclickevent="GranadoToast.success('Pesagem confirmada com sucesso')">
       </granado-button>
 
-      <granado-button
-        label="Error"
-        icon="x"
-        color="#C0392B"
+      <granado-button label="Error" icon="x" color="#C0392B"
         onclickevent="GranadoToast.error('Falha de comunicacao com a balanca', { heading: 'Erro' })">
       </granado-button>
 
-      <granado-button
-        label="Warning"
-        variant="secondary"
-        color="#9A5A00"
+      <granado-button label="Warning" variant="secondary" color="#9A5A00"
         onclickevent="GranadoToast.warning('Lote MP-01002 em desvio', { heading: 'Atencao' })">
       </granado-button>
 
-      <granado-button
-        label="Info"
-        variant="secondary"
-        color="#2C5A8C"
+      <granado-button label="Info" variant="secondary" color="#2C5A8C"
         onclickevent="GranadoToast.info('Aguardando aprovacao do supervisor')">
       </granado-button>
 
-      <granado-button
-        label="Permanente"
-        variant="ghost"
+      <granado-button label="Permanente" variant="ghost"
         onclickevent="GranadoToast.show({ variant:'info', heading:'Conectando', message:'Aguarde...', duration:0 })">
       </granado-button>
 
-      <granado-button
-        label="Bottom center"
-        variant="ghost"
+      <granado-button label="Bottom center" variant="ghost"
         onclickevent="GranadoToast.show({ variant:'success', message:'Toast no rodape', position:'bottom-center' })">
       </granado-button>
 
-      <granado-button
-        label="Fechar todos"
-        variant="ghost"
-        icon="x"
-        onclickevent="GranadoToast.dismissAll()">
+      <granado-button label="Fechar todos" variant="ghost" icon="x" onclickevent="GranadoToast.dismissAll()">
       </granado-button>
     </div>
   </section>
@@ -727,8 +585,7 @@
 
       <granado-chip label="Maria Silva" removable="true"
         onremoveevent="this.remove(); GranadoToast.info('Operador removido')"></granado-chip>
-      <granado-chip label="Joao Santos" removable="true"
-        onremoveevent="this.remove()"></granado-chip>
+      <granado-chip label="Joao Santos" removable="true" onremoveevent="this.remove()"></granado-chip>
 
       <span style="width:1px;height:24px;background:#E5DDC8;margin:0 6px"></span>
 
@@ -772,8 +629,97 @@
       <granado-icon name="bell" color="#2C5A8C" background="true" size="28"></granado-icon>
     </div>
 
-    <p style="font-size:11px;color:#5A6B5E;margin:0 0 8px">Galeria completa (<span id="iconCount"></span> icones):</p>
-    <div id="iconGallery" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;background:#FDFAF1;border:1px solid #E5DDC8;border-radius:8px;padding:14px;max-height:340px;overflow-y:auto"></div>
+    <p style="font-size:11px;color:#5A6B5E;margin:0 0 8px">Galeria completa (<span id="iconCount">87</span> icones):</p>
+    <div id="iconGallery"
+      style="display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;background:#FDFAF1;border:1px solid #E5DDC8;border-radius:8px;padding:14px;max-height:340px;overflow-y:auto">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="plus"><granado-icon name="plus" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">plus</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="minus"><granado-icon name="minus" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">minus</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="x"><granado-icon name="x" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">x</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="check"><granado-icon name="check" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">check</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="edit"><granado-icon name="edit" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">edit</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="save"><granado-icon name="save" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">save</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="trash"><granado-icon name="trash" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">trash</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="copy"><granado-icon name="copy" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">copy</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="share"><granado-icon name="share" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">share</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="upload"><granado-icon name="upload" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">upload</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="download"><granado-icon name="download" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">download</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="search"><granado-icon name="search" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">search</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="filter"><granado-icon name="filter" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">filter</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="refresh"><granado-icon name="refresh" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">refresh</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="send"><granado-icon name="send" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">send</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="print"><granado-icon name="print" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">print</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="arrow-up"><granado-icon name="arrow-up" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">arrow-up</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="arrow-down"><granado-icon name="arrow-down" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">arrow-down</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="arrow-left"><granado-icon name="arrow-left" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">arrow-left</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="arrow-right"><granado-icon name="arrow-right" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">arrow-right</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="chevron-up"><granado-icon name="chevron-up" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">chevron-up</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="chevron-down"><granado-icon name="chevron-down" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">chevron-down</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="chevron-left"><granado-icon name="chevron-left" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">chevron-left</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="chevron-right"><granado-icon name="chevron-right" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">chevron-right</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="home"><granado-icon name="home" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">home</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="menu"><granado-icon name="menu" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">menu</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="more-horizontal"><granado-icon name="more-horizontal" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">more-horizontal</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="more-vertical"><granado-icon name="more-vertical" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">more-vertical</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="external-link"><granado-icon name="external-link" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">external-link</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="info"><granado-icon name="info" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">info</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="alert-triangle"><granado-icon name="alert-triangle" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">alert-triangle</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="alert-circle"><granado-icon name="alert-circle" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">alert-circle</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="check-circle"><granado-icon name="check-circle" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">check-circle</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="x-circle"><granado-icon name="x-circle" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">x-circle</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="help-circle"><granado-icon name="help-circle" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">help-circle</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="bell"><granado-icon name="bell" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">bell</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="bell-off"><granado-icon name="bell-off" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">bell-off</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="shield"><granado-icon name="shield" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">shield</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="shield-off"><granado-icon name="shield-off" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">shield-off</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="file"><granado-icon name="file" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">file</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="file-text"><granado-icon name="file-text" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">file-text</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="folder"><granado-icon name="folder" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">folder</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="user"><granado-icon name="user" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">user</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="users"><granado-icon name="users" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">users</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="calendar"><granado-icon name="calendar" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">calendar</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="clock"><granado-icon name="clock" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">clock</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="mail"><granado-icon name="mail" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">mail</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="phone"><granado-icon name="phone" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">phone</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="lock"><granado-icon name="lock" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">lock</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="unlock"><granado-icon name="unlock" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">unlock</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="eye"><granado-icon name="eye" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">eye</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="eye-off"><granado-icon name="eye-off" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">eye-off</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="settings"><granado-icon name="settings" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">settings</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="tag"><granado-icon name="tag" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">tag</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="flag"><granado-icon name="flag" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">flag</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="bookmark"><granado-icon name="bookmark" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">bookmark</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="heart"><granado-icon name="heart" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">heart</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="star"><granado-icon name="star" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">star</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="map-pin"><granado-icon name="map-pin" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">map-pin</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="image"><granado-icon name="image" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">image</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="link"><granado-icon name="link" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">link</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="package"><granado-icon name="package" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">package</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="box"><granado-icon name="box" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">box</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="truck"><granado-icon name="truck" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">truck</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="archive"><granado-icon name="archive" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">archive</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="database"><granado-icon name="database" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">database</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="server"><granado-icon name="server" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">server</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="activity"><granado-icon name="activity" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">activity</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="bar-chart"><granado-icon name="bar-chart" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">bar-chart</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="pie-chart"><granado-icon name="pie-chart" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">pie-chart</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="trending-up"><granado-icon name="trending-up" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">trending-up</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="trending-down"><granado-icon name="trending-down" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">trending-down</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="droplet"><granado-icon name="droplet" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">droplet</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="thermometer"><granado-icon name="thermometer" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">thermometer</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="zap"><granado-icon name="zap" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">zap</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="wifi"><granado-icon name="wifi" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">wifi</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="wifi-off"><granado-icon name="wifi-off" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">wifi-off</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="play"><granado-icon name="play" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">play</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="pause"><granado-icon name="pause" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">pause</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="stop"><granado-icon name="stop" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">stop</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="volume"><granado-icon name="volume" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">volume</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="sun"><granado-icon name="sun" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">sun</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="moon"><granado-icon name="moon" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">moon</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="globe"><granado-icon name="globe" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">globe</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="log-out"><granado-icon name="log-out" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">log-out</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="log-in"><granado-icon name="log-in" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">log-in</span></div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="power"><granado-icon name="power" size="22" color="#103E20"></granado-icon><span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">power</span></div>
+    </div>
   </section>
 
   <!-- ========== Linha 19 — granado-progress-bar ========== -->
@@ -784,19 +730,102 @@
     </h2>
 
     <div style="display:flex;flex-direction:column;gap:18px;max-width:560px">
-      <granado-progress-bar label="Eficiencia" value="92"
-        labelposition="left" valueposition="right"
+      <granado-progress-bar label="Eficiencia" value="92" labelposition="left" valueposition="right"
         color="#1C7A38"></granado-progress-bar>
 
-      <granado-progress-bar value="65" isshowlabel="false" valueposition="right"
-        color="#2C5A8C" pulse="true"></granado-progress-bar>
+      <granado-progress-bar value="65" isshowlabel="false" valueposition="right" color="#2C5A8C"
+        pulse="true"></granado-progress-bar>
 
-      <granado-progress-bar value="38" isshowlabel="false" valueposition="down"
-        color="#9A7B1C"></granado-progress-bar>
+      <granado-progress-bar value="38" isshowlabel="false" valueposition="down" color="#9A7B1C"></granado-progress-bar>
     </div>
   </section>
 
-  <!-- ========== Linha 20 — granado-table ========== -->
+  <!-- ========== Linha 20 — granado-stepper ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-stepper&gt;
+    </h2>
+
+    <div style="display:flex;flex-direction:column;gap:18px">
+
+      <!-- 1) Cockpit de Pesagem (replica do pes-stepper) -->
+      <div style="background:#FDFAF1;border:1px solid #D6CDA4;border-radius:8px;padding:14px 20px">
+        <div
+          style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E;margin-bottom:10px">
+          Pesagem · step 4 de 7
+        </div>
+        <granado-stepper id="stp-pes" onstepclickevent="console.log('Pesagem · click step', key, '→', step.subtitle)">
+        </granado-stepper>
+      </div>
+
+      <!-- 2) Onboarding · paleta active/desactive + currentstepcolor -->
+      <div style="background:#FDFAF1;border:1px solid #D6CDA4;border-radius:8px;padding:14px 20px">
+        <div
+          style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E;margin-bottom:10px">
+          Onboarding · paleta active/desactive + currentstepcolor (shape "rounded")
+        </div>
+        <granado-stepper id="stp-onb" activeiconcolor="#2C5A8C" desactiveiconcolor="#8FA9C2" activetextcolor="#1B3A5C"
+          desactivetextcolor="#1B3A5C" activeconnectorcolor="#2C5A8C" desactiveconnectorcolor="#D8E0EA"
+          currentstepcolor="#9A7520"></granado-stepper>
+      </div>
+
+      <!-- 3) Quadrado, sem subtitle -->
+      <div style="background:#FDFAF1;border:1px solid #D6CDA4;border-radius:8px;padding:14px 20px">
+        <div
+          style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E;margin-bottom:10px">
+          Compacto · activeiconcolor + currentstepcolor (shape "square", sem subtitle)
+        </div>
+        <granado-stepper id="stp-sq" activeiconcolor="#9A7520" activeconnectorcolor="#9A7520"
+          currentstepcolor="#1C5C31"></granado-stepper>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      // Setup via setAttribute('steps', JSON.stringify(...)) em vez de .steps = [...].
+      // Em Apriso o script da pagina pode rodar antes do custom element ter sido
+      // upgraded — nesse cenario, atribuir a property direta cria uma own property
+      // no HTMLElement e o setter da classe nunca e chamado. setAttribute funciona
+      // sempre porque attributeChangedCallback dispara assim que o componente sobe.
+
+      // 1) Replica do pes-stepper: 3 steps concluidos, step atual = 4
+      //    Step "4" usa isCurrent: true → bolinha em currentstepcolor (ouro).
+      document.getElementById('stp-pes').setAttribute('steps', JSON.stringify([
+        { key: 'mp', title: '✓', subtitle: 'Selecionar MP', isFilled: true, onClickEvent: "alert('Voltar para: ' + step.subtitle)" },
+        { key: 'ini', title: '✓', subtitle: 'Iniciar', isFilled: true, onClickEvent: "alert('Voltar para: ' + step.subtitle)" },
+        { key: 'scan', title: '✓', subtitle: 'Scan Etiqueta', isFilled: true, onClickEvent: "alert('Voltar para: ' + step.subtitle)" },
+        { key: 'bal', title: '4', subtitle: 'Balanca', isFilled: true, isCurrent: true, onClickEvent: "alert('Step atual: ' + step.subtitle)" },
+        { key: 'pes', title: '5', subtitle: 'Pesagem', isFilled: false },
+        { key: 'conf', title: '6', subtitle: 'Confirmar', isFilled: false },
+        { key: 'etq', title: '7', subtitle: 'Etiqueta / Gaiola', isFilled: false }
+      ]));
+
+      // 2) Onboarding: cores via paleta active/desactive do elemento.
+      //    Step 3 e o atual (isCurrent → ouro). Step 4 nao tem onClickEvent
+      //    e fica "apagado".
+      document.getElementById('stp-onb').setAttribute('steps', JSON.stringify([
+        { key: 'cad', title: '✓', subtitle: 'Cadastro', isFilled: true, shapeFormat: 'rounded', onClickEvent: "console.log('cadastro')" },
+        { key: 'doc', title: '✓', subtitle: 'Documentos', isFilled: true, shapeFormat: 'rounded', onClickEvent: "console.log('documentos')" },
+        { key: 'pgto', title: '3', subtitle: 'Pagamento', isFilled: false, shapeFormat: 'rounded', isCurrent: true, onClickEvent: "alert('Pagamento (atual)')" },
+        { key: 'rev', title: '4', subtitle: 'Revisao', isFilled: false, shapeFormat: 'rounded' }
+      ]));
+
+      // 3) Compacto: paleta do elemento. Step "C" e o atual (isCurrent
+      //    → verde via currentstepcolor); D e E ficam apagados.
+      document.getElementById('stp-sq').setAttribute('steps', JSON.stringify([
+        { key: 's1', title: 'A', isFilled: true, shapeFormat: 'square', onClickEvent: "console.log('A')" },
+        { key: 's2', title: 'B', isFilled: true, shapeFormat: 'square', onClickEvent: "console.log('B')" },
+        { key: 's3', title: 'C', isFilled: false, shapeFormat: 'square', isCurrent: true, onClickEvent: "console.log('C (atual)')" },
+        { key: 's4', title: 'D', isFilled: false, shapeFormat: 'square' },
+        { key: 's5', title: 'E', isFilled: false, shapeFormat: 'square' }
+      ]));
+    })();
+  </script>
+
+  <!-- ========== Linha 21 — granado-table ========== -->
   <section>
     <h2
       style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
@@ -806,49 +835,36 @@
     </granado-table>
   </section>
 
-  <script>
-    (function () {
-      const gallery = document.getElementById('iconGallery');
-      const all = GranadoIcon.list();
-      document.getElementById('iconCount').textContent = all.length;
-      gallery.innerHTML = all.map(name =>
-        `<div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:6px;background:#F5EFD9" title="${name}">
-          <granado-icon name="${name}" size="22" color="#103E20"></granado-icon>
-          <span style="font-size:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#5A6B5E;text-align:center;word-break:break-all">${name}</span>
-        </div>`
-      ).join('');
-    })();
-  </script>
 
   <script>
     const rows = [
-      { cod: 'MP-01001', lote: 'L24-1001', mat: 'Glicerina USP',         pesado: '44983,210', balanca: 'B-01', operador: 'Maria Silva',  horario: '08:15', status: 'OK' },
-      { cod: 'MP-01002', lote: 'L24-1002', mat: 'Fenoxietanol',          pesado: '3028,500',  balanca: 'B-02', operador: 'Joao Santos',  horario: '08:24', status: 'Desvio' },
-      { cod: 'MP-01003', lote: 'L24-1003', mat: 'Acido Citrico',         pesado: '12450,000', balanca: 'B-01', operador: 'Ana Costa',    horario: '08:31', status: 'Pendente' },
-      { cod: 'MP-01004', lote: 'L24-1004', mat: 'Lauril Sulfato',        pesado: '8721,640',  balanca: 'B-03', operador: 'Pedro Lima',   horario: '08:42', status: 'Aprovado' },
-      { cod: 'MP-01005', lote: 'L24-1005', mat: 'Cera de Abelha',        pesado: '2100,000',  balanca: 'B-02', operador: 'Carla Souza',  horario: '08:55', status: 'OK' },
-      { cod: 'MP-01006', lote: 'L24-1006', mat: 'Oleo de Amendoa',       pesado: '15890,330', balanca: 'B-04', operador: 'Maria Silva',  horario: '09:08', status: 'Desvio' },
-      { cod: 'MP-01007', lote: 'L24-1007', mat: 'Manteiga de Karite',    pesado: '4567,890',  balanca: 'B-01', operador: 'Joao Santos',  horario: '09:21', status: 'OK' },
-      { cod: 'MP-01008', lote: 'L24-1008', mat: 'Vitamina E',            pesado: '320,150',   balanca: 'B-03', operador: 'Ana Costa',    horario: '09:34', status: 'Aprovado' },
-      { cod: 'MP-01009', lote: 'L24-1009', mat: 'Extrato de Camomila',   pesado: '985,420',   balanca: 'B-02', operador: 'Pedro Lima',   horario: '09:47', status: 'Pendente' },
-      { cod: 'MP-01010', lote: 'L24-1010', mat: 'Mentol Cristal',        pesado: '1240,000',  balanca: 'B-04', operador: 'Carla Souza',  horario: '10:02', status: 'OK' },
-      { cod: 'MP-01011', lote: 'L24-1011', mat: 'Acido Salicilico',      pesado: '670,800',   balanca: 'B-01', operador: 'Maria Silva',  horario: '10:15', status: 'Desvio' },
-      { cod: 'MP-01012', lote: 'L24-1012', mat: 'Ureia',                 pesado: '5430,250',  balanca: 'B-03', operador: 'Joao Santos',  horario: '10:28', status: 'OK' },
-      { cod: 'MP-01013', lote: 'L24-1013', mat: 'Pantenol',              pesado: '1890,470',  balanca: 'B-02', operador: 'Ana Costa',    horario: '10:41', status: 'Aprovado' },
-      { cod: 'MP-01014', lote: 'L24-1014', mat: 'Niacinamida',           pesado: '2230,000',  balanca: 'B-04', operador: 'Pedro Lima',   horario: '10:55', status: 'Pendente' },
-      { cod: 'MP-01015', lote: 'L24-1015', mat: 'Acido Hialuronico',     pesado: '95,780',    balanca: 'B-01', operador: 'Carla Souza',  horario: '11:08', status: 'OK' }
+      { cod: 'MP-01001', lote: 'L24-1001', mat: 'Glicerina USP', pesado: '44983,210', balanca: 'B-01', operador: 'Maria Silva', horario: '08:15', status: 'OK' },
+      { cod: 'MP-01002', lote: 'L24-1002', mat: 'Fenoxietanol', pesado: '3028,500', balanca: 'B-02', operador: 'Joao Santos', horario: '08:24', status: 'Desvio' },
+      { cod: 'MP-01003', lote: 'L24-1003', mat: 'Acido Citrico', pesado: '12450,000', balanca: 'B-01', operador: 'Ana Costa', horario: '08:31', status: 'Pendente' },
+      { cod: 'MP-01004', lote: 'L24-1004', mat: 'Lauril Sulfato', pesado: '8721,640', balanca: 'B-03', operador: 'Pedro Lima', horario: '08:42', status: 'Aprovado' },
+      { cod: 'MP-01005', lote: 'L24-1005', mat: 'Cera de Abelha', pesado: '2100,000', balanca: 'B-02', operador: 'Carla Souza', horario: '08:55', status: 'OK' },
+      { cod: 'MP-01006', lote: 'L24-1006', mat: 'Oleo de Amendoa', pesado: '15890,330', balanca: 'B-04', operador: 'Maria Silva', horario: '09:08', status: 'Desvio' },
+      { cod: 'MP-01007', lote: 'L24-1007', mat: 'Manteiga de Karite', pesado: '4567,890', balanca: 'B-01', operador: 'Joao Santos', horario: '09:21', status: 'OK' },
+      { cod: 'MP-01008', lote: 'L24-1008', mat: 'Vitamina E', pesado: '320,150', balanca: 'B-03', operador: 'Ana Costa', horario: '09:34', status: 'Aprovado' },
+      { cod: 'MP-01009', lote: 'L24-1009', mat: 'Extrato de Camomila', pesado: '985,420', balanca: 'B-02', operador: 'Pedro Lima', horario: '09:47', status: 'Pendente' },
+      { cod: 'MP-01010', lote: 'L24-1010', mat: 'Mentol Cristal', pesado: '1240,000', balanca: 'B-04', operador: 'Carla Souza', horario: '10:02', status: 'OK' },
+      { cod: 'MP-01011', lote: 'L24-1011', mat: 'Acido Salicilico', pesado: '670,800', balanca: 'B-01', operador: 'Maria Silva', horario: '10:15', status: 'Desvio' },
+      { cod: 'MP-01012', lote: 'L24-1012', mat: 'Ureia', pesado: '5430,250', balanca: 'B-03', operador: 'Joao Santos', horario: '10:28', status: 'OK' },
+      { cod: 'MP-01013', lote: 'L24-1013', mat: 'Pantenol', pesado: '1890,470', balanca: 'B-02', operador: 'Ana Costa', horario: '10:41', status: 'Aprovado' },
+      { cod: 'MP-01014', lote: 'L24-1014', mat: 'Niacinamida', pesado: '2230,000', balanca: 'B-04', operador: 'Pedro Lima', horario: '10:55', status: 'Pendente' },
+      { cod: 'MP-01015', lote: 'L24-1015', mat: 'Acido Hialuronico', pesado: '95,780', balanca: 'B-01', operador: 'Carla Souza', horario: '11:08', status: 'OK' }
     ];
 
     const columns = [
-      { key: 'cod',      label: 'Codigo MP',   align: 'left', width: '100px', mono: true },
-      { key: 'lote',     label: 'Lote',        align: 'left', width: '95px',  mono: true },
-      { key: 'mat',      label: 'Material',    align: 'left', width: '180px' },
-      { key: 'pesado',   label: 'Pesado (kg)', align: 'left', width: '110px', mono: true },
-      { key: 'balanca',  label: 'Balanca',     align: 'left', width: '80px' },
-      { key: 'operador', label: 'Operador',    align: 'left', width: '130px' },
-      { key: 'horario',  label: 'Horario',     align: 'left', width: '85px',  mono: true },
-      { key: 'status',   label: 'Status',      align: 'left', width: '110px' },
-      { key: 'acao',     label: 'Acao',        align: 'left', width: '110px', filterable: false, sortable: false }
+      { key: 'cod', label: 'Codigo MP', align: 'left', width: '100px', mono: true },
+      { key: 'lote', label: 'Lote', align: 'left', width: '95px', mono: true },
+      { key: 'mat', label: 'Material', align: 'left', width: '180px' },
+      { key: 'pesado', label: 'Pesado (kg)', align: 'left', width: '110px', mono: true },
+      { key: 'balanca', label: 'Balanca', align: 'left', width: '80px' },
+      { key: 'operador', label: 'Operador', align: 'left', width: '130px' },
+      { key: 'horario', label: 'Horario', align: 'left', width: '85px', mono: true },
+      { key: 'status', label: 'Status', align: 'left', width: '110px' },
+      { key: 'acao', label: 'Acao', align: 'left', width: '110px', filterable: false, sortable: false }
     ];
 
     const tbl = document.getElementById('tbl');
