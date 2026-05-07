@@ -42,7 +42,7 @@ export const MODULES = [
       { id: 'pes-devol-mp',     label: 'Devolucao de MP' },
       { id: 'pes-checkout',     label: 'Checkout / Validacao' },
       { id: 'pes-oee',          label: '📊 OEE Pesagem' },
-      { id: 'pes-perf-operador', label: '📈 Minha Performance' },
+      { id: 'pes-perf-operador', label: '📈 Performance' },
       { id: 'pes-rastr',        label: '📋 Rastreabilidade' },
     ],
   },

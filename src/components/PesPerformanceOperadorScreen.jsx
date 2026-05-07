@@ -3,20 +3,21 @@ import {
   OPERADOR_LOGADO_ID,
   META_ADERENCIA,
   OPERADORES,
-  MINHAS_PESAGENS,
+  PESAGENS_HOJE,
 } from '../data/pes-perf-operador-data.js';
 
 /**
- * Tela /pes-perf-operador — Performance Pessoal na Pesagem (Fase A).
+ * Tela /pes-perf-operador — Performance na Pesagem (Fase A).
  *
  * Foco: o OPERADOR. Responde "como EU estou pesando?".
- * Complementa /pes-oee (que e visao agregada por sala/granel).
+ * Complementa /pes-oee (visao agregada por sala/granel).
  *
  * Fase A entrega:
- *   1. Header com seletor de periodo (Hoje / Semana / Mes)
- *   2. 4 KPIs pessoais (aderencia, tempo medio, MPs pesadas, variancias criticas)
- *   3. Ranking entre operadores com a linha "VOCE" destacada
- *   4. Tabela cronologica das pesagens do operador no periodo
+ *   1. Header com seletor de periodo
+ *   2. 4 KPIs pessoais (aderencia, tempo medio, MPs pesadas, variancias)
+ *   3. Filtros (operador, ordem, MP)
+ *   4. Ranking entre operadores (numerado)
+ *   5. Tabela cronologica das pesagens do dia
  */
 
 const PERIODO_LABEL = {
@@ -57,8 +58,6 @@ function KpiCard({ label, valor, unidade, cor, icone, subInfo, deltaInfo, destaq
 }
 
 function DeltaBadge({ valor, tipo = 'maior-melhor', sufixo = 'pp', referencia }) {
-  // tipo='maior-melhor': verde quando valor positivo (acima de referencia eh bom).
-  // tipo='menor-melhor': verde quando valor negativo (abaixo de referencia eh bom).
   if (valor == null) return null;
   const positivo = valor >= 0;
   const bom = tipo === 'maior-melhor' ? positivo : !positivo;
@@ -98,17 +97,18 @@ function TempoPill({ real, padrao }) {
 
 export default function PesPerformanceOperadorScreen() {
   const [periodo, setPeriodo] = useState('hoje');
-  const [operadorId, setOperadorId] = useState(OPERADOR_LOGADO_ID);
+  const [filtroOperador, setFiltroOperador] = useState(OPERADOR_LOGADO_ID);
+  const [filtroOrdem, setFiltroOrdem] = useState('todos');
+  const [filtroMP, setFiltroMP] = useState('todos');
 
-  // Lider/CQ pode trocar de operador via select (mock — em prod, gated por role).
+  // Dados do operador filtrado (KPIs sao sempre referentes a esse operador).
   const operador = useMemo(
-    () => OPERADORES.find((o) => o.id === operadorId) || OPERADORES[0],
-    [operadorId]
+    () => OPERADORES.find((o) => o.id === filtroOperador) || OPERADORES[0],
+    [filtroOperador]
   );
-
   const stats = operador.stats[periodo];
 
-  // Media da equipe (todos operadores) no periodo escolhido.
+  // Media da equipe no periodo.
   const mediaEquipe = useMemo(() => {
     const arr = OPERADORES.map((o) => o.stats[periodo]);
     return {
@@ -119,20 +119,46 @@ export default function PesPerformanceOperadorScreen() {
     };
   }, [periodo]);
 
-  // Ranking ordenado por aderencia decrescente.
+  // Ranking ordenado por aderencia decrescente (sempre full — nao filtrado).
   const ranking = useMemo(() => {
     return [...OPERADORES]
       .map((o) => ({ ...o, s: o.stats[periodo] }))
       .sort((a, b) => b.s.aderencia - a.s.aderencia);
   }, [periodo]);
 
-  const minhaPosicao = ranking.findIndex((r) => r.id === operadorId) + 1;
+  const minhaPosicao = ranking.findIndex((r) => r.id === filtroOperador) + 1;
   const totalOperadores = ranking.length;
 
-  // Pesagens do operador no periodo. Hoje tem feed completo; semana/mes
-  // sao agregados — mostramos apenas as mais recentes (Fase A).
-  const minhasPesagens = MINHAS_PESAGENS[periodo] || [];
-  const ehOperadorLogado = operadorId === OPERADOR_LOGADO_ID;
+  // Listas unicas para os dropdowns de filtro (agregam todas as pesagens
+  // do dia — independente do operador).
+  const ordensDisponiveis = useMemo(
+    () => [...new Set(PESAGENS_HOJE.map((p) => p.op))].sort(),
+    []
+  );
+  const mpsDisponiveis = useMemo(() => {
+    const map = new Map();
+    PESAGENS_HOJE.forEach((p) => {
+      if (!map.has(p.mp)) map.set(p.mp, p.material);
+    });
+    return [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  }, []);
+
+  // Pesagens visiveis: aplicam-se TODOS os filtros.
+  const pesagensFiltradas = useMemo(() => {
+    return PESAGENS_HOJE.filter((p) => {
+      if (filtroOperador !== 'todos' && p.operadorId !== filtroOperador) return false;
+      if (filtroOrdem !== 'todos' && p.op !== filtroOrdem) return false;
+      if (filtroMP !== 'todos' && p.mp !== filtroMP) return false;
+      return true;
+    });
+  }, [filtroOperador, filtroOrdem, filtroMP]);
+
+  const limparFiltros = () => {
+    setFiltroOperador(OPERADOR_LOGADO_ID);
+    setFiltroOrdem('todos');
+    setFiltroMP('todos');
+  };
+  const algumFiltroAtivo = filtroOperador !== OPERADOR_LOGADO_ID || filtroOrdem !== 'todos' || filtroMP !== 'todos';
 
   // KPI deltas
   const deltaAderencia = stats.aderencia - META_ADERENCIA;
@@ -144,13 +170,11 @@ export default function PesPerformanceOperadorScreen() {
       {/* ── Header ─────────────────────────────────────────── */}
       <div className="page-header">
         <div>
-          <div className="ph-eyebrow">Pesagem · Performance Pessoal · MF5</div>
-          <div className="ph-title">
-            {ehOperadorLogado ? 'Minha Performance na Pesagem' : `Performance — ${operador.nome}`}
-          </div>
+          <div className="ph-eyebrow">Pesagem · Performance · MF5</div>
+          <div className="ph-title">Performance</div>
         </div>
         <div className="ph-actions" style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-          {/* Avatar do operador logado / selecionado */}
+          {/* Avatar do operador filtrado */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 8,
             padding: '6px 12px', background: 'var(--surface2)',
@@ -162,21 +186,6 @@ export default function PesPerformanceOperadorScreen() {
               <div style={{ fontSize: 10, color: 'var(--text3)', fontFamily: 'var(--font-m)' }}>Mat. {operador.matricula}</div>
             </div>
           </div>
-
-          {/* Select de operador (Lider/CQ) */}
-          <select
-            className="inp"
-            value={operadorId}
-            onChange={(e) => setOperadorId(e.target.value)}
-            style={{ width: 'auto', fontSize: 12, padding: '6px 10px' }}
-            title="Trocar operador (visão líder)"
-          >
-            {OPERADORES.map((o) => (
-              <option key={o.id} value={o.id}>
-                {o.id === OPERADOR_LOGADO_ID ? '⭐ ' : ''}{o.nome} ({o.matricula})
-              </option>
-            ))}
-          </select>
 
           {/* Periodo */}
           <select
@@ -209,12 +218,7 @@ export default function PesPerformanceOperadorScreen() {
           destaque
           subInfo={`Meta ${META_ADERENCIA}%`}
           deltaInfo={
-            <DeltaBadge
-              valor={deltaAderencia}
-              tipo="maior-melhor"
-              sufixo="pp"
-              referencia="meta"
-            />
+            <DeltaBadge valor={deltaAderencia} tipo="maior-melhor" sufixo="pp" referencia="meta" />
           }
         />
         <KpiCard
@@ -225,12 +229,7 @@ export default function PesPerformanceOperadorScreen() {
           icone="⏱"
           subInfo={`Padrão equipe: ${stats.padraoMedio.toFixed(1)} min`}
           deltaInfo={
-            <DeltaBadge
-              valor={deltaTempoMP}
-              tipo="menor-melhor"
-              sufixo="%"
-              referencia="padrão"
-            />
+            <DeltaBadge valor={deltaTempoMP} tipo="menor-melhor" sufixo="%" referencia="padrão" />
           }
         />
         <KpiCard
@@ -249,47 +248,105 @@ export default function PesPerformanceOperadorScreen() {
           icone="⚠"
           subInfo={`Média da equipe: ${mediaEquipe.variancesCriticas.toFixed(1)}`}
           deltaInfo={
-            <DeltaBadge
-              valor={deltaCriticas}
-              tipo="menor-melhor"
-              sufixo=""
-              referencia="média"
-            />
+            <DeltaBadge valor={deltaCriticas} tipo="menor-melhor" sufixo="" referencia="média" />
           }
         />
       </div>
 
-      {/* ── Ranking + Tabela em 2 colunas ───────────────────── */}
+      {/* ── Filtros ─────────────────────────────────────────── */}
       <div
+        className="card mb14"
         style={{
+          padding: 14,
           display: 'grid',
-          gridTemplateColumns: 'minmax(320px, 1fr) minmax(420px, 2fr)',
-          gap: 14,
-          marginBottom: 14,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+          gap: 12,
+          alignItems: 'flex-end',
         }}
       >
-        {/* Ranking */}
-        <div className="card co" style={{ padding: 0, overflow: 'hidden', borderTop: '3px solid var(--ouro-claro)' }}>
-          <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 800 }}>🏆 Ranking da Equipe</span>
-            <span style={{ fontSize: 10, color: 'var(--text3)', fontFamily: 'var(--font-m)' }}>
-              {periodo === 'hoje' ? 'Hoje' : periodo === 'semana' ? 'Semana' : 'Mês'} · ordenado por aderência
-            </span>
-          </div>
-          <table className="tbl" style={{ fontSize: 11 }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label className="lbl">Operador</label>
+          <select
+            className="sel"
+            value={filtroOperador}
+            onChange={(e) => setFiltroOperador(e.target.value)}
+            style={{ fontSize: 12, padding: '7px 10px' }}
+          >
+            <option value="todos">Todos os operadores</option>
+            {OPERADORES.map((o) => (
+              <option key={o.id} value={o.id}>
+                {o.id === OPERADOR_LOGADO_ID ? '★ ' : ''}{o.nome} ({o.matricula})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label className="lbl">Ordem (OP)</label>
+          <select
+            className="sel"
+            value={filtroOrdem}
+            onChange={(e) => setFiltroOrdem(e.target.value)}
+            style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }}
+          >
+            <option value="todos">Todas as ordens</option>
+            {ordensDisponiveis.map((o) => (
+              <option key={o} value={o}>{o}</option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label className="lbl">Matéria-Prima (MP)</label>
+          <select
+            className="sel"
+            value={filtroMP}
+            onChange={(e) => setFiltroMP(e.target.value)}
+            style={{ fontSize: 12, padding: '7px 10px' }}
+          >
+            <option value="todos">Todas as MPs</option>
+            {mpsDisponiveis.map(([cod, mat]) => (
+              <option key={cod} value={cod}>{cod} — {mat}</option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
+          <button
+            className="btn btn-md btn-ghost"
+            onClick={limparFiltros}
+            disabled={!algumFiltroAtivo}
+            style={{ opacity: algumFiltroAtivo ? 1 : 0.5 }}
+          >
+            ✕ Limpar Filtros
+          </button>
+        </div>
+      </div>
+
+      {/* ── Ranking (acima) ─────────────────────────────────── */}
+      <div className="card co mb14" style={{ padding: 0, overflow: 'hidden', borderTop: '3px solid var(--ouro-claro)' }}>
+        <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 13, fontWeight: 800 }}>🏆 Ranking da Equipe</span>
+          <span style={{ fontSize: 10, color: 'var(--text3)', fontFamily: 'var(--font-m)' }}>
+            {PERIODO_LABEL[periodo]} · ordenado por aderência
+          </span>
+        </div>
+        <div style={{ overflowX: 'auto' }}>
+          <table className="tbl" style={{ fontSize: 11, minWidth: 700 }}>
             <thead>
               <tr>
-                <th style={{ width: 40, textAlign: 'center' }}>Pos.</th>
+                <th style={{ width: 50, textAlign: 'center' }}>Pos.</th>
                 <th>Operador</th>
                 <th style={{ textAlign: 'right' }}>Aderência</th>
+                <th style={{ textAlign: 'right' }}>Tempo Médio</th>
                 <th style={{ textAlign: 'right' }}>MPs/h</th>
-                <th style={{ textAlign: 'right' }}>Críticas</th>
+                <th style={{ textAlign: 'right' }}>MPs Total</th>
+                <th style={{ textAlign: 'right' }}>Variâncias</th>
               </tr>
             </thead>
             <tbody>
               {ranking.map((r, i) => {
-                const ehLinhaAtiva = r.id === operadorId;
-                const medalha = ['🥇', '🥈', '🥉'][i] || `${i + 1}º`;
+                const ehLinhaAtiva = r.id === filtroOperador;
                 return (
                   <tr
                     key={r.id}
@@ -298,7 +355,9 @@ export default function PesPerformanceOperadorScreen() {
                       fontWeight: ehLinhaAtiva ? 700 : 400,
                     }}
                   >
-                    <td style={{ textAlign: 'center', fontSize: 14 }}>{medalha}</td>
+                    <td className="mono" style={{ textAlign: 'center', fontSize: 13, fontWeight: 800, color: ehLinhaAtiva ? 'var(--verde)' : 'var(--text2)' }}>
+                      {i + 1}
+                    </td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <span style={{ fontSize: 14 }}>{r.avatar}</span>
@@ -313,7 +372,9 @@ export default function PesPerformanceOperadorScreen() {
                     <td className="mono" style={{ textAlign: 'right', color: r.s.aderencia >= META_ADERENCIA ? 'var(--ok)' : 'var(--text)' }}>
                       {r.s.aderencia.toFixed(1)}%
                     </td>
+                    <td className="mono" style={{ textAlign: 'right' }}>{r.s.tempoMedio.toFixed(1)} min</td>
                     <td className="mono" style={{ textAlign: 'right' }}>{r.s.mpsHora.toFixed(1)}</td>
+                    <td className="mono" style={{ textAlign: 'right' }}>{r.s.mpsTotal.toLocaleString('pt-BR')}</td>
                     <td className="mono" style={{ textAlign: 'right', color: r.s.variancesCriticas === 0 ? 'var(--ok)' : 'var(--alr)' }}>
                       {r.s.variancesCriticas}
                     </td>
@@ -322,54 +383,69 @@ export default function PesPerformanceOperadorScreen() {
               })}
             </tbody>
           </table>
-          <div style={{ padding: '8px 14px', borderTop: '1px solid var(--border)', background: 'var(--bg)', fontSize: 10, color: 'var(--text3)' }}>
-            Você está em <strong style={{ color: 'var(--verde)' }}>{minhaPosicao}º de {totalOperadores}</strong>.
-            {minhaPosicao === 1 && ' 🎉 Liderando!'}
-            {minhaPosicao === 2 && ' Está bem perto da liderança 👀'}
-            {minhaPosicao === totalOperadores && ' Foco — vamos subir.'}
-          </div>
         </div>
+        <div style={{ padding: '8px 14px', borderTop: '1px solid var(--border)', background: 'var(--bg)', fontSize: 10, color: 'var(--text3)' }}>
+          Você está em <strong style={{ color: 'var(--verde)' }}>{minhaPosicao}º de {totalOperadores}</strong>.
+          {minhaPosicao === 1 && ' 🎉 Liderando!'}
+          {minhaPosicao === 2 && ' Está bem perto da liderança 👀'}
+          {minhaPosicao === totalOperadores && ' Foco — vamos subir.'}
+        </div>
+      </div>
 
-        {/* Tabela de pesagens */}
-        <div className="card cv" style={{ padding: 0, overflow: 'hidden' }}>
-          <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 800 }}>
-              📋 {ehOperadorLogado ? 'Minhas' : `Pesagens de ${operador.nome}`} — {PERIODO_LABEL[periodo]}
-            </span>
-            <span style={{ fontSize: 10, color: 'var(--text3)', fontFamily: 'var(--font-m)' }}>
-              {minhasPesagens.length} pesagens detalhadas
-            </span>
-          </div>
-          <div style={{ overflowX: 'auto' }}>
-            <table className="tbl" style={{ fontSize: 11, minWidth: 760 }}>
-              <thead>
+      {/* ── Tabela "Hoje · Turno A" (abaixo) ────────────────── */}
+      <div className="card cv mb14" style={{ padding: 0, overflow: 'hidden' }}>
+        <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 13, fontWeight: 800 }}>📋 Hoje · Turno A</span>
+          <span style={{ fontSize: 10, color: 'var(--text3)', fontFamily: 'var(--font-m)' }}>
+            {pesagensFiltradas.length} pesagens
+            {algumFiltroAtivo && (
+              <span style={{ color: 'var(--inf)', marginLeft: 6 }}>
+                (filtrado de {PESAGENS_HOJE.length})
+              </span>
+            )}
+          </span>
+        </div>
+        <div style={{ overflowX: 'auto' }}>
+          <table className="tbl" style={{ fontSize: 11, minWidth: 880 }}>
+            <thead>
+              <tr>
+                <th>Hora</th>
+                <th>Operador</th>
+                <th>OP</th>
+                <th>MP · Material</th>
+                <th>Lote</th>
+                <th style={{ textAlign: 'right' }}>Alvo / Pesado (kg)</th>
+                <th style={{ textAlign: 'right' }}>Variância</th>
+                <th style={{ textAlign: 'right' }}>Tempo Real / Padrão</th>
+                <th>Sala · Box</th>
+                <th style={{ textAlign: 'center' }}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pesagensFiltradas.length === 0 && (
                 <tr>
-                  <th>Hora</th>
-                  <th>OP</th>
-                  <th>MP · Material</th>
-                  <th>Lote</th>
-                  <th style={{ textAlign: 'right' }}>Alvo / Pesado (kg)</th>
-                  <th style={{ textAlign: 'right' }}>Variância</th>
-                  <th style={{ textAlign: 'right' }}>Tempo Real / Padrão</th>
-                  <th>Sala · Box</th>
-                  <th style={{ textAlign: 'center' }}>Status</th>
+                  <td colSpan={10} style={{ textAlign: 'center', padding: 28, color: 'var(--text3)' }}>
+                    <div style={{ fontSize: 22, marginBottom: 4 }}>🔍</div>
+                    Nenhuma pesagem corresponde aos filtros aplicados.
+                    <div style={{ fontSize: 10, marginTop: 4 }}>
+                      <button onClick={limparFiltros} style={{ background: 'none', border: 'none', color: 'var(--verde)', cursor: 'pointer', textDecoration: 'underline', fontFamily: 'inherit', fontSize: 10 }}>
+                        Limpar filtros
+                      </button>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {minhasPesagens.length === 0 && (
-                  <tr>
-                    <td colSpan={9} style={{ textAlign: 'center', padding: 28, color: 'var(--text3)' }}>
-                      <div style={{ fontSize: 22, marginBottom: 4 }}>📊</div>
-                      Feed detalhado disponível apenas para "Hoje" nesta fase.
-                      <div style={{ fontSize: 10, marginTop: 4 }}>
-                        (Em produção: paginação completa por período.)
-                      </div>
-                    </td>
-                  </tr>
-                )}
-                {minhasPesagens.map((p, idx) => (
+              )}
+              {pesagensFiltradas.map((p, idx) => {
+                const op = OPERADORES.find((o) => o.id === p.operadorId);
+                return (
                   <tr key={idx} style={{ background: p.status === 'desv' ? 'var(--alr-p)' : 'transparent' }}>
                     <td className="mono">{p.hora}</td>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <span style={{ fontSize: 12 }}>{op?.avatar}</span>
+                        <span style={{ fontSize: 11 }}>{op?.nome}</span>
+                      </div>
+                    </td>
                     <td className="mono" style={{ color: 'var(--text2)' }}>{p.op}</td>
                     <td>
                       <div style={{ fontFamily: 'var(--font-m)', fontSize: 10, color: 'var(--text3)' }}>{p.mp}</div>
@@ -394,10 +470,10 @@ export default function PesPerformanceOperadorScreen() {
                       <StatusPill status={p.status} />
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
 
