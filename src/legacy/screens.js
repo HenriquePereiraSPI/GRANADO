@@ -1600,37 +1600,37 @@ export const SCREENS = {
               <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px">
 
                 <!-- BAL-01 -->
-                <div id="bal-btn-BAL-01" onclick="pesEscolherBalanca('BAL-01','Toledo PC Link 7 — Bancada A','Cap: 600 kg · Prec: 0,01 kg','20/03/2026')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--surface2);transition:all .18s">
+                <div id="bal-btn-BAL-01" onclick="pesEscolherBalanca('BAL-01','Toledo PC Link 7 — Bancada A','Cap: 600 kg · Div: 0,01 kg','20/03/2026')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--surface2);transition:all .18s">
                   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
                     <div style="font-family:var(--font-m);font-size:14px;font-weight:700;color:var(--verde)">BAL-01</div>
                     <span class="bdg bdg-ok">Disponível</span>
                   </div>
                   <div style="font-size:12px;font-weight:700;color:var(--text)">Toledo PC Link 7 — Bancada A</div>
-                  <div style="font-size:10px;color:var(--text2);margin-top:4px">Cap: 600 kg · Precisão: 0,01 kg</div>
+                  <div style="font-size:10px;color:var(--text2);margin-top:4px">Cap: 600 kg · Divisão: 0,01 kg</div>
                   <div style="font-size:10px;color:var(--text3);margin-top:2px">Última calibração: 20/03/2026</div>
                   <div style="margin-top:8px;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--verde)">⭐ Sugestão do sistema</div>
                 </div>
 
                 <!-- BAL-02 -->
-                <div id="bal-btn-BAL-02" onclick="pesEscolherBalanca('BAL-02','Toledo PC Link 7 — Bancada B','Cap: 600 kg · Prec: 0,01 kg','18/03/2026')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--surface2);transition:all .18s">
+                <div id="bal-btn-BAL-02" onclick="pesEscolherBalanca('BAL-02','Toledo PC Link 7 — Bancada B','Cap: 100 kg · Div: 0,5 kg','18/03/2026')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--surface2);transition:all .18s">
                   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
                     <div style="font-family:var(--font-m);font-size:14px;font-weight:700;color:var(--verde)">BAL-02</div>
                     <span class="bdg bdg-ok">Disponível</span>
                   </div>
                   <div style="font-size:12px;font-weight:700;color:var(--text)">Toledo PC Link 7 — Bancada B</div>
-                  <div style="font-size:10px;color:var(--text2);margin-top:4px">Cap: 600 kg · Precisão: 0,01 kg</div>
+                  <div style="font-size:10px;color:var(--text2);margin-top:4px">Cap: 100 kg · Divisão: 0,5 kg</div>
                   <div style="font-size:10px;color:var(--text3);margin-top:2px">Última calibração: 18/03/2026</div>
                 </div>
 
                 <!-- BAL-03 -->
-                <div id="bal-btn-BAL-03" style="cursor:not-allowed;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--per-p);opacity:.65">
+                <div id="bal-btn-BAL-03" onclick="pesEscolherBalanca('BAL-03','Toledo PC Link 7 — Bancada C','Cap: 5 kg · Div: 0,01 kg','15/03/2026')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--surface2);transition:all .18s">
                   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
-                    <div style="font-family:var(--font-m);font-size:14px;font-weight:700;color:var(--per)">BAL-03</div>
-                    <span class="bdg bdg-per">Em Uso</span>
+                    <div style="font-family:var(--font-m);font-size:14px;font-weight:700;color:var(--verde)">BAL-03</div>
+                    <span class="bdg bdg-ok">Disponível</span>
                   </div>
                   <div style="font-size:12px;font-weight:700;color:var(--text)">Toledo PC Link 7 — Bancada C</div>
-                  <div style="font-size:10px;color:var(--text2);margin-top:4px">Cap: 600 kg · Precisão: 0,01 kg</div>
-                  <div style="font-size:10px;color:var(--per);margin-top:2px">Em uso por: M. Oliveira · OP-2026-0417</div>
+                  <div style="font-size:10px;color:var(--text2);margin-top:4px">Cap: 5 kg · Divisão: 0,01 kg</div>
+                  <div style="font-size:10px;color:var(--alr);margin-top:2px">⚠ Em uso por: M. Oliveira · OP-2026-0417</div>
                 </div>
 
               </div>
@@ -2444,15 +2444,15 @@ export const SCREENS = {
       <div class="card cv">
         <div class="card-title">Registro de Pesagens Confirmadas — Clique na linha para ações</div>
         <div style="overflow-x:auto">
-        <table class="tbl" id="tbl-mps-pesadas" style="font-size:11px;min-width:900px">
+        <table class="tbl" id="tbl-mps-pesadas" style="font-size:11px;min-width:1020px">
           <thead>
             <tr>
               <th>#</th><th>Código MP</th><th>Material</th><th>Lote</th><th>Alvo (kg)</th><th>Pesado (kg)</th>
-              <th>Variância de pesagem</th><th>Nº Gaiola</th><th>Cód. Etiqueta</th><th>Operador</th><th>Horário</th><th>Balança</th><th>Status</th><th></th>
+              <th>Variância de pesagem</th><th>Nº Gaiola</th><th>Cód. Etiqueta</th><th>Operador<br/>(Matrícula)</th><th>Horário</th><th>Balança</th><th>Sala · Box</th><th>Status</th><th></th>
             </tr>
           </thead>
           <tbody>
-            <tr style="cursor:pointer" onclick="pesAbrirDesvio({n:'1',mat:'Glicerina USP',lote:'GLI-2026-08',alvo:'45,000',pesado:'44,983',desv:'–0,017',op:'J. Santos',hr:'06:12',bal:'BAL-03',etq:'ETQ-2026-0416-001',status:'ok'})">
+            <tr style="cursor:pointer" onclick="pesAbrirDesvio({n:'1',mat:'Glicerina USP',lote:'GLI-2026-08',alvo:'45,000',pesado:'44,983',desv:'–0,017',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 3',hr:'06:12',bal:'BAL-03',etq:'ETQ-2026-0416-001',status:'ok'})">
               <td class="mono" style="color:var(--ok)">1</td>
               <td class="mono" style="font-size:10px;color:var(--text2)">MP-4821</td>
               <td style="font-size:12px">Glicerina USP</td>
@@ -2461,11 +2461,12 @@ export const SCREENS = {
               <td class="mono" style="color:var(--ok)">–0,017</td>
               <td class="mono" style="font-size:10px;color:var(--inf)">563944</td>
               <td class="mono" style="font-size:10px">ETQ-2026-0416-001</td>
-              <td style="font-size:11px">J. Santos</td><td class="mono" style="font-size:10px">06:12</td><td class="mono" style="font-size:10px">BAL-03</td>
+              <td style="font-size:11px">J. Santos <span class="mono" style="color:var(--text3);font-size:10px">(155)</span></td><td class="mono" style="font-size:10px">06:12</td><td class="mono" style="font-size:10px">BAL-03</td>
+              <td style="font-size:10px;color:var(--text2)">Sala A · Box 3</td>
               <td><span class="bdg bdg-ok">✓ Impressa</span></td>
-              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'1',mat:'Glicerina USP',lote:'GLI-2026-08',alvo:'45,000',pesado:'44,983',desv:'–0,017',op:'J. Santos',hr:'06:12',bal:'BAL-03',etq:'ETQ-2026-0416-001',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'1',mat:'Glicerina USP',lote:'GLI-2026-08',alvo:'45,000',pesado:'44,983',desv:'–0,017',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 3',hr:'06:12',bal:'BAL-03',etq:'ETQ-2026-0416-001',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
             </tr>
-            <tr style="cursor:pointer" onclick="pesAbrirDesvio({n:'2',mat:'Propilenoglicol',lote:'PPG-2026-12',alvo:'18,000',pesado:'18,005',desv:'+0,005',op:'J. Santos',hr:'06:24',bal:'BAL-03',etq:'ETQ-2026-0416-002',status:'ok'})">
+            <tr style="cursor:pointer" onclick="pesAbrirDesvio({n:'2',mat:'Propilenoglicol',lote:'PPG-2026-12',alvo:'18,000',pesado:'18,005',desv:'+0,005',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 3',hr:'06:24',bal:'BAL-03',etq:'ETQ-2026-0416-002',status:'ok'})">
               <td class="mono" style="color:var(--ok)">2</td>
               <td class="mono" style="font-size:10px;color:var(--text2)">MP-3307</td>
               <td style="font-size:12px">Propilenoglicol</td>
@@ -2474,11 +2475,12 @@ export const SCREENS = {
               <td class="mono" style="color:var(--ok)">+0,005</td>
               <td class="mono" style="font-size:10px;color:var(--inf)">563945</td>
               <td class="mono" style="font-size:10px">ETQ-2026-0416-002</td>
-              <td style="font-size:11px">J. Santos</td><td class="mono" style="font-size:10px">06:24</td><td class="mono" style="font-size:10px">BAL-03</td>
+              <td style="font-size:11px">J. Santos <span class="mono" style="color:var(--text3);font-size:10px">(155)</span></td><td class="mono" style="font-size:10px">06:24</td><td class="mono" style="font-size:10px">BAL-03</td>
+              <td style="font-size:10px;color:var(--text2)">Sala A · Box 3</td>
               <td><span class="bdg bdg-ok">✓ Impressa</span></td>
-              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'2',mat:'Propilenoglicol',lote:'PPG-2026-12',alvo:'18,000',pesado:'18,005',desv:'+0,005',op:'J. Santos',hr:'06:24',bal:'BAL-03',etq:'ETQ-2026-0416-002',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'2',mat:'Propilenoglicol',lote:'PPG-2026-12',alvo:'18,000',pesado:'18,005',desv:'+0,005',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 3',hr:'06:24',bal:'BAL-03',etq:'ETQ-2026-0416-002',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
             </tr>
-            <tr style="cursor:pointer" onclick="pesAbrirDesvio({n:'3',mat:'Carbopol 940',lote:'CAR-2026-05',alvo:'2,500',pesado:'2,498',desv:'–0,002',op:'J. Santos',hr:'06:38',bal:'BAL-01',etq:'ETQ-2026-0416-003',status:'ok'})">
+            <tr style="cursor:pointer" onclick="pesAbrirDesvio({n:'3',mat:'Carbopol 940',lote:'CAR-2026-05',alvo:'2,500',pesado:'2,498',desv:'–0,002',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'06:38',bal:'BAL-01',etq:'ETQ-2026-0416-003',status:'ok'})">
               <td class="mono" style="color:var(--ok)">3</td>
               <td class="mono" style="font-size:10px;color:var(--text2)">MP-0914</td>
               <td style="font-size:12px">Carbopol 940</td>
@@ -2487,11 +2489,12 @@ export const SCREENS = {
               <td class="mono" style="color:var(--ok)">–0,002</td>
               <td class="mono" style="font-size:10px;color:var(--inf)">563946</td>
               <td class="mono" style="font-size:10px">ETQ-2026-0416-003</td>
-              <td style="font-size:11px">J. Santos</td><td class="mono" style="font-size:10px">06:38</td><td class="mono" style="font-size:10px">BAL-01</td>
+              <td style="font-size:11px">J. Santos <span class="mono" style="color:var(--text3);font-size:10px">(155)</span></td><td class="mono" style="font-size:10px">06:38</td><td class="mono" style="font-size:10px">BAL-01</td>
+              <td style="font-size:10px;color:var(--text2)">Sala A · Box 1</td>
               <td><span class="bdg bdg-ok">✓ Impressa</span></td>
-              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'3',mat:'Carbopol 940',lote:'CAR-2026-05',alvo:'2,500',pesado:'2,498',desv:'–0,002',op:'J. Santos',hr:'06:38',bal:'BAL-01',etq:'ETQ-2026-0416-003',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'3',mat:'Carbopol 940',lote:'CAR-2026-05',alvo:'2,500',pesado:'2,498',desv:'–0,002',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'06:38',bal:'BAL-01',etq:'ETQ-2026-0416-003',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
             </tr>
-            <tr style="cursor:pointer;background:var(--alr-p)" onclick="pesAbrirDesvio({n:'4',mat:'Fenoxietanol',lote:'FEN-2026-03',alvo:'3,000',pesado:'3,028',desv:'+0,028 ⚠',op:'J. Santos',hr:'06:51',bal:'BAL-01',etq:'ETQ-2026-0416-004',status:'desv'})">
+            <tr style="cursor:pointer;background:var(--alr-p)" onclick="pesAbrirDesvio({n:'4',mat:'Fenoxietanol',lote:'FEN-2026-03',alvo:'3,000',pesado:'3,028',desv:'+0,028 ⚠',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'06:51',bal:'BAL-01',etq:'ETQ-2026-0416-004',status:'desv'})">
               <td class="mono" style="color:var(--ok)">4</td>
               <td class="mono" style="font-size:10px;color:var(--text2)">MP-2256</td>
               <td style="font-size:12px">Fenoxietanol</td>
@@ -2500,11 +2503,12 @@ export const SCREENS = {
               <td class="mono" style="color:var(--alr);font-weight:700">+0,028 ⚠</td>
               <td class="mono" style="font-size:10px;color:var(--inf)">563947</td>
               <td class="mono" style="font-size:10px">ETQ-2026-0416-004</td>
-              <td style="font-size:11px">J. Santos</td><td class="mono" style="font-size:10px">06:51</td><td class="mono" style="font-size:10px">BAL-01</td>
+              <td style="font-size:11px">J. Santos <span class="mono" style="color:var(--text3);font-size:10px">(155)</span></td><td class="mono" style="font-size:10px">06:51</td><td class="mono" style="font-size:10px">BAL-01</td>
+              <td style="font-size:10px;color:var(--text2)">Sala A · Box 1</td>
               <td><span class="bdg bdg-alr">Com Variância</span></td>
-              <td><button class="btn btn-sm btn-p" style="font-size:9px" onclick="pesAbrirDesvio({n:'4',mat:'Fenoxietanol',lote:'FEN-2026-03',alvo:'3,000',pesado:'3,028',desv:'+0,028',op:'J. Santos',hr:'06:51',bal:'BAL-01',etq:'ETQ-2026-0416-004',status:'desv'});event.stopPropagation()">⚠ Variância de pesagem</button></td>
+              <td><button class="btn btn-sm btn-p" style="font-size:9px" onclick="pesAbrirDesvio({n:'4',mat:'Fenoxietanol',lote:'FEN-2026-03',alvo:'3,000',pesado:'3,028',desv:'+0,028',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'06:51',bal:'BAL-01',etq:'ETQ-2026-0416-004',status:'desv'});event.stopPropagation()">⚠ Variância de pesagem</button></td>
             </tr>
-            <tr style="cursor:pointer" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99%',lote:'TEA-2026-07',alvo:'1,800',pesado:'1,801',desv:'+0,001',op:'J. Santos',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005',status:'ok'})">
+            <tr style="cursor:pointer" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99%',lote:'TEA-2026-07',alvo:'1,800',pesado:'1,801',desv:'+0,001',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005',status:'ok'})">
               <td class="mono" style="color:var(--ok)">5</td>
               <td class="mono" style="font-size:10px;color:var(--text2)">MP-5593</td>
               <td style="font-size:12px">TEA 99%</td>
@@ -2513,9 +2517,10 @@ export const SCREENS = {
               <td class="mono" style="color:var(--ok)">+0,001</td>
               <td class="mono" style="font-size:10px;color:var(--inf)">563948</td>
               <td class="mono" style="font-size:10px">ETQ-2026-0416-005</td>
-              <td style="font-size:11px">J. Santos</td><td class="mono" style="font-size:10px">07:02</td><td class="mono" style="font-size:10px">BAL-01</td>
+              <td style="font-size:11px">J. Santos <span class="mono" style="color:var(--text3);font-size:10px">(155)</span></td><td class="mono" style="font-size:10px">07:02</td><td class="mono" style="font-size:10px">BAL-01</td>
+              <td style="font-size:10px;color:var(--text2)">Sala A · Box 1</td>
               <td><span class="bdg bdg-ok">✓ Impressa</span></td>
-              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99%',lote:'TEA-2026-07',alvo:'1,800',pesado:'1,801',desv:'+0,001',op:'J. Santos',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99%',lote:'TEA-2026-07',alvo:'1,800',pesado:'1,801',desv:'+0,001',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
             </tr>
           </tbody>
         </table>
@@ -2644,13 +2649,17 @@ export const SCREENS = {
       function pesAbrirDesvio(d) {
         _mpsSel = d;
         document.getElementById('mps-popup-titulo').textContent = 'MP #' + d.n + ' — ' + d.mat;
+        var opLabel = d.op ? d.op + (d.mat_op ? ' (' + d.mat_op + ')' : '') : '—';
+        var salaLabel = d.sala || '—';
         document.getElementById('mps-popup-info').innerHTML =
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Lote</span><div style="font-family:var(--font-m);font-size:12px;font-weight:700;margin-top:2px">' + d.lote + '</div></div>' +
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Qtd. Alvo</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + d.alvo + ' kg</div></div>' +
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Pesado</span><div style="font-size:12px;font-weight:700;color:var(--verde);margin-top:2px">' + d.pesado + ' kg</div></div>' +
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Variância de pesagem</span><div style="font-size:12px;font-weight:700;color:' + (d.status==='desv'?'var(--alr)':'var(--ok)') + ';margin-top:2px">' + d.desv + ' kg</div></div>' +
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Etiqueta</span><div style="font-family:var(--font-m);font-size:11px;margin-top:2px">' + d.etq + '</div></div>' +
-          '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Balança</span><div style="font-family:var(--font-m);font-size:12px;margin-top:2px">' + d.bal + '</div></div>';
+          '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Balança</span><div style="font-family:var(--font-m);font-size:12px;margin-top:2px">' + d.bal + '</div></div>' +
+          '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Operador</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + opLabel + '</div></div>' +
+          '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Sala · Box</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + salaLabel + '</div></div>';
         // Reset tabs
         mpsPoupupAba('desvio');
         document.getElementById('mps-desvio-scan').value = '';
@@ -2662,7 +2671,7 @@ export const SCREENS = {
       }
 
       function pesAbrirNovaPS() {
-        pesAbrirDesvio({n:'—',mat:'Nova Pesagem',lote:'—',alvo:'—',pesado:'—',desv:'—',op:'',hr:'',bal:'',etq:'',status:'novo'});
+        pesAbrirDesvio({n:'—',mat:'Nova Pesagem',lote:'—',alvo:'—',pesado:'—',desv:'—',op:'',mat_op:'',sala:'',hr:'',bal:'',etq:'',status:'novo'});
       }
 
       function mpsPoupupAba(aba) {
