@@ -38,14 +38,25 @@ const COR_VARS = {
 
 export default function GenealogiaScreen() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [DOSSIE, setDossie] = useState(DOSSIES[0]);
 
-  // Le ?area=... da URL (vem da tela de Reconciliacao de Qualidade) e
-  // garante que o no correspondente esteja expandido inicialmente.
+  // Le ?lote=... e ?area=... da URL (vem da Reconciliacao de Qualidade).
+  // Lote (Lote PA, lote granel, WO ou codigo) seleciona o dossie inicial.
+  // Area expande o no correspondente.
+  const dossieInicial = useMemo(() => {
+    const l = searchParams.get('lote');
+    if (l) {
+      const d = findDossie(l);
+      if (d) return d;
+    }
+    return DOSSIES[0];
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const noAreaInicial = useMemo(() => {
     const a = searchParams.get('area');
     return a ? AREA_PARA_NO[a] : null;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const [DOSSIE, setDossie] = useState(dossieInicial);
 
   const [expandidos, setExpandidos] = useState(() => {
     const base = new Set(['mp', 'fabricacao', 'granel']);

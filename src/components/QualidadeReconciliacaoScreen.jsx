@@ -18,60 +18,42 @@ import { useNavigate } from 'react-router-dom';
  *      CED'. Se alguma REPROVADO, libera 'Reprovar Lote'.
  */
 
-// ── Mock de lotes (substituir por chamada API JDE/Apriso) ─────
+// ─────────────────────────────────────────────────────────────
+// Mock de lotes — chave eh o LOTE PA (numero de Producao Acabado),
+// alinhado 1:1 com os 3 dossies da Genealogia
+// (src/data/dossie-wo-784426.js → DOSSIES). Em producao, esta tabela
+// virá da integracao JDE/Apriso usando o lote PA como chave primária.
+//
+// Mapeamento:
+//   262417 → Sabonete Glicerinado Tradicional (DOSSIE_1, WO 784426, granel 2551/2026)
+//   261892 → Sabonete Glicerinado Limão Siciliano (DOSSIE_2, WO 784301, granel 2401/2026)
+//   261104 → Sabonete Glicerinado Mel (DOSSIE_3, WO 783897, granel 2298/2026)
+// ─────────────────────────────────────────────────────────────
 const BASE_MOCK = {
-  ABC123: {
+  '262417': {
     numeroReconciliacao: '137234',
     filial: '0015 - Casa Granado',
-    produtoAcabado: 'PA-08812 — Sabonete Glicerina Tradicional 90g',
-    granel: 'GR-552 — Granel Sabonete Glicerina',
-    loteFabricacao: 'FAB-2026-0418',
-    dataFabricacao: '2026-04-18',
-    dataValidade: '2029-04-18',
-    statusLote: 'Q — Sob Quarentena',
-    statusReconciliacao: '10 — Aberto',
-    statusDocumentacao: '10 — Aberto',
-    areas: {
-      fabricacao: {
-        rendimentoTeorico: '10.000 kg', rendimentoReal: '9.870 kg', perda: '1,30%',
-        responsavel: '', data: '', status: 'PENDENTE', observacoes: '',
-      },
-      embalagem: {
-        unidadesPlanejadas: '9.870 un', unidadesProduzidas: '9.842 un', perda: '0,28%',
-        responsavel: '', data: '', status: 'PENDENTE', observacoes: '',
-      },
-      fisicoQuimico: {
-        ph: '7,2', umidade: '8,4%', densidade: '1,05 g/cm³',
-        responsavel: '', data: '', status: 'PENDENTE', observacoes: '',
-      },
-      microbiologia: {
-        contagemTotal: '< 10 UFC/g', bolorLevedura: '< 10 UFC/g', patogenos: 'Ausente',
-        responsavel: '', data: '', status: 'PENDENTE', observacoes: '',
-      },
-    },
-  },
-  G2026091: {
-    numeroReconciliacao: '137240',
-    filial: '0015 - Casa Granado',
-    produtoAcabado: 'PA-08815 — Loção Hidratante Rosa 200ml',
-    granel: 'GR-589 — Granel Loção Hidratante Rosa',
-    loteFabricacao: 'FAB-2026-0416',
+    produtoAcabado: 'S0815B_G — Sabonete Glicerinado Tradicional 90g',
+    granel: 'S0815B — TRANSP GRANADO GLICERINA',
+    loteGranel: '2551/2026',
+    lotePA: '262417',
+    loteFabricacao: 'WO 784426',
     dataFabricacao: '2026-04-16',
-    dataValidade: '2028-04-16',
+    dataValidade: '2029-04-30',
     statusLote: 'Q — Sob Quarentena',
     statusReconciliacao: '10 — Aberto',
     statusDocumentacao: '10 — Aberto',
     areas: {
       fabricacao: {
-        rendimentoTeorico: '600 kg', rendimentoReal: '598,2 kg', perda: '0,30%',
+        rendimentoTeorico: '6.000 kg', rendimentoReal: '6.006 kg', perda: '0,10%',
         responsavel: '', data: '', status: 'PENDENTE', observacoes: '',
       },
       embalagem: {
-        unidadesPlanejadas: '4.820 un', unidadesProduzidas: '4.820 un', perda: '0,00%',
+        unidadesPlanejadas: '52.056 un', unidadesProduzidas: '48.531 un', perda: '6,77%',
         responsavel: '', data: '', status: 'PENDENTE', observacoes: '',
       },
       fisicoQuimico: {
-        ph: '6,8', umidade: '32%', densidade: '0,98 g/cm³',
+        ph: '10,7', umidade: '22%', densidade: '1,02 g/cm³',
         responsavel: '', data: '', status: 'PENDENTE', observacoes: '',
       },
       microbiologia: {
@@ -80,36 +62,71 @@ const BASE_MOCK = {
       },
     },
   },
-  XYZ789: {
+  '261892': {
+    numeroReconciliacao: '137220',
+    filial: '0015 - Casa Granado',
+    produtoAcabado: 'S0822B_G — Sabonete Glicerinado Limão Siciliano 90g',
+    granel: 'S0822B — TRANSP GRANADO LIMÃO SICILIANO',
+    loteGranel: '2401/2026',
+    lotePA: '261892',
+    loteFabricacao: 'WO 784301',
+    dataFabricacao: '2026-04-08',
+    dataValidade: '2029-04-20',
+    statusLote: 'Q — Sob Quarentena',
+    statusReconciliacao: '10 — Aberto',
+    statusDocumentacao: '10 — Aberto',
+    areas: {
+      fabricacao: {
+        rendimentoTeorico: '5.500 kg', rendimentoReal: '5.503 kg', perda: '0,05%',
+        responsavel: 'Daltivo (108922)', data: '2026-04-09', status: 'APROVADO',
+        observacoes: 'Rendimento dentro do limite (97–103%).',
+      },
+      embalagem: {
+        unidadesPlanejadas: '47.652 un', unidadesProduzidas: '44.218 un', perda: '7,21%',
+        responsavel: '', data: '', status: 'PENDENTE', observacoes: '',
+      },
+      fisicoQuimico: {
+        ph: '10,5', umidade: '23%', densidade: '1,03 g/cm³',
+        responsavel: '', data: '', status: 'PENDENTE', observacoes: '',
+      },
+      microbiologia: {
+        contagemTotal: '< 10 UFC/g', bolorLevedura: '< 10 UFC/g', patogenos: 'Ausente',
+        responsavel: '', data: '', status: 'PENDENTE', observacoes: '',
+      },
+    },
+  },
+  '261104': {
     numeroReconciliacao: '137199',
     filial: '0015 - Casa Granado',
-    produtoAcabado: 'PA-08920 — Talco Bebê Phebo 200g',
-    granel: 'GR-401 — Granel Talco Bebê',
-    loteFabricacao: 'FAB-2026-0405',
-    dataFabricacao: '2026-04-05',
-    dataValidade: '2029-04-05',
+    produtoAcabado: 'S0830B_G — Sabonete Glicerinado Mel 90g',
+    granel: 'S0830B — TRANSP GRANADO MEL',
+    loteGranel: '2298/2026',
+    lotePA: '261104',
+    loteFabricacao: 'WO 783897',
+    dataFabricacao: '2026-03-28',
+    dataValidade: '2029-04-12',
     statusLote: 'Q — Sob Quarentena',
     statusReconciliacao: '10 — Aberto',
     statusDocumentacao: '10 — Aberto',
     areas: {
       fabricacao: {
-        rendimentoTeorico: '5.000 kg', rendimentoReal: '4.870 kg', perda: '2,60%',
-        responsavel: 'M. Rocha (108)', data: '2026-04-06', status: 'PENDENTE',
-        observacoes: 'Perda acima do limite (1,5%) — aguardando análise de causa raiz.',
+        rendimentoTeorico: '4.000 kg', rendimentoReal: '4.012 kg', perda: '0,30%',
+        responsavel: 'M. Rocha (108)', data: '2026-03-29', status: 'PENDENTE',
+        observacoes: 'Aguardando aprovação final do supervisor.',
       },
       embalagem: {
-        unidadesPlanejadas: '24.350 un', unidadesProduzidas: '24.310 un', perda: '0,16%',
-        responsavel: 'F. Costa (212)', data: '2026-04-07', status: 'APROVADO',
+        unidadesPlanejadas: '34.700 un', unidadesProduzidas: '32.140 un', perda: '7,38%',
+        responsavel: 'F. Costa (212)', data: '2026-03-30', status: 'APROVADO',
         observacoes: '',
       },
       fisicoQuimico: {
-        ph: '6,0', umidade: '0,5%', densidade: '0,68 g/cm³',
-        responsavel: 'Rcafé (LIMS)', data: '2026-04-08', status: 'APROVADO',
+        ph: '10,8', umidade: '21%', densidade: '1,04 g/cm³',
+        responsavel: 'Rcafé (LIMS)', data: '2026-03-30', status: 'APROVADO',
         observacoes: 'Análise 118.502 — todos os parâmetros conforme.',
       },
       microbiologia: {
         contagemTotal: '< 10 UFC/g', bolorLevedura: '< 10 UFC/g', patogenos: 'Ausente',
-        responsavel: 'Jessica Costa', data: '2026-04-08', status: 'APROVADO',
+        responsavel: 'Jessica Costa', data: '2026-03-30', status: 'APROVADO',
         observacoes: '',
       },
     },
@@ -335,6 +352,8 @@ function loteTemplate(numero) {
     filial: '0015 - Casa Granado',
     produtoAcabado: '',
     granel: '',
+    loteGranel: '',
+    lotePA: '',
     loteFabricacao: '',
     dataFabricacao: hoje,
     dataValidade: validade.toISOString().split('T')[0],
@@ -360,7 +379,10 @@ export default function QualidadeReconciliacaoScreen() {
   const [modo, setModo] = useState('analise'); // 'analise' | 'criacao'
 
   const abrirGenealogia = (chaveArea) => {
-    navigate('/dash-genealogia?area=' + encodeURIComponent(chaveArea));
+    const params = new URLSearchParams();
+    if (lote?.lotePA) params.set('lote', lote.lotePA);
+    if (chaveArea) params.set('area', chaveArea);
+    navigate('/dash-genealogia?' + params.toString());
   };
 
   const novaReconciliacao = () => {
@@ -376,16 +398,16 @@ export default function QualidadeReconciliacaoScreen() {
     setErro('');
     setMensagem('');
     if (!numeroLote.trim()) {
-      setErro('Informe o Nº do Lote de Embalagem para iniciar a análise.');
+      setErro('Informe o Nº do Lote PA para iniciar a análise.');
       return;
     }
     setCarregando(true);
     setModo('analise');
     setTimeout(() => {
-      const key = numeroLote.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+      const key = numeroLote.trim().replace(/[^0-9]/g, '');
       const dados = BASE_MOCK[key];
       if (!dados) {
-        setErro(`Lote "${numeroLote}" não encontrado ou ainda não finalizou a etapa de embalagem.`);
+        setErro(`Lote PA "${numeroLote}" não encontrado ou ainda não finalizou a etapa de embalagem.`);
         setLote(null);
       } else {
         setLote(JSON.parse(JSON.stringify(dados)));
@@ -427,19 +449,19 @@ export default function QualidadeReconciliacaoScreen() {
         <div style={{ display: 'flex', alignItems: 'flex-end', gap: 12, flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 280, maxWidth: 460 }}>
             <label className="lbl" style={{ fontWeight: 700 }}>
-              Nº Lote de Embalagem <span style={{ color: 'var(--per)' }}>*</span>
+              Nº Lote PA (Produto Acabado) <span style={{ color: 'var(--per)' }}>*</span>
             </label>
             <input
               className="inp"
               type="text"
               value={numeroLote}
               onChange={(e) => setNumeroLote(e.target.value)}
-              placeholder="Ex.: ABC123, G2026091, XYZ789"
+              placeholder="Ex.: 262417, 261892, 261104"
               onKeyDown={(e) => e.key === 'Enter' && buscarLote()}
               style={{ fontFamily: 'var(--font-m)', fontSize: 14 }}
             />
             <span style={{ fontSize: 10, color: 'var(--text3)', marginTop: 4 }}>
-              A presença do lote indica que Fabricação e Embalagem foram concluídas.
+              Mesmo Lote PA usado no Dossiê de Genealogia. Indica que Fabricação e Embalagem foram concluídas.
             </span>
           </div>
           <button
@@ -506,23 +528,40 @@ export default function QualidadeReconciliacaoScreen() {
 
           {/* Identificação */}
           <div className="card mb14" style={{ padding: 16 }}>
-            <div className="card-title" style={{ marginBottom: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
+            <div className="card-title" style={{ marginBottom: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
               <span>Identificação do Lote</span>
-              {modo === 'criacao' && (
-                <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--ouro)' }}>
-                  ✏️ Editável (modo criação)
-                </span>
-              )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                {modo === 'criacao' && (
+                  <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--ouro)' }}>
+                    ✏️ Editável (modo criação)
+                  </span>
+                )}
+                {lote.lotePA && (
+                  <button
+                    type="button"
+                    onClick={() => abrirGenealogia()}
+                    className="btn btn-sm btn-ghost"
+                    style={{ fontSize: 10, borderColor: 'var(--verde)', color: 'var(--verde)' }}
+                    title={`Abrir Dossiê de Genealogia do Lote PA ${lote.lotePA}`}
+                  >
+                    🧬 Ver Dossiê de Genealogia (Lote PA {lote.lotePA})
+                  </button>
+                )}
+              </div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
               <Campo label="Nº Reconciliação" value={lote.numeroReconciliacao} />
               <Campo label="Filial / Fábrica" value={lote.filial} />
               <Campo label="Produto Acabado" value={lote.produtoAcabado} />
               <Campo label="Granel" value={lote.granel} />
-              <Campo label="Lote Fabricação" value={lote.loteFabricacao} />
+              <Campo label="Lote PA" value={lote.lotePA} obrigatorio />
+              <Campo label="Lote Granel" value={lote.loteGranel} />
+              <Campo label="Ordem (WO)" value={lote.loteFabricacao} />
+              <Campo label="Status do Lote" value={lote.statusLote} />
               <Campo label="Data Fabricação" value={lote.dataFabricacao} />
               <Campo label="Data Validade" value={lote.dataValidade} />
-              <Campo label="Status do Lote" value={lote.statusLote} />
+              <Campo label="Status Reconciliação" value={lote.statusReconciliacao} />
+              <Campo label="Status Documentação" value={lote.statusDocumentacao} />
             </div>
           </div>
 
@@ -627,13 +666,16 @@ export default function QualidadeReconciliacaoScreen() {
         <div className="card" style={{ padding: 40, textAlign: 'center', border: '1px dashed var(--border2)' }}>
           <div style={{ fontSize: 36, marginBottom: 8 }}>🔬</div>
           <div style={{ fontSize: 14, color: 'var(--text2)' }}>
-            Informe o <strong>Nº do Lote de Embalagem</strong> para iniciar a análise da Qualidade.
+            Informe o <strong>Nº Lote PA</strong> para iniciar a análise da Qualidade.
           </div>
           <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 6 }}>
-            Lotes de teste disponíveis: <strong style={{ fontFamily: 'var(--font-m)', color: 'var(--verde)' }}>ABC123</strong>{' '}
-            (tudo pendente) · <strong style={{ fontFamily: 'var(--font-m)', color: 'var(--verde)' }}>G2026091</strong>{' '}
-            (Loção Hidratante) · <strong style={{ fontFamily: 'var(--font-m)', color: 'var(--verde)' }}>XYZ789</strong>{' '}
-            (3 áreas aprovadas, 1 pendente)
+            Lotes de teste disponíveis (mesmos Lotes PA da Genealogia):{' '}
+            <strong style={{ fontFamily: 'var(--font-m)', color: 'var(--verde)' }}>262417</strong>{' '}
+            (Sabonete Glicerinado · tudo pendente) ·{' '}
+            <strong style={{ fontFamily: 'var(--font-m)', color: 'var(--verde)' }}>261892</strong>{' '}
+            (Limão Siciliano · 1 aprovada) ·{' '}
+            <strong style={{ fontFamily: 'var(--font-m)', color: 'var(--verde)' }}>261104</strong>{' '}
+            (Mel · 3 aprovadas, 1 pendente)
           </div>
         </div>
       )}
