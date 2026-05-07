@@ -6,6 +6,7 @@ import SinoticoScreen from './components/SinoticoScreen.jsx';
 import ProdCockpitScreen from './components/ProdCockpitScreen.jsx';
 import GenealogiaScreen from './components/GenealogiaScreen.jsx';
 import PesagemOeeScreen from './components/PesagemOeeScreen.jsx';
+import PesPerformanceOperadorScreen from './components/PesPerformanceOperadorScreen.jsx';
 import QualidadeReconciliacaoScreen from './components/QualidadeReconciliacaoScreen.jsx';
 import QualidadeFilaReconciliacaoScreen from './components/QualidadeFilaReconciliacaoScreen.jsx';
 import { ModalProvider, useModal } from './components/ModalProvider.jsx';
@@ -66,6 +67,9 @@ export default function App() {
 
           {/* OEE Pesagem (componente React) */}
           <Route path="/pes-oee" element={<PesagemOeeScreen />} />
+
+          {/* Pesagem — Performance Pessoal (Fase A) */}
+          <Route path="/pes-perf-operador" element={<PesPerformanceOperadorScreen />} />
 
           {/* Qualidade — Fila de Reconciliacoes Pendentes (grid JDE F4108-Z) */}
           <Route path="/qual-fila" element={<QualidadeFilaReconciliacaoScreen />} />
