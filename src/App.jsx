@@ -6,6 +6,7 @@ import SinoticoScreen from './components/SinoticoScreen.jsx';
 import ProdCockpitScreen from './components/ProdCockpitScreen.jsx';
 import GenealogiaScreen from './components/GenealogiaScreen.jsx';
 import PesagemOeeScreen from './components/PesagemOeeScreen.jsx';
+import QualidadeReconciliacaoScreen from './components/QualidadeReconciliacaoScreen.jsx';
 import { ModalProvider, useModal } from './components/ModalProvider.jsx';
 import { injectLegacyScripts, installNavBridges, resolveScreenId } from './lib/legacy-bridge.js';
 import manifest from './legacy/manifest.json';
@@ -64,6 +65,9 @@ export default function App() {
 
           {/* OEE Pesagem (componente React) */}
           <Route path="/pes-oee" element={<PesagemOeeScreen />} />
+
+          {/* Qualidade — Reconciliacao Tecnica e Liberacao de Lote */}
+          <Route path="/qual-reconciliacao" element={<QualidadeReconciliacaoScreen />} />
 
           {/* todas as demais telas extraidas */}
           {manifest.screens.map((id) => {

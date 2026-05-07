@@ -62,6 +62,14 @@ export const MODULES = [
     ],
   },
   {
+    id: 'mod-qual',
+    label: 'Qualidade',
+    icon: '🔬',
+    items: [
+      { id: 'qual-reconciliacao', label: '✓ Reconciliacao Tec. & Liberacao' },
+    ],
+  },
+  {
     id: 'mod-rel',
     label: 'Relatorios',
     icon: '📈',
