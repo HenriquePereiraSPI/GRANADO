@@ -1437,28 +1437,28 @@ export const SCREENS = {
                 <div id="pes-scan-feedback" style="display:none;font-size:11px;font-weight:700;padding:6px 10px;border-radius:4px;margin-bottom:4px"></div>
               </div>
               <table class="tbl" id="pes-mp-tabela">
-                <thead><tr><th>#</th><th>Código</th><th>Lote</th><th>Material</th><th>Qtd. Alvo</th><th>Tolerância</th><th>Status</th><th></th></tr></thead>
+                <thead><tr><th>#</th><th>Código</th><th>Lote</th><th>Material</th><th>Qtd. Alvo</th><th>Pesado</th><th>Pendente</th><th>Tolerância</th><th>Status</th><th></th></tr></thead>
                 <tbody>
-                  <tr data-cod="MP-4821" data-lote="GLI-2026-08" data-mp="Glicerina USP" data-alvo="45,000 kg" data-tol="±0,5%" data-status="pesada" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">1</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-4821</td><td class="mono" style="font-size:11px;color:var(--text2)">GLI-2026-08</td><td style="font-size:12px;color:var(--ok)">✓ Glicerina USP</td><td class="mono">45,000 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-ok">Pesada</span></td><td></td></tr>
-                  <tr data-cod="MP-3307" data-lote="PPG-2026-12" data-mp="Propilenoglicol" data-alvo="18,000 kg" data-tol="±0,5%" data-status="pesada" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">2</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-3307</td><td class="mono" style="font-size:11px;color:var(--text2)">PPG-2026-12</td><td style="font-size:12px;color:var(--ok)">✓ Propilenoglicol</td><td class="mono">18,000 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-ok">Pesada</span></td><td></td></tr>
-                  <tr data-cod="MP-0914" data-lote="CAR-2026-05" data-mp="Carbopol 940" data-alvo="2,500 kg" data-tol="±0,3%" data-status="pesada" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">3</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-0914</td><td class="mono" style="font-size:11px;color:var(--text2)">CAR-2026-05</td><td style="font-size:12px;color:var(--ok)">✓ Carbopol 940</td><td class="mono">2,500 kg</td><td class="mono">±0,3%</td><td><span class="bdg bdg-ok">Pesada</span></td><td></td></tr>
-                  <tr data-cod="MP-2256" data-lote="FEN-2026-03" data-mp="Fenoxietanol" data-alvo="3,000 kg" data-tol="±0,5%" data-status="desvio" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">4</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-2256</td><td class="mono" style="font-size:11px;color:var(--text2)">FEN-2026-03</td><td style="font-size:12px;color:var(--ok)">✓ Fenoxietanol</td><td class="mono">3,000 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-alr">Com Variância</span></td><td></td></tr>
-                  <tr data-cod="MP-5593" data-lote="TEA-2026-07" data-mp="TEA 99%" data-alvo="1,800 kg" data-tol="±0,5%" data-status="pesada" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">5</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-5593</td><td class="mono" style="font-size:11px;color:var(--text2)">TEA-2026-07</td><td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td><td class="mono">1,800 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-ok">Pesada</span></td><td></td></tr>
+                  <tr data-cod="MP-4821" data-lote="GLI-2026-08" data-mp="Glicerina USP" data-alvo="45,000 kg" data-tol="±0,5%" data-status="pesada" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">1</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-4821</td><td class="mono" style="font-size:11px;color:var(--text2)">GLI-2026-08</td><td style="font-size:12px;color:var(--ok)">✓ Glicerina USP</td><td class="mono">45,000 kg</td><td class="mono" style="color:var(--ok)">44,983 kg</td><td class="mono" style="color:var(--text3)">0,000 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-ok">Pesada</span></td><td></td></tr>
+                  <tr data-cod="MP-3307" data-lote="PPG-2026-12" data-mp="Propilenoglicol" data-alvo="18,000 kg" data-tol="±0,5%" data-status="pesada" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">2</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-3307</td><td class="mono" style="font-size:11px;color:var(--text2)">PPG-2026-12</td><td style="font-size:12px;color:var(--ok)">✓ Propilenoglicol</td><td class="mono">18,000 kg</td><td class="mono" style="color:var(--ok)">18,005 kg</td><td class="mono" style="color:var(--text3)">0,000 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-ok">Pesada</span></td><td></td></tr>
+                  <tr data-cod="MP-0914" data-lote="CAR-2026-05" data-mp="Carbopol 940" data-alvo="2,500 kg" data-tol="±0,3%" data-status="pesada" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">3</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-0914</td><td class="mono" style="font-size:11px;color:var(--text2)">CAR-2026-05</td><td style="font-size:12px;color:var(--ok)">✓ Carbopol 940</td><td class="mono">2,500 kg</td><td class="mono" style="color:var(--ok)">2,498 kg</td><td class="mono" style="color:var(--text3)">0,000 kg</td><td class="mono">±0,3%</td><td><span class="bdg bdg-ok">Pesada</span></td><td></td></tr>
+                  <tr data-cod="MP-2256" data-lote="FEN-2026-03" data-mp="Fenoxietanol" data-alvo="3,000 kg" data-tol="±0,5%" data-status="desvio" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">4</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-2256</td><td class="mono" style="font-size:11px;color:var(--text2)">FEN-2026-03</td><td style="font-size:12px;color:var(--ok)">✓ Fenoxietanol</td><td class="mono">3,000 kg</td><td class="mono" style="color:var(--alr);font-weight:700">3,028 kg</td><td class="mono" style="color:var(--text3)">0,000 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-alr">Com Variância</span></td><td></td></tr>
+                  <tr data-cod="MP-5593" data-lote="TEA-2026-07" data-mp="TEA 99%" data-alvo="1,800 kg" data-tol="±0,5%" data-status="pesada" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">5</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-5593</td><td class="mono" style="font-size:11px;color:var(--text2)">TEA-2026-07</td><td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td><td class="mono">1,800 kg</td><td class="mono" style="color:var(--ok)">1,801 kg</td><td class="mono" style="color:var(--text3)">0,000 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-ok">Pesada</span></td><td></td></tr>
                   <tr data-cod="MP-0001" data-lote="AGUA-2026-03" data-mp="Aqua (Água Purificada)" data-alvo="412,500 kg" data-tol="±0,5%" data-status="proxima" style="background:var(--verde-dim);border-left:3px solid var(--verde);cursor:pointer" onclick="pesSetMP(this)">
                     <td class="mono" style="color:var(--verde);font-weight:700">6</td>
                     <td class="mono" style="font-size:11px;font-weight:700;color:var(--verde)">MP-0001</td>
                     <td class="mono" style="font-size:11px;font-weight:700;color:var(--verde)">AGUA-2026-03</td>
                     <td style="font-size:12px;font-weight:700;color:var(--verde)">→ Aqua (Água Purificada)</td>
-                    <td class="mono" style="font-weight:700">412,500 kg</td><td class="mono">±0,5%</td>
+                    <td class="mono" style="font-weight:700">412,500 kg</td><td class="mono" style="color:var(--text3)">—</td><td class="mono" style="color:var(--verde);font-weight:700">412,500 kg</td><td class="mono">±0,5%</td>
                     <td><span class="bdg bdg-alr">Próxima</span></td>
                     <td><button class="btn btn-sm btn-v" onclick="pesSetMP(this.closest('tr'));event.stopPropagation()">Selecionar</button></td>
                   </tr>
-                  <tr data-cod="MP-7742" data-lote="ERM-2026-01" data-mp="Extrato Rosa Mosqueta" data-alvo="6,000 kg" data-tol="±1,0%" data-status="aguardando"><td class="mono" style="color:var(--text3)">7</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-7742</td><td class="mono" style="font-size:11px;color:var(--text3)">ERM-2026-01</td><td style="font-size:12px;color:var(--text3)">Extrato Rosa Mosqueta</td><td class="mono" style="color:var(--text3)">6,000 kg</td><td class="mono" style="color:var(--text3)">±1,0%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
-                  <tr data-cod="MP-0008" data-lote="PAN-2026-04" data-mp="Pantenol 75%" data-alvo="3,000 kg" data-tol="±0,5%" data-status="aguardando"><td class="mono" style="color:var(--text3)">8</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-0008</td><td class="mono" style="font-size:11px;color:var(--text3)">PAN-2026-04</td><td style="font-size:12px;color:var(--text3)">Pantenol 75%</td><td class="mono" style="color:var(--text3)">3,000 kg</td><td class="mono" style="color:var(--text3)">±0,5%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
-                  <tr data-cod="MP-6631" data-lote="VTE-2026-02" data-mp="Vitamina E Acetato" data-alvo="1,200 kg" data-tol="±0,5%" data-status="aguardando"><td class="mono" style="color:var(--text3)">9</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-6631</td><td class="mono" style="font-size:11px;color:var(--text3)">VTE-2026-02</td><td style="font-size:12px;color:var(--text3)">Vitamina E Acetato</td><td class="mono" style="color:var(--text3)">1,200 kg</td><td class="mono" style="color:var(--text3)">±0,5%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
-                  <tr data-cod="MP-2089" data-lote="FRG-2026-09" data-mp="Fragância Rosa" data-alvo="4,500 kg" data-tol="±0,5%" data-status="aguardando"><td class="mono" style="color:var(--text3)">10</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-2089</td><td class="mono" style="font-size:11px;color:var(--text3)">FRG-2026-09</td><td style="font-size:12px;color:var(--text3)">Fragância Rosa</td><td class="mono" style="color:var(--text3)">4,500 kg</td><td class="mono" style="color:var(--text3)">±0,5%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
-                  <tr data-cod="MP-3374" data-lote="DMD-2026-01" data-mp="DMDM Hydantoin" data-alvo="0,600 kg" data-tol="±0,5%" data-status="aguardando"><td class="mono" style="color:var(--text3)">11</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-3374</td><td class="mono" style="font-size:11px;color:var(--text3)">DMD-2026-01</td><td style="font-size:12px;color:var(--text3)">DMDM Hydantoin</td><td class="mono" style="color:var(--text3)">0,600 kg</td><td class="mono" style="color:var(--text3)">±0,5%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
-                  <tr data-cod="MP-9118" data-lote="COR-2026-15" data-mp="Corante Rosaline" data-alvo="0,150 kg" data-tol="±0,5%" data-status="aguardando"><td class="mono" style="color:var(--text3)">12</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-9118</td><td class="mono" style="font-size:11px;color:var(--text3)">COR-2026-15</td><td style="font-size:12px;color:var(--text3)">Corante Rosaline</td><td class="mono" style="color:var(--text3)">0,150 kg</td><td class="mono" style="color:var(--text3)">±0,5%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
+                  <tr data-cod="MP-7742" data-lote="ERM-2026-01" data-mp="Extrato Rosa Mosqueta" data-alvo="6,000 kg" data-tol="±1,0%" data-status="aguardando"><td class="mono" style="color:var(--text3)">7</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-7742</td><td class="mono" style="font-size:11px;color:var(--text3)">ERM-2026-01</td><td style="font-size:12px;color:var(--text3)">Extrato Rosa Mosqueta</td><td class="mono" style="color:var(--text3)">6,000 kg</td><td class="mono" style="color:var(--text3)">—</td><td class="mono" style="color:var(--text3)">6,000 kg</td><td class="mono" style="color:var(--text3)">±1,0%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
+                  <tr data-cod="MP-0008" data-lote="PAN-2026-04" data-mp="Pantenol 75%" data-alvo="3,000 kg" data-tol="±0,5%" data-status="aguardando"><td class="mono" style="color:var(--text3)">8</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-0008</td><td class="mono" style="font-size:11px;color:var(--text3)">PAN-2026-04</td><td style="font-size:12px;color:var(--text3)">Pantenol 75%</td><td class="mono" style="color:var(--text3)">3,000 kg</td><td class="mono" style="color:var(--text3)">—</td><td class="mono" style="color:var(--text3)">3,000 kg</td><td class="mono" style="color:var(--text3)">±0,5%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
+                  <tr data-cod="MP-6631" data-lote="VTE-2026-02" data-mp="Vitamina E Acetato" data-alvo="1,200 kg" data-tol="±0,5%" data-status="aguardando"><td class="mono" style="color:var(--text3)">9</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-6631</td><td class="mono" style="font-size:11px;color:var(--text3)">VTE-2026-02</td><td style="font-size:12px;color:var(--text3)">Vitamina E Acetato</td><td class="mono" style="color:var(--text3)">1,200 kg</td><td class="mono" style="color:var(--text3)">—</td><td class="mono" style="color:var(--text3)">1,200 kg</td><td class="mono" style="color:var(--text3)">±0,5%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
+                  <tr data-cod="MP-2089" data-lote="FRG-2026-09" data-mp="Fragância Rosa" data-alvo="4,500 kg" data-tol="±0,5%" data-status="aguardando"><td class="mono" style="color:var(--text3)">10</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-2089</td><td class="mono" style="font-size:11px;color:var(--text3)">FRG-2026-09</td><td style="font-size:12px;color:var(--text3)">Fragância Rosa</td><td class="mono" style="color:var(--text3)">4,500 kg</td><td class="mono" style="color:var(--text3)">—</td><td class="mono" style="color:var(--text3)">4,500 kg</td><td class="mono" style="color:var(--text3)">±0,5%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
+                  <tr data-cod="MP-3374" data-lote="DMD-2026-01" data-mp="DMDM Hydantoin" data-alvo="0,600 kg" data-tol="±0,5%" data-status="aguardando"><td class="mono" style="color:var(--text3)">11</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-3374</td><td class="mono" style="font-size:11px;color:var(--text3)">DMD-2026-01</td><td style="font-size:12px;color:var(--text3)">DMDM Hydantoin</td><td class="mono" style="color:var(--text3)">0,600 kg</td><td class="mono" style="color:var(--text3)">—</td><td class="mono" style="color:var(--text3)">0,600 kg</td><td class="mono" style="color:var(--text3)">±0,5%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
+                  <tr data-cod="MP-9118" data-lote="COR-2026-15" data-mp="Corante Rosaline" data-alvo="0,150 kg" data-tol="±0,5%" data-status="aguardando"><td class="mono" style="color:var(--text3)">12</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-9118</td><td class="mono" style="font-size:11px;color:var(--text3)">COR-2026-15</td><td style="font-size:12px;color:var(--text3)">Corante Rosaline</td><td class="mono" style="color:var(--text3)">0,150 kg</td><td class="mono" style="color:var(--text3)">—</td><td class="mono" style="color:var(--text3)">0,150 kg</td><td class="mono" style="color:var(--text3)">±0,5%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
                 </tbody>
               </table>
               <script>
@@ -2345,13 +2345,12 @@ export const SCREENS = {
           <div class="card">
             <div class="card-title">Gaiolas Montadas — OP-2026-0416</div>
             <table class="tbl">
-              <thead><tr><th>Gaiola</th><th>MPs</th><th>Peso Total</th><th>Destino</th><th>Etiqueta Mãe</th><th>Status</th></tr></thead>
+              <thead><tr><th>Gaiola</th><th>MPs</th><th>Peso Total</th><th>Etiqueta Mãe</th><th>Status</th></tr></thead>
               <tbody>
                 <tr style="opacity:.75">
                   <td class="mono" style="color:var(--ok)">GAI-2026-0087</td>
                   <td class="mono">3 MPs</td>
                   <td class="mono">67,298 kg</td>
-                  <td style="font-size:12px">Reator R-01 · Fase 2</td>
                   <td><span class="bdg bdg-ok">✓ Impressa</span></td>
                   <td><span class="bdg bdg-ok">Entregue</span></td>
                 </tr>
@@ -2359,7 +2358,6 @@ export const SCREENS = {
                   <td class="mono" style="color:var(--ok)">GAI-2026-0088</td>
                   <td class="mono">4 MPs</td>
                   <td class="mono">12,150 kg</td>
-                  <td style="font-size:12px">Reator R-01 · Fase 3</td>
                   <td><span class="bdg bdg-ok">✓ Impressa</span></td>
                   <td><span class="bdg bdg-ok">Entregue</span></td>
                 </tr>
@@ -2367,7 +2365,6 @@ export const SCREENS = {
                   <td class="mono" style="color:var(--alr)">GAI-2026-0089</td>
                   <td class="mono">5 MPs (em montagem)</td>
                   <td class="mono">479,127 kg</td>
-                  <td style="font-size:12px">Reator R-01 · Fase 1</td>
                   <td><span class="bdg bdg-alr">⏳ Pendente</span></td>
                   <td><span class="bdg bdg-alr">Em montagem</span></td>
                 </tr>
@@ -3250,7 +3247,7 @@ export const SCREENS = {
         <table class="tbl" id="pes-rastr-tbl">
           <thead>
             <tr>
-              <th>#</th><th>Ordem</th><th>MP</th><th>Lote MP</th>
+              <th>#</th><th>Ordem</th><th>MP</th><th>Lote MP</th><th>Gaiola</th>
               <th>Box</th><th>Balança</th><th>Qtd. (kg)</th>
               <th>Responsável</th><th>Data / Hora</th><th>Observação (Trilha)</th>
             </tr>
@@ -3260,7 +3257,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:10px;color:var(--text3)">001</td>
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-003</td>
               <td><div style="font-size:12px;font-weight:700">MP-0001</div><div style="font-size:10px;color:var(--text3)">Água Purificada</div></td>
-              <td class="mono" style="font-size:11px">LOT-H2O-261</td>
+              <td class="mono" style="font-size:11px">LOT-H2O-261</td><td class="mono" style="font-size:11px;color:var(--inf)">GAI-2026-0085</td>
               <td class="mono">BOX-001</td><td class="mono">BAL-002</td>
               <td class="mono" style="color:var(--ok);font-weight:700">1.500,00</td>
               <td style="font-size:12px">Claudinei</td>
@@ -3271,7 +3268,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:10px;color:var(--text3)">002</td>
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-003</td>
               <td><div style="font-size:12px;font-weight:700">MP-0002</div><div style="font-size:10px;color:var(--text3)">Glicerina USP</div></td>
-              <td class="mono" style="font-size:11px">LOT-GLI-412</td>
+              <td class="mono" style="font-size:11px">LOT-GLI-412</td><td class="mono" style="font-size:11px;color:var(--inf)">GAI-2026-0085</td>
               <td class="mono">BOX-001</td><td class="mono">BAL-002</td>
               <td class="mono" style="color:var(--ok);font-weight:700">120,00</td>
               <td style="font-size:12px">Claudinei</td>
@@ -3282,7 +3279,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:10px;color:var(--text3)">003</td>
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-003</td>
               <td><div style="font-size:12px;font-weight:700">MP-0003</div><div style="font-size:10px;color:var(--text3)">Fragância Rosa Phebo</div></td>
-              <td class="mono" style="font-size:11px">LOT-FRG-089</td>
+              <td class="mono" style="font-size:11px">LOT-FRG-089</td><td class="mono" style="font-size:11px;color:var(--inf)">GAI-2026-0086</td>
               <td class="mono">BOX-002</td><td class="mono">BAL-005</td>
               <td class="mono" style="color:var(--ok);font-weight:700">8,50</td>
               <td style="font-size:12px">Claudinei</td>
@@ -3293,7 +3290,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:10px;color:var(--text3)">004</td>
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-003</td>
               <td><div style="font-size:12px;font-weight:700">MP-0004</div><div style="font-size:10px;color:var(--text3)">Carbomer 940</div></td>
-              <td class="mono" style="font-size:11px">LOT-CAR-201</td>
+              <td class="mono" style="font-size:11px">LOT-CAR-201</td><td class="mono" style="font-size:11px;color:var(--inf)">GAI-2026-0086</td>
               <td class="mono">BOX-002</td><td class="mono">BAL-005</td>
               <td class="mono" style="color:var(--ok);font-weight:700">2,80</td>
               <td style="font-size:12px">Claudinei</td>
@@ -3304,7 +3301,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:10px;color:var(--text3)">005</td>
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-004</td>
               <td><div style="font-size:12px;font-weight:700">MP-0001</div><div style="font-size:10px;color:var(--text3)">Água Purificada</div></td>
-              <td class="mono" style="font-size:11px">LOT-H2O-261</td>
+              <td class="mono" style="font-size:11px">LOT-H2O-261</td><td class="mono" style="font-size:11px;color:var(--inf)">GAI-2026-0091</td>
               <td class="mono">BOX-003</td><td class="mono">BAL-007</td>
               <td class="mono" style="color:var(--ok);font-weight:700">900,00</td>
               <td style="font-size:12px">Santos</td>
@@ -3315,7 +3312,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:10px;color:var(--text3)">006</td>
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-004</td>
               <td><div style="font-size:12px;font-weight:700;color:var(--per)">MP-0003 ⚠</div><div style="font-size:10px;color:var(--text3)">Fragância Rosa Phebo</div></td>
-              <td class="mono" style="font-size:11px">LOT-FRG-089</td>
+              <td class="mono" style="font-size:11px">LOT-FRG-089</td><td class="mono" style="font-size:11px;color:var(--inf)">GAI-2026-0091</td>
               <td class="mono">BOX-003</td><td class="mono">BAL-007</td>
               <td class="mono" style="color:var(--per);font-weight:700">5,20</td>
               <td style="font-size:12px">Santos</td>
@@ -3326,7 +3323,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:10px;color:var(--text3)">007</td>
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-005</td>
               <td><div style="font-size:12px;font-weight:700">MP-0001</div><div style="font-size:10px;color:var(--text3)">Água Purificada</div></td>
-              <td class="mono" style="font-size:11px">LOT-H2O-262</td>
+              <td class="mono" style="font-size:11px">LOT-H2O-262</td><td class="mono" style="font-size:11px;color:var(--inf)">GAI-2026-0092</td>
               <td class="mono">BOX-001</td><td class="mono">BAL-001</td>
               <td class="mono" style="color:var(--ok);font-weight:700">1.200,00</td>
               <td style="font-size:12px">Manoel</td>
@@ -3337,7 +3334,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:10px;color:var(--text3)">008</td>
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-005</td>
               <td><div style="font-size:12px;font-weight:700">MP-0002</div><div style="font-size:10px;color:var(--text3)">Glicerina USP</div></td>
-              <td class="mono" style="font-size:11px">LOT-GLI-412</td>
+              <td class="mono" style="font-size:11px">LOT-GLI-412</td><td class="mono" style="font-size:11px;color:var(--inf)">GAI-2026-0092</td>
               <td class="mono">BOX-001</td><td class="mono">BAL-001</td>
               <td class="mono" style="color:var(--ok);font-weight:700">85,00</td>
               <td style="font-size:12px">Manoel</td>
