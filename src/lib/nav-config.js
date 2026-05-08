@@ -32,17 +32,14 @@ export const MODULES = [
     label: 'Pesagem',
     icon: '⚖️',
     items: [
-      { id: 'pes-ordens',       label: 'Selecao de Ordem' },
-      { id: 'pes-cockpit',      label: 'Cockpit de Pesagem' },
-      { id: 'pes-mps',          label: 'MPs Pesadas' },
-      { id: 'pes-pendencias',   label: 'Pendencias' },
-      { id: 'pes-checklist',    label: 'Checklist Limpeza' },
-      { id: 'pes-gaiola',       label: 'Gestao de Gaiola' },
-      { id: 'pes-devol-mp',     label: 'Devolucao de MP' },
-      { id: 'pes-checkout',     label: 'Checkout / Validacao' },
-      { id: 'pes-oee',          label: '📊 OEE Pesagem' },
+      // Subtelas operacionais (pes-cockpit, pes-mps, pes-pendencias,
+      // pes-checklist, pes-gaiola, pes-devol-mp, pes-checkout) foram
+      // movidas pra DENTRO de pes-ordens — só ficam acessiveis depois
+      // que o usuario seleciona uma ordem na fila de pesagem.
+      { id: 'pes-ordens',        label: 'Selecao de Ordem' },
+      { id: 'pes-oee',           label: '📊 OEE Pesagem' },
       { id: 'pes-perf-operador', label: '📈 Performance' },
-      { id: 'pes-rastr',        label: '📋 Rastreabilidade' },
+      { id: 'pes-rastr',         label: '📋 Rastreabilidade' },
     ],
   },
   {

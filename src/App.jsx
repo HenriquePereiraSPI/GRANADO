@@ -9,6 +9,15 @@ import PesagemOeeScreen from './components/PesagemOeeScreen.jsx';
 import PesPerformanceOperadorScreen from './components/PesPerformanceOperadorScreen.jsx';
 import QualidadeReconciliacaoScreen from './components/QualidadeReconciliacaoScreen.jsx';
 import QualidadeFilaReconciliacaoScreen from './components/QualidadeFilaReconciliacaoScreen.jsx';
+import PesOrdemSubScreen from './components/PesOrdemSubScreen.jsx';
+
+/** Sub-telas da Pesagem que so podem ser acessadas com ?op= setado.
+ *  Sao agrupadas dentro de pes-ordens (a tela "pai"). Acesso direto
+ *  cai no empty-state do wrapper PesOrdemSubScreen. */
+const PES_ORDEM_SUBSCREENS = new Set([
+  'pes-cockpit', 'pes-mps', 'pes-pendencias',
+  'pes-checklist', 'pes-gaiola', 'pes-devol-mp', 'pes-checkout',
+]);
 import { ModalProvider, useModal } from './components/ModalProvider.jsx';
 import { injectLegacyScripts, installNavBridges, resolveScreenId } from './lib/legacy-bridge.js';
 import manifest from './legacy/manifest.json';
@@ -84,6 +93,10 @@ export default function App() {
             const target = resolveScreenId(id);
             // se ja virou alias, pulamos pra evitar duplicidade
             if (target !== id) return null;
+            // Sub-telas da Pesagem: envelopadas no wrapper que valida ?op=
+            if (PES_ORDEM_SUBSCREENS.has(id)) {
+              return <Route key={id} path={'/' + id} element={<PesOrdemSubScreen id={id} />} />;
+            }
             return <Route key={id} path={'/' + id} element={<LegacyScreen id={id} />} />;
           })}
 

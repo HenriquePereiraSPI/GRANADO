@@ -14,10 +14,10 @@ function fmtDate(d) {
   });
 }
 
-export default function Sidebar() {
+export default function Sidebar({ collapsed = false }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const currentId = pathname.replace(/^\//, '') || 'sinotico';
+  const currentId = pathname.replace(/^\//, '').split('?')[0] || 'sinotico';
   const resolvedId = ALIASES[currentId] || currentId;
 
   // Modulo aberto: por padrao o que contem a tela atual; senao mod-pes (default original).
@@ -42,19 +42,23 @@ export default function Sidebar() {
   const isActiveItem = (id) => id === currentId || ALIASES[id] === resolvedId;
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar${collapsed ? ' collapsed' : ''}`}>
       <div className="sb-brand">
         <div className="sb-brand-top">
           <div className="sb-mark">G</div>
-          <div>
-            <div className="sb-name">Casa Granado</div>
-            <div className="sb-sub">Pharmácias · Desde 1870</div>
+          {!collapsed && (
+            <div>
+              <div className="sb-name">Casa Granado</div>
+              <div className="sb-sub">Pharmácias · Desde 1870</div>
+            </div>
+          )}
+        </div>
+        {!collapsed && (
+          <div className="sb-session">
+            <span>● Online</span> · MES Apriso<br />
+            Turno A · MF5 · <span>J. Santos</span>
           </div>
-        </div>
-        <div className="sb-session">
-          <span>● Online</span> · MES Apriso<br />
-          Turno A · MF5 · <span>J. Santos</span>
-        </div>
+        )}
       </div>
 
       <nav className="sb-nav">
@@ -63,44 +67,56 @@ export default function Sidebar() {
             key={t.id}
             className={`sb-module-btn${currentId === t.id ? ' active' : ''}`}
             onClick={() => go(t.id)}
+            title={collapsed ? t.label : undefined}
           >
-            <span className="sb-ico">{t.icon}</span> {t.label}
+            <span className="sb-ico">{t.icon}</span>
+            {!collapsed && <span className="sb-lbl">{t.label}</span>}
           </button>
         ))}
 
         {MODULES.map((m) => {
-          const open = openMod === m.id;
+          const open = openMod === m.id && !collapsed;
           const containsActive = m.items.some((it) => isActiveItem(it.id));
           return (
             <div key={m.id}>
               <button
                 className={`sb-module-btn${open ? ' open' : ''}${containsActive ? ' active' : ''}`}
-                onClick={() => toggleMod(m.id)}
+                onClick={() => !collapsed && toggleMod(m.id)}
+                title={collapsed ? m.label : undefined}
               >
                 {containsActive && <div className="sb-dot" />}
-                <span className="sb-ico">{m.icon}</span> {m.label}
-                <span className="sb-arr">›</span>
+                <span className="sb-ico">{m.icon}</span>
+                {!collapsed && (
+                  <>
+                    <span className="sb-lbl">{m.label}</span>
+                    <span className="sb-arr">›</span>
+                  </>
+                )}
               </button>
-              <div className={`sb-sub-list${open ? ' open' : ''}`} id={m.id}>
-                {m.items.map((it) => (
-                  <button
-                    key={it.id}
-                    className={`sb-sub-item${isActiveItem(it.id) ? ' active' : ''}`}
-                    onClick={() => go(it.id)}
-                  >
-                    {it.label}
-                  </button>
-                ))}
-              </div>
+              {!collapsed && (
+                <div className={`sb-sub-list${open ? ' open' : ''}`} id={m.id}>
+                  {m.items.map((it) => (
+                    <button
+                      key={it.id}
+                      className={`sb-sub-item${isActiveItem(it.id) ? ' active' : ''}`}
+                      onClick={() => go(it.id)}
+                    >
+                      {it.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           );
         })}
       </nav>
 
-      <div className="sb-footer">
-        <div className="sb-clock" id="sb-clk">{fmtTime(now)}</div>
-        <div className="sb-date" id="sb-date">{fmtDate(now)}</div>
-      </div>
+      {!collapsed && (
+        <div className="sb-footer">
+          <div className="sb-clock" id="sb-clk">{fmtTime(now)}</div>
+          <div className="sb-date" id="sb-date">{fmtDate(now)}</div>
+        </div>
+      )}
     </aside>
   );
 }

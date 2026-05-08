@@ -107,8 +107,10 @@ export function installNavBridges({ navigate, openModalFn, closeModalFn }) {
   }
 
   window.nav = (id /*, subEl, modId */) => {
-    const target = resolveScreenId(id);
-    navigate('/' + target);
+    // Suporta query string no id ('pes-cockpit?op=OP-2026-0414').
+    const [base, query] = String(id).split('?');
+    const target = resolveScreenId(base);
+    navigate('/' + target + (query ? '?' + query : ''));
   };
 
   // ── modais ────────────────────────────────────────────────────────────

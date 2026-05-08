@@ -2859,7 +2859,10 @@ export const SCREENS = {
         var eyebrow = document.querySelector('#screen-pes-cockpit .ph-eyebrow');
         if (eyebrow) eyebrow.textContent = 'Pesagem · MF5';
       }
-      function pesIrCockpit(event, tipo) {
+      // Guarda da OP em pesagem (extraida do data-op da linha clicada).
+      var PES_OP_SEL = null;
+
+      function pesIrCockpit(event, tipo, opId) {
         if (event) event.stopPropagation();
         if (!PES_SALA_SEL) {
           alert('⚠ Selecione a Sala de Pesagem antes de iniciar.');
@@ -2872,10 +2875,13 @@ export const SCREENS = {
             return;
           }
         }
+        // Memoriza a OP ativa pra propagar nas demais sub-telas.
+        if (opId) PES_OP_SEL = opId;
+        var qs = PES_OP_SEL ? '?op=' + encodeURIComponent(PES_OP_SEL) : '';
         // Tipo 'continuar' (OP ja em pesagem) → vai direto pro cockpit.
         // Tipo 'inicio' (primeira pesagem da OP) → abre checklist da sala.
         if (tipo === 'continuar') {
-          nav('pes-cockpit', null, null);
+          nav('pes-cockpit' + qs, null, null);
           return;
         }
         pesAbrirChecklistSala();
@@ -2923,7 +2929,8 @@ export const SCREENS = {
         document.getElementById('modal-pes-cks-sala').style.display = 'none';
         var hora = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
         alert('✅ Sala liberada para pesagem!\\nRegistro: CKS-PES-' + hora + ' · Operador: J. Santos\\n\\nIniciando cockpit de pesagem...');
-        nav('pes-cockpit', null, null);
+        var qs2 = PES_OP_SEL ? '?op=' + encodeURIComponent(PES_OP_SEL) : '';
+        nav('pes-cockpit' + qs2, null, null);
       }
       function pesFecharChecklistSala() {
         document.getElementById('modal-pes-cks-sala').style.display = 'none';
@@ -2948,7 +2955,7 @@ export const SCREENS = {
           </thead>
           <tbody>
             <!-- OP-2026-0414 — EM PESAGEM -->
-            <tr onclick="pesIrCockpit(event, 'continuar')" style="background:var(--inf-p);cursor:pointer">
+            <tr data-op="OP-2026-0414" onclick="pesIrCockpit(event, 'continuar', 'OP-2026-0414')" style="background:var(--inf-p);cursor:pointer">
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0414</td>
               <td style="font-size:12px">Creme Hidratante 150g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-076</span></td>
               <td class="mono">540 kg</td>
@@ -2967,11 +2974,11 @@ export const SCREENS = {
                 Sala A
                 <div class="mono" style="font-size:10px;color:var(--text3)">BAL-01</div>
               </td>
-              <td><button class="btn btn-sm btn-v" onclick="pesIrCockpit(event, 'continuar')">Continuar</button></td>
+              <td><button class="btn btn-sm btn-v" onclick="pesIrCockpit(event, 'continuar', 'OP-2026-0414')">Continuar</button></td>
             </tr>
 
             <!-- OP-2026-0416 — PRONTA PARA PESAGEM -->
-            <tr onclick="pesIrCockpit(event, 'inicio')" style="background:var(--ouro-dim);cursor:pointer">
+            <tr data-op="OP-2026-0416" onclick="pesIrCockpit(event, 'inicio', 'OP-2026-0416')" style="background:var(--ouro-dim);cursor:pointer">
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0416</td>
               <td style="font-size:12px">Loção Hidratante Rosa 200ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-089</span></td>
               <td class="mono">600 kg</td>
@@ -2987,11 +2994,11 @@ export const SCREENS = {
               <td class="mono" style="font-size:11px">18/05/2026</td>
               <td style="font-size:11px;color:var(--text3)">—</td>
               <td style="font-size:11px;color:var(--text3)">A definir</td>
-              <td><button class="btn btn-sm btn-v" onclick="pesIrCockpit(event, 'inicio')">Pesar</button></td>
+              <td><button class="btn btn-sm btn-v" onclick="pesIrCockpit(event, 'inicio', 'OP-2026-0416')">Pesar</button></td>
             </tr>
 
             <!-- OP-2026-0413 — FINALIZADA -->
-            <tr style="background:var(--ok-p);opacity:.85">
+            <tr data-op="OP-2026-0413" style="background:var(--ok-p);opacity:.85">
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0413</td>
               <td style="font-size:12px">Sabonete Phebo Glicerinado 90g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-051</span></td>
               <td class="mono">320 kg</td>
@@ -3010,7 +3017,7 @@ export const SCREENS = {
                 Sala A
                 <div class="mono" style="font-size:10px;color:var(--text3)">BAL-01</div>
               </td>
-              <td><button class="btn btn-sm btn-ghost" onclick="nav('pes-rastr',null,null)" title="Ver trilha de auditoria desta OP">Detalhes</button></td>
+              <td><button class="btn btn-sm btn-ghost" onclick="PES_OP_SEL='OP-2026-0413';nav('pes-checkout?op=OP-2026-0413',null,null)" title="Ver checkout desta OP">Detalhes</button></td>
             </tr>
           </tbody>
         </table>
