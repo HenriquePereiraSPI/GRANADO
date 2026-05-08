@@ -94,7 +94,7 @@ class GranadoCalendar extends HTMLElement {
     const btnBg = this._open ? '#F5EFD9' : '#FDFAF1';
 
     this.innerHTML = `
-      <div style="position:relative;display:inline-block;font-family:system-ui,-apple-system,sans-serif">
+      <div style="position:relative;display:inline-block;font-family:'Lato','DejaVu Sans',Arial,sans-serif">
         <button data-cal-toggle type="button" style="
           display:inline-flex;
           align-items:center;
@@ -229,7 +229,7 @@ class GranadoCalendar extends HTMLElement {
     const hh = String(sel.getHours()).padStart(2, '0');
     const mm = String(sel.getMinutes()).padStart(2, '0');
     const ss = String(sel.getSeconds()).padStart(2, '0');
-    const inputStyle = 'width:42px;font-size:12px;padding:5px;text-align:center;border:1px solid #E5DDC8;border-radius:4px;background:#FDFAF1;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#103E20';
+    const inputStyle = "width:42px;font-size:12px;padding:5px;text-align:center;border:1px solid #E5DDC8;border-radius:4px;background:#FDFAF1;font-family:'DM Mono','DejaVu Mono',Consolas,monospace;color:#103E20";
 
     return `
       <div style="display:flex;align-items:center;gap:6px;justify-content:center;margin-top:10px;padding-top:10px;border-top:1px solid #E5DDC8">

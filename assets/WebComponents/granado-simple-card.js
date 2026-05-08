@@ -54,7 +54,7 @@ class GranadoSimpleCard extends HTMLElement {
                 border-radius: 8px;
                 padding: 18px;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-                font-family: system-ui, -apple-system, sans-serif;
+                font-family: 'Lato', 'DejaVu Sans', Arial, sans-serif;
                 transition: box-shadow 0.15s, transform 0.15s;
                 ${onClickEvent ? 'cursor: pointer;' : ''}
             "
@@ -73,7 +73,7 @@ class GranadoSimpleCard extends HTMLElement {
 
                 <h3 style="
                     margin: 0 0 6px;
-                    font-family: system-ui, -apple-system, sans-serif;
+                    font-family: 'Lato', 'DejaVu Sans', Arial, sans-serif;
                     font-size: 16px;
                     font-weight: 700;
                     color: #103E20;

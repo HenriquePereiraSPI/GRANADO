@@ -64,7 +64,7 @@ class GranadoBadge extends HTMLElement {
 
     this.style.display = this.style.display || 'inline-flex';
 
-    this.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;font-size:${fontSize};font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:${padding};border-radius:4px;background:${bg};color:${fg};border:${border};font-family:system-ui,-apple-system,sans-serif;line-height:1;white-space:nowrap;box-sizing:border-box">${dotHtml}${label ? `<span>${this._escape(label)}</span>` : ''}</span>`;
+    this.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;font-size:${fontSize};font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:${padding};border-radius:4px;background:${bg};color:${fg};border:${border};font-family:'Lato','DejaVu Sans',Arial,sans-serif;line-height:1;white-space:nowrap;box-sizing:border-box">${dotHtml}${label ? `<span>${this._escape(label)}</span>` : ''}</span>`;
   }
 
   _lighten(hex, amount) {

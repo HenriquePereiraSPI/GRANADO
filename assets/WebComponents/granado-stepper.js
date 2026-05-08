@@ -157,7 +157,7 @@ class GranadoStepper extends HTMLElement {
     // garante folga para a animacao crescer sem cortar.
     this.style.paddingTop = this.style.paddingTop || '6px';
     this.style.paddingBottom = this.style.paddingBottom || '6px';
-    this.style.fontFamily = 'system-ui,-apple-system,sans-serif';
+    this.style.fontFamily = "'Lato','DejaVu Sans',Arial,sans-serif";
 
     let html = '';
     steps.forEach((st, i) => {

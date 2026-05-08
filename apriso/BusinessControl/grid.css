@@ -1,0 +1,251 @@
+/* ============================================================
+   Granado theme para o DynamicGrid do Apriso (BusinessControl)
+
+   FASE 1 — apenas CORES e FONTES.
+   Nao mexe em padding, layout, scrollbar, nem checkbox.
+   A estrutura e o comportamento (sort, resize, paginacao,
+   selecao) ficam por conta do CSS/JS default do Apriso.
+
+   Como usar:
+     <link rel="stylesheet" href="[AprisoScripts]/fonts/granado-fonts.css">
+     <link rel="stylesheet" href="[AprisoScripts]/BusinessControl/grid.css">
+
+   Carregue DEPOIS do CSS default do Apriso para vencer na cascata.
+
+   Tokens (referencia):
+     bg card     #FDFAF1
+     border      #E5DDC8
+     header bg   #F4EED9
+     header tx   #8A9E8E
+     text        #103E20
+     muted       #5A6B5E
+     accent      #1C5C31
+     row alt     #FEF0CC
+     row hover   #ECE3C2
+     btn border  #D6CDA4
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   Tipografia base
+   ------------------------------------------------------------ */
+.BusinessControlContainer,
+.BusinessControlContainer .DynamicGrid {
+  font-family: 'Lato', 'DejaVu Sans', Arial, sans-serif;
+  color: #103E20;
+}
+
+
+/* ------------------------------------------------------------
+   Card / fundo
+   ------------------------------------------------------------ */
+.DynamicGrid {
+  background: #FDFAF1;
+  border: 1px solid #E5DDC8;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+
+/* ------------------------------------------------------------
+   Toolbox (top + bottom)
+   ------------------------------------------------------------ */
+.DynamicGrid .Toolbox {
+  background: transparent;
+  color: #5A6B5E;
+}
+
+.DynamicGrid .Toolbox.Top {
+  border-bottom: 1px solid #E5DDC8;
+}
+
+.DynamicGrid .Toolbox.Bottom {
+  border-top: 1px solid #E5DDC8;
+  font-size: 11px;
+  color: #5A6B5E;
+}
+
+/* Botoes de paginacao + export */
+.DynamicGrid .Toolbox button.apr-button,
+.DynamicGrid .Toolbox button.ToolButton {
+  border: 1px solid #D6CDA4;
+  background: #FDFAF1;
+  color: #1C5C31;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.DynamicGrid .Toolbox button.apr-button:hover:not([disabled]) {
+  background: #ECE3C2;
+  border-color: #B5AB85;
+}
+
+.DynamicGrid .Toolbox button.apr-button:active:not([disabled]) {
+  background: #E5DDC8;
+}
+
+.DynamicGrid .Toolbox button.apr-button[disabled] {
+  background: #F4EED9;
+  color: #B5AB85;
+  border-color: #E5DDC8;
+}
+
+/* Indicador de pagina ".Index" */
+.DynamicGrid .Toolbox .Index {
+  font-size: 11px;
+  font-weight: 700;
+  color: #1C5C31;
+  font-family: inherit;
+}
+
+.DynamicGrid .Toolbox .Index .pgCurrent,
+.DynamicGrid .Toolbox .Index .pgTotal {
+  color: inherit;
+}
+
+/* Totais (toolbox Bottom) */
+.DynamicGrid .Toolbox.Bottom .Total,
+.DynamicGrid .Toolbox.Bottom .SelectedDiv,
+.DynamicGrid .Toolbox.Bottom .MultiSelectModeActive {
+  font-size: 11px;
+  color: #5A6B5E;
+  font-family: inherit;
+}
+
+.DynamicGrid .Toolbox.Bottom .dgSelectCount {
+  font-weight: 700;
+  color: #1C5C31;
+}
+
+
+/* ------------------------------------------------------------
+   Spinner (loading)
+   ------------------------------------------------------------ */
+.DynamicGrid .apr-ctwaitbox {
+  background: rgba(253, 250, 241, 0.85);
+}
+
+.DynamicGrid .apr-ctspinner-bar {
+  background: #1C5C31;
+}
+
+
+/* ------------------------------------------------------------
+   Tabela: tipografia comum
+   ------------------------------------------------------------ */
+.DynamicGrid .vpHead table,
+.DynamicGrid .Container.vpBody table {
+  font-family: inherit;
+  font-size: 11px;
+  color: #103E20;
+}
+
+
+/* ------------------------------------------------------------
+   Header (THEAD) — apenas cores e fontes
+   ------------------------------------------------------------ */
+.DynamicGrid .vpHead {
+  background: #F4EED9;
+}
+
+.DynamicGrid .vpHead thead tr>td {
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #8A9E8E;
+  background: #F4EED9;
+  border-bottom: 1px solid #E5DDC8;
+  font-family: inherit;
+  padding: 1px;
+}
+
+.DynamicGrid .vpHead thead tr>td>.fix,
+.DynamicGrid .vpHead thead tr>td>.auto {
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  font-family: inherit;
+}
+
+
+/* ------------------------------------------------------------
+   Body (TBODY) — apenas cores e fontes
+   ------------------------------------------------------------ */
+.DynamicGrid .Container.vpBody tbody tr {
+  background: #FDFAF1;
+}
+
+.DynamicGrid .vpBody tbody>tr.selected {
+  background: #bfb291 !important;
+}
+
+.DynamicGrid .vpBody tbody>tr.selected:hover {
+  background: #9c8e6d !important;
+}
+
+.apr-input input[type=checkbox]:checked+label:before,
+span.k-widget.apr-ctdatetime>span.k-picker-wrap>input[type=text].apr-ctdatetime input[type=checkbox]:checked+label:before,
+.apr-input input[type=checkbox].active+label:before,
+span.k-widget.apr-ctdatetime>span.k-picker-wrap>input[type=text].apr-ctdatetime input[type=checkbox].active+label:before,
+.apr-input input[type=radio]:checked+label:before,
+span.k-widget.apr-ctdatetime>span.k-picker-wrap>input[type=text].apr-ctdatetime input[type=radio]:checked+label:before,
+.apr-input input[type=radio].active+label:before,
+span.k-widget.apr-ctdatetime>span.k-picker-wrap>input[type=text].apr-ctdatetime input[type=radio].active+label:before {
+  background-color: #1C5C31;
+  color: #FFF;
+  border-color: #1C5C31;
+}
+
+.apr-input input[type=checkbox]:not([disabled]):checked:hover+label:before,
+span.k-widget.apr-ctdatetime>span.k-picker-wrap>input[type=text].apr-ctdatetime input[type=checkbox]:not([disabled]):checked:hover+label:before,
+.apr-input input[type=checkbox]:not([disabled]).active:hover+label:before,
+span.k-widget.apr-ctdatetime>span.k-picker-wrap>input[type=text].apr-ctdatetime input[type=checkbox]:not([disabled]).active:hover+label:before,
+.apr-input input[type=radio]:not([disabled]):checked:hover+label:before,
+span.k-widget.apr-ctdatetime>span.k-picker-wrap>input[type=text].apr-ctdatetime input[type=radio]:not([disabled]):checked:hover+label:before,
+.apr-input input[type=radio]:not([disabled]).active:hover+label:before,
+span.k-widget.apr-ctdatetime>span.k-picker-wrap>input[type=text].apr-ctdatetime input[type=radio]:not([disabled]).active:hover+label:before {
+  background-color: #134524;
+  color: #FFF;
+  border-color: #134524;
+}
+
+
+/* Zebra (linhas pares) — usa nth-of-type para nao contar a .Dummy */
+.DynamicGrid .Container.vpBody tbody tr:not(.Dummy):nth-of-type(even) {
+  background: #FEF0CC;
+}
+
+.DynamicGrid .Container.vpBody tbody tr:not(.Dummy):hover {
+  background: #ECE3C2;
+}
+
+/* TD de dados */
+.DynamicGrid .Container.vpBody tbody tr>td {
+  border-bottom: 1px solid #E5DDC8;
+  color: #103E20;
+  font-size: 11px;
+  font-family: inherit;
+  padding: 1px;
+}
+
+.DynamicGrid .Container.vpBody tbody tr>td.value>.fix,
+.DynamicGrid .Container.vpBody tbody tr>td.value>.auto {
+  font-size: 11px;
+  color: #103E20;
+  font-family: inherit;
+}
+
+/* Numericos em DM Mono (mesmo gesto do granado-table com mono:true) */
+.DynamicGrid .Container.vpBody tbody tr>td.value>.integer {
+  font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
+}
+
+.DynamicGrid .Container.vpBody tbody tr>td.value .display {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}

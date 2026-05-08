@@ -147,7 +147,7 @@ class GranadoTable extends HTMLElement {
     const rowHeight = this.getAttribute('rowheight') || '4px';
     const TH_BASE = 'font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E;padding:7px 12px;border-bottom:1px solid #E5DDC8;background:#F4EED9';
     const TD_BASE = `padding:${rowHeight} 12px;vertical-align:middle;border-bottom:1px solid #E5DDC8`;
-    const MONO = ';font-family:ui-monospace,SFMono-Regular,Menlo,monospace';
+    const MONO = ";font-family:'DM Mono','DejaVu Mono',Consolas,monospace";
 
     const colgroup = columns.some(c => c.width)
       ? `<colgroup>${columns.map(c => `<col${c.width ? ` style="width:${c.width}"` : ''}>`).join('')}</colgroup>`
@@ -226,7 +226,7 @@ class GranadoTable extends HTMLElement {
                 border-radius: 8px;
                 padding: 18px;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-                font-family: system-ui, -apple-system, sans-serif;
+                font-family: 'Lato', 'DejaVu Sans', Arial, sans-serif;
             ">
                 <span style="
                     position: absolute;
@@ -263,7 +263,7 @@ class GranadoTable extends HTMLElement {
   _renderExportButtons(isCsv, isPdf, color) {
     const iconBase = `width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:block"`;
     const fileShape = `<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>`;
-    const label = (text) => `<text x="12" y="19" text-anchor="middle" font-size="6.5" font-weight="800" stroke="none" fill="currentColor" font-family="system-ui,sans-serif">${text}</text>`;
+    const label = (text) => `<text x="12" y="19" text-anchor="middle" font-size="6.5" font-weight="800" stroke="none" fill="currentColor" font-family="'Lato',Arial,sans-serif">${text}</text>`;
     const ICON_CSV = `<svg ${iconBase}>${fileShape}${label('CSV')}</svg>`;
     const ICON_PDF = `<svg ${iconBase}>${fileShape}${label('PDF')}</svg>`;
 
@@ -358,7 +358,7 @@ class GranadoTable extends HTMLElement {
       const trBg = bgColor ? ` style="background:${bgColor}"` : '';
       const tds = columns.map(c => {
         const align = c.align ? `;text-align:${c.align}` : '';
-        const mono = c.mono ? ';font-family:ui-monospace,SFMono-Regular,Menlo,monospace' : '';
+        const mono = c.mono ? ";font-family:'DM Mono','DejaVu Mono',Consolas,monospace" : '';
         return `<td style="${TD}${align}${mono}">${escapeHtml(row[c.key])}</td>`;
       }).join('');
       return `<tr${trBg}>${tds}</tr>`;
@@ -371,7 +371,7 @@ class GranadoTable extends HTMLElement {
 <style>
   @page { margin: 14mm; size: A4; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  body { font-family: system-ui, -apple-system, sans-serif; margin: 0; color: #2A2A2A; }
+  body { font-family: 'Lato', 'DejaVu Sans', Arial, sans-serif; margin: 0; color: #2A2A2A; }
   h1 { font-size: 14px; color: ${color}; margin: 0 0 10px; letter-spacing: .04em; }
   table { width: 100%; border-collapse: collapse; }
   thead { display: table-header-group; }

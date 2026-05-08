@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Componentes Granado — Documentação</title>
 
+  <!-- Fontes Granado (Lato + Playfair Display + DM Mono) self-host.
+       Em Apriso, o @font-face e os tokens vivem em [AprisoScripts]/fonts/. -->
+  <link rel="stylesheet" href="../fonts/granado-fonts.css">
+
   <script src="./granado-simple-card.js"></script>
   <script src="./granado-complete-card.js"></script>
   <script src="./granado-empty-card.js"></script>
@@ -14,6 +18,7 @@
   <script src="./granado-checkbox.js"></script>
   <script src="./granado-dropdown.js"></script>
   <script src="./granado-input.js"></script>
+  <script src="./granado-text.js"></script>
   <script src="./granado-radio.js"></script>
   <script src="./granado-slider.js"></script>
   <script src="./granado-toggle.js"></script>
@@ -36,7 +41,7 @@
       padding: 0;
       background: #F4EED9;
       color: #103E20;
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: 'Lato', 'DejaVu Sans', Arial, sans-serif;
     }
 
     a {
@@ -53,7 +58,7 @@
       border-left: 2px solid transparent;
       border-radius: 0 4px 4px 0;
       transition: background .12s ease, color .12s ease, border-color .12s ease;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
     }
 
     .gd-side a.gd-link:hover {
@@ -78,7 +83,7 @@
       margin: 0;
       background: #1F2937;
       color: #E5E7EB;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
       font-size: 12px;
       line-height: 1.6;
       padding: 14px 16px;
@@ -133,20 +138,20 @@
     }
 
     .gd-api td.col-name {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
       color: #1C5C31;
       font-weight: 600;
       white-space: nowrap;
     }
 
     .gd-api td.col-type {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
       color: #9A7520;
       white-space: nowrap;
     }
 
     .gd-api td.col-default {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
       color: #5A6B5E;
       white-space: nowrap;
     }
@@ -165,7 +170,7 @@
     }
 
     .gd-h1 code {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
       font-size: 22px;
       color: #1C5C31;
       background: transparent;
@@ -241,6 +246,7 @@
       <a class="gd-link" href="#granado-checkbox">granado-checkbox</a>
       <a class="gd-link" href="#granado-dropdown">granado-dropdown</a>
       <a class="gd-link" href="#granado-input">granado-input</a>
+      <a class="gd-link" href="#granado-text">granado-text</a>
       <a class="gd-link" href="#granado-radio">granado-radio</a>
       <a class="gd-link" href="#granado-slider">granado-slider</a>
       <a class="gd-link" href="#granado-toggle">granado-toggle</a>
@@ -2603,6 +2609,250 @@ inp.blur();</pre>
       </section>
 
       <!-- ============================================================
+           granado-text
+           ============================================================ -->
+      <section id="granado-text" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-text&gt;</code></h1>
+        <p class="gd-lead">
+          Texto somente leitura no padrão visual de <code>&lt;granado-input&gt;</code>.
+          É um "campo" não-interativo — mesma caixa, mesma borda, mesmo label —
+          usado para exibir valores em formulários (campos calculados, dados de
+          contexto, confirmação de tela). Suporta ícone à esquerda e modo
+          multi-linha (<code>type="textarea"</code>) quando o conteúdo precisa
+          preservar quebras de linha.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-text.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <!-- ===== Uso básico ===== -->
+        <h2 class="gd-h2">Uso básico</h2>
+        <p class="gd-lead">
+          O mínimo: <code>label</code> + <code>value</code>. O conteúdo é selecionável
+          (o usuário pode copiar) mas não é editável.
+        </p>
+        <div class="gd-demo">
+          <granado-text style="max-width:340px"
+            label="Operador"
+            value="Maria Silva">
+          </granado-text>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-text</span>
+    <span class="tk-attr">label</span>=<span class="tk-str">"Operador"</span>
+    <span class="tk-attr">value</span>=<span class="tk-str">"Maria Silva"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-text&gt;</span></pre>
+
+        <!-- ===== Com ícone ===== -->
+        <h2 class="gd-h2">Com ícone</h2>
+        <p class="gd-lead">
+          O atributo <code>icon</code> aceita os mesmos presets de
+          <code>&lt;granado-input&gt;</code> (<code>search</code>, <code>mail</code>,
+          <code>phone</code>, <code>user</code>, <code>lock</code>,
+          <code>calendar</code>, <code>info</code>) ou qualquer texto/emoji/SVG bruto.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start">
+          <granado-text style="flex:1;min-width:220px"
+            label="CPF" icon="user" value="123.456.789-00">
+          </granado-text>
+
+          <granado-text style="flex:1;min-width:220px"
+            label="Email" icon="mail" value="maria@granado.com.br">
+          </granado-text>
+
+          <granado-text style="flex:1;min-width:220px"
+            label="Validade" icon="calendar" value="2026-12-31">
+          </granado-text>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-text</span> <span class="tk-attr">label</span>=<span class="tk-str">"CPF"</span>      <span class="tk-attr">icon</span>=<span class="tk-str">"user"</span>     <span class="tk-attr">value</span>=<span class="tk-str">"123.456.789-00"</span><span class="tk-tag">&gt;&lt;/granado-text&gt;</span>
+<span class="tk-tag">&lt;granado-text</span> <span class="tk-attr">label</span>=<span class="tk-str">"Email"</span>    <span class="tk-attr">icon</span>=<span class="tk-str">"mail"</span>     <span class="tk-attr">value</span>=<span class="tk-str">"maria@granado.com.br"</span><span class="tk-tag">&gt;&lt;/granado-text&gt;</span>
+<span class="tk-tag">&lt;granado-text</span> <span class="tk-attr">label</span>=<span class="tk-str">"Validade"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"calendar"</span> <span class="tk-attr">value</span>=<span class="tk-str">"2026-12-31"</span><span class="tk-tag">&gt;&lt;/granado-text&gt;</span></pre>
+
+        <!-- ===== Sem valor (placeholder) ===== -->
+        <h2 class="gd-h2">Sem valor (placeholder)</h2>
+        <p class="gd-lead">
+          Se <code>value</code> está vazio e <code>placeholder</code> definido, o
+          texto do placeholder aparece em cinza — útil para indicar "ainda não
+          preenchido" sem deixar o campo visualmente vazio.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start">
+          <granado-text style="flex:1;min-width:220px"
+            label="Lote" placeholder="(não atribuído)">
+          </granado-text>
+
+          <granado-text style="flex:1;min-width:220px"
+            label="Aprovador" icon="user" placeholder="(aguardando aprovação)">
+          </granado-text>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-text</span> <span class="tk-attr">label</span>=<span class="tk-str">"Lote"</span> <span class="tk-attr">placeholder</span>=<span class="tk-str">"(não atribuído)"</span><span class="tk-tag">&gt;&lt;/granado-text&gt;</span></pre>
+
+        <!-- ===== Cor customizada ===== -->
+        <h2 class="gd-h2">Cor do texto</h2>
+        <p class="gd-lead">
+          O atributo <code>color</code> pinta o texto exibido. Use com moderação —
+          em geral o default <code>#103E20</code> mantém consistência com o
+          restante do form. Útil para destacar status (verde aprovado, vermelho
+          desvio).
+        </p>
+        <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start">
+          <granado-text style="flex:1;min-width:200px"
+            label="Status" value="Aprovado" color="#1C5C31">
+          </granado-text>
+
+          <granado-text style="flex:1;min-width:200px"
+            label="Status" value="Em desvio" color="#C0392B">
+          </granado-text>
+
+          <granado-text style="flex:1;min-width:200px"
+            label="Lote" value="MP-01001" color="#9A7520">
+          </granado-text>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-text</span> <span class="tk-attr">value</span>=<span class="tk-str">"Aprovado"</span>  <span class="tk-attr">color</span>=<span class="tk-str">"#1C5C31"</span><span class="tk-tag">&gt;&lt;/granado-text&gt;</span>
+<span class="tk-tag">&lt;granado-text</span> <span class="tk-attr">value</span>=<span class="tk-str">"Em desvio"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#C0392B"</span><span class="tk-tag">&gt;&lt;/granado-text&gt;</span></pre>
+
+        <!-- ===== Textarea ===== -->
+        <h2 class="gd-h2">Multi-linha (textarea)</h2>
+        <p class="gd-lead">
+          Com <code>type="textarea"</code>, o componente preserva quebras de
+          linha (<code>\n</code>) e quebra texto longo automaticamente. Use
+          <code>rows</code> para definir a altura inicial.
+        </p>
+        <div class="gd-demo">
+          <granado-text style="max-width:520px"
+            label="Observações"
+            type="textarea"
+            rows="4"
+            value="Lote chegou com 3 caixas amassadas.
+Operador OK após inspeção visual.
+Liberado para envase às 14:32.">
+          </granado-text>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-text</span>
+    <span class="tk-attr">label</span>=<span class="tk-str">"Observações"</span>
+    <span class="tk-attr">type</span>=<span class="tk-str">"textarea"</span>
+    <span class="tk-attr">rows</span>=<span class="tk-str">"4"</span>
+    <span class="tk-attr">value</span>=<span class="tk-str">"Linha 1\nLinha 2\nLinha 3"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-text&gt;</span></pre>
+
+        <!-- ===== Acesso programático ===== -->
+        <h2 class="gd-h2">Acesso programático</h2>
+        <p class="gd-lead">
+          A propriedade <code>value</code> é getter/setter. Em Apriso, para
+          atualizar o conteúdo via JS, prefira <code>setAttribute</code> (mantém
+          o atributo HTML em sincronia).
+        </p>
+        <pre class="gd-code">const tx = document.querySelector(<span class="tk-str">'granado-text'</span>);
+
+<span class="tk-comment">// Ler valor atual</span>
+console.log(tx.value);
+
+<span class="tk-comment">// Atualizar valor (qualquer um dos dois funciona)</span>
+tx.value = <span class="tk-str">'Maria Silva'</span>;
+tx.setAttribute(<span class="tk-str">'value'</span>, <span class="tk-str">'Maria Silva'</span>);</pre>
+
+        <!-- ===== API ===== -->
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:160px">Nome</th>
+              <th style="width:200px">Tipo</th>
+              <th style="width:120px">Default</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">label</td>
+              <td class="col-type">string</td>
+              <td class="col-default">""</td>
+              <td class="col-desc">Texto exibido acima da caixa.</td>
+            </tr>
+            <tr>
+              <td class="col-name">value</td>
+              <td class="col-type">string</td>
+              <td class="col-default">""</td>
+              <td class="col-desc">Valor exibido na caixa.</td>
+            </tr>
+            <tr>
+              <td class="col-name">placeholder</td>
+              <td class="col-type">string</td>
+              <td class="col-default">""</td>
+              <td class="col-desc">Texto exibido (em cinza) quando <code>value</code> está vazio.</td>
+            </tr>
+            <tr>
+              <td class="col-name">icon</td>
+              <td class="col-type">string</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">
+                Ícone à esquerda. Aceita presets
+                (<code>search</code>, <code>mail</code>, <code>phone</code>,
+                <code>user</code>, <code>lock</code>, <code>calendar</code>,
+                <code>info</code>) ou qualquer texto/emoji/SVG bruto.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">type</td>
+              <td class="col-type">"text" | "textarea"</td>
+              <td class="col-default">"text"</td>
+              <td class="col-desc">
+                <code>"text"</code> renderiza uma única linha (com truncamento
+                em <code>…</code> se exceder a largura).
+                <code>"textarea"</code> preserva quebras de linha e expande verticalmente.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#103E20"</td>
+              <td class="col-desc">Cor do texto exibido.</td>
+            </tr>
+            <tr>
+              <td class="col-name">rows</td>
+              <td class="col-type">number</td>
+              <td class="col-default">4</td>
+              <td class="col-desc">Linhas iniciais quando <code>type="textarea"</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Propriedades JS</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:160px">Membro</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:120px">Acesso</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">value</td>
+              <td class="col-type">string</td>
+              <td class="col-default">get / set</td>
+              <td class="col-desc">Valor atual exibido. Em sincronia com o atributo <code>value</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Não é interativo:</strong> sem foco, sem eventos
+            <code>input</code>/<code>change</code>, sem teclado. Para coletar
+            entrada do usuário use <code>&lt;granado-input&gt;</code>.</li>
+          <li><strong>Truncamento:</strong> em modo single-line, valores que
+            excedem a largura são truncados com <code>…</code>. Em
+            <code>type="textarea"</code> o texto quebra em múltiplas linhas.</li>
+          <li><strong>Largura:</strong> aplique <code>style="flex:1; min-width:Xpx"</code>
+            no host quando empilhar campos em uma linha flex (mesmo padrão do
+            <code>&lt;granado-input&gt;</code>).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
            granado-radio
            ============================================================ -->
       <section id="granado-radio" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
@@ -4024,7 +4274,7 @@ tg.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tr
         <div class="gd-demo">
           <granado-scroll-panel title="Log de eventos" subtitle="Últimas 30 entradas"
             maxheight="220px">
-            <ul style="margin:0;padding:0;list-style:none;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:#103E20">
+            <ul style="margin:0;padding:0;list-style:none;font-family:'DM Mono','DejaVu Mono',Consolas,monospace;font-size:12px;color:#103E20">
               <li style="padding:6px 0;border-bottom:1px solid #E5DDC8">[08:15] MP-01001 pesado · OK</li>
               <li style="padding:6px 0;border-bottom:1px solid #E5DDC8">[08:24] MP-01002 pesado · Desvio</li>
               <li style="padding:6px 0;border-bottom:1px solid #E5DDC8">[08:31] MP-01003 pesado · Pendente</li>
@@ -4363,7 +4613,7 @@ tg.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tr
             </granado-tab>
 
             <granado-tab value="hist" label="Histórico" icon="calendar">
-              <ul style="margin:0;padding:0;list-style:none;font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#103E20">
+              <ul style="margin:0;padding:0;list-style:none;font-size:12px;font-family:'DM Mono','DejaVu Mono',Consolas,monospace;color:#103E20">
                 <li style="padding:6px 0;border-bottom:1px solid #E5DDC8">[08:15] MP-01001 confirmado · 44983,210 kg</li>
                 <li style="padding:6px 0;border-bottom:1px solid #E5DDC8">[08:24] MP-01002 confirmado · 3028,500 kg</li>
                 <li style="padding:6px 0;border-bottom:1px solid #E5DDC8">[08:31] MP-01003 confirmado · 12450,000 kg</li>
@@ -5415,7 +5665,7 @@ t.dismiss();</pre>
         <div class="gd-demo" style="display:flex;flex-direction:column;gap:18px">
           <div>
             <div style="font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#8A9E8E;margin-bottom:8px">Ações</div>
-            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;color:#5A6B5E">
+            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:'DM Mono','DejaVu Mono',Consolas,monospace;font-size:10px;color:#5A6B5E">
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="plus"></granado-icon>plus</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="check"></granado-icon>check</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="trash"></granado-icon>trash</span>
@@ -5429,7 +5679,7 @@ t.dismiss();</pre>
 
           <div>
             <div style="font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#8A9E8E;margin-bottom:8px">Navegação</div>
-            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;color:#5A6B5E">
+            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:'DM Mono','DejaVu Mono',Consolas,monospace;font-size:10px;color:#5A6B5E">
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="arrow-left"></granado-icon>arrow-left</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="arrow-right"></granado-icon>arrow-right</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="chevron-down"></granado-icon>chevron-down</span>
@@ -5441,7 +5691,7 @@ t.dismiss();</pre>
 
           <div>
             <div style="font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#8A9E8E;margin-bottom:8px">Status</div>
-            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;color:#5A6B5E">
+            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:'DM Mono','DejaVu Mono',Consolas,monospace;font-size:10px;color:#5A6B5E">
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="info"></granado-icon>info</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="alert-triangle" color="#9A5A00"></granado-icon>alert-triangle</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="check-circle" color="#1C7A38"></granado-icon>check-circle</span>
@@ -5453,7 +5703,7 @@ t.dismiss();</pre>
 
           <div>
             <div style="font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#8A9E8E;margin-bottom:8px">Objetos</div>
-            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;color:#5A6B5E">
+            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:'DM Mono','DejaVu Mono',Consolas,monospace;font-size:10px;color:#5A6B5E">
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="file"></granado-icon>file</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="folder"></granado-icon>folder</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="user"></granado-icon>user</span>
@@ -5467,7 +5717,7 @@ t.dismiss();</pre>
 
           <div>
             <div style="font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#8A9E8E;margin-bottom:8px">Indústria / MES</div>
-            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;color:#5A6B5E">
+            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:'DM Mono','DejaVu Mono',Consolas,monospace;font-size:10px;color:#5A6B5E">
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="package"></granado-icon>package</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="truck"></granado-icon>truck</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="database"></granado-icon>database</span>
@@ -5481,7 +5731,7 @@ t.dismiss();</pre>
 
           <div>
             <div style="font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#8A9E8E;margin-bottom:8px">Misc / UI</div>
-            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;color:#5A6B5E">
+            <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:'DM Mono','DejaVu Mono',Consolas,monospace;font-size:10px;color:#5A6B5E">
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="play"></granado-icon>play</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="pause"></granado-icon>pause</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="stop" color="#C0392B"></granado-icon>stop</span>

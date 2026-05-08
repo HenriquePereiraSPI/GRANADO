@@ -1,20 +1,16 @@
-<aside class="sidebar" data-current-screen="{Screen}" data-active-menu="{ActiveMenu}">
+<link type="text/css" rel="stylesheet" href="[Apriso]/Scripts/FontsGranado/granado-fonts.css">
+<link type="text/css" rel="stylesheet" href="[Apriso]/Scripts/CustomStylesGranado/custom_styles_grid.css">
 
-    <!-- Ponte: $Context so existe na aba HTML. Exporta pra global para
-         sidebar.js (arquivo externo) conseguir setar outputs. -->
-    <script>
-        if (typeof $Context !== 'undefined') {
-            window.AprisoContext = $Context;
-        }
-    </script>
+<aside class="sidebar" data-current-screen="{Screen}">
+
 
     <!-- ============ BRAND ============ -->
     <div class="sb-brand">
         <div class="sb-brand-top">
             <div class="sb-mark">G</div>
             <div>
-                <div class="sb-name">Casa Granado</div>
-                <div class="sb-sub">Pharmacias &middot; Desde 1870</div>
+                <div class="sb-name">Granado</div>
+                <div class="sb-sub">Desde 1870</div>
             </div>
         </div>
         <div class="sb-session">
@@ -175,6 +171,21 @@
             </div>
         </div>
 
+        <!-- ===== MODULO: DEV TOOLS ===== -->
+        <div class="sb-module" data-mod="mod-dev-tools">
+            <div class="sb-module-btn" data-toggle="mod-dev-tools" role="button" tabindex="0">
+                <div class="sb-dot"></div>
+                <span class="sb-ico">&#128736;</span> Dev Tools
+                <span class="sb-arr">&rsaquo;</span>
+            </div>
+            <div class="sb-sub-list">
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="DEV_TOOLS_ALL_COMPONENTS">All
+                    Components</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action"
+                    value="DEV_TOOLS_DOCUMENTATION">Documentation</button>
+            </div>
+        </div>
+
     </nav>
 
     <!-- ============ FOOTER ============ -->
@@ -184,3 +195,29 @@
     </div>
 
 </aside>
+
+<script>
+    (function () {
+        function init() {
+
+            console.log("CONTEXT:" + $Context.inputs);
+            if (typeof $Context !== 'undefined') {
+                window.AprisoContext = $Context;
+            }
+
+            [...document.fonts].forEach(f =>
+                console.log(f)
+            );
+
+            initSidebarEvents();
+
+        }
+        // Garante que so roda depois do DOM montado
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+
+</script>

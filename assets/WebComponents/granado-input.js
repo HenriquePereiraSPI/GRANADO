@@ -156,7 +156,7 @@ class GranadoInput extends HTMLElement {
     this.style.display = this.style.display || 'block';
 
     this.innerHTML = `
-      <div style="font-family:system-ui,-apple-system,sans-serif">
+      <div style="font-family:'Lato','DejaVu Sans',Arial,sans-serif">
         <label data-input-label style="display:none;font-size:11px;font-weight:600;color:#103E20;margin-bottom:6px;font-family:inherit"></label>
         <div data-input-row style="position:relative">
           ${iconHtml ? `<span data-input-icon style="${iconStyle}">${iconHtml}</span>` : ''}

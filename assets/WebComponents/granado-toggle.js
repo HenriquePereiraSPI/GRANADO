@@ -64,7 +64,7 @@ class GranadoToggle extends HTMLElement {
     const labelHtml = label ? `<span data-toggle-label></span>` : '';
     const order = labelPos === 'left' ? `${labelHtml}${switchHtml}` : `${switchHtml}${labelHtml}`;
 
-    this.innerHTML = `<span data-toggle-root role="switch" tabindex="0" style="display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none;font-family:system-ui,-apple-system,sans-serif;font-size:13px;outline:none;line-height:1">${order}</span>`;
+    this.innerHTML = `<span data-toggle-root role="switch" tabindex="0" style="display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none;font-family:'Lato','DejaVu Sans',Arial,sans-serif;font-size:13px;outline:none;line-height:1">${order}</span>`;
 
     const root = this.querySelector('[data-toggle-root]');
     root.addEventListener('click', (e) => this._toggle(e));

@@ -1,0 +1,124 @@
+/* ============================================================
+   Tela inicial — composicao do logo Granado:
+     marca dourada (G) + wordmark Playfair + divisor +
+     tagline em letterspacing.
+   Estilo limpo, fundo bege da marca, fade-in escalonado.
+   ============================================================ */
+
+.grn-home {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  margin: 0;
+  box-sizing: border-box;
+  background: #FDFAF1;
+  /* Sutil aura de luz e calor — quase imperceptivel, da profundidade */
+  background-image:
+    radial-gradient(ellipse at top, rgba(200, 168, 75, 0.07) 0%, transparent 55%),
+    radial-gradient(ellipse at bottom, rgba(28, 92, 49, 0.04) 0%, transparent 60%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Lato', 'DejaVu Sans', Arial, sans-serif;
+  color: #0F3319;
+  overflow: hidden;
+}
+
+.grn-home__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  padding: 32px;
+  user-select: none;
+}
+
+/* === Marca: quadrado dourado com "G" === */
+.grn-home__mark {
+  width: 92px;
+  height: 92px;
+  border-radius: 12px;
+  background: #C8A85A;
+  border: 1px solid #9A7520;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', 'DejaVu Serif', Georgia, serif;
+  font-size: 56px;
+  font-weight: 800;
+  color: #0F3319;
+  line-height: 1;
+  /* Pulse continuo — respiracao suave + halo dourado expandindo */
+  animation: grn-mark-pulse 2.6s ease-in-out infinite !important;
+  will-change: transform, box-shadow;
+}
+
+/* Especificidade dobrada para vencer regras globais do Apriso */
+.grn-home .grn-home__mark {
+  animation: grn-mark-pulse 2.6s ease-in-out infinite !important;
+}
+
+/* === Wordmark "Granado" === */
+.grn-home__wordmark {
+  margin: 0;
+  padding: 0;
+  font-family: 'Playfair Display', 'DejaVu Serif', Georgia, serif;
+  font-weight: 700;
+  font-size: clamp(52px, 7vw, 88px);
+  color: #0F3319;
+  letter-spacing: 0.015em;
+  line-height: 1;
+}
+
+/* === Divisor dourado === */
+.grn-home__rule {
+  width: 64px;
+  height: 1px;
+  background: #C8A85A;
+  border-radius: 1px;
+}
+
+/* === Tagline === */
+.grn-home__tagline {
+  font-family: 'Lato', 'DejaVu Sans', Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: #9A7520;
+  /* Compensa o letterspacing pra centralizar opticamente com o wordmark */
+  padding-left: 0.34em;
+}
+
+/* === Animacao do "G" =========================================
+   Dois efeitos sincronizados num ciclo de 2.6s:
+     1. Respiracao: scale 1 -> 1.05 -> 1
+     2. Sombra: a base ganha intensidade no pico + um halo
+        dourado se expande de 0px ate 18px e desaparece.
+   Resulta numa pulsacao calma, "viva", em tom da marca.
+   ============================================================ */
+@keyframes grn-mark-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      0 10px 28px rgba(154, 117, 32, 0.18),
+      0 2px 6px rgba(15, 51, 25, 0.10),
+      0 0 0 0 rgba(200, 168, 75, 0.45);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      0 16px 40px rgba(154, 117, 32, 0.32),
+      0 4px 12px rgba(15, 51, 25, 0.14),
+      0 0 0 18px rgba(200, 168, 75, 0);
+  }
+}
+
+/* === Acessibilidade: respeita prefers-reduced-motion === */
+@media (prefers-reduced-motion: reduce) {
+  .grn-home__mark {
+    animation: none;
+  }
+}

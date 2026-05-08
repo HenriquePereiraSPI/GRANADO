@@ -61,7 +61,7 @@ class GranadoCompleteCard extends HTMLElement {
                 border-radius: 8px;
                 padding: 16px 12px;
                 text-align: center;
-                font-family: system-ui, -apple-system, sans-serif;
+                font-family: 'Lato', 'DejaVu Sans', Arial, sans-serif;
                 transition: box-shadow 0.18s, transform 0.18s;
                 ${onClickEvent ? 'cursor: pointer;' : ''}
             "
@@ -90,7 +90,7 @@ class GranadoCompleteCard extends HTMLElement {
 
                 ${subtitle ? `
                     <div style="
-                        font-family: system-ui, -apple-system, sans-serif;
+                        font-family: 'Lato', 'DejaVu Sans', Arial, sans-serif;
                         font-size: 10px;
                         color: #6B7280;
                         line-height: 1.3;

@@ -11,9 +11,9 @@
     --grn-ok-p: #D2E8D7;
     --grn-ok-b: #98C8A8;
     --grn-per: #8C1A1A;
-    --grn-font-d: 'Playfair Display', Georgia, serif;
+    --grn-font-d: 'Lato', Georgia, serif;
     --grn-font-b: 'Lato', sans-serif;
-    --grn-font-m: 'DM Mono', monospace;
+    --grn-font-m: 'Lato', monospace;
 }
 
 /* === Topbar container === */
@@ -33,6 +33,9 @@
 
 /* === Breadcrumb === */
 .topbar-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     font-family: var(--grn-font-b);
     font-size: 11px;
     color: var(--grn-text3);
@@ -46,6 +49,53 @@
 .tb-page {
     color: var(--grn-verde);
     font-weight: 700;
+}
+
+/* Separador ">" entre o botao home e o ScreenTitle */
+.tb-sep {
+    color: var(--grn-text3);
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* Botao home (icone de casinha + label "MES Apriso") */
+.tb-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 10px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: var(--grn-text3);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: inherit;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s;
+}
+
+.tb-home__label {
+    line-height: 1;
+    margin-top: 4px;
+}
+
+.tb-home:hover {
+    background: var(--grn-surface2);
+    border-color: var(--grn-border);
+    color: var(--grn-verde);
+}
+
+.tb-home:active {
+    background: var(--grn-border);
+    color: var(--grn-verde);
+}
+
+.tb-home:focus-visible {
+    outline: 2px solid rgba(28, 92, 49, 0.4);
+    outline-offset: 1px;
 }
 
 /* === Right group === */
@@ -112,12 +162,12 @@
     padding: 7px 14px;
     border-radius: 5px;
     cursor: pointer;
-    transition: all .2s;
+    transition: all .1s;
 }
 
 .tb-btn-andon:hover {
     background: #A93226;
-    transform: scale(1.04);
+    transform: scale(1.01);
 }
 
 .tb-btn-andon::after {
@@ -131,7 +181,15 @@
 }
 
 @keyframes andon-pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(140, 26, 26, .45); }
-    70%  { box-shadow: 0 0 0 8px rgba(140, 26, 26, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(140, 26, 26, 0); }
+    0% {
+        box-shadow: 0 0 0 0 rgba(140, 26, 26, .45);
+    }
+
+    70% {
+        box-shadow: 0 0 0 8px rgba(140, 26, 26, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(140, 26, 26, 0);
+    }
 }

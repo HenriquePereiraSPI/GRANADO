@@ -4,9 +4,9 @@
     --grn-ouro-claro: #C8A85A;
     --grn-ouro: #9A7520;
     --grn-surface: #FDFAF1;
-    --grn-font-d: 'Playfair Display', Georgia, serif;
+    --grn-font-d: 'Lato', Georgia, serif;
     --grn-font-b: 'Lato', sans-serif;
-    --grn-font-m: 'DM Mono', monospace;
+    --grn-font-m: 'Lato', monospace;
 }
 
 /* === Sidebar container === */
@@ -142,7 +142,6 @@
 
 .sb-module-btn:hover {
     color: rgba(253, 250, 241, .85);
-    background: rgba(255, 255, 255, .05);
 }
 
 .sb-module-btn:focus-visible {
@@ -152,7 +151,29 @@
 .sb-module-btn.open,
 .sb-module-btn.active {
     color: #FDFAF1;
-    background: rgba(255, 255, 255, .07);
+}
+
+/* Modulo ATIVO — fundo dourado translucido + barra lateral dourada
+   (estilo "side rail" — substitui o highlight branco anterior) */
+.sb-module-btn.active {
+    background: rgba(200, 168, 75, .15);
+}
+
+.sb-module-btn.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    background: var(--grn-ouro-claro);
+    border-radius: 0 3px 3px 0;
+}
+
+/* Esconde o dot do modulo pai quando a barra lateral esta ativa
+   (a barra ja indica o modulo selecionado) */
+.sb-module-btn.active .sb-dot {
+    display: none;
 }
 
 .sb-module-btn .sb-ico {
@@ -191,7 +212,10 @@
 /* === Sub-items === */
 .sb-sub-list {
     display: none;
-    background: rgba(0, 0, 0, .15);
+    /* Indentacao do bloco de subitens — guia visual feita pelas
+       border-left dos proprios .sb-sub-item formam um trilho vertical. */
+    padding-left: 28px;
+    margin: 4px 0 8px;
 }
 
 .sb-sub-list.open {
@@ -202,29 +226,58 @@
     display: block;
     width: 100%;
     box-sizing: border-box;
-    padding: 9px 16px 9px 38px;
+    padding: 6px 14px;
+    /* Reset agressivo de aparencia nativa do <button> em todos os estados —
+       o Apriso/SO costuma adicionar um realce cinza/branco no hover/focus
+       que vaza por baixo das nossas cores. */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
     background: transparent;
+    background-color: transparent;
+    background-image: none;
     border: none;
+    /* Linha guia vertical que conecta os subitens */
+    border-left: 1px solid rgba(200, 168, 75, .12);
+    outline: none;
     cursor: pointer;
     font-family: var(--grn-font-b);
     font-size: 11px;
     font-weight: 400;
-    color: rgba(253, 250, 241, .45);
+    color: rgba(253, 250, 241, .5);
     text-align: left !important;
-    transition: all .15s;
-    border-left: 2px solid transparent;
+    transition: color .2s ease, border-left-color .2s ease, border-left-width .2s ease, padding-left .2s ease;
+    position: relative;
+}
+
+/* Hover/focus/active — apenas troca a cor do texto.
+   Forcamos background transparente em todos os estados pra fechar a porta
+   pra qualquer regra global (Apriso ou user-agent) que tente pintar. */
+.sb-sub-item:hover,
+.sb-sub-item:focus,
+.sb-sub-item:focus-visible,
+.sb-sub-item:active {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    outline: none;
 }
 
 .sb-sub-item:hover {
-    color: rgba(253, 250, 241, .8);
-    background: rgba(255, 255, 255, .04);
+    /* Ouro suave (mais claro que o ativo pra diferenciar) — !important
+       garante que vence regras globais de :hover que possam estar
+       pintando preto/cinza por baixo. */
+    color: rgba(232, 207, 132, .95) !important;
 }
 
+/* Subitem ATIVO — borda esquerda mais grossa em ouro vivo + cor de destaque.
+   Sem fundo: o destaque vem da borda + cor do texto. */
 .sb-sub-item.active {
     color: var(--grn-ouro-claro);
-    border-left-color: var(--grn-ouro-claro);
-    background: rgba(200, 168, 75, .08);
-    font-weight: 700;
+    border-left: 2px solid var(--grn-ouro-claro);
+    padding-left: 13px;
+    /* compensa o 1px extra da borda */
 }
 
 /* === Footer === */

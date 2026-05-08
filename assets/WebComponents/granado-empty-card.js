@@ -89,7 +89,7 @@ class GranadoEmptyCard extends HTMLElement {
                 border-radius: 8px;
                 padding: ${padding};
                 box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-                font-family: system-ui, -apple-system, sans-serif;
+                font-family: 'Lato', 'DejaVu Sans', Arial, sans-serif;
             ">
                 <span style="
                     position: absolute;

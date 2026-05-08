@@ -2,7 +2,15 @@
 
     <!-- ============ BREADCRUMB ============ -->
     <div class="topbar-breadcrumb">
-        <span class="tb-section">MES Apriso &rsaquo;</span>
+        <button type="button" class="tb-home" data-flx-bind="Action" value="OPEN_HOME">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 12 12 3l9 9" />
+                <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10" />
+            </svg>
+            <span class="tb-home__label">MES Apriso</span>
+        </button>
+        <span class="tb-sep" aria-hidden="true">&rsaquo;</span>
         <strong class="tb-page">{ScreenTitle}</strong>
     </div>
 
@@ -12,21 +20,28 @@
         <div class="tb-pill ok">&#9679; Sistema Online</div>
         <div class="tb-pill">OP Ativa: <span class="tb-op">OP-2026-0414</span></div>
 
-        <button type="button"
-                class="tb-btn-andon"
-                data-flx-bind="Action"
-                value="OPEN_ANDON"
-                title="Cadeia de Ajuda Autonoma">
+        <button type="button" class="tb-btn-andon" data-flx-bind="Action" value="OPEN_ANDON"
+            title="Cadeia de Ajuda Autonoma">
             &#128680; Pedir Ajuda
         </button>
 
-        <button type="button"
-                class="tb-btn"
-                data-flx-bind="Action"
-                value="OPEN_TRACTIAN">
+        <button type="button" class="tb-btn" data-flx-bind="Action" value="OPEN_TRACTIAN">
             + Solicitacao Servico
         </button>
 
     </div>
 
 </header>
+
+<script>
+    (function () {
+        var header_home = document.querySelector('.tb-home');
+        if (!header_home) return;
+
+        header_home.addEventListener('click', function (e) {
+            if (window.AprisoContext && window.AprisoContext.outputs) {
+                window.AprisoContext.outputs.current_sidebar_selected_item = '';
+            }
+        }, true);
+    })();
+</script>
