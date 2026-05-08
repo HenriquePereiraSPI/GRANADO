@@ -41,3 +41,105 @@ export const STATUS_PROC_LABEL = {
   '20': 'Em Curso',
   '30': 'Aguardando',
 };
+
+/**
+ * Lotes JA reconciliados (visao historica para o CQ).
+ * Em producao, virao da tabela JDE F4108 + tabelas de desvio.
+ *
+ * Cada item traz o status individual de cada uma das 4 areas
+ * (analises) + a contagem de desvios (abertos/tratados/criticos)
+ * + o status final do lote (L/R/B/D).
+ */
+export const LOTES_FINALIZADOS = [
+  {
+    linha: 1,
+    numeroReconciliacao: '137188',
+    lotePA: '260847',
+    produto: 'Sab. Glicerinado Lavanda 90g',
+    wo: 'WO 783785',
+    analises: { fab: 'APROVADO', emb: 'APROVADO', fq: 'APROVADO', micro: 'NA' },
+    desvios: { abertos: 0, tratados: 0, criticos: 0 },
+    statusLote: 'L — Liberado',
+    dataLiberacao: '2026-04-02',
+    responsavel: 'Bárbara C. O. Peixoto',
+  },
+  {
+    linha: 2,
+    numeroReconciliacao: '137195',
+    lotePA: '260921',
+    produto: 'Sab. Glicerinado Mel 90g',
+    wo: 'WO 783821',
+    analises: { fab: 'APROVADO', emb: 'APROVADO', fq: 'APROVADO', micro: 'APROVADO' },
+    desvios: { abertos: 0, tratados: 1, criticos: 0 },
+    statusLote: 'L — Liberado',
+    dataLiberacao: '2026-04-08',
+    responsavel: 'Bárbara C. O. Peixoto',
+  },
+  {
+    linha: 3,
+    numeroReconciliacao: '137201',
+    lotePA: '261004',
+    produto: 'Sab. Glicerinado Tradicional 90g',
+    wo: 'WO 783866',
+    analises: { fab: 'APROVADO', emb: 'APROVADO', fq: 'APROVADO', micro: 'NA' },
+    desvios: { abertos: 0, tratados: 0, criticos: 0 },
+    statusLote: 'L — Liberado',
+    dataLiberacao: '2026-04-11',
+    responsavel: 'Bárbara C. O. Peixoto',
+  },
+  {
+    linha: 4,
+    numeroReconciliacao: '137207',
+    lotePA: '261087',
+    produto: 'Sab. Glicerinado Limão 90g',
+    wo: 'WO 783892',
+    analises: { fab: 'APROVADO', emb: 'APROVADO', fq: 'REPROVADO', micro: 'PENDENTE' },
+    desvios: { abertos: 1, tratados: 0, criticos: 1 },
+    statusLote: 'B — Bloqueado',
+    dataLiberacao: '—',
+    responsavel: 'Bárbara C. O. Peixoto',
+  },
+  {
+    linha: 5,
+    numeroReconciliacao: '137215',
+    lotePA: '261142',
+    produto: 'Sab. Glicerinado Verbena 90g',
+    wo: 'WO 783923',
+    analises: { fab: 'REPROVADO', emb: 'NA', fq: 'NA', micro: 'NA' },
+    desvios: { abertos: 0, tratados: 2, criticos: 1 },
+    statusLote: 'R — Reprovado',
+    dataLiberacao: '2026-04-15',
+    responsavel: 'Bárbara C. O. Peixoto',
+  },
+  {
+    linha: 6,
+    numeroReconciliacao: '137223',
+    lotePA: '261198',
+    produto: 'Sab. Glicerinado Chá Branco 90g',
+    wo: 'WO 783955',
+    analises: { fab: 'APROVADO', emb: 'APROVADO', fq: 'APROVADO', micro: 'APROVADO' },
+    desvios: { abertos: 0, tratados: 0, criticos: 0 },
+    statusLote: 'L — Liberado',
+    dataLiberacao: '2026-04-18',
+    responsavel: 'Bárbara C. O. Peixoto',
+  },
+];
+
+/** Cor para o status de cada analise — reusado nas pills da tabela. */
+export const STATUS_ANALISE_COLOR = {
+  APROVADO:  { bg: 'var(--ok-p)',     fg: 'var(--ok)',    bd: 'var(--ok-b)'   },
+  REPROVADO: { bg: 'var(--per-p)',    fg: 'var(--per)',   bd: 'var(--per-b)'  },
+  PENDENTE:  { bg: 'var(--alr-p)',    fg: 'var(--alr)',   bd: 'var(--alr-b)'  },
+  NA:        { bg: 'var(--surface2)', fg: 'var(--text2)', bd: 'var(--border2)' },
+};
+
+/** Cor por status final do lote (Q/A/L/R/B/D/E). */
+export const STATUS_LOTE_FINAL_COLOR = {
+  L: { bg: 'var(--ok-p)',     fg: 'var(--ok)',    bd: 'var(--ok-b)'    },
+  R: { bg: 'var(--per-p)',    fg: 'var(--per)',   bd: 'var(--per-b)'   },
+  B: { bg: 'var(--per-p)',    fg: 'var(--per)',   bd: 'var(--per-b)'   },
+  D: { bg: 'var(--surface2)', fg: 'var(--text2)', bd: 'var(--border2)' },
+  Q: { bg: 'var(--alr-p)',    fg: 'var(--alr)',   bd: 'var(--alr-b)'   },
+  A: { bg: 'var(--inf-p)',    fg: 'var(--inf)',   bd: 'var(--inf-b)'   },
+  E: { bg: 'var(--surface2)', fg: 'var(--text2)', bd: 'var(--border2)' },
+};

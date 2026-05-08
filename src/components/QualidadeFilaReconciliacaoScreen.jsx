@@ -2,8 +2,11 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   LOTES_FILA,
+  LOTES_FINALIZADOS,
   STATUS_PROC_COLOR,
   STATUS_PROC_LABEL,
+  STATUS_ANALISE_COLOR,
+  STATUS_LOTE_FINAL_COLOR,
 } from '../data/lotes-fila-reconciliacao.js';
 
 /**
@@ -74,11 +77,85 @@ function KpiCard({ label, valor, cor, icone, hint }) {
 }
 
 /* ─────────────────────────────────────────────────────────────
+   Pill de status da analise (Aprovado / Reprovado / Pendente / NA)
+───────────────────────────────────────────────────────────── */
+function AnalisePill({ status }) {
+  const c = STATUS_ANALISE_COLOR[status] || STATUS_ANALISE_COLOR.PENDENTE;
+  const label = status === 'NA' ? 'N/A' : status.charAt(0) + status.slice(1).toLowerCase();
+  return (
+    <span
+      style={{
+        display: 'inline-block',
+        padding: '2px 8px', borderRadius: 10,
+        fontSize: 9, fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase',
+        background: c.bg, color: c.fg, border: `1px solid ${c.bd}`,
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {label}
+    </span>
+  );
+}
+
+/** Pill do status final do lote (L/R/B/D/Q/A/E). */
+function StatusLoteFinal({ valor }) {
+  const codigo = (valor || '').charAt(0);
+  const c = STATUS_LOTE_FINAL_COLOR[codigo] || STATUS_LOTE_FINAL_COLOR.Q;
+  return (
+    <span
+      style={{
+        display: 'inline-block',
+        padding: '3px 9px', borderRadius: 11,
+        fontSize: 10, fontWeight: 800, letterSpacing: '.04em',
+        background: c.bg, color: c.fg, border: `1px solid ${c.bd}`,
+        whiteSpace: 'nowrap',
+      }}
+      title={valor}
+    >
+      {valor}
+    </span>
+  );
+}
+
+/** Coluna 'Desvio' com badge dependendo da contagem. */
+function DesvioCellInline({ desvios }) {
+  const total = desvios.abertos + desvios.tratados;
+  if (total === 0) {
+    return <span style={{ fontSize: 10, color: 'var(--text3)' }}>—</span>;
+  }
+  if (desvios.abertos > 0) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'flex-start' }}>
+        <span className="bdg bdg-per" style={{ fontSize: 9 }} title={`${desvios.abertos} desvio(s) em aberto`}>
+          ⚠ {desvios.abertos} aberto{desvios.abertos > 1 ? 's' : ''}
+        </span>
+        {desvios.criticos > 0 && (
+          <span style={{ fontSize: 9, color: 'var(--per)', fontWeight: 700 }}>
+            • {desvios.criticos} crítico{desvios.criticos > 1 ? 's' : ''}
+          </span>
+        )}
+        {desvios.tratados > 0 && (
+          <span style={{ fontSize: 9, color: 'var(--text3)' }}>
+            • {desvios.tratados} tratado{desvios.tratados > 1 ? 's' : ''}
+          </span>
+        )}
+      </div>
+    );
+  }
+  return (
+    <span className="bdg bdg-ok" style={{ fontSize: 9 }} title={`${desvios.tratados} desvio(s) tratado(s)`}>
+      ✓ {desvios.tratados} tratado{desvios.tratados > 1 ? 's' : ''}
+    </span>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
    Tela principal
 ───────────────────────────────────────────────────────────── */
 
 export default function QualidadeFilaReconciliacaoScreen() {
   const navigate = useNavigate();
+  const [aba, setAba] = useState('pendentes'); // 'pendentes' | 'finalizadas'
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [filtroProcesso, setFiltroProcesso] = useState('todos');
   const [filtroTipo, setFiltroTipo] = useState('todos');
@@ -160,10 +237,10 @@ export default function QualidadeFilaReconciliacaoScreen() {
       <div className="page-header">
         <div>
           <div className="ph-eyebrow">Qualidade · CQ · ERU 6.1.x — Fila JDE F4108-Z</div>
-          <div className="ph-title">Fila de Reconciliações Pendentes</div>
+          <div className="ph-title">{aba === 'pendentes' ? 'Fila de Reconciliações Pendentes' : 'Reconciliações Finalizadas'}</div>
         </div>
         <div className="ph-actions" style={{ display: 'flex', gap: 8 }}>
-          <button className="btn btn-sm btn-ghost" onClick={atualizarMock} title="Atualizar fila via JDE">
+          <button className="btn btn-sm btn-ghost" onClick={atualizarMock} title="Atualizar via JDE">
             ↻ Atualizar
           </button>
           <button className="btn btn-sm btn-ghost" onClick={exportarMock} title="Exportar lista filtrada">
@@ -172,7 +249,51 @@ export default function QualidadeFilaReconciliacaoScreen() {
         </div>
       </div>
 
-      {/* KPIs */}
+      {/* Abas Pendentes / Finalizadas */}
+      <div
+        style={{
+          display: 'flex', gap: 0, marginBottom: 14,
+          borderBottom: '2px solid var(--border)',
+        }}
+      >
+        {[
+          { id: 'pendentes',   label: '📋 Pendentes',   sub: `${LOTES_FILA.length} na fila` },
+          { id: 'finalizadas', label: '✅ Finalizadas', sub: `${LOTES_FINALIZADOS.length} reconciliados` },
+        ].map((a) => {
+          const ativa = aba === a.id;
+          return (
+            <button
+              key={a.id}
+              type="button"
+              onClick={() => setAba(a.id)}
+              style={{
+                background: ativa ? 'var(--surface)' : 'transparent',
+                border: 'none',
+                borderBottom: ativa ? '3px solid var(--verde)' : '3px solid transparent',
+                marginBottom: -2,
+                padding: '10px 18px',
+                fontSize: 13, fontWeight: ativa ? 800 : 600,
+                color: ativa ? 'var(--verde)' : 'var(--text2)',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                display: 'flex', alignItems: 'center', gap: 8,
+              }}
+            >
+              {a.label}
+              <span style={{
+                fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 9,
+                background: ativa ? 'var(--verde-dim)' : 'var(--surface2)',
+                color: ativa ? 'var(--verde)' : 'var(--text3)',
+              }}>
+                {a.sub}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* KPIs (apenas na aba Pendentes) */}
+      {aba === 'pendentes' && (
       <div
         style={{
           display: 'grid',
@@ -185,6 +306,23 @@ export default function QualidadeFilaReconciliacaoScreen() {
         <KpiCard label="Em Curso"           valor={stats.emCurso}    cor="var(--inf)"  icone="🏭" hint="Fab / Emb / Pesagem"   />
         <KpiCard label="Aguardando LIMS"    valor={stats.aguardando} cor="var(--alr)"  icone="⏳" hint="Físico-Q. / Microbio." />
       </div>
+      )}
+
+      {/* KPIs (aba Finalizadas) */}
+      {aba === 'finalizadas' && (
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+          gap: 12, marginBottom: 14,
+        }}
+      >
+        <KpiCard label="Total Reconciliado" valor={LOTES_FINALIZADOS.length} cor="var(--text)" icone="📚" hint="Lotes processados pelo CQ" />
+        <KpiCard label="Liberados" valor={LOTES_FINALIZADOS.filter(l => l.statusLote.startsWith('L')).length} cor="var(--ok)" icone="✅" hint="Liberado para CED" />
+        <KpiCard label="Reprovados / Bloqueados" valor={LOTES_FINALIZADOS.filter(l => l.statusLote.startsWith('R') || l.statusLote.startsWith('B')).length} cor="var(--per)" icone="⛔" hint="Não foram para o CED" />
+        <KpiCard label="Com Desvio" valor={LOTES_FINALIZADOS.filter(l => l.desvios.abertos + l.desvios.tratados > 0).length} cor="var(--alr)" icone="⚠" hint="Aberto ou tratado" />
+      </div>
+      )}
 
       {/* Avisos */}
       {aviso && (
@@ -200,7 +338,8 @@ export default function QualidadeFilaReconciliacaoScreen() {
         </div>
       )}
 
-      {/* Filtros */}
+      {/* Filtros (apenas Pendentes) */}
+      {aba === 'pendentes' && (
       <div
         className="card mb14"
         style={{
@@ -279,8 +418,10 @@ export default function QualidadeFilaReconciliacaoScreen() {
           </button>
         </div>
       </div>
+      )}
 
-      {/* Tabela JDE-grid */}
+      {/* Tabela JDE-grid (Pendentes) */}
+      {aba === 'pendentes' && (
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         {/* Barra de info estilo JDE — "Registros 1 - N" */}
         <div
@@ -416,6 +557,102 @@ export default function QualidadeFilaReconciliacaoScreen() {
           <span style={{ marginLeft: 'auto' }}>★ campo obrigatório</span>
         </div>
       </div>
+      )}
+
+      {/* Tabela de Reconciliacoes FINALIZADAS */}
+      {aba === 'finalizadas' && (
+      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '6px 14px',
+            background: 'var(--surface2)',
+            borderBottom: '1px solid var(--border)',
+            fontSize: 11, color: 'var(--text3)', fontFamily: 'var(--font-m)',
+          }}
+        >
+          <span>
+            Registros 1 - {LOTES_FINALIZADOS.length} · Histórico de reconciliações
+          </span>
+          <span style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <span title="Exportar (mock)" style={{ cursor: 'pointer' }} onClick={exportarMock}>🡑</span>
+            <span title="Atualizar (mock)" style={{ cursor: 'pointer' }} onClick={atualizarMock}>↻</span>
+          </span>
+        </div>
+
+        <div style={{ overflowX: 'auto' }}>
+          <table className="tbl" style={{ minWidth: 1280 }}>
+            <thead>
+              <tr>
+                <th>Nº<br />Linha</th>
+                <th>Nº Reconc.</th>
+                <th>Lote PA</th>
+                <th>Produto</th>
+                <th style={{ textAlign: 'center' }}>🧪 Fabricação</th>
+                <th style={{ textAlign: 'center' }}>📦 Embalagem</th>
+                <th style={{ textAlign: 'center' }}>⚗️ F-Químico</th>
+                <th style={{ textAlign: 'center' }}>🔬 Microbiol.</th>
+                <th>Desvio</th>
+                <th>Status do Lote</th>
+                <th>Data<br />Liberação</th>
+                <th>Responsável</th>
+              </tr>
+            </thead>
+            <tbody>
+              {LOTES_FINALIZADOS.map((l) => {
+                const semDesvio = l.desvios.abertos + l.desvios.tratados === 0;
+                const linhaCor = l.statusLote.startsWith('L')
+                  ? 'transparent'
+                  : l.statusLote.startsWith('R') || l.statusLote.startsWith('B')
+                  ? 'var(--per-p)'
+                  : 'transparent';
+                return (
+                  <tr key={l.linha} style={{ background: linhaCor }}>
+                    <td className="mono">{String(l.linha).padStart(2, '0')}</td>
+                    <td className="mono" style={{ fontSize: 11, fontWeight: 700 }}>{l.numeroReconciliacao}</td>
+                    <td className="mono" style={{ color: 'var(--verde)', fontWeight: 800 }}>{l.lotePA}</td>
+                    <td style={{ fontSize: 12 }}>
+                      <div>{l.produto}</div>
+                      <div className="mono" style={{ fontSize: 10, color: 'var(--text3)' }}>{l.wo}</div>
+                    </td>
+                    <td style={{ textAlign: 'center' }}><AnalisePill status={l.analises.fab} /></td>
+                    <td style={{ textAlign: 'center' }}><AnalisePill status={l.analises.emb} /></td>
+                    <td style={{ textAlign: 'center' }}><AnalisePill status={l.analises.fq} /></td>
+                    <td style={{ textAlign: 'center' }}><AnalisePill status={l.analises.micro} /></td>
+                    <td style={{ minWidth: 110 }}><DesvioCellInline desvios={l.desvios} /></td>
+                    <td><StatusLoteFinal valor={l.statusLote} /></td>
+                    <td className="mono" style={{ fontSize: 11, color: l.dataLiberacao === '—' ? 'var(--text3)' : 'var(--text)' }}>
+                      {l.dataLiberacao}
+                    </td>
+                    <td style={{ fontSize: 11 }}>{l.responsavel}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <div
+          style={{
+            padding: '8px 14px',
+            background: 'var(--bg)',
+            borderTop: '1px solid var(--border)',
+            fontSize: 10, color: 'var(--text3)',
+            display: 'flex', flexWrap: 'wrap', gap: 14, alignItems: 'center',
+          }}
+        >
+          <span>
+            Status do Lote:{' '}
+            <strong style={{ color: 'var(--ok)' }}>L</strong> Liberado &nbsp;|&nbsp;
+            <strong style={{ color: 'var(--per)' }}>R</strong> Reprovado &nbsp;|&nbsp;
+            <strong style={{ color: 'var(--per)' }}>B</strong> Bloqueado
+          </span>
+          <span style={{ marginLeft: 'auto' }}>
+            Análises por área: <strong style={{ color: 'var(--ok)' }}>Aprovado</strong> · <strong style={{ color: 'var(--per)' }}>Reprovado</strong> · <strong style={{ color: 'var(--alr)' }}>Pendente</strong> · <strong style={{ color: 'var(--text2)' }}>N/A</strong>
+          </span>
+        </div>
+      </div>
+      )}
     </div>
   );
 }

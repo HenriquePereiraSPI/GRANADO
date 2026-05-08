@@ -148,6 +148,66 @@ const STATUS_LABEL = {
 };
 
 // ─────────────────────────────────────────────────────────────
+// Desvios do Lote — abertos durante a analise pelo CQ.
+// Cada desvio bloqueia a liberacao para o CED ate ser tratado.
+// ─────────────────────────────────────────────────────────────
+const TIPOS_DESVIO = [
+  { value: 'documental',     label: '📄 Documental' },
+  { value: 'processo',       label: '⚙️ Processo' },
+  { value: 'fisicoQuimico',  label: '⚗️ Físico-Químico' },
+  { value: 'microbiologico', label: '🔬 Microbiológico' },
+  { value: 'embalagem',      label: '📦 Embalagem' },
+  { value: 'outro',          label: 'Outro' },
+];
+
+const SEVERIDADES = {
+  leve:     { label: 'Leve',     bg: 'var(--inf-p)', fg: 'var(--inf)',  bd: 'var(--inf-b)'  },
+  moderado: { label: 'Moderado', bg: 'var(--alr-p)', fg: 'var(--alr)',  bd: 'var(--alr-b)'  },
+  critico:  { label: 'Crítico',  bg: 'var(--per-p)', fg: 'var(--per)',  bd: 'var(--per-b)'  },
+};
+
+const STATUS_DESVIO = {
+  aberto:   { label: 'Aberto',     bg: 'var(--per-p)', fg: 'var(--per)',  bd: 'var(--per-b)'  },
+  analise:  { label: 'Em Análise', bg: 'var(--alr-p)', fg: 'var(--alr)',  bd: 'var(--alr-b)'  },
+  tratado:  { label: 'Tratado',    bg: 'var(--ok-p)',  fg: 'var(--ok)',   bd: 'var(--ok-b)'   },
+  fechado:  { label: 'Fechado',    bg: 'var(--surface2)', fg: 'var(--text2)', bd: 'var(--border2)' },
+};
+
+const AREAS_DESVIO = [
+  { value: 'fabricacao',    label: '🧪 Fabricação' },
+  { value: 'embalagem',     label: '📦 Embalagem' },
+  { value: 'fisicoQuimico', label: '⚗️ Físico-Químico' },
+  { value: 'microbiologia', label: '🔬 Microbiologia' },
+  { value: 'geral',         label: '🌐 Geral / Lote' },
+];
+
+/** Gera numero de desvio no formato DSV-AAAA-NNNN. */
+function gerarNumeroDesvio() {
+  const ano = new Date().getFullYear();
+  const seq = String(Math.floor(Math.random() * 9000) + 1000);
+  return `DSV-${ano}-${seq}`;
+}
+
+/** Template de desvio vazio para o formulario "Novo Desvio". */
+function desvioTemplate() {
+  return {
+    id: null,
+    numero: gerarNumeroDesvio(),
+    tipo: 'documental',
+    severidade: 'moderado',
+    area: 'geral',
+    titulo: '',
+    descricao: '',
+    acaoImediata: '',
+    planoAcao: '',
+    responsavel: '',
+    dataAbertura: new Date().toISOString().split('T')[0],
+    status: 'aberto',
+    observacaoTratativa: '',
+  };
+}
+
+// ─────────────────────────────────────────────────────────────
 // Checklist de Reconciliacao — Anexo 2 do POP-GQV-0009/05.
 // Estados por item: 'pendente' (cinza) · 'concluido' (verde ✓) · 'na' (texto cinza).
 // Para liberar o lote pro CED, todos os itens precisam estar
@@ -665,6 +725,260 @@ function ChecklistModal({ checklist, setChecklist, onClose, lote, marcados, tota
 }
 
 /* ─────────────────────────────────────────────────────────────
+   Card compacto de Desvio (linha na lista) + Modal de Cadastro
+───────────────────────────────────────────────────────────── */
+function DesvioCard({ desvio, onEdit, onTratar, onRemover }) {
+  const sev = SEVERIDADES[desvio.severidade] || SEVERIDADES.moderado;
+  const st = STATUS_DESVIO[desvio.status] || STATUS_DESVIO.aberto;
+  const tipo = TIPOS_DESVIO.find((t) => t.value === desvio.tipo);
+  const area = AREAS_DESVIO.find((a) => a.value === desvio.area);
+  const tratado = desvio.status === 'tratado' || desvio.status === 'fechado';
+  return (
+    <div
+      style={{
+        background: 'var(--surface)', border: `1.5px solid ${tratado ? 'var(--ok-b)' : sev.bd}`,
+        borderLeft: `4px solid ${tratado ? 'var(--ok)' : sev.fg}`,
+        borderRadius: 6, padding: '10px 12px',
+        display: 'flex', flexDirection: 'column', gap: 6,
+        opacity: tratado ? 0.85 : 1,
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', flex: 1, minWidth: 240 }}>
+          <span className="mono" style={{ fontSize: 11, fontWeight: 800, color: 'var(--text2)' }}>{desvio.numero}</span>
+          <span style={{
+            fontSize: 9, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase',
+            padding: '2px 7px', borderRadius: 10, background: sev.bg, color: sev.fg, border: `1px solid ${sev.bd}`,
+          }}>
+            {sev.label}
+          </span>
+          <span style={{ fontSize: 10, color: 'var(--text3)' }}>{tipo?.label}</span>
+          <span style={{ fontSize: 10, color: 'var(--text3)' }}>·</span>
+          <span style={{ fontSize: 10, color: 'var(--text3)' }}>{area?.label}</span>
+          <span style={{
+            fontSize: 9, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase',
+            padding: '2px 7px', borderRadius: 10, background: st.bg, color: st.fg, border: `1px solid ${st.bd}`,
+            marginLeft: 'auto',
+          }}>
+            {st.label}
+          </span>
+        </div>
+      </div>
+
+      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{desvio.titulo || <em style={{ color: 'var(--text3)', fontWeight: 400 }}>(sem título)</em>}</div>
+
+      {desvio.descricao && (
+        <div style={{ fontSize: 11, color: 'var(--text2)', lineHeight: 1.4 }}>
+          {desvio.descricao.length > 180 ? desvio.descricao.slice(0, 180) + '…' : desvio.descricao}
+        </div>
+      )}
+
+      <div style={{ display: 'flex', gap: 14, fontSize: 10, color: 'var(--text3)', flexWrap: 'wrap' }}>
+        <span>📅 {desvio.dataAbertura}</span>
+        {desvio.responsavel && <span>👤 {desvio.responsavel}</span>}
+      </div>
+
+      <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', paddingTop: 4, borderTop: '1px dashed var(--border)', flexWrap: 'wrap' }}>
+        <button className="btn btn-sm btn-ghost" style={{ fontSize: 10, padding: '3px 8px' }} onClick={() => onEdit(desvio)}>
+          ✎ Editar
+        </button>
+        {!tratado && (
+          <button
+            className="btn btn-sm btn-v"
+            style={{ fontSize: 10, padding: '3px 8px' }}
+            onClick={() => onTratar(desvio)}
+            title="Marcar desvio como Tratado (libera para CED)"
+          >
+            ✓ Marcar como Tratado
+          </button>
+        )}
+        <button
+          className="btn btn-sm btn-ghost"
+          style={{ fontSize: 10, padding: '3px 8px', borderColor: 'var(--per)', color: 'var(--per)' }}
+          onClick={() => { if (window.confirm(`Excluir o desvio ${desvio.numero}?`)) onRemover(desvio.id); }}
+        >
+          ✕ Excluir
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function DesvioModal({ desvio, setDesvio, onSalvar, onClose }) {
+  const setCampo = (campo, valor) => setDesvio((d) => ({ ...d, [campo]: valor }));
+  const podeSalvar = desvio.titulo.trim() && desvio.descricao.trim() && desvio.responsavel.trim();
+  const editing = !!desvio.id;
+  return (
+    <div
+      style={{
+        position: 'fixed', inset: 0, background: 'rgba(15,51,25,.55)',
+        zIndex: 950, display: 'flex', alignItems: 'flex-start',
+        justifyContent: 'center', padding: '40px 20px', overflowY: 'auto',
+        backdropFilter: 'blur(3px)',
+      }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div
+        style={{
+          background: 'var(--surface)',
+          borderTop: `4px solid ${SEVERIDADES[desvio.severidade]?.fg || 'var(--per)'}`,
+          border: '1px solid var(--border)',
+          borderRadius: 8, padding: '24px 28px', maxWidth: 760, width: '100%',
+          boxShadow: 'var(--sh2)',
+        }}
+      >
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14, gap: 12 }}>
+          <div>
+            <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--per)' }}>
+              ⚠ {editing ? 'Editar Desvio' : 'Novo Desvio'}
+            </div>
+            <div style={{ fontFamily: 'var(--font-d)', fontSize: 18, fontWeight: 700, color: 'var(--verde-esc)', marginTop: 2 }}>
+              {desvio.numero}
+            </div>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 10px', cursor: 'pointer', fontSize: 13, color: 'var(--text2)' }}>✕</button>
+        </div>
+
+        {/* Linha 1: tipo / severidade / area */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 10 }}>
+          <div>
+            <label className="lbl">Tipo de Desvio <span style={{ color: 'var(--per)' }}>*</span></label>
+            <select className="sel" value={desvio.tipo} onChange={(e) => setCampo('tipo', e.target.value)} style={{ fontSize: 12, padding: '7px 10px' }}>
+              {TIPOS_DESVIO.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="lbl">Severidade <span style={{ color: 'var(--per)' }}>*</span></label>
+            <select className="sel" value={desvio.severidade} onChange={(e) => setCampo('severidade', e.target.value)} style={{ fontSize: 12, padding: '7px 10px', color: SEVERIDADES[desvio.severidade]?.fg, fontWeight: 700 }}>
+              {Object.entries(SEVERIDADES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="lbl">Área Relacionada <span style={{ color: 'var(--per)' }}>*</span></label>
+            <select className="sel" value={desvio.area} onChange={(e) => setCampo('area', e.target.value)} style={{ fontSize: 12, padding: '7px 10px' }}>
+              {AREAS_DESVIO.map((a) => <option key={a.value} value={a.value}>{a.label}</option>)}
+            </select>
+          </div>
+        </div>
+
+        {/* Titulo */}
+        <div style={{ marginBottom: 10 }}>
+          <label className="lbl">Título do Desvio <span style={{ color: 'var(--per)' }}>*</span></label>
+          <input
+            className="inp"
+            type="text"
+            value={desvio.titulo}
+            onChange={(e) => setCampo('titulo', e.target.value)}
+            placeholder="Ex.: Variância de pesagem em Fenoxietanol acima do limite"
+            style={{ fontSize: 12, padding: '7px 10px' }}
+            maxLength={120}
+          />
+        </div>
+
+        {/* Descricao */}
+        <div style={{ marginBottom: 10 }}>
+          <label className="lbl">Descrição do Desvio <span style={{ color: 'var(--per)' }}>*</span></label>
+          <textarea
+            className="txta"
+            value={desvio.descricao}
+            onChange={(e) => setCampo('descricao', e.target.value)}
+            rows={3}
+            placeholder="Descreva o desvio: o que foi observado, quando, por quem, quais evidências (etiquetas, fotos, batch records etc)..."
+            style={{ fontSize: 12, padding: '7px 10px', resize: 'vertical' }}
+          />
+        </div>
+
+        {/* Acao imediata + Plano de acao */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+          <div>
+            <label className="lbl">Ação Imediata</label>
+            <textarea
+              className="txta"
+              value={desvio.acaoImediata}
+              onChange={(e) => setCampo('acaoImediata', e.target.value)}
+              rows={2}
+              placeholder="Ex.: lote bloqueado, área isolada..."
+              style={{ fontSize: 12, padding: '7px 10px', resize: 'vertical' }}
+            />
+          </div>
+          <div>
+            <label className="lbl">Plano de Ação</label>
+            <textarea
+              className="txta"
+              value={desvio.planoAcao}
+              onChange={(e) => setCampo('planoAcao', e.target.value)}
+              rows={2}
+              placeholder="Ex.: revisão de POP, treinamento, repesagem..."
+              style={{ fontSize: 12, padding: '7px 10px', resize: 'vertical' }}
+            />
+          </div>
+        </div>
+
+        {/* Responsavel + data */}
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 10, marginBottom: 10 }}>
+          <div>
+            <label className="lbl">Responsável CQ <span style={{ color: 'var(--per)' }}>*</span></label>
+            <input
+              className="inp"
+              type="text"
+              value={desvio.responsavel}
+              onChange={(e) => setCampo('responsavel', e.target.value)}
+              placeholder="Matrícula ou nome"
+              style={{ fontSize: 12, padding: '7px 10px' }}
+            />
+          </div>
+          <div>
+            <label className="lbl">Data de Abertura</label>
+            <input
+              className="inp"
+              type="date"
+              value={desvio.dataAbertura}
+              onChange={(e) => setCampo('dataAbertura', e.target.value)}
+              style={{ fontSize: 12, padding: '7px 10px' }}
+            />
+          </div>
+        </div>
+
+        {/* Status (apenas em edicao) */}
+        {editing && (
+          <div style={{ marginBottom: 14 }}>
+            <label className="lbl">Status</label>
+            <select className="sel" value={desvio.status} onChange={(e) => setCampo('status', e.target.value)} style={{ fontSize: 12, padding: '7px 10px', color: STATUS_DESVIO[desvio.status]?.fg, fontWeight: 700 }}>
+              {Object.entries(STATUS_DESVIO).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+            </select>
+            {(desvio.status === 'tratado' || desvio.status === 'fechado') && (
+              <textarea
+                className="txta"
+                value={desvio.observacaoTratativa}
+                onChange={(e) => setCampo('observacaoTratativa', e.target.value)}
+                rows={2}
+                placeholder="Observação da tratativa (CAPA, evidência, lote a ser repesado etc)..."
+                style={{ fontSize: 12, padding: '7px 10px', resize: 'vertical', marginTop: 6 }}
+              />
+            )}
+          </div>
+        )}
+
+        {/* Footer */}
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+          <button className="btn btn-md btn-ghost" onClick={onClose}>Cancelar</button>
+          <button
+            className="btn btn-md btn-v"
+            onClick={onSalvar}
+            disabled={!podeSalvar}
+            style={{ opacity: podeSalvar ? 1 : 0.5, cursor: podeSalvar ? 'pointer' : 'not-allowed' }}
+            title={podeSalvar ? 'Salvar desvio' : 'Preencha Título, Descrição e Responsável'}
+          >
+            ✓ Salvar Desvio
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
    Tela principal
 ───────────────────────────────────────────────────────────── */
 
@@ -728,6 +1042,8 @@ export default function QualidadeReconciliacaoScreen() {
   const [modo, setModo] = useState('analise'); // 'analise' | 'criacao'
   const [checklist, setChecklist] = useState(checklistInicial());
   const [modalChecklistAberto, setModalChecklistAberto] = useState(false);
+  const [desvios, setDesvios] = useState([]);
+  const [desvioEditando, setDesvioEditando] = useState(null);
 
   // Quando aberta a partir da Fila (/qual-fila) com ?lote=<PA>,
   // mostramos um botao "Voltar para Fila" no header.
@@ -800,17 +1116,51 @@ export default function QualidadeReconciliacaoScreen() {
   const checklistMarcados = Object.values(checklist.itens).filter((s) => s === 'concluido' || s === 'na').length;
   const checklistCompleto = checklistMarcados === checklistTotal;
 
-  const podeLiberar = todasAprovadas && checklistCompleto;
+  // Desvios abertos (qualquer estado != tratado/fechado) bloqueiam a liberacao.
+  const desviosAbertos = desvios.filter((d) => d.status !== 'tratado' && d.status !== 'fechado');
+  const desviosBloqueando = desviosAbertos.length > 0;
+
+  const podeLiberar = todasAprovadas && checklistCompleto && !desviosBloqueando;
 
   const liberarParaCED = () => {
     if (!checklistCompleto) {
       setMensagem(`⚠ Preencha o Checklist de Reconciliação (POP-GQV-0009) antes de liberar. Itens marcados: ${checklistMarcados}/${checklistTotal}.`);
       return;
     }
+    if (desviosBloqueando) {
+      setMensagem(`⚠ Existe(m) ${desviosAbertos.length} desvio(s) em aberto. Trate todos antes de liberar para o CED.`);
+      return;
+    }
     setMensagem(`✓ Lote ${numeroLote.toUpperCase()} liberado para o CED em ${new Date().toLocaleString('pt-BR')}. Status atualizado para "L — Liberado".`);
   };
   const reprovarLote = () => {
     setMensagem(`✗ Lote ${numeroLote.toUpperCase()} REPROVADO em ${new Date().toLocaleString('pt-BR')}. Status atualizado para "R — Reprovado". Encaminhar para destruição.`);
+  };
+
+  // ─── Handlers de Desvio ────────────────────────────────────
+  const abrirNovoDesvio = () => {
+    setDesvioEditando(desvioTemplate());
+  };
+  const editarDesvio = (desvio) => {
+    setDesvioEditando({ ...desvio });
+  };
+  const tratarDesvio = (desvio) => {
+    setDesvios((prev) => prev.map((d) => d.id === desvio.id ? { ...d, status: 'tratado' } : d));
+    setMensagem(`✓ Desvio ${desvio.numero} marcado como TRATADO.`);
+  };
+  const removerDesvio = (id) => {
+    setDesvios((prev) => prev.filter((d) => d.id !== id));
+  };
+  const salvarDesvio = () => {
+    if (!desvioEditando) return;
+    if (desvioEditando.id) {
+      // edicao
+      setDesvios((prev) => prev.map((d) => d.id === desvioEditando.id ? desvioEditando : d));
+    } else {
+      // novo
+      setDesvios((prev) => [...prev, { ...desvioEditando, id: Date.now() }]);
+    }
+    setDesvioEditando(null);
   };
 
   return (
@@ -1014,6 +1364,85 @@ export default function QualidadeReconciliacaoScreen() {
             />
           </div>
 
+          {/* ── Desvios do Lote ───────────────────────────── */}
+          <div
+            className="card mb14"
+            style={{
+              padding: 14,
+              borderTop: `3px solid ${desviosBloqueando ? 'var(--per)' : (desvios.length > 0 ? 'var(--ok)' : 'var(--border2)')}`,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: 14, fontWeight: 800 }}>⚠ Desvios do Lote</span>
+                {desvios.length > 0 && (
+                  <>
+                    <span className="bdg" style={{ fontSize: 10, background: 'var(--surface2)', color: 'var(--text2)', border: '1px solid var(--border)' }}>
+                      {desvios.length} no total
+                    </span>
+                    {desviosBloqueando && (
+                      <span className="bdg bdg-per" style={{ fontSize: 10 }}>
+                        ⛔ {desviosAbertos.length} em aberto · bloqueia liberação
+                      </span>
+                    )}
+                    {!desviosBloqueando && (
+                      <span className="bdg bdg-ok" style={{ fontSize: 10 }}>
+                        ✓ Todos tratados
+                      </span>
+                    )}
+                  </>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={abrirNovoDesvio}
+                className="btn btn-sm"
+                style={{
+                  background: 'var(--per-p)', color: 'var(--per)',
+                  border: '1.5px solid var(--per-b)',
+                  fontWeight: 700, fontSize: 12,
+                }}
+              >
+                + Abrir Novo Desvio
+              </button>
+            </div>
+
+            {desvios.length === 0 ? (
+              <div
+                style={{
+                  padding: '14px',
+                  background: 'var(--surface2)',
+                  border: '1px dashed var(--border2)',
+                  borderRadius: 6,
+                  textAlign: 'center',
+                  fontSize: 11,
+                  color: 'var(--text3)',
+                }}
+              >
+                Nenhum desvio registrado para este lote.{' '}
+                <button
+                  onClick={abrirNovoDesvio}
+                  style={{ background: 'none', border: 'none', color: 'var(--per)', cursor: 'pointer', textDecoration: 'underline', fontFamily: 'inherit', fontSize: 11 }}
+                >
+                  Abrir um novo desvio
+                </button>{' '}
+                se necessário durante a análise.
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {desvios.map((d) => (
+                  <DesvioCard
+                    key={d.id}
+                    desvio={d}
+                    onEdit={editarDesvio}
+                    onTratar={tratarDesvio}
+                    onRemover={removerDesvio}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* Resumo + Ações finais */}
           <div className="card co" style={{ padding: 16, display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', alignItems: 'center', borderTop: '3px solid var(--ouro-claro)' }}>
             <div style={{ minWidth: 280 }}>
@@ -1065,6 +1494,8 @@ export default function QualidadeReconciliacaoScreen() {
                     ? 'Todas as áreas precisam estar APROVADAS ou N/A'
                     : !checklistCompleto
                     ? 'Preencha o Checklist de Reconciliação antes de liberar'
+                    : desviosBloqueando
+                    ? `Trate os ${desviosAbertos.length} desvio(s) em aberto antes de liberar`
                     : 'Liberar lote para o CED'
                 }
               >
@@ -1084,10 +1515,12 @@ export default function QualidadeReconciliacaoScreen() {
               </button>
               <div style={{ fontSize: 10, color: 'var(--text3)', textAlign: 'right', maxWidth: 230, lineHeight: 1.5 }}>
                 {podeLiberar
-                  ? '✓ Pronto para liberar — áreas + checklist OK.'
+                  ? '✓ Pronto para liberar — áreas + checklist + desvios OK.'
                   : !todasAprovadas
                   ? 'Liberação habilita quando as 4 áreas estão APROVADAS ou N/A.'
-                  : 'Falta o Checklist de Reconciliação.'}
+                  : !checklistCompleto
+                  ? 'Falta o Checklist de Reconciliação.'
+                  : `${desviosAbertos.length} desvio(s) em aberto — trate antes de liberar.`}
               </div>
             </div>
           </div>
@@ -1103,6 +1536,16 @@ export default function QualidadeReconciliacaoScreen() {
           lote={lote}
           marcados={checklistMarcados}
           total={checklistTotal}
+        />
+      )}
+
+      {/* Modal Desvio (novo / editar) */}
+      {desvioEditando && (
+        <DesvioModal
+          desvio={desvioEditando}
+          setDesvio={setDesvioEditando}
+          onSalvar={salvarDesvio}
+          onClose={() => setDesvioEditando(null)}
         />
       )}
 
