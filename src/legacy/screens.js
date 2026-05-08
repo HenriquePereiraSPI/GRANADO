@@ -2935,12 +2935,13 @@ export const SCREENS = {
         <div class="card-title">Fila de Pesagem — Prioridade</div>
         <div class="abox info mb14"><span class="ai">ℹ</span><div>Esta fila mostra <strong>apenas as ordens prontas para pesagem</strong> (com 100% das MPs pagas pelo almoxarifado no JDE).</div></div>
         <div style="overflow-x:auto">
-        <table class="tbl" style="min-width:1080px">
+        <table class="tbl" style="min-width:1180px">
           <thead>
             <tr>
               <th>Núm. da Ordem</th>
               <th>Produto / Fórmula</th>
               <th>Quantidade</th>
+              <th>Pagamento MP</th>
               <th>Status</th>
               <th>Data Prev.<br/>Fabricação</th>
               <th>Desvio</th>
@@ -2954,6 +2955,14 @@ export const SCREENS = {
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0414</td>
               <td style="font-size:12px">Creme Hidratante 150g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-076</span></td>
               <td class="mono">540 kg</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="mono" style="font-size:12px;font-weight:700;color:var(--ok);min-width:38px">12/12</span>
+                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
+                    <div style="width:100%;height:100%;background:var(--ok);border-radius:3px"></div>
+                  </div>
+                </div>
+              </td>
               <td><span class="bdg bdg-inf">🔄 Pesando</span></td>
               <td class="mono" style="font-size:11px">17/05/2026</td>
               <td><span class="bdg bdg-ok" style="font-size:9px">Sem desvio</span></td>
@@ -2969,6 +2978,14 @@ export const SCREENS = {
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0416</td>
               <td style="font-size:12px">Loção Hidratante Rosa 200ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-089</span></td>
               <td class="mono">600 kg</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="mono" style="font-size:12px;font-weight:700;color:var(--ok);min-width:38px">12/12</span>
+                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
+                    <div style="width:100%;height:100%;background:var(--ok);border-radius:3px"></div>
+                  </div>
+                </div>
+              </td>
               <td><span class="bdg bdg-ok">✓ Pronta para Pesagem</span></td>
               <td class="mono" style="font-size:11px">18/05/2026</td>
               <td style="font-size:11px;color:var(--text3)">—</td>
@@ -2981,6 +2998,14 @@ export const SCREENS = {
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0413</td>
               <td style="font-size:12px">Sabonete Phebo Glicerinado 90g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-051</span></td>
               <td class="mono">320 kg</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="mono" style="font-size:12px;font-weight:700;color:var(--ok);min-width:38px">8/8</span>
+                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
+                    <div style="width:100%;height:100%;background:var(--ok);border-radius:3px"></div>
+                  </div>
+                </div>
+              </td>
               <td><span class="bdg bdg-ok">✅ Finalizada</span></td>
               <td class="mono" style="font-size:11px">14/05/2026</td>
               <td><span class="bdg bdg-alr" style="font-size:9px" title="Fenoxietanol +0,028 kg">⚠ 1 variância</span></td>

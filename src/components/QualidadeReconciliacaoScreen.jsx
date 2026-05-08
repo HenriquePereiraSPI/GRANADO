@@ -134,10 +134,39 @@ const BASE_MOCK = {
 };
 
 const STATUS_COLOR = {
-  APROVADO:  { bg: 'var(--ok-p)',  fg: 'var(--ok)',   bd: 'var(--ok-b)'  },
-  REPROVADO: { bg: 'var(--per-p)', fg: 'var(--per)',  bd: 'var(--per-b)' },
-  PENDENTE:  { bg: 'var(--alr-p)', fg: 'var(--alr)',  bd: 'var(--alr-b)' },
+  APROVADO:  { bg: 'var(--ok-p)',   fg: 'var(--ok)',    bd: 'var(--ok-b)'  },
+  REPROVADO: { bg: 'var(--per-p)',  fg: 'var(--per)',   bd: 'var(--per-b)' },
+  PENDENTE:  { bg: 'var(--alr-p)',  fg: 'var(--alr)',   bd: 'var(--alr-b)' },
+  NA:        { bg: 'var(--surface2)', fg: 'var(--text2)', bd: 'var(--border2)' },
 };
+
+const STATUS_LABEL = {
+  APROVADO:  'APROVADO',
+  REPROVADO: 'REPROVADO',
+  PENDENTE:  'PENDENTE',
+  NA:        'N/A',
+};
+
+// ─────────────────────────────────────────────────────────────
+// Checklist de Reconciliacao — Anexo 2 do POP-GQV-0009/05.
+// Estados por item: 'pendente' (cinza) · 'concluido' (verde ✓) · 'na' (texto cinza).
+// Para liberar o lote pro CED, todos os itens precisam estar
+// marcados como 'concluido' OU 'na'.
+// ─────────────────────────────────────────────────────────────
+const CHECKLIST_ITENS = [
+  { id: 'wo_mps_pesadas',     label: 'WO com Matérias-Primas Pesadas' },
+  { id: 'etq_mp_relat_pes',   label: 'Etiquetas de Matéria-Prima / Relatório de Pesagem' },
+  { id: 'ctrl_assinat',       label: 'Controle de Assinaturas / Assinatura Eletrônica' },
+  { id: 'of_relat_inbatch',   label: 'Ordem de Fabricação / Relatório do InBatch' },
+  { id: 'wo_envase_montag',   label: 'WO Envase EAN / WO Montagem EAN' },
+  { id: 'rel_ctrl_emb',       label: 'Relatório de Controle em Processo na Linha de Embalagem' },
+  { id: 'ctrl_peso',          label: 'Controle de Peso' },
+  { id: 'ordem_emb',          label: 'Ordem de Embalagem' },
+  { id: 'wo_emb_dun',         label: 'WO Embalagem DUN' },
+  { id: 'bol_fq',             label: 'Boletim de Análise Físico-Químico' },
+  { id: 'bol_micro',          label: 'Boletim de Análise Microbiológico' },
+  { id: 'rel_desvio',         label: 'Relatório de Desvio' },
+];
 
 // Opcoes do campo "Status do Lote" (alinhadas a tabela 41/F4108 do JDE).
 // O CQ pode alterar manualmente (ex.: Q -> L apos liberacao, Q -> B se
@@ -165,6 +194,7 @@ const AREA_COR = {
 
 function StatusPill({ status }) {
   const c = STATUS_COLOR[status] || STATUS_COLOR.PENDENTE;
+  const label = STATUS_LABEL[status] || status;
   return (
     <span
       style={{
@@ -180,7 +210,7 @@ function StatusPill({ status }) {
         borderRadius: 12,
       }}
     >
-      {status}
+      {label}
     </span>
   );
 }
@@ -262,6 +292,8 @@ function CampoSelect({ label, value, opcoes, onChange, obrigatorio }) {
 function CardArea({ chave, dados, indicadores, onUpdate, onAbrirGenealogia }) {
   const cor = AREA_COR[chave];
   const handleChange = (campo, valor) => onUpdate({ ...dados, [campo]: valor });
+  const [expObs, setExpObs] = useState(false);
+  const ehNA = dados.status === 'NA';
 
   return (
     <div style={{
@@ -270,6 +302,7 @@ function CardArea({ chave, dados, indicadores, onUpdate, onAbrirGenealogia }) {
       borderRadius: 7,
       boxShadow: 'var(--sh)',
       overflow: 'hidden',
+      opacity: ehNA ? 0.78 : 1,
     }}>
       {/* Header colorido — clicavel pra abrir Genealogia */}
       <button
@@ -277,89 +310,139 @@ function CardArea({ chave, dados, indicadores, onUpdate, onAbrirGenealogia }) {
         onClick={onAbrirGenealogia}
         title="Clique para ver na Genealogia de Lote"
         style={{
-          background: cor.bg, color: cor.fg,
-          padding: '10px 14px',
+          background: ehNA ? 'var(--text3)' : cor.bg, color: cor.fg,
+          padding: '8px 12px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           width: '100%', border: 'none', cursor: 'pointer', font: 'inherit',
           gap: 10,
         }}
       >
-        <div style={{ fontSize: 13, fontWeight: 900, letterSpacing: '.08em', textTransform: 'uppercase' }}>
+        <div style={{ fontSize: 12, fontWeight: 900, letterSpacing: '.08em', textTransform: 'uppercase' }}>
           {cor.icon} {cor.label}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span
             style={{
               fontSize: 9, fontWeight: 700, letterSpacing: '.08em',
-              padding: '3px 9px', borderRadius: 12,
+              padding: '2px 7px', borderRadius: 10,
               background: 'rgba(255,255,255,.18)', color: '#fff',
               border: '1px solid rgba(255,255,255,.35)',
               whiteSpace: 'nowrap',
             }}
           >
-            🧬 Ver Genealogia →
+            🧬 Genealogia →
           </span>
           <StatusPill status={dados.status} />
         </div>
       </button>
 
-      {/* Body */}
-      <div style={{ padding: 14, display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {/* Indicadores */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-          {indicadores.map((ind) => (
-            <Campo key={ind.label} label={ind.label} value={ind.value} />
-          ))}
-        </div>
+      {/* Body — versão compacta */}
+      <div style={{ padding: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {/* Indicadores em linha (compactados se NA) */}
+        {!ehNA && (
+          <div style={{
+            display: 'flex', flexWrap: 'wrap', gap: '4px 14px',
+            fontSize: 11, color: 'var(--text2)',
+            padding: '6px 10px',
+            background: 'var(--surface2)',
+            borderRadius: 4, border: '1px solid var(--border)',
+          }}>
+            {indicadores.map((ind) => (
+              <span key={ind.label}>
+                <span style={{ color: 'var(--text3)', fontWeight: 700 }}>{ind.label}: </span>
+                <span style={{ fontFamily: 'var(--font-m)', fontWeight: 700, color: 'var(--text)' }}>{ind.value || '—'}</span>
+              </span>
+            ))}
+          </div>
+        )}
 
-        {/* Responsavel + Data */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label className="lbl">Responsável CQ <span style={{ color: 'var(--per)' }}>*</span></label>
+        {/* Responsavel + Data — uma linha só */}
+        {!ehNA && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 130px', gap: 8 }}>
             <input
               className="inp"
               type="text"
               value={dados.responsavel}
               onChange={(e) => handleChange('responsavel', e.target.value)}
-              placeholder="Matrícula ou nome"
-              style={{ fontSize: 12, padding: '7px 10px' }}
+              placeholder="Responsável CQ (matrícula)"
+              style={{ fontSize: 11, padding: '5px 8px' }}
             />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label className="lbl">Data da Análise</label>
             <input
               className="inp"
               type="date"
               value={dados.data || ''}
               onChange={(e) => handleChange('data', e.target.value)}
-              style={{ fontSize: 12, padding: '7px 10px' }}
+              style={{ fontSize: 11, padding: '5px 8px' }}
             />
           </div>
-        </div>
+        )}
 
-        {/* Observacoes */}
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label className="lbl">Observações</label>
-          <textarea
-            className="txta"
-            value={dados.observacoes}
-            onChange={(e) => handleChange('observacoes', e.target.value)}
-            rows={2}
-            placeholder="Registrar não conformidades, desvios ou comentários..."
-            style={{ fontSize: 12, padding: '7px 10px', resize: 'vertical' }}
-          />
-        </div>
+        {/* Observacoes — colapsado por padrão */}
+        {!ehNA && (
+          <div>
+            {!expObs && !dados.observacoes && (
+              <button
+                type="button"
+                onClick={() => setExpObs(true)}
+                className="btn btn-sm btn-ghost"
+                style={{ fontSize: 10, padding: '3px 8px' }}
+              >
+                + Observações
+              </button>
+            )}
+            {!expObs && dados.observacoes && (
+              <button
+                type="button"
+                onClick={() => setExpObs(true)}
+                style={{
+                  background: 'var(--alr-p)', border: '1px solid var(--alr-b)',
+                  color: 'var(--alr)', borderRadius: 4, padding: '4px 8px',
+                  fontSize: 10, cursor: 'pointer', fontFamily: 'inherit',
+                  width: '100%', textAlign: 'left',
+                }}
+              >
+                💬 {dados.observacoes.length > 60 ? dados.observacoes.slice(0, 60) + '…' : dados.observacoes}
+              </button>
+            )}
+            {expObs && (
+              <textarea
+                className="txta"
+                value={dados.observacoes}
+                onChange={(e) => handleChange('observacoes', e.target.value)}
+                onBlur={() => setExpObs(false)}
+                rows={2}
+                placeholder="Registrar não conformidades, desvios ou comentários..."
+                autoFocus
+                style={{ fontSize: 11, padding: '6px 8px', resize: 'vertical' }}
+              />
+            )}
+          </div>
+        )}
 
-        {/* Botoes Reprovar / Pendente / Aprovar */}
+        {/* Marca informativa quando NA */}
+        {ehNA && (
+          <div style={{
+            padding: '8px 10px',
+            background: 'var(--surface2)', border: '1px dashed var(--border2)',
+            borderRadius: 4, fontSize: 11, color: 'var(--text2)',
+            display: 'flex', alignItems: 'center', gap: 8,
+          }}>
+            <span>ℹ️</span>
+            <span>Esta análise não se aplica para o lote atual.</span>
+          </div>
+        )}
+
+        {/* Botoes Reprovar / Pendente / N/A / Aprovar */}
         <div style={{
-          display: 'flex', gap: 8, justifyContent: 'flex-end',
-          paddingTop: 10, borderTop: '1px solid var(--border)',
+          display: 'flex', gap: 6, justifyContent: 'flex-end',
+          paddingTop: 6, borderTop: '1px solid var(--border)',
+          flexWrap: 'wrap',
         }}>
           <button
             type="button"
             onClick={() => handleChange('status', 'REPROVADO')}
             className="btn btn-sm btn-ghost"
-            style={{ borderColor: 'var(--per)', color: 'var(--per)', fontSize: 10 }}
+            style={{ borderColor: 'var(--per)', color: 'var(--per)', fontSize: 10, padding: '3px 8px' }}
           >
             ✗ Reprovar
           </button>
@@ -367,15 +450,24 @@ function CardArea({ chave, dados, indicadores, onUpdate, onAbrirGenealogia }) {
             type="button"
             onClick={() => handleChange('status', 'PENDENTE')}
             className="btn btn-sm btn-ghost"
-            style={{ borderColor: 'var(--alr)', color: 'var(--alr)', fontSize: 10 }}
+            style={{ borderColor: 'var(--alr)', color: 'var(--alr)', fontSize: 10, padding: '3px 8px' }}
           >
             ⏳ Pendente
           </button>
           <button
             type="button"
+            onClick={() => handleChange('status', 'NA')}
+            className="btn btn-sm btn-ghost"
+            style={{ borderColor: 'var(--text3)', color: 'var(--text2)', fontSize: 10, padding: '3px 8px' }}
+            title="Esta análise não se aplica ao lote"
+          >
+            — N/A
+          </button>
+          <button
+            type="button"
             onClick={() => handleChange('status', 'APROVADO')}
             className="btn btn-sm btn-v"
-            style={{ fontSize: 10 }}
+            style={{ fontSize: 10, padding: '3px 8px' }}
           >
             ✓ Aprovar
           </button>
@@ -388,6 +480,189 @@ function CardArea({ chave, dados, indicadores, onUpdate, onAbrirGenealogia }) {
 /* (A Fila de Reconciliacoes Pendentes virou tela dedicada:
    /qual-fila — QualidadeFilaReconciliacaoScreen.jsx) */
 
+
+/* ─────────────────────────────────────────────────────────────
+   Modal Checklist de Reconciliacao — POP-GQV-0009/05 · Anexo 2
+   Espelha o formulario fisico que o CQ assina no fim do processo.
+───────────────────────────────────────────────────────────── */
+function ChecklistEstadoToggle({ estado, onChange }) {
+  // Toggle 3 estados: pendente -> concluido -> na -> pendente
+  const cores = {
+    pendente:  { bg: 'var(--surface2)', fg: 'var(--text3)',   bd: 'var(--border)',   label: '?',   help: 'Pendente'   },
+    concluido: { bg: 'var(--ok-p)',     fg: 'var(--ok)',      bd: 'var(--ok-b)',     label: '✓',   help: 'Concluído'  },
+    na:        { bg: 'var(--surface2)', fg: 'var(--text2)',   bd: 'var(--border2)',  label: 'N/A', help: 'Não se aplica' },
+  };
+  const c = cores[estado] || cores.pendente;
+  const proximo = estado === 'pendente' ? 'concluido' : estado === 'concluido' ? 'na' : 'pendente';
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(proximo)}
+      title={`${c.help} — clique para alternar`}
+      style={{
+        minWidth: 56, padding: '4px 8px',
+        background: c.bg, color: c.fg,
+        border: `1.5px solid ${c.bd}`,
+        borderRadius: 4,
+        fontSize: 12, fontWeight: 800,
+        cursor: 'pointer', fontFamily: 'inherit',
+      }}
+    >
+      {c.label}
+    </button>
+  );
+}
+
+function ChecklistModal({ checklist, setChecklist, onClose, lote, marcados, total }) {
+  const setItem = (id, valor) => setChecklist((c) => ({ ...c, itens: { ...c.itens, [id]: valor } }));
+  const setBool = (campo, valor) => setChecklist((c) => ({ ...c, [campo]: valor }));
+  const setCampo = (campo, valor) => setChecklist((c) => ({ ...c, [campo]: valor }));
+  const pct = Math.round((marcados / total) * 100);
+
+  return (
+    <div
+      style={{
+        position: 'fixed', inset: 0, background: 'rgba(15,51,25,.55)',
+        zIndex: 950, display: 'flex', alignItems: 'flex-start',
+        justifyContent: 'center', padding: '40px 20px', overflowY: 'auto',
+        backdropFilter: 'blur(3px)',
+      }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div
+        style={{
+          background: 'var(--surface)', borderTop: '4px solid var(--ouro)',
+          border: '1px solid var(--border)',
+          borderRadius: 8, padding: '24px 28px', maxWidth: 760, width: '100%',
+          boxShadow: 'var(--sh2)',
+        }}
+      >
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12, gap: 12 }}>
+          <div>
+            <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--ouro)' }}>
+              POP-GQV-0009/05 · Anexo 2
+            </div>
+            <div style={{ fontFamily: 'var(--font-d)', fontSize: 18, fontWeight: 700, color: 'var(--verde-esc)', marginTop: 2 }}>
+              Check List de Reconciliação de Lote
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 10px', cursor: 'pointer', fontSize: 13, color: 'var(--text2)' }}
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Header do produto/lote */}
+        <div
+          style={{
+            background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 6,
+            padding: '10px 14px', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr',
+            gap: 12, fontSize: 11, marginBottom: 14,
+          }}
+        >
+          <div>
+            <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase' }}>Produto</div>
+            <div style={{ fontWeight: 700, marginTop: 2 }}>{lote?.produtoAcabado || '—'}</div>
+          </div>
+          <div>
+            <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase' }}>Lote Fabricação</div>
+            <div className="mono" style={{ fontWeight: 700, marginTop: 2 }}>{lote?.loteGranel || '—'}</div>
+          </div>
+          <div>
+            <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase' }}>Lote Embalagem (PA)</div>
+            <div className="mono" style={{ fontWeight: 700, marginTop: 2 }}>{lote?.lotePA || '—'}</div>
+          </div>
+        </div>
+
+        {/* Barra de progresso */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12, background: 'var(--surface2)', padding: '8px 12px', borderRadius: 6, border: '1px solid var(--border)' }}>
+          <div style={{ fontFamily: 'var(--font-d)', fontSize: 22, fontWeight: 700, color: pct === 100 ? 'var(--ok)' : 'var(--ouro)', minWidth: 48 }}>{pct}%</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ height: 6, background: 'var(--bg2)', borderRadius: 3, overflow: 'hidden' }}>
+              <div style={{ width: `${pct}%`, height: '100%', background: pct === 100 ? 'var(--ok)' : 'linear-gradient(90deg, var(--ouro), var(--ok))', transition: 'width .3s' }} />
+            </div>
+            <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 3 }}>
+              {marcados} de {total} itens marcados (concluído ou N/A)
+            </div>
+          </div>
+        </div>
+
+        {/* Documentação do Lote */}
+        <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 6 }}>
+          Documentação do Lote
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 14, border: '1px solid var(--border)', borderRadius: 6, overflow: 'hidden' }}>
+          {CHECKLIST_ITENS.map((it, i) => (
+            <div
+              key={it.id}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '8px 12px', gap: 12,
+                background: i % 2 === 0 ? 'var(--surface)' : 'var(--surface2)',
+                fontSize: 12,
+              }}
+            >
+              <span style={{ flex: 1, color: 'var(--text)' }}>{it.label}</span>
+              <ChecklistEstadoToggle estado={checklist.itens[it.id]} onChange={(v) => setItem(it.id, v)} />
+            </div>
+          ))}
+        </div>
+
+        {/* Flags extras */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 6, cursor: 'pointer', fontSize: 12 }}>
+            <input
+              type="checkbox"
+              checked={checklist.ordemParcial}
+              onChange={(e) => setBool('ordemParcial', e.target.checked)}
+              style={{ width: 16, height: 16 }}
+            />
+            <span><strong>Ordem Parcial</strong> <span style={{ color: 'var(--text3)' }}>(N/A se desmarcado)</span></span>
+          </label>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 6, cursor: 'pointer', fontSize: 12 }}>
+            <input
+              type="checkbox"
+              checked={checklist.produtoKit}
+              onChange={(e) => setBool('produtoKit', e.target.checked)}
+              style={{ width: 16, height: 16 }}
+            />
+            <span><strong>Produto destinado para Kit</strong> <span style={{ color: 'var(--text3)' }}>(N/A se desmarcado)</span></span>
+          </label>
+        </div>
+
+        {/* Observação */}
+        <div style={{ marginBottom: 14 }}>
+          <label className="lbl">Observação</label>
+          <textarea
+            className="txta"
+            value={checklist.observacao}
+            onChange={(e) => setCampo('observacao', e.target.value)}
+            rows={2}
+            placeholder="Registrar não conformidades, justificativas de N/A ou comentários relevantes..."
+            style={{ fontSize: 12, padding: '7px 10px', resize: 'vertical' }}
+          />
+        </div>
+
+        {/* Footer */}
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+          <button className="btn btn-md btn-ghost" onClick={onClose}>Fechar</button>
+          <button
+            className="btn btn-md btn-v"
+            onClick={onClose}
+            disabled={pct !== 100}
+            style={{ opacity: pct === 100 ? 1 : 0.5, cursor: pct === 100 ? 'pointer' : 'not-allowed' }}
+            title={pct === 100 ? 'Confirmar e fechar' : 'Marque todos os itens (concluído ou N/A)'}
+          >
+            ✓ Confirmar Checklist
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /* ─────────────────────────────────────────────────────────────
    Tela principal
@@ -428,6 +703,20 @@ function loteTemplate(numero) {
   };
 }
 
+/** Estado inicial do checklist (todos os 12 itens em pendente). */
+function checklistInicial() {
+  const itens = {};
+  CHECKLIST_ITENS.forEach((it) => { itens[it.id] = 'pendente'; });
+  return {
+    itens,
+    ordemParcial: false,
+    produtoKit: false,
+    observacao: '',
+    assinatura: '',
+    dataAssinatura: '',
+  };
+}
+
 export default function QualidadeReconciliacaoScreen() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -437,6 +726,8 @@ export default function QualidadeReconciliacaoScreen() {
   const [lote, setLote] = useState(null);
   const [mensagem, setMensagem] = useState('');
   const [modo, setModo] = useState('analise'); // 'analise' | 'criacao'
+  const [checklist, setChecklist] = useState(checklistInicial());
+  const [modalChecklistAberto, setModalChecklistAberto] = useState(false);
 
   // Quando aberta a partir da Fila (/qual-fila) com ?lote=<PA>,
   // mostramos um botao "Voltar para Fila" no header.
@@ -499,10 +790,23 @@ export default function QualidadeReconciliacaoScreen() {
     setLote((prev) => ({ ...prev, areas: { ...prev.areas, [chave]: novoValor } }));
   };
 
-  const todasAprovadas = lote && Object.values(lote.areas).every((a) => a.status === 'APROVADO');
+  // Para liberar pro CED, areas precisam estar APROVADO ou NA (nenhuma pendente)
+  // E o checklist precisa estar 100% preenchido (todo item concluido ou na).
+  const todasAprovadas = lote && Object.values(lote.areas).every((a) => a.status === 'APROVADO' || a.status === 'NA');
   const algumaReprovada = lote && Object.values(lote.areas).some((a) => a.status === 'REPROVADO');
 
+  // Checklist completo = todos os 12 itens estao 'concluido' ou 'na'.
+  const checklistTotal = CHECKLIST_ITENS.length;
+  const checklistMarcados = Object.values(checklist.itens).filter((s) => s === 'concluido' || s === 'na').length;
+  const checklistCompleto = checklistMarcados === checklistTotal;
+
+  const podeLiberar = todasAprovadas && checklistCompleto;
+
   const liberarParaCED = () => {
+    if (!checklistCompleto) {
+      setMensagem(`⚠ Preencha o Checklist de Reconciliação (POP-GQV-0009) antes de liberar. Itens marcados: ${checklistMarcados}/${checklistTotal}.`);
+      return;
+    }
     setMensagem(`✓ Lote ${numeroLote.toUpperCase()} liberado para o CED em ${new Date().toLocaleString('pt-BR')}. Status atualizado para "L — Liberado".`);
   };
   const reprovarLote = () => {
@@ -712,27 +1016,57 @@ export default function QualidadeReconciliacaoScreen() {
 
           {/* Resumo + Ações finais */}
           <div className="card co" style={{ padding: 16, display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', alignItems: 'center', borderTop: '3px solid var(--ouro-claro)' }}>
-            <div>
+            <div style={{ minWidth: 280 }}>
               <div className="card-title" style={{ marginBottom: 8, padding: 0, border: 'none' }}>Resumo da Análise</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
                 <ResumoItem label="Fabricação"     status={lote.areas.fabricacao.status} />
                 <ResumoItem label="Embalagem"      status={lote.areas.embalagem.status} />
                 <ResumoItem label="Físico-Químico" status={lote.areas.fisicoQuimico.status} />
                 <ResumoItem label="Microbiologia"  status={lote.areas.microbiologia.status} />
               </div>
+
+              {/* Botao do Checklist */}
+              <button
+                type="button"
+                onClick={() => setModalChecklistAberto(true)}
+                className="btn btn-md"
+                style={{
+                  background: checklistCompleto ? 'var(--ok-p)' : 'var(--surface2)',
+                  border: `1.5px solid ${checklistCompleto ? 'var(--ok-b)' : 'var(--ouro-claro)'}`,
+                  color: checklistCompleto ? 'var(--ok)' : 'var(--ouro)',
+                  fontWeight: 700, fontSize: 12,
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%',
+                }}
+              >
+                <span style={{ fontSize: 18 }}>{checklistCompleto ? '✅' : '📋'}</span>
+                <div style={{ flex: 1, textAlign: 'left' }}>
+                  <div>{checklistCompleto ? 'Checklist Completo' : 'Checklist de Reconciliação'}</div>
+                  <div style={{ fontSize: 9, fontWeight: 500, opacity: 0.85 }}>
+                    POP-GQV-0009/05 · Anexo 2 · {checklistMarcados}/{checklistTotal} itens
+                  </div>
+                </div>
+                <span style={{ fontSize: 16 }}>›</span>
+              </button>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-end' }}>
               <button
                 className="btn btn-lg btn-v"
                 onClick={liberarParaCED}
-                disabled={!todasAprovadas}
+                disabled={!podeLiberar}
                 style={{
-                  opacity: todasAprovadas ? 1 : 0.5,
-                  cursor: todasAprovadas ? 'pointer' : 'not-allowed',
+                  opacity: podeLiberar ? 1 : 0.5,
+                  cursor: podeLiberar ? 'pointer' : 'not-allowed',
                   minWidth: 230,
                 }}
-                title={todasAprovadas ? 'Liberar lote para o CED' : 'Todas as áreas precisam estar APROVADAS'}
+                title={
+                  !todasAprovadas
+                    ? 'Todas as áreas precisam estar APROVADAS ou N/A'
+                    : !checklistCompleto
+                    ? 'Preencha o Checklist de Reconciliação antes de liberar'
+                    : 'Liberar lote para o CED'
+                }
               >
                 ✓ Liberar para o CED
               </button>
@@ -749,13 +1083,27 @@ export default function QualidadeReconciliacaoScreen() {
                 ✗ Reprovar Lote
               </button>
               <div style={{ fontSize: 10, color: 'var(--text3)', textAlign: 'right', maxWidth: 230, lineHeight: 1.5 }}>
-                {todasAprovadas
-                  ? 'Pronto para liberar — todas as 4 áreas APROVADAS.'
-                  : 'Liberação habilita quando as 4 áreas estão APROVADAS.'}
+                {podeLiberar
+                  ? '✓ Pronto para liberar — áreas + checklist OK.'
+                  : !todasAprovadas
+                  ? 'Liberação habilita quando as 4 áreas estão APROVADAS ou N/A.'
+                  : 'Falta o Checklist de Reconciliação.'}
               </div>
             </div>
           </div>
         </>
+      )}
+
+      {/* Modal Checklist de Reconciliação (POP-GQV-0009/05 — Anexo 2) */}
+      {modalChecklistAberto && (
+        <ChecklistModal
+          checklist={checklist}
+          setChecklist={setChecklist}
+          onClose={() => setModalChecklistAberto(false)}
+          lote={lote}
+          marcados={checklistMarcados}
+          total={checklistTotal}
+        />
       )}
 
       {/* Dica para o usuario quando nao ha lote carregado */}
