@@ -26,6 +26,18 @@ export const DOSSIE = {
   emitido: '05/05/2026 13:52',
   conformidades: ['CFR 21 Part 11 (FDA)', 'IN 134/2022 (ANVISA)'],
 
+  // Cronograma da Ordem (extraído do Relatório de Pesagem do dossiê).
+  // Mostra a progressão temporal completa da OF — da abertura no JDE
+  // até o encerramento — útil para auditoria e análise de lead time.
+  cronograma: {
+    ordemInicio:    '05/04/2026',
+    pesagem:        '14/04/2026',
+    conferencia:    '16/04/2026',
+    inbatchInicio:  '16/04/2026',
+    inbatchFim:     '16/04/2026',
+    ordemFim:       '17/04/2026',
+  },
+
   // ── Cadeia genealogica (nos da arvore visual) ────────────────────────────
   cadeia: [
     {
@@ -35,54 +47,78 @@ export const DOSSIE = {
       icone: '🌱',
       cor: 'inf',
       itens: [
-        { cod: 'M0042',     desc: 'GLICERINA (VEGETAL)',           qtd: '68,75 kg',     lote: '0314226' },
-        { cod: 'M0328',     desc: 'AMARELO QUIMIBLEND TRAD. 128',  qtd: '27,50 kg',     lote: '0126326' },
-        { cod: 'M3302B',    desc: 'ESSÊNCIA GLICERINA REF BQ34957',qtd: '82,50 kg',     lote: '0176826' },
-        { cod: 'M8020',     desc: 'AÇÚCAR CRISTAL SUPERIOR',       qtd: '952,00 kg',    lote: '0288026' },
-        { cod: 'MAP0815B',  desc: 'APARA TRANSP GRANADO GLICERINA',qtd: '161,206 kg',   lote: '1512/2026' },
-        { cod: 'APAR0815B', desc: 'APARA TRANSP GRANADO GLICERINA',qtd: '338,794 kg',   lote: '1513/2026' },
-        { cod: 'S0800B',    desc: 'MASSA BASE SABONETE VEGETAL',   qtd: '4.418,000 kg', lote: '2270/2026' },
+        { cod: 'M0042',    desc: 'GLICERINA (VEGETAL)',            qtd: '68,75 kg',     lote: '0314226',  validade: '19/03/2028' },
+        { cod: 'M0328',    desc: 'AMARELO QUIMIBLEND TRAD. 128',   qtd: '27,50 kg',     lote: '0126326',  validade: '21/01/2027' },
+        { cod: 'M3102B',   desc: 'ESSÊNCIA GLICERINA REF BQ34957', qtd: '82,50 kg',     lote: '0176826',  validade: '22/12/2026' },
+        { cod: 'M0020',    desc: 'AÇÚCAR CRISTAL SUPERIOR',        qtd: '952,00 kg',    lote: '0288026',  validade: '08/10/2027' },
+        { cod: 'MAP0815B', desc: 'APARA TRANSP GRANADO GLICERINA', qtd: '161,206 kg',   lote: '1512/2026',validade: '17/03/2029' },
+        { cod: 'MAP0815B', desc: 'APARA TRANSP GRANADO GLICERINA', qtd: '338,794 kg',   lote: '1513/2026',validade: '19/03/2029' },
+        { cod: 'S0800B',   desc: 'MASSA BASE SABONETE VEGETAL',    qtd: '4.418,000 kg', lote: '2270/2026',validade: '09/04/2029' },
       ],
     },
     {
       id: 'pesagem',
       titulo: 'Pesagem (Sala A)',
-      subtitulo: '14/04/2026 · Total 178,75 kg · Toledo PC Link 7',
+      subtitulo: '14/04/2026 · Total 178,75 kg · Gaiola 1 · 4 volumes separados',
       icone: '⚖️',
       cor: 'verde',
+      gaiola: 'GAIOLA 1',
+      gaiolaPosicao: 'MFSSAA101',
+      // 4 volumes separados conforme PDF (M0042 1 vol · M0328 2 vols · M3102B 1 vol).
       itens: [
         {
           cod: 'M0042',  desc: 'GLICERINA (VEGETAL)', qtd: '68,75 kg',
           balanca: 'TOL-A-01', operador: 'Marcelo Brito Ribeiro',
-          etqCodigo: 'ETQ-784426-01', etqLote: '0314226', etqHora: '14/04 09:12',
-          barcode: 'M0042-0314226-784426-01',
+          conferente: 'Ricardo Henriques da Cunha', dataConf: '16/04/2026 09:39',
+          gaiolaPosicao: 'MFSSAA101',
+          etqCodigo: 'B020692', etqLote: '0314226', etqHora: '14/04/2026 02:11',
+          barcode: 'B020692-M0042-0314226',
+          tipoVolume: 'FRACIONADO',
         },
         {
           cod: 'M0328',  desc: 'AMARELO QUIMIBLEND TRAD. 128', qtd: '27,50 kg',
           balanca: 'TOL-A-02', operador: 'Marcelo Brito Ribeiro',
-          etqCodigo: 'ETQ-784426-02', etqLote: '0126326', etqHora: '14/04 09:25',
-          barcode: 'M0328-0126326-784426-02',
+          conferente: 'Ricardo Henriques da Cunha', dataConf: '16/04/2026 09:39',
+          gaiolaPosicao: 'MFSSAA101',
+          etqCodigo: 'B020832', etqLote: '0126326', etqHora: '14/04/2026 04:09',
+          barcode: 'B020832-M0328-0126326',
+          tipoVolume: 'FRACIONADO',
+          // Esta MP é separada em 2 etiquetas (volumes) por capacidade da gaiola.
+          subVolumes: [
+            { etqCodigo: 'B020832', qtd: '20,00 kg', etqHora: '14/04/2026 04:09' },
+            { etqCodigo: 'B020848', qtd: '7,50 kg',  etqHora: '14/04/2026 04:26' },
+          ],
         },
         {
-          cod: 'M3302B', desc: 'ESSÊNCIA GLICERINA REF BQ34957', qtd: '82,50 kg',
+          cod: 'M3102B', desc: 'ESSÊNCIA GLICERINA REF BQ34957', qtd: '82,50 kg',
           balanca: 'TOL-A-03', operador: 'Marcelo Brito Ribeiro',
-          etqCodigo: 'ETQ-784426-03', etqLote: '0176826', etqHora: '14/04 09:48',
-          barcode: 'M3302B-0176826-784426-03',
+          conferente: 'Ricardo Henriques da Cunha', dataConf: '16/04/2026 09:39',
+          gaiolaPosicao: 'MFSSAA101',
+          etqCodigo: 'B020812', etqLote: '0176826', etqHora: '14/04/2026 03:45',
+          barcode: 'B020812-M3102B-0176826',
+          tipoVolume: 'FRACIONADO',
         },
       ],
     },
     {
       id: 'fabricacao',
       titulo: 'Fabricação (MF5 · HOMO4)',
-      subtitulo: '16/04/2026 · 8 etapas InBatch · Líder: Geisha',
+      subtitulo: '16/04/2026 · 9 etapas InBatch · Operador: Ricardo H. Cunha',
       icone: '🧪',
       cor: 'verde',
       etapas: [
+        { codigo: '01.00', nome: 'VERIFICAÇÃO INICIAL', inicio: '16/04 15:24:57', fim: '16/04 15:26:38', operador: 'Ricardo Henriques da Cunha', status: 'OK', params: [
+          {p:'Equipamentos identificados (POP-PROD-002)', um:'—', prev:'Sim', real:'Sim'},
+          {p:'Sala limpa e organizada',                   um:'—', prev:'Sim', real:'Sim'},
+          {p:'Conferência do produto realizada',          um:'—', prev:'Sim', real:'Sim'},
+          {p:'Utensílios limpos e secos',                 um:'—', prev:'Sim', real:'Sim'},
+          {p:'WO LOTE_BATCH_OK aberta no InBatch',        um:'—', prev:'Sim', real:'Sim'},
+        ] },
         { codigo: '03.02', nome: 'ADICAO_MB',         inicio: '16/04 15:26:49', fim: '16/04 15:45:05', operador: 'Sistema',                    status: 'OK', params: [{p:'Massa Base S0800B', um:'kg', prev:'4363,70', real:'4418,00'}, {p:'Temperatura', um:'°C', prev:'—', real:'70,92'}, {p:'Velocidade', um:'rpm', prev:'1700', real:'1700'}] },
         { codigo: '03.03', nome: 'ADICAO_APARAS',     inicio: '16/04 15:46:21', fim: '16/04 15:59:17', operador: 'Sistema',                    status: 'OK', params: [{p:'Apara MAP0815B',    um:'kg', prev:'500,00',  real:'500,00'},  {p:'Temperatura', um:'°C', prev:'—', real:'76,70'}] },
         { codigo: '03.04', nome: 'ADICAO_ACUCAR',     inicio: '16/04 15:59:25', fim: '16/04 16:40:25', operador: 'Sistema',                    status: 'OK', params: [{p:'Açúcar M8020',      um:'kg', prev:'957,55',  real:'952,00'},  {p:'Temperatura', um:'°C', prev:'—', real:'68,31'}] },
         { codigo: '03.04', nome: 'ADD_TAMPA · Glicerina', inicio: '16/04 16:40:29', fim: '16/04 16:42:23', operador: 'Sistema',                status: 'OK', params: [{p:'Glicerina M0042',   um:'kg', prev:'68,75',   real:'68,75'},   {p:'Temperatura', um:'°C', prev:'—', real:'68,09'}] },
-        { codigo: '03.04', nome: 'ADD_TAMPA · Essência',  inicio: '16/04 16:42:27', fim: '16/04 16:46:07', operador: 'Sistema',                status: 'OK', params: [{p:'Essência M3302B',   um:'kg', prev:'82,50',   real:'82,50'},   {p:'Temperatura', um:'°C', prev:'—', real:'67,87'}] },
+        { codigo: '03.04', nome: 'ADD_TAMPA · Essência',  inicio: '16/04 16:42:27', fim: '16/04 16:46:07', operador: 'Sistema',                status: 'OK', params: [{p:'Essência M3102B',   um:'kg', prev:'82,50',   real:'82,50'},   {p:'Temperatura', um:'°C', prev:'—', real:'67,87'}] },
         { codigo: '03.04', nome: 'HOMOGENEIZACAO',    inicio: '16/04 16:47:39', fim: '16/04 17:02:57', operador: 'Sistema',                    status: 'OK', params: [{p:'Tempo',              um:'seg', prev:'900',    real:'900'}] },
         { codigo: '03.05/06', nome: 'RECIRC + HOMOGE_FINAL', inicio: '16/04 17:03:11', fim: '16/04 17:30:07', operador: 'Sistema',             status: 'OK', params: [{p:'Velocidade',         um:'rpm', prev:'800',    real:'800'},   {p:'Tempo', um:'seg', prev:'1500', real:'1500'}] },
         { codigo: 'CQ',    nome: 'AMOSTRA + APROVAÇÃO', inicio: '16/04 17:30:07', fim: '16/04 18:35:16', operador: 'Maicon dos Santos Souza Lima', status: 'OK', params: [{p:'Amostra aprovada',  um:'—',  prev:'Sim',    real:'Sim'}] },
@@ -103,7 +139,7 @@ export const DOSSIE = {
         status:   'DENTRO DO LIMITE',
         rendEmb:  '93,23%',
         ultimoProduto: 'TRANSP GRANADO GLICERINA',
-        ultimoLote: '2547/2026',
+        ultimoLote: '2065/2026',
       },
       etiqueta: {
         codigo:        'S0815B',
@@ -124,7 +160,7 @@ export const DOSSIE = {
       subtitulo: 'Análise 118.481 · Aprovado · 16/04/2026',
       icone: '🧫',
       cor: 'verde',
-      analise: { numero: '118.481', amostra: '136.158', data: '16/04/2026', analista: 'Rcafé', parecer: 'Aprovado' },
+      analise: { numero: '118.461', amostra: '138.158', data: '16/04/2026', analista: 'Rcafé', parecer: 'Aprovado' },
       ensaios: [
         { ensaio: 'Aspecto',                 esp: 'Conforme',     resultado: 'Conforme', status: 'Conforme' },
         { ensaio: 'Cor',                     esp: 'Conforme',     resultado: 'Conforme', status: 'Conforme' },
@@ -164,9 +200,9 @@ export const DOSSIE = {
       cor: 'ouro',
       info: { of: '784458', linha: 'Linha B', modulo: 'MF1', inicio: '17/04/2026 09:15', fim: '17/04/2026 19:40' },
       consumo: [
-        { cod: 'S0815B', desc: 'TRANSP GRANADO GLICERINA',   exigido: '6.000,000', entregue: '6.006',    devolvido: '—',    perdido: '1.057',  utilizado: '5.930,79' },
-        { cod: 'E3072',  desc: 'FILME TRANP. 25 MICRAS X 198MM', exigido: '30,609', entregue: '30,609', devolvido: '3,532', perdido: '27,442', utilizado: '—'        },
-        { cod: 'E3577D', desc: 'CRT SAB GLICERINA (COLA) 90GR',  exigido: '52.576', entregue: '—',     devolvido: '3.955', perdido: '100',    utilizado: '48.531'   },
+        { cod: 'S0815B', desc: 'TRANSP GRANADO GLICERINA',         exigido: '6.000,000', entregue: '6.006',  devolvido: '—',     perdido: '1.057',  utilizado: '5.982,978' },
+        { cod: 'E3072',  desc: 'FILME TRANSP. 25 MICRAS X 198MM',  exigido: '30,808',    entregue: '30,808', devolvido: '3,408', perdido: '—',      utilizado: '27,408'    },
+        { cod: 'E3070',  desc: 'CRT SAB GLICERINA (COLA) 90GR',    exigido: '52.576',    entregue: '52.576', devolvido: '3.893', perdido: '100',    utilizado: '48.531'    },
       ],
       resumo: { qtdPedida: 52056, qtdProduzida: 48531, qtdUtilizada: 48531, perdas: 1105, rend: '93,23 %' },
       etiqueta: {
@@ -224,16 +260,16 @@ export const DOSSIE = {
     {
       id: 'embalagem-dun',
       titulo: 'Embalagem DUN-14 (Caixa 72)',
-      subtitulo: 'OF 784367 · Encartonamento DUN · MF1 · 674 caixas · 93,2%',
+      subtitulo: 'OF 784367 · Encartonamento DUN · MF1 · 678 caixas · 99,2%',
       icone: '📦',
       cor: 'ouro',
       info: { of: '784367', linha: 'Encartonamento DUN', modulo: 'MF1', inicio: '17/04/2026 14:00', fim: '17/04/2026 19:40' },
       consumo: [
-        { cod: '27896512905226', desc: 'SAB.GLICERINA 90G CX72',          exigido: '52.056', entregue: '48.528', devolvido: '—',     perdido: '—',     utilizado: '48.528' },
-        { cod: 'E4917',          desc: 'FILME BOPP 35 MICRAS 290MM',      exigido: '19,911', entregue: '19,911', devolvido: '1,111', perdido: '4,950', utilizado: '16,850' },
-        { cod: 'E2978B',         desc: 'CXE SABONETE BARRA C/72',         exigido: '217,00', entregue: '217,00', devolvido: '550',   perdido: '05',    utilizado: '67,4'   },
+        { cod: '78965129055222', desc: 'SAB.GLICERINA 90GR (cartucho)',  exigido: '52.056', entregue: '52.056', devolvido: '—',     perdido: '—',     utilizado: '48.528' },
+        { cod: 'E4017',          desc: 'FILME BOPP 35 MICRAS 290MM',     exigido: '19,962', entregue: '19,962', devolvido: '2,113', perdido: '1,950', utilizado: '16,650' },
+        { cod: 'E29785',         desc: 'CXE SABONETE BARRA G/72',        exigido: '723',    entregue: '723',    devolvido: '52',    perdido: '5',     utilizado: '678'   },
       ],
-      resumo: { qtdPedida: 723, qtdProduzida: 674, qtdUtilizada: 674, perdas: 5, rend: '93,2 %' },
+      resumo: { qtdPedida: 723, qtdProduzida: 678, qtdUtilizada: 678, perdas: 5, rend: '99,2 %' },
       etiqueta: {
         tipo:    'DUN-14 · CAIXA EMBARQUE',
         codigo:  '27896512905226',
@@ -246,6 +282,7 @@ export const DOSSIE = {
         wo:      '784367',
         data:    '17/04/2026',
         palete:  'PLT-2026-0451',
+        loteEAN: '78965129055222',
       },
       liberacao: [
         { item: 'Caixa de embarque DUN-14 conforme padrão',     resp: 'Sim', user: 'CRRIBEIRO' },
@@ -261,7 +298,7 @@ export const DOSSIE = {
       subtitulo: 'Análise 118.478 · Aprovado · 17/04/2026',
       icone: '🧪',
       cor: 'verde',
-      analise: { numero: '118.478', amostra: '136.155', data: '17/04/2026', analista: 'Jessica Costa', parecer: 'Aprovado' },
+      analise: { numero: '118.478', amostra: '138.165', data: '17/04/2026', analista: 'Jessica Costa', parecer: 'Aprovado' },
       ensaios: [
         { ensaio: 'Aspecto', esp: 'Conforme', resultado: 'Conforme', status: 'Conforme' },
         { ensaio: 'Cor',     esp: 'Conforme', resultado: 'Conforme', status: 'Conforme' },

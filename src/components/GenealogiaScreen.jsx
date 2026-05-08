@@ -181,6 +181,16 @@ export default function GenealogiaScreen() {
           <Kpi label="MPs Consumidas" valor="7" cor="var(--inf)" sub="3 pesagens + 4 mid-process" />
           <Kpi label="PA Produzido" valor="48.531 un" cor="var(--ouro)" sub="cartuchos 90g · rend. 93,23%" />
         </div>
+
+        {/* Cronograma da Ordem (timeline horizontal) */}
+        {DOSSIE.cronograma && (
+          <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
+            <div className="card-title" style={{ marginBottom: 10, padding: 0, border: 'none' }}>
+              📅 Cronograma da Ordem
+            </div>
+            <CronogramaTimeline cronograma={DOSSIE.cronograma} />
+          </div>
+        )}
       </div>
 
       {/* ── Cadeia genealógica ──────────────────────────────── */}
@@ -219,6 +229,66 @@ export default function GenealogiaScreen() {
 /* ─────────────────────────────────────────────────────────────
    Componentes auxiliares
 ───────────────────────────────────────────────────────────── */
+
+/* Timeline horizontal mostrando o ciclo de vida da OF (datas) */
+function CronogramaTimeline({ cronograma }) {
+  const steps = [
+    { id: 'ordemInicio',   label: 'Ordem Início',   icon: '📋', cor: 'var(--inf)'  },
+    { id: 'pesagem',       label: 'Pesagem',        icon: '⚖️', cor: 'var(--verde)' },
+    { id: 'conferencia',   label: 'Conferência',    icon: '🔍', cor: 'var(--inf)'  },
+    { id: 'inbatchInicio', label: 'InBatch Início', icon: '🧪', cor: 'var(--ouro)' },
+    { id: 'inbatchFim',    label: 'InBatch Fim',    icon: '✓',  cor: 'var(--ok)'   },
+    { id: 'ordemFim',      label: 'Ordem Fim',      icon: '🏁', cor: 'var(--ok)'   },
+  ];
+  return (
+    <div
+      style={{
+        display: 'flex', alignItems: 'flex-start',
+        gap: 0, overflowX: 'auto', paddingBottom: 4,
+      }}
+    >
+      {steps.map((s, i) => (
+        <div
+          key={s.id}
+          style={{
+            flex: '1 1 0', minWidth: 110,
+            position: 'relative',
+            display: 'flex', flexDirection: 'column', alignItems: 'center',
+          }}
+        >
+          {/* Linha conectora */}
+          {i > 0 && (
+            <div
+              aria-hidden
+              style={{
+                position: 'absolute', left: '-50%', top: 18, width: '100%', height: 2,
+                background: 'var(--border)', zIndex: 0,
+              }}
+            />
+          )}
+          <div
+            style={{
+              width: 38, height: 38, borderRadius: '50%',
+              background: 'var(--surface)', border: `2px solid ${s.cor}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 16, position: 'relative', zIndex: 1,
+              boxShadow: 'var(--sh)',
+            }}
+            title={s.label}
+          >
+            {s.icon}
+          </div>
+          <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--text3)', marginTop: 6, textAlign: 'center' }}>
+            {s.label}
+          </div>
+          <div className="mono" style={{ fontSize: 11, fontWeight: 700, color: s.cor, marginTop: 2 }}>
+            {cronograma[s.id]}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function Kpi({ label, valor, cor, sub }) {
   return (
@@ -343,22 +413,98 @@ function RenderConteudoNo({ no, cores, dossie }) {
   switch (no.id) {
     case 'mp':
       return <TabelaItens dados={no.itens} colunas={[
-        { k: 'cod',   label: 'Código',    style: { fontFamily: 'var(--font-m)', fontWeight: 700, color: 'var(--verde)' } },
-        { k: 'desc',  label: 'Descrição' },
-        { k: 'lote',  label: 'Lote',      style: { fontFamily: 'var(--font-m)', color: 'var(--text2)' } },
-        { k: 'qtd',   label: 'Qtd.',      style: { fontFamily: 'var(--font-m)', textAlign: 'right' } },
+        { k: 'cod',      label: 'Código',     style: { fontFamily: 'var(--font-m)', fontWeight: 700, color: 'var(--verde)' } },
+        { k: 'desc',     label: 'Descrição' },
+        { k: 'lote',     label: 'Lote',       style: { fontFamily: 'var(--font-m)', color: 'var(--text2)' } },
+        { k: 'validade', label: 'Validade',   style: { fontFamily: 'var(--font-m)', color: 'var(--text2)', fontSize: 11 } },
+        { k: 'qtd',      label: 'Qtd.',       style: { fontFamily: 'var(--font-m)', textAlign: 'right', fontWeight: 700 } },
       ]} />;
 
     case 'pesagem':
       return (
         <div style={{ marginTop: 12 }}>
-          <TabelaItens dados={no.itens} colunas={[
-            { k: 'cod',      label: 'Código',     style: { fontFamily: 'var(--font-m)', fontWeight: 700, color: 'var(--verde)' } },
-            { k: 'desc',     label: 'Descrição' },
-            { k: 'qtd',      label: 'Qtd.',       style: { fontFamily: 'var(--font-m)' } },
-            { k: 'balanca',  label: 'Balança',    style: { fontFamily: 'var(--font-m)', color: 'var(--text2)' } },
-            { k: 'operador', label: 'Operador' },
-          ]} />
+          {/* Cabecalho da gaiola */}
+          {no.gaiola && (
+            <div
+              style={{
+                display: 'flex', alignItems: 'center', gap: 12,
+                padding: '8px 12px', marginBottom: 10,
+                background: 'var(--verde-dim)',
+                border: '1px solid var(--ok-b)', borderRadius: 6,
+                fontSize: 12, fontWeight: 700, color: 'var(--verde-esc)',
+              }}
+            >
+              <span style={{ fontSize: 18 }}>📦</span>
+              <span>{no.gaiola}</span>
+              {no.gaiolaPosicao && (
+                <span className="mono" style={{ fontSize: 11, color: 'var(--text2)', fontWeight: 400 }}>
+                  · Posição: {no.gaiolaPosicao}
+                </span>
+              )}
+              <span style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--text3)', fontWeight: 400 }}>
+                {no.itens.length} MPs · {no.itens.reduce((acc, m) => acc + (m.subVolumes?.length || 1), 0)} volume(s) separado(s)
+              </span>
+            </div>
+          )}
+          <table className="tbl" style={{ marginTop: 0 }}>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th style={{ textAlign: 'right' }}>Qtd.</th>
+                <th>Etiqueta</th>
+                <th>Lote MP</th>
+                <th>Operador (Pesagem)</th>
+                <th>Conferente (CQ)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {no.itens.map((mp, i) => (
+                <tr key={i}>
+                  <td className="mono" style={{ fontWeight: 700, color: 'var(--verde)' }}>{mp.cod}</td>
+                  <td>{mp.desc}</td>
+                  <td className="mono" style={{ textAlign: 'right', fontWeight: 700 }}>{mp.qtd}</td>
+                  <td className="mono" style={{ fontSize: 11, color: 'var(--inf)', fontWeight: 700 }}>{mp.etqCodigo}</td>
+                  <td className="mono" style={{ fontSize: 11, color: 'var(--text2)' }}>{mp.etqLote}</td>
+                  <td style={{ fontSize: 11 }}>
+                    {mp.operador}
+                    <div className="mono" style={{ fontSize: 10, color: 'var(--text3)' }}>{mp.etqHora}</div>
+                  </td>
+                  <td style={{ fontSize: 11 }}>
+                    {mp.conferente || <span style={{ color: 'var(--text3)' }}>—</span>}
+                    {mp.dataConf && <div className="mono" style={{ fontSize: 10, color: 'var(--text3)' }}>{mp.dataConf}</div>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Sub-volumes (quando uma MP tem mais de 1 etiqueta) */}
+          {no.itens.some((mp) => mp.subVolumes && mp.subVolumes.length > 1) && (
+            <div style={{ marginTop: 14 }}>
+              <div className="card-title" style={{ marginBottom: 8 }}>Sub-volumes (MPs com fracionamento)</div>
+              {no.itens.filter((mp) => mp.subVolumes && mp.subVolumes.length > 1).map((mp, i) => (
+                <div key={i} style={{ background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 6, padding: '8px 12px', marginBottom: 8 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--verde-esc)', marginBottom: 6 }}>
+                    {mp.cod} · {mp.desc} <span style={{ color: 'var(--text3)', fontWeight: 400 }}>(total {mp.qtd})</span>
+                  </div>
+                  <table className="tbl" style={{ fontSize: 11 }}>
+                    <thead><tr><th>Etiqueta</th><th style={{ textAlign: 'right' }}>Qtd. Volume</th><th>Hora</th></tr></thead>
+                    <tbody>
+                      {mp.subVolumes.map((sv, j) => (
+                        <tr key={j}>
+                          <td className="mono" style={{ color: 'var(--inf)', fontWeight: 700 }}>{sv.etqCodigo}</td>
+                          <td className="mono" style={{ textAlign: 'right', fontWeight: 700 }}>{sv.qtd}</td>
+                          <td className="mono" style={{ fontSize: 10 }}>{sv.etqHora}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="card-title" style={{ marginTop: 14, marginBottom: 10 }}>Etiquetas Filhas Impressas (Zebra)</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
             {no.itens.map((mp, i) => (
@@ -375,6 +521,9 @@ function RenderConteudoNo({ no, cores, dossie }) {
                   ['BALANÇA',      mp.balanca],
                   ['OPERADOR',     mp.operador],
                   ['DATA / HORA',  mp.etqHora],
+                  ['CONFERENTE',   mp.conferente || '—'],
+                  ['DATA CONF.',   mp.dataConf || '—'],
+                  ['POSIÇÃO',      mp.gaiolaPosicao || '—'],
                   ['WO',           dossie.wo],
                 ]}
                 barcodeValue={mp.barcode}
