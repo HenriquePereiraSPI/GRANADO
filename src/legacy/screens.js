@@ -1269,10 +1269,20 @@ export const SCREENS = {
       </div>
     `,
   "pes-checkout": `      <div class="page-header">
-        <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Checkout — Validação Final da Ordem</div></div>
+        <div><div class="ph-eyebrow">Pesagem · MF5 · Sala A (Box 3)</div><div class="ph-title">Checkout — Validação Final da Ordem</div></div>
         <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416 · 12/12 MPs pesadas<br><span style="color:var(--verde)">Pronto para Fabricação</span></div>
       </div>
       <div class="abox ok mb14"><span class="ai">✅</span><div><strong>Todas as 12 MPs pesadas com sucesso.</strong> Revise o resumo abaixo e confirme a liberação para a fabricação.</div></div>
+
+      <!-- Aviso de bloqueio por sala de pesagem -->
+      <div class="abox warn mb14" style="border-top-width:3px;border-top-style:solid;border-top-color:var(--alr)">
+        <span class="ai">🔒</span>
+        <div>
+          <strong>Regra de bloqueio da Sala A:</strong> enquanto esta ordem não for liberada para a fabricação (botão abaixo),
+          a <strong>Sala A (Box 3)</strong> permanece travada — você não consegue iniciar nova OP nesta sala de pesagem.
+          <span style="color:var(--text3);font-size:11px">As demais salas (Sala B, Sala C, Sem Balança) seguem operando normalmente com outros operadores.</span>
+        </div>
+      </div>
       <!-- KPIs topo — Validação Final -->
       <div class="g4 mb14">
         <div class="card cv" style="text-align:center;padding:14px">
@@ -1316,10 +1326,13 @@ export const SCREENS = {
         </div>
       </div>
 
-      <div style="display:flex;gap:10px;padding-top:16px;border-top:1px solid var(--border)">
-        <button class="btn btn-lg btn-v" onclick="alert('✅ Pesagem da OP-2026-0416 validada!\\n\\nOrdem liberada para Fabricação.\\nRegistro: PES-2026-0416\\nNotificado: Líder de Fabricação')">✔ Liberar para Fabricação</button>
+      <div style="display:flex;gap:10px;padding-top:16px;border-top:1px solid var(--border);flex-wrap:wrap">
+        <button class="btn btn-lg btn-v" onclick="alert('✅ Pesagem da OP-2026-0416 validada!\\n\\n• Ordem liberada para Fabricação\\n• Sala A (Box 3) DESBLOQUEADA — pronta para receber nova OP\\n• Notificado: Líder de Fabricação\\n\\nRegistro: PES-2026-0416 · Liberado por J. Santos em ' + new Date().toLocaleString('pt-BR'))">✔ Liberar para Fabricação · Liberar Sala A</button>
         <button class="btn btn-md btn-ghost">🖨 Imprimir Resumo</button>
         <button class="btn btn-md btn-ghost" onclick="nav('pes-devol-mp',null,null)">📦 Devolução de MP</button>
+        <div style="margin-left:auto;font-size:10px;color:var(--text3);align-self:center;max-width:280px;text-align:right;line-height:1.4">
+          🔒 Sem liberação, esta Sala A continua travada. <br>Liberar é o único caminho para abrir outra OP aqui.
+        </div>
       </div>
     `,
   "pes-cockpit": `      <div class="page-header">
@@ -1405,6 +1418,10 @@ export const SCREENS = {
           for (var i = 1; i <= 7; i++) {
             var p = document.getElementById('pes-panel-' + i);
             if (p) p.style.display = (i === n) ? 'block' : 'none';
+          }
+          // Ao entrar no step 4: validar balanças contra o alvo da MP
+          if (n === 4) {
+            setTimeout(function(){ if (typeof pesValidarBalancas === 'function') pesValidarBalancas(); }, 30);
           }
           // Ao entrar no step 7: resetar estado de gaiolas e renderizar config
           if (n === 7) {
@@ -1961,26 +1978,26 @@ export const SCREENS = {
           <div id="pes-panel-4" style="display:none">
             <div class="card cv mb14" style="border:2px solid var(--ouro)">
               <div class="card-title">④ Selecionar Balança para Pesagem</div>
-              <div class="abox inf mb14"><span class="ai">⚖️</span><div>Selecione a balança disponível para esta pesagem. O sistema sugere a balança com maior disponibilidade e capacidade adequada à quantidade alvo (<strong>412,50 kg</strong>).</div></div>
+              <div class="abox inf mb14"><span class="ai">⚖️</span><div>Selecione a balança disponível para esta pesagem. O sistema sugere a balança com maior disponibilidade e capacidade adequada à quantidade alvo (<strong id="pes-bal-alvo-display">412,50 kg</strong>). <strong style="color:var(--per)">Balanças inadequadas ficam bloqueadas automaticamente</strong> — divisão insuficiente para a fração ou capacidade menor que o alvo.</div></div>
               <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px">
 
                 <!-- BAL-01 -->
-                <div id="bal-btn-BAL-01" onclick="pesEscolherBalanca('BAL-01','Toledo PC Link 7 — Bancada A','Cap: 600 kg · Div: 0,01 kg','20/03/2026')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--surface2);transition:all .18s">
+                <div id="bal-btn-BAL-01" data-cap="600" data-div="0.01" onclick="pesTentarEscolherBalanca('BAL-01','Toledo PC Link 7 — Bancada A','Cap: 600 kg · Div: 0,01 kg','20/03/2026')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--surface2);transition:all .18s">
                   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
                     <div style="font-family:var(--font-m);font-size:14px;font-weight:700;color:var(--verde)">BAL-01</div>
-                    <span class="bdg bdg-ok">Disponível</span>
+                    <span class="bdg bdg-ok bal-status-bdg">Disponível</span>
                   </div>
                   <div style="font-size:12px;font-weight:700;color:var(--text)">Toledo PC Link 7 — Bancada A</div>
                   <div style="font-size:10px;color:var(--text2);margin-top:4px">Cap: 600 kg · Divisão: 0,01 kg</div>
                   <div style="font-size:10px;color:var(--text3);margin-top:2px">Última calibração: 20/03/2026</div>
-                  <div style="margin-top:8px;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--verde)">⭐ Sugestão do sistema</div>
+                  <div class="bal-suggest-tag" style="margin-top:8px;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--verde)">⭐ Sugestão do sistema</div>
                 </div>
 
                 <!-- BAL-02 -->
-                <div id="bal-btn-BAL-02" onclick="pesEscolherBalanca('BAL-02','Toledo PC Link 7 — Bancada B','Cap: 100 kg · Div: 0,5 kg','18/03/2026')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--surface2);transition:all .18s">
+                <div id="bal-btn-BAL-02" data-cap="100" data-div="0.5" onclick="pesTentarEscolherBalanca('BAL-02','Toledo PC Link 7 — Bancada B','Cap: 100 kg · Div: 0,5 kg','18/03/2026')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--surface2);transition:all .18s">
                   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
                     <div style="font-family:var(--font-m);font-size:14px;font-weight:700;color:var(--verde)">BAL-02</div>
-                    <span class="bdg bdg-ok">Disponível</span>
+                    <span class="bdg bdg-ok bal-status-bdg">Disponível</span>
                   </div>
                   <div style="font-size:12px;font-weight:700;color:var(--text)">Toledo PC Link 7 — Bancada B</div>
                   <div style="font-size:10px;color:var(--text2);margin-top:4px">Cap: 100 kg · Divisão: 0,5 kg</div>
@@ -1988,10 +2005,10 @@ export const SCREENS = {
                 </div>
 
                 <!-- BAL-03 -->
-                <div id="bal-btn-BAL-03" onclick="pesEscolherBalanca('BAL-03','Toledo PC Link 7 — Bancada C','Cap: 5 kg · Div: 0,01 kg','15/03/2026')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--surface2);transition:all .18s">
+                <div id="bal-btn-BAL-03" data-cap="5" data-div="0.01" onclick="pesTentarEscolherBalanca('BAL-03','Toledo PC Link 7 — Bancada C','Cap: 5 kg · Div: 0,01 kg','15/03/2026')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px;background:var(--surface2);transition:all .18s">
                   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
                     <div style="font-family:var(--font-m);font-size:14px;font-weight:700;color:var(--verde)">BAL-03</div>
-                    <span class="bdg bdg-ok">Disponível</span>
+                    <span class="bdg bdg-ok bal-status-bdg">Disponível</span>
                   </div>
                   <div style="font-size:12px;font-weight:700;color:var(--text)">Toledo PC Link 7 — Bancada C</div>
                   <div style="font-size:10px;color:var(--text2);margin-top:4px">Cap: 5 kg · Divisão: 0,01 kg</div>
@@ -1999,6 +2016,76 @@ export const SCREENS = {
                 </div>
 
               </div>
+
+              <script>
+              // Le o alvo (em kg) da MP atualmente selecionada
+              function pesObterAlvoKg() {
+                var alvoEl = document.getElementById('pes-mp-sel-alvo');
+                if (!alvoEl) return 412.5; // fallback do mock
+                var txt = (alvoEl.textContent || '').trim();
+                // Aceita "412,500 kg" ou "0,150 kg" etc
+                var m = txt.match(/([\d.,]+)/);
+                if (!m) return 412.5;
+                return parseFloat(m[1].replace(/\./g,'').replace(',', '.'));
+              }
+
+              // Trava balanças cuja capacidade < alvo OU divisão insuficiente.
+              // Regra de divisão: alvo / divisão >= 10 (10x a divisão minima).
+              function pesValidarBalancas() {
+                var alvo = pesObterAlvoKg();
+                var disp = document.getElementById('pes-bal-alvo-display');
+                if (disp) disp.textContent = alvo.toFixed(3).replace('.', ',') + ' kg';
+                ['BAL-01','BAL-02','BAL-03'].forEach(function(id){
+                  var el = document.getElementById('bal-btn-' + id);
+                  if (!el) return;
+                  var cap = parseFloat(el.getAttribute('data-cap')) || 0;
+                  var div = parseFloat(el.getAttribute('data-div')) || 1;
+                  var motivo = null;
+                  if (alvo > cap) motivo = 'Capacidade insuficiente (cap ' + cap + ' kg < alvo ' + alvo.toFixed(3).replace('.', ',') + ' kg)';
+                  else if (alvo / div < 10) motivo = 'Divisão inadequada (alvo ' + alvo.toFixed(3).replace('.', ',') + ' kg ÷ ' + div + ' kg = apenas ' + Math.floor(alvo/div) + 'x)';
+
+                  // Resetar visual
+                  el.style.opacity = '';
+                  el.style.cursor = 'pointer';
+                  el.style.borderColor = 'var(--border)';
+                  el.style.background = 'var(--surface2)';
+                  el.removeAttribute('data-bloqueada');
+                  var badge = el.querySelector('.bal-status-bdg');
+                  if (badge) { badge.className = 'bdg bdg-ok bal-status-bdg'; badge.textContent = 'Disponível'; }
+                  var sug = el.querySelector('.bal-suggest-tag');
+                  if (sug) sug.style.display = '';
+                  // Remove aviso de bloqueio anterior
+                  var avisoAnt = el.querySelector('.bal-bloq-msg');
+                  if (avisoAnt) avisoAnt.remove();
+
+                  if (motivo) {
+                    el.style.opacity = '.55';
+                    el.style.cursor = 'not-allowed';
+                    el.style.borderColor = 'var(--per-b)';
+                    el.style.background = 'var(--per-p)';
+                    el.setAttribute('data-bloqueada', motivo);
+                    if (badge) { badge.className = 'bdg bdg-per bal-status-bdg'; badge.textContent = '⛔ Inadequada'; }
+                    if (sug) sug.style.display = 'none';
+                    var aviso = document.createElement('div');
+                    aviso.className = 'bal-bloq-msg';
+                    aviso.style.cssText = 'margin-top:8px;font-size:10px;color:var(--per);font-weight:700;padding:6px 8px;background:var(--surface);border:1px dashed var(--per-b);border-radius:4px';
+                    aviso.textContent = '⛔ ' + motivo;
+                    el.appendChild(aviso);
+                  }
+                });
+              }
+
+              // Wrapper: bloqueia o click se a balança estiver inadequada
+              function pesTentarEscolherBalanca(id, nome, cap, ul) {
+                var el = document.getElementById('bal-btn-' + id);
+                if (el && el.getAttribute('data-bloqueada')) {
+                  alert('⛔ Balança ' + id + ' INADEQUADA para esta pesagem.\\n\\n' + el.getAttribute('data-bloqueada') + '\\n\\nSelecione outra balança que atenda capacidade e divisão da MP.');
+                  return;
+                }
+                if (typeof pesEscolherBalanca === 'function') pesEscolherBalanca(id, nome, cap, ul);
+              }
+              </script>
+
               <div id="pes-bal-escolhida"></div>
               <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:flex-start">
                 <button class="btn btn-sm btn-cancelar-pes" onclick="pesSetStep(1)">✕ Cancelar — Voltar para Selecionar MP</button>
@@ -2310,10 +2397,26 @@ export const SCREENS = {
               <div class="card-title">🏷️ Gaiolas — Imprimir e Associar</div>
               <div class="abox inf mb14"><span class="ai">📦</span><div>Informe a quantidade de gaiolas necessárias para esta pesagem. Clique em <strong>"+ Nova Gaiola"</strong> para gerar o número sequencial e imprimir a etiqueta de cada gaiola individualmente. O campo de código é somente leitura — gerado automaticamente pelo sistema.</div></div>
 
+              <!-- Sugestão do Sistema baseada em histórico (aprendizado por SKU+lote) -->
+              <div style="background:var(--ouro-dim);border:1.5px solid var(--ouro-claro);border-radius:7px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                <div style="font-size:22px">🧠</div>
+                <div style="flex:1;min-width:240px">
+                  <div style="font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--ouro);margin-bottom:2px">Sugestão do Sistema</div>
+                  <div style="font-size:12px;color:var(--text);font-weight:700">
+                    <span class="mono" style="font-size:18px;color:var(--ouro)">3 gaiolas</span>
+                    <span style="font-weight:400;color:var(--text2)"> · baseado no histórico do SKU <strong>S0815B</strong> (Loção Hidratante Rosa) + tamanho de lote <strong>600 kg</strong></span>
+                  </div>
+                  <div style="font-size:10px;color:var(--text3);margin-top:3px">
+                    📊 Últimas 8 pesagens deste SKU/lote usaram: 3× (6 vezes), 2× (1 vez), 4× (1 vez) · média ponderada 3,0
+                  </div>
+                </div>
+                <button class="btn btn-sm" style="background:var(--ouro);color:#fff;border:none;font-weight:700;white-space:nowrap" onclick="var el=document.getElementById('gai-qtd');el.value=3;gaiRenderConfig()">✓ Aceitar Sugestão</button>
+              </div>
+
               <!-- Qtd de gaiolas -->
               <div style="display:flex;gap:14px;align-items:flex-end;margin-bottom:16px;flex-wrap:wrap">
                 <div class="fg" style="min-width:160px">
-                  <label class="lbl">Quantidade de Gaiolas Necessárias</label>
+                  <label class="lbl">Quantidade de Gaiolas Necessárias <span style="font-size:9px;color:var(--text3);font-weight:400">(edite se quiser ignorar a sugestão)</span></label>
                   <div class="qty-w">
                     <button class="qty-b" onclick="var el=document.getElementById('gai-qtd');el.value=Math.max(1,parseInt(el.value||1)-1);gaiRenderConfig()">−</button>
                     <input class="qty-i" id="gai-qtd" type="number" value="3" min="1" max="20" style="font-size:26px" onchange="gaiRenderConfig()">
@@ -2720,17 +2823,29 @@ export const SCREENS = {
 
       <div class="card cv">
         <div class="card-title">Registro de Pesagens Confirmadas — Clique na linha para ações</div>
+
+        <!-- Filtro por classe (Normal / Adicional) -->
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px">
+          <span style="font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)">Classe:</span>
+          <button id="mps-flt-todas"    class="btn btn-sm btn-v"     onclick="mpsFiltrarClasse('todas')"    style="font-size:11px;font-weight:700">Todas (6)</button>
+          <button id="mps-flt-normal"   class="btn btn-sm btn-ghost" onclick="mpsFiltrarClasse('normal')"   style="font-size:11px">📦 Normais (5)</button>
+          <button id="mps-flt-adicional" class="btn btn-sm btn-ghost" onclick="mpsFiltrarClasse('adicional')" style="font-size:11px">➕ Adicionais (1)</button>
+          <div style="margin-left:auto;font-size:10px;color:var(--text3);font-style:italic">
+            <strong>Adicional</strong>: MP solicitada após o início da fabricação (reprocesso, ajuste de variância ou complemento)
+          </div>
+        </div>
+
         <div style="overflow-x:auto">
-        <table class="tbl" id="tbl-mps-pesadas" style="font-size:11px;min-width:1020px">
+        <table class="tbl" id="tbl-mps-pesadas" style="font-size:11px;min-width:1100px">
           <thead>
             <tr>
-              <th>#</th><th>Código MP</th><th>Material</th><th>Lote</th><th>Alvo (kg)</th><th>Pesado (kg)</th>
+              <th>#</th><th>Classe</th><th>Código MP</th><th>Material</th><th>Lote</th><th>Alvo (kg)</th><th>Pesado (kg)</th>
               <th>Variância de pesagem</th><th>Nº Gaiola</th><th>Cód. Etiqueta</th><th>Operador<br/>(Matrícula)</th><th>Horário</th><th>Balança</th><th>Sala · Box</th><th>Status</th><th></th>
             </tr>
           </thead>
           <tbody>
-            <tr style="cursor:pointer" onclick="pesAbrirDesvio({n:'1',mat:'Glicerina USP',lote:'GLI-2026-08',alvo:'45,000',pesado:'44,983',desv:'–0,017',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 3',hr:'06:12',bal:'BAL-03',etq:'ETQ-2026-0416-001',status:'ok'})">
-              <td class="mono" style="color:var(--ok)">1</td>
+            <tr data-classe="normal" style="cursor:pointer" onclick="pesAbrirDesvio({n:'1',mat:'Glicerina USP',lote:'GLI-2026-08',alvo:'45,000',pesado:'44,983',desv:'–0,017',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 3',hr:'06:12',bal:'BAL-03',etq:'ETQ-2026-0416-001',status:'ok'})">
+              <td class="mono" style="color:var(--ok)">1</td><td><span class="bdg bdg-ok" style="font-size:9px">Normal</span></td>
               <td class="mono" style="font-size:10px;color:var(--text2)">MP-4821</td>
               <td style="font-size:12px">Glicerina USP</td>
               <td class="mono" style="font-size:10px">GLI-2026-08</td>
@@ -2743,8 +2858,8 @@ export const SCREENS = {
               <td><span class="bdg bdg-ok">✓ Impressa</span></td>
               <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'1',mat:'Glicerina USP',lote:'GLI-2026-08',alvo:'45,000',pesado:'44,983',desv:'–0,017',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 3',hr:'06:12',bal:'BAL-03',etq:'ETQ-2026-0416-001',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
             </tr>
-            <tr style="cursor:pointer" onclick="pesAbrirDesvio({n:'2',mat:'Propilenoglicol',lote:'PPG-2026-12',alvo:'18,000',pesado:'18,005',desv:'+0,005',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 3',hr:'06:24',bal:'BAL-03',etq:'ETQ-2026-0416-002',status:'ok'})">
-              <td class="mono" style="color:var(--ok)">2</td>
+            <tr data-classe="normal" style="cursor:pointer" onclick="pesAbrirDesvio({n:'2',mat:'Propilenoglicol',lote:'PPG-2026-12',alvo:'18,000',pesado:'18,005',desv:'+0,005',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 3',hr:'06:24',bal:'BAL-03',etq:'ETQ-2026-0416-002',status:'ok'})">
+              <td class="mono" style="color:var(--ok)">2</td><td><span class="bdg bdg-ok" style="font-size:9px">Normal</span></td>
               <td class="mono" style="font-size:10px;color:var(--text2)">MP-3307</td>
               <td style="font-size:12px">Propilenoglicol</td>
               <td class="mono" style="font-size:10px">PPG-2026-12</td>
@@ -2757,8 +2872,8 @@ export const SCREENS = {
               <td><span class="bdg bdg-ok">✓ Impressa</span></td>
               <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'2',mat:'Propilenoglicol',lote:'PPG-2026-12',alvo:'18,000',pesado:'18,005',desv:'+0,005',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 3',hr:'06:24',bal:'BAL-03',etq:'ETQ-2026-0416-002',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
             </tr>
-            <tr style="cursor:pointer" onclick="pesAbrirDesvio({n:'3',mat:'Carbopol 940',lote:'CAR-2026-05',alvo:'2,500',pesado:'2,498',desv:'–0,002',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'06:38',bal:'BAL-01',etq:'ETQ-2026-0416-003',status:'ok'})">
-              <td class="mono" style="color:var(--ok)">3</td>
+            <tr data-classe="normal" style="cursor:pointer" onclick="pesAbrirDesvio({n:'3',mat:'Carbopol 940',lote:'CAR-2026-05',alvo:'2,500',pesado:'2,498',desv:'–0,002',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'06:38',bal:'BAL-01',etq:'ETQ-2026-0416-003',status:'ok'})">
+              <td class="mono" style="color:var(--ok)">3</td><td><span class="bdg bdg-ok" style="font-size:9px">Normal</span></td>
               <td class="mono" style="font-size:10px;color:var(--text2)">MP-0914</td>
               <td style="font-size:12px">Carbopol 940</td>
               <td class="mono" style="font-size:10px">CAR-2026-05</td>
@@ -2771,8 +2886,8 @@ export const SCREENS = {
               <td><span class="bdg bdg-ok">✓ Impressa</span></td>
               <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'3',mat:'Carbopol 940',lote:'CAR-2026-05',alvo:'2,500',pesado:'2,498',desv:'–0,002',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'06:38',bal:'BAL-01',etq:'ETQ-2026-0416-003',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
             </tr>
-            <tr style="cursor:pointer;background:var(--alr-p)" onclick="pesAbrirDesvio({n:'4',mat:'Fenoxietanol',lote:'FEN-2026-03',alvo:'3,000',pesado:'3,028',desv:'+0,028 ⚠',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'06:51',bal:'BAL-01',etq:'ETQ-2026-0416-004',status:'desv'})">
-              <td class="mono" style="color:var(--ok)">4</td>
+            <tr data-classe="normal" style="cursor:pointer;background:var(--alr-p)" onclick="pesAbrirDesvio({n:'4',mat:'Fenoxietanol',lote:'FEN-2026-03',alvo:'3,000',pesado:'3,028',desv:'+0,028 ⚠',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'06:51',bal:'BAL-01',etq:'ETQ-2026-0416-004',status:'desv'})">
+              <td class="mono" style="color:var(--ok)">4</td><td><span class="bdg bdg-ok" style="font-size:9px">Normal</span></td>
               <td class="mono" style="font-size:10px;color:var(--text2)">MP-2256</td>
               <td style="font-size:12px">Fenoxietanol</td>
               <td class="mono" style="font-size:10px">FEN-2026-03</td>
@@ -2785,8 +2900,8 @@ export const SCREENS = {
               <td><span class="bdg bdg-alr">Com Variância</span></td>
               <td><button class="btn btn-sm btn-p" style="font-size:9px" onclick="pesAbrirDesvio({n:'4',mat:'Fenoxietanol',lote:'FEN-2026-03',alvo:'3,000',pesado:'3,028',desv:'+0,028',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'06:51',bal:'BAL-01',etq:'ETQ-2026-0416-004',status:'desv'});event.stopPropagation()">⚠ Variância de pesagem</button></td>
             </tr>
-            <tr style="cursor:pointer" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99%',lote:'TEA-2026-07',alvo:'1,800',pesado:'1,801',desv:'+0,001',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005',status:'ok'})">
-              <td class="mono" style="color:var(--ok)">5</td>
+            <tr data-classe="normal" style="cursor:pointer" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99%',lote:'TEA-2026-07',alvo:'1,800',pesado:'1,801',desv:'+0,001',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005',status:'ok'})">
+              <td class="mono" style="color:var(--ok)">5</td><td><span class="bdg bdg-ok" style="font-size:9px">Normal</span></td>
               <td class="mono" style="font-size:10px;color:var(--text2)">MP-5593</td>
               <td style="font-size:12px">TEA 99%</td>
               <td class="mono" style="font-size:10px">TEA-2026-07</td>
@@ -2799,9 +2914,49 @@ export const SCREENS = {
               <td><span class="bdg bdg-ok">✓ Impressa</span></td>
               <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99%',lote:'TEA-2026-07',alvo:'1,800',pesado:'1,801',desv:'+0,001',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
             </tr>
+
+            <!-- Linha 6: ADICIONAL — solicitação após início da fabricação -->
+            <tr data-classe="adicional" style="cursor:pointer;background:var(--ouro-dim);border-left:4px solid var(--ouro)" onclick="pesAbrirDesvio({n:'6',mat:'Fenoxietanol (Adicional)',lote:'FEN-2026-03',alvo:'0,500',pesado:'0,498',desv:'–0,002',op:'M. Oliveira',mat_op:'108',sala:'Sala A · Box 2',hr:'09:42',bal:'BAL-02',etq:'ETQ-2026-0416-006',status:'ok'})">
+              <td class="mono" style="color:var(--ouro);font-weight:700">6</td>
+              <td><span class="bdg" style="font-size:9px;background:var(--ouro);color:#fff;border:1px solid var(--ouro-claro);font-weight:800">➕ Adicional</span></td>
+              <td class="mono" style="font-size:10px;color:var(--text2)">MP-2256</td>
+              <td style="font-size:12px">
+                Fenoxietanol
+                <div style="font-size:9px;color:var(--ouro);font-weight:700;margin-top:2px">⚙ Pedido pós-fabricação · Solicitação SOLIC-MP-784512</div>
+              </td>
+              <td class="mono" style="font-size:10px">FEN-2026-03</td>
+              <td class="mono">0,500</td><td class="mono" style="color:var(--ok)">0,498</td>
+              <td class="mono" style="color:var(--ok)">–0,002</td>
+              <td class="mono" style="font-size:10px;color:var(--text3)">— sem gaiola</td>
+              <td class="mono" style="font-size:10px">ETQ-2026-0416-006</td>
+              <td style="font-size:11px">M. Oliveira <span class="mono" style="color:var(--text3);font-size:10px">(108)</span></td>
+              <td class="mono" style="font-size:10px">09:42</td>
+              <td class="mono" style="font-size:10px">BAL-02</td>
+              <td style="font-size:10px;color:var(--text2)">Sala A · Box 2</td>
+              <td><span class="bdg bdg-ok">✓ Impressa</span></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="event.stopPropagation();pesAbrirDesvio({n:'6',mat:'Fenoxietanol (Adicional)',lote:'FEN-2026-03',alvo:'0,500',pesado:'0,498',desv:'–0,002',op:'M. Oliveira',mat_op:'108',sala:'Sala A · Box 2',hr:'09:42',bal:'BAL-02',etq:'ETQ-2026-0416-006',status:'ok'})">⋮ Ações</button></td>
+            </tr>
           </tbody>
         </table>
         </div><!-- /overflow-x:auto -->
+
+        <script>
+        function mpsFiltrarClasse(classe) {
+          var rows = document.querySelectorAll('#tbl-mps-pesadas tbody tr');
+          rows.forEach(function(r){
+            var c = r.getAttribute('data-classe') || 'normal';
+            if (classe === 'todas') r.style.display = '';
+            else r.style.display = (c === classe) ? '' : 'none';
+          });
+          // Atualiza visual dos botões
+          ['todas','normal','adicional'].forEach(function(k){
+            var btn = document.getElementById('mps-flt-' + (k==='adicional' ? 'adicional' : k));
+            if (!btn) return;
+            if (k === classe) { btn.classList.remove('btn-ghost'); btn.classList.add('btn-v'); }
+            else { btn.classList.remove('btn-v'); btn.classList.add('btn-ghost'); }
+          });
+        }
+        </script>
       </div><!-- /card -->
 
       <!-- ── Modal Ações / Add Desvio ── -->
@@ -3186,7 +3341,7 @@ export const SCREENS = {
       <div class="card">
         <div class="card-title">Histórico de Paradas — OP-2026-0416 · Turno A</div>
         <div style="overflow-x:auto">
-          <table class="tbl" id="par-tabela" style="min-width:980px;font-size:11px">
+          <table class="tbl" id="par-tabela" style="min-width:1180px;font-size:11px">
             <thead>
               <tr>
                 <th>#</th>
@@ -3195,6 +3350,7 @@ export const SCREENS = {
                 <th>Início</th>
                 <th>Fim</th>
                 <th>Duração</th>
+                <th title="Padrão / Mínimo / Máximo (histórico do sistema)">Padrão<br/><span style="font-weight:400;font-size:8px;color:var(--text3)">min ↓ · max ↑</span></th>
                 <th>Justificativa</th>
                 <th>Operador</th>
                 <th>Afeta OEE</th>
@@ -3210,6 +3366,10 @@ export const SCREENS = {
                 <td class="mono" style="font-size:10px">14/05 07:42</td>
                 <td class="mono" style="font-size:10px">14/05 08:18</td>
                 <td class="mono" style="color:var(--alr);font-weight:700">36 min</td>
+                <td class="mono" style="font-size:10px">
+                  <strong>25 min</strong>
+                  <div style="font-size:9px;color:var(--text3);font-weight:400">↓ 15 · ↑ 45</div>
+                </td>
                 <td style="font-size:11px">BAL-01 descalibrada — necessária recalibração emergencial</td>
                 <td style="font-size:11px">J. Santos</td>
                 <td><span class="bdg bdg-per" style="font-size:9px">SIM</span></td>
@@ -3223,6 +3383,10 @@ export const SCREENS = {
                 <td class="mono" style="font-size:10px">14/05 12:00</td>
                 <td class="mono" style="font-size:10px">14/05 13:00</td>
                 <td class="mono">1h 00</td>
+                <td class="mono" style="font-size:10px">
+                  <strong>1h 00</strong>
+                  <div style="font-size:9px;color:var(--text3);font-weight:400">↓ 0h 45 · ↑ 1h 15</div>
+                </td>
                 <td style="font-size:11px">Pausa regulamentar (CCT)</td>
                 <td style="font-size:11px">J. Santos</td>
                 <td><span class="bdg bdg-ney" style="font-size:9px">NÃO</span></td>
@@ -3236,6 +3400,10 @@ export const SCREENS = {
                 <td class="mono" style="font-size:10px">14/05 14:22</td>
                 <td class="mono" style="font-size:10px">14/05 14:45</td>
                 <td class="mono" style="color:var(--alr);font-weight:700">23 min</td>
+                <td class="mono" style="font-size:10px">
+                  <strong>15 min</strong>
+                  <div style="font-size:9px;color:var(--text3);font-weight:400">↓ 5 · ↑ 30</div>
+                </td>
                 <td style="font-size:11px">Aguardando entrega de Fenoxietanol — almoxarifado</td>
                 <td style="font-size:11px">J. Santos</td>
                 <td><span class="bdg bdg-per" style="font-size:9px">SIM</span></td>
@@ -3249,6 +3417,10 @@ export const SCREENS = {
                 <td class="mono" style="font-size:10px">14/05 15:30</td>
                 <td class="mono" style="font-size:10px">14/05 15:40</td>
                 <td class="mono">10 min</td>
+                <td class="mono" style="font-size:10px">
+                  <strong>10 min</strong>
+                  <div style="font-size:9px;color:var(--text3);font-weight:400">↓ 8 · ↑ 12</div>
+                </td>
                 <td style="font-size:11px">Programa SST · obrigatória ergonomia</td>
                 <td style="font-size:11px">Equipe MF5</td>
                 <td><span class="bdg bdg-ney" style="font-size:9px">NÃO</span></td>
@@ -3262,6 +3434,10 @@ export const SCREENS = {
                 <td class="mono" style="font-size:10px">14/05 16:48</td>
                 <td class="mono" style="font-size:10px;color:var(--alr);font-weight:700">— em andamento</td>
                 <td class="mono" style="color:var(--alr);font-weight:700">23+ min</td>
+                <td class="mono" style="font-size:10px">
+                  <strong>18 min</strong>
+                  <div style="font-size:9px;color:var(--text3);font-weight:400">↓ 10 · ↑ 30</div>
+                </td>
                 <td style="font-size:11px;color:var(--alr)">⚠ Aguardando análise CQ do desvio de Fenoxietanol</td>
                 <td style="font-size:11px">J. Santos</td>
                 <td><span class="bdg bdg-per" style="font-size:9px">SIM</span></td>
@@ -3580,7 +3756,7 @@ export const SCREENS = {
               <th>Status</th>
               <th>Data Prev.<br/>Fabricação</th>
               <th>Desvio</th>
-              <th>Sala / Equipamento</th>
+              <th title="Sala onde o granel será fabricado (vem da OF do PCP — não confundir com a sala de pesagem)">Sala de<br/>Fabricação ⓘ</th>
               <th></th>
             </tr>
           </thead>
@@ -3602,8 +3778,8 @@ export const SCREENS = {
               <td class="mono" style="font-size:11px">17/05/2026</td>
               <td><span class="bdg bdg-ok" style="font-size:9px">Sem desvio</span></td>
               <td style="font-size:11px">
-                Sala A
-                <div class="mono" style="font-size:10px;color:var(--text3)">BAL-01</div>
+                Sala 4
+                <div class="mono" style="font-size:10px;color:var(--text3)">MF5 · Reator R-04</div>
               </td>
               <td><button class="btn btn-sm btn-v" onclick="pesIrCockpit(event, 'continuar', 'OP-2026-0414')">Continuar</button></td>
             </tr>
@@ -3624,7 +3800,10 @@ export const SCREENS = {
               <td><span class="bdg bdg-ok">✓ Pronta para Pesagem</span></td>
               <td class="mono" style="font-size:11px">18/05/2026</td>
               <td style="font-size:11px;color:var(--text3)">—</td>
-              <td style="font-size:11px;color:var(--text3)">A definir</td>
+              <td style="font-size:11px">
+                Sala 2
+                <div class="mono" style="font-size:10px;color:var(--text3)">MF5 · Reator R-02</div>
+              </td>
               <td><button class="btn btn-sm btn-v" onclick="pesIrCockpit(event, 'inicio', 'OP-2026-0416')">Pesar</button></td>
             </tr>
 
@@ -3645,8 +3824,8 @@ export const SCREENS = {
               <td class="mono" style="font-size:11px">14/05/2026</td>
               <td><span class="bdg bdg-alr" style="font-size:9px" title="Fenoxietanol +0,028 kg">⚠ 1 variância</span></td>
               <td style="font-size:11px">
-                Sala A
-                <div class="mono" style="font-size:10px;color:var(--text3)">BAL-01</div>
+                Sala 1
+                <div class="mono" style="font-size:10px;color:var(--text3)">MF5 · Reator R-01</div>
               </td>
               <td><button class="btn btn-sm btn-ghost" onclick="PES_OP_SEL='OP-2026-0413';nav('pes-checkout?op=OP-2026-0413',null,null)" title="Ver checkout desta OP">Detalhes</button></td>
             </tr>
@@ -3668,8 +3847,8 @@ export const SCREENS = {
               <td class="mono" style="font-size:11px">13/05/2026</td>
               <td><span class="bdg bdg-ok" style="font-size:9px">Sem desvio</span></td>
               <td style="font-size:11px">
-                Sala A
-                <div class="mono" style="font-size:10px;color:var(--text3)">BAL-01</div>
+                Sala 3
+                <div class="mono" style="font-size:10px;color:var(--text3)">MF5 · Reator R-03</div>
               </td>
               <td><button class="btn btn-sm" style="background:var(--per);color:#fff;font-weight:700" onclick="alert('🚦 OP-2026-0412 aguardando Líder de Fabricação liberar.\\nNotificação push enviada há 2h 15min.\\nEscalada automática em 1h 45min se não houver resposta.')">⚠ Notificar Líder Fab.</button></td>
             </tr>

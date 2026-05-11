@@ -7,6 +7,7 @@ import ProdCockpitScreen from './components/ProdCockpitScreen.jsx';
 import GenealogiaScreen from './components/GenealogiaScreen.jsx';
 import PesagemOeeScreen from './components/PesagemOeeScreen.jsx';
 import PesPerformanceOperadorScreen from './components/PesPerformanceOperadorScreen.jsx';
+import PesPerformanceGestaoScreen from './components/PesPerformanceGestaoScreen.jsx';
 import QualidadeReconciliacaoScreen from './components/QualidadeReconciliacaoScreen.jsx';
 import QualidadeFilaReconciliacaoScreen from './components/QualidadeFilaReconciliacaoScreen.jsx';
 import PesOrdemSubScreen from './components/PesOrdemSubScreen.jsx';
@@ -80,6 +81,9 @@ export default function App() {
 
           {/* Pesagem — Performance Pessoal (Fase A) */}
           <Route path="/pes-perf-operador" element={<PesPerformanceOperadorScreen />} />
+
+          {/* Pesagem — Performance Gestão (gerencial, restrita a Líder/Supervisor) */}
+          <Route path="/pes-perf-gestao" element={<PesPerformanceGestaoScreen />} />
 
           {/* Qualidade — Fila de Reconciliacoes Pendentes (grid JDE F4108-Z) */}
           <Route path="/qual-fila" element={<QualidadeFilaReconciliacaoScreen />} />

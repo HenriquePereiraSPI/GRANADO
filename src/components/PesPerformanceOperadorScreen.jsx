@@ -35,18 +35,27 @@ function StatusPill({ status }) {
   return <span className="bdg bdg-ok" style={{ fontSize: 9 }}>OK</span>;
 }
 
-function TempoPill({ real, padrao }) {
+function TempoPill({ real, padrao, min, max }) {
   const pct = ((real - padrao) / padrao) * 100;
   const acimaDoPadrao = pct > 5;
   const dentro = Math.abs(pct) <= 5;
   const cor = dentro ? 'var(--ok)' : (acimaDoPadrao ? 'var(--alr)' : 'var(--inf)');
   const sinal = pct > 0 ? '+' : '';
+  // Se min e max foram fornecidos, classifica em relação ao range
+  const dentroRange = min != null && max != null && real >= min && real <= max;
   return (
-    <span style={{ fontFamily: 'var(--font-m)', fontSize: 11, color: cor, fontWeight: 700 }}>
-      {real.toFixed(1)}
-      <span style={{ color: 'var(--text3)', fontWeight: 400 }}> / {padrao.toFixed(1)} min</span>
-      <span style={{ marginLeft: 4, fontSize: 9 }}>({sinal}{pct.toFixed(0)}%)</span>
-    </span>
+    <div style={{ fontFamily: 'var(--font-m)', fontSize: 11, color: cor, fontWeight: 700, lineHeight: 1.3 }}>
+      <div>
+        <strong>{real.toFixed(1)}</strong>
+        <span style={{ color: 'var(--text3)', fontWeight: 400 }}> / {padrao.toFixed(1)} min</span>
+        <span style={{ marginLeft: 4, fontSize: 9 }}>({sinal}{pct.toFixed(0)}%)</span>
+      </div>
+      {min != null && max != null && (
+        <div style={{ fontSize: 9, fontWeight: 400, color: dentroRange ? 'var(--text3)' : 'var(--alr)', marginTop: 1 }}>
+          ↓ {min.toFixed(1)} · ↑ {max.toFixed(1)} {dentroRange ? '✓' : '⚠'}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -307,7 +316,7 @@ export default function PesPerformanceOperadorScreen() {
                 <th>Lote</th>
                 <th style={{ textAlign: 'right' }}>Alvo / Pesado (kg)</th>
                 <th style={{ textAlign: 'right' }}>Variância</th>
-                <th style={{ textAlign: 'right' }}>Tempo Real / Padrão</th>
+                <th style={{ textAlign: 'right' }} title="Real / Padrão (min ↓ · max ↑)">Tempo Real / Padrão<br/><span style={{ fontWeight: 400, fontSize: 8, color: 'var(--text3)' }}>min ↓ · max ↑</span></th>
                 <th>Sala · Box</th>
                 <th style={{ textAlign: 'center' }}>Status</th>
               </tr>
@@ -351,7 +360,7 @@ export default function PesPerformanceOperadorScreen() {
                       {p.variancia}
                     </td>
                     <td style={{ textAlign: 'right' }}>
-                      <TempoPill real={p.tempoReal} padrao={p.tempoPadrao} />
+                      <TempoPill real={p.tempoReal} padrao={p.tempoPadrao} min={p.tempoMin} max={p.tempoMax} />
                     </td>
                     <td style={{ fontSize: 10, color: 'var(--text2)' }}>
                       {p.sala}

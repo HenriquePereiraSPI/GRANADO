@@ -38,7 +38,8 @@ export const MODULES = [
       // que o usuario seleciona uma ordem na fila de pesagem.
       { id: 'pes-ordens',        label: 'Selecao de Ordem' },
       { id: 'pes-oee',           label: '📊 OEE Pesagem' },
-      { id: 'pes-perf-operador', label: '📈 Performance' },
+      { id: 'pes-perf-operador', label: '📈 Performance (Operador)' },
+      { id: 'pes-perf-gestao',   label: '👔 Performance Gestao' },
       { id: 'pes-rastr',         label: '📋 Rastreabilidade' },
     ],
   },
