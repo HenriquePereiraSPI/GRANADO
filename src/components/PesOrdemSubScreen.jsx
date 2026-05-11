@@ -14,13 +14,13 @@ import LegacyScreen from './LegacyScreen.jsx';
  */
 
 const SUBSCREEN_TABS = [
-  { id: 'pes-cockpit',    label: 'Cockpit',    icon: '🎯' },
-  { id: 'pes-mps',        label: 'MPs',        icon: '⚖️' },
-  { id: 'pes-pendencias', label: 'Pendências', icon: '⚠' },
-  { id: 'pes-checklist',  label: 'Checklist',  icon: '📋' },
-  { id: 'pes-gaiola',     label: 'Gaiola',     icon: '📦' },
-  { id: 'pes-devol-mp',   label: 'Devolução',  icon: '↩' },
-  { id: 'pes-checkout',   label: 'Checkout',   icon: '✓' },
+  { id: 'pes-cockpit',   label: 'Cockpit',    icon: '🎯' },
+  { id: 'pes-mps',       label: 'MPs',        icon: '⚖️' },
+  { id: 'pes-checklist', label: 'Checklist',  icon: '📋' },
+  { id: 'pes-gaiola',    label: 'Gaiola',     icon: '📦' },
+  { id: 'pes-paradas',   label: 'Paradas',    icon: '⏸️' },
+  { id: 'pes-devol-mp',  label: 'Devolução',  icon: '↩' },
+  { id: 'pes-checkout',  label: 'Checkout',   icon: '✓' },
 ];
 
 export default function PesOrdemSubScreen({ id }) {

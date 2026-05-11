@@ -15,8 +15,9 @@ import PesOrdemSubScreen from './components/PesOrdemSubScreen.jsx';
  *  Sao agrupadas dentro de pes-ordens (a tela "pai"). Acesso direto
  *  cai no empty-state do wrapper PesOrdemSubScreen. */
 const PES_ORDEM_SUBSCREENS = new Set([
-  'pes-cockpit', 'pes-mps', 'pes-pendencias',
+  'pes-cockpit', 'pes-mps',
   'pes-checklist', 'pes-gaiola', 'pes-devol-mp', 'pes-checkout',
+  'pes-paradas',
 ]);
 import { ModalProvider, useModal } from './components/ModalProvider.jsx';
 import { injectLegacyScripts, installNavBridges, resolveScreenId } from './lib/legacy-bridge.js';

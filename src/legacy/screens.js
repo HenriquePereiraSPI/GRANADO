@@ -1324,8 +1324,37 @@ export const SCREENS = {
     `,
   "pes-cockpit": `      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · Box 3 · MF5</div><div class="ph-title">Cockpit de Pesagem</div></div>
-        <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416<br>Loção Hidratante Rosa 200ml<br><span style="color:var(--verde)">J. Santos · Box 3</span></div>
+        <div class="ph-actions" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <button
+            class="btn btn-sm"
+            style="background:var(--alr-p);color:var(--alr);border:1.5px solid var(--alr-b);font-weight:700"
+            onclick="pesCockpitHold()"
+            title="Colocar a ordem em Hold (Aguardando)"
+          >⏸ Hold</button>
+          <button
+            class="btn btn-sm"
+            style="background:var(--per-p);color:var(--per);border:1.5px solid var(--per-b);font-weight:700"
+            onclick="pesCockpitCancelar()"
+            title="Cancelar esta Ordem"
+          >⛔ Cancelar Ordem</button>
+          <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2);margin-left:8px">OP-2026-0416<br>Loção Hidratante Rosa 200ml<br><span style="color:var(--verde)">J. Santos · Box 3</span></div>
+        </div>
       </div>
+
+      <script>
+      function pesCockpitHold() {
+        var motivo = prompt('⏸ Colocar OP-2026-0416 em HOLD (Aguardando)?\\n\\nInforme o motivo:');
+        if (!motivo) return;
+        alert('⏸ Ordem em HOLD\\n\\nOP-2026-0416 · Loção Rosa\\nMotivo: ' + motivo + '\\nRegistrado em: ' + new Date().toLocaleString('pt-BR') + ' por J. Santos\\nNotificação enviada ao Líder de Pesagem.\\n\\nAviso: se permanecer em hold por mais de 30 dias, supervisão de produção será notificada automaticamente.');
+      }
+      function pesCockpitCancelar() {
+        if (!confirm('⛔ CANCELAR OP-2026-0416?\\n\\nEsta ação é IRREVERSÍVEL:\\n• Pesagens em andamento serão descartadas\\n• MPs já pesadas voltam pro estoque (mov. reverso JDE)\\n• OF será reaberta para análise\\n• Auditoria registrada\\n\\nConfirmar cancelamento?')) return;
+        var motivo = prompt('Informe o motivo do cancelamento:');
+        if (!motivo) { alert('Cancelamento abortado — motivo obrigatório.'); return; }
+        alert('⛔ Ordem CANCELADA\\n\\nOP-2026-0416 cancelada por J. Santos\\nMotivo: ' + motivo + '\\nData/hora: ' + new Date().toLocaleString('pt-BR') + '\\nRegistro de auditoria: CANC-PES-' + Date.now() + '\\n\\nFabricação notificada. Voltando para Seleção de Ordem...');
+        setTimeout(function(){ nav('pes-ordens',null,null); }, 800);
+      }
+      </script>
 
       <!-- ── Stepper ── -->
       <div id="pes-stepper" style="display:flex;align-items:center;gap:0;margin-bottom:22px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 20px;overflow-x:auto">
@@ -1514,31 +1543,263 @@ export const SCREENS = {
                 <input class="inp" id="pes-mp-filtro" placeholder="Digite código/descrição OU escaneie ex.: MP-0001;AGUA-2026-03" oninput="pesFiltrarMPs(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();pesScanRapido(this.value);}" style="margin-bottom:6px">
                 <div id="pes-scan-feedback" style="display:none;font-size:11px;font-weight:700;padding:6px 10px;border-radius:4px;margin-bottom:4px"></div>
               </div>
-              <table class="tbl" id="pes-mp-tabela">
-                <thead><tr><th>#</th><th>Código</th><th>Lote</th><th>Material</th><th>Qtd. Alvo</th><th>Pesado</th><th>Pendente</th><th>Tolerância</th><th>Status</th><th></th></tr></thead>
+              <table class="tbl" id="pes-mp-tabela" style="font-size:11px">
+                <thead><tr><th>#</th><th>Código</th><th>Lote</th><th>Material</th><th>Qtd. Estoque</th><th>Qtd. Alvo</th><th>Pesado</th><th>Pendente</th><th>Tolerância</th><th>Status</th><th>Ações</th></tr></thead>
                 <tbody>
-                  <tr data-cod="MP-4821" data-lote="GLI-2026-08" data-mp="Glicerina USP" data-alvo="45,000 kg" data-tol="±0,5%" data-status="pesada" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">1</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-4821</td><td class="mono" style="font-size:11px;color:var(--text2)">GLI-2026-08</td><td style="font-size:12px;color:var(--ok)">✓ Glicerina USP</td><td class="mono">45,000 kg</td><td class="mono" style="color:var(--ok)">44,983 kg</td><td class="mono" style="color:var(--text3)">0,000 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-ok">Pesada</span></td><td></td></tr>
-                  <tr data-cod="MP-3307" data-lote="PPG-2026-12" data-mp="Propilenoglicol" data-alvo="18,000 kg" data-tol="±0,5%" data-status="pesada" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">2</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-3307</td><td class="mono" style="font-size:11px;color:var(--text2)">PPG-2026-12</td><td style="font-size:12px;color:var(--ok)">✓ Propilenoglicol</td><td class="mono">18,000 kg</td><td class="mono" style="color:var(--ok)">18,005 kg</td><td class="mono" style="color:var(--text3)">0,000 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-ok">Pesada</span></td><td></td></tr>
-                  <tr data-cod="MP-0914" data-lote="CAR-2026-05" data-mp="Carbopol 940" data-alvo="2,500 kg" data-tol="±0,3%" data-status="pesada" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">3</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-0914</td><td class="mono" style="font-size:11px;color:var(--text2)">CAR-2026-05</td><td style="font-size:12px;color:var(--ok)">✓ Carbopol 940</td><td class="mono">2,500 kg</td><td class="mono" style="color:var(--ok)">2,498 kg</td><td class="mono" style="color:var(--text3)">0,000 kg</td><td class="mono">±0,3%</td><td><span class="bdg bdg-ok">Pesada</span></td><td></td></tr>
-                  <tr data-cod="MP-2256" data-lote="FEN-2026-03" data-mp="Fenoxietanol" data-alvo="3,000 kg" data-tol="±0,5%" data-status="desvio" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">4</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-2256</td><td class="mono" style="font-size:11px;color:var(--text2)">FEN-2026-03</td><td style="font-size:12px;color:var(--ok)">✓ Fenoxietanol</td><td class="mono">3,000 kg</td><td class="mono" style="color:var(--alr);font-weight:700">3,028 kg</td><td class="mono" style="color:var(--text3)">0,000 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-alr">Com Variância</span></td><td></td></tr>
-                  <tr data-cod="MP-5593" data-lote="TEA-2026-07" data-mp="TEA 99%" data-alvo="1,800 kg" data-tol="±0,5%" data-status="pesada" style="background:var(--ok-p);opacity:.7"><td class="mono" style="color:var(--ok)">5</td><td class="mono" style="font-size:11px;color:var(--text2)">MP-5593</td><td class="mono" style="font-size:11px;color:var(--text2)">TEA-2026-07</td><td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td><td class="mono">1,800 kg</td><td class="mono" style="color:var(--ok)">1,801 kg</td><td class="mono" style="color:var(--text3)">0,000 kg</td><td class="mono">±0,5%</td><td><span class="bdg bdg-ok">Pesada</span></td><td></td></tr>
-                  <tr data-cod="MP-0001" data-lote="AGUA-2026-03" data-mp="Aqua (Água Purificada)" data-alvo="412,500 kg" data-tol="±0,5%" data-status="proxima" style="background:var(--verde-dim);border-left:3px solid var(--verde);cursor:pointer" onclick="pesSetMP(this)">
-                    <td class="mono" style="color:var(--verde);font-weight:700">6</td>
+                  <!-- ORDENADO POR MENOR ESTOQUE PRIMEIRO (criticidade de abastecimento) -->
+                  <!-- 1. Corante Rosaline — Estoque baixo (0,8 kg) -->
+                  <tr data-cod="MP-9118" data-lote="COR-2026-15" data-mp="Corante Rosaline" data-alvo="0,150 kg" data-tol="±0,5%" data-status="aguardando" data-estoque="0.8">
+                    <td class="mono" style="color:var(--text3)">1</td>
+                    <td class="mono" style="font-size:11px;color:var(--text3)">MP-9118</td>
+                    <td class="mono" style="font-size:11px;color:var(--text3)">COR-2026-15</td>
+                    <td style="font-size:12px;color:var(--text3)">Corante Rosaline</td>
+                    <td class="mono" style="color:var(--alr);font-weight:700">0,800 kg</td>
+                    <td class="mono">0,150 kg</td>
+                    <td class="mono" style="color:var(--text3)">—</td>
+                    <td class="mono" style="color:var(--text3)">0,150 kg</td>
+                    <td class="mono" style="color:var(--text3)">±0,5%</td>
+                    <td><span class="bdg bdg-ney">Aguardando</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td>
+                  </tr>
+
+                  <!-- 2. Conservante BHT — CANCELADA POR DESVIO (estoque insuficiente) -->
+                  <tr data-cod="MP-9999" data-lote="BHT-2026-01" data-mp="Conservante BHT" data-alvo="1,800 kg" data-tol="±0,5%" data-status="cancelada" data-estoque="1.2" style="background:var(--per-p);animation:row-blink 2.4s ease-in-out infinite">
+                    <td class="mono" style="color:var(--per);font-weight:800">2</td>
+                    <td class="mono" style="font-size:11px;color:var(--per);font-weight:700">MP-9999</td>
+                    <td class="mono" style="font-size:11px;color:var(--per)">BHT-2026-01</td>
+                    <td style="font-size:12px;color:var(--per);font-weight:700">⛔ Conservante BHT</td>
+                    <td class="mono" style="color:var(--per);font-weight:900">1,200 kg</td>
+                    <td class="mono" style="color:var(--per);font-weight:700">1,800 kg</td>
+                    <td class="mono" style="color:var(--text3)">—</td>
+                    <td class="mono" style="color:var(--per);font-weight:700">1,800 kg</td>
+                    <td class="mono" style="color:var(--text3)">±0,5%</td>
+                    <td><span class="bdg bdg-per" style="font-weight:800">CANCELADA · DESVIO</span></td>
+                    <td>
+                      <button class="btn btn-sm" style="background:var(--ouro-claro);color:var(--verde-esc);border:1.5px solid var(--ouro);font-weight:800" onclick="pesSolicitarMaisMP('MP-9999','Conservante BHT','1,800 kg','1,200 kg')">+ Solicitar mais MP</button>
+                    </td>
+                  </tr>
+
+                  <!-- 3. DMDM Hydantoin — Estoque baixo (2,4 kg) -->
+                  <tr data-cod="MP-3374" data-lote="DMD-2026-01" data-mp="DMDM Hydantoin" data-alvo="0,600 kg" data-tol="±0,5%" data-status="aguardando" data-estoque="2.4">
+                    <td class="mono" style="color:var(--text3)">3</td>
+                    <td class="mono" style="font-size:11px;color:var(--text3)">MP-3374</td>
+                    <td class="mono" style="font-size:11px;color:var(--text3)">DMD-2026-01</td>
+                    <td style="font-size:12px;color:var(--text3)">DMDM Hydantoin</td>
+                    <td class="mono" style="color:var(--alr);font-weight:700">2,400 kg</td>
+                    <td class="mono">0,600 kg</td>
+                    <td class="mono" style="color:var(--text3)">—</td>
+                    <td class="mono" style="color:var(--text3)">0,600 kg</td>
+                    <td class="mono" style="color:var(--text3)">±0,5%</td>
+                    <td><span class="bdg bdg-ney">Aguardando</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td>
+                  </tr>
+
+                  <!-- 4. Vitamina E Acetato — Estoque moderado (6,2 kg) -->
+                  <tr data-cod="MP-6631" data-lote="VTE-2026-02" data-mp="Vitamina E Acetato" data-alvo="1,200 kg" data-tol="±0,5%" data-status="aguardando" data-estoque="6.2">
+                    <td class="mono" style="color:var(--text3)">4</td>
+                    <td class="mono" style="font-size:11px;color:var(--text3)">MP-6631</td>
+                    <td class="mono" style="font-size:11px;color:var(--text3)">VTE-2026-02</td>
+                    <td style="font-size:12px;color:var(--text3)">Vitamina E Acetato</td>
+                    <td class="mono" style="color:var(--alr)">6,200 kg</td>
+                    <td class="mono">1,200 kg</td>
+                    <td class="mono" style="color:var(--text3)">—</td>
+                    <td class="mono" style="color:var(--text3)">1,200 kg</td>
+                    <td class="mono" style="color:var(--text3)">±0,5%</td>
+                    <td><span class="bdg bdg-ney">Aguardando</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td>
+                  </tr>
+
+                  <!-- 5. Fenoxietanol — Com variância de pesagem (8 kg estoque) -->
+                  <tr data-cod="MP-2256" data-lote="FEN-2026-03" data-mp="Fenoxietanol" data-alvo="3,000 kg" data-tol="±0,5%" data-status="desvio" data-estoque="8" style="background:var(--alr-p)">
+                    <td class="mono" style="color:var(--alr);font-weight:800">5</td>
+                    <td class="mono" style="font-size:11px;color:var(--alr);font-weight:700">MP-2256</td>
+                    <td class="mono" style="font-size:11px;color:var(--alr)">FEN-2026-03</td>
+                    <td style="font-size:12px;color:var(--alr);font-weight:700">⚠ Fenoxietanol</td>
+                    <td class="mono" style="color:var(--alr);font-weight:700">8,000 kg</td>
+                    <td class="mono">3,000 kg</td>
+                    <td class="mono" style="color:var(--alr);font-weight:700">3,028 kg</td>
+                    <td class="mono" style="color:var(--text3)">0,000 kg</td>
+                    <td class="mono">±0,5%</td>
+                    <td><span class="bdg bdg-alr">Com Variância</span></td>
+                    <td><button class="btn btn-sm" style="background:var(--ouro-claro);color:var(--verde-esc);border:1.5px solid var(--ouro);font-weight:700" onclick="pesSolicitarMaisMP('MP-2256','Fenoxietanol','3,000 kg','8,000 kg')">+ Solicitar mais MP</button></td>
+                  </tr>
+
+                  <!-- 6. Carbopol — Pesada (estoque 12,5 kg) -->
+                  <tr data-cod="MP-0914" data-lote="CAR-2026-05" data-mp="Carbopol 940" data-alvo="2,500 kg" data-tol="±0,3%" data-status="pesada" data-estoque="12.5" style="background:var(--ok-p);opacity:.85">
+                    <td class="mono" style="color:var(--ok)">6</td>
+                    <td class="mono" style="font-size:11px;color:var(--text2)">MP-0914</td>
+                    <td class="mono" style="font-size:11px;color:var(--text2)">CAR-2026-05</td>
+                    <td style="font-size:12px;color:var(--ok)">✓ Carbopol 940</td>
+                    <td class="mono" style="color:var(--text2)">12,500 kg</td>
+                    <td class="mono">2,500 kg</td>
+                    <td class="mono" style="color:var(--ok)">2,498 kg</td>
+                    <td class="mono" style="color:var(--text3)">0,000 kg</td>
+                    <td class="mono">±0,3%</td>
+                    <td><span class="bdg bdg-ok">Pesada</span></td>
+                    <td></td>
+                  </tr>
+
+                  <!-- 7. Fragância Rosa (estoque 18 kg) -->
+                  <tr data-cod="MP-2089" data-lote="FRG-2026-09" data-mp="Fragância Rosa" data-alvo="4,500 kg" data-tol="±0,5%" data-status="aguardando" data-estoque="18">
+                    <td class="mono" style="color:var(--text3)">7</td>
+                    <td class="mono" style="font-size:11px;color:var(--text3)">MP-2089</td>
+                    <td class="mono" style="font-size:11px;color:var(--text3)">FRG-2026-09</td>
+                    <td style="font-size:12px;color:var(--text3)">Fragância Rosa</td>
+                    <td class="mono" style="color:var(--text2)">18,000 kg</td>
+                    <td class="mono">4,500 kg</td>
+                    <td class="mono" style="color:var(--text3)">—</td>
+                    <td class="mono" style="color:var(--text3)">4,500 kg</td>
+                    <td class="mono" style="color:var(--text3)">±0,5%</td>
+                    <td><span class="bdg bdg-ney">Aguardando</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td>
+                  </tr>
+
+                  <!-- 8. Pantenol 75% (estoque 22 kg) -->
+                  <tr data-cod="MP-0008" data-lote="PAN-2026-04" data-mp="Pantenol 75%" data-alvo="3,000 kg" data-tol="±0,5%" data-status="aguardando" data-estoque="22">
+                    <td class="mono" style="color:var(--text3)">8</td>
+                    <td class="mono" style="font-size:11px;color:var(--text3)">MP-0008</td>
+                    <td class="mono" style="font-size:11px;color:var(--text3)">PAN-2026-04</td>
+                    <td style="font-size:12px;color:var(--text3)">Pantenol 75%</td>
+                    <td class="mono" style="color:var(--text2)">22,000 kg</td>
+                    <td class="mono">3,000 kg</td>
+                    <td class="mono" style="color:var(--text3)">—</td>
+                    <td class="mono" style="color:var(--text3)">3,000 kg</td>
+                    <td class="mono" style="color:var(--text3)">±0,5%</td>
+                    <td><span class="bdg bdg-ney">Aguardando</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td>
+                  </tr>
+
+                  <!-- 9. Extrato Rosa Mosqueta (estoque 35 kg) -->
+                  <tr data-cod="MP-7742" data-lote="ERM-2026-01" data-mp="Extrato Rosa Mosqueta" data-alvo="6,000 kg" data-tol="±1,0%" data-status="aguardando" data-estoque="35">
+                    <td class="mono" style="color:var(--text3)">9</td>
+                    <td class="mono" style="font-size:11px;color:var(--text3)">MP-7742</td>
+                    <td class="mono" style="font-size:11px;color:var(--text3)">ERM-2026-01</td>
+                    <td style="font-size:12px;color:var(--text3)">Extrato Rosa Mosqueta</td>
+                    <td class="mono" style="color:var(--text2)">35,000 kg</td>
+                    <td class="mono">6,000 kg</td>
+                    <td class="mono" style="color:var(--text3)">—</td>
+                    <td class="mono" style="color:var(--text3)">6,000 kg</td>
+                    <td class="mono" style="color:var(--text3)">±1,0%</td>
+                    <td><span class="bdg bdg-ney">Aguardando</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td>
+                  </tr>
+
+                  <!-- 10. TEA 99% — Pesada (estoque 95 kg) -->
+                  <tr data-cod="MP-5593" data-lote="TEA-2026-07" data-mp="TEA 99%" data-alvo="1,800 kg" data-tol="±0,5%" data-status="pesada" data-estoque="95" style="background:var(--ok-p);opacity:.85">
+                    <td class="mono" style="color:var(--ok)">10</td>
+                    <td class="mono" style="font-size:11px;color:var(--text2)">MP-5593</td>
+                    <td class="mono" style="font-size:11px;color:var(--text2)">TEA-2026-07</td>
+                    <td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td>
+                    <td class="mono" style="color:var(--text2)">95,000 kg</td>
+                    <td class="mono">1,800 kg</td>
+                    <td class="mono" style="color:var(--ok)">1,801 kg</td>
+                    <td class="mono" style="color:var(--text3)">0,000 kg</td>
+                    <td class="mono">±0,5%</td>
+                    <td><span class="bdg bdg-ok">Pesada</span></td>
+                    <td></td>
+                  </tr>
+
+                  <!-- 11. Propilenoglicol — Pesada (estoque 320 kg) -->
+                  <tr data-cod="MP-3307" data-lote="PPG-2026-12" data-mp="Propilenoglicol" data-alvo="18,000 kg" data-tol="±0,5%" data-status="pesada" data-estoque="320" style="background:var(--ok-p);opacity:.85">
+                    <td class="mono" style="color:var(--ok)">11</td>
+                    <td class="mono" style="font-size:11px;color:var(--text2)">MP-3307</td>
+                    <td class="mono" style="font-size:11px;color:var(--text2)">PPG-2026-12</td>
+                    <td style="font-size:12px;color:var(--ok)">✓ Propilenoglicol</td>
+                    <td class="mono" style="color:var(--text2)">320,000 kg</td>
+                    <td class="mono">18,000 kg</td>
+                    <td class="mono" style="color:var(--ok)">18,005 kg</td>
+                    <td class="mono" style="color:var(--text3)">0,000 kg</td>
+                    <td class="mono">±0,5%</td>
+                    <td><span class="bdg bdg-ok">Pesada</span></td>
+                    <td></td>
+                  </tr>
+
+                  <!-- 12. Glicerina USP — Pesada (estoque 850 kg) -->
+                  <tr data-cod="MP-4821" data-lote="GLI-2026-08" data-mp="Glicerina USP" data-alvo="45,000 kg" data-tol="±0,5%" data-status="pesada" data-estoque="850" style="background:var(--ok-p);opacity:.85">
+                    <td class="mono" style="color:var(--ok)">12</td>
+                    <td class="mono" style="font-size:11px;color:var(--text2)">MP-4821</td>
+                    <td class="mono" style="font-size:11px;color:var(--text2)">GLI-2026-08</td>
+                    <td style="font-size:12px;color:var(--ok)">✓ Glicerina USP</td>
+                    <td class="mono" style="color:var(--text2)">850,000 kg</td>
+                    <td class="mono">45,000 kg</td>
+                    <td class="mono" style="color:var(--ok)">44,983 kg</td>
+                    <td class="mono" style="color:var(--text3)">0,000 kg</td>
+                    <td class="mono">±0,5%</td>
+                    <td><span class="bdg bdg-ok">Pesada</span></td>
+                    <td></td>
+                  </tr>
+
+                  <!-- 13. Aqua — Próxima (estoque 9500 kg) -->
+                  <tr data-cod="MP-0001" data-lote="AGUA-2026-03" data-mp="Aqua (Água Purificada)" data-alvo="412,500 kg" data-tol="±0,5%" data-status="proxima" data-estoque="9500" style="background:var(--verde-dim);border-left:3px solid var(--verde);cursor:pointer" onclick="pesSetMP(this)">
+                    <td class="mono" style="color:var(--verde);font-weight:700">13</td>
                     <td class="mono" style="font-size:11px;font-weight:700;color:var(--verde)">MP-0001</td>
                     <td class="mono" style="font-size:11px;font-weight:700;color:var(--verde)">AGUA-2026-03</td>
                     <td style="font-size:12px;font-weight:700;color:var(--verde)">→ Aqua (Água Purificada)</td>
-                    <td class="mono" style="font-weight:700">412,500 kg</td><td class="mono" style="color:var(--text3)">—</td><td class="mono" style="color:var(--verde);font-weight:700">412,500 kg</td><td class="mono">±0,5%</td>
+                    <td class="mono" style="color:var(--ok);font-weight:700">9.500,000 kg</td>
+                    <td class="mono" style="font-weight:700">412,500 kg</td>
+                    <td class="mono" style="color:var(--text3)">—</td>
+                    <td class="mono" style="color:var(--verde);font-weight:700">412,500 kg</td>
+                    <td class="mono">±0,5%</td>
                     <td><span class="bdg bdg-alr">Próxima</span></td>
                     <td><button class="btn btn-sm btn-v" onclick="pesSetMP(this.closest('tr'));event.stopPropagation()">Selecionar</button></td>
                   </tr>
-                  <tr data-cod="MP-7742" data-lote="ERM-2026-01" data-mp="Extrato Rosa Mosqueta" data-alvo="6,000 kg" data-tol="±1,0%" data-status="aguardando"><td class="mono" style="color:var(--text3)">7</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-7742</td><td class="mono" style="font-size:11px;color:var(--text3)">ERM-2026-01</td><td style="font-size:12px;color:var(--text3)">Extrato Rosa Mosqueta</td><td class="mono" style="color:var(--text3)">6,000 kg</td><td class="mono" style="color:var(--text3)">—</td><td class="mono" style="color:var(--text3)">6,000 kg</td><td class="mono" style="color:var(--text3)">±1,0%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
-                  <tr data-cod="MP-0008" data-lote="PAN-2026-04" data-mp="Pantenol 75%" data-alvo="3,000 kg" data-tol="±0,5%" data-status="aguardando"><td class="mono" style="color:var(--text3)">8</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-0008</td><td class="mono" style="font-size:11px;color:var(--text3)">PAN-2026-04</td><td style="font-size:12px;color:var(--text3)">Pantenol 75%</td><td class="mono" style="color:var(--text3)">3,000 kg</td><td class="mono" style="color:var(--text3)">—</td><td class="mono" style="color:var(--text3)">3,000 kg</td><td class="mono" style="color:var(--text3)">±0,5%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
-                  <tr data-cod="MP-6631" data-lote="VTE-2026-02" data-mp="Vitamina E Acetato" data-alvo="1,200 kg" data-tol="±0,5%" data-status="aguardando"><td class="mono" style="color:var(--text3)">9</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-6631</td><td class="mono" style="font-size:11px;color:var(--text3)">VTE-2026-02</td><td style="font-size:12px;color:var(--text3)">Vitamina E Acetato</td><td class="mono" style="color:var(--text3)">1,200 kg</td><td class="mono" style="color:var(--text3)">—</td><td class="mono" style="color:var(--text3)">1,200 kg</td><td class="mono" style="color:var(--text3)">±0,5%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
-                  <tr data-cod="MP-2089" data-lote="FRG-2026-09" data-mp="Fragância Rosa" data-alvo="4,500 kg" data-tol="±0,5%" data-status="aguardando"><td class="mono" style="color:var(--text3)">10</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-2089</td><td class="mono" style="font-size:11px;color:var(--text3)">FRG-2026-09</td><td style="font-size:12px;color:var(--text3)">Fragância Rosa</td><td class="mono" style="color:var(--text3)">4,500 kg</td><td class="mono" style="color:var(--text3)">—</td><td class="mono" style="color:var(--text3)">4,500 kg</td><td class="mono" style="color:var(--text3)">±0,5%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
-                  <tr data-cod="MP-3374" data-lote="DMD-2026-01" data-mp="DMDM Hydantoin" data-alvo="0,600 kg" data-tol="±0,5%" data-status="aguardando"><td class="mono" style="color:var(--text3)">11</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-3374</td><td class="mono" style="font-size:11px;color:var(--text3)">DMD-2026-01</td><td style="font-size:12px;color:var(--text3)">DMDM Hydantoin</td><td class="mono" style="color:var(--text3)">0,600 kg</td><td class="mono" style="color:var(--text3)">—</td><td class="mono" style="color:var(--text3)">0,600 kg</td><td class="mono" style="color:var(--text3)">±0,5%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
-                  <tr data-cod="MP-9118" data-lote="COR-2026-15" data-mp="Corante Rosaline" data-alvo="0,150 kg" data-tol="±0,5%" data-status="aguardando"><td class="mono" style="color:var(--text3)">12</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-9118</td><td class="mono" style="font-size:11px;color:var(--text3)">COR-2026-15</td><td style="font-size:12px;color:var(--text3)">Corante Rosaline</td><td class="mono" style="color:var(--text3)">0,150 kg</td><td class="mono" style="color:var(--text3)">—</td><td class="mono" style="color:var(--text3)">0,150 kg</td><td class="mono" style="color:var(--text3)">±0,5%</td><td><span class="bdg bdg-ney">Aguardando</span></td><td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td></tr>
                 </tbody>
               </table>
+
+              <!-- Legenda + nota de ordenação -->
+              <div style="margin-top:8px;font-size:10px;color:var(--text3);display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+                <span>📊 Ordenado por <strong>menor estoque primeiro</strong> (criticidade de abastecimento)</span>
+                <span style="margin-left:auto">
+                  <span style="color:var(--alr);font-weight:700">●</span> Estoque baixo &nbsp;
+                  <span style="color:var(--per);font-weight:700">●</span> Insuficiente
+                </span>
+              </div>
+
+              <!-- Modal: Solicitar mais MP (popup inline) -->
+              <div id="modal-solic-mp" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:950;align-items:flex-start;justify-content:center;padding-top:60px;backdrop-filter:blur(3px)">
+                <div style="background:var(--surface);border-top:4px solid var(--ouro);border:1px solid var(--border);border-radius:8px;padding:24px 28px;max-width:560px;width:94%;box-shadow:var(--sh2)">
+                  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+                    <div>
+                      <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--ouro)">📦 Almoxarifado · Solicitação Extra</div>
+                      <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-top:2px">Solicitar mais MP</div>
+                    </div>
+                    <button onclick="document.getElementById('modal-solic-mp').style.display='none'" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
+                  </div>
+                  <div id="solic-mp-info" style="padding:12px 14px;background:var(--alr-p);border:1px solid var(--alr-b);border-radius:6px;margin-bottom:14px;font-size:12px;color:var(--alr)"></div>
+                  <div class="form-row">
+                    <div class="fg">
+                      <label class="lbl">Quantidade Adicional Necessária *</label>
+                      <input class="inp" id="solic-mp-qtd" type="text" placeholder="Ex.: 5,000" style="font-family:var(--font-m)">
+                      <span style="font-size:10px;color:var(--text3);margin-top:3px;display:block">Em kg. Considere folga de 10–20% sobre o alvo.</span>
+                    </div>
+                    <div class="fg" style="max-width:160px">
+                      <label class="lbl">Urgência *</label>
+                      <select class="sel" id="solic-mp-urg">
+                        <option value="normal">Normal (24h)</option>
+                        <option value="alta">Alta (4h)</option>
+                        <option value="critica" selected>Crítica (Imediata)</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="fg">
+                      <label class="lbl">Justificativa *</label>
+                      <textarea class="txta" id="solic-mp-just" rows="2" placeholder="Ex.: MP em desvio — estoque insuficiente para alvo, paralisada a pesagem"></textarea>
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:12px;border-top:1px solid var(--border)">
+                    <button class="btn btn-md btn-ghost" onclick="document.getElementById('modal-solic-mp').style.display='none'">Cancelar</button>
+                    <button class="btn btn-md btn-v" onclick="pesEnviarSolicMP()">📨 Enviar ao Almoxarifado</button>
+                  </div>
+                </div>
+              </div>
+
+              <style>
+                @keyframes row-blink {
+                  0%,100% { background: var(--per-p); }
+                  50%     { background: rgba(140,26,26,.18); }
+                }
+              </style>
               <script>
               function pesSetMP(tr) {
                 var d = tr.dataset;
@@ -1557,6 +1818,32 @@ export const SCREENS = {
                 if (v && v.indexOf(';') !== -1) return;
                 var rows = document.querySelectorAll('#pes-mp-tabela tbody tr');
                 rows.forEach(function(r){ r.style.display = (!v || r.textContent.toLowerCase().includes(v.toLowerCase())) ? '' : 'none'; });
+              }
+
+              // Solicitar mais MP — abre modal para MP em desvio/cancelada
+              function pesSolicitarMaisMP(cod, mat, alvo, estoque) {
+                var info = document.getElementById('solic-mp-info');
+                if (info) {
+                  info.innerHTML = '<strong>' + cod + ' · ' + mat + '</strong><br>' +
+                    'Alvo: <strong>' + alvo + '</strong> · Estoque disponível: <strong>' + estoque + '</strong><br>' +
+                    '<span style="font-size:10px;opacity:.85">Esta solicitação será enviada ao Almoxarifado e gerará movimento JDE de transferência.</span>';
+                }
+                var just = document.getElementById('solic-mp-just');
+                if (just) just.value = 'MP em desvio — estoque insuficiente para concluir a pesagem da OP-2026-0416 (' + mat + ').';
+                document.getElementById('modal-solic-mp').style.display = 'flex';
+              }
+
+              function pesEnviarSolicMP() {
+                var qtd = document.getElementById('solic-mp-qtd').value.trim();
+                var urg = document.getElementById('solic-mp-urg').value;
+                var just = document.getElementById('solic-mp-just').value.trim();
+                if (!qtd) { alert('⚠ Informe a quantidade adicional.'); return; }
+                if (!just) { alert('⚠ Justificativa obrigatória.'); return; }
+                var protocolo = 'SOLIC-MP-' + Date.now().toString().slice(-6);
+                alert('✅ Solicitação enviada ao Almoxarifado!\\n\\nProtocolo: ' + protocolo + '\\nQtd: ' + qtd + ' kg · Urgência: ' + urg.toUpperCase() + '\\nNotificação enviada a: Almoxarifado MF5 + Líder de Pesagem.\\n\\nSLA: ' + (urg === 'critica' ? 'Imediato (push)' : urg === 'alta' ? '4 horas' : '24 horas'));
+                document.getElementById('modal-solic-mp').style.display = 'none';
+                document.getElementById('solic-mp-qtd').value = '';
+                document.getElementById('solic-mp-just').value = '';
               }
               /**
                * Scan rapido: parseia formato MP-XXXX;LOTE-XXXX-XX, valida e
@@ -1901,7 +2188,10 @@ export const SCREENS = {
               if (alertaOk)  alertaOk.style.display  = 'flex';
               if (btnImp)    { btnImp.disabled = false; btnImp.classList.remove('btn-ghost'); btnImp.classList.add('btn-v'); }
               gaiRenderConfig();
-              gaiRenderEtiquetaGaiola(entrada);
+              // Preview removido — só aparece quando o usuário clica em "Ver / Imprimir"
+              // na lista de gaiolas geradas. Limpamos qualquer preview residual:
+              var prev = document.getElementById('gai-etq-preview-area');
+              if (prev) prev.innerHTML = '';
             }
 
             function gaiVerificarEImprimir() {
@@ -2089,123 +2379,70 @@ export const SCREENS = {
               </script>
             </div>
 
-            <!-- Bloco 2: Etiqueta de Pesagem de Material (MP Pesada) — agora depois -->
+            <!-- Bloco 2: Etiqueta de Pesagem de Material (MP Pesada) — sem preview -->
             <div class="card cv mb14" style="border:2px solid var(--verde)">
               <div class="card-title">⑦ Etiqueta de Pesagem de Material — MP Confirmada</div>
 
               <!-- Alerta: gaiola obrigatória -->
               <div id="alerta-sem-gaiola" class="abox err mb14"><span class="ai">🚫</span><div><strong>Gaiola não gerada!</strong> Gere e imprima ao menos uma etiqueta de gaiola antes de imprimir a etiqueta da MP.</div></div>
 
-              <div class="abox ok mb14" id="alerta-pesagem-ok" style="display:none"><span class="ai">✅</span><div><strong>Pesagem confirmada!</strong> Imprima a etiqueta da MP pesada e associe à gaiola gerada.</div></div>
+              <div class="abox ok mb14" id="alerta-pesagem-ok" style="display:none"><span class="ai">✅</span><div><strong>Pesagem confirmada!</strong> Imprima a etiqueta da MP pesada e associe à gaiola gerada. O preview da etiqueta abre ao clicar em "Ver / Imprimir".</div></div>
 
-              <!-- Preview Etiqueta MP Pesada — fiel ao modelo -->
-              <div style="background:#fff;border:2px solid #222;border-radius:4px;max-width:560px;font-family:Arial,sans-serif;font-size:12px;color:#000;margin-bottom:14px;overflow:hidden">
-                <!-- Header -->
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 14px 8px;border-bottom:2px solid #222">
-                  <div style="font-size:17px;font-weight:900">PESAGEM DE MATERIAL</div>
-                  <div style="text-align:right;font-size:10px;line-height:1.6">
-                    <div style="font-weight:700;letter-spacing:.06em">DATA IMPRESSÃO</div>
-                    <div style="font-size:13px;font-weight:900">01/04/2026</div>
-                  </div>
+              <!-- Resumo compacto da MP -->
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;margin-bottom:14px">
+                <div>
+                  <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">MP</div>
+                  <div style="font-size:12px;font-weight:700">M9808 — Aqua (Água Purificada)</div>
                 </div>
-                <!-- Row: OF / Lote Granel / APROVADO -->
-                <div style="display:flex;border-bottom:1px solid #999">
-                  <div style="padding:7px 14px;border-right:1px solid #999;min-width:120px">
-                    <div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">ORDEM DE FABRICAÇÃO</div>
-                    <div style="font-size:26px;font-weight:900;line-height:1.1">771166</div>
-                  </div>
-                  <div style="padding:7px 14px;flex:1;border-right:1px solid #999">
-                    <div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">LOTE GRANEL</div>
-                    <div style="font-size:22px;font-weight:900;line-height:1.1">1621/2026</div>
-                    <div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-top:4px">DATA DA PESAGEM</div>
-                    <div style="font-size:12px;font-weight:700">01/04/2026 09:22</div>
-                  </div>
-                  <div style="padding:7px 14px;display:flex;align-items:center;justify-content:center;min-width:100px">
-                    <div style="border:2px solid #000;padding:6px 12px;font-size:14px;font-weight:900;letter-spacing:.1em">APROVADO</div>
-                  </div>
+                <div>
+                  <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Lote MP</div>
+                  <div class="mono" style="font-size:12px;font-weight:700">AGUA-2026-03</div>
                 </div>
-                <!-- Granel Resultante -->
-                <div style="padding:7px 14px;border-bottom:1px solid #999">
-                  <div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">GRANEL RESULTANTE</div>
-                  <div style="font-size:13px;font-weight:700;margin-top:2px">S0835B – SAB. PH LIMAO SICILIANO</div>
+                <div>
+                  <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Peso Líquido</div>
+                  <div class="mono" style="font-size:14px;font-weight:900;color:var(--verde)">411,840 kg</div>
                 </div>
-                <!-- Matéria Prima -->
-                <div style="padding:7px 14px;border-bottom:1px solid #999">
-                  <div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">MATÉRIA PRIMA</div>
-                  <div style="font-size:13px;font-weight:700;margin-top:2px">M9808 – AQUA (ÁGUA PURIFICADA)</div>
+                <div>
+                  <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Balança</div>
+                  <div class="mono" style="font-size:12px;font-weight:700">BAL-01</div>
                 </div>
-                <!-- Lote MP / Validade / Tipo / Qtd Ordem -->
-                <div style="display:flex;border-bottom:1px solid #999">
-                  <div style="flex:1;padding:7px 14px;border-right:1px solid #999">
-                    <div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">LOTE MP</div>
-                    <div style="font-size:15px;font-weight:900">AGUA-2026-03</div>
-                  </div>
-                  <div style="flex:1;padding:7px 14px;border-right:1px solid #999;background:#000;color:#fff">
-                    <div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">VALIDADE</div>
-                    <div style="font-size:15px;font-weight:900">12/2026</div>
-                  </div>
-                  <div style="flex:1;padding:7px 14px;border-right:1px solid #999">
-                    <div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">TIPO DE PESAGEM</div>
-                    <div style="font-size:13px;font-weight:900">SIMPLES</div>
-                  </div>
-                  <div style="flex:1;padding:7px 14px">
-                    <div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">QTD ORDEM</div>
-                    <div style="font-size:13px;font-weight:900">412,500 KG</div>
-                  </div>
-                </div>
-                <!-- Pesado por / Matrícula / Balança / Tara / Peso Bruto / Nº Etiqueta -->
-                <div style="display:flex;border-bottom:1px solid #999">
-                  <div style="flex:1;padding:7px 14px;border-right:1px solid #999">
-                    <div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">PESADO POR</div>
-                    <div style="font-size:12px;font-weight:700">J. SANTOS</div>
-                  </div>
-                  <div style="padding:7px 10px;border-right:1px solid #999;min-width:72px">
-                    <div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">MATRÍCULA</div>
-                    <div style="font-size:12px;font-weight:700">102266</div>
-                  </div>
-                  <div style="padding:7px 10px;border-right:1px solid #999;min-width:60px">
-                    <div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">BALANÇA</div>
-                    <div style="font-size:12px;font-weight:700">BAL-01</div>
-                  </div>
-                  <div style="padding:7px 10px;border-right:1px solid #999;min-width:72px">
-                    <div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">TARA</div>
-                    <div style="font-size:12px;font-weight:700">0,021 KG</div>
-                  </div>
-                  <div style="padding:7px 10px;border-right:1px solid #999;min-width:80px">
-                    <div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">PESO BRUTO</div>
-                    <div style="font-size:12px;font-weight:700">411,861 KG</div>
-                  </div>
-                  <div style="padding:7px 10px;min-width:80px">
-                    <div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">Nº ETIQUETA</div>
-                    <div style="font-size:12px;font-weight:700">7953072</div>
-                  </div>
-                </div>
-                <!-- Barcode + Peso Líquido -->
-                <div style="display:flex;border-bottom:1px solid #999">
-                  <div style="flex:1;padding:10px 14px">
-                    <div style="font-family:monospace;font-size:30px;letter-spacing:.1em;line-height:1;color:#000">|||||||||||||||||||||||||||||||||||||||||||||</div>
-                    <div style="font-size:9px;margin-top:3px;letter-spacing:.05em">#P12814471417953072</div>
-                  </div>
-                  <div style="min-width:150px;background:#000;color:#fff;padding:10px 14px;display:flex;flex-direction:column;justify-content:center">
-                    <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">PESO LÍQUIDO</div>
-                    <div style="font-size:32px;font-weight:900;line-height:1">411,840</div>
-                    <div style="font-size:14px;font-weight:900;margin-top:2px">KG</div>
-                  </div>
-                </div>
-                <!-- Footer -->
-                <div style="display:flex;justify-content:space-between;padding:4px 14px 6px;font-size:9px;color:#555">
-                  <span>Impresso por: J. Santos</span>
-                  <span>Impresso em: 01/04/2026 09:22</span>
+                <div>
+                  <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Nº Etiqueta</div>
+                  <div class="mono" style="font-size:12px;font-weight:700">7953072</div>
                 </div>
               </div>
 
+              <!-- Preview da Etiqueta MP — vazio por padrão; aparece ao clicar em "Ver / Imprimir" -->
+              <div id="etq-mp-preview-area"></div>
+
               <div style="display:flex;gap:10px;margin-bottom:4px;flex-wrap:wrap">
                 <button class="btn btn-md btn-v" id="btn-imprimir-mp" onclick="gaiVerificarEImprimir()">🖨️ Imprimir Etiqueta MP</button>
+                <button class="btn btn-md btn-ghost" onclick="mostrarPreviewMP()">👁️ Ver / Pré-visualizar</button>
                 <button class="btn btn-md btn-ghost" onclick="alert('🖨️ Reimpressão solicitada.')">↩ Reimprimir</button>
                 <div style="flex:1"></div>
                 <button class="btn btn-md btn-v" style="background:var(--verde-esc);border:2px solid var(--verde)" onclick="pesSetStep(1)">▶ Próxima MP</button>
                 <button class="btn btn-md btn-ghost" onclick="pesConcluir()">✔ Concluir — MPs Pesadas</button>
               </div>
+
+              <script>
+              function mostrarPreviewMP() {
+                var area = document.getElementById('etq-mp-preview-area');
+                if (!area) return;
+                if (area.innerHTML.trim() !== '') {
+                  // Já tem preview — toggle pra esconder
+                  area.innerHTML = '';
+                  return;
+                }
+                area.innerHTML = '<div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin:6px 0 8px">Preview — Etiqueta de Pesagem de Material</div>' +
+                '<div style="background:#fff;border:2px solid #222;border-radius:4px;max-width:560px;font-family:Arial,sans-serif;font-size:12px;color:#000;margin-bottom:14px;overflow:hidden">' +
+                  '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 14px 8px;border-bottom:2px solid #222"><div style="font-size:17px;font-weight:900">PESAGEM DE MATERIAL</div><div style="text-align:right;font-size:10px;line-height:1.6"><div style="font-weight:700;letter-spacing:.06em">DATA IMPRESSÃO</div><div style="font-size:13px;font-weight:900">01/04/2026</div></div></div>' +
+                  '<div style="display:flex;border-bottom:1px solid #999"><div style="padding:7px 14px;border-right:1px solid #999;min-width:120px"><div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">ORDEM DE FABRICAÇÃO</div><div style="font-size:26px;font-weight:900;line-height:1.1">771166</div></div><div style="padding:7px 14px;flex:1;border-right:1px solid #999"><div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">LOTE GRANEL</div><div style="font-size:22px;font-weight:900;line-height:1.1">1621/2026</div></div><div style="padding:7px 14px;display:flex;align-items:center;justify-content:center;min-width:100px"><div style="border:2px solid #000;padding:6px 12px;font-size:14px;font-weight:900;letter-spacing:.1em">APROVADO</div></div></div>' +
+                  '<div style="padding:7px 14px;border-bottom:1px solid #999"><div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">MATÉRIA PRIMA</div><div style="font-size:13px;font-weight:700;margin-top:2px">M9808 – AQUA (ÁGUA PURIFICADA)</div></div>' +
+                  '<div style="display:flex;border-bottom:1px solid #999"><div style="flex:1;padding:10px 14px"><div style="font-family:monospace;font-size:30px;letter-spacing:.1em;line-height:1;color:#000">|||||||||||||||||||||||||||||||||||||||||||||</div><div style="font-size:9px;margin-top:3px">#P12814471417953072</div></div><div style="min-width:150px;background:#000;color:#fff;padding:10px 14px;display:flex;flex-direction:column;justify-content:center"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">PESO LÍQUIDO</div><div style="font-size:32px;font-weight:900;line-height:1">411,840</div><div style="font-size:14px;font-weight:900;margin-top:2px">KG</div></div></div>' +
+                  '<div style="display:flex;justify-content:space-between;padding:4px 14px 6px;font-size:9px;color:#555"><span>J. Santos · Mat. 102266</span><span>BAL-01 · Tara 0,021 kg · ETQ 7953072</span></div>' +
+                '</div>';
+              }
+              </script>
             </div>
 
           </div>
@@ -2337,148 +2574,113 @@ export const SCREENS = {
         <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416 · 12 MPs pesadas<br>Loção Hidratante Rosa 200ml<br><span style="color:var(--verde)">Pronto para montar gaiolas</span></div>
       </div>
 
-      <div class="abox info mb14"><span class="ai">ℹ</span><div>A <strong>Gaiola</strong> é o container físico que agrupa as MPs pesadas de uma ordem para transporte até o reator. Cada gaiola recebe uma <strong>etiqueta mãe</strong> com rastreabilidade das etiquetas filhas (MPs individuais). O Apriso registra a relação pai-filho para rastreabilidade completa.</div></div>
+      <div class="abox info mb14"><span class="ai">ℹ</span><div>A <strong>Gaiola</strong> é o container físico que agrupa as MPs pesadas de uma ordem para transporte até o reator. Cada gaiola recebe uma <strong>etiqueta mãe</strong> com rastreabilidade das etiquetas filhas (MPs individuais).</div></div>
 
-      <div class="g64">
-        <div>
-          <!-- Montar nova gaiola -->
-          <div class="card cv mb14">
-            <div class="card-title">Montar Nova Gaiola</div>
-            <div class="form-row">
-              <div class="fg" style="max-width:200px">
-                <label class="lbl">ID da Gaiola</label>
-                <input class="inp" value="GAI-2026-0089" readonly style="background:var(--surface2);font-family:var(--font-m);color:var(--verde);font-weight:600">
-              </div>
-            </div>
-            <div style="margin-top:14px">
-              <label class="lbl">Associar MPs à Gaiola — Leitura de Etiquetas Filhas</label>
-              <div style="background:var(--verde-esc);border-radius:8px;padding:14px;display:flex;align-items:center;gap:14px;margin-bottom:12px">
-                <div style="font-size:28px">📷</div>
-                <div style="flex:1">
-                  <div style="font-size:13px;color:#FDFAF1;font-weight:700">Escanear etiqueta da MP pesada</div>
-                  <div style="font-size:11px;color:rgba(253,250,241,.5);margin-top:2px">Aproxime o leitor ou câmera do tablet à etiqueta da bombona/saco</div>
-                </div>
-                <button class="btn btn-sm" style="background:var(--ouro-claro);color:var(--verde-esc);border:none" onclick="alert('Leitura simulada: ETQ-2026-0412 — Glicerina USP 44,983kg ✓\\nAssociada à GAI-2026-0089')">Simular Leitura</button>
-              </div>
-            </div>
-
-            <!-- MPs já associadas -->
-            <table class="tbl">
-              <thead><tr><th>#</th><th>ID Etiqueta Filha</th><th>Material</th><th>Lote</th><th>Qtd. Pesada</th><th>Fase Destino</th><th></th></tr></thead>
-              <tbody>
-                <tr style="background:var(--ok-p)">
-                  <td class="mono" style="color:var(--ok)">1</td>
-                  <td class="mono" style="font-size:11px;color:var(--verde)">ETQ-2026-0412</td>
-                  <td style="font-size:12px">Glicerina USP</td>
-                  <td class="mono" style="font-size:11px">GLI-2026-08</td>
-                  <td class="mono">44,983 kg</td>
-                  <td style="font-size:11px">Fase 1 — Aquosa</td>
-                  <td><button class="btn btn-sm btn-p" onclick="this.closest('tr').remove()">✕</button></td>
-                </tr>
-                <tr style="background:var(--ok-p)">
-                  <td class="mono" style="color:var(--ok)">2</td>
-                  <td class="mono" style="font-size:11px;color:var(--verde)">ETQ-2026-0413</td>
-                  <td style="font-size:12px">Propilenoglicol</td>
-                  <td class="mono" style="font-size:11px">PPG-2026-12</td>
-                  <td class="mono">18,005 kg</td>
-                  <td style="font-size:11px">Fase 1 — Aquosa</td>
-                  <td><button class="btn btn-sm btn-p" onclick="this.closest('tr').remove()">✕</button></td>
-                </tr>
-                <tr style="background:var(--ok-p)">
-                  <td class="mono" style="color:var(--ok)">3</td>
-                  <td class="mono" style="font-size:11px;color:var(--verde)">ETQ-2026-0414</td>
-                  <td style="font-size:12px">Carbopol 940</td>
-                  <td class="mono" style="font-size:11px">CAR-2026-05</td>
-                  <td class="mono">2,498 kg</td>
-                  <td style="font-size:11px">Fase 1 — Aquosa</td>
-                  <td><button class="btn btn-sm btn-p" onclick="this.closest('tr').remove()">✕</button></td>
-                </tr>
-                <tr style="background:var(--ok-p)">
-                  <td class="mono" style="color:var(--ok)">4</td>
-                  <td class="mono" style="font-size:11px;color:var(--verde)">ETQ-2026-0415</td>
-                  <td style="font-size:12px">TEA 99%</td>
-                  <td class="mono" style="font-size:11px">TEA-2026-07</td>
-                  <td class="mono">1,801 kg</td>
-                  <td style="font-size:11px">Fase 1 — Aquosa</td>
-                  <td><button class="btn btn-sm btn-p" onclick="this.closest('tr').remove()">✕</button></td>
-                </tr>
-                <tr style="background:var(--ok-p)">
-                  <td class="mono" style="color:var(--ok)">5</td>
-                  <td class="mono" style="font-size:11px;color:var(--verde)">ETQ-2026-0416</td>
-                  <td style="font-size:12px">Aqua (Água Purificada)</td>
-                  <td class="mono" style="font-size:11px">AGUA-2026-03</td>
-                  <td class="mono">411,840 kg</td>
-                  <td style="font-size:11px">Fase 1 — Aquosa</td>
-                  <td><button class="btn btn-sm btn-p" onclick="this.closest('tr').remove()">✕</button></td>
-                </tr>
-              </tbody>
-            </table>
-            <div style="display:flex;gap:10px;margin-top:14px">
-              <button class="btn btn-md btn-v" onclick="alert('✅ Gaiola GAI-2026-0089 montada!\\n\\nEtiqueta mãe impressa (Zebra).\\n5 MPs · 479,127 kg total\\nDestino: Reator R-01\\nRel. pai-filho registrada no Apriso.')">🏷️ Imprimir Etiqueta Mãe</button>
-              <button class="btn btn-md btn-ghost">Adicionar mais MPs</button>
-            </div>
-          </div>
-
-          <!-- Gaiolas já montadas -->
-          <div class="card">
-            <div class="card-title">Gaiolas Montadas — OP-2026-0416</div>
-            <table class="tbl">
-              <thead><tr><th>Gaiola</th><th>MPs</th><th>Peso Total</th><th>Etiqueta Mãe</th><th>Status</th></tr></thead>
-              <tbody>
-                <tr style="opacity:.75">
-                  <td class="mono" style="color:var(--ok)">GAI-2026-0087</td>
-                  <td class="mono">3 MPs</td>
-                  <td class="mono">67,298 kg</td>
-                  <td><span class="bdg bdg-ok">✓ Impressa</span></td>
-                  <td><span class="bdg bdg-ok">Entregue</span></td>
-                </tr>
-                <tr style="opacity:.75">
-                  <td class="mono" style="color:var(--ok)">GAI-2026-0088</td>
-                  <td class="mono">4 MPs</td>
-                  <td class="mono">12,150 kg</td>
-                  <td><span class="bdg bdg-ok">✓ Impressa</span></td>
-                  <td><span class="bdg bdg-ok">Entregue</span></td>
-                </tr>
-                <tr style="background:var(--verde-dim)">
-                  <td class="mono" style="color:var(--alr)">GAI-2026-0089</td>
-                  <td class="mono">5 MPs (em montagem)</td>
-                  <td class="mono">479,127 kg</td>
-                  <td><span class="bdg bdg-alr">⏳ Pendente</span></td>
-                  <td><span class="bdg bdg-alr">Em montagem</span></td>
-                </tr>
-              </tbody>
-            </table>
+      <!-- Montar nova gaiola — ocupa toda a largura -->
+      <div class="card cv mb14">
+        <div class="card-title">Montar Nova Gaiola</div>
+        <div class="form-row">
+          <div class="fg" style="max-width:280px">
+            <label class="lbl">ID da Gaiola</label>
+            <select class="sel" id="pgaio-sel" style="font-family:var(--font-m);color:var(--verde);font-weight:700">
+              <option value="GAI-2026-0089" selected>GAI-2026-0089 (em montagem)</option>
+              <option value="GAI-2026-0090">GAI-2026-0090 — Nova gaiola vazia</option>
+              <option value="GAI-2026-0091">GAI-2026-0091 — Nova gaiola vazia</option>
+              <option value="GAI-2026-0087" disabled>GAI-2026-0087 (concluída/entregue)</option>
+              <option value="GAI-2026-0088" disabled>GAI-2026-0088 (concluída/entregue)</option>
+            </select>
+            <div style="font-size:10px;color:var(--text3);margin-top:4px">Gaiolas vinculadas à OP-2026-0416</div>
           </div>
         </div>
 
-        <!-- Resumo -->
-        <div>
-          <div class="resumo">
-            <div class="resumo-hd">Resumo das Gaiolas</div>
-            <div class="sum-row"><span class="sk">Ordem</span><span class="sv" style="color:var(--verde)">OP-2026-0416</span></div>
-            <div class="sum-row"><span class="sk">Total MPs</span><span class="sv">12 MPs</span></div>
-            <div class="sum-row"><span class="sk">MPs em gaiolas</span><span class="sv" style="color:var(--ok)">12 / 12</span></div>
-            <div class="sum-row"><span class="sk">Gaiolas montadas</span><span class="sv">2 concluídas</span></div>
-            <div class="sum-row"><span class="sk">Gaiolas em montagem</span><span class="sv" style="color:var(--alr)">1 em andamento</span></div>
-            <div class="sum-row"><span class="sk">Peso total pesado</span><span class="sv">599,87 kg</span></div>
+        <!-- MPs já associadas -->
+        <table class="tbl" style="margin-top:14px">
+          <thead><tr><th>#</th><th>ID Etiqueta Filha</th><th>Material</th><th>Lote</th><th>Qtd. Pesada</th><th>Fase Destino</th><th></th></tr></thead>
+          <tbody>
+            <tr style="background:var(--ok-p)">
+              <td class="mono" style="color:var(--ok)">1</td>
+              <td class="mono" style="font-size:11px;color:var(--verde)">ETQ-2026-0412</td>
+              <td style="font-size:12px">Glicerina USP</td>
+              <td class="mono" style="font-size:11px">GLI-2026-08</td>
+              <td class="mono">44,983 kg</td>
+              <td style="font-size:11px">Fase 1 — Aquosa</td>
+              <td><button class="btn btn-sm btn-p" onclick="this.closest('tr').remove()">✕</button></td>
+            </tr>
+            <tr style="background:var(--ok-p)">
+              <td class="mono" style="color:var(--ok)">2</td>
+              <td class="mono" style="font-size:11px;color:var(--verde)">ETQ-2026-0413</td>
+              <td style="font-size:12px">Propilenoglicol</td>
+              <td class="mono" style="font-size:11px">PPG-2026-12</td>
+              <td class="mono">18,005 kg</td>
+              <td style="font-size:11px">Fase 1 — Aquosa</td>
+              <td><button class="btn btn-sm btn-p" onclick="this.closest('tr').remove()">✕</button></td>
+            </tr>
+            <tr style="background:var(--ok-p)">
+              <td class="mono" style="color:var(--ok)">3</td>
+              <td class="mono" style="font-size:11px;color:var(--verde)">ETQ-2026-0414</td>
+              <td style="font-size:12px">Carbopol 940</td>
+              <td class="mono" style="font-size:11px">CAR-2026-05</td>
+              <td class="mono">2,498 kg</td>
+              <td style="font-size:11px">Fase 1 — Aquosa</td>
+              <td><button class="btn btn-sm btn-p" onclick="this.closest('tr').remove()">✕</button></td>
+            </tr>
+            <tr style="background:var(--ok-p)">
+              <td class="mono" style="color:var(--ok)">4</td>
+              <td class="mono" style="font-size:11px;color:var(--verde)">ETQ-2026-0415</td>
+              <td style="font-size:12px">TEA 99%</td>
+              <td class="mono" style="font-size:11px">TEA-2026-07</td>
+              <td class="mono">1,801 kg</td>
+              <td style="font-size:11px">Fase 1 — Aquosa</td>
+              <td><button class="btn btn-sm btn-p" onclick="this.closest('tr').remove()">✕</button></td>
+            </tr>
+            <tr style="background:var(--ok-p)">
+              <td class="mono" style="color:var(--ok)">5</td>
+              <td class="mono" style="font-size:11px;color:var(--verde)">ETQ-2026-0416</td>
+              <td style="font-size:12px">Aqua (Água Purificada)</td>
+              <td class="mono" style="font-size:11px">AGUA-2026-03</td>
+              <td class="mono">411,840 kg</td>
+              <td style="font-size:11px">Fase 1 — Aquosa</td>
+              <td><button class="btn btn-sm btn-p" onclick="this.closest('tr').remove()">✕</button></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="display:flex;gap:10px;margin-top:14px">
+          <button class="btn btn-md btn-v" onclick="alert('✅ Gaiola GAI-2026-0089 montada!\\n\\nEtiqueta mãe impressa (Zebra).\\n5 MPs · 479,127 kg total\\nDestino: Reator R-01\\nRel. pai-filho registrada no Apriso.')">🏷️ Imprimir Etiqueta Mãe</button>
+        </div>
+      </div>
 
-            <div style="margin-top:16px;background:var(--verde-dim);border:1px solid var(--ok-b);border-radius:7px;padding:12px">
-              <div style="font-size:9px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--verde);margin-bottom:8px">Rastreabilidade Pai → Filho</div>
-              <div style="font-size:11px;color:var(--text2);line-height:1.8">
-                <div>GAI-2026-0087 →</div>
-                <div style="padding-left:12px;color:var(--text3)">ETQ-00407 · ETQ-00408 · ETQ-00409</div>
-                <div>GAI-2026-0088 →</div>
-                <div style="padding-left:12px;color:var(--text3)">ETQ-00410 · ETQ-00411 · ETQ-00412 · ETQ-00413</div>
-                <div>GAI-2026-0089 →</div>
-                <div style="padding-left:12px;color:var(--alr)">ETQ-00414...00418 (em montagem)</div>
-              </div>
-            </div>
-
-            <div style="margin-top:14px;display:flex;flex-direction:column;gap:9px">
-              <button class="btn btn-md btn-v btn-full" onclick="alert('✅ Todas as gaiolas concluídas!\\nFabricação notificada para coleta.')">✔ Concluir e Notificar Fabricação</button>
-              <button class="btn btn-md btn-ghost btn-full">Imprimir Mapa de Gaiolas</button>
-            </div>
-          </div>
+      <!-- Gaiolas já montadas — ocupa toda a largura -->
+      <div class="card">
+        <div class="card-title">Gaiolas Montadas — OP-2026-0416</div>
+        <table class="tbl">
+          <thead><tr><th>Gaiola</th><th>MPs</th><th>Peso Total</th><th>Etiqueta Mãe</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr style="opacity:.75">
+              <td class="mono" style="color:var(--ok)">GAI-2026-0087</td>
+              <td class="mono">3 MPs</td>
+              <td class="mono">67,298 kg</td>
+              <td><span class="bdg bdg-ok">✓ Impressa</span></td>
+              <td><span class="bdg bdg-ok">Entregue</span></td>
+            </tr>
+            <tr style="opacity:.75">
+              <td class="mono" style="color:var(--ok)">GAI-2026-0088</td>
+              <td class="mono">4 MPs</td>
+              <td class="mono">12,150 kg</td>
+              <td><span class="bdg bdg-ok">✓ Impressa</span></td>
+              <td><span class="bdg bdg-ok">Entregue</span></td>
+            </tr>
+            <tr style="background:var(--verde-dim)">
+              <td class="mono" style="color:var(--alr)">GAI-2026-0089</td>
+              <td class="mono">5 MPs (em montagem)</td>
+              <td class="mono">479,127 kg</td>
+              <td><span class="bdg bdg-alr">⏳ Pendente</span></td>
+              <td><span class="bdg bdg-alr">Em montagem</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:14px;display:flex;gap:10px;justify-content:flex-end">
+          <button class="btn btn-md btn-v" onclick="alert('✅ Todas as gaiolas concluídas!\\nFabricação notificada para coleta.')">✔ Concluir e Notificar Fabricação</button>
+          <button class="btn btn-md btn-ghost">🖨 Imprimir Mapa de Gaiolas</button>
         </div>
       </div>
     `,
@@ -2618,10 +2820,15 @@ export const SCREENS = {
           <div id="mps-popup-info" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:18px;font-size:11px;color:var(--text2);display:grid;grid-template-columns:1fr 1fr;gap:6px"></div>
 
           <!-- Abas de ação -->
-          <div style="display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:18px" id="mps-popup-tabs">
-            <button onclick="mpsPoupupAba('desvio')" id="mps-tab-desvio" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--verde);border-bottom:3px solid var(--verde);margin-bottom:-2px">⚠ Add Variância de pesagem</button>
+          <div style="display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:18px;flex-wrap:wrap" id="mps-popup-tabs">
+            <button onclick="mpsPoupupAba('desvio')" id="mps-tab-desvio" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--verde);border-bottom:3px solid var(--verde);margin-bottom:-2px">⚠ Add Variância</button>
             <button onclick="mpsPoupupAba('repesar')" id="mps-tab-repesar" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--text3);border-bottom:3px solid transparent;margin-bottom:-2px">↩ Repesar</button>
             <button onclick="mpsPoupupAba('reimprimir')" id="mps-tab-reimprimir" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--text3);border-bottom:3px solid transparent;margin-bottom:-2px">🖨️ Reimprimir</button>
+            <button onclick="mpsPoupupAba('solicitar')" id="mps-tab-solicitar" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--per);border-bottom:3px solid transparent;margin-bottom:-2px">📦 Solicitar Mais MP</button>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:10px;color:var(--text3)">
+              <span style="font-weight:900;letter-spacing:.1em;text-transform:uppercase">Status MP:</span>
+              <span class="bdg bdg-alr" id="mps-popup-status" style="font-size:9px">—</span>
+            </div>
           </div>
 
           <!-- Aba: Add Desvio -->
@@ -2715,6 +2922,51 @@ export const SCREENS = {
             </div>
           </div>
 
+          <!-- Aba: Solicitar Mais MP -->
+          <div id="mps-aba-solicitar" style="display:none">
+            <div class="abox warn" style="margin-bottom:14px"><span class="ai">📦</span><div>Solicite quantidade adicional desta MP ao Almoxarifado. Use quando o estoque atual for insuficiente para concluir a pesagem ou quando houver desvio que exija reprocessamento.</div></div>
+
+            <!-- Resumo da MP atual -->
+            <div style="background:var(--per-p);border:1px solid var(--per-b);border-radius:8px;padding:12px 14px;margin-bottom:14px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11px">
+                <div>
+                  <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:3px">MP em Desvio</div>
+                  <div id="mps-solic-mat" style="font-weight:700;color:var(--per)">—</div>
+                </div>
+                <div>
+                  <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Lote / Pesado</div>
+                  <div id="mps-solic-info" style="font-family:var(--font-m);font-weight:700">—</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="fg">
+                <label class="lbl">Quantidade Adicional Necessária *</label>
+                <input class="inp" id="mps-solic-qtd" placeholder="Ex.: 5,000" style="font-family:var(--font-m)">
+                <span style="font-size:10px;color:var(--text3);margin-top:3px;display:block">Em kg. Considere folga de 10–20% sobre o alvo.</span>
+              </div>
+              <div class="fg" style="max-width:160px">
+                <label class="lbl">Urgência *</label>
+                <select class="sel" id="mps-solic-urg">
+                  <option value="normal">Normal (24h)</option>
+                  <option value="alta">Alta (4h)</option>
+                  <option value="critica" selected>Crítica (Imediata)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-bottom:16px">
+              <label class="lbl">Justificativa *</label>
+              <textarea class="txta" id="mps-solic-just" rows="2" placeholder="Ex.: MP em desvio — pesado com variância acima do limite, necessário re-pesagem; estoque atual insuficiente."></textarea>
+            </div>
+
+            <div style="display:flex;gap:10px">
+              <button class="btn btn-md btn-v" style="flex:1" onclick="mpsEnviarSolicMP()">📨 Enviar ao Almoxarifado</button>
+              <button class="btn btn-md btn-ghost" onclick="document.getElementById('modal-mps-desvio').style.display='none'">Cancelar</button>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -2735,8 +2987,20 @@ export const SCREENS = {
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Balança</span><div style="font-family:var(--font-m);font-size:12px;margin-top:2px">' + d.bal + '</div></div>' +
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Operador</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + opLabel + '</div></div>' +
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Sala · Box</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + salaLabel + '</div></div>';
-        // Reset tabs
-        mpsPoupupAba('desvio');
+        // Atualiza badge de status MP
+        var statusEl = document.getElementById('mps-popup-status');
+        if (statusEl) {
+          if (d.status === 'desv') {
+            statusEl.textContent = '⚠ Com Variância';
+            statusEl.className = 'bdg bdg-alr';
+          } else {
+            statusEl.textContent = '✓ OK';
+            statusEl.className = 'bdg bdg-ok';
+          }
+        }
+        // Reset tabs — se MP em desvio, abre direto na aba de Solicitar mais MP
+        var abaInicial = d.status === 'desv' ? 'solicitar' : 'desvio';
+        mpsPoupupAba(abaInicial);
         document.getElementById('mps-desvio-scan').value = '';
         document.getElementById('mps-desvio-scan-result').innerHTML = '';
         document.getElementById('mps-desvio-tipo').value = '';
@@ -2753,11 +3017,14 @@ export const SCREENS = {
         document.getElementById('mps-aba-desvio').style.display    = aba==='desvio'     ? 'block' : 'none';
         document.getElementById('mps-aba-repesar').style.display   = aba==='repesar'    ? 'block' : 'none';
         document.getElementById('mps-aba-reimprimir').style.display= aba==='reimprimir' ? 'block' : 'none';
-        ['desvio','repesar','reimprimir'].forEach(function(t){
+        var abaSolic = document.getElementById('mps-aba-solicitar');
+        if (abaSolic) abaSolic.style.display = aba==='solicitar' ? 'block' : 'none';
+        ['desvio','repesar','reimprimir','solicitar'].forEach(function(t){
           var tab = document.getElementById('mps-tab-'+t);
           if (tab) {
-            tab.style.color = aba===t ? 'var(--verde)' : 'var(--text3)';
-            tab.style.borderBottomColor = aba===t ? 'var(--verde)' : 'transparent';
+            var cor = t === 'solicitar' ? 'var(--per)' : 'var(--verde)';
+            tab.style.color = aba===t ? cor : 'var(--text3)';
+            tab.style.borderBottomColor = aba===t ? cor : 'transparent';
           }
         });
         // Preencher dados da aba reimprimir com a MP selecionada
@@ -2770,6 +3037,30 @@ export const SCREENS = {
           document.getElementById('reimp-op').textContent       = _mpsSel.op   || '—';
           document.getElementById('reimp-motivo').value = '';
         }
+        if (aba === 'solicitar') {
+          var matEl = document.getElementById('mps-solic-mat');
+          var infoEl = document.getElementById('mps-solic-info');
+          var justEl = document.getElementById('mps-solic-just');
+          if (matEl) matEl.textContent = (_mpsSel.mat || '—');
+          if (infoEl) infoEl.textContent = (_mpsSel.lote || '—') + ' · pesado ' + (_mpsSel.pesado || '—') + ' kg';
+          if (justEl && !justEl.value.trim()) {
+            justEl.value = 'MP "' + (_mpsSel.mat || '') + '" pesada com variância (' + (_mpsSel.desv || '—') + ' kg). Estoque atual insuficiente para repesagem.';
+          }
+        }
+      }
+
+      // Envia solicitacao adicional de MP ao Almoxarifado a partir da tela /pes-mps.
+      function mpsEnviarSolicMP() {
+        var qtd = (document.getElementById('mps-solic-qtd').value || '').trim();
+        var urg = document.getElementById('mps-solic-urg').value;
+        var just = (document.getElementById('mps-solic-just').value || '').trim();
+        if (!qtd) { alert('⚠ Informe a quantidade adicional.'); return; }
+        if (!just) { alert('⚠ Justificativa obrigatória.'); return; }
+        var protocolo = 'SOLIC-MP-' + Date.now().toString().slice(-6);
+        document.getElementById('modal-mps-desvio').style.display = 'none';
+        alert('✅ Solicitação enviada ao Almoxarifado!\\n\\nProtocolo: ' + protocolo + '\\nMP: ' + (_mpsSel.mat || '—') + '\\nQtd: ' + qtd + ' kg · Urgência: ' + urg.toUpperCase() + '\\n\\nSLA: ' + (urg === 'critica' ? 'Imediato (push)' : urg === 'alta' ? '4 horas' : '24 horas') + '\\n\\nNotificação enviada a: Almoxarifado MF5 + Líder de Pesagem.');
+        document.getElementById('mps-solic-qtd').value = '';
+        document.getElementById('mps-solic-just').value = '';
       }
 
       function mpsReimprimir() {
@@ -2808,6 +3099,228 @@ export const SCREENS = {
         document.getElementById('modal-mps-desvio').style.display = 'none';
         nav('pes-cockpit', null, 'mod-pes');
         alert('↩ Redirecionando para Cockpit de Pesagem...\\nMP: ' + _mpsSel.mat + '\\nQtd. solicitada: ' + qty + ' kg\\nMotivo: ' + motivo);
+      }
+      </script>
+    `,
+  "pes-paradas": `      <div class="page-header">
+        <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Apontamento de Paradas</div></div>
+        <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416 · Sala A · BAL-01<br>Loção Hidratante Rosa 200ml<br><span style="color:var(--verde)">J. Santos (155)</span></div>
+      </div>
+
+      <div class="abox info mb14"><span class="ai">⏸</span><div>Registre aqui todas as <strong>paradas/eventos não-produtivos</strong> ocorridos durante a pesagem da OP. Estes apontamentos são consumidos pelo <strong>OEE Pesagem</strong> para cálculo do indicador de Disponibilidade.</div></div>
+
+      <!-- KPIs do turno -->
+      <div class="g4 mb14">
+        <div class="card cv" style="text-align:center;padding:14px">
+          <div class="kpi-l">Total de Paradas (hoje)</div>
+          <div style="font-family:var(--font-d);font-size:34px;font-weight:700;color:var(--verde)">5</div>
+        </div>
+        <div class="card co" style="text-align:center;padding:14px">
+          <div class="kpi-l">Tempo Total Parado</div>
+          <div style="font-family:var(--font-d);font-size:34px;font-weight:700;color:var(--ouro)">1h<span style="font-size:18px">32</span></div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">de um turno de 8h00</div>
+        </div>
+        <div class="card" style="text-align:center;padding:14px">
+          <div class="kpi-l">Disponibilidade</div>
+          <div style="font-family:var(--font-d);font-size:34px;font-weight:700;color:var(--inf)">80,8%</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">meta ≥ 85%</div>
+        </div>
+        <div class="card cp" style="text-align:center;padding:14px">
+          <div class="kpi-l">Em Aberto</div>
+          <div style="font-family:var(--font-d);font-size:34px;font-weight:700;color:var(--per)">1</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">aguardando justificativa</div>
+        </div>
+      </div>
+
+      <!-- Apontar Nova Parada -->
+      <div class="card cv mb14" style="border:2px solid var(--verde)">
+        <div class="card-title">+ Apontar Nova Parada</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:12px">
+          <div style="display:flex;flex-direction:column">
+            <label class="lbl">Categoria *</label>
+            <select class="sel" id="par-cat" style="font-size:12px;padding:7px 10px">
+              <option value="">Selecione...</option>
+              <option value="manutencao">🔧 Manutenção (corretiva)</option>
+              <option value="preventiva">🛠️ Manutenção Preventiva</option>
+              <option value="setup">⚙ Setup / Limpeza</option>
+              <option value="falta-mp">📦 Falta de MP</option>
+              <option value="falta-op">👷 Falta de Operador</option>
+              <option value="qualidade">🔬 Aguardando Qualidade</option>
+              <option value="energia">⚡ Falta de Energia / Utilidades</option>
+              <option value="cipa">🛡 Reunião CIPA / Segurança</option>
+              <option value="refeicao">🍴 Refeição / Pausa Regulamentar</option>
+              <option value="ginastica">🧘 Ginástica Laboral</option>
+              <option value="treinamento">🎓 Treinamento</option>
+              <option value="outro">Outro (especificar)</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <label class="lbl">Tipo *</label>
+            <select class="sel" id="par-tipo" style="font-size:12px;padding:7px 10px">
+              <option value="planejada">Planejada (não afeta OEE)</option>
+              <option value="nao-planejada" selected>Não Planejada (afeta OEE)</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <label class="lbl">Início *</label>
+            <input class="inp" id="par-inicio" type="datetime-local" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <label class="lbl">Fim</label>
+            <input class="inp" id="par-fim" type="datetime-local" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+            <span style="font-size:9px;color:var(--text3);margin-top:2px">Deixe em branco se ainda em andamento</span>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <label class="lbl">Descrição / Justificativa *</label>
+          <textarea class="txta" id="par-just" rows="2" placeholder="Ex.: balança BAL-01 apresentou descalibração; aguardando técnico Tractian..."></textarea>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-md btn-v" onclick="pesAdicionarParada()">✔ Registrar Parada</button>
+          <button class="btn btn-md btn-ghost" onclick="pesLimparFormParada()">Limpar</button>
+          <div style="margin-left:auto;font-size:10px;color:var(--text3)">Cada parada gera registro de auditoria + sincroniza com OEE em tempo real.</div>
+        </div>
+      </div>
+
+      <!-- Histórico de Paradas -->
+      <div class="card">
+        <div class="card-title">Histórico de Paradas — OP-2026-0416 · Turno A</div>
+        <div style="overflow-x:auto">
+          <table class="tbl" id="par-tabela" style="min-width:980px;font-size:11px">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Categoria</th>
+                <th>Tipo</th>
+                <th>Início</th>
+                <th>Fim</th>
+                <th>Duração</th>
+                <th>Justificativa</th>
+                <th>Operador</th>
+                <th>Afeta OEE</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono" style="color:var(--text3)">01</td>
+                <td>🔧 Manutenção</td>
+                <td><span class="bdg bdg-per" style="font-size:9px">Não Planejada</span></td>
+                <td class="mono" style="font-size:10px">14/05 07:42</td>
+                <td class="mono" style="font-size:10px">14/05 08:18</td>
+                <td class="mono" style="color:var(--alr);font-weight:700">36 min</td>
+                <td style="font-size:11px">BAL-01 descalibrada — necessária recalibração emergencial</td>
+                <td style="font-size:11px">J. Santos</td>
+                <td><span class="bdg bdg-per" style="font-size:9px">SIM</span></td>
+                <td><span class="bdg bdg-ok">✓ Fechada</span></td>
+                <td><button class="btn btn-sm btn-ghost" style="font-size:9px">Detalhes</button></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color:var(--text3)">02</td>
+                <td>🍴 Refeição</td>
+                <td><span class="bdg bdg-ok" style="font-size:9px">Planejada</span></td>
+                <td class="mono" style="font-size:10px">14/05 12:00</td>
+                <td class="mono" style="font-size:10px">14/05 13:00</td>
+                <td class="mono">1h 00</td>
+                <td style="font-size:11px">Pausa regulamentar (CCT)</td>
+                <td style="font-size:11px">J. Santos</td>
+                <td><span class="bdg bdg-ney" style="font-size:9px">NÃO</span></td>
+                <td><span class="bdg bdg-ok">✓ Fechada</span></td>
+                <td><button class="btn btn-sm btn-ghost" style="font-size:9px">Detalhes</button></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color:var(--text3)">03</td>
+                <td>📦 Falta de MP</td>
+                <td><span class="bdg bdg-per" style="font-size:9px">Não Planejada</span></td>
+                <td class="mono" style="font-size:10px">14/05 14:22</td>
+                <td class="mono" style="font-size:10px">14/05 14:45</td>
+                <td class="mono" style="color:var(--alr);font-weight:700">23 min</td>
+                <td style="font-size:11px">Aguardando entrega de Fenoxietanol — almoxarifado</td>
+                <td style="font-size:11px">J. Santos</td>
+                <td><span class="bdg bdg-per" style="font-size:9px">SIM</span></td>
+                <td><span class="bdg bdg-ok">✓ Fechada</span></td>
+                <td><button class="btn btn-sm btn-ghost" style="font-size:9px">Detalhes</button></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color:var(--text3)">04</td>
+                <td>🧘 Ginástica Laboral</td>
+                <td><span class="bdg bdg-ok" style="font-size:9px">Planejada</span></td>
+                <td class="mono" style="font-size:10px">14/05 15:30</td>
+                <td class="mono" style="font-size:10px">14/05 15:40</td>
+                <td class="mono">10 min</td>
+                <td style="font-size:11px">Programa SST · obrigatória ergonomia</td>
+                <td style="font-size:11px">Equipe MF5</td>
+                <td><span class="bdg bdg-ney" style="font-size:9px">NÃO</span></td>
+                <td><span class="bdg bdg-ok">✓ Fechada</span></td>
+                <td><button class="btn btn-sm btn-ghost" style="font-size:9px">Detalhes</button></td>
+              </tr>
+              <tr style="background:var(--alr-p)">
+                <td class="mono" style="color:var(--alr);font-weight:800">05</td>
+                <td>🔬 Aguardando Qualidade</td>
+                <td><span class="bdg bdg-per" style="font-size:9px">Não Planejada</span></td>
+                <td class="mono" style="font-size:10px">14/05 16:48</td>
+                <td class="mono" style="font-size:10px;color:var(--alr);font-weight:700">— em andamento</td>
+                <td class="mono" style="color:var(--alr);font-weight:700">23+ min</td>
+                <td style="font-size:11px;color:var(--alr)">⚠ Aguardando análise CQ do desvio de Fenoxietanol</td>
+                <td style="font-size:11px">J. Santos</td>
+                <td><span class="bdg bdg-per" style="font-size:9px">SIM</span></td>
+                <td><span class="bdg bdg-alr">⏳ Em Aberto</span></td>
+                <td><button class="btn btn-sm btn-v" style="font-size:9px" onclick="alert('Fechando parada 05...\\nInforme o motivo de encerramento')">✔ Fechar</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Rodape: linkar ao OEE -->
+        <div style="display:flex;gap:10px;padding-top:14px;margin-top:14px;border-top:1px solid var(--border);flex-wrap:wrap;align-items:center">
+          <div style="font-size:11px;color:var(--text2)">
+            <strong style="color:var(--alr)">59 min</strong> de paradas <strong>não-planejadas</strong> afetam o cálculo do OEE da OP.
+          </div>
+          <div style="margin-left:auto;display:flex;gap:8px">
+            <button class="btn btn-md btn-ghost" onclick="nav('pes-oee', null, null)">📊 Ver OEE Pesagem</button>
+            <button class="btn btn-md btn-ghost">📥 Exportar CSV</button>
+          </div>
+        </div>
+      </div>
+
+      <script>
+      // Pré-preenche o início com data/hora atual ao abrir a tela
+      setTimeout(function(){
+        var ini = document.getElementById('par-inicio');
+        if (ini && !ini.value) {
+          var n = new Date();
+          var iso = n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0') + '-' + String(n.getDate()).padStart(2,'0') + 'T' + String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+          ini.value = iso;
+        }
+      }, 50);
+
+      function pesAdicionarParada() {
+        var cat = document.getElementById('par-cat');
+        var tipo = document.getElementById('par-tipo');
+        var ini = document.getElementById('par-inicio');
+        var fim = document.getElementById('par-fim');
+        var just = document.getElementById('par-just');
+        if (!cat.value) { alert('⚠ Selecione a categoria'); return; }
+        if (!ini.value) { alert('⚠ Informe a data/hora de início'); return; }
+        if (!just.value.trim()) { alert('⚠ A justificativa é obrigatória'); return; }
+        var emAndamento = !fim.value;
+        var afetaOee = tipo.value === 'nao-planejada';
+        var protocolo = 'PAR-' + Date.now().toString().slice(-6);
+        alert('✔ Parada registrada!\\n\\nProtocolo: ' + protocolo + '\\nCategoria: ' + cat.options[cat.selectedIndex].text + '\\nStatus: ' + (emAndamento ? 'EM ABERTO (em andamento)' : 'FECHADA') + '\\nAfeta OEE: ' + (afetaOee ? 'SIM' : 'NÃO') + '\\n\\nSincronizando com OEE Pesagem...');
+        pesLimparFormParada();
+      }
+
+      function pesLimparFormParada() {
+        document.getElementById('par-cat').value = '';
+        document.getElementById('par-just').value = '';
+        document.getElementById('par-fim').value = '';
+        var ini = document.getElementById('par-inicio');
+        if (ini) {
+          var n = new Date();
+          var iso = n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0') + '-' + String(n.getDate()).padStart(2,'0') + 'T' + String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+          ini.value = iso;
+        }
       }
       </script>
     `,
@@ -3014,10 +3527,50 @@ export const SCREENS = {
         document.getElementById('modal-pes-cks-sala').style.display = 'none';
       }
       </script>
+        <!-- ── Barra de Filtros ── -->
+        <div class="card cv mb14" style="padding:14px">
+          <div style="font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:10px">🔎 Filtros</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:flex-end">
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Núm. da Ordem</label>
+              <input class="inp" id="po-flt-num" placeholder="Ex.: OP-2026-0416" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Produto / Fórmula</label>
+              <input class="inp" id="po-flt-prod" placeholder="Buscar produto..." style="font-size:12px;padding:7px 10px">
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Status</label>
+              <select class="sel" id="po-flt-status" style="font-size:12px;padding:7px 10px">
+                <option value="">Todos</option>
+                <option value="pronta">✓ Pronta para Pesagem</option>
+                <option value="pesando">🔄 Pesando</option>
+                <option value="finalizada">✅ Finalizada</option>
+                <option value="aguardando-fab">🚦 Aguardando Liberação Fabricação</option>
+                <option value="hold">⏸ Hold (Aguardando)</option>
+                <option value="cancelada">⛔ Cancelada</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Data Prev. (de)</label>
+              <input class="inp" id="po-flt-data-ini" type="date" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Data Prev. (até)</label>
+              <input class="inp" id="po-flt-data-fim" type="date" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+            </div>
+            <div style="display:flex;gap:6px;align-items:flex-end">
+              <button class="btn btn-md btn-v" onclick="pesAplicarFiltros()" style="flex:1;white-space:nowrap">🔍 Filtrar</button>
+              <button class="btn btn-md btn-ghost" onclick="pesLimparFiltros()" title="Limpar filtros">✕</button>
+            </div>
+          </div>
+          <div id="po-flt-result" style="font-size:10px;color:var(--text3);margin-top:8px;font-family:var(--font-m)"></div>
+        </div>
+
         <div class="card-title">Fila de Pesagem — Prioridade</div>
-        <div class="abox info mb14"><span class="ai">ℹ</span><div>Esta fila mostra <strong>apenas as ordens prontas para pesagem</strong> (com 100% das MPs pagas pelo almoxarifado no JDE).</div></div>
+        <div class="abox info mb14"><span class="ai">ℹ</span><div>Esta fila mostra ordens em diferentes estágios — desde pagamento de MPs até liberação para fabricação. Linhas vermelhas piscando indicam ordens aguardando liberação para fabricação.</div></div>
         <div style="overflow-x:auto">
-        <table class="tbl" style="min-width:1180px">
+        <table class="tbl" id="po-tabela" style="min-width:1180px">
           <thead>
             <tr>
               <th>Núm. da Ordem</th>
@@ -3097,9 +3650,131 @@ export const SCREENS = {
               </td>
               <td><button class="btn btn-sm btn-ghost" onclick="PES_OP_SEL='OP-2026-0413';nav('pes-checkout?op=OP-2026-0413',null,null)" title="Ver checkout desta OP">Detalhes</button></td>
             </tr>
+
+            <!-- OP-2026-0412 — AGUARDANDO LIBERAÇÃO PARA FABRICAÇÃO (linha vermelha piscando) -->
+            <tr data-op="OP-2026-0412" data-status="aguardando-fab" class="po-linha-fab-pendente" style="animation:po-row-blink 2s ease-in-out infinite">
+              <td class="mono" style="color:var(--per);font-weight:800">OP-2026-0412</td>
+              <td style="font-size:12px;color:var(--per);font-weight:700">Sabonete Glicerinado Mel 90g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-051</span></td>
+              <td class="mono">280 kg</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="mono" style="font-size:12px;font-weight:700;color:var(--ok);min-width:38px">8/8</span>
+                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
+                    <div style="width:100%;height:100%;background:var(--ok);border-radius:3px"></div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="bdg bdg-per" style="font-weight:800">🚦 Aguardando Liberação Fabricação</span></td>
+              <td class="mono" style="font-size:11px">13/05/2026</td>
+              <td><span class="bdg bdg-ok" style="font-size:9px">Sem desvio</span></td>
+              <td style="font-size:11px">
+                Sala A
+                <div class="mono" style="font-size:10px;color:var(--text3)">BAL-01</div>
+              </td>
+              <td><button class="btn btn-sm" style="background:var(--per);color:#fff;font-weight:700" onclick="alert('🚦 OP-2026-0412 aguardando Líder de Fabricação liberar.\\nNotificação push enviada há 2h 15min.\\nEscalada automática em 1h 45min se não houver resposta.')">⚠ Notificar Líder Fab.</button></td>
+            </tr>
+
+            <!-- OP-2026-0411 — HOLD / Aguardando -->
+            <tr data-op="OP-2026-0411" data-status="hold" data-hold-dias="32" style="background:var(--alr-p)">
+              <td class="mono" style="color:var(--alr);font-weight:800">OP-2026-0411</td>
+              <td style="font-size:12px">Sabonete Phebo Lavanda 90g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-074</span></td>
+              <td class="mono">450 kg</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span class="mono" style="font-size:12px;font-weight:700;color:var(--alr);min-width:38px">6/10</span>
+                  <div style="flex:1;height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;min-width:60px">
+                    <div style="width:60%;height:100%;background:var(--alr);border-radius:3px"></div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="bdg bdg-alr">⏸ Hold (Aguardando)</span>
+                <div style="font-size:9px;color:var(--per);font-weight:700;margin-top:3px;background:var(--per-p);padding:2px 6px;border-radius:10px;border:1px solid var(--per-b);display:inline-block">
+                  ⚠ 32 dias em hold · notificação enviada à supervisão (>30 dias)
+                </div>
+              </td>
+              <td class="mono" style="font-size:11px;color:var(--text3)">—</td>
+              <td style="font-size:11px;color:var(--text3)">—</td>
+              <td style="font-size:11px;color:var(--text3)">—</td>
+              <td>
+                <button class="btn btn-sm btn-v" onclick="alert('▶ Retomar OP-2026-0411?\\n\\nA OP estava em hold por 32 dias.\\nMotivo do hold: Aguardando MP importada (Vitamina E).\\nMP recebida em: 09/05/2026.\\n\\nLiberar para fila de pesagem?')">▶ Retomar</button>
+              </td>
+            </tr>
+
+            <!-- OP-2026-0410 — CANCELADA -->
+            <tr data-op="OP-2026-0410" data-status="cancelada" style="background:var(--per-p);opacity:.6;text-decoration:line-through">
+              <td class="mono" style="color:var(--per);font-weight:700">OP-2026-0410</td>
+              <td style="font-size:12px">Loção Hidratante Camomila 200ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-098</span></td>
+              <td class="mono">350 kg</td>
+              <td><span style="font-size:10px;color:var(--text3)">N/A</span></td>
+              <td><span class="bdg bdg-per" style="font-weight:800">⛔ Cancelada</span></td>
+              <td class="mono" style="font-size:11px;color:var(--text3)">—</td>
+              <td><span class="bdg bdg-per" style="font-size:9px" title="MP indisponível">⚠ MP crítica indisponível</span></td>
+              <td style="font-size:11px;color:var(--text3)">—</td>
+              <td>
+                <button class="btn btn-sm btn-ghost" onclick="alert('📋 OP-2026-0410 — Detalhes do Cancelamento\\n\\nCancelada por: M. Oliveira (Líder PCP)\\nData: 05/05/2026 14:38\\nMotivo: Fornecedor de Camomila indisponível, MP descontinuada.\\nFOLOW-UP: nova OP gerada (OP-2026-0418) com fórmula alternativa.')" style="text-decoration:none">Ver Detalhes</button>
+              </td>
+            </tr>
           </tbody>
         </table>
         </div><!-- /overflow-x:auto -->
+
+        <!-- Animação para linhas piscando -->
+        <style>
+          @keyframes po-row-blink {
+            0%, 100% { background: var(--per-p); }
+            50%      { background: rgba(140,26,26,.28); }
+          }
+        </style>
+
+        <!-- Scripts dos filtros -->
+        <script>
+        function pesAplicarFiltros() {
+          var fNum    = (document.getElementById('po-flt-num').value || '').trim().toLowerCase();
+          var fProd   = (document.getElementById('po-flt-prod').value || '').trim().toLowerCase();
+          var fStatus = document.getElementById('po-flt-status').value;
+          var fDataI  = document.getElementById('po-flt-data-ini').value;
+          var fDataF  = document.getElementById('po-flt-data-fim').value;
+          var rows = document.querySelectorAll('#po-tabela tbody tr');
+          var visiveis = 0;
+          rows.forEach(function(r){
+            var op = (r.getAttribute('data-op') || '').toLowerCase();
+            var status = (r.getAttribute('data-status') || '').toLowerCase();
+            var txt = r.textContent.toLowerCase();
+            // Inferir status pelas linhas que nao tem data-status (linhas originais)
+            if (!status) {
+              if (txt.indexOf('🔄 pesando') !== -1) status = 'pesando';
+              else if (txt.indexOf('pronta para pesagem') !== -1) status = 'pronta';
+              else if (txt.indexOf('finalizada') !== -1) status = 'finalizada';
+            }
+            var ok = true;
+            if (fNum && op.indexOf(fNum) === -1) ok = false;
+            if (fProd && txt.indexOf(fProd) === -1) ok = false;
+            if (fStatus && status !== fStatus) ok = false;
+            // Filtros de data: pegar primeira data dd/mm/aaaa da linha (Data Prev. Fabricação)
+            if ((fDataI || fDataF) && ok) {
+              var match = txt.match(/(\\d{2})\\/(\\d{2})\\/(\\d{4})/);
+              if (match) {
+                var iso = match[3] + '-' + match[2] + '-' + match[1];
+                if (fDataI && iso < fDataI) ok = false;
+                if (fDataF && iso > fDataF) ok = false;
+              } else if (fDataI || fDataF) {
+                ok = false; // sem data, exclui
+              }
+            }
+            r.style.display = ok ? '' : 'none';
+            if (ok) visiveis++;
+          });
+          document.getElementById('po-flt-result').textContent = visiveis + ' de ' + rows.length + ' ordem(ns) — ' + (fNum||fProd||fStatus||fDataI||fDataF ? 'filtros aplicados' : 'sem filtros');
+        }
+        function pesLimparFiltros() {
+          ['po-flt-num','po-flt-prod','po-flt-data-ini','po-flt-data-fim'].forEach(function(id){
+            var el = document.getElementById(id); if (el) el.value = '';
+          });
+          document.getElementById('po-flt-status').value = '';
+          pesAplicarFiltros();
+        }
+        </script>
 
       <!-- ── Modal Checklist de Conferência da Sala (POP-PES-001) ── -->
       <style>
@@ -3189,85 +3864,6 @@ export const SCREENS = {
         </div>
       </div>
       `,
-  "pes-pendencias": `      <div class="page-header">
-        <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Pendências de Pesagem</div></div>
-        <div class="ph-actions">
-          <button class="btn btn-sm btn-ghost" onclick="openModal('modal-diverg')">⚠ Justificar Variância de pesagem</button>
-          <button class="btn btn-sm btn-v" onclick="openModal('modal-requisitar')">📦 Requisitar Material</button>
-        </div>
-      </div>
-
-      <!-- KPIs topo -->
-      <div class="g4 mb14">
-        <div class="card cp" style="text-align:center;padding:14px">
-          <div class="kpi-l">Críticas</div>
-          <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--per)">1</div>
-          <div style="font-size:10px;color:var(--text3)">bloqueia pesagem</div>
-        </div>
-        <div class="card ca" style="text-align:center;padding:14px">
-          <div class="kpi-l">Aguardando</div>
-          <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--alr)">1</div>
-          <div style="font-size:10px;color:var(--text3)">reposição material</div>
-        </div>
-        <div class="card" style="text-align:center;padding:14px">
-          <div class="kpi-l">Resolvidas (Turno)</div>
-          <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--ok)">1</div>
-          <div style="font-size:10px;color:var(--text3)">este turno</div>
-        </div>
-        <div class="card cv" style="text-align:center;padding:14px">
-          <div class="kpi-l">Ordem</div>
-          <div style="font-family:var(--font-m);font-size:18px;font-weight:700;color:var(--verde);margin:6px 0">OP-2026-0416</div>
-          <div style="font-size:10px;color:var(--text3)">Loção Hidratante Rosa</div>
-        </div>
-      </div>
-
-      <div class="abox err mb14"><span class="ai">🔴</span><div><strong>1 pendência crítica</strong> bloqueia o progresso da pesagem da OP-2026-0416. Resolva antes de continuar.</div></div>
-
-      <!-- Pendências Abertas -->
-      <div class="card cp mb14">
-        <div class="card-title">Pendências Abertas</div>
-
-        <div class="val-item" style="border-color:var(--per-b);background:var(--per-p);margin-bottom:10px">
-          <div class="val-icon fail">🔴</div>
-          <div style="flex:1">
-            <div class="val-nome">Variância de pesagem — Fenoxietanol (MP #4)</div>
-            <div class="val-desc">Pesado: 3,028 kg · Alvo: 3,000 kg · Variância de pesagem: +0,028 kg (+0,93%) · Limite: ±0,5%<br>Operador: J. Santos · 06:51 · BAL-01</div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-            <span class="bdg bdg-per">Variância Crítica</span>
-            <button class="btn btn-sm btn-ghost" onclick="openModal('modal-diverg')">📋 Justificar</button>
-          </div>
-        </div>
-
-        <div class="val-item" style="border-color:var(--alr-b);background:var(--alr-p)">
-          <div class="val-icon pend">⏳</div>
-          <div style="flex:1">
-            <div class="val-nome">Aguardando Reposição — Extrato Rosa Mosqueta</div>
-            <div class="val-desc">Saldo insuficiente no box 3 · Solicitado reposição ao almoxarifado · Solicitação ALM-2026-0441 aberta</div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-            <span class="bdg bdg-alr">Aguardando</span>
-            <button class="btn btn-sm btn-ghost" onclick="openModal('modal-requisitar')">📦 Requisitar</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Pendências Resolvidas -->
-      <div class="card">
-        <div class="card-title">Pendências Resolvidas — Turno Atual</div>
-        <div class="val-item" style="opacity:.8">
-          <div class="val-icon ok">✅</div>
-          <div style="flex:1">
-            <div class="val-nome">Lote Alternativo Aprovado — Propilenoglicol</div>
-            <div class="val-desc">Lote PPG-2026-11 substituído por PPG-2026-12 · Aprovado pelo CQ às 05:48 · Motivo: lote original vencido</div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-            <span class="bdg bdg-ok">Resolvida</span>
-            <span style="font-size:10px;color:var(--text3);font-family:var(--font-m)">05:48</span>
-          </div>
-        </div>
-      </div>
-    `,
   "pes-rastr": `      <div class="page-header">
         <div>
           <div class="ph-eyebrow">Pesagem · MF5 · ERU 4.1.37 — Trilha de Auditoria</div>
