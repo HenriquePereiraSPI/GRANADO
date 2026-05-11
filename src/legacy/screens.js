@@ -188,73 +188,151 @@ export const SCREENS = {
       </div>
     `,
   "fab-iniciar": `      <div class="page-header">
-        <div><div class="ph-eyebrow">Fabricação · Reator R-01 · MF5</div><div class="ph-title">Iniciar Ordem — Pré-Validações</div></div>
-        <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416 · Lote G2026-091<br>Loção Hidratante Rosa 200ml<br><span style="color:var(--verde)">J. Santos · 31/03/2026</span></div>
+        <div><div class="ph-eyebrow">Fabricação · Reator R-01 · MF5 · SABONETE / ETAPA 01.00</div><div class="ph-title">Iniciar Ordem — Verificações de Setup</div></div>
+        <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416 · Lote G2026-091<br>Loção Hidratante Rosa 200ml<br><span style="color:var(--verde)">Ricardo Henriques da Cunha (PRD)</span></div>
       </div>
 
       <!-- Barra de progresso -->
       <div class="prog-wrap mb14">
         <div class="prog-pct" id="fvi-pct">0%</div>
-        <div style="flex:1"><div class="prog-out"><div class="prog-in" id="fvi-bar" style="width:0%"></div></div><div class="prog-txt" id="fvi-txt">0 de 5 itens aprovados — todos obrigatórios para iniciar a fabricação</div></div>
+        <div style="flex:1"><div class="prog-out"><div class="prog-in" id="fvi-bar" style="width:0%"></div></div><div class="prog-txt" id="fvi-txt">0 de 5 verificações realizadas — todas obrigatórias para iniciar a fabricação</div></div>
         <span id="fvi-ico" style="font-size:26px">⏳</span>
       </div>
-      <div class="abox warn mb14"><span class="ai">⚠</span><div>Todas as validações abaixo são <strong>pré-requisitos obrigatórios</strong> para iniciar a fabricação. Itens pendentes ou reprovados bloqueiam o início.</div></div>
+      <div class="abox warn mb14"><span class="ai">⚠</span><div>SABONETE / ETAPA 01.00 — Todas as verificações abaixo são <strong>pré-requisitos obrigatórios</strong>. Cada item registra timestamp de início, fim e responsável (assinatura eletrônica).</div></div>
 
-      <!-- Item 1: Aprovação do LIMS -->
-      <div class="val-item" id="fval-1" style="cursor:pointer" onclick="fabAbrirLims()">
+      <!-- Cabeçalho da tabela -->
+      <div style="display:grid;grid-template-columns:60px 1fr 80px 130px 130px 200px;gap:0;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-bottom:none;border-radius:6px 6px 0 0;font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)">
+        <div>Item</div>
+        <div>Verificação</div>
+        <div style="text-align:center">Resposta</div>
+        <div>Início</div>
+        <div>Fim</div>
+        <div>Realizado / Verificado Por</div>
+      </div>
+
+      <!-- Item 1: EQUIP/SALA IDENTIF PROD/LOTE PROCESSO? -->
+      <div class="val-item" id="fval-1" style="cursor:pointer;display:grid;grid-template-columns:60px 1fr 80px 130px 130px 200px;align-items:center;gap:0;padding:10px 12px;border-radius:0;border-bottom:none" onclick="fabConfirmarItem('fval-1')">
         <div class="val-icon pend" id="fval-1-ico">⏳</div>
-        <div style="flex:1">
-          <div class="val-nome">1. Aprovação do Granel — LIMS</div>
-          <div class="val-desc" id="fval-1-desc">Lote G2026-091 · Aguardando liberação do CQ · <strong style="color:var(--alr)">Clique para aprovar / consultar</strong></div>
+        <div>
+          <div class="val-nome" style="font-size:12px">EQUIP/SALA IDENTIF PROD/LOTE PROCESSO?</div>
+          <div class="val-desc" style="font-size:10px;margin-top:2px">Confirme que equipamento e sala estão identificados com o produto/lote em processo</div>
         </div>
-        <span class="bdg bdg-alr" id="fval-1-bdg">Pendente</span>
+        <div style="text-align:center"><span class="bdg bdg-alr" id="fval-1-bdg" style="font-size:10px">Pendente</span></div>
+        <div class="mono" id="fval-1-ini" style="font-size:10px;color:var(--text3)">—</div>
+        <div class="mono" id="fval-1-fim" style="font-size:10px;color:var(--text3)">—</div>
+        <div id="fval-1-resp" style="font-size:11px;color:var(--text3)">—</div>
       </div>
 
-      <!-- Item 2: Embalagens -->
-      <div class="val-item" id="fval-2" style="cursor:pointer" onclick="nav('prod-materiais',null,null); fabMarcarAprovado('fval-2')">
+      <!-- Item 2: SALA/AREA LIMPA E ORGANIZADA? -->
+      <div class="val-item" id="fval-2" style="cursor:pointer;display:grid;grid-template-columns:60px 1fr 80px 130px 130px 200px;align-items:center;gap:0;padding:10px 12px;border-radius:0;border-bottom:none" onclick="fabConfirmarItem('fval-2')">
         <div class="val-icon pend" id="fval-2-ico">⏳</div>
-        <div style="flex:1">
-          <div class="val-nome">2. Embalagens e Materiais Conferidos</div>
-          <div class="val-desc">Kitting da OP · Frascos, tampas, rótulos e caixas · <strong style="color:var(--inf)">Clique para abrir tela de Materiais da OP</strong></div>
+        <div>
+          <div class="val-nome" style="font-size:12px">SALA/ÁREA LIMPA E ORGANIZADA?</div>
+          <div class="val-desc" style="font-size:10px;margin-top:2px">Verifique limpeza de bancadas, piso, ausência de resíduos do lote anterior</div>
         </div>
-        <span class="bdg bdg-alr" id="fval-2-bdg">Pendente</span>
+        <div style="text-align:center"><span class="bdg bdg-alr" id="fval-2-bdg" style="font-size:10px">Pendente</span></div>
+        <div class="mono" id="fval-2-ini" style="font-size:10px;color:var(--text3)">—</div>
+        <div class="mono" id="fval-2-fim" style="font-size:10px;color:var(--text3)">—</div>
+        <div id="fval-2-resp" style="font-size:11px;color:var(--text3)">—</div>
       </div>
 
-      <!-- Item 3: Setup da Linha -->
-      <div class="val-item" id="fval-3" style="cursor:pointer" onclick="openModal('modal-fab-setup')">
+      <!-- Item 3: CONFERENCIA DO PROD/LOTE REALIZADO? -->
+      <div class="val-item" id="fval-3" style="cursor:pointer;display:grid;grid-template-columns:60px 1fr 80px 130px 130px 200px;align-items:center;gap:0;padding:10px 12px;border-radius:0;border-bottom:none" onclick="fabConfirmarItem('fval-3')">
         <div class="val-icon pend" id="fval-3-ico">⏳</div>
-        <div style="flex:1">
-          <div class="val-nome">3. Setup da Linha Realizado</div>
-          <div class="val-desc">Velocidade, agitação, temperatura e parâmetros de processo ajustados · <strong style="color:var(--inf)">Clique para preencher checklist de setup</strong></div>
+        <div>
+          <div class="val-nome" style="font-size:12px">CONFERÊNCIA DO PROD/LOTE REALIZADO?</div>
+          <div class="val-desc" style="font-size:10px;margin-top:2px">Confirme conferência do produto e lote contra a Ordem de Fabricação (WO)</div>
         </div>
-        <span class="bdg bdg-alr" id="fval-3-bdg">Pendente</span>
+        <div style="text-align:center"><span class="bdg bdg-alr" id="fval-3-bdg" style="font-size:10px">Pendente</span></div>
+        <div class="mono" id="fval-3-ini" style="font-size:10px;color:var(--text3)">—</div>
+        <div class="mono" id="fval-3-fim" style="font-size:10px;color:var(--text3)">—</div>
+        <div id="fval-3-resp" style="font-size:11px;color:var(--text3)">—</div>
       </div>
 
-      <!-- Item 4: Recursos Alocados -->
-      <div class="val-item" id="fval-4" style="cursor:pointer" onclick="openModal('modal-fab-checkin-op')">
-        <div class="val-icon fail" id="fval-4-ico">❌</div>
-        <div style="flex:1">
-          <div class="val-nome">4. Recursos Alocados — Check-in de Operadores</div>
-          <div class="val-desc" id="fval-4-desc">Reator R-01 requer mínimo 2 operadores · Alocados: <strong style="color:var(--per)">0 de 2</strong> · Habilitação Enabley obrigatória · <strong style="color:var(--inf)">Clique para abrir Check-in</strong></div>
+      <!-- Item 4: UTENSILIOS LIMPOS E SECOS? -->
+      <div class="val-item" id="fval-4" style="cursor:pointer;display:grid;grid-template-columns:60px 1fr 80px 130px 130px 200px;align-items:center;gap:0;padding:10px 12px;border-radius:0;border-bottom:none" onclick="fabConfirmarItem('fval-4')">
+        <div class="val-icon pend" id="fval-4-ico">⏳</div>
+        <div>
+          <div class="val-nome" style="font-size:12px">UTENSÍLIOS LIMPOS E SECOS?</div>
+          <div class="val-desc" style="font-size:10px;margin-top:2px">Bombonas, recipientes, sondas e instrumentos lavados, secos e identificados</div>
         </div>
-        <span class="bdg bdg-per" id="fval-4-bdg">Reprovado</span>
+        <div style="text-align:center"><span class="bdg bdg-alr" id="fval-4-bdg" style="font-size:10px">Pendente</span></div>
+        <div class="mono" id="fval-4-ini" style="font-size:10px;color:var(--text3)">—</div>
+        <div class="mono" id="fval-4-fim" style="font-size:10px;color:var(--text3)">—</div>
+        <div id="fval-4-resp" style="font-size:11px;color:var(--text3)">—</div>
       </div>
 
-      <!-- Item 5: Aptidão Enabley -->
-      <div class="val-item" id="fval-5">
-        <div class="val-icon fail" id="fval-5-ico">❌</div>
-        <div style="flex:1">
-          <div class="val-nome">5. Aptidão dos Operadores (Enabley)</div>
-          <div class="val-desc" id="fval-5-desc">Aguardando check-in e validação Enabley para o Reator R-01 · Produto: Loção Hidratante Rosa 200ml</div>
+      <!-- Item 5: WO, LOTE E BATCH OK? SE NAO ABORTE -->
+      <div class="val-item" id="fval-5" style="cursor:pointer;display:grid;grid-template-columns:60px 1fr 80px 130px 130px 200px;align-items:center;gap:0;padding:10px 12px;border-radius:0 0 6px 6px;border-top:none" onclick="fabConfirmarItem('fval-5')">
+        <div class="val-icon pend" id="fval-5-ico">⏳</div>
+        <div>
+          <div class="val-nome" style="font-size:12px">WO, LOTE E BATCH OK? <span style="color:var(--per)">SE NÃO, ABORTE</span></div>
+          <div class="val-desc" style="font-size:10px;margin-top:2px">Última checagem crítica — WO ativa, lote correto, batch InBatch aberto. Caso contrário, aborte e reabra a OF</div>
         </div>
-        <span class="bdg bdg-per" id="fval-5-bdg">Reprovado</span>
+        <div style="text-align:center"><span class="bdg bdg-alr" id="fval-5-bdg" style="font-size:10px">Pendente</span></div>
+        <div class="mono" id="fval-5-ini" style="font-size:10px;color:var(--text3)">—</div>
+        <div class="mono" id="fval-5-fim" style="font-size:10px;color:var(--text3)">—</div>
+        <div id="fval-5-resp" style="font-size:11px;color:var(--text3)">—</div>
       </div>
 
       <div style="display:flex;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
         <button class="btn btn-lg btn-v" id="fvi-btn" disabled onclick="fabIniciarProducao()">🚀 Iniciar Fabricação</button>
+        <button class="btn btn-lg btn-p" onclick="if(confirm('Abortar Ordem? A WO precisará ser reaberta no JDE.')){alert('⛔ Ordem abortada. Notificação enviada ao supervisor.')}">⛔ Abortar Ordem</button>
         <button class="btn btn-lg btn-ghost" onclick="nav('fab-ordens',null,null)">← Voltar</button>
-        <div style="margin-left:auto;font-size:11px;color:var(--text3);align-self:center" id="fvi-note">Resolva as pendências para habilitar o início.</div>
+        <div style="margin-left:auto;font-size:11px;color:var(--text3);align-self:center" id="fvi-note">Confirme as 5 verificações para habilitar o início.</div>
       </div>
+
+      <script>
+      // Confirma um item da Etapa 01.00 — registra timestamps e responsavel.
+      function fabConfirmarItem(id) {
+        var ico = document.getElementById(id + '-ico');
+        if (!ico || ico.classList.contains('ok')) return; // ja confirmado
+        var bdg = document.getElementById(id + '-bdg');
+        var iniEl = document.getElementById(id + '-ini');
+        var fimEl = document.getElementById(id + '-fim');
+        var respEl = document.getElementById(id + '-resp');
+        var agora = new Date();
+        var hh = String(agora.getHours()).padStart(2,'0') + ':' + String(agora.getMinutes()).padStart(2,'0') + ':' + String(agora.getSeconds()).padStart(2,'0');
+        var dd = String(agora.getDate()).padStart(2,'0') + '/' + String(agora.getMonth()+1).padStart(2,'0') + '/' + agora.getFullYear();
+        ico.className = 'val-icon ok';
+        ico.textContent = '✅';
+        bdg.className = 'bdg bdg-ok';
+        bdg.textContent = 'Sim';
+        bdg.style.fontSize = '10px';
+        if (iniEl) iniEl.textContent = dd + ' ' + hh;
+        // Fim no mesmo segundo + 3s (simula registro automatico)
+        var fim = new Date(agora.getTime() + 3000);
+        var fhh = String(fim.getHours()).padStart(2,'0') + ':' + String(fim.getMinutes()).padStart(2,'0') + ':' + String(fim.getSeconds()).padStart(2,'0');
+        if (fimEl) fimEl.textContent = dd + ' ' + fhh;
+        if (respEl) {
+          respEl.innerHTML = '<strong>Ricardo H. Cunha</strong><br><span style="font-size:9px;color:var(--text3)">Mat. 103415 · PRD</span>';
+          respEl.style.color = 'var(--text)';
+        }
+        // Atualizar progresso
+        var total = 5, done = 0;
+        for (var i=1; i<=5; i++) {
+          var x = document.getElementById('fval-' + i + '-ico');
+          if (x && x.classList.contains('ok')) done++;
+        }
+        var pct = Math.round(done/total*100);
+        var bar = document.getElementById('fvi-bar');
+        var pctEl = document.getElementById('fvi-pct');
+        var txt = document.getElementById('fvi-txt');
+        var fvIco = document.getElementById('fvi-ico');
+        var btn = document.getElementById('fvi-btn');
+        var note = document.getElementById('fvi-note');
+        if (bar) bar.style.width = pct + '%';
+        if (pctEl) pctEl.textContent = pct + '%';
+        if (txt) txt.textContent = done + ' de ' + total + ' verificações realizadas — todas obrigatórias';
+        if (done === total) {
+          if (fvIco) fvIco.textContent = '✅';
+          if (btn) btn.disabled = false;
+          if (note) { note.textContent = '✓ Todas as verificações realizadas — pronto para iniciar!'; note.style.color = 'var(--ok)'; }
+        } else {
+          if (fvIco) fvIco.textContent = done > 2 ? '⚡' : '⏳';
+        }
+      }
+      </script>
     `,
   "fab-ordens": `      <div class="page-header">
         <div><div class="ph-eyebrow">Fabricação · MF5</div><div class="ph-title">Seleção de Ordens de Fabricação</div></div>
