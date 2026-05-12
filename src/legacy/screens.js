@@ -1699,73 +1699,60 @@ export const SCREENS = {
                     <td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td>
                   </tr>
 
-                  <!-- 10. TEA 99% — Pesada FRACIONADA em 3 sub-pesagens (TEA viscoso vem em baldes ~0,6 kg) -->
-                  <tr data-cod="MP-5593" data-lote="TEA-2026-07" data-mp="TEA 99%" data-alvo="1,800 kg" data-tol="±0,5%" data-status="pesada" data-estoque="95" data-frac="3" style="background:var(--ok-p);opacity:.92">
+                  <!-- 10. TEA 99% — Pesada (estoque 95 kg) — fracionada em 3 sub-pesagens -->
+                  <tr data-cod="MP-5593" data-lote="TEA-2026-07" data-mp="TEA 99%" data-alvo="1,800 kg" data-tol="±0,5%" data-status="pesada" data-estoque="95" data-frac="3" style="background:var(--ok-p);opacity:.85">
                     <td class="mono" style="color:var(--ok)">10</td>
                     <td class="mono" style="font-size:11px;color:var(--text2)">MP-5593</td>
                     <td class="mono" style="font-size:11px;color:var(--text2)">TEA-2026-07</td>
-                    <td style="font-size:12px;color:var(--ok)">✓ TEA 99% <span title="MP fracionada em 3 sub-pesagens (baldes do fornecedor ≈ 0,6 kg cada)" style="display:inline-block;font-size:9px;font-weight:800;background:var(--inf-p);color:var(--inf);padding:1px 6px;border-radius:8px;margin-left:6px;border:1px solid var(--inf-b)">⊟ 3 pesagens</span></td>
+                    <td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td>
                     <td class="mono" style="color:var(--text2)">95,000 kg</td>
-                    <td class="mono"><strong>1,800 kg</strong></td>
-                    <td class="mono" style="color:var(--ok);font-weight:700">1,801 kg</td>
+                    <td class="mono">1,800 kg</td>
+                    <td class="mono" style="color:var(--ok)">1,801 kg</td>
                     <td class="mono" style="color:var(--text3)">0,000 kg</td>
                     <td class="mono">±0,5%</td>
                     <td><span class="bdg bdg-ok">Pesada</span></td>
                     <td></td>
                   </tr>
-                  <!-- Sub-pesagem 1/3 — 1º balde -->
-                  <tr data-parent="MP-5593" data-sub="1" style="background:var(--verde-dim);font-size:10px;border-left:3px solid var(--ok)">
-                    <td class="mono" style="color:var(--ok);text-align:right;font-weight:700;padding-left:14px">↳ 1/3</td>
-                    <td colspan="3" style="font-size:10px;color:var(--text2);padding-left:8px">
-                      <strong style="color:var(--ok)">1ª pesagem</strong>
-                      · <span class="mono" style="color:var(--text3)">14:32:05</span>
-                      · J. Santos
-                      · <span class="mono" style="color:var(--inf);font-weight:700">BAL-02 (Bancada)</span>
-                      · Etiqueta <span class="mono" style="color:var(--ok);font-weight:700">ETQ-5593-A</span>
-                    </td>
+                  <!-- Sub-pesagem 1/3 -->
+                  <tr data-parent="MP-5593" data-sub="1" style="background:var(--ok-p);opacity:.85">
                     <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono" style="color:var(--text2)">0,600 kg</td>
-                    <td class="mono" style="color:var(--ok);font-weight:700">0,601 kg</td>
+                    <td class="mono" style="font-size:11px;color:var(--text2)">MP-5593</td>
+                    <td class="mono" style="font-size:11px;color:var(--text2)">TEA-2026-07</td>
+                    <td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td>
+                    <td class="mono" style="color:var(--text3)">—</td>
+                    <td class="mono">0,600 kg</td>
+                    <td class="mono" style="color:var(--ok)">0,601 kg</td>
                     <td class="mono" style="color:var(--text3)">+0,001</td>
                     <td class="mono" style="color:var(--text3)">—</td>
-                    <td><span class="bdg bdg-ok" style="font-size:9px;padding:1px 6px">OK</span></td>
+                    <td><span class="bdg bdg-ok">OK</span></td>
                     <td></td>
                   </tr>
-                  <!-- Sub-pesagem 2/3 — 2º balde -->
-                  <tr data-parent="MP-5593" data-sub="2" style="background:var(--verde-dim);font-size:10px;border-left:3px solid var(--ok)">
-                    <td class="mono" style="color:var(--ok);text-align:right;font-weight:700;padding-left:14px">↳ 2/3</td>
-                    <td colspan="3" style="font-size:10px;color:var(--text2);padding-left:8px">
-                      <strong style="color:var(--ok)">2ª pesagem</strong>
-                      · <span class="mono" style="color:var(--text3)">14:35:18</span>
-                      · J. Santos
-                      · <span class="mono" style="color:var(--inf);font-weight:700">BAL-02 (Bancada)</span>
-                      · Etiqueta <span class="mono" style="color:var(--ok);font-weight:700">ETQ-5593-B</span>
-                    </td>
+                  <!-- Sub-pesagem 2/3 -->
+                  <tr data-parent="MP-5593" data-sub="2" style="background:var(--ok-p);opacity:.85">
                     <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono" style="color:var(--text2)">0,600 kg</td>
-                    <td class="mono" style="color:var(--ok);font-weight:700">0,598 kg</td>
+                    <td class="mono" style="font-size:11px;color:var(--text2)">MP-5593</td>
+                    <td class="mono" style="font-size:11px;color:var(--text2)">TEA-2026-07</td>
+                    <td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td>
+                    <td class="mono" style="color:var(--text3)">—</td>
+                    <td class="mono">0,600 kg</td>
+                    <td class="mono" style="color:var(--ok)">0,598 kg</td>
                     <td class="mono" style="color:var(--text3)">–0,002</td>
                     <td class="mono" style="color:var(--text3)">—</td>
-                    <td><span class="bdg bdg-ok" style="font-size:9px;padding:1px 6px">OK</span></td>
+                    <td><span class="bdg bdg-ok">OK</span></td>
                     <td></td>
                   </tr>
-                  <!-- Sub-pesagem 3/3 — 3º balde (totaliza o alvo) -->
-                  <tr data-parent="MP-5593" data-sub="3" style="background:var(--verde-dim);font-size:10px;border-left:3px solid var(--ok)">
-                    <td class="mono" style="color:var(--ok);text-align:right;font-weight:700;padding-left:14px">↳ 3/3</td>
-                    <td colspan="3" style="font-size:10px;color:var(--text2);padding-left:8px">
-                      <strong style="color:var(--ok)">3ª pesagem</strong>
-                      · <span class="mono" style="color:var(--text3)">14:37:42</span>
-                      · J. Santos
-                      · <span class="mono" style="color:var(--inf);font-weight:700">BAL-02 (Bancada)</span>
-                      · Etiqueta <span class="mono" style="color:var(--ok);font-weight:700">ETQ-5593-C</span>
-                      <span style="margin-left:10px;font-size:9px;font-weight:700;color:var(--ok);background:var(--ok-p);padding:1px 5px;border-radius:8px">✓ alvo atingido</span>
-                    </td>
+                  <!-- Sub-pesagem 3/3 -->
+                  <tr data-parent="MP-5593" data-sub="3" style="background:var(--ok-p);opacity:.85">
                     <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono" style="color:var(--text2)">0,600 kg</td>
-                    <td class="mono" style="color:var(--ok);font-weight:700">0,602 kg</td>
+                    <td class="mono" style="font-size:11px;color:var(--text2)">MP-5593</td>
+                    <td class="mono" style="font-size:11px;color:var(--text2)">TEA-2026-07</td>
+                    <td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td>
+                    <td class="mono" style="color:var(--text3)">—</td>
+                    <td class="mono">0,600 kg</td>
+                    <td class="mono" style="color:var(--ok)">0,602 kg</td>
                     <td class="mono" style="color:var(--text3)">+0,002</td>
                     <td class="mono" style="color:var(--text3)">—</td>
-                    <td><span class="bdg bdg-ok" style="font-size:9px;padding:1px 6px">OK</span></td>
+                    <td><span class="bdg bdg-ok">OK</span></td>
                     <td></td>
                   </tr>
 
