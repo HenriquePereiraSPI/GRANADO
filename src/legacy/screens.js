@@ -1612,8 +1612,8 @@ export const SCREENS = {
                     <td><button class="btn btn-sm" style="background:var(--ouro-claro);color:var(--verde-esc);border:1.5px solid var(--ouro);font-weight:700" onclick="pesSolicitarMaisMP('MP-2256','Fenoxietanol','3,000 kg','8,000 kg')">+ Solicitar mais MP</button></td>
                   </tr>
 
-                  <!-- 4. TEA 99% — Pesada · disp +93,200 kg · fracionada em 3 sub-pesagens -->
-                  <tr data-cod="MP-5593" data-lote="TEA-2026-07" data-mp="TEA 99%" data-alvo="1,800 kg" data-tol="±0,5%" data-status="pesada" data-estoque="95" data-disp="93.2" data-frac="3" style="background:var(--ok-p);opacity:.85">
+                  <!-- 4. TEA 99% — Pesada · disp +93,200 kg -->
+                  <tr data-cod="MP-5593" data-lote="TEA-2026-07" data-mp="TEA 99%" data-alvo="1,800 kg" data-tol="±0,5%" data-status="pesada" data-estoque="95" data-disp="93.2" style="background:var(--ok-p);opacity:.85">
                     <td class="mono" style="color:var(--ok)">4</td>
                     <td class="mono" style="font-size:11px;color:var(--text2)">MP-5593</td>
                     <td class="mono" style="font-size:11px;color:var(--text2)">TEA-2026-07</td>
@@ -1625,51 +1625,6 @@ export const SCREENS = {
                     <td class="mono" style="color:var(--text3)">0,000 kg</td>
                     <td class="mono">±0,5%</td>
                     <td><span class="bdg bdg-ok">Pesada</span></td>
-                    <td></td>
-                  </tr>
-                  <!-- Sub-pesagem 1/3 -->
-                  <tr data-parent="MP-5593" data-sub="1" style="background:var(--ok-p);opacity:.85">
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono" style="font-size:11px;color:var(--text2)">MP-5593</td>
-                    <td class="mono" style="font-size:11px;color:var(--text2)">TEA-2026-07</td>
-                    <td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td>
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono">0,600 kg</td>
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono" style="color:var(--ok)">0,601 kg</td>
-                    <td class="mono" style="color:var(--text3)">+0,001</td>
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td><span class="bdg bdg-ok">OK</span></td>
-                    <td></td>
-                  </tr>
-                  <!-- Sub-pesagem 2/3 -->
-                  <tr data-parent="MP-5593" data-sub="2" style="background:var(--ok-p);opacity:.85">
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono" style="font-size:11px;color:var(--text2)">MP-5593</td>
-                    <td class="mono" style="font-size:11px;color:var(--text2)">TEA-2026-07</td>
-                    <td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td>
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono">0,600 kg</td>
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono" style="color:var(--ok)">0,598 kg</td>
-                    <td class="mono" style="color:var(--text3)">–0,002</td>
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td><span class="bdg bdg-ok">OK</span></td>
-                    <td></td>
-                  </tr>
-                  <!-- Sub-pesagem 3/3 -->
-                  <tr data-parent="MP-5593" data-sub="3" style="background:var(--ok-p);opacity:.85">
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono" style="font-size:11px;color:var(--text2)">MP-5593</td>
-                    <td class="mono" style="font-size:11px;color:var(--text2)">TEA-2026-07</td>
-                    <td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td>
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono">0,600 kg</td>
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono" style="color:var(--ok)">0,602 kg</td>
-                    <td class="mono" style="color:var(--text3)">+0,002</td>
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td><span class="bdg bdg-ok">OK</span></td>
                     <td></td>
                   </tr>
 
@@ -2727,8 +2682,8 @@ export const SCREENS = {
         <!-- Filtro por classe (Normal / Adicional) -->
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px">
           <span style="font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)">Classe:</span>
-          <button id="mps-flt-todas"    class="btn btn-sm btn-v"     onclick="mpsFiltrarClasse('todas')"    style="font-size:11px;font-weight:700">Todas (6)</button>
-          <button id="mps-flt-normal"   class="btn btn-sm btn-ghost" onclick="mpsFiltrarClasse('normal')"   style="font-size:11px">📦 Normais (5)</button>
+          <button id="mps-flt-todas"    class="btn btn-sm btn-v"     onclick="mpsFiltrarClasse('todas')"    style="font-size:11px;font-weight:700">Todas (8)</button>
+          <button id="mps-flt-normal"   class="btn btn-sm btn-ghost" onclick="mpsFiltrarClasse('normal')"   style="font-size:11px">📦 Normais (7)</button>
           <button id="mps-flt-adicional" class="btn btn-sm btn-ghost" onclick="mpsFiltrarClasse('adicional')" style="font-size:11px">➕ Adicionais (1)</button>
           <div style="margin-left:auto;font-size:10px;color:var(--text3);font-style:italic">
             <strong>Adicional</strong>: MP solicitada após o início da fabricação (reprocesso, ajuste de variância ou complemento)
@@ -2800,19 +2755,48 @@ export const SCREENS = {
               <td><span class="bdg bdg-alr">Com Variância</span></td>
               <td><button class="btn btn-sm btn-p" style="font-size:9px" onclick="pesAbrirDesvio({n:'4',mat:'Fenoxietanol',lote:'FEN-2026-03',alvo:'3,000',pesado:'3,028',desv:'+0,028',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'06:51',bal:'BAL-01',etq:'ETQ-2026-0416-004',status:'desv'});event.stopPropagation()">⚠ Variância de pesagem</button></td>
             </tr>
-            <tr data-classe="normal" style="cursor:pointer" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99%',lote:'TEA-2026-07',alvo:'1,800',pesado:'1,801',desv:'+0,001',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005',status:'ok'})">
+            <!-- Linha 5: MP-5593 TEA 99% — FRACIONADA em 3 pesagens (mesma MP, mesma gaiola, etiquetas A/B/C) -->
+            <tr data-classe="normal" data-frac="3" style="cursor:pointer" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99% (1ª de 3 pesagens)',lote:'TEA-2026-07',alvo:'0,600',pesado:'0,601',desv:'+0,001',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005-A',status:'ok'})">
               <td class="mono" style="color:var(--ok)">5</td><td><span class="bdg bdg-ok" style="font-size:9px">Normal</span></td>
               <td class="mono" style="font-size:10px;color:var(--text2)">MP-5593</td>
               <td style="font-size:12px">TEA 99%</td>
               <td class="mono" style="font-size:10px">TEA-2026-07</td>
-              <td class="mono">1,800</td><td class="mono" style="color:var(--ok)">1,801</td>
+              <td class="mono">0,600</td><td class="mono" style="color:var(--ok)">0,601</td>
               <td class="mono" style="color:var(--ok)">+0,001</td>
               <td class="mono" style="font-size:10px;color:var(--inf)">563948</td>
-              <td class="mono" style="font-size:10px">ETQ-2026-0416-005</td>
+              <td class="mono" style="font-size:10px">ETQ-2026-0416-005-A</td>
               <td style="font-size:11px">J. Santos <span class="mono" style="color:var(--text3);font-size:10px">(155)</span></td><td class="mono" style="font-size:10px">07:02</td><td class="mono" style="font-size:10px">BAL-01</td>
               <td style="font-size:10px;color:var(--text2)">Sala A · Box 1</td>
               <td><span class="bdg bdg-ok">✓ Impressa</span></td>
-              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99%',lote:'TEA-2026-07',alvo:'1,800',pesado:'1,801',desv:'+0,001',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99% (1ª de 3 pesagens)',lote:'TEA-2026-07',alvo:'0,600',pesado:'0,601',desv:'+0,001',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005-A',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
+            </tr>
+            <tr data-classe="normal" data-parent="MP-5593" data-sub="2" style="cursor:pointer" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99% (2ª de 3 pesagens)',lote:'TEA-2026-07',alvo:'0,600',pesado:'0,598',desv:'–0,002',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005-B',status:'ok'})">
+              <td class="mono" style="color:var(--ok)">5</td><td><span class="bdg bdg-ok" style="font-size:9px">Normal</span></td>
+              <td class="mono" style="font-size:10px;color:var(--text2)">MP-5593</td>
+              <td style="font-size:12px">TEA 99%</td>
+              <td class="mono" style="font-size:10px">TEA-2026-07</td>
+              <td class="mono">0,600</td><td class="mono" style="color:var(--ok)">0,598</td>
+              <td class="mono" style="color:var(--ok)">–0,002</td>
+              <td class="mono" style="font-size:10px;color:var(--inf)">563948</td>
+              <td class="mono" style="font-size:10px">ETQ-2026-0416-005-B</td>
+              <td style="font-size:11px">J. Santos <span class="mono" style="color:var(--text3);font-size:10px">(155)</span></td><td class="mono" style="font-size:10px">07:02</td><td class="mono" style="font-size:10px">BAL-01</td>
+              <td style="font-size:10px;color:var(--text2)">Sala A · Box 1</td>
+              <td><span class="bdg bdg-ok">✓ Impressa</span></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99% (2ª de 3 pesagens)',lote:'TEA-2026-07',alvo:'0,600',pesado:'0,598',desv:'–0,002',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005-B',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
+            </tr>
+            <tr data-classe="normal" data-parent="MP-5593" data-sub="3" style="cursor:pointer" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99% (3ª de 3 pesagens)',lote:'TEA-2026-07',alvo:'0,600',pesado:'0,602',desv:'+0,002',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005-C',status:'ok'})">
+              <td class="mono" style="color:var(--ok)">5</td><td><span class="bdg bdg-ok" style="font-size:9px">Normal</span></td>
+              <td class="mono" style="font-size:10px;color:var(--text2)">MP-5593</td>
+              <td style="font-size:12px">TEA 99%</td>
+              <td class="mono" style="font-size:10px">TEA-2026-07</td>
+              <td class="mono">0,600</td><td class="mono" style="color:var(--ok)">0,602</td>
+              <td class="mono" style="color:var(--ok)">+0,002</td>
+              <td class="mono" style="font-size:10px;color:var(--inf)">563948</td>
+              <td class="mono" style="font-size:10px">ETQ-2026-0416-005-C</td>
+              <td style="font-size:11px">J. Santos <span class="mono" style="color:var(--text3);font-size:10px">(155)</span></td><td class="mono" style="font-size:10px">07:02</td><td class="mono" style="font-size:10px">BAL-01</td>
+              <td style="font-size:10px;color:var(--text2)">Sala A · Box 1</td>
+              <td><span class="bdg bdg-ok">✓ Impressa</span></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99% (3ª de 3 pesagens)',lote:'TEA-2026-07',alvo:'0,600',pesado:'0,602',desv:'+0,002',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005-C',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
             </tr>
 
             <!-- Linha 6: ADICIONAL — solicitação após início da fabricação -->
