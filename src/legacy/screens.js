@@ -1559,32 +1559,18 @@ export const SCREENS = {
                 <div id="pes-scan-feedback" style="display:none;font-size:11px;font-weight:700;padding:6px 10px;border-radius:4px;margin-bottom:4px"></div>
               </div>
               <table class="tbl" id="pes-mp-tabela" style="font-size:11px">
-                <thead><tr><th>#</th><th>Código</th><th>Lote</th><th>Material</th><th>Qtd. Estoque</th><th>Qtd. Alvo</th><th>Pesado</th><th>Pendente</th><th>Tolerância</th><th>Status</th><th>Ações</th></tr></thead>
+                <thead><tr><th>#</th><th>Código</th><th>Lote</th><th>Material</th><th>Qtd. Estoque</th><th>Qtd. Alvo</th><th title="Disponibilidade = Estoque − Alvo">Disponibilidade</th><th>Pesado</th><th>Pendente</th><th>Tolerância</th><th>Status</th><th>Ações</th></tr></thead>
                 <tbody>
-                  <!-- ORDENADO POR MENOR ESTOQUE PRIMEIRO (criticidade de abastecimento) -->
-                  <!-- 1. Corante Rosaline — Estoque baixo (0,8 kg) -->
-                  <tr data-cod="MP-9118" data-lote="COR-2026-15" data-mp="Corante Rosaline" data-alvo="0,150 kg" data-tol="±0,5%" data-status="aguardando" data-estoque="0.8">
-                    <td class="mono" style="color:var(--text3)">1</td>
-                    <td class="mono" style="font-size:11px;color:var(--text3)">MP-9118</td>
-                    <td class="mono" style="font-size:11px;color:var(--text3)">COR-2026-15</td>
-                    <td style="font-size:12px;color:var(--text3)">Corante Rosaline</td>
-                    <td class="mono" style="color:var(--alr);font-weight:700">0,800 kg</td>
-                    <td class="mono">0,150 kg</td>
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono" style="color:var(--text3)">0,150 kg</td>
-                    <td class="mono" style="color:var(--text3)">±0,5%</td>
-                    <td><span class="bdg bdg-ney">Aguardando</span></td>
-                    <td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td>
-                  </tr>
-
-                  <!-- 2. Conservante BHT — CANCELADA POR DESVIO (estoque insuficiente) -->
-                  <tr data-cod="MP-9999" data-lote="BHT-2026-01" data-mp="Conservante BHT" data-alvo="1,800 kg" data-tol="±0,5%" data-status="cancelada" data-estoque="1.2" style="background:var(--per-p);animation:row-blink 2.4s ease-in-out infinite">
-                    <td class="mono" style="color:var(--per);font-weight:800">2</td>
+                  <!-- ORDENADO POR MENOR DISPONIBILIDADE PRIMEIRO (Estoque − Alvo) — valores negativos = falta de MP -->
+                  <!-- 1. Conservante BHT — CANCELADA · disp −0,600 kg (estoque INSUFICIENTE) -->
+                  <tr data-cod="MP-9999" data-lote="BHT-2026-01" data-mp="Conservante BHT" data-alvo="1,800 kg" data-tol="±0,5%" data-status="cancelada" data-estoque="1.2" data-disp="-0.6" style="background:var(--per-p);animation:row-blink 2.4s ease-in-out infinite">
+                    <td class="mono" style="color:var(--per);font-weight:800">1</td>
                     <td class="mono" style="font-size:11px;color:var(--per);font-weight:700">MP-9999</td>
                     <td class="mono" style="font-size:11px;color:var(--per)">BHT-2026-01</td>
                     <td style="font-size:12px;color:var(--per);font-weight:700">⛔ Conservante BHT</td>
                     <td class="mono" style="color:var(--per);font-weight:900">1,200 kg</td>
                     <td class="mono" style="color:var(--per);font-weight:700">1,800 kg</td>
+                    <td class="mono" style="color:var(--per);font-weight:800">−0,600 kg</td>
                     <td class="mono" style="color:var(--text3)">—</td>
                     <td class="mono" style="color:var(--per);font-weight:700">1,800 kg</td>
                     <td class="mono" style="color:var(--text3)">±0,5%</td>
@@ -1594,14 +1580,31 @@ export const SCREENS = {
                     </td>
                   </tr>
 
-                  <!-- 3. Fenoxietanol — Com variância de pesagem (8 kg estoque) -->
-                  <tr data-cod="MP-2256" data-lote="FEN-2026-03" data-mp="Fenoxietanol" data-alvo="3,000 kg" data-tol="±0,5%" data-status="desvio" data-estoque="8" style="background:var(--alr-p)">
+                  <!-- 2. Corante Rosaline — Aguardando · disp +0,650 kg (folga apertada) -->
+                  <tr data-cod="MP-9118" data-lote="COR-2026-15" data-mp="Corante Rosaline" data-alvo="0,150 kg" data-tol="±0,5%" data-status="aguardando" data-estoque="0.8" data-disp="0.65">
+                    <td class="mono" style="color:var(--text3)">2</td>
+                    <td class="mono" style="font-size:11px;color:var(--text3)">MP-9118</td>
+                    <td class="mono" style="font-size:11px;color:var(--text3)">COR-2026-15</td>
+                    <td style="font-size:12px;color:var(--text3)">Corante Rosaline</td>
+                    <td class="mono" style="color:var(--alr);font-weight:700">0,800 kg</td>
+                    <td class="mono">0,150 kg</td>
+                    <td class="mono" style="color:var(--alr);font-weight:700">+0,650 kg</td>
+                    <td class="mono" style="color:var(--text3)">—</td>
+                    <td class="mono" style="color:var(--text3)">0,150 kg</td>
+                    <td class="mono" style="color:var(--text3)">±0,5%</td>
+                    <td><span class="bdg bdg-ney">Aguardando</span></td>
+                    <td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td>
+                  </tr>
+
+                  <!-- 3. Fenoxietanol — Com Variância · disp +5,000 kg -->
+                  <tr data-cod="MP-2256" data-lote="FEN-2026-03" data-mp="Fenoxietanol" data-alvo="3,000 kg" data-tol="±0,5%" data-status="desvio" data-estoque="8" data-disp="5" style="background:var(--alr-p)">
                     <td class="mono" style="color:var(--alr);font-weight:800">3</td>
                     <td class="mono" style="font-size:11px;color:var(--alr);font-weight:700">MP-2256</td>
                     <td class="mono" style="font-size:11px;color:var(--alr)">FEN-2026-03</td>
                     <td style="font-size:12px;color:var(--alr);font-weight:700">⚠ Fenoxietanol</td>
                     <td class="mono" style="color:var(--alr);font-weight:700">8,000 kg</td>
                     <td class="mono">3,000 kg</td>
+                    <td class="mono" style="color:var(--text2)">+5,000 kg</td>
                     <td class="mono" style="color:var(--alr);font-weight:700">3,028 kg</td>
                     <td class="mono" style="color:var(--text3)">0,000 kg</td>
                     <td class="mono">±0,5%</td>
@@ -1609,14 +1612,15 @@ export const SCREENS = {
                     <td><button class="btn btn-sm" style="background:var(--ouro-claro);color:var(--verde-esc);border:1.5px solid var(--ouro);font-weight:700" onclick="pesSolicitarMaisMP('MP-2256','Fenoxietanol','3,000 kg','8,000 kg')">+ Solicitar mais MP</button></td>
                   </tr>
 
-                  <!-- 4. TEA 99% — Pesada (estoque 95 kg) — fracionada em 3 sub-pesagens -->
-                  <tr data-cod="MP-5593" data-lote="TEA-2026-07" data-mp="TEA 99%" data-alvo="1,800 kg" data-tol="±0,5%" data-status="pesada" data-estoque="95" data-frac="3" style="background:var(--ok-p);opacity:.85">
+                  <!-- 4. TEA 99% — Pesada · disp +93,200 kg · fracionada em 3 sub-pesagens -->
+                  <tr data-cod="MP-5593" data-lote="TEA-2026-07" data-mp="TEA 99%" data-alvo="1,800 kg" data-tol="±0,5%" data-status="pesada" data-estoque="95" data-disp="93.2" data-frac="3" style="background:var(--ok-p);opacity:.85">
                     <td class="mono" style="color:var(--ok)">4</td>
                     <td class="mono" style="font-size:11px;color:var(--text2)">MP-5593</td>
                     <td class="mono" style="font-size:11px;color:var(--text2)">TEA-2026-07</td>
                     <td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td>
                     <td class="mono" style="color:var(--text2)">95,000 kg</td>
                     <td class="mono">1,800 kg</td>
+                    <td class="mono" style="color:var(--text2)">+93,200 kg</td>
                     <td class="mono" style="color:var(--ok)">1,801 kg</td>
                     <td class="mono" style="color:var(--text3)">0,000 kg</td>
                     <td class="mono">±0,5%</td>
@@ -1631,6 +1635,7 @@ export const SCREENS = {
                     <td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td>
                     <td class="mono" style="color:var(--text3)">—</td>
                     <td class="mono">0,600 kg</td>
+                    <td class="mono" style="color:var(--text3)">—</td>
                     <td class="mono" style="color:var(--ok)">0,601 kg</td>
                     <td class="mono" style="color:var(--text3)">+0,001</td>
                     <td class="mono" style="color:var(--text3)">—</td>
@@ -1645,6 +1650,7 @@ export const SCREENS = {
                     <td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td>
                     <td class="mono" style="color:var(--text3)">—</td>
                     <td class="mono">0,600 kg</td>
+                    <td class="mono" style="color:var(--text3)">—</td>
                     <td class="mono" style="color:var(--ok)">0,598 kg</td>
                     <td class="mono" style="color:var(--text3)">–0,002</td>
                     <td class="mono" style="color:var(--text3)">—</td>
@@ -1659,6 +1665,7 @@ export const SCREENS = {
                     <td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td>
                     <td class="mono" style="color:var(--text3)">—</td>
                     <td class="mono">0,600 kg</td>
+                    <td class="mono" style="color:var(--text3)">—</td>
                     <td class="mono" style="color:var(--ok)">0,602 kg</td>
                     <td class="mono" style="color:var(--text3)">+0,002</td>
                     <td class="mono" style="color:var(--text3)">—</td>
@@ -1666,14 +1673,15 @@ export const SCREENS = {
                     <td></td>
                   </tr>
 
-                  <!-- 5. Aqua — Próxima (estoque 9500 kg) -->
-                  <tr data-cod="MP-0001" data-lote="AGUA-2026-03" data-mp="Aqua (Água Purificada)" data-alvo="412,500 kg" data-tol="±0,5%" data-status="proxima" data-estoque="9500" style="background:var(--verde-dim);border-left:3px solid var(--verde);cursor:pointer" onclick="pesSetMP(this)">
+                  <!-- 5. Aqua — Próxima · disp +9.087,500 kg (estoque amplo) -->
+                  <tr data-cod="MP-0001" data-lote="AGUA-2026-03" data-mp="Aqua (Água Purificada)" data-alvo="412,500 kg" data-tol="±0,5%" data-status="proxima" data-estoque="9500" data-disp="9087.5" style="background:var(--verde-dim);border-left:3px solid var(--verde);cursor:pointer" onclick="pesSetMP(this)">
                     <td class="mono" style="color:var(--verde);font-weight:700">5</td>
                     <td class="mono" style="font-size:11px;font-weight:700;color:var(--verde)">MP-0001</td>
                     <td class="mono" style="font-size:11px;font-weight:700;color:var(--verde)">AGUA-2026-03</td>
                     <td style="font-size:12px;font-weight:700;color:var(--verde)">→ Aqua (Água Purificada)</td>
                     <td class="mono" style="color:var(--ok);font-weight:700">9.500,000 kg</td>
                     <td class="mono" style="font-weight:700">412,500 kg</td>
+                    <td class="mono" style="color:var(--ok);font-weight:700">+9.087,500 kg</td>
                     <td class="mono" style="color:var(--text3)">—</td>
                     <td class="mono" style="color:var(--verde);font-weight:700">412,500 kg</td>
                     <td class="mono">±0,5%</td>
@@ -1685,10 +1693,10 @@ export const SCREENS = {
 
               <!-- Legenda + nota de ordenação -->
               <div style="margin-top:8px;font-size:10px;color:var(--text3);display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-                <span>📊 Ordenado por <strong>menor estoque primeiro</strong> (criticidade de abastecimento)</span>
+                <span>📊 Ordenado por <strong>menor disponibilidade primeiro</strong> · <span class="mono" style="color:var(--text2)">Disponibilidade = Estoque − Alvo</span> · negativo = falta de MP</span>
                 <span style="margin-left:auto">
-                  <span style="color:var(--alr);font-weight:700">●</span> Estoque baixo &nbsp;
-                  <span style="color:var(--per);font-weight:700">●</span> Insuficiente
+                  <span style="color:var(--per);font-weight:700">●</span> Insuficiente &nbsp;
+                  <span style="color:var(--alr);font-weight:700">●</span> Folga apertada
                 </span>
               </div>
 
