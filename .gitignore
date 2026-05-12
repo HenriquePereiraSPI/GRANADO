@@ -5,3 +5,6 @@ dist/
 *.log
 .env
 .env.local
+/assets/Apriso_DB_Docs
+/assets/Apriso2025_Documentation
+/assets/Apriso_BusinessComponents_Documentation
