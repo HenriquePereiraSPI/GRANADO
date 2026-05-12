@@ -1594,39 +1594,9 @@ export const SCREENS = {
                     </td>
                   </tr>
 
-                  <!-- 3. DMDM Hydantoin — Estoque baixo (2,4 kg) -->
-                  <tr data-cod="MP-3374" data-lote="DMD-2026-01" data-mp="DMDM Hydantoin" data-alvo="0,600 kg" data-tol="±0,5%" data-status="aguardando" data-estoque="2.4">
-                    <td class="mono" style="color:var(--text3)">3</td>
-                    <td class="mono" style="font-size:11px;color:var(--text3)">MP-3374</td>
-                    <td class="mono" style="font-size:11px;color:var(--text3)">DMD-2026-01</td>
-                    <td style="font-size:12px;color:var(--text3)">DMDM Hydantoin</td>
-                    <td class="mono" style="color:var(--alr);font-weight:700">2,400 kg</td>
-                    <td class="mono">0,600 kg</td>
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono" style="color:var(--text3)">0,600 kg</td>
-                    <td class="mono" style="color:var(--text3)">±0,5%</td>
-                    <td><span class="bdg bdg-ney">Aguardando</span></td>
-                    <td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td>
-                  </tr>
-
-                  <!-- 4. Vitamina E Acetato — Estoque moderado (6,2 kg) -->
-                  <tr data-cod="MP-6631" data-lote="VTE-2026-02" data-mp="Vitamina E Acetato" data-alvo="1,200 kg" data-tol="±0,5%" data-status="aguardando" data-estoque="6.2">
-                    <td class="mono" style="color:var(--text3)">4</td>
-                    <td class="mono" style="font-size:11px;color:var(--text3)">MP-6631</td>
-                    <td class="mono" style="font-size:11px;color:var(--text3)">VTE-2026-02</td>
-                    <td style="font-size:12px;color:var(--text3)">Vitamina E Acetato</td>
-                    <td class="mono" style="color:var(--alr)">6,200 kg</td>
-                    <td class="mono">1,200 kg</td>
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono" style="color:var(--text3)">1,200 kg</td>
-                    <td class="mono" style="color:var(--text3)">±0,5%</td>
-                    <td><span class="bdg bdg-ney">Aguardando</span></td>
-                    <td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td>
-                  </tr>
-
-                  <!-- 5. Fenoxietanol — Com variância de pesagem (8 kg estoque) -->
+                  <!-- 3. Fenoxietanol — Com variância de pesagem (8 kg estoque) -->
                   <tr data-cod="MP-2256" data-lote="FEN-2026-03" data-mp="Fenoxietanol" data-alvo="3,000 kg" data-tol="±0,5%" data-status="desvio" data-estoque="8" style="background:var(--alr-p)">
-                    <td class="mono" style="color:var(--alr);font-weight:800">5</td>
+                    <td class="mono" style="color:var(--alr);font-weight:800">3</td>
                     <td class="mono" style="font-size:11px;color:var(--alr);font-weight:700">MP-2256</td>
                     <td class="mono" style="font-size:11px;color:var(--alr)">FEN-2026-03</td>
                     <td style="font-size:12px;color:var(--alr);font-weight:700">⚠ Fenoxietanol</td>
@@ -1639,69 +1609,9 @@ export const SCREENS = {
                     <td><button class="btn btn-sm" style="background:var(--ouro-claro);color:var(--verde-esc);border:1.5px solid var(--ouro);font-weight:700" onclick="pesSolicitarMaisMP('MP-2256','Fenoxietanol','3,000 kg','8,000 kg')">+ Solicitar mais MP</button></td>
                   </tr>
 
-                  <!-- 6. Carbopol — Pesada (estoque 12,5 kg) -->
-                  <tr data-cod="MP-0914" data-lote="CAR-2026-05" data-mp="Carbopol 940" data-alvo="2,500 kg" data-tol="±0,3%" data-status="pesada" data-estoque="12.5" style="background:var(--ok-p);opacity:.85">
-                    <td class="mono" style="color:var(--ok)">6</td>
-                    <td class="mono" style="font-size:11px;color:var(--text2)">MP-0914</td>
-                    <td class="mono" style="font-size:11px;color:var(--text2)">CAR-2026-05</td>
-                    <td style="font-size:12px;color:var(--ok)">✓ Carbopol 940</td>
-                    <td class="mono" style="color:var(--text2)">12,500 kg</td>
-                    <td class="mono">2,500 kg</td>
-                    <td class="mono" style="color:var(--ok)">2,498 kg</td>
-                    <td class="mono" style="color:var(--text3)">0,000 kg</td>
-                    <td class="mono">±0,3%</td>
-                    <td><span class="bdg bdg-ok">Pesada</span></td>
-                    <td></td>
-                  </tr>
-
-                  <!-- 7. Fragância Rosa (estoque 18 kg) -->
-                  <tr data-cod="MP-2089" data-lote="FRG-2026-09" data-mp="Fragância Rosa" data-alvo="4,500 kg" data-tol="±0,5%" data-status="aguardando" data-estoque="18">
-                    <td class="mono" style="color:var(--text3)">7</td>
-                    <td class="mono" style="font-size:11px;color:var(--text3)">MP-2089</td>
-                    <td class="mono" style="font-size:11px;color:var(--text3)">FRG-2026-09</td>
-                    <td style="font-size:12px;color:var(--text3)">Fragância Rosa</td>
-                    <td class="mono" style="color:var(--text2)">18,000 kg</td>
-                    <td class="mono">4,500 kg</td>
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono" style="color:var(--text3)">4,500 kg</td>
-                    <td class="mono" style="color:var(--text3)">±0,5%</td>
-                    <td><span class="bdg bdg-ney">Aguardando</span></td>
-                    <td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td>
-                  </tr>
-
-                  <!-- 8. Pantenol 75% (estoque 22 kg) -->
-                  <tr data-cod="MP-0008" data-lote="PAN-2026-04" data-mp="Pantenol 75%" data-alvo="3,000 kg" data-tol="±0,5%" data-status="aguardando" data-estoque="22">
-                    <td class="mono" style="color:var(--text3)">8</td>
-                    <td class="mono" style="font-size:11px;color:var(--text3)">MP-0008</td>
-                    <td class="mono" style="font-size:11px;color:var(--text3)">PAN-2026-04</td>
-                    <td style="font-size:12px;color:var(--text3)">Pantenol 75%</td>
-                    <td class="mono" style="color:var(--text2)">22,000 kg</td>
-                    <td class="mono">3,000 kg</td>
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono" style="color:var(--text3)">3,000 kg</td>
-                    <td class="mono" style="color:var(--text3)">±0,5%</td>
-                    <td><span class="bdg bdg-ney">Aguardando</span></td>
-                    <td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td>
-                  </tr>
-
-                  <!-- 9. Extrato Rosa Mosqueta (estoque 35 kg) -->
-                  <tr data-cod="MP-7742" data-lote="ERM-2026-01" data-mp="Extrato Rosa Mosqueta" data-alvo="6,000 kg" data-tol="±1,0%" data-status="aguardando" data-estoque="35">
-                    <td class="mono" style="color:var(--text3)">9</td>
-                    <td class="mono" style="font-size:11px;color:var(--text3)">MP-7742</td>
-                    <td class="mono" style="font-size:11px;color:var(--text3)">ERM-2026-01</td>
-                    <td style="font-size:12px;color:var(--text3)">Extrato Rosa Mosqueta</td>
-                    <td class="mono" style="color:var(--text2)">35,000 kg</td>
-                    <td class="mono">6,000 kg</td>
-                    <td class="mono" style="color:var(--text3)">—</td>
-                    <td class="mono" style="color:var(--text3)">6,000 kg</td>
-                    <td class="mono" style="color:var(--text3)">±1,0%</td>
-                    <td><span class="bdg bdg-ney">Aguardando</span></td>
-                    <td><button class="btn btn-sm btn-ghost" onclick="pesSetMP(this.closest('tr'))">Selecionar</button></td>
-                  </tr>
-
-                  <!-- 10. TEA 99% — Pesada (estoque 95 kg) — fracionada em 3 sub-pesagens -->
+                  <!-- 4. TEA 99% — Pesada (estoque 95 kg) — fracionada em 3 sub-pesagens -->
                   <tr data-cod="MP-5593" data-lote="TEA-2026-07" data-mp="TEA 99%" data-alvo="1,800 kg" data-tol="±0,5%" data-status="pesada" data-estoque="95" data-frac="3" style="background:var(--ok-p);opacity:.85">
-                    <td class="mono" style="color:var(--ok)">10</td>
+                    <td class="mono" style="color:var(--ok)">4</td>
                     <td class="mono" style="font-size:11px;color:var(--text2)">MP-5593</td>
                     <td class="mono" style="font-size:11px;color:var(--text2)">TEA-2026-07</td>
                     <td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td>
@@ -1756,39 +1666,9 @@ export const SCREENS = {
                     <td></td>
                   </tr>
 
-                  <!-- 11. Propilenoglicol — Pesada (estoque 320 kg) -->
-                  <tr data-cod="MP-3307" data-lote="PPG-2026-12" data-mp="Propilenoglicol" data-alvo="18,000 kg" data-tol="±0,5%" data-status="pesada" data-estoque="320" style="background:var(--ok-p);opacity:.85">
-                    <td class="mono" style="color:var(--ok)">11</td>
-                    <td class="mono" style="font-size:11px;color:var(--text2)">MP-3307</td>
-                    <td class="mono" style="font-size:11px;color:var(--text2)">PPG-2026-12</td>
-                    <td style="font-size:12px;color:var(--ok)">✓ Propilenoglicol</td>
-                    <td class="mono" style="color:var(--text2)">320,000 kg</td>
-                    <td class="mono">18,000 kg</td>
-                    <td class="mono" style="color:var(--ok)">18,005 kg</td>
-                    <td class="mono" style="color:var(--text3)">0,000 kg</td>
-                    <td class="mono">±0,5%</td>
-                    <td><span class="bdg bdg-ok">Pesada</span></td>
-                    <td></td>
-                  </tr>
-
-                  <!-- 12. Glicerina USP — Pesada (estoque 850 kg) -->
-                  <tr data-cod="MP-4821" data-lote="GLI-2026-08" data-mp="Glicerina USP" data-alvo="45,000 kg" data-tol="±0,5%" data-status="pesada" data-estoque="850" style="background:var(--ok-p);opacity:.85">
-                    <td class="mono" style="color:var(--ok)">12</td>
-                    <td class="mono" style="font-size:11px;color:var(--text2)">MP-4821</td>
-                    <td class="mono" style="font-size:11px;color:var(--text2)">GLI-2026-08</td>
-                    <td style="font-size:12px;color:var(--ok)">✓ Glicerina USP</td>
-                    <td class="mono" style="color:var(--text2)">850,000 kg</td>
-                    <td class="mono">45,000 kg</td>
-                    <td class="mono" style="color:var(--ok)">44,983 kg</td>
-                    <td class="mono" style="color:var(--text3)">0,000 kg</td>
-                    <td class="mono">±0,5%</td>
-                    <td><span class="bdg bdg-ok">Pesada</span></td>
-                    <td></td>
-                  </tr>
-
-                  <!-- 13. Aqua — Próxima (estoque 9500 kg) -->
+                  <!-- 5. Aqua — Próxima (estoque 9500 kg) -->
                   <tr data-cod="MP-0001" data-lote="AGUA-2026-03" data-mp="Aqua (Água Purificada)" data-alvo="412,500 kg" data-tol="±0,5%" data-status="proxima" data-estoque="9500" style="background:var(--verde-dim);border-left:3px solid var(--verde);cursor:pointer" onclick="pesSetMP(this)">
-                    <td class="mono" style="color:var(--verde);font-weight:700">13</td>
+                    <td class="mono" style="color:var(--verde);font-weight:700">5</td>
                     <td class="mono" style="font-size:11px;font-weight:700;color:var(--verde)">MP-0001</td>
                     <td class="mono" style="font-size:11px;font-weight:700;color:var(--verde)">AGUA-2026-03</td>
                     <td style="font-size:12px;font-weight:700;color:var(--verde)">→ Aqua (Água Purificada)</td>
