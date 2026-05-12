@@ -1,0 +1,2 @@
+
+"Trabalhei no header e sidebar pro Apriso seguindo o padrão View General + DFC View. Header e sidebar estão funcionando, com Refresh provisório nas Actions. Próximo passo é criar a primeira Screen funcional / os modais Andon e ServiceRequest / etc."
