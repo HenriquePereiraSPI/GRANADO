@@ -1328,8 +1328,6 @@ export const SCREENS = {
 
       <div style="display:flex;gap:10px;padding-top:16px;border-top:1px solid var(--border);flex-wrap:wrap">
         <button class="btn btn-lg btn-v" onclick="alert('✅ Pesagem da OP-2026-0416 validada!\\n\\n• Ordem liberada para Fabricação\\n• Sala A (Box 3) DESBLOQUEADA — pronta para receber nova OP\\n• Notificado: Líder de Fabricação\\n\\nRegistro: PES-2026-0416 · Liberado por J. Santos em ' + new Date().toLocaleString('pt-BR'))">✔ Liberar para Fabricação · Liberar Sala A</button>
-        <button class="btn btn-md btn-ghost">🖨 Imprimir Resumo</button>
-        <button class="btn btn-md btn-ghost" onclick="nav('pes-devol-mp',null,null)">📦 Devolução de MP</button>
         <div style="margin-left:auto;font-size:10px;color:var(--text3);align-self:center;max-width:280px;text-align:right;line-height:1.4">
           🔒 Sem liberação, esta Sala A continua travada. <br>Liberar é o único caminho para abrir outra OP aqui.
         </div>
@@ -2781,10 +2779,6 @@ export const SCREENS = {
             </tr>
           </tbody>
         </table>
-        <div style="margin-top:14px;display:flex;gap:10px;justify-content:flex-end">
-          <button class="btn btn-md btn-v" onclick="alert('✅ Todas as gaiolas concluídas!\\nFabricação notificada para coleta.')">✔ Concluir e Notificar Fabricação</button>
-          <button class="btn btn-md btn-ghost">🖨 Imprimir Mapa de Gaiolas</button>
-        </div>
       </div>
     `,
   "pes-mps": `      <div class="page-header">
@@ -2796,30 +2790,6 @@ export const SCREENS = {
       </div>
 
       <div class="abox inf mb14"><span class="ai">ℹ️</span><div>Clique em qualquer linha da tabela para registrar uma <strong>Variância de pesagem</strong> ou iniciar uma nova pesagem de reprocesso para a MP selecionada.</div></div>
-
-      <!-- KPIs topo -->
-      <div class="g4 mb14">
-        <div class="card cv" style="text-align:center;padding:14px">
-          <div class="kpi-l">MPs Pesadas</div>
-          <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--verde)">5<span style="font-size:16px;color:var(--text3)">/12</span></div>
-          <div style="font-size:10px;color:var(--text3)">OP-2026-0416</div>
-        </div>
-        <div class="card" style="text-align:center;padding:14px">
-          <div class="kpi-l">Aprovadas</div>
-          <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--ok)">4</div>
-          <div style="font-size:10px;color:var(--text3)">dentro do limite</div>
-        </div>
-        <div class="card ca" style="text-align:center;padding:14px">
-          <div class="kpi-l">Com Variância de pesagem</div>
-          <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--alr)">1</div>
-          <div style="font-size:10px;color:var(--text3)">requer justificativa</div>
-        </div>
-        <div class="card" style="text-align:center;padding:14px">
-          <div class="kpi-l">Peso Total Pesado</div>
-          <div style="font-family:var(--font-d);font-size:28px;font-weight:700;color:var(--inf)">68,01<span style="font-size:14px"> kg</span></div>
-          <div style="font-size:10px;color:var(--text3)">de 5 MPs concluídas</div>
-        </div>
-      </div>
 
       <div class="card cv">
         <div class="card-title">Registro de Pesagens Confirmadas — Clique na linha para ações</div>
@@ -3263,29 +3233,6 @@ export const SCREENS = {
       </div>
 
       <div class="abox info mb14"><span class="ai">⏸</span><div>Registre aqui todas as <strong>paradas/eventos não-produtivos</strong> ocorridos durante a pesagem da OP. Estes apontamentos são consumidos pelo <strong>OEE Pesagem</strong> para cálculo do indicador de Disponibilidade.</div></div>
-
-      <!-- KPIs do turno -->
-      <div class="g4 mb14">
-        <div class="card cv" style="text-align:center;padding:14px">
-          <div class="kpi-l">Total de Paradas (hoje)</div>
-          <div style="font-family:var(--font-d);font-size:34px;font-weight:700;color:var(--verde)">5</div>
-        </div>
-        <div class="card co" style="text-align:center;padding:14px">
-          <div class="kpi-l">Tempo Total Parado</div>
-          <div style="font-family:var(--font-d);font-size:34px;font-weight:700;color:var(--ouro)">1h<span style="font-size:18px">32</span></div>
-          <div style="font-size:10px;color:var(--text3);margin-top:2px">de um turno de 8h00</div>
-        </div>
-        <div class="card" style="text-align:center;padding:14px">
-          <div class="kpi-l">Disponibilidade</div>
-          <div style="font-family:var(--font-d);font-size:34px;font-weight:700;color:var(--inf)">80,8%</div>
-          <div style="font-size:10px;color:var(--text3);margin-top:2px">meta ≥ 85%</div>
-        </div>
-        <div class="card cp" style="text-align:center;padding:14px">
-          <div class="kpi-l">Em Aberto</div>
-          <div style="font-family:var(--font-d);font-size:34px;font-weight:700;color:var(--per)">1</div>
-          <div style="font-size:10px;color:var(--text3);margin-top:2px">aguardando justificativa</div>
-        </div>
-      </div>
 
       <!-- Apontar Nova Parada -->
       <div class="card cv mb14" style="border:2px solid var(--verde)">
