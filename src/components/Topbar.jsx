@@ -35,7 +35,8 @@ export default function Topbar({ onToggleSidebar, sidebarCollapsed }) {
       </div>
       <div className="topbar-right">
         <div className="tb-pill ok">● Sistema Online</div>
-        <div className="tb-pill">OP Ativa: OP-2026-0414</div>
+        {/* "OP Ativa: ..." removida do topbar — informação já aparece no header
+            de cada sub-tela da Pesagem (evita duplicação). */}
         <button
           className="tb-btn-andon"
           onClick={() => openModal('modal-andon')}

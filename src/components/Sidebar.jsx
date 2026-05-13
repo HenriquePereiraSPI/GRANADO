@@ -2,6 +2,13 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { TOP_LINKS, MODULES, PARENT_MODULE, ALIASES } from '../lib/nav-config.js';
 
+// Versão do software: injetada em build-time pelo Vite (ver vite.config.js).
+// Em runtime fora do bundle (ex.: testes) cai no fallback.
+const APP_VERSION =
+  typeof __APP_VERSION__ !== 'undefined'
+    ? __APP_VERSION__
+    : { hash: 'dev', branch: 'local', date: '', dirty: false };
+
 function fmtTime(d) {
   return d.toLocaleTimeString('pt-BR');
 }
@@ -113,6 +120,15 @@ export default function Sidebar({ collapsed = false }) {
 
       {!collapsed && (
         <div className="sb-footer">
+          <div
+            className="sb-version"
+            title={`Build ${APP_VERSION.hash} · branch ${APP_VERSION.branch}${APP_VERSION.date ? ' · ' + APP_VERSION.date : ''}${APP_VERSION.dirty ? ' · árvore com alterações não-commitadas' : ''}`}
+          >
+            <span className="sb-version-tag">v</span>
+            <span className="sb-version-hash">{APP_VERSION.hash}</span>
+            {APP_VERSION.dirty && <span className="sb-version-dirty" title="Há alterações não-commitadas">●</span>}
+            <span className="sb-version-branch">{APP_VERSION.branch}</span>
+          </div>
           <div className="sb-clock" id="sb-clk">{fmtTime(now)}</div>
           <div className="sb-date" id="sb-date">{fmtDate(now)}</div>
         </div>

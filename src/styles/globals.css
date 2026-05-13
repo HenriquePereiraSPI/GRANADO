@@ -133,6 +133,23 @@ body { font-family:var(--font-b); background:var(--bg); color:var(--text); displ
 .sb-clock { font-family:var(--font-m); font-size:18px; color:var(--ouro-claro); letter-spacing:.05em; }
 .sb-date  { font-family:var(--font-b); font-size:9px; color:rgba(253,250,241,.35); margin-top:2px; }
 
+/* Versão do software (commit hash + branch) — exibida acima do relógio */
+.sb-version {
+  display:flex; align-items:baseline; gap:4px;
+  font-family:var(--font-m);
+  font-size:9px;
+  color:rgba(253,250,241,.45);
+  margin-bottom:6px;
+  padding-bottom:6px;
+  border-bottom:1px dashed rgba(255,255,255,.07);
+  cursor:default;
+  letter-spacing:.02em;
+}
+.sb-version-tag    { color:rgba(253,250,241,.35); font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; }
+.sb-version-hash   { color:var(--ouro-claro); font-weight:700; font-size:10px; }
+.sb-version-branch { color:rgba(253,250,241,.4); font-size:8px; font-style:italic; margin-left:auto; }
+.sb-version-dirty  { color:#e6a23c; font-size:11px; line-height:1; margin-left:-2px; }
+
 /* ══════════════════════════════════════════════════════
    MAIN AREA
 ════════════════════════════════════════════════════════ */
