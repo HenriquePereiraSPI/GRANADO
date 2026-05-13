@@ -1732,17 +1732,24 @@ export const SCREENS = {
               <script>
               function pesSetMP(tr) {
                 var d = tr.dataset;
+                // Mantém os campos ocultos populados — pesObterAlvoKg() e o fluxo
+                // de Balança/Pesagem leem destes elementos.
                 document.getElementById('pes-mp-sel-nome').textContent = d.mp;
                 document.getElementById('pes-mp-sel-info').textContent = d.cod + ' · Lote: ' + d.lote;
                 document.getElementById('pes-mp-sel-alvo').textContent = d.alvo;
                 document.getElementById('pes-mp-sel-tol').textContent = d.tol;
-                document.getElementById('pes-mp-selecionada').style.display = 'flex';
+                // O preview "MP selecionada" abaixo da tabela foi removido — vai direto pro modal de confirmação.
                 // Highlight visual da linha
                 document.querySelectorAll('#pes-mp-tabela tbody tr').forEach(function(r){ r.style.outline = ''; });
                 tr.style.outline = '2px solid var(--verde)';
                 tr.scrollIntoView({behavior:'smooth', block:'center'});
-                // Avança automaticamente para Iniciar Pesagem (sem clique adicional)
-                setTimeout(function(){ pesIniciarPesagem(); }, 350);
+                // Popula o modal de confirmação com os dados da MP selecionada
+                var confNome = document.getElementById('pes-conf-mp');
+                var confInfo = document.getElementById('pes-conf-mp-info');
+                if (confNome) confNome.textContent = d.mp;
+                if (confInfo) confInfo.innerHTML = 'Código: <strong>' + d.cod + '</strong> · Lote: <strong>' + d.lote + '</strong><br>Qtd. Alvo: <strong>' + d.alvo + '</strong> · Variância máx: <strong>' + d.tol + '</strong>';
+                // Abre o popup de confirmação imediatamente
+                pesIniciarPesagem();
               }
               function pesFiltrarMPs(v) {
                 // Se o valor parece um codigo de scan (contem ';'), nao filtra ainda — espera Enter.
@@ -1849,18 +1856,12 @@ export const SCREENS = {
               }
               </script>
             </div>
-            <!-- MP selecionada preview — sem botão "Pesar esta MP" (selecionar já avança o stepper) -->
-            <div id="pes-mp-selecionada" style="display:none;background:var(--verde-dim);border:1px solid var(--ok-b);border-radius:var(--r);padding:12px 16px;margin-bottom:14px;align-items:center;gap:14px">
-              <span style="font-size:22px">⚖️</span>
-              <div style="flex:1">
-                <div style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--verde-esc)" id="pes-mp-sel-nome">—</div>
-                <div style="font-family:var(--font-m);font-size:11px;color:var(--text2);margin-top:2px" id="pes-mp-sel-info">—</div>
-                <div style="margin-top:6px;display:flex;gap:18px">
-                  <div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Qtd. Alvo</span><div style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--verde)" id="pes-mp-sel-alvo">—</div></div>
-                  <div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Variância máx.</span><div style="font-size:15px;font-weight:700;color:var(--text2)" id="pes-mp-sel-tol">—</div></div>
-                </div>
-              </div>
-              <div style="font-size:10px;color:var(--text3);font-style:italic;text-align:right;max-width:130px">Avançando para Iniciar Pesagem...</div>
+            <!-- Holder oculto: armazena dados da MP selecionada (lidos por pesObterAlvoKg e fluxo de balança). Preview visual movido para o modal de confirmação. -->
+            <div id="pes-mp-selecionada" style="display:none">
+              <span id="pes-mp-sel-nome">—</span>
+              <span id="pes-mp-sel-info">—</span>
+              <span id="pes-mp-sel-alvo">—</span>
+              <span id="pes-mp-sel-tol">—</span>
             </div>
             <!-- "Progresso de MPs" removido (já existe em /pes-mps e /pes-oee) -->
           </div>
@@ -2423,8 +2424,8 @@ export const SCREENS = {
           <div style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--verde-esc);margin-bottom:6px">② Confirmar Início de Pesagem</div>
           <div style="font-size:12px;color:var(--text2);margin-bottom:18px">Confirme os dados antes de iniciar o processo de pesagem desta matéria-prima.</div>
           <div style="background:var(--verde-dim);border:1px solid var(--ok-b);border-radius:8px;padding:12px 16px;margin-bottom:20px">
-            <div style="font-size:13px;font-weight:700;color:var(--verde-esc)" id="pes-conf-mp">Aqua (Água Purificada)</div>
-            <div style="font-family:var(--font-m);font-size:11px;color:var(--text2);margin-top:4px">Qtd. Alvo: <strong>412,500 kg</strong> · Tol: ±0,5% · OP: OP-2026-0416</div>
+            <div style="font-size:13px;font-weight:700;color:var(--verde-esc)" id="pes-conf-mp">—</div>
+            <div style="font-family:var(--font-m);font-size:11px;color:var(--text2);margin-top:4px" id="pes-conf-mp-info">—</div>
           </div>
           <div style="display:flex;gap:10px">
             <button class="btn btn-md btn-v" style="flex:1" onclick="pesConfirmarInicio()">✔ Confirmar e Prosseguir</button>
@@ -3685,23 +3686,58 @@ export const SCREENS = {
   "pes-ordens": `      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Seleção de Ordem de Pesagem</div></div>
       </div>
-      <!-- KPIs compactos — versão enxuta (height ~50px) -->
-      <div class="g4 mb14" style="gap:8px">
-        <div class="card cv" style="display:flex;align-items:center;gap:10px;padding:8px 12px">
-          <div style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--verde);line-height:1">1</div>
-          <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">Pronta<br/>p/ Pesagem</div>
+      <!-- KPIs — dashboard de fila de pesagem -->
+      <div class="g4 mb14" style="gap:10px">
+        <!-- Pronta p/ Pesagem -->
+        <div style="position:relative;background:var(--surface);border:1px solid var(--ok-b);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh);overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--verde)"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Pronta p/ Pesagem</span>
+            <span style="font-size:16px;line-height:1;background:var(--ok-p);border:1px solid var(--ok-b);color:var(--verde);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">✓</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
+            <div style="font-family:var(--font-d);font-size:32px;font-weight:700;color:var(--verde)">1</div>
+            <div style="font-size:10px;color:var(--text3);font-weight:600">ordem na fila</div>
+          </div>
         </div>
-        <div class="card co" style="display:flex;align-items:center;gap:10px;padding:8px 12px">
-          <div style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--inf);line-height:1">1</div>
-          <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">Em<br/>Pesagem</div>
+
+        <!-- Em Pesagem -->
+        <div style="position:relative;background:var(--surface);border:1px solid var(--inf-b);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh);overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--inf)"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Em Pesagem</span>
+            <span style="font-size:14px;line-height:1;background:var(--inf-p);border:1px solid var(--inf-b);color:var(--inf);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">🔄</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
+            <div style="font-family:var(--font-d);font-size:32px;font-weight:700;color:var(--inf)">1</div>
+            <div style="font-size:10px;color:var(--text3);font-weight:600">em execução agora</div>
+          </div>
         </div>
-        <div class="card" style="display:flex;align-items:center;gap:10px;padding:8px 12px">
-          <div style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--ouro);line-height:1">14</div>
-          <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">Concluídas<br/>Hoje</div>
+
+        <!-- Concluídas Hoje -->
+        <div style="position:relative;background:var(--surface);border:1px solid var(--ouro-claro);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh);overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--ouro)"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Concluídas Hoje</span>
+            <span style="font-size:14px;line-height:1;background:var(--ouro-dim);border:1px solid var(--ouro-claro);color:var(--ouro);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">⭐</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
+            <div style="font-family:var(--font-d);font-size:32px;font-weight:700;color:var(--ouro)">14</div>
+            <div style="font-size:10px;color:var(--text3);font-weight:600">ordens finalizadas</div>
+          </div>
         </div>
-        <div class="card cp" style="display:flex;align-items:center;gap:10px;padding:8px 12px">
-          <div style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--per);line-height:1">1</div>
-          <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">Com<br/>Pendência</div>
+
+        <!-- Com Pendência -->
+        <div style="position:relative;background:var(--surface);border:1px solid var(--per-b);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh);overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--per)"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Com Pendência</span>
+            <span style="font-size:14px;line-height:1;background:var(--per-p);border:1px solid var(--per-b);color:var(--per);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">⚠</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
+            <div style="font-family:var(--font-d);font-size:32px;font-weight:700;color:var(--per)">1</div>
+            <div style="font-size:10px;color:var(--text3);font-weight:600">requer atenção</div>
+          </div>
         </div>
       </div>
       <!-- ── Modal: Seleção de Sala de Pesagem (abre ao clicar em "Pesar" da OP) ── -->
@@ -3915,40 +3951,58 @@ export const SCREENS = {
         document.getElementById('modal-pes-cks-sala').style.display = 'none';
       }
       </script>
-        <!-- ── Barra de Filtros ── -->
-        <div class="card cv mb14" style="padding:14px">
-          <div style="font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:10px">🔎 Filtros</div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:flex-end">
-            <div style="display:flex;flex-direction:column">
+        <!-- ── Barra de Filtros (linha única) ── -->
+        <div class="card cv mb14" style="padding:10px 14px;overflow:visible">
+          <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+            <div style="display:flex;flex-direction:column;flex:1 1 140px;min-width:130px">
               <label class="lbl">Núm. da Ordem</label>
               <input class="inp" id="po-flt-num" placeholder="Ex.: OP-2026-0416" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
             </div>
-            <div style="display:flex;flex-direction:column">
+            <div style="display:flex;flex-direction:column;flex:1.4 1 160px;min-width:150px">
               <label class="lbl">Produto / Fórmula</label>
               <input class="inp" id="po-flt-prod" placeholder="Buscar produto..." style="font-size:12px;padding:7px 10px">
             </div>
-            <div style="display:flex;flex-direction:column;grid-column:1 / -1">
-              <label class="lbl">Status <span style="font-size:9px;font-weight:600;color:var(--text3);margin-left:4px">(múltipla seleção — clique para incluir/excluir)</span></label>
-              <div id="po-flt-status-chips" style="display:flex;flex-wrap:wrap;gap:6px;padding:6px 0">
-                <button type="button" class="po-st-chip" data-st="pronta"         onclick="poToggleStatus(this)" style="font-size:11px;padding:5px 10px;border-radius:14px;border:1px solid var(--ok-b);background:var(--surface2);color:var(--text2);cursor:pointer">✓ Pronta para Pesagem</button>
-                <button type="button" class="po-st-chip" data-st="pesando"        onclick="poToggleStatus(this)" style="font-size:11px;padding:5px 10px;border-radius:14px;border:1px solid var(--inf-b);background:var(--surface2);color:var(--text2);cursor:pointer">🔄 Pesando</button>
-                <button type="button" class="po-st-chip" data-st="finalizada"     onclick="poToggleStatus(this)" style="font-size:11px;padding:5px 10px;border-radius:14px;border:1px solid var(--ok-b);background:var(--surface2);color:var(--text2);cursor:pointer">✅ Finalizada</button>
-                <button type="button" class="po-st-chip" data-st="aguardando-fab" onclick="poToggleStatus(this)" style="font-size:11px;padding:5px 10px;border-radius:14px;border:1px solid var(--per-b);background:var(--surface2);color:var(--text2);cursor:pointer">🚦 Aguard. Fabricação</button>
-                <button type="button" class="po-st-chip" data-st="hold"           onclick="poToggleStatus(this)" style="font-size:11px;padding:5px 10px;border-radius:14px;border:1px solid var(--alr-b);background:var(--surface2);color:var(--text2);cursor:pointer">⏸ Hold</button>
-                <button type="button" class="po-st-chip" data-st="cancelada"      onclick="poToggleStatus(this)" style="font-size:11px;padding:5px 10px;border-radius:14px;border:1px solid var(--per-b);background:var(--surface2);color:var(--text2);cursor:pointer">⛔ Cancelada</button>
-                <button type="button" class="po-st-chip-clear" onclick="poLimparStatus()" style="font-size:10px;padding:5px 10px;border-radius:14px;border:1px dashed var(--border2);background:transparent;color:var(--text3);cursor:pointer;font-style:italic">Limpar</button>
+            <div style="display:flex;flex-direction:column;flex:1.3 1 180px;min-width:170px;position:relative">
+              <label class="lbl">Status</label>
+              <button type="button" id="po-flt-status-btn" onclick="poToggleStatusDropdown(event)" style="font-size:12px;padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:6px;text-align:left;font-family:inherit;height:34px">
+                <span id="po-flt-status-label" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Todos selecionados</span>
+                <span style="font-size:10px;color:var(--text3)">▾</span>
+              </button>
+              <div id="po-flt-status-dd" style="display:none;position:absolute;top:calc(100% + 2px);left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:6px;box-shadow:var(--sh2);z-index:500;padding:6px;max-height:280px;overflow-y:auto">
+                <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:4px;cursor:pointer;font-size:11px" onmouseover="this.style.background='var(--ouro-dim)'" onmouseout="this.style.background='transparent'">
+                  <input type="checkbox" class="po-st-chk" value="pronta" checked onchange="poOnChangeStatus()"><span>✓ Pronta para Pesagem</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:4px;cursor:pointer;font-size:11px" onmouseover="this.style.background='var(--ouro-dim)'" onmouseout="this.style.background='transparent'">
+                  <input type="checkbox" class="po-st-chk" value="pesando" checked onchange="poOnChangeStatus()"><span>🔄 Pesando</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:4px;cursor:pointer;font-size:11px" onmouseover="this.style.background='var(--ouro-dim)'" onmouseout="this.style.background='transparent'">
+                  <input type="checkbox" class="po-st-chk" value="finalizada" checked onchange="poOnChangeStatus()"><span>✅ Finalizada</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:4px;cursor:pointer;font-size:11px" onmouseover="this.style.background='var(--ouro-dim)'" onmouseout="this.style.background='transparent'">
+                  <input type="checkbox" class="po-st-chk" value="aguardando-fab" checked onchange="poOnChangeStatus()"><span>🚦 Aguard. Fabricação</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:4px;cursor:pointer;font-size:11px" onmouseover="this.style.background='var(--ouro-dim)'" onmouseout="this.style.background='transparent'">
+                  <input type="checkbox" class="po-st-chk" value="hold" checked onchange="poOnChangeStatus()"><span>⏸ Hold</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:4px;cursor:pointer;font-size:11px" onmouseover="this.style.background='var(--ouro-dim)'" onmouseout="this.style.background='transparent'">
+                  <input type="checkbox" class="po-st-chk" value="cancelada" checked onchange="poOnChangeStatus()"><span>⛔ Cancelada</span>
+                </label>
+                <div style="display:flex;gap:4px;padding:6px 4px 2px;margin-top:4px;border-top:1px solid var(--border)">
+                  <button type="button" onclick="poStatusMarcarTodos()" style="flex:1;font-size:10px;padding:4px 8px;border:1px solid var(--border);background:var(--surface2);border-radius:4px;color:var(--text2);cursor:pointer">Marcar todos</button>
+                  <button type="button" onclick="poStatusDesmarcarTodos()" style="flex:1;font-size:10px;padding:4px 8px;border:1px dashed var(--border2);background:transparent;border-radius:4px;color:var(--text3);cursor:pointer;font-style:italic">Limpar</button>
+                </div>
               </div>
             </div>
-            <div style="display:flex;flex-direction:column">
+            <div style="display:flex;flex-direction:column;flex:1 1 130px;min-width:120px">
               <label class="lbl">Data Prev. (de)</label>
               <input class="inp" id="po-flt-data-ini" type="date" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
             </div>
-            <div style="display:flex;flex-direction:column">
+            <div style="display:flex;flex-direction:column;flex:1 1 130px;min-width:120px">
               <label class="lbl">Data Prev. (até)</label>
               <input class="inp" id="po-flt-data-fim" type="date" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
             </div>
             <div style="display:flex;gap:6px;align-items:flex-end">
-              <button class="btn btn-md btn-v" onclick="pesAplicarFiltros()" style="flex:1;white-space:nowrap">🔍 Filtrar</button>
+              <button class="btn btn-md btn-v" onclick="pesAplicarFiltros()" style="white-space:nowrap">🔍 Filtrar</button>
               <button class="btn btn-md btn-ghost" onclick="pesLimparFiltros()" title="Limpar filtros">✕</button>
             </div>
           </div>
@@ -4118,42 +4172,67 @@ export const SCREENS = {
           }
         </style>
 
-        <!-- Scripts dos filtros — STATUS = múltipla seleção via chips -->
+        <!-- Scripts dos filtros — STATUS = dropdown multi-seleção (padrão: todos marcados) -->
         <script>
-        // Toggle de um chip de status
-        function poToggleStatus(btn) {
-          var ativo = btn.classList.toggle('po-st-on');
-          if (ativo) {
-            btn.style.background = 'var(--verde)';
-            btn.style.color = '#fff';
-            btn.style.fontWeight = '700';
-          } else {
-            btn.style.background = 'var(--surface2)';
-            btn.style.color = 'var(--text2)';
-            btn.style.fontWeight = '400';
-          }
-          pesAplicarFiltros();
+        function poToggleStatusDropdown(ev) {
+          if (ev) ev.stopPropagation();
+          var dd = document.getElementById('po-flt-status-dd');
+          if (!dd) return;
+          var aberto = dd.style.display === 'block';
+          dd.style.display = aberto ? 'none' : 'block';
         }
-        function poLimparStatus() {
-          document.querySelectorAll('#po-flt-status-chips .po-st-chip').forEach(function(c){
-            c.classList.remove('po-st-on');
-            c.style.background = 'var(--surface2)';
-            c.style.color = 'var(--text2)';
-            c.style.fontWeight = '400';
+        // Fecha o dropdown ao clicar fora
+        if (!window.__poStDdHandlerInstalado) {
+          window.__poStDdHandlerInstalado = true;
+          document.addEventListener('click', function(e){
+            var dd = document.getElementById('po-flt-status-dd');
+            var btn = document.getElementById('po-flt-status-btn');
+            if (!dd || !btn) return;
+            if (dd.contains(e.target) || btn.contains(e.target)) return;
+            dd.style.display = 'none';
           });
-          pesAplicarFiltros();
         }
         function poGetStatusSelecionados() {
           var sel = [];
-          document.querySelectorAll('#po-flt-status-chips .po-st-chip.po-st-on').forEach(function(c){
-            sel.push(c.getAttribute('data-st'));
+          document.querySelectorAll('#po-flt-status-dd .po-st-chk:checked').forEach(function(c){
+            sel.push(c.value);
           });
           return sel;
         }
+        function poAtualizarLabelStatus() {
+          var todos = document.querySelectorAll('#po-flt-status-dd .po-st-chk');
+          var marcados = document.querySelectorAll('#po-flt-status-dd .po-st-chk:checked');
+          var lbl = document.getElementById('po-flt-status-label');
+          if (!lbl) return;
+          if (marcados.length === todos.length) lbl.textContent = 'Todos selecionados';
+          else if (marcados.length === 0) lbl.textContent = 'Nenhum selecionado';
+          else if (marcados.length === 1) lbl.textContent = (marcados[0].parentNode.textContent || '').trim();
+          else lbl.textContent = marcados.length + ' selecionados';
+        }
+        function poOnChangeStatus() {
+          poAtualizarLabelStatus();
+          pesAplicarFiltros();
+        }
+        function poStatusMarcarTodos() {
+          document.querySelectorAll('#po-flt-status-dd .po-st-chk').forEach(function(c){ c.checked = true; });
+          poAtualizarLabelStatus();
+          pesAplicarFiltros();
+        }
+        function poStatusDesmarcarTodos() {
+          document.querySelectorAll('#po-flt-status-dd .po-st-chk').forEach(function(c){ c.checked = false; });
+          poAtualizarLabelStatus();
+          pesAplicarFiltros();
+        }
+        // Compat: usado por pesLimparFiltros — restaura "todos selecionados"
+        function poLimparStatus() { poStatusMarcarTodos(); }
+
         function pesAplicarFiltros() {
           var fNum     = (document.getElementById('po-flt-num').value || '').trim().toLowerCase();
           var fProd    = (document.getElementById('po-flt-prod').value || '').trim().toLowerCase();
-          var fStatus  = poGetStatusSelecionados(); // array de status escolhidos (vazio = todos)
+          var fStatusArr = poGetStatusSelecionados();
+          var totalSt = document.querySelectorAll('#po-flt-status-dd .po-st-chk').length;
+          // Status só é tratado como filtro "ativo" se não estiverem todos marcados
+          var fStatusAtivo = fStatusArr.length > 0 && fStatusArr.length < totalSt;
           var fDataI   = document.getElementById('po-flt-data-ini').value;
           var fDataF   = document.getElementById('po-flt-data-fim').value;
           var rows = document.querySelectorAll('#po-tabela tbody tr');
@@ -4170,7 +4249,8 @@ export const SCREENS = {
             var ok = true;
             if (fNum && op.indexOf(fNum) === -1) ok = false;
             if (fProd && txt.indexOf(fProd) === -1) ok = false;
-            if (fStatus.length && fStatus.indexOf(status) === -1) ok = false;
+            if (fStatusAtivo && fStatusArr.indexOf(status) === -1) ok = false;
+            if (fStatusArr.length === 0) ok = false; // nenhum marcado = não mostrar nada
             if ((fDataI || fDataF) && ok) {
               var match = txt.match(/(\\d{2})\\/(\\d{2})\\/(\\d{4})/);
               if (match) {
@@ -4184,16 +4264,18 @@ export const SCREENS = {
             r.style.display = ok ? '' : 'none';
             if (ok) visiveis++;
           });
-          var temFiltro = fNum || fProd || fStatus.length || fDataI || fDataF;
+          var temFiltro = fNum || fProd || fStatusAtivo || fStatusArr.length === 0 || fDataI || fDataF;
           var label = visiveis + ' de ' + rows.length + ' ordem(ns) — ' + (temFiltro ? 'filtros aplicados' : 'sem filtros');
-          if (fStatus.length) label += ' · status: ' + fStatus.join(', ');
+          if (fStatusAtivo) label += ' · status: ' + fStatusArr.join(', ');
+          else if (fStatusArr.length === 0) label += ' · nenhum status selecionado';
           document.getElementById('po-flt-result').textContent = label;
+          poAtualizarLabelStatus();
         }
         function pesLimparFiltros() {
           ['po-flt-num','po-flt-prod','po-flt-data-ini','po-flt-data-fim'].forEach(function(id){
             var el = document.getElementById(id); if (el) el.value = '';
           });
-          poLimparStatus();
+          poStatusMarcarTodos();
         }
         </script>
 
