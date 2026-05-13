@@ -2573,7 +2573,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:11px">GLI-2026-08</td>
               <td class="mono">44,983 kg</td>
               <td style="font-size:11px">Fase 1 — Aquosa</td>
-              <td><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button></td>
+              <td style="display:flex;gap:4px"><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button><button class="btn btn-sm btn-p" style="font-size:10px" onclick="gaioAbrirRemover(this.closest('tr'))">✕ Remover</button></td>
             </tr>
             <tr style="background:var(--ok-p)" data-etq="ETQ-2026-0413">
               <td class="mono" style="color:var(--ok)">2</td>
@@ -2582,7 +2582,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:11px">PPG-2026-12</td>
               <td class="mono">18,005 kg</td>
               <td style="font-size:11px">Fase 1 — Aquosa</td>
-              <td><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button></td>
+              <td style="display:flex;gap:4px"><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button><button class="btn btn-sm btn-p" style="font-size:10px" onclick="gaioAbrirRemover(this.closest('tr'))">✕ Remover</button></td>
             </tr>
             <tr style="background:var(--ok-p)" data-etq="ETQ-2026-0414">
               <td class="mono" style="color:var(--ok)">3</td>
@@ -2591,7 +2591,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:11px">CAR-2026-05</td>
               <td class="mono">2,498 kg</td>
               <td style="font-size:11px">Fase 1 — Aquosa</td>
-              <td><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button></td>
+              <td style="display:flex;gap:4px"><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button><button class="btn btn-sm btn-p" style="font-size:10px" onclick="gaioAbrirRemover(this.closest('tr'))">✕ Remover</button></td>
             </tr>
             <tr style="background:var(--ok-p)" data-etq="ETQ-2026-0415">
               <td class="mono" style="color:var(--ok)">4</td>
@@ -2600,7 +2600,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:11px">TEA-2026-07</td>
               <td class="mono">1,801 kg</td>
               <td style="font-size:11px">Fase 1 — Aquosa</td>
-              <td><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button></td>
+              <td style="display:flex;gap:4px"><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button><button class="btn btn-sm btn-p" style="font-size:10px" onclick="gaioAbrirRemover(this.closest('tr'))">✕ Remover</button></td>
             </tr>
             <tr style="background:var(--ok-p)" data-etq="ETQ-2026-0416">
               <td class="mono" style="color:var(--ok)">5</td>
@@ -2609,7 +2609,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:11px">AGUA-2026-03</td>
               <td class="mono">411,840 kg</td>
               <td style="font-size:11px">Fase 1 — Aquosa</td>
-              <td><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button></td>
+              <td style="display:flex;gap:4px"><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button><button class="btn btn-sm btn-p" style="font-size:10px" onclick="gaioAbrirRemover(this.closest('tr'))">✕ Remover</button></td>
             </tr>
           </tbody>
         </table>
@@ -2706,119 +2706,218 @@ export const SCREENS = {
         if (!_gaioMpMover) return;
         var etq = _gaioMpMover.getAttribute('data-etq') || '—';
         var mat = _gaioMpMover.cells[2].textContent.trim();
+        var origem = (document.getElementById('pgaio-sel')||{value:'—'}).value;
         // Aqui no mock: removemos da linha atual (foi "movida")
         _gaioMpMover.remove();
+        // Decrementa contador de MPs da gaiola origem na tabela "Gaiolas Montadas"
+        gaioAtualizarContadorMPs(origem, -1);
+        // Incrementa contador da gaiola destino
+        gaioAtualizarContadorMPs(dest, +1);
         document.getElementById('modal-gaio-mover').style.display = 'none';
         alert(
           '↔ MP movida com sucesso!\\n\\n' +
           'Etiqueta: ' + etq + '\\n' +
           'Material: ' + mat + '\\n' +
+          'Origem: ' + origem + '\\n' +
           'Destino: ' + dest + '\\n' +
           'Motivo: ' + motivo + '\\n\\n' +
           'Movimentação registrada na trilha de auditoria.'
         );
       }
+
+      // ====== REMOVER MP da gaiola atual ======
+      var _gaioMpRemover = null;
+
+      function gaioAbrirRemover(tr) {
+        _gaioMpRemover = tr;
+        var mat = tr.cells[2].textContent.trim();
+        var lote = tr.cells[3].textContent.trim();
+        var qtd = tr.cells[4].textContent.trim();
+        var etq = tr.getAttribute('data-etq') || '—';
+        document.getElementById('gaio-remover-titulo').textContent = mat;
+        document.getElementById('gaio-remover-info').innerHTML =
+          '<strong>' + etq + '</strong> · Lote ' + lote + ' · ' + qtd +
+          '<br/><span style="color:var(--text3);font-size:10px">Gaiola atual: ' + (document.getElementById('pgaio-sel')||{value:'—'}).value + '</span>';
+        document.getElementById('gaio-remover-motivo').value = '';
+        document.getElementById('modal-gaio-remover').style.display = 'flex';
+      }
+
+      function gaioConfirmarRemover() {
+        var motivo = (document.getElementById('gaio-remover-motivo').value || '').trim();
+        if (!motivo) { alert('⚠ Motivo da remoção é obrigatório (registrado na trilha de auditoria).'); return; }
+        if (!_gaioMpRemover) return;
+        var etq = _gaioMpRemover.getAttribute('data-etq') || '—';
+        var mat = _gaioMpRemover.cells[2].textContent.trim();
+        var origem = (document.getElementById('pgaio-sel')||{value:'—'}).value;
+        _gaioMpRemover.remove();
+        gaioAtualizarContadorMPs(origem, -1);
+        document.getElementById('modal-gaio-remover').style.display = 'none';
+        alert(
+          '✕ MP removida da gaiola.\\n\\n' +
+          'Etiqueta: ' + etq + '\\n' +
+          'Material: ' + mat + '\\n' +
+          'Origem: ' + origem + '\\n' +
+          'Motivo: ' + motivo + '\\n\\n' +
+          'A MP fica disponível para ser realocada em outra gaiola da OP.\\n' +
+          'Remoção registrada na trilha de auditoria.'
+        );
+      }
+
+      // ====== DELETAR gaiola (só permitido se MPs == 0) ======
+      function gaioDeletarGaiola(tr) {
+        var gai = tr.getAttribute('data-gai') || '—';
+        var mps = parseInt(tr.getAttribute('data-mps') || '0', 10);
+        if (mps > 0) {
+          alert(
+            '⛔ Não é possível deletar ' + gai + '\\n\\n' +
+            'A gaiola ainda possui ' + mps + ' MP(s) associada(s).\\n' +
+            'Remova ou mova todas as MPs antes de deletar a gaiola.'
+          );
+          return;
+        }
+        var ok = confirm(
+          '🗑 Deletar gaiola ' + gai + '?\\n\\n' +
+          '• A gaiola está vazia (0 MPs) — operação permitida.\\n' +
+          '• A gaiola será removida da OP e do dropdown.\\n' +
+          '• Operação registrada na trilha de auditoria.\\n\\n' +
+          'Confirmar?'
+        );
+        if (!ok) return;
+        // Remove a linha da tabela "Gaiolas Montadas"
+        tr.remove();
+        // Remove a option do seletor #pgaio-sel
+        var sel = document.getElementById('pgaio-sel');
+        if (sel) {
+          var opt = Array.from(sel.options).find(function(o){ return o.value === gai; });
+          if (opt) opt.remove();
+        }
+        alert('🗑 Gaiola ' + gai + ' deletada. Trilha: DEL-GAI-' + Date.now().toString().slice(-6));
+      }
+
+      // Atualiza o contador de MPs da gaiola na tabela "Gaiolas Montadas" e
+      // habilita/desabilita o botão Deletar conforme o novo total.
+      function gaioAtualizarContadorMPs(gaiId, delta) {
+        var row = document.querySelector('#tbl-gaiolas-montadas tbody tr[data-gai="' + gaiId + '"]');
+        if (!row) return;
+        var atual = parseInt(row.getAttribute('data-mps') || '0', 10);
+        var novo = Math.max(0, atual + delta);
+        row.setAttribute('data-mps', String(novo));
+        // Atualiza célula de quantidade de MPs (coluna 1) e peso (coluna 2)
+        var qtdCell = row.cells[1];
+        var pesoCell = row.cells[2];
+        var etqCell  = row.cells[3];
+        if (novo === 0) {
+          qtdCell.textContent = '— vazia —';
+          qtdCell.style.color = 'var(--text3)';
+          if (pesoCell) { pesoCell.textContent = '—'; pesoCell.style.color = 'var(--text3)'; }
+          if (etqCell)  { etqCell.innerHTML = '<span class="bdg bdg-ney">— sem etiqueta —</span>'; }
+        } else {
+          qtdCell.textContent = novo + ' MPs';
+          qtdCell.style.color = '';
+        }
+        // Atualiza botão Deletar
+        var btn = row.querySelector('.gaio-del-btn');
+        if (btn) {
+          if (novo === 0) {
+            btn.disabled = false;
+            btn.classList.remove('btn-ghost');
+            btn.classList.add('btn-p');
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+            btn.title = 'Deletar gaiola vazia';
+          } else {
+            btn.disabled = true;
+            btn.classList.remove('btn-p');
+            btn.classList.add('btn-ghost');
+            btn.style.opacity = '.4';
+            btn.style.cursor = 'not-allowed';
+            btn.title = 'Remova as ' + novo + ' MPs antes de deletar';
+          }
+        }
+      }
       </script>
+
+      <!-- ── Modal: Remover MP da gaiola ── -->
+      <div id="modal-gaio-remover" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:960;align-items:flex-start;justify-content:center;padding-top:80px;backdrop-filter:blur(3px)">
+        <div style="background:var(--surface);border-top:4px solid var(--per);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:520px;width:94%;box-shadow:var(--sh2)">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+            <div>
+              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--per)">✕ Remover MP da Gaiola</div>
+              <div style="font-family:var(--font-d);font-size:17px;font-weight:700;color:var(--verde-esc);margin-top:2px" id="gaio-remover-titulo">—</div>
+            </div>
+            <button onclick="document.getElementById('modal-gaio-remover').style.display='none'" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
+          </div>
+
+          <div class="abox warn mb14" style="margin-bottom:14px"><span class="ai">⚠️</span><div>A MP será <strong>desvinculada da gaiola atual</strong> mas continuará pesada — fica disponível para ser realocada em outra gaiola desta OP. Operação registrada na trilha de auditoria.</div></div>
+
+          <div id="gaio-remover-info" style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;margin-bottom:14px;font-size:11px;color:var(--text2)"></div>
+
+          <div class="fg" style="margin-bottom:14px">
+            <label class="lbl">Motivo da remoção <span style="font-size:9px;color:var(--text3)">(obrigatório · registrado na trilha)</span></label>
+            <textarea class="txta" id="gaio-remover-motivo" rows="2" placeholder="Ex.: MP foi adicionada por engano nesta gaiola, será descartada, reagrupamento de fase..."></textarea>
+          </div>
+
+          <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:12px;border-top:1px solid var(--border)">
+            <button class="btn btn-md btn-ghost" onclick="document.getElementById('modal-gaio-remover').style.display='none'">Cancelar</button>
+            <button class="btn btn-md btn-p" onclick="gaioConfirmarRemover()">✕ Remover MP</button>
+          </div>
+        </div>
+      </div>
 
       <!-- Gaiolas já montadas — ocupa toda a largura -->
       <div class="card">
         <div class="card-title">Gaiolas Montadas — OP-2026-0416</div>
         <div class="abox inf mb14" style="margin-bottom:10px"><span class="ai">📦</span><div>Todas as gaiolas da OP permanecem com status <strong>"Aguardando envio para fabricação"</strong> e abertas para realocação de MPs até que o envio físico em bloco seja confirmado pelo operador no final da ordem.</div></div>
         <table class="tbl" id="tbl-gaiolas-montadas">
-          <thead><tr><th>Gaiola</th><th>MPs</th><th>Peso Total</th><th>Etiqueta Mãe</th><th>Status</th></tr></thead>
+          <thead><tr><th>Gaiola</th><th>MPs</th><th>Peso Total</th><th>Etiqueta Mãe</th><th>Status</th><th>Ação</th></tr></thead>
           <tbody>
-            <tr data-gai="GAI-2026-0087">
+            <tr data-gai="GAI-2026-0087" data-mps="3">
               <td class="mono" style="color:var(--verde)">GAI-2026-0087</td>
               <td class="mono">3 MPs</td>
               <td class="mono">67,298 kg</td>
               <td><span class="bdg bdg-ok">✓ Impressa</span></td>
               <td><span class="bdg bdg-alr">⏳ Aguardando envio para fabricação</span></td>
+              <td><button class="btn btn-sm btn-ghost gaio-del-btn" onclick="gaioDeletarGaiola(this.closest('tr'))" disabled title="Remova as 3 MPs antes de deletar" style="opacity:.4;cursor:not-allowed;font-size:10px">🗑 Deletar</button></td>
             </tr>
-            <tr data-gai="GAI-2026-0088">
+            <tr data-gai="GAI-2026-0088" data-mps="4">
               <td class="mono" style="color:var(--verde)">GAI-2026-0088</td>
               <td class="mono">4 MPs</td>
               <td class="mono">12,150 kg</td>
               <td><span class="bdg bdg-ok">✓ Impressa</span></td>
               <td><span class="bdg bdg-alr">⏳ Aguardando envio para fabricação</span></td>
+              <td><button class="btn btn-sm btn-ghost gaio-del-btn" onclick="gaioDeletarGaiola(this.closest('tr'))" disabled title="Remova as 4 MPs antes de deletar" style="opacity:.4;cursor:not-allowed;font-size:10px">🗑 Deletar</button></td>
             </tr>
-            <tr data-gai="GAI-2026-0089" style="background:var(--verde-dim)">
+            <tr data-gai="GAI-2026-0089" data-mps="5" style="background:var(--verde-dim)">
               <td class="mono" style="color:var(--alr)">GAI-2026-0089</td>
               <td class="mono">5 MPs (em montagem)</td>
               <td class="mono">479,127 kg</td>
               <td><span class="bdg bdg-alr">⏳ Pendente</span></td>
               <td><span class="bdg bdg-alr">⏳ Aguardando envio para fabricação</span></td>
+              <td><button class="btn btn-sm btn-ghost gaio-del-btn" onclick="gaioDeletarGaiola(this.closest('tr'))" disabled title="Remova as 5 MPs antes de deletar" style="opacity:.4;cursor:not-allowed;font-size:10px">🗑 Deletar</button></td>
             </tr>
-            <tr data-gai="GAI-2026-0090">
+            <tr data-gai="GAI-2026-0090" data-mps="0">
               <td class="mono" style="color:var(--text3)">GAI-2026-0090</td>
               <td class="mono" style="color:var(--text3)">— vazia —</td>
               <td class="mono" style="color:var(--text3)">—</td>
               <td><span class="bdg bdg-ney">— sem etiqueta —</span></td>
               <td><span class="bdg bdg-alr">⏳ Aguardando envio para fabricação</span></td>
+              <td><button class="btn btn-sm btn-p gaio-del-btn" onclick="gaioDeletarGaiola(this.closest('tr'))" style="font-size:10px">🗑 Deletar</button></td>
             </tr>
-            <tr data-gai="GAI-2026-0091">
+            <tr data-gai="GAI-2026-0091" data-mps="0">
               <td class="mono" style="color:var(--text3)">GAI-2026-0091</td>
               <td class="mono" style="color:var(--text3)">— vazia —</td>
               <td class="mono" style="color:var(--text3)">—</td>
               <td><span class="bdg bdg-ney">— sem etiqueta —</span></td>
               <td><span class="bdg bdg-alr">⏳ Aguardando envio para fabricação</span></td>
+              <td><button class="btn btn-sm btn-p gaio-del-btn" onclick="gaioDeletarGaiola(this.closest('tr'))" style="font-size:10px">🗑 Deletar</button></td>
             </tr>
           </tbody>
         </table>
-        <!-- Envio em bloco no final da ordem -->
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);flex-wrap:wrap">
-          <div style="font-size:11px;color:var(--text2)">
-            <strong style="color:var(--ouro)">📤 Envio à Fabricação</strong> — disponível somente após todas as gaiolas estarem com etiqueta-mãe impressa. Após o envio, as MPs ficam imutáveis e o transporte físico é registrado.
-          </div>
-          <button class="btn btn-md" style="background:var(--ouro);color:#fff;font-weight:700;border:none" onclick="gaioEnviarFabricacao()">📤 Enviar Todas à Fabricação</button>
+        <!-- O envio em bloco das gaiolas à Fabricação acontece na tela /pes-checkout -->
+        <div style="margin-top:14px;padding:10px 14px;background:var(--surface2);border:1px dashed var(--border);border-radius:7px;font-size:11px;color:var(--text3);font-style:italic">
+          ℹ️ O envio das gaiolas à Fabricação é confirmado na tela <strong>/pes-checkout</strong> (Gate 4 do checkout da OP). Enquanto a OP não passar pelo checkout, as MPs podem ser movidas ou removidas livremente.
         </div>
       </div>
-
-      <script>
-      // Envio em bloco das gaiolas da OP à Fabricação.
-      // Após confirmar, todas viram "Enviada à fabricação" e os botões de Mover ficam desabilitados.
-      function gaioEnviarFabricacao() {
-        // Verifica se há gaiolas vazias ou sem etiqueta-mãe — alerta o operador
-        var pendentes = document.querySelectorAll('#tbl-gaiolas-montadas tbody tr');
-        var vazias = 0, semEtq = 0;
-        pendentes.forEach(function(r){
-          var mpsTxt = (r.cells[1].textContent || '').toLowerCase();
-          var etqTxt = (r.cells[3].textContent || '').toLowerCase();
-          if (mpsTxt.indexOf('vazia') !== -1) vazias++;
-          if (etqTxt.indexOf('sem etiqueta') !== -1 || etqTxt.indexOf('pendente') !== -1) semEtq++;
-        });
-        var aviso = '';
-        if (vazias > 0) aviso += '\\n• ' + vazias + ' gaiola(s) ainda vazia(s) — serão descartadas no envio.';
-        if (semEtq > 0) aviso += '\\n• ' + semEtq + ' gaiola(s) sem etiqueta-mãe — imprima antes de enviar.';
-        var ok = confirm(
-          '📤 Enviar TODAS as gaiolas da OP-2026-0416 à Fabricação?\\n\\n' +
-          'Após o envio:\\n' +
-          '• As MPs não poderão mais ser realocadas\\n' +
-          '• O transporte físico será registrado na trilha\\n' +
-          '• A Fabricação será notificada' +
-          (aviso ? '\\n\\n⚠ Atenção:' + aviso : '') +
-          '\\n\\nConfirmar envio?'
-        );
-        if (!ok) return;
-        // Marca todas as linhas como enviadas
-        pendentes.forEach(function(r){
-          var statusCell = r.cells[r.cells.length - 1];
-          if (statusCell) statusCell.innerHTML = '<span class="bdg bdg-ok">📤 Enviada à Fabricação</span>';
-        });
-        // Desabilita os botões Mover na tabela de MPs (#tbl-gaiola-mps)
-        document.querySelectorAll('#tbl-gaiola-mps tbody button').forEach(function(b){
-          b.disabled = true;
-          b.style.opacity = '.4';
-          b.style.cursor = 'not-allowed';
-          b.title = 'OP enviada à Fabricação — movimentação bloqueada.';
-        });
-        alert(
-          '📤 Gaiolas enviadas à Fabricação!\\n\\n' +
-          'OP-2026-0416 · Loção Hidratante Rosa 200ml\\n' +
-          'Notificação enviada ao Líder de Fabricação.\\n' +
-          'Trilha: ENV-FAB-' + Date.now().toString().slice(-6)
-        );
-      }
-      </script>
     `,
   "pes-mps": `      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Matérias-Primas Pesadas</div></div>
