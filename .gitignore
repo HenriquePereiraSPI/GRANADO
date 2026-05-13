@@ -9,3 +9,7 @@ dist/
 /assets/Apriso2025_Documentation
 /assets/Apriso_BusinessComponents_Documentation
 /apriso/Documents
+
+# Utilitários locais de análise do BBP (não fazem parte do mockup)
+scripts/bbp_*.py
+scripts/read_bbp_docx.py
