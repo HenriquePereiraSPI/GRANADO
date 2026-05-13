@@ -2574,7 +2574,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:11px">GLI-2026-08</td>
               <td class="mono">44,983 kg</td>
               <td style="font-size:11px">Fase 1 — Aquosa</td>
-              <td style="display:flex;gap:4px"><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button><button class="btn btn-sm btn-p" style="font-size:10px" onclick="gaioAbrirRemover(this.closest('tr'))">✕ Remover</button></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button></td>
             </tr>
             <tr style="background:var(--ok-p)" data-etq="ETQ-2026-0413">
               <td class="mono" style="color:var(--ok)">2</td>
@@ -2583,7 +2583,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:11px">PPG-2026-12</td>
               <td class="mono">18,005 kg</td>
               <td style="font-size:11px">Fase 1 — Aquosa</td>
-              <td style="display:flex;gap:4px"><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button><button class="btn btn-sm btn-p" style="font-size:10px" onclick="gaioAbrirRemover(this.closest('tr'))">✕ Remover</button></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button></td>
             </tr>
             <tr style="background:var(--ok-p)" data-etq="ETQ-2026-0414">
               <td class="mono" style="color:var(--ok)">3</td>
@@ -2592,7 +2592,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:11px">CAR-2026-05</td>
               <td class="mono">2,498 kg</td>
               <td style="font-size:11px">Fase 1 — Aquosa</td>
-              <td style="display:flex;gap:4px"><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button><button class="btn btn-sm btn-p" style="font-size:10px" onclick="gaioAbrirRemover(this.closest('tr'))">✕ Remover</button></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button></td>
             </tr>
             <tr style="background:var(--ok-p)" data-etq="ETQ-2026-0415">
               <td class="mono" style="color:var(--ok)">4</td>
@@ -2601,7 +2601,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:11px">TEA-2026-07</td>
               <td class="mono">1,801 kg</td>
               <td style="font-size:11px">Fase 1 — Aquosa</td>
-              <td style="display:flex;gap:4px"><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button><button class="btn btn-sm btn-p" style="font-size:10px" onclick="gaioAbrirRemover(this.closest('tr'))">✕ Remover</button></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button></td>
             </tr>
             <tr style="background:var(--ok-p)" data-etq="ETQ-2026-0416">
               <td class="mono" style="color:var(--ok)">5</td>
@@ -2610,7 +2610,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:11px">AGUA-2026-03</td>
               <td class="mono">411,840 kg</td>
               <td style="font-size:11px">Fase 1 — Aquosa</td>
-              <td style="display:flex;gap:4px"><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button><button class="btn btn-sm btn-p" style="font-size:10px" onclick="gaioAbrirRemover(this.closest('tr'))">✕ Remover</button></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button></td>
             </tr>
           </tbody>
         </table>
@@ -2726,44 +2726,6 @@ export const SCREENS = {
         );
       }
 
-      // ====== REMOVER MP da gaiola atual ======
-      var _gaioMpRemover = null;
-
-      function gaioAbrirRemover(tr) {
-        _gaioMpRemover = tr;
-        var mat = tr.cells[2].textContent.trim();
-        var lote = tr.cells[3].textContent.trim();
-        var qtd = tr.cells[4].textContent.trim();
-        var etq = tr.getAttribute('data-etq') || '—';
-        document.getElementById('gaio-remover-titulo').textContent = mat;
-        document.getElementById('gaio-remover-info').innerHTML =
-          '<strong>' + etq + '</strong> · Lote ' + lote + ' · ' + qtd +
-          '<br/><span style="color:var(--text3);font-size:10px">Gaiola atual: ' + (document.getElementById('pgaio-sel')||{value:'—'}).value + '</span>';
-        document.getElementById('gaio-remover-motivo').value = '';
-        document.getElementById('modal-gaio-remover').style.display = 'flex';
-      }
-
-      function gaioConfirmarRemover() {
-        var motivo = (document.getElementById('gaio-remover-motivo').value || '').trim();
-        if (!motivo) { alert('⚠ Motivo da remoção é obrigatório (registrado na trilha de auditoria).'); return; }
-        if (!_gaioMpRemover) return;
-        var etq = _gaioMpRemover.getAttribute('data-etq') || '—';
-        var mat = _gaioMpRemover.cells[2].textContent.trim();
-        var origem = (document.getElementById('pgaio-sel')||{value:'—'}).value;
-        _gaioMpRemover.remove();
-        gaioAtualizarContadorMPs(origem, -1);
-        document.getElementById('modal-gaio-remover').style.display = 'none';
-        alert(
-          '✕ MP removida da gaiola.\\n\\n' +
-          'Etiqueta: ' + etq + '\\n' +
-          'Material: ' + mat + '\\n' +
-          'Origem: ' + origem + '\\n' +
-          'Motivo: ' + motivo + '\\n\\n' +
-          'A MP fica disponível para ser realocada em outra gaiola da OP.\\n' +
-          'Remoção registrada na trilha de auditoria.'
-        );
-      }
-
       // ====== DELETAR gaiola (só permitido se MPs == 0) ======
       function gaioDeletarGaiola(tr) {
         var gai = tr.getAttribute('data-gai') || '—';
@@ -2838,32 +2800,8 @@ export const SCREENS = {
       }
       </script>
 
-      <!-- ── Modal: Remover MP da gaiola ── -->
-      <div id="modal-gaio-remover" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:960;align-items:flex-start;justify-content:center;padding-top:80px;backdrop-filter:blur(3px)">
-        <div style="background:var(--surface);border-top:4px solid var(--per);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:520px;width:94%;box-shadow:var(--sh2)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
-            <div>
-              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--per)">✕ Remover MP da Gaiola</div>
-              <div style="font-family:var(--font-d);font-size:17px;font-weight:700;color:var(--verde-esc);margin-top:2px" id="gaio-remover-titulo">—</div>
-            </div>
-            <button onclick="document.getElementById('modal-gaio-remover').style.display='none'" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
-          </div>
+      <!-- Modal "Remover MP" removido — operação foi descontinuada; só Mover entre gaiolas existe. -->
 
-          <div class="abox warn mb14" style="margin-bottom:14px"><span class="ai">⚠️</span><div>A MP será <strong>desvinculada da gaiola atual</strong> mas continuará pesada — fica disponível para ser realocada em outra gaiola desta OP. Operação registrada na trilha de auditoria.</div></div>
-
-          <div id="gaio-remover-info" style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;margin-bottom:14px;font-size:11px;color:var(--text2)"></div>
-
-          <div class="fg" style="margin-bottom:14px">
-            <label class="lbl">Motivo da remoção <span style="font-size:9px;color:var(--text3)">(obrigatório · registrado na trilha)</span></label>
-            <textarea class="txta" id="gaio-remover-motivo" rows="2" placeholder="Ex.: MP foi adicionada por engano nesta gaiola, será descartada, reagrupamento de fase..."></textarea>
-          </div>
-
-          <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:12px;border-top:1px solid var(--border)">
-            <button class="btn btn-md btn-ghost" onclick="document.getElementById('modal-gaio-remover').style.display='none'">Cancelar</button>
-            <button class="btn btn-md btn-p" onclick="gaioConfirmarRemover()">✕ Remover MP</button>
-          </div>
-        </div>
-      </div>
 
       <!-- Gaiolas já montadas — ocupa toda a largura -->
       <div class="card">
@@ -3042,7 +2980,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:10px">BAL-01</td>
               <td style="font-size:10px;color:var(--text2)">Sala A · Box 1</td>
               <td><span class="bdg bdg-ok">✓ Impressa</span></td>
-              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'5',mat:'TEA 99% (3 sub-pesagens consolidadas)',lote:'TEA-2026-07',alvo:'1,800',pesado:'1,801',desv:'+0,001',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005 (A/B/C)',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
+              <td><span style="font-size:10px;color:var(--text3);font-style:italic" title="Esta linha é o agregado das sub-pesagens. As ações ficam disponíveis em cada sub-pesagem (expanda ▸).">Ações na sub-pesagem ↓</span></td>
             </tr>
             <!-- Sub-pesagens (filhas) — começam recolhidas; mpsToggleFrac() expande/recolhe -->
             <tr data-classe="normal" data-frac-child="MP-5593" style="display:none;cursor:pointer;background:rgba(124,168,255,.04)" onclick="pesAbrirDesvio({n:'5.1',mat:'TEA 99% — sub-pesagem 1 de 3',lote:'TEA-2026-07',alvo:'0,600',pesado:'0,601',desv:'+0,001',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005-A',status:'ok'})">
@@ -3198,48 +3136,45 @@ export const SCREENS = {
 
           <!-- Abas de ação -->
           <div style="display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:18px;flex-wrap:wrap" id="mps-popup-tabs">
-            <button onclick="mpsPoupupAba('desvio')" id="mps-tab-desvio" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--verde);border-bottom:3px solid var(--verde);margin-bottom:-2px">⚠ Adicionar</button>
+            <button onclick="mpsPoupupAba('desvio')" id="mps-tab-desvio" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--verde);border-bottom:3px solid var(--verde);margin-bottom:-2px">📦 Solicitar MP</button>
             <button onclick="mpsPoupupAba('reimprimir')" id="mps-tab-reimprimir" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--text3);border-bottom:3px solid transparent;margin-bottom:-2px">🖨️ Reimprimir</button>
-            <button onclick="mpsPoupupAba('solicitar')" id="mps-tab-solicitar" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--per);border-bottom:3px solid transparent;margin-bottom:-2px">📦 Solicitar Mais MP</button>
             <div style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:10px;color:var(--text3)">
               <span style="font-weight:900;letter-spacing:.1em;text-transform:uppercase">Status MP:</span>
               <span class="bdg bdg-alr" id="mps-popup-status" style="font-size:9px">—</span>
             </div>
           </div>
 
-          <!-- Aba: Add Desvio -->
+          <!-- Aba: Solicitar MP -->
           <div id="mps-aba-desvio">
-            <div class="abox inf" style="margin-bottom:14px"><span class="ai">🏷️</span><div>Escaneie a etiqueta da MP que será pesada para registrar a variância de pesagem. Confirme os dados antes de prosseguir.</div></div>
-            <div class="form-row" style="margin-bottom:12px">
-              <div class="fg" style="flex:1">
-                <label class="lbl">Scan da Etiqueta da MP</label>
-                <input class="inp" id="mps-desvio-scan" placeholder="Escanear ou digitar código..." style="font-family:var(--font-m)">
-              </div>
-              <button class="btn btn-sm btn-v" style="align-self:flex-end" onclick="mpsScanDesvio()">🔍 Validar</button>
-            </div>
-            <div id="mps-desvio-scan-result"></div>
-            <div style="margin-bottom:12px;margin-top:12px">
-              <label class="lbl">Tipo de pesagem</label>
-              <select class="sel" id="mps-desvio-tipo">
+            <div class="abox inf" style="margin-bottom:14px"><span class="ai">📦</span><div>Solicite uma nova MP ao Almoxarifado. Selecione o <strong>Tipo de solicitação</strong>; quando for <strong>Desvio</strong>, informe o número do desvio.</div></div>
+            <div style="margin-bottom:12px">
+              <label class="lbl">Tipo de solicitação</label>
+              <select class="sel" id="mps-desvio-tipo" onchange="mpsToggleNumDesvio()">
                 <option value="">Selecione o tipo...</option>
                 <option value="exc">Excesso de pesagem</option>
                 <option value="fal">Falta de material</option>
                 <option value="cont">Contaminação/troca de lote</option>
                 <option value="equip">Falha de equipamento (balança)</option>
                 <option value="proc">Pesagem de procedimento</option>
+                <option value="desvio">Desvio</option>
+                <option value="perda">Perda (cancela a MP)</option>
                 <option value="outro">Outro</option>
               </select>
+              <div id="mps-perda-aviso" style="display:none;margin-top:8px;padding:8px 12px;background:var(--per-p);border:1px solid var(--per-b);border-radius:6px;font-size:11px;color:var(--per);line-height:1.4">
+                <strong>⚠ Perda — atenção:</strong> ao confirmar, o status da MP <strong id="mps-perda-mp-nome">selecionada</strong> será alterado para <span class="bdg bdg-per" style="font-size:9px">⛔ Cancelado</span> e a linha será marcada como cancelada na tabela de pesagens.
+              </div>
             </div>
-            <div style="margin-bottom:12px">
-              <label class="lbl">Número da Variância de pesagem / Referência</label>
+            <div id="mps-desvio-num-wrap" style="margin-bottom:12px;display:none">
+              <label class="lbl">Número do desvio</label>
               <input class="inp" id="mps-desvio-num" placeholder="Ex: DEV-2026-0041" style="font-family:var(--font-m)">
+              <span style="font-size:10px;color:var(--text3);margin-top:3px;display:block">Obrigatório quando o Tipo de solicitação é <strong>Desvio</strong>.</span>
             </div>
             <div style="margin-bottom:16px">
               <label class="lbl">Justificativa / Observação</label>
               <textarea class="txta" id="mps-desvio-justif" placeholder="Descreva a causa e ação tomada..."></textarea>
             </div>
             <div style="display:flex;gap:10px">
-              <button class="btn btn-md btn-v" style="flex:1" onclick="mpsSalvarDesvio()">✔ Registrar Variância de pesagem</button>
+              <button class="btn btn-md btn-v" style="flex:1" onclick="mpsSalvarDesvio()">📨 Solicitar MP</button>
               <button class="btn btn-md btn-ghost" onclick="document.getElementById('modal-mps-desvio').style.display='none'">Cancelar</button>
             </div>
           </div>
@@ -3273,50 +3208,7 @@ export const SCREENS = {
             </div>
           </div>
 
-          <!-- Aba: Solicitar Mais MP -->
-          <div id="mps-aba-solicitar" style="display:none">
-            <div class="abox warn" style="margin-bottom:14px"><span class="ai">📦</span><div>Solicite quantidade adicional desta MP ao Almoxarifado. Use quando o estoque atual for insuficiente para concluir a pesagem ou quando houver desvio que exija reprocessamento.</div></div>
-
-            <!-- Resumo da MP atual -->
-            <div style="background:var(--per-p);border:1px solid var(--per-b);border-radius:8px;padding:12px 14px;margin-bottom:14px">
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11px">
-                <div>
-                  <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:3px">MP em Desvio</div>
-                  <div id="mps-solic-mat" style="font-weight:700;color:var(--per)">—</div>
-                </div>
-                <div>
-                  <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Lote / Pesado</div>
-                  <div id="mps-solic-info" style="font-family:var(--font-m);font-weight:700">—</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div class="fg">
-                <label class="lbl">Quantidade Adicional Necessária *</label>
-                <input class="inp" id="mps-solic-qtd" placeholder="Ex.: 5,000" style="font-family:var(--font-m)">
-                <span style="font-size:10px;color:var(--text3);margin-top:3px;display:block">Em kg. Considere folga de 10–20% sobre o alvo.</span>
-              </div>
-              <div class="fg" style="max-width:160px">
-                <label class="lbl">Urgência *</label>
-                <select class="sel" id="mps-solic-urg">
-                  <option value="normal">Normal (24h)</option>
-                  <option value="alta">Alta (4h)</option>
-                  <option value="critica" selected>Crítica (Imediata)</option>
-                </select>
-              </div>
-            </div>
-
-            <div style="margin-bottom:16px">
-              <label class="lbl">Justificativa *</label>
-              <textarea class="txta" id="mps-solic-just" rows="2" placeholder="Ex.: MP em desvio — pesado com variância acima do limite, necessário re-pesagem; estoque atual insuficiente."></textarea>
-            </div>
-
-            <div style="display:flex;gap:10px">
-              <button class="btn btn-md btn-v" style="flex:1" onclick="mpsEnviarSolicMP()">📨 Enviar ao Almoxarifado</button>
-              <button class="btn btn-md btn-ghost" onclick="document.getElementById('modal-mps-desvio').style.display='none'">Cancelar</button>
-            </div>
-          </div>
+          <!-- Aba "Solicitar Mais MP" REMOVIDA — funcionalidade unificada na aba "Solicitar MP" (mps-aba-desvio). -->
 
         </div>
       </div>
@@ -3349,14 +3241,16 @@ export const SCREENS = {
             statusEl.className = 'bdg bdg-ok';
           }
         }
-        // Reset tabs — se MP em desvio, abre direto na aba de Solicitar mais MP
-        var abaInicial = d.status === 'desv' ? 'solicitar' : 'desvio';
-        mpsPoupupAba(abaInicial);
-        document.getElementById('mps-desvio-scan').value = '';
-        document.getElementById('mps-desvio-scan-result').innerHTML = '';
-        document.getElementById('mps-desvio-tipo').value = '';
-        document.getElementById('mps-desvio-num').value = '';
-        document.getElementById('mps-desvio-justif').value = '';
+        // Sempre abre na aba "Solicitar MP" (a antiga "Solicitar Mais MP" foi unificada aqui).
+        // Se a MP estiver com desvio, pré-seleciona o tipo "Desvio".
+        mpsPoupupAba('desvio');
+        var tipoEl = document.getElementById('mps-desvio-tipo');
+        if (tipoEl) tipoEl.value = (d.status === 'desv') ? 'desvio' : '';
+        var numEl = document.getElementById('mps-desvio-num');
+        if (numEl) numEl.value = '';
+        var justEl = document.getElementById('mps-desvio-justif');
+        if (justEl) justEl.value = '';
+        mpsToggleNumDesvio(); // mostra/esconde "Número do desvio" conforme tipo
         document.getElementById('modal-mps-desvio').style.display = 'flex';
       }
 
@@ -3367,14 +3261,12 @@ export const SCREENS = {
       function mpsPoupupAba(aba) {
         document.getElementById('mps-aba-desvio').style.display    = aba==='desvio'     ? 'block' : 'none';
         document.getElementById('mps-aba-reimprimir').style.display= aba==='reimprimir' ? 'block' : 'none';
-        var abaSolic = document.getElementById('mps-aba-solicitar');
-        if (abaSolic) abaSolic.style.display = aba==='solicitar' ? 'block' : 'none';
-        ['desvio','reimprimir','solicitar'].forEach(function(t){
+        // (aba "solicitar" foi removida — funcionalidade unificada em "desvio" = Solicitar MP)
+        ['desvio','reimprimir'].forEach(function(t){
           var tab = document.getElementById('mps-tab-'+t);
           if (tab) {
-            var cor = t === 'solicitar' ? 'var(--per)' : 'var(--verde)';
-            tab.style.color = aba===t ? cor : 'var(--text3)';
-            tab.style.borderBottomColor = aba===t ? cor : 'transparent';
+            tab.style.color = aba===t ? 'var(--verde)' : 'var(--text3)';
+            tab.style.borderBottomColor = aba===t ? 'var(--verde)' : 'transparent';
           }
         });
         // Preencher dados da aba reimprimir com a MP selecionada
@@ -3387,30 +3279,49 @@ export const SCREENS = {
           document.getElementById('reimp-op').textContent       = _mpsSel.op   || '—';
           document.getElementById('reimp-motivo').value = '';
         }
-        if (aba === 'solicitar') {
-          var matEl = document.getElementById('mps-solic-mat');
-          var infoEl = document.getElementById('mps-solic-info');
-          var justEl = document.getElementById('mps-solic-just');
-          if (matEl) matEl.textContent = (_mpsSel.mat || '—');
-          if (infoEl) infoEl.textContent = (_mpsSel.lote || '—') + ' · pesado ' + (_mpsSel.pesado || '—') + ' kg';
-          if (justEl && !justEl.value.trim()) {
-            justEl.value = 'MP "' + (_mpsSel.mat || '') + '" pesada com variância (' + (_mpsSel.desv || '—') + ' kg). Estoque atual insuficiente para repesagem.';
-          }
-        }
       }
 
-      // Envia solicitacao adicional de MP ao Almoxarifado a partir da tela /pes-mps.
-      function mpsEnviarSolicMP() {
-        var qtd = (document.getElementById('mps-solic-qtd').value || '').trim();
-        var urg = document.getElementById('mps-solic-urg').value;
-        var just = (document.getElementById('mps-solic-just').value || '').trim();
-        if (!qtd) { alert('⚠ Informe a quantidade adicional.'); return; }
-        if (!just) { alert('⚠ Justificativa obrigatória.'); return; }
-        var protocolo = 'SOLIC-MP-' + Date.now().toString().slice(-6);
-        document.getElementById('modal-mps-desvio').style.display = 'none';
-        alert('✅ Solicitação enviada ao Almoxarifado!\\n\\nProtocolo: ' + protocolo + '\\nMP: ' + (_mpsSel.mat || '—') + '\\nQtd: ' + qtd + ' kg · Urgência: ' + urg.toUpperCase() + '\\n\\nSLA: ' + (urg === 'critica' ? 'Imediato (push)' : urg === 'alta' ? '4 horas' : '24 horas') + '\\n\\nNotificação enviada a: Almoxarifado MF5 + Líder de Pesagem.');
-        document.getElementById('mps-solic-qtd').value = '';
-        document.getElementById('mps-solic-just').value = '';
+      // Mostra/esconde campos auxiliares conforme o Tipo de solicitação:
+      //  - "Número do desvio" só quando tipo == 'desvio'
+      //  - Aviso "MP será cancelada" só quando tipo == 'perda'
+      function mpsToggleNumDesvio() {
+        var tipoEl = document.getElementById('mps-desvio-tipo');
+        var wrapNum = document.getElementById('mps-desvio-num-wrap');
+        var avisoPerda = document.getElementById('mps-perda-aviso');
+        var perdaNome = document.getElementById('mps-perda-mp-nome');
+        if (!tipoEl) return;
+        if (wrapNum)    wrapNum.style.display    = (tipoEl.value === 'desvio') ? 'block' : 'none';
+        if (avisoPerda) avisoPerda.style.display = (tipoEl.value === 'perda')  ? 'block' : 'none';
+        if (perdaNome)  perdaNome.textContent = (_mpsSel && _mpsSel.mat) ? ('"' + _mpsSel.mat + ' #' + (_mpsSel.n||'') + '"') : 'selecionada';
+      }
+
+      // Localiza a linha da MP na tabela #tbl-mps-pesadas pelo número da MP (_mpsSel.n).
+      // Suporta sub-pesagens (n "5.1") e linhas-pai consolidadas.
+      function mpsLocalizarLinha(n) {
+        if (n == null) return null;
+        var alvo = String(n);
+        var rows = document.querySelectorAll('#tbl-mps-pesadas tbody tr');
+        for (var i = 0; i < rows.length; i++) {
+          var primeiraCell = (rows[i].cells[0] && rows[i].cells[0].textContent || '').replace(/\\s|└/g,'').trim();
+          if (primeiraCell === alvo) return rows[i];
+        }
+        return null;
+      }
+
+      // Aplica visual "Cancelado" a uma linha da tabela de pesagens.
+      function mpsAplicarCancelado(tr) {
+        if (!tr) return;
+        // Penúltima célula é Status, última é Ações
+        var statusCell = tr.cells[tr.cells.length - 2];
+        if (statusCell) statusCell.innerHTML = '<span class="bdg bdg-per" style="font-weight:800">⛔ Cancelado</span>';
+        // Visual da linha
+        tr.style.background = 'var(--per-p)';
+        tr.style.opacity = '.7';
+        tr.classList.add('mps-row-cancelada');
+        // Risca o texto das células de Material/Lote/Alvo/Pesado/Desvio (não tudo pra não ficar ilegível)
+        [3,4,5,6,7].forEach(function(idx){
+          if (tr.cells[idx]) tr.cells[idx].style.textDecoration = 'line-through';
+        });
       }
 
       function mpsReimprimir() {
@@ -3445,20 +3356,52 @@ export const SCREENS = {
         );
       }
 
-      function mpsScanDesvio() {
-        var v = document.getElementById('mps-desvio-scan').value.trim();
-        if (!v) { alert('⚠ Escaneie ou informe o código da etiqueta.'); return; }
-        document.getElementById('mps-desvio-scan-result').innerHTML = '<div style="background:var(--verde-dim);border:1px solid var(--ok-b);border-radius:7px;padding:10px 14px;margin-bottom:10px;display:flex;gap:10px;align-items:center"><span>✅</span><div style="font-size:11px;color:var(--verde);font-weight:700">Etiqueta validada: ' + v + ' · MP: ' + (_mpsSel.mat||'—') + ' · Lote: ' + (_mpsSel.lote||'—') + '</div></div>';
-      }
-
+      // Envia a solicitação de MP ao Almoxarifado.
+      // Tipo "desvio" exige Número do desvio.
+      // Tipo "perda" cancela a MP selecionada (visual na tabela).
       function mpsSalvarDesvio() {
-        var tipo = document.getElementById('mps-desvio-tipo').value;
-        var num = document.getElementById('mps-desvio-num').value.trim() || 'DEV-2026-AUTO';
-        var just = document.getElementById('mps-desvio-justif').value.trim();
-        if (!tipo) { alert('⚠ Selecione o tipo de variância de pesagem.'); return; }
+        var tipoSel = document.getElementById('mps-desvio-tipo');
+        var tipo = tipoSel.value;
+        var tipoLabel = tipoSel.options[tipoSel.selectedIndex] ? tipoSel.options[tipoSel.selectedIndex].text : tipo;
+        var numEl = document.getElementById('mps-desvio-num');
+        var num = (numEl.value || '').trim();
+        var just = (document.getElementById('mps-desvio-justif').value || '').trim();
+        if (!tipo) { alert('⚠ Selecione o tipo de solicitação.'); return; }
+        if (tipo === 'desvio' && !num) { alert('⚠ Para o tipo Desvio, o "Número do desvio" é obrigatório.'); numEl.focus(); return; }
         if (!just) { alert('⚠ Preencha a justificativa.'); return; }
+
+        // Confirmação adicional para Perda (ação destrutiva visualmente)
+        if (tipo === 'perda') {
+          var okPerda = confirm(
+            '⛔ Confirmar registro de PERDA?\\n\\n' +
+            'MP: ' + (_mpsSel.mat || '—') + ' #' + (_mpsSel.n || '—') + '\\n' +
+            'Etiqueta: ' + (_mpsSel.etq || '—') + '\\n\\n' +
+            'O status desta MP será alterado para CANCELADO e a linha ficará marcada na tabela.\\n\\n' +
+            'Esta operação é registrada na trilha de auditoria.'
+          );
+          if (!okPerda) return;
+        }
+
+        var protocolo = (tipo === 'perda' ? 'PERDA-MP-' : 'SOLIC-MP-') + Date.now().toString().slice(-6);
         document.getElementById('modal-mps-desvio').style.display = 'none';
-        alert('✅ Variância de pesagem registrada com sucesso!\\nNúmero: ' + num + '\\nMP: ' + _mpsSel.mat + '\\nTipo: ' + tipo + '\\nEtiqueta gerada com referência à variância de pesagem.');
+
+        // Aplicar o cancelamento visual quando tipo == perda
+        if (tipo === 'perda') {
+          var tr = mpsLocalizarLinha(_mpsSel.n);
+          mpsAplicarCancelado(tr);
+        }
+
+        alert(
+          (tipo === 'perda' ? '⛔ Perda registrada · MP CANCELADA' : '📨 Solicitação de MP enviada ao Almoxarifado') + '!\\n\\n' +
+          'Protocolo: ' + protocolo + '\\n' +
+          'MP: ' + (_mpsSel.mat || '—') + '\\n' +
+          'Tipo: ' + tipoLabel +
+          (tipo === 'desvio' ? '\\nNº Desvio: ' + num : '') +
+          '\\n\\nJustificativa: ' + just +
+          (tipo === 'perda'
+            ? '\\n\\nLinha marcada como CANCELADA na tabela. Notificação: Líder de Pesagem + Qualidade.'
+            : '\\n\\nNotificação enviada a: Almoxarifado MF5 + Líder de Pesagem.')
+        );
       }
 
       </script>
