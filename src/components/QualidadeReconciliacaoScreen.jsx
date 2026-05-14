@@ -81,6 +81,9 @@ const BASE_MOCK = {
       { lote: '2402/2026', wo: 'WO 784302', peso: '2.000 kg', status: 'APROVADO' },
       { lote: '2403/2026', wo: 'WO 784303', peso: '1.500 kg', status: 'APROVADO' },
     ],
+    // Ordem Parcial — lote dividido em N OFs por capacidade da linha.
+    // Amostras de retenção e parte do checklist têm tratamento diferenciado.
+    ordemParcial: true,
     lotePA: '261892',
     loteFabricacao: 'WO 784301',
     dataFabricacao: '2026-04-08',
@@ -175,6 +178,25 @@ const MOCK_AMOSTRAS = {
     { id: 35, tipo: 'fq',           caixa: '07', pallet: 'P-02', posicao: 'Estante B · Col 2', quantidade: '2 un', observacao: '', destruida: false, dataColeta: '2026-03-28' },
     { id: 36, tipo: 'estabilidade', caixa: '07A', pallet: 'P-02', posicao: 'Câmara 25°C', quantidade: '6 un', observacao: 'Estudo 36 meses', destruida: false, dataColeta: '2026-03-28' },
   ],
+};
+
+// Mock de anexos por lote PA. Slots: foto_etiqueta (obrigatório),
+// boletim_lims (obrigatório), dados_brutos (opcional).
+const MOCK_ANEXOS = {
+  '262417': {
+    foto_etiqueta: { nome: 'etiqueta_granel_2551.jpg', tamanho: '1,4 MB', data: '16/04/2026 14:32' },
+    boletim_lims:  { nome: 'boletim_lims_118502.pdf', tamanho: '328 KB',  data: '17/04/2026 09:10' },
+  },
+  '261892': {
+    foto_etiqueta: { nome: 'etiqueta_granel_2401.jpg', tamanho: '1,2 MB', data: '08/04/2026 11:15' },
+    boletim_lims:  { nome: 'boletim_lims_118420.pdf', tamanho: '301 KB',  data: '09/04/2026 08:45' },
+    dados_brutos:  { nome: 'analise_fq_lote_261892.xlsx', tamanho: '64 KB', data: '09/04/2026 09:02' },
+  },
+  '261104': {
+    // Foto etiqueta intencionalmente ausente — demonstra estado de
+    // bloqueio (slot obrigatório sem anexo).
+    boletim_lims: { nome: 'boletim_lims_118380.pdf', tamanho: '294 KB', data: '30/03/2026 16:20' },
+  },
 };
 
 const STATUS_COLOR = {
@@ -544,6 +566,174 @@ function MultibatchBlock({ granelLotes, loteGranelLegacy }) {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   AnexosCard — 3 slots de anexo do lote
+   (Foto da Etiqueta do Granel · Boletim LIMS · Dados Brutos).
+   Reunião GQV/CQ 12/05/2026 — discutido a partir do minuto 18:53
+   (Henrique→Carlos→Lorena): a foto da etiqueta tem que ser
+   anexada NO MOMENTO da fabricação. Anexo ausente = bloqueia
+   liberação. Mockup: drag-and-drop / clique pra adicionar.
+───────────────────────────────────────────────────────────── */
+function AnexoSlot({ slot, anexo, onUpload, onRemove }) {
+  const tem = !!anexo;
+  return (
+    <div style={{
+      flex: 1, minWidth: 220,
+      background: 'var(--surface)',
+      border: `1.5px ${tem ? 'solid' : 'dashed'} ${tem ? 'var(--ok-b)' : (slot.obrigatorio ? 'var(--alr-b)' : 'var(--border2)')}`,
+      borderRadius: 7, padding: '10px 12px',
+      display: 'flex', flexDirection: 'column', gap: 6,
+      position: 'relative',
+    }}>
+      {slot.obrigatorio && !tem && (
+        <span style={{
+          position: 'absolute', top: -8, right: 10,
+          fontSize: 9, fontWeight: 900, letterSpacing: '.08em',
+          background: 'var(--alr)', color: '#fff',
+          padding: '2px 7px', borderRadius: 8,
+          border: '1px solid var(--alr-b)',
+        }}>
+          OBRIGATÓRIO
+        </span>
+      )}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{ fontSize: 18 }}>{slot.icon}</span>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--text)' }}>{slot.titulo}</div>
+          <div style={{ fontSize: 10, color: 'var(--text3)' }}>{slot.descricao}</div>
+        </div>
+      </div>
+      {tem ? (
+        <div style={{
+          background: 'var(--ok-p)', border: '1px solid var(--ok-b)',
+          borderRadius: 5, padding: '6px 10px',
+          fontSize: 11, color: 'var(--ok)',
+          display: 'flex', alignItems: 'center', gap: 8,
+        }}>
+          <span>✓</span>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {anexo.nome}
+            </div>
+            <div style={{ fontSize: 9, color: 'var(--text3)' }}>
+              {anexo.tamanho} · enviado em {anexo.data}
+            </div>
+          </div>
+          <button
+            onClick={onRemove}
+            style={{
+              background: 'none', border: '1px solid var(--per-b)', color: 'var(--per)',
+              borderRadius: 4, padding: '2px 6px', fontSize: 10,
+              cursor: 'pointer', fontFamily: 'inherit',
+            }}
+            title="Remover anexo"
+          >
+            ✕
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={onUpload}
+          style={{
+            background: 'var(--surface2)', border: '1px dashed var(--border)',
+            color: 'var(--text2)', borderRadius: 5, padding: '12px 10px',
+            fontSize: 11, fontFamily: 'inherit', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+          }}
+        >
+          📎 Clique para anexar
+        </button>
+      )}
+    </div>
+  );
+}
+
+function AnexosCard({ anexos, setAnexos, ordemParcial }) {
+  const SLOTS = [
+    { key: 'foto_etiqueta', icon: '📸', titulo: 'Foto da Etiqueta do Granel',
+      descricao: 'Anexada no momento do envase (Fabricação)', obrigatorio: true },
+    { key: 'boletim_lims',  icon: '📊', titulo: 'Boletim LIMS (FQ / Micro)',
+      descricao: 'PDF gerado pelo Customer Report do LIMS', obrigatorio: true },
+    { key: 'dados_brutos',  icon: '🗂️', titulo: 'Dados Brutos da Análise',
+      descricao: 'CSV/PDF/XLS — análise tabulada', obrigatorio: false },
+  ];
+
+  const simularUpload = (key) => {
+    // Mock: simula seleção de arquivo
+    const fakeNomes = {
+      foto_etiqueta: 'etiqueta_granel_2551.jpg',
+      boletim_lims:  'boletim_lims_118502.pdf',
+      dados_brutos:  'analise_fq_dados_brutos.xlsx',
+    };
+    const fakeTamanhos = {
+      foto_etiqueta: '1,4 MB',
+      boletim_lims:  '328 KB',
+      dados_brutos:  '64 KB',
+    };
+    setAnexos((prev) => ({
+      ...prev,
+      [key]: {
+        nome: fakeNomes[key] || `${key}.pdf`,
+        tamanho: fakeTamanhos[key] || '— KB',
+        data: new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }),
+      },
+    }));
+  };
+  const remover = (key) => {
+    setAnexos((prev) => {
+      const { [key]: _, ...rest } = prev;
+      return rest;
+    });
+  };
+
+  const obrigatoriosFaltando = SLOTS.filter((s) => s.obrigatorio && !anexos[s.key]);
+
+  return (
+    <div className="card mb14" style={{
+      padding: 14,
+      borderTop: `3px solid ${obrigatoriosFaltando.length === 0 ? 'var(--ok)' : 'var(--alr)'}`,
+    }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        gap: 10, flexWrap: 'wrap', marginBottom: 10,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 14, fontWeight: 800 }}>📎 Anexos do Lote</span>
+          {obrigatoriosFaltando.length === 0 ? (
+            <span className="bdg bdg-ok" style={{ fontSize: 10 }}>
+              ✓ Todos obrigatórios anexados
+            </span>
+          ) : (
+            <span className="bdg bdg-alr" style={{ fontSize: 10 }}>
+              ⚠ Faltam {obrigatoriosFaltando.length} anexo(s) obrigatório(s)
+            </span>
+          )}
+          <span style={{
+            fontSize: 9, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase',
+            color: 'var(--text3)', padding: '2px 6px',
+            border: '1px dashed var(--border2)', borderRadius: 8,
+          }}>
+            evidência GMP
+          </span>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+        {SLOTS.map((s) => (
+          <AnexoSlot
+            key={s.key}
+            slot={s}
+            anexo={anexos[s.key]}
+            onUpload={() => simularUpload(s.key)}
+            onRemove={() => remover(s.key)}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -1563,6 +1753,11 @@ export default function QualidadeReconciliacaoScreen() {
   // grava direto na base do Estoque de Retenção (acessivel pela tela
   // gerencial /qual-amostras).
   const [amostras, setAmostras] = useState([]);
+  // Wave 2.5 — Anexos do Lote (Foto Etiqueta, Boletim LIMS, Dados Brutos).
+  // Mapa { slot_key: { nome, tamanho, data } } — em produção vira upload
+  // pro repositório de evidências (S3 / SharePoint). Foto Etiqueta e
+  // Boletim LIMS são obrigatórios → bloqueiam liberação.
+  const [anexos, setAnexos] = useState({});
 
   // Quando aberta a partir da Fila (/qual-fila) com ?lote=<PA>,
   // mostramos um botao "Voltar para Fila" no header.
@@ -1590,6 +1785,7 @@ export default function QualidadeReconciliacaoScreen() {
     setNumeroLote('NOVO-' + numero);
     setLote(loteTemplate(numero));
     setAmostras([]);
+    setAnexos({});
     setModo('criacao');
     setErro('');
     setMensagem('🆕 Nova Reconciliação iniciada — Nº ' + numero + ' (gerado via integração JDE).');
@@ -1616,11 +1812,18 @@ export default function QualidadeReconciliacaoScreen() {
         setErro(`Lote PA "${alvo}" não encontrado ou ainda não finalizou a etapa de embalagem.`);
         setLote(null);
         setAmostras([]);
+        setAnexos({});
       } else {
         setLote(JSON.parse(JSON.stringify(dados)));
         // Mock seed: lotes conhecidos já vêm com amostras coletadas
         // do envase (Início/Meio/Fim + Micro + FQ).
         setAmostras(MOCK_AMOSTRAS[key] || []);
+        // Mock seed dos anexos — em produção vem do repositório.
+        setAnexos(MOCK_ANEXOS[key] || {});
+        // Sincroniza flag de Ordem Parcial vinda do JDE com o
+        // checklist (Anexo 2 do POP-GQV-0009) — afeta a obrigatoriedade
+        // de amostras Início/Meio/Fim.
+        setChecklist((c) => ({ ...c, ordemParcial: !!dados.ordemParcial }));
       }
       setCarregando(false);
     }, 400);
@@ -1644,9 +1847,19 @@ export default function QualidadeReconciliacaoScreen() {
   const desviosAbertos = desvios.filter((d) => d.status !== 'tratado' && d.status !== 'fechado');
   const desviosBloqueando = desviosAbertos.length > 0;
 
-  const podeLiberar = todasAprovadas && checklistCompleto && !desviosBloqueando;
+  // Wave 2.5 — Anexos obrigatórios faltando bloqueiam a liberação.
+  const anexosObrigatorios = ['foto_etiqueta', 'boletim_lims'];
+  const anexosFaltando = anexosObrigatorios.filter((k) => !anexos[k]);
+  const anexosBloqueando = anexosFaltando.length > 0;
+
+  const podeLiberar = todasAprovadas && checklistCompleto && !desviosBloqueando && !anexosBloqueando;
 
   const liberarParaCED = () => {
+    if (anexosBloqueando) {
+      const nomes = anexosFaltando.map((k) => k === 'foto_etiqueta' ? 'Foto da Etiqueta' : 'Boletim LIMS').join(' e ');
+      setMensagem(`⚠ Anexo obrigatório faltando: ${nomes}. Anexe antes de liberar para o CED.`);
+      return;
+    }
     if (!checklistCompleto) {
       setMensagem(`⚠ Preencha o Checklist de Reconciliação (POP-GQV-0009) antes de liberar. Itens marcados: ${checklistMarcados}/${checklistTotal}.`);
       return;
@@ -1693,7 +1906,23 @@ export default function QualidadeReconciliacaoScreen() {
       <div className="page-header">
         <div>
           <div className="ph-eyebrow">Qualidade · CQ · ERU 6.1.x — Reconciliação Técnica</div>
-          <div className="ph-title">Reconciliação Técnica & Liberação de Lote</div>
+          <div className="ph-title" style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            Reconciliação Técnica & Liberação de Lote
+            {lote && checklist.ordemParcial && (
+              <span
+                className="bdg"
+                style={{
+                  fontSize: 10, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase',
+                  background: 'var(--inf-p)', color: 'var(--inf)',
+                  border: '1.5px solid var(--inf-b)',
+                  padding: '3px 9px', borderRadius: 10,
+                }}
+                title="Lote produzido em ordens parciais (dividido em N OFs). Amostras de retenção Início/Meio/Fim são opcionais."
+              >
+                🧩 Ordem Parcial
+              </span>
+            )}
+          </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           {veioDaFila && (
@@ -1743,7 +1972,7 @@ export default function QualidadeReconciliacaoScreen() {
           </button>
           <button
             className="btn btn-md btn-ghost"
-            onClick={() => { setNumeroLote(''); setLote(null); setAmostras([]); setErro(''); setMensagem(''); setModo('analise'); }}
+            onClick={() => { setNumeroLote(''); setLote(null); setAmostras([]); setAnexos({}); setErro(''); setMensagem(''); setModo('analise'); }}
           >
             Limpar
           </button>
@@ -1895,6 +2124,9 @@ export default function QualidadeReconciliacaoScreen() {
             />
           </div>
 
+          {/* ── Wave 2.5 — Anexos do Lote ──────────────── */}
+          <AnexosCard anexos={anexos} setAnexos={setAnexos} ordemParcial={checklist.ordemParcial} />
+
           {/* ── Wave 1.1 — Amostras de Retenção ─────────── */}
           <AmostrasRetencaoCard
             amostras={amostras}
@@ -2041,6 +2273,8 @@ export default function QualidadeReconciliacaoScreen() {
                 title={
                   !todasAprovadas
                     ? 'Todas as áreas precisam estar APROVADAS ou N/A'
+                    : anexosBloqueando
+                    ? `Faltam ${anexosFaltando.length} anexo(s) obrigatório(s)`
                     : !checklistCompleto
                     ? 'Preencha o Checklist de Reconciliação antes de liberar'
                     : desviosBloqueando
@@ -2064,9 +2298,11 @@ export default function QualidadeReconciliacaoScreen() {
               </button>
               <div style={{ fontSize: 10, color: 'var(--text3)', textAlign: 'right', maxWidth: 230, lineHeight: 1.5 }}>
                 {podeLiberar
-                  ? '✓ Pronto para liberar — áreas + checklist + correções OK.'
+                  ? '✓ Pronto para liberar — áreas + anexos + checklist + correções OK.'
                   : !todasAprovadas
                   ? 'Liberação habilita quando as 4 áreas estão APROVADAS ou N/A.'
+                  : anexosBloqueando
+                  ? `Falta(m) ${anexosFaltando.length} anexo(s) obrigatório(s).`
                   : !checklistCompleto
                   ? 'Falta o Checklist de Reconciliação.'
                   : `${desviosAbertos.length} registro(s) em aberto — trate antes de liberar.`}

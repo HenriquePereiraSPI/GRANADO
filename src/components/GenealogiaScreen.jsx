@@ -19,6 +19,27 @@ const AREA_PARA_NO = {
 };
 
 /**
+ * Wave 2.6 — Genealogia em abas por fase.
+ * Cada aba filtra a cadeia em um subconjunto de nós. Aba "Todos"
+ * mostra a cadeia completa (comportamento legado).
+ */
+const FASES = [
+  { id: 'todos',     label: 'Todos',     icon: '🧬', ids: null },
+  { id: 'pesagem',   label: 'Pesagem',   icon: '⚖️', ids: ['mp', 'pesagem'] },
+  { id: 'fabricacao',label: 'Fabricação',icon: '🧪', ids: ['fabricacao', 'granel'] },
+  { id: 'qualidade', label: 'Qualidade', icon: '🔬', ids: ['lims-granel', 'cama-indiana', 'cq-ean', 'lims-pa'] },
+  { id: 'embalagem', label: 'Embalagem', icon: '📦', ids: ['embalagem-ean', 'embalagem-dun'] },
+  { id: 'liberacao', label: 'Liberação', icon: '✓',  ids: ['liberacao'] },
+];
+
+const AREA_PARA_FASE = {
+  fabricacao:    'fabricacao',
+  embalagem:     'embalagem',
+  fisicoQuimico: 'qualidade',
+  microbiologia: 'qualidade',
+};
+
+/**
  * Tela "Genealogia de Lote" — Dossie Eletronico de Producao (EBR).
  * Apresenta o ciclo completo de um batch como uma cadeia genealogica
  * vertical (MPs -> Pesagem -> Fabricacao -> Granel -> ... -> Liberacao
@@ -64,11 +85,26 @@ export default function GenealogiaScreen() {
 
   const [DOSSIE, setDossie] = useState(dossieInicial);
 
+  // Wave 2.6 — Aba de fase ativa. Se a tela foi aberta com ?area=...,
+  // pré-seleciona a aba correspondente (ex: ?area=fabricacao → fabricacao).
+  const [faseAtiva, setFaseAtiva] = useState(() => {
+    const a = searchParams.get('area');
+    return (a && AREA_PARA_FASE[a]) || 'todos';
+  });
+
   const [expandidos, setExpandidos] = useState(() => {
     const base = new Set(['mp', 'fabricacao', 'granel']);
     if (noAreaInicial) base.add(noAreaInicial);
     return base;
   });
+
+  // Filtra a cadeia conforme a fase ativa (Wave 2.6).
+  const cadeiaFiltrada = useMemo(() => {
+    const fase = FASES.find((f) => f.id === faseAtiva);
+    if (!fase || !fase.ids) return DOSSIE.cadeia;
+    const set = new Set(fase.ids);
+    return DOSSIE.cadeia.filter((n) => set.has(n.id));
+  }, [DOSSIE, faseAtiva]);
 
   // Quando vier de outra tela com ?area=..., faz scroll suave ate o no.
   useEffect(() => {
@@ -193,34 +229,90 @@ export default function GenealogiaScreen() {
         )}
       </div>
 
+      {/* ── Wave 2.6 — Tabs por Fase ───────────────────────── */}
+      <div style={{
+        display: 'flex', flexWrap: 'wrap', gap: 4,
+        marginBottom: 14, paddingBottom: 0,
+        borderBottom: '2px solid var(--border)',
+      }}>
+        {FASES.map((f) => {
+          const ativo = faseAtiva === f.id;
+          const count = f.ids ? DOSSIE.cadeia.filter((n) => f.ids.includes(n.id)).length : DOSSIE.cadeia.length;
+          return (
+            <button
+              key={f.id}
+              type="button"
+              onClick={() => setFaseAtiva(f.id)}
+              style={{
+                background: ativo ? 'var(--verde)' : 'var(--surface)',
+                color: ativo ? '#fff' : 'var(--text2)',
+                border: '1px solid var(--border)',
+                borderBottom: ativo ? '2px solid var(--verde)' : '1px solid var(--border)',
+                marginBottom: -2,
+                borderRadius: '6px 6px 0 0',
+                padding: '8px 16px',
+                fontSize: 12, fontWeight: 700,
+                fontFamily: 'inherit',
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: 6,
+              }}
+            >
+              <span style={{ fontSize: 14 }}>{f.icon}</span>
+              {f.label}
+              <span style={{
+                fontSize: 10, fontWeight: 800,
+                padding: '1px 6px', borderRadius: 8,
+                background: ativo ? 'rgba(255,255,255,.22)' : 'var(--surface2)',
+                color: ativo ? '#fff' : 'var(--text3)',
+                border: `1px solid ${ativo ? 'rgba(255,255,255,.4)' : 'var(--border)'}`,
+              }}>
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* ── Cadeia genealógica ──────────────────────────────── */}
       <div style={{ position: 'relative' }}>
         {/* linha vertical de fundo conectando os nós */}
-        <div
-          aria-hidden
-          style={{
-            position: 'absolute',
-            left: 30,
-            top: 32,
-            bottom: 32,
-            width: 3,
-            background: 'linear-gradient(to bottom, var(--verde), var(--ouro-claro), var(--ok))',
-            borderRadius: 2,
-            zIndex: 0,
-          }}
-        />
-
-        {DOSSIE.cadeia.map((no, idx) => (
-          <NoCadeia
-            key={no.id}
-            no={no}
-            ordem={idx + 1}
-            total={DOSSIE.cadeia.length}
-            expandido={expandidos.has(no.id)}
-            onToggle={() => toggle(no.id)}
-            dossie={DOSSIE}
+        {cadeiaFiltrada.length > 1 && (
+          <div
+            aria-hidden
+            style={{
+              position: 'absolute',
+              left: 30,
+              top: 32,
+              bottom: 32,
+              width: 3,
+              background: 'linear-gradient(to bottom, var(--verde), var(--ouro-claro), var(--ok))',
+              borderRadius: 2,
+              zIndex: 0,
+            }}
           />
-        ))}
+        )}
+
+        {cadeiaFiltrada.length === 0 ? (
+          <div style={{
+            padding: 30, textAlign: 'center', color: 'var(--text3)',
+            background: 'var(--surface2)', border: '1px dashed var(--border)',
+            borderRadius: 6, fontSize: 12,
+          }}>
+            Nenhum nó da cadeia para esta fase neste dossiê.
+          </div>
+        ) : (
+          cadeiaFiltrada.map((no, idx) => (
+            <NoCadeia
+              key={no.id}
+              no={no}
+              ordem={idx + 1}
+              total={cadeiaFiltrada.length}
+              expandido={expandidos.has(no.id)}
+              onToggle={() => toggle(no.id)}
+              dossie={DOSSIE}
+            />
+          ))
+        )}
       </div>
     </div>
   );
