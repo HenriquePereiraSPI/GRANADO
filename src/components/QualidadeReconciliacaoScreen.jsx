@@ -35,7 +35,14 @@ const BASE_MOCK = {
     filial: '0015 - Casa Granado',
     produtoAcabado: 'S0815B_G — Sabonete Glicerinado Tradicional 90g',
     granel: 'S0815B — TRANSP GRANADO GLICERINA',
-    loteGranel: '2551/2026',
+    loteGranel: '2551/2026', // mantido para compat — agora ver granelLotes[]
+    // Multibatch: N granéis fechando 1 lote PA (combinação rotineira na
+    // fábrica — ver reunião GQV/CQ 12/05/2026, Carlos Lima @22:41).
+    // Cada item tem o seu próprio Nº de OF (WO) e batch fabricação.
+    granelLotes: [
+      { lote: '2551/2026', wo: 'WO 784426', peso: '4.000 kg', status: 'APROVADO' },
+      { lote: '2552/2026', wo: 'WO 784427', peso: '2.000 kg', status: 'APROVADO' },
+    ],
     lotePA: '262417',
     loteFabricacao: 'WO 784426',
     dataFabricacao: '2026-04-16',
@@ -68,6 +75,12 @@ const BASE_MOCK = {
     produtoAcabado: 'S0822B_G — Sabonete Glicerinado Limão Siciliano 90g',
     granel: 'S0822B — TRANSP GRANADO LIMÃO SICILIANO',
     loteGranel: '2401/2026',
+    // Multibatch (3 granéis pra esse PA)
+    granelLotes: [
+      { lote: '2401/2026', wo: 'WO 784301', peso: '2.000 kg', status: 'APROVADO' },
+      { lote: '2402/2026', wo: 'WO 784302', peso: '2.000 kg', status: 'APROVADO' },
+      { lote: '2403/2026', wo: 'WO 784303', peso: '1.500 kg', status: 'APROVADO' },
+    ],
     lotePA: '261892',
     loteFabricacao: 'WO 784301',
     dataFabricacao: '2026-04-08',
@@ -101,6 +114,11 @@ const BASE_MOCK = {
     produtoAcabado: 'S0830B_G — Sabonete Glicerinado Mel 90g',
     granel: 'S0830B — TRANSP GRANADO MEL',
     loteGranel: '2298/2026',
+    // Multibatch (caso "single-batch" — 1 granel só fechando o PA;
+    // mesmo assim renderiza a tabela pra padronizar a UI).
+    granelLotes: [
+      { lote: '2298/2026', wo: 'WO 783897', peso: '4.000 kg', status: 'APROVADO' },
+    ],
     lotePA: '261104',
     loteFabricacao: 'WO 783897',
     dataFabricacao: '2026-03-28',
@@ -131,6 +149,32 @@ const BASE_MOCK = {
       },
     },
   },
+};
+
+// Mock de amostras de retenção por lote PA. Em produção virá da
+// integração com o módulo de Estoque de Retenção (mesma base do
+// /qual-amostras gerencial).
+const MOCK_AMOSTRAS = {
+  '262417': [
+    { id: 11, tipo: 'inicio', caixa: '12', pallet: 'P-07', posicao: 'Estante A · Col 3', quantidade: '3 un', observacao: 'Coleta padrão início de envase', destruida: false, dataColeta: '2026-04-16' },
+    { id: 12, tipo: 'meio',   caixa: '13', pallet: 'P-07', posicao: 'Estante A · Col 3', quantidade: '3 un', observacao: '', destruida: false, dataColeta: '2026-04-16' },
+    { id: 13, tipo: 'fim',    caixa: '14', pallet: 'P-07', posicao: 'Estante A · Col 3', quantidade: '3 un', observacao: '', destruida: false, dataColeta: '2026-04-16' },
+    { id: 14, tipo: 'micro',  caixa: '15', pallet: 'P-08', posicao: 'Geladeira micro', quantidade: '2 un', observacao: 'Para análise de patógenos', destruida: false, dataColeta: '2026-04-16' },
+    { id: 15, tipo: 'fq',     caixa: '16', pallet: 'P-08', posicao: 'Estante B · Col 1', quantidade: '2 un', observacao: 'pH/umidade/densidade', destruida: false, dataColeta: '2026-04-16' },
+  ],
+  '261892': [
+    { id: 21, tipo: 'inicio', caixa: '08', pallet: 'P-04', posicao: 'Estante A · Col 1', quantidade: '3 un', observacao: '', destruida: false, dataColeta: '2026-04-08' },
+    { id: 22, tipo: 'fim',    caixa: '09', pallet: 'P-04', posicao: 'Estante A · Col 1', quantidade: '3 un', observacao: '', destruida: false, dataColeta: '2026-04-08' },
+    { id: 23, tipo: 'micro',  caixa: '10', pallet: 'P-04', posicao: 'Geladeira micro', quantidade: '2 un', observacao: '', destruida: false, dataColeta: '2026-04-08' },
+  ],
+  '261104': [
+    { id: 31, tipo: 'inicio',       caixa: '03', pallet: 'P-02', posicao: 'Estante A · Col 2', quantidade: '3 un', observacao: '', destruida: false, dataColeta: '2026-03-28' },
+    { id: 32, tipo: 'meio',         caixa: '04', pallet: 'P-02', posicao: 'Estante A · Col 2', quantidade: '3 un', observacao: '', destruida: false, dataColeta: '2026-03-28' },
+    { id: 33, tipo: 'fim',          caixa: '05', pallet: 'P-02', posicao: 'Estante A · Col 2', quantidade: '3 un', observacao: '', destruida: false, dataColeta: '2026-03-28' },
+    { id: 34, tipo: 'micro',        caixa: '06', pallet: 'P-02', posicao: 'Geladeira micro', quantidade: '2 un', observacao: '', destruida: false, dataColeta: '2026-03-28' },
+    { id: 35, tipo: 'fq',           caixa: '07', pallet: 'P-02', posicao: 'Estante B · Col 2', quantidade: '2 un', observacao: '', destruida: false, dataColeta: '2026-03-28' },
+    { id: 36, tipo: 'estabilidade', caixa: '07A', pallet: 'P-02', posicao: 'Câmara 25°C', quantidade: '6 un', observacao: 'Estudo 36 meses', destruida: false, dataColeta: '2026-03-28' },
+  ],
 };
 
 const STATUS_COLOR = {
@@ -181,19 +225,45 @@ const AREAS_DESVIO = [
   { value: 'geral',         label: '🌐 Geral / Lote' },
 ];
 
-/** Gera numero de desvio no formato DSV-AAAA-NNNN. */
+// ─────────────────────────────────────────────────────────────
+// Classificação do Registro de Correção — categorização rápida
+// das ocorrências mais comuns que aparecem na conferência do CQ
+// (extraída da reunião G.Q.V./C.Q. de 12/05/2026, Barbara/Fabiana/
+// Gustavo). Permite tabular ofensores recorrentes no painel
+// gerencial (Wave 2 — Dashboard de Correções).
+// ─────────────────────────────────────────────────────────────
+const CLASSIFICACAO_CORRECAO = [
+  { value: 'ausencia_etiqueta',     label: 'Ausência de Etiqueta' },
+  { value: 'falta_data',            label: 'Falta de Data / Hora' },
+  { value: 'falta_assinatura',      label: 'Falta de Assinatura / Rubrica' },
+  { value: 'divergencia_pesagem',   label: 'Divergência de Pesagem' },
+  { value: 'divergencia_rotulagem', label: 'Divergência de Rotulagem' },
+  { value: 'rasura_documento',      label: 'Rasura em Documento' },
+  { value: 'campo_branco',          label: 'Campo em Branco' },
+  { value: 'fora_especificacao',    label: 'Fora de Especificação' },
+  { value: 'foto_etiqueta_ausente', label: 'Foto da Etiqueta não Anexada' },
+  { value: 'boletim_pendente',      label: 'Boletim LIMS Pendente' },
+  { value: 'outro',                 label: 'Outro' },
+];
+
+/** Gera numero de registro de correção no formato RC-AAAA-NNNN.
+ *  (Renomeado de DSV em 14/05/2026 conforme reunião G.Q.V./C.Q. —
+ *  o termo "desvio" tem peso regulatório forte; o que o CQ abre na
+ *  reconciliação são ocorrências documentais/operacionais menores,
+ *  por isso o nome "Registro de Correção" é mais adequado.) */
 function gerarNumeroDesvio() {
   const ano = new Date().getFullYear();
   const seq = String(Math.floor(Math.random() * 9000) + 1000);
-  return `DSV-${ano}-${seq}`;
+  return `RC-${ano}-${seq}`;
 }
 
-/** Template de desvio vazio para o formulario "Novo Desvio". */
+/** Template de Registro de Correção vazio para o formulario "Novo Registro". */
 function desvioTemplate() {
   return {
     id: null,
     numero: gerarNumeroDesvio(),
     tipo: 'documental',
+    classificacao: 'ausencia_etiqueta',
     severidade: 'moderado',
     area: 'geral',
     titulo: '',
@@ -247,6 +317,46 @@ const AREA_COR = {
   fisicoQuimico: { fg: '#FFFFFF', bg: 'var(--verde-meio)',label: 'Físico-Químico', icon: '⚗️' },
   microbiologia: { fg: '#FFFFFF', bg: '#7A4A9A',          label: 'Microbiologia',  icon: '🔬' },
 };
+
+// ─────────────────────────────────────────────────────────────
+// Amostras de Retenção — caixas guardadas no estoque de retenção
+// por 1 ano após a validade do lote (ANVISA RDC 658/2022).
+// Reunião GQV/CQ 12/05/2026: Barbara/Fabiana pediram que a tela de
+// reconciliação tivesse o cadastro das amostras (tipo, caixa, pallet,
+// posição) e que houvesse uma tela gerencial pra consulta posterior
+// na hora da destruição.
+//
+// Tipos da reunião:
+//   - inicio       — coletada no início do envase
+//   - meio         — meio da rodada
+//   - fim          — fim do envase
+//   - micro        — destinada à microbiologia
+//   - fq           — destinada ao físico-químico
+//   - estabilidade — amostra extra pra estudo de estabilidade
+// ─────────────────────────────────────────────────────────────
+const AMOSTRA_TIPOS = [
+  { value: 'inicio',       label: 'Início',        icon: '🟢' },
+  { value: 'meio',         label: 'Meio',          icon: '🟡' },
+  { value: 'fim',          label: 'Fim',           icon: '🔴' },
+  { value: 'micro',        label: 'Microbiologia', icon: '🔬' },
+  { value: 'fq',           label: 'Físico-Químico',icon: '⚗️' },
+  { value: 'estabilidade', label: 'Estabilidade',  icon: '📈' },
+];
+
+/** Template de amostra vazia para o formulario. */
+function amostraTemplate() {
+  return {
+    id: null,
+    tipo: 'inicio',
+    caixa: '',
+    pallet: '',
+    posicao: '',          // ex.: "Estante A · Coluna 3"
+    quantidade: '',
+    observacao: '',
+    destruida: false,
+    dataColeta: new Date().toISOString().split('T')[0],
+  };
+}
 
 /* ─────────────────────────────────────────────────────────────
    Helpers de UI
@@ -341,6 +451,375 @@ function CampoSelect({ label, value, opcoes, onChange, obrigatorio }) {
           <option key={o.value} value={o.value}>{o.value}</option>
         ))}
       </select>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MultibatchBlock — exibe N granéis que compõem 1 lote PA.
+   Render no cabeçalho de Identificação, logo abaixo da grid 4×N
+   de campos. Mostra Lote/WO/Peso/Status de cada granel.
+───────────────────────────────────────────────────────────── */
+function MultibatchBlock({ granelLotes, loteGranelLegacy }) {
+  // Fallback pra mocks/templates legados que ainda só tem loteGranel string
+  const lotes = (granelLotes && granelLotes.length > 0)
+    ? granelLotes
+    : (loteGranelLegacy
+        ? [{ lote: loteGranelLegacy, wo: '—', peso: '—', status: 'PENDENTE' }]
+        : []);
+  const isMulti = lotes.length > 1;
+  return (
+    <div style={{ marginTop: 12, borderTop: '1px dashed var(--border)', paddingTop: 12 }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+        marginBottom: 6,
+      }}>
+        <span style={{
+          fontSize: 10, fontWeight: 900, letterSpacing: '.14em', textTransform: 'uppercase',
+          color: 'var(--text3)',
+        }}>
+          {isMulti ? '🔀 Multibatch — Granéis que compõem o PA' : 'Granel de Origem'}
+        </span>
+        {isMulti && (
+          <span className="bdg" style={{
+            fontSize: 9, background: 'var(--ouro-claro)', color: '#fff',
+            border: '1px solid var(--ouro)', fontWeight: 800,
+          }}>
+            {lotes.length} GRANÉIS
+          </span>
+        )}
+        {lotes.length === 0 && (
+          <span style={{ fontSize: 10, color: 'var(--text3)', fontStyle: 'italic' }}>
+            — sem granéis vinculados
+          </span>
+        )}
+      </div>
+
+      {lotes.length > 0 && (
+        <div style={{
+          background: 'var(--surface2)',
+          border: '1px solid var(--border)',
+          borderRadius: 6,
+          overflow: 'hidden',
+        }}>
+          {/* Header */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '40px 1.2fr 1.2fr 1fr 110px',
+            gap: 0,
+            fontSize: 9, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase',
+            color: 'var(--text3)', background: 'var(--bg2)',
+            padding: '6px 10px', borderBottom: '1px solid var(--border)',
+          }}>
+            <div>#</div>
+            <div>Lote Granel</div>
+            <div>Ordem (WO)</div>
+            <div>Peso</div>
+            <div style={{ textAlign: 'right' }}>Status</div>
+          </div>
+          {lotes.map((g, i) => (
+            <div
+              key={`${g.lote}-${i}`}
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '40px 1.2fr 1.2fr 1fr 110px',
+                gap: 0,
+                fontSize: 12, fontFamily: 'var(--font-m)', fontWeight: 600,
+                padding: '7px 10px',
+                background: i % 2 === 0 ? 'var(--surface)' : 'var(--surface2)',
+                borderBottom: i < lotes.length - 1 ? '1px solid var(--border)' : 'none',
+                alignItems: 'center',
+              }}
+            >
+              <div style={{
+                fontSize: 10, fontWeight: 900, color: 'var(--text3)',
+              }}>{i + 1}</div>
+              <div style={{ color: 'var(--text)' }}>{g.lote}</div>
+              <div style={{ color: 'var(--text2)' }}>{g.wo}</div>
+              <div style={{ color: 'var(--text2)' }}>{g.peso}</div>
+              <div style={{ textAlign: 'right' }}>
+                <StatusPill status={g.status} />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   AmostrasRetencaoCard — bloco do lote em análise.
+   Lista as amostras coletadas (Início/Meio/Fim/Micro/FQ/Estab)
+   com Caixa/Pallet/Posição. Editar inline + adicionar/remover.
+───────────────────────────────────────────────────────────── */
+function AmostrasRetencaoCard({ amostras, setAmostras, ordemParcial }) {
+  const [editando, setEditando] = useState(null); // null | id | 'new'
+  const [draft, setDraft] = useState(amostraTemplate());
+
+  const adicionar = () => {
+    setDraft(amostraTemplate());
+    setEditando('new');
+  };
+  const editar = (a) => {
+    setDraft({ ...a });
+    setEditando(a.id);
+  };
+  const salvar = () => {
+    if (!draft.caixa.trim()) {
+      window.alert('Informe ao menos o número da Caixa.');
+      return;
+    }
+    if (editando === 'new') {
+      setAmostras((prev) => [...prev, { ...draft, id: Date.now() }]);
+    } else {
+      setAmostras((prev) => prev.map((a) => a.id === editando ? draft : a));
+    }
+    setEditando(null);
+  };
+  const cancelar = () => setEditando(null);
+  const remover = (id) => {
+    if (window.confirm('Remover esta amostra da lista?')) {
+      setAmostras((prev) => prev.filter((a) => a.id !== id));
+    }
+  };
+
+  // Cobertura mínima: Início/Meio/Fim + Micro + FQ (boa prática POP).
+  // Para Ordens Parciais não há retenção de Início/Meio/Fim (campo opcional).
+  const tiposPresentes = new Set(amostras.map((a) => a.tipo));
+  const minimosObrigatorios = ordemParcial ? [] : ['inicio', 'meio', 'fim', 'micro', 'fq'];
+  const faltando = minimosObrigatorios.filter((t) => !tiposPresentes.has(t));
+
+  return (
+    <div className="card mb14" style={{
+      padding: 14,
+      borderTop: `3px solid ${faltando.length === 0 ? 'var(--ok)' : 'var(--alr)'}`,
+    }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        gap: 10, flexWrap: 'wrap', marginBottom: 10,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 14, fontWeight: 800 }}>📦 Amostras de Retenção</span>
+          <span style={{
+            fontSize: 9, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase',
+            color: 'var(--text3)', padding: '2px 6px',
+            border: '1px dashed var(--border2)', borderRadius: 8,
+          }} title="ANVISA RDC 658/2022 — retenção mínima de 1 ano após validade">
+            RDC 658/2022 · 1 ano após validade
+          </span>
+          {amostras.length > 0 && (
+            <span className="bdg" style={{
+              fontSize: 10, background: 'var(--surface2)', color: 'var(--text2)',
+              border: '1px solid var(--border)',
+            }}>
+              {amostras.length} cadastrada{amostras.length > 1 ? 's' : ''}
+            </span>
+          )}
+          {faltando.length > 0 && !ordemParcial && (
+            <span className="bdg bdg-alr" style={{ fontSize: 10 }} title={`Faltando: ${faltando.join(', ')}`}>
+              ⚠ Faltam {faltando.length} tipo{faltando.length > 1 ? 's' : ''} mínimo{faltando.length > 1 ? 's' : ''}
+            </span>
+          )}
+          {ordemParcial && (
+            <span className="bdg" style={{
+              fontSize: 10, background: 'var(--inf-p)', color: 'var(--inf)',
+              border: '1px solid var(--inf-b)',
+            }}>
+              ℹ️ Ordem Parcial · retenção opcional
+            </span>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={adicionar}
+          className="btn btn-sm btn-v"
+          style={{ fontSize: 12, fontWeight: 700 }}
+        >
+          + Nova Amostra
+        </button>
+      </div>
+
+      {amostras.length === 0 && !editando ? (
+        <div style={{
+          padding: '14px', background: 'var(--surface2)',
+          border: '1px dashed var(--border2)', borderRadius: 6,
+          textAlign: 'center', fontSize: 11, color: 'var(--text3)',
+        }}>
+          Nenhuma amostra de retenção cadastrada para este lote.{' '}
+          <button
+            onClick={adicionar}
+            style={{
+              background: 'none', border: 'none', color: 'var(--verde)',
+              cursor: 'pointer', textDecoration: 'underline',
+              fontFamily: 'inherit', fontSize: 11,
+            }}
+          >
+            Cadastrar a primeira amostra
+          </button>.
+        </div>
+      ) : (
+        <div style={{
+          background: 'var(--surface2)', border: '1px solid var(--border)',
+          borderRadius: 6, overflow: 'hidden',
+        }}>
+          {/* Header */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '36px 130px 90px 90px 1.2fr 90px 1fr 110px',
+            gap: 0,
+            fontSize: 9, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase',
+            color: 'var(--text3)', background: 'var(--bg2)',
+            padding: '6px 10px', borderBottom: '1px solid var(--border)',
+            alignItems: 'center',
+          }}>
+            <div>#</div>
+            <div>Tipo</div>
+            <div>Caixa</div>
+            <div>Pallet</div>
+            <div>Posição</div>
+            <div>Qtde</div>
+            <div>Observação</div>
+            <div style={{ textAlign: 'right' }}>Ações</div>
+          </div>
+          {amostras.map((a, i) => {
+            const tipo = AMOSTRA_TIPOS.find((t) => t.value === a.tipo);
+            const emEdicao = editando === a.id;
+            if (emEdicao) {
+              return (
+                <AmostraEditRow
+                  key={a.id} idx={i + 1} draft={draft} setDraft={setDraft}
+                  onSalvar={salvar} onCancelar={cancelar}
+                />
+              );
+            }
+            return (
+              <div
+                key={a.id}
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '36px 130px 90px 90px 1.2fr 90px 1fr 110px',
+                  gap: 0,
+                  fontSize: 12, fontFamily: 'var(--font-m)', fontWeight: 600,
+                  padding: '7px 10px',
+                  background: i % 2 === 0 ? 'var(--surface)' : 'var(--surface2)',
+                  borderBottom: i < amostras.length - 1 ? '1px solid var(--border)' : 'none',
+                  alignItems: 'center',
+                  opacity: a.destruida ? 0.6 : 1,
+                }}
+              >
+                <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text3)' }}>{i + 1}</div>
+                <div style={{ color: 'var(--text)' }}>
+                  {tipo?.icon} {tipo?.label || a.tipo}
+                </div>
+                <div style={{ color: 'var(--text)' }}>{a.caixa}</div>
+                <div style={{ color: 'var(--text2)' }}>{a.pallet || '—'}</div>
+                <div style={{ color: 'var(--text2)' }}>{a.posicao || '—'}</div>
+                <div style={{ color: 'var(--text2)' }}>{a.quantidade || '—'}</div>
+                <div style={{
+                  color: 'var(--text3)', fontSize: 11, fontFamily: 'inherit', fontWeight: 500,
+                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                }} title={a.observacao}>
+                  {a.observacao || '—'}
+                </div>
+                <div style={{ display: 'flex', gap: 4, justifyContent: 'flex-end' }}>
+                  <button
+                    onClick={() => editar(a)}
+                    className="btn btn-sm btn-ghost"
+                    style={{ fontSize: 10, padding: '2px 6px' }}
+                    title="Editar amostra"
+                  >
+                    ✎
+                  </button>
+                  <button
+                    onClick={() => remover(a.id)}
+                    className="btn btn-sm btn-ghost"
+                    style={{ fontSize: 10, padding: '2px 6px', borderColor: 'var(--per)', color: 'var(--per)' }}
+                    title="Remover"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+          {editando === 'new' && (
+            <AmostraEditRow
+              idx={amostras.length + 1}
+              draft={draft} setDraft={setDraft}
+              onSalvar={salvar} onCancelar={cancelar}
+              isNew
+            />
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AmostraEditRow({ idx, draft, setDraft, onSalvar, onCancelar, isNew }) {
+  const setCampo = (k, v) => setDraft((d) => ({ ...d, [k]: v }));
+  return (
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: '36px 130px 90px 90px 1.2fr 90px 1fr 110px',
+      gap: 6, padding: '7px 10px',
+      background: isNew ? 'var(--ok-p)' : 'var(--alr-p)',
+      borderBottom: '1px solid var(--border)',
+      alignItems: 'center',
+    }}>
+      <div style={{ fontSize: 10, fontWeight: 900, color: 'var(--text3)' }}>
+        {isNew ? '+' : idx}
+      </div>
+      <select
+        className="sel"
+        value={draft.tipo}
+        onChange={(e) => setCampo('tipo', e.target.value)}
+        style={{ fontSize: 11, padding: '4px 6px' }}
+      >
+        {AMOSTRA_TIPOS.map((t) => (
+          <option key={t.value} value={t.value}>{t.icon} {t.label}</option>
+        ))}
+      </select>
+      <input
+        className="inp" type="text"
+        placeholder="Ex.: 12"
+        value={draft.caixa}
+        onChange={(e) => setCampo('caixa', e.target.value)}
+        style={{ fontSize: 11, padding: '4px 6px' }}
+      />
+      <input
+        className="inp" type="text"
+        placeholder="Ex.: P-07"
+        value={draft.pallet}
+        onChange={(e) => setCampo('pallet', e.target.value)}
+        style={{ fontSize: 11, padding: '4px 6px' }}
+      />
+      <input
+        className="inp" type="text"
+        placeholder="Ex.: Estante A · Col 3"
+        value={draft.posicao}
+        onChange={(e) => setCampo('posicao', e.target.value)}
+        style={{ fontSize: 11, padding: '4px 6px' }}
+      />
+      <input
+        className="inp" type="text"
+        placeholder="Ex.: 3 un"
+        value={draft.quantidade}
+        onChange={(e) => setCampo('quantidade', e.target.value)}
+        style={{ fontSize: 11, padding: '4px 6px' }}
+      />
+      <input
+        className="inp" type="text"
+        placeholder="(opcional)"
+        value={draft.observacao}
+        onChange={(e) => setCampo('observacao', e.target.value)}
+        style={{ fontSize: 11, padding: '4px 6px' }}
+      />
+      <div style={{ display: 'flex', gap: 4, justifyContent: 'flex-end' }}>
+        <button onClick={onSalvar} className="btn btn-sm btn-v" style={{ fontSize: 10, padding: '3px 6px' }}>✓</button>
+        <button onClick={onCancelar} className="btn btn-sm btn-ghost" style={{ fontSize: 10, padding: '3px 6px' }}>✕</button>
+      </div>
     </div>
   );
 }
@@ -732,6 +1211,7 @@ function DesvioCard({ desvio, onEdit, onTratar, onRemover }) {
   const st = STATUS_DESVIO[desvio.status] || STATUS_DESVIO.aberto;
   const tipo = TIPOS_DESVIO.find((t) => t.value === desvio.tipo);
   const area = AREAS_DESVIO.find((a) => a.value === desvio.area);
+  const classif = CLASSIFICACAO_CORRECAO.find((c) => c.value === desvio.classificacao);
   const tratado = desvio.status === 'tratado' || desvio.status === 'fechado';
   return (
     <div
@@ -755,6 +1235,19 @@ function DesvioCard({ desvio, onEdit, onTratar, onRemover }) {
           <span style={{ fontSize: 10, color: 'var(--text3)' }}>{tipo?.label}</span>
           <span style={{ fontSize: 10, color: 'var(--text3)' }}>·</span>
           <span style={{ fontSize: 10, color: 'var(--text3)' }}>{area?.label}</span>
+          {classif && (
+            <>
+              <span style={{ fontSize: 10, color: 'var(--text3)' }}>·</span>
+              <span style={{
+                fontSize: 9, fontWeight: 700,
+                padding: '1px 6px', borderRadius: 8,
+                background: 'var(--surface2)', color: 'var(--text2)',
+                border: '1px dashed var(--border2)',
+              }} title="Classificação da ocorrência">
+                🏷️ {classif.label}
+              </span>
+            </>
+          )}
           <span style={{
             fontSize: 9, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase',
             padding: '2px 7px', borderRadius: 10, background: st.bg, color: st.fg, border: `1px solid ${st.bd}`,
@@ -787,7 +1280,7 @@ function DesvioCard({ desvio, onEdit, onTratar, onRemover }) {
             className="btn btn-sm btn-v"
             style={{ fontSize: 10, padding: '3px 8px' }}
             onClick={() => onTratar(desvio)}
-            title="Marcar desvio como Tratado (libera para CED)"
+            title="Marcar registro como Tratado (libera para CED)"
           >
             ✓ Marcar como Tratado
           </button>
@@ -795,7 +1288,7 @@ function DesvioCard({ desvio, onEdit, onTratar, onRemover }) {
         <button
           className="btn btn-sm btn-ghost"
           style={{ fontSize: 10, padding: '3px 8px', borderColor: 'var(--per)', color: 'var(--per)' }}
-          onClick={() => { if (window.confirm(`Excluir o desvio ${desvio.numero}?`)) onRemover(desvio.id); }}
+          onClick={() => { if (window.confirm(`Excluir o registro ${desvio.numero}?`)) onRemover(desvio.id); }}
         >
           ✕ Excluir
         </button>
@@ -831,7 +1324,7 @@ function DesvioModal({ desvio, setDesvio, onSalvar, onClose }) {
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14, gap: 12 }}>
           <div>
             <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--per)' }}>
-              ⚠ {editing ? 'Editar Desvio' : 'Novo Desvio'}
+              📝 {editing ? 'Editar Registro de Correção' : 'Novo Registro de Correção'}
             </div>
             <div style={{ fontFamily: 'var(--font-d)', fontSize: 18, fontWeight: 700, color: 'var(--verde-esc)', marginTop: 2 }}>
               {desvio.numero}
@@ -843,7 +1336,7 @@ function DesvioModal({ desvio, setDesvio, onSalvar, onClose }) {
         {/* Linha 1: tipo / severidade / area */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 10 }}>
           <div>
-            <label className="lbl">Tipo de Desvio <span style={{ color: 'var(--per)' }}>*</span></label>
+            <label className="lbl">Tipo <span style={{ color: 'var(--per)' }}>*</span></label>
             <select className="sel" value={desvio.tipo} onChange={(e) => setCampo('tipo', e.target.value)} style={{ fontSize: 12, padding: '7px 10px' }}>
               {TIPOS_DESVIO.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
             </select>
@@ -862,15 +1355,36 @@ function DesvioModal({ desvio, setDesvio, onSalvar, onClose }) {
           </div>
         </div>
 
+        {/* Classificacao da ocorrência (categorização rápida — feeds o
+            Painel de Ofensores do Dashboard Gerencial, Wave 2). */}
+        <div style={{ marginBottom: 10 }}>
+          <label className="lbl">
+            🏷️ Classificação da Ocorrência <span style={{ color: 'var(--per)' }}>*</span>
+            <span style={{ fontWeight: 400, color: 'var(--text3)', marginLeft: 8 }}>
+              (define o ofensor pro painel gerencial)
+            </span>
+          </label>
+          <select
+            className="sel"
+            value={desvio.classificacao}
+            onChange={(e) => setCampo('classificacao', e.target.value)}
+            style={{ fontSize: 12, padding: '7px 10px', fontWeight: 700 }}
+          >
+            {CLASSIFICACAO_CORRECAO.map((c) => (
+              <option key={c.value} value={c.value}>{c.label}</option>
+            ))}
+          </select>
+        </div>
+
         {/* Titulo */}
         <div style={{ marginBottom: 10 }}>
-          <label className="lbl">Título do Desvio <span style={{ color: 'var(--per)' }}>*</span></label>
+          <label className="lbl">Título do Registro <span style={{ color: 'var(--per)' }}>*</span></label>
           <input
             className="inp"
             type="text"
             value={desvio.titulo}
             onChange={(e) => setCampo('titulo', e.target.value)}
-            placeholder="Ex.: Variância de pesagem em Fenoxietanol acima do limite"
+            placeholder="Ex.: Etiqueta da MP Fenoxietanol sem rubrica do pesador"
             style={{ fontSize: 12, padding: '7px 10px' }}
             maxLength={120}
           />
@@ -878,13 +1392,13 @@ function DesvioModal({ desvio, setDesvio, onSalvar, onClose }) {
 
         {/* Descricao */}
         <div style={{ marginBottom: 10 }}>
-          <label className="lbl">Descrição do Desvio <span style={{ color: 'var(--per)' }}>*</span></label>
+          <label className="lbl">Descrição da Ocorrência <span style={{ color: 'var(--per)' }}>*</span></label>
           <textarea
             className="txta"
             value={desvio.descricao}
             onChange={(e) => setCampo('descricao', e.target.value)}
             rows={3}
-            placeholder="Descreva o desvio: o que foi observado, quando, por quem, quais evidências (etiquetas, fotos, batch records etc)..."
+            placeholder="Descreva a ocorrência: o que foi observado, quando, por quem, quais evidências (etiquetas, fotos, batch records etc)..."
             style={{ fontSize: 12, padding: '7px 10px', resize: 'vertical' }}
           />
         </div>
@@ -968,9 +1482,9 @@ function DesvioModal({ desvio, setDesvio, onSalvar, onClose }) {
             onClick={onSalvar}
             disabled={!podeSalvar}
             style={{ opacity: podeSalvar ? 1 : 0.5, cursor: podeSalvar ? 'pointer' : 'not-allowed' }}
-            title={podeSalvar ? 'Salvar desvio' : 'Preencha Título, Descrição e Responsável'}
+            title={podeSalvar ? 'Salvar registro de correção' : 'Preencha Título, Descrição e Responsável'}
           >
-            ✓ Salvar Desvio
+            ✓ Salvar Registro
           </button>
         </div>
       </div>
@@ -1001,6 +1515,7 @@ function loteTemplate(numero) {
     produtoAcabado: '',
     granel: '',
     loteGranel: '',
+    granelLotes: [], // multibatch — pode receber N granéis
     lotePA: '',
     loteFabricacao: '',
     dataFabricacao: hoje,
@@ -1044,6 +1559,10 @@ export default function QualidadeReconciliacaoScreen() {
   const [modalChecklistAberto, setModalChecklistAberto] = useState(false);
   const [desvios, setDesvios] = useState([]);
   const [desvioEditando, setDesvioEditando] = useState(null);
+  // Wave 1.1 — Amostras de Retenção. Estado local; em produção a API
+  // grava direto na base do Estoque de Retenção (acessivel pela tela
+  // gerencial /qual-amostras).
+  const [amostras, setAmostras] = useState([]);
 
   // Quando aberta a partir da Fila (/qual-fila) com ?lote=<PA>,
   // mostramos um botao "Voltar para Fila" no header.
@@ -1070,6 +1589,7 @@ export default function QualidadeReconciliacaoScreen() {
     const numero = gerarNumeroReconciliacao();
     setNumeroLote('NOVO-' + numero);
     setLote(loteTemplate(numero));
+    setAmostras([]);
     setModo('criacao');
     setErro('');
     setMensagem('🆕 Nova Reconciliação iniciada — Nº ' + numero + ' (gerado via integração JDE).');
@@ -1095,8 +1615,12 @@ export default function QualidadeReconciliacaoScreen() {
       if (!dados) {
         setErro(`Lote PA "${alvo}" não encontrado ou ainda não finalizou a etapa de embalagem.`);
         setLote(null);
+        setAmostras([]);
       } else {
         setLote(JSON.parse(JSON.stringify(dados)));
+        // Mock seed: lotes conhecidos já vêm com amostras coletadas
+        // do envase (Início/Meio/Fim + Micro + FQ).
+        setAmostras(MOCK_AMOSTRAS[key] || []);
       }
       setCarregando(false);
     }, 400);
@@ -1128,7 +1652,7 @@ export default function QualidadeReconciliacaoScreen() {
       return;
     }
     if (desviosBloqueando) {
-      setMensagem(`⚠ Existe(m) ${desviosAbertos.length} desvio(s) em aberto. Trate todos antes de liberar para o CED.`);
+      setMensagem(`⚠ Existe(m) ${desviosAbertos.length} registro(s) de correção em aberto. Trate todos antes de liberar para o CED.`);
       return;
     }
     setMensagem(`✓ Lote ${numeroLote.toUpperCase()} liberado para o CED em ${new Date().toLocaleString('pt-BR')}. Status atualizado para "L — Liberado".`);
@@ -1146,7 +1670,7 @@ export default function QualidadeReconciliacaoScreen() {
   };
   const tratarDesvio = (desvio) => {
     setDesvios((prev) => prev.map((d) => d.id === desvio.id ? { ...d, status: 'tratado' } : d));
-    setMensagem(`✓ Desvio ${desvio.numero} marcado como TRATADO.`);
+    setMensagem(`✓ Registro ${desvio.numero} marcado como TRATADO.`);
   };
   const removerDesvio = (id) => {
     setDesvios((prev) => prev.filter((d) => d.id !== id));
@@ -1219,7 +1743,7 @@ export default function QualidadeReconciliacaoScreen() {
           </button>
           <button
             className="btn btn-md btn-ghost"
-            onClick={() => { setNumeroLote(''); setLote(null); setErro(''); setMensagem(''); setModo('analise'); }}
+            onClick={() => { setNumeroLote(''); setLote(null); setAmostras([]); setErro(''); setMensagem(''); setModo('analise'); }}
           >
             Limpar
           </button>
@@ -1300,8 +1824,6 @@ export default function QualidadeReconciliacaoScreen() {
               <Campo label="Produto Acabado" value={lote.produtoAcabado} />
               <Campo label="Granel" value={lote.granel} />
               <Campo label="Lote PA" value={lote.lotePA} obrigatorio />
-              <Campo label="Lote Granel" value={lote.loteGranel} />
-              <Campo label="Ordem (WO)" value={lote.loteFabricacao} />
               <CampoSelect
                 label="Status do Lote"
                 value={lote.statusLote}
@@ -1314,6 +1836,15 @@ export default function QualidadeReconciliacaoScreen() {
               <Campo label="Status Reconciliação" value={lote.statusReconciliacao} />
               <Campo label="Status Documentação" value={lote.statusDocumentacao} />
             </div>
+
+            {/* ── Multibatch: N granéis fechando 1 PA ──────────
+                Reunião GQV/CQ 12/05/2026, Carlos Lima @22:41 —
+                "aqui na fábrica a gente tem uma coisa que a gente
+                chama de multibatch". O cabeçalho não pode mais
+                exibir um único Lote Granel — precisa listar todos
+                os granéis (cada um com sua WO e peso) que
+                contribuíram para o lote PA. */}
+            <MultibatchBlock granelLotes={lote.granelLotes || []} loteGranelLegacy={lote.loteGranel} />
           </div>
 
           {/* Grid 2x2 das 4 áreas */}
@@ -1364,7 +1895,18 @@ export default function QualidadeReconciliacaoScreen() {
             />
           </div>
 
-          {/* ── Desvios do Lote ───────────────────────────── */}
+          {/* ── Wave 1.1 — Amostras de Retenção ─────────── */}
+          <AmostrasRetencaoCard
+            amostras={amostras}
+            setAmostras={setAmostras}
+            ordemParcial={checklist.ordemParcial}
+          />
+
+          {/* ── Registros de Correção do Lote ──────────────
+              (Renomeado de "Desvios" em 14/05/2026 — reunião GQV/CQ.
+              "Desvio" tem peso regulatório forte; o que se abre na
+              reconciliação são correções documentais/operacionais
+              menores. "Desvio formal" mesmo vai pro CAPA/Trackwise.) */}
           <div
             className="card mb14"
             style={{
@@ -1374,7 +1916,14 @@ export default function QualidadeReconciliacaoScreen() {
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <span style={{ fontSize: 14, fontWeight: 800 }}>⚠ Desvios do Lote</span>
+                <span style={{ fontSize: 14, fontWeight: 800 }}>📝 Registros de Correção</span>
+                <span style={{
+                  fontSize: 9, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase',
+                  color: 'var(--text3)', padding: '2px 6px',
+                  border: '1px dashed var(--border2)', borderRadius: 8,
+                }} title="Ocorrências internas tratadas na reconciliação. Desvios formais com impacto GxP migram para CAPA/Trackwise.">
+                  ocorrência interna
+                </span>
                 {desvios.length > 0 && (
                   <>
                     <span className="bdg" style={{ fontSize: 10, background: 'var(--surface2)', color: 'var(--text2)', border: '1px solid var(--border)' }}>
@@ -1403,7 +1952,7 @@ export default function QualidadeReconciliacaoScreen() {
                   fontWeight: 700, fontSize: 12,
                 }}
               >
-                + Abrir Novo Desvio
+                + Novo Registro de Correção
               </button>
             </div>
 
@@ -1419,14 +1968,14 @@ export default function QualidadeReconciliacaoScreen() {
                   color: 'var(--text3)',
                 }}
               >
-                Nenhum desvio registrado para este lote.{' '}
+                Nenhum registro de correção aberto para este lote.{' '}
                 <button
                   onClick={abrirNovoDesvio}
                   style={{ background: 'none', border: 'none', color: 'var(--per)', cursor: 'pointer', textDecoration: 'underline', fontFamily: 'inherit', fontSize: 11 }}
                 >
-                  Abrir um novo desvio
+                  Abrir um novo registro
                 </button>{' '}
-                se necessário durante a análise.
+                se identificar alguma ocorrência durante a análise.
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -1495,7 +2044,7 @@ export default function QualidadeReconciliacaoScreen() {
                     : !checklistCompleto
                     ? 'Preencha o Checklist de Reconciliação antes de liberar'
                     : desviosBloqueando
-                    ? `Trate os ${desviosAbertos.length} desvio(s) em aberto antes de liberar`
+                    ? `Trate os ${desviosAbertos.length} registro(s) de correção em aberto antes de liberar`
                     : 'Liberar lote para o CED'
                 }
               >
@@ -1515,12 +2064,12 @@ export default function QualidadeReconciliacaoScreen() {
               </button>
               <div style={{ fontSize: 10, color: 'var(--text3)', textAlign: 'right', maxWidth: 230, lineHeight: 1.5 }}>
                 {podeLiberar
-                  ? '✓ Pronto para liberar — áreas + checklist + desvios OK.'
+                  ? '✓ Pronto para liberar — áreas + checklist + correções OK.'
                   : !todasAprovadas
                   ? 'Liberação habilita quando as 4 áreas estão APROVADAS ou N/A.'
                   : !checklistCompleto
                   ? 'Falta o Checklist de Reconciliação.'
-                  : `${desviosAbertos.length} desvio(s) em aberto — trate antes de liberar.`}
+                  : `${desviosAbertos.length} registro(s) em aberto — trate antes de liberar.`}
               </div>
             </div>
           </div>

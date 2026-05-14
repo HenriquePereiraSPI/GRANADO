@@ -10,6 +10,7 @@ import PesPerformanceOperadorScreen from './components/PesPerformanceOperadorScr
 import PesPerformanceGestaoScreen from './components/PesPerformanceGestaoScreen.jsx';
 import QualidadeReconciliacaoScreen from './components/QualidadeReconciliacaoScreen.jsx';
 import QualidadeFilaReconciliacaoScreen from './components/QualidadeFilaReconciliacaoScreen.jsx';
+import QualidadeAmostrasScreen from './components/QualidadeAmostrasScreen.jsx';
 import PesOrdemSubScreen from './components/PesOrdemSubScreen.jsx';
 
 /** Sub-telas da Pesagem que so podem ser acessadas com ?op= setado.
@@ -90,6 +91,9 @@ export default function App() {
 
           {/* Qualidade — Reconciliacao Tecnica e Liberacao de Lote */}
           <Route path="/qual-reconciliacao" element={<QualidadeReconciliacaoScreen />} />
+
+          {/* Qualidade — Amostras de Retencao (gerencial, RDC 658/2022) */}
+          <Route path="/qual-amostras" element={<QualidadeAmostrasScreen />} />
 
           {/* todas as demais telas extraidas */}
           {manifest.screens.map((id) => {
