@@ -1061,7 +1061,7 @@ export const SCREENS = {
       </div>
     `,
   "pes-checklist": `      <div class="page-header">
-        <div><div class="ph-eyebrow">Pesagem · Box 3 · MF5</div><div class="ph-title">Checklist de Limpeza e Aferição</div></div>
+        <div><div class="ph-eyebrow">Pesagem · Box 3 · MF5</div><div class="ph-title">Checklist de Limpeza</div></div>
         <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">Obrigatório antes de iniciar pesagem<br><span style="color:var(--verde)">J. Santos · 19/03/2026</span></div>
       </div>
       <div class="prog-wrap mb14">
