@@ -55,6 +55,10 @@ const BASE_MOCK = {
     statusReconciliacao: '10 — Aberto',
     statusDocumentacao: '10 — Aberto',
     areas: {
+      pesagem: {
+        nMps: '7', pesoTotal: '178,75 kg', volumes: '4', mpsZeradas: '0',
+        responsavel: '', data: '', status: 'PENDENTE', observacoes: '',
+      },
       fabricacao: {
         rendimentoTeorico: '6.000 kg', rendimentoReal: '6.006 kg', perda: '0,10%',
         responsavel: '', data: '', status: 'PENDENTE', observacoes: '',
@@ -97,6 +101,11 @@ const BASE_MOCK = {
     statusReconciliacao: '10 — Aberto',
     statusDocumentacao: '10 — Aberto',
     areas: {
+      pesagem: {
+        nMps: '8', pesoTotal: '165,40 kg', volumes: '5', mpsZeradas: '0',
+        responsavel: 'Daltivo (108922)', data: '2026-04-08', status: 'APROVADO',
+        observacoes: 'Conferência dupla executada.',
+      },
       fabricacao: {
         rendimentoTeorico: '5.500 kg', rendimentoReal: '5.503 kg', perda: '0,05%',
         responsavel: 'Daltivo (108922)', data: '2026-04-09', status: 'APROVADO',
@@ -136,6 +145,11 @@ const BASE_MOCK = {
     statusReconciliacao: '10 — Aberto',
     statusDocumentacao: '10 — Aberto',
     areas: {
+      pesagem: {
+        nMps: '6', pesoTotal: '124,00 kg', volumes: '3', mpsZeradas: '0',
+        responsavel: 'M. Rocha (108)', data: '2026-03-28', status: 'APROVADO',
+        observacoes: '',
+      },
       fabricacao: {
         rendimentoTeorico: '4.000 kg', rendimentoReal: '4.012 kg', perda: '0,30%',
         responsavel: 'M. Rocha (108)', data: '2026-03-29', status: 'PENDENTE',
@@ -340,6 +354,7 @@ const STATUS_LOTE_OPCOES = [
 ];
 
 const AREA_COR = {
+  pesagem:       { fg: '#FFFFFF', bg: 'var(--verde-esc)', label: 'Pesagem',        icon: '⚖️' },
   fabricacao:    { fg: '#FFFFFF', bg: 'var(--inf)',       label: 'Fabricação',     icon: '🧪' },
   embalagem:     { fg: '#FFFFFF', bg: 'var(--ouro)',      label: 'Embalagem',      icon: '📦' },
   fisicoQuimico: { fg: '#FFFFFF', bg: 'var(--verde-meio)',label: 'Físico-Químico', icon: '⚗️' },
@@ -588,52 +603,52 @@ function AnexoSlot({ slot, anexo, onUpload, onRemove }) {
   const tem = !!anexo;
   return (
     <div style={{
-      flex: 1, minWidth: 220,
+      flex: 1, minWidth: 200,
       background: 'var(--surface)',
       border: `1.5px ${tem ? 'solid' : 'dashed'} ${tem ? 'var(--ok-b)' : (slot.obrigatorio ? 'var(--alr-b)' : 'var(--border2)')}`,
-      borderRadius: 7, padding: '10px 12px',
-      display: 'flex', flexDirection: 'column', gap: 6,
+      borderRadius: 6, padding: '6px 8px',
+      display: 'flex', flexDirection: 'column', gap: 4,
       position: 'relative',
     }}>
       {slot.obrigatorio && !tem && (
         <span style={{
-          position: 'absolute', top: -8, right: 10,
-          fontSize: 9, fontWeight: 900, letterSpacing: '.08em',
+          position: 'absolute', top: -7, right: 8,
+          fontSize: 8, fontWeight: 900, letterSpacing: '.08em',
           background: 'var(--alr)', color: '#fff',
-          padding: '2px 7px', borderRadius: 8,
+          padding: '1px 6px', borderRadius: 7,
           border: '1px solid var(--alr-b)',
         }}>
           OBRIGATÓRIO
         </span>
       )}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 18 }}>{slot.icon}</span>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--text)' }}>{slot.titulo}</div>
-          <div style={{ fontSize: 10, color: 'var(--text3)' }}>{slot.descricao}</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <span style={{ fontSize: 14 }}>{slot.icon}</span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text)' }}>{slot.titulo}</div>
+          <div style={{ fontSize: 9, color: 'var(--text3)' }}>{slot.descricao}</div>
         </div>
       </div>
       {tem ? (
         <div style={{
           background: 'var(--ok-p)', border: '1px solid var(--ok-b)',
-          borderRadius: 5, padding: '6px 10px',
-          fontSize: 11, color: 'var(--ok)',
-          display: 'flex', alignItems: 'center', gap: 8,
+          borderRadius: 4, padding: '4px 6px',
+          fontSize: 10, color: 'var(--ok)',
+          display: 'flex', alignItems: 'center', gap: 6,
         }}>
           <span>✓</span>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {anexo.nome}
             </div>
-            <div style={{ fontSize: 9, color: 'var(--text3)' }}>
-              {anexo.tamanho} · enviado em {anexo.data}
+            <div style={{ fontSize: 8, color: 'var(--text3)' }}>
+              {anexo.tamanho} · {anexo.data}
             </div>
           </div>
           <button
             onClick={onRemove}
             style={{
               background: 'none', border: '1px solid var(--per-b)', color: 'var(--per)',
-              borderRadius: 4, padding: '2px 6px', fontSize: 10,
+              borderRadius: 3, padding: '1px 5px', fontSize: 9,
               cursor: 'pointer', fontFamily: 'inherit',
             }}
             title="Remover anexo"
@@ -647,9 +662,9 @@ function AnexoSlot({ slot, anexo, onUpload, onRemove }) {
           onClick={onUpload}
           style={{
             background: 'var(--surface2)', border: '1px dashed var(--border)',
-            color: 'var(--text2)', borderRadius: 5, padding: '12px 10px',
-            fontSize: 11, fontFamily: 'inherit', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+            color: 'var(--text2)', borderRadius: 4, padding: '6px 8px',
+            fontSize: 10, fontFamily: 'inherit', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
           }}
         >
           📎 Clique para anexar
@@ -700,16 +715,16 @@ function AnexosCard({ anexos, setAnexos, ordemParcial }) {
   const obrigatoriosFaltando = SLOTS.filter((s) => s.obrigatorio && !anexos[s.key]);
 
   return (
-    <div className="card mb14" style={{
-      padding: 14,
+    <div className="card" style={{
+      padding: 10, marginBottom: 10,
       borderTop: `3px solid ${obrigatoriosFaltando.length === 0 ? 'var(--ok)' : 'var(--alr)'}`,
     }}>
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        gap: 10, flexWrap: 'wrap', marginBottom: 10,
+        gap: 8, flexWrap: 'wrap', marginBottom: 6,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 14, fontWeight: 800 }}>📎 Anexos do Lote</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 13, fontWeight: 800 }}>📎 Anexos do Lote</span>
           {obrigatoriosFaltando.length === 0 ? (
             <span className="bdg bdg-ok" style={{ fontSize: 10 }}>
               ✓ Todos obrigatórios anexados
@@ -787,16 +802,16 @@ function AmostrasRetencaoCard({ amostras, setAmostras, ordemParcial }) {
   const faltando = minimosObrigatorios.filter((t) => !tiposPresentes.has(t));
 
   return (
-    <div className="card mb14" style={{
-      padding: 14,
+    <div className="card" style={{
+      padding: 10, marginBottom: 10,
       borderTop: `3px solid ${faltando.length === 0 ? 'var(--ok)' : 'var(--alr)'}`,
     }}>
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        gap: 10, flexWrap: 'wrap', marginBottom: 10,
+        gap: 8, flexWrap: 'wrap', marginBottom: 6,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 14, fontWeight: 800 }}>📦 Amostras de Retenção</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 13, fontWeight: 800 }}>📦 Amostras de Retenção</span>
           <span style={{
             fontSize: 9, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase',
             color: 'var(--text3)', padding: '2px 6px',
@@ -1034,7 +1049,7 @@ function CardArea({ chave, dados, indicadores, onUpdate, onAbrirGenealogia }) {
     <div style={{
       background: 'var(--surface)',
       border: '1px solid var(--border)',
-      borderRadius: 7,
+      borderRadius: 6,
       boxShadow: 'var(--sh)',
       overflow: 'hidden',
       opacity: ehNA ? 0.78 : 1,
@@ -1046,46 +1061,50 @@ function CardArea({ chave, dados, indicadores, onUpdate, onAbrirGenealogia }) {
         title="Clique para ver na Genealogia de Lote"
         style={{
           background: ehNA ? 'var(--text3)' : cor.bg, color: cor.fg,
-          padding: '8px 12px',
+          padding: '5px 9px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           width: '100%', border: 'none', cursor: 'pointer', font: 'inherit',
-          gap: 10,
+          gap: 6,
         }}
       >
-        <div style={{ fontSize: 12, fontWeight: 900, letterSpacing: '.08em', textTransform: 'uppercase' }}>
+        <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: '.06em', textTransform: 'uppercase' }}>
           {cor.icon} {cor.label}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <span
             style={{
-              fontSize: 9, fontWeight: 700, letterSpacing: '.08em',
-              padding: '2px 7px', borderRadius: 10,
+              fontSize: 8, fontWeight: 700, letterSpacing: '.06em',
+              padding: '1px 5px', borderRadius: 8,
               background: 'rgba(255,255,255,.18)', color: '#fff',
               border: '1px solid rgba(255,255,255,.35)',
               whiteSpace: 'nowrap',
             }}
           >
-            🧬 Genealogia →
+            🧬→
           </span>
           <StatusPill status={dados.status} />
         </div>
       </button>
 
-      {/* Body — versão compacta */}
-      <div style={{ padding: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {/* Indicadores em linha (compactados se NA) */}
+      {/* Body — versão ultra-compacta */}
+      <div style={{ padding: 7, display: 'flex', flexDirection: 'column', gap: 5 }}>
+        {/* Indicadores em linha */}
         {!ehNA && (
           <div style={{
-            display: 'flex', flexWrap: 'wrap', gap: '4px 14px',
-            fontSize: 11, color: 'var(--text2)',
-            padding: '6px 10px',
+            display: 'flex', flexWrap: 'wrap', gap: '2px 10px',
+            fontSize: 10, color: 'var(--text2)',
+            padding: '4px 7px',
             background: 'var(--surface2)',
             borderRadius: 4, border: '1px solid var(--border)',
+            lineHeight: 1.4,
           }}>
             {indicadores.map((ind) => (
               <span key={ind.label}>
                 <span style={{ color: 'var(--text3)', fontWeight: 700 }}>{ind.label}: </span>
-                <span style={{ fontFamily: 'var(--font-m)', fontWeight: 700, color: 'var(--text)' }}>{ind.value || '—'}</span>
+                <span style={{
+                  fontFamily: 'var(--font-m)', fontWeight: 700,
+                  color: ind.alerta ? 'var(--per)' : 'var(--text)',
+                }}>{ind.value || '—'}</span>
               </span>
             ))}
           </div>
@@ -1093,36 +1112,42 @@ function CardArea({ chave, dados, indicadores, onUpdate, onAbrirGenealogia }) {
 
         {/* Responsavel + Data — uma linha só */}
         {!ehNA && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 130px', gap: 8 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 115px', gap: 5 }}>
             <input
               className="inp"
               type="text"
               value={dados.responsavel}
               onChange={(e) => handleChange('responsavel', e.target.value)}
-              placeholder="Responsável CQ (matrícula)"
-              style={{ fontSize: 11, padding: '5px 8px' }}
+              placeholder="Responsável CQ"
+              style={{ fontSize: 10, padding: '3px 6px' }}
             />
             <input
               className="inp"
               type="date"
               value={dados.data || ''}
               onChange={(e) => handleChange('data', e.target.value)}
-              style={{ fontSize: 11, padding: '5px 8px' }}
+              style={{ fontSize: 10, padding: '3px 6px' }}
             />
           </div>
         )}
 
-        {/* Observacoes — colapsado por padrão */}
+        {/* Linha de Observações + Botões (1 linha só pra economizar altura) */}
         {!ehNA && (
-          <div>
+          <div style={{
+            display: 'flex', gap: 4, alignItems: 'center',
+            paddingTop: 4, borderTop: '1px solid var(--border)',
+            flexWrap: 'wrap',
+          }}>
+            {/* Obs button compacto à esquerda */}
             {!expObs && !dados.observacoes && (
               <button
                 type="button"
                 onClick={() => setExpObs(true)}
                 className="btn btn-sm btn-ghost"
-                style={{ fontSize: 10, padding: '3px 8px' }}
+                style={{ fontSize: 9, padding: '2px 6px' }}
+                title="Adicionar observações"
               >
-                + Observações
+                + Obs
               </button>
             )}
             {!expObs && dados.observacoes && (
@@ -1131,82 +1156,90 @@ function CardArea({ chave, dados, indicadores, onUpdate, onAbrirGenealogia }) {
                 onClick={() => setExpObs(true)}
                 style={{
                   background: 'var(--alr-p)', border: '1px solid var(--alr-b)',
-                  color: 'var(--alr)', borderRadius: 4, padding: '4px 8px',
-                  fontSize: 10, cursor: 'pointer', fontFamily: 'inherit',
-                  width: '100%', textAlign: 'left',
+                  color: 'var(--alr)', borderRadius: 4, padding: '2px 6px',
+                  fontSize: 9, cursor: 'pointer', fontFamily: 'inherit',
+                  maxWidth: 130, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                 }}
+                title={dados.observacoes}
               >
-                💬 {dados.observacoes.length > 60 ? dados.observacoes.slice(0, 60) + '…' : dados.observacoes}
+                💬 {dados.observacoes.slice(0, 28)}{dados.observacoes.length > 28 ? '…' : ''}
               </button>
             )}
-            {expObs && (
-              <textarea
-                className="txta"
-                value={dados.observacoes}
-                onChange={(e) => handleChange('observacoes', e.target.value)}
-                onBlur={() => setExpObs(false)}
-                rows={2}
-                placeholder="Registrar não conformidades, desvios ou comentários..."
-                autoFocus
-                style={{ fontSize: 11, padding: '6px 8px', resize: 'vertical' }}
-              />
-            )}
+
+            {/* Status buttons à direita */}
+            <div style={{ display: 'flex', gap: 3, marginLeft: 'auto', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={() => handleChange('status', 'REPROVADO')}
+                className="btn btn-sm btn-ghost"
+                style={{ borderColor: 'var(--per)', color: 'var(--per)', fontSize: 9, padding: '2px 6px' }}
+              >
+                ✗
+              </button>
+              <button
+                type="button"
+                onClick={() => handleChange('status', 'PENDENTE')}
+                className="btn btn-sm btn-ghost"
+                style={{ borderColor: 'var(--alr)', color: 'var(--alr)', fontSize: 9, padding: '2px 6px' }}
+                title="Pendente"
+              >
+                ⏳
+              </button>
+              <button
+                type="button"
+                onClick={() => handleChange('status', 'NA')}
+                className="btn btn-sm btn-ghost"
+                style={{ borderColor: 'var(--text3)', color: 'var(--text2)', fontSize: 9, padding: '2px 6px' }}
+                title="Não se aplica"
+              >
+                —
+              </button>
+              <button
+                type="button"
+                onClick={() => handleChange('status', 'APROVADO')}
+                className="btn btn-sm btn-v"
+                style={{ fontSize: 9, padding: '2px 8px', fontWeight: 800 }}
+              >
+                ✓ Aprovar
+              </button>
+            </div>
           </div>
+        )}
+
+        {/* Textarea expandido quando obs ativo */}
+        {!ehNA && expObs && (
+          <textarea
+            className="txta"
+            value={dados.observacoes}
+            onChange={(e) => handleChange('observacoes', e.target.value)}
+            onBlur={() => setExpObs(false)}
+            rows={2}
+            placeholder="Registrar observações..."
+            autoFocus
+            style={{ fontSize: 10, padding: '4px 6px', resize: 'vertical' }}
+          />
         )}
 
         {/* Marca informativa quando NA */}
         {ehNA && (
           <div style={{
-            padding: '8px 10px',
+            padding: '5px 8px',
             background: 'var(--surface2)', border: '1px dashed var(--border2)',
-            borderRadius: 4, fontSize: 11, color: 'var(--text2)',
-            display: 'flex', alignItems: 'center', gap: 8,
+            borderRadius: 4, fontSize: 10, color: 'var(--text2)',
+            display: 'flex', alignItems: 'center', gap: 6,
           }}>
             <span>ℹ️</span>
-            <span>Esta análise não se aplica para o lote atual.</span>
+            <span>Análise não se aplica.</span>
+            <button
+              type="button"
+              onClick={() => handleChange('status', 'PENDENTE')}
+              className="btn btn-sm btn-ghost"
+              style={{ fontSize: 9, padding: '2px 6px', marginLeft: 'auto' }}
+            >
+              Reverter
+            </button>
           </div>
         )}
-
-        {/* Botoes Reprovar / Pendente / N/A / Aprovar */}
-        <div style={{
-          display: 'flex', gap: 6, justifyContent: 'flex-end',
-          paddingTop: 6, borderTop: '1px solid var(--border)',
-          flexWrap: 'wrap',
-        }}>
-          <button
-            type="button"
-            onClick={() => handleChange('status', 'REPROVADO')}
-            className="btn btn-sm btn-ghost"
-            style={{ borderColor: 'var(--per)', color: 'var(--per)', fontSize: 10, padding: '3px 8px' }}
-          >
-            ✗ Reprovar
-          </button>
-          <button
-            type="button"
-            onClick={() => handleChange('status', 'PENDENTE')}
-            className="btn btn-sm btn-ghost"
-            style={{ borderColor: 'var(--alr)', color: 'var(--alr)', fontSize: 10, padding: '3px 8px' }}
-          >
-            ⏳ Pendente
-          </button>
-          <button
-            type="button"
-            onClick={() => handleChange('status', 'NA')}
-            className="btn btn-sm btn-ghost"
-            style={{ borderColor: 'var(--text3)', color: 'var(--text2)', fontSize: 10, padding: '3px 8px' }}
-            title="Esta análise não se aplica ao lote"
-          >
-            — N/A
-          </button>
-          <button
-            type="button"
-            onClick={() => handleChange('status', 'APROVADO')}
-            className="btn btn-sm btn-v"
-            style={{ fontSize: 10, padding: '3px 8px' }}
-          >
-            ✓ Aprovar
-          </button>
-        </div>
       </div>
     </div>
   );
@@ -1721,6 +1754,7 @@ function loteTemplate(numero) {
     statusReconciliacao: '10 — Aberto',
     statusDocumentacao: '10 — Aberto',
     areas: {
+      pesagem:       { nMps: '',               pesoTotal: '',           volumes: '',         mpsZeradas: '0', responsavel: '', data: '', status: 'PENDENTE', observacoes: '' },
       fabricacao:    { rendimentoTeorico: '',  rendimentoReal: '',     perda: '',           responsavel: '', data: '', status: 'PENDENTE', observacoes: '' },
       embalagem:     { unidadesPlanejadas: '', unidadesProduzidas: '', perda: '',           responsavel: '', data: '', status: 'PENDENTE', observacoes: '' },
       fisicoQuimico: { ph: '',                umidade: '',             densidade: '',       responsavel: '', data: '', status: 'PENDENTE', observacoes: '' },
@@ -2032,8 +2066,8 @@ export default function QualidadeReconciliacaoScreen() {
           )}
 
           {/* Identificação */}
-          <div className="card mb14" style={{ padding: 16 }}>
-            <div className="card-title" style={{ marginBottom: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+          <div className="card" style={{ padding: 10, marginBottom: 10 }}>
+            <div className="card-title" style={{ marginBottom: 8, padding: '0 0 6px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
               <span>Identificação do Lote</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 {modo === 'criacao' && (
@@ -2054,7 +2088,7 @@ export default function QualidadeReconciliacaoScreen() {
                 )}
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
               <Campo label="Nº Reconciliação" value={lote.numeroReconciliacao} />
               <Campo label="RD JDE (F4108)" value={lote.rdJde} />
               <Campo label="Filial / Fábrica" value={lote.filial} />
@@ -2084,15 +2118,32 @@ export default function QualidadeReconciliacaoScreen() {
             <MultibatchBlock granelLotes={lote.granelLotes || []} loteGranelLegacy={lote.loteGranel} />
           </div>
 
-          {/* Grid 2x2 das 4 áreas */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: 14, marginBottom: 14 }}>
+          {/* Grid das 5 áreas — auto-fit com cards compactos.
+              No mock o card Pesagem é 1º (ordem cronológica do processo). */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))',
+            gap: 8, marginBottom: 10,
+          }}>
+            <CardArea
+              chave="pesagem"
+              dados={lote.areas.pesagem || { nMps: '', pesoTotal: '', volumes: '', mpsZeradas: '0', responsavel: '', data: '', status: 'PENDENTE', observacoes: '' }}
+              indicadores={[
+                { label: 'MPs',     value: lote.areas.pesagem?.nMps },
+                { label: 'Peso',    value: lote.areas.pesagem?.pesoTotal },
+                { label: 'Volumes', value: lote.areas.pesagem?.volumes },
+                { label: 'Zeradas', value: lote.areas.pesagem?.mpsZeradas || '0', alerta: parseInt(lote.areas.pesagem?.mpsZeradas || '0', 10) > 0 },
+              ]}
+              onUpdate={(novo) => atualizarArea('pesagem', novo)}
+              onAbrirGenealogia={() => abrirGenealogia('pesagem')}
+            />
             <CardArea
               chave="fabricacao"
               dados={lote.areas.fabricacao}
               indicadores={[
-                { label: 'Rend. Teórico', value: lote.areas.fabricacao.rendimentoTeorico },
-                { label: 'Rend. Real',    value: lote.areas.fabricacao.rendimentoReal },
-                { label: 'Perda',         value: lote.areas.fabricacao.perda },
+                { label: 'R.Teór.', value: lote.areas.fabricacao.rendimentoTeorico },
+                { label: 'R.Real',  value: lote.areas.fabricacao.rendimentoReal },
+                { label: 'Perda',   value: lote.areas.fabricacao.perda },
               ]}
               onUpdate={(novo) => atualizarArea('fabricacao', novo)}
               onAbrirGenealogia={() => abrirGenealogia('fabricacao')}
@@ -2101,9 +2152,9 @@ export default function QualidadeReconciliacaoScreen() {
               chave="embalagem"
               dados={lote.areas.embalagem}
               indicadores={[
-                { label: 'Un. Planejadas', value: lote.areas.embalagem.unidadesPlanejadas },
-                { label: 'Un. Produzidas', value: lote.areas.embalagem.unidadesProduzidas },
-                { label: 'Perda',          value: lote.areas.embalagem.perda },
+                { label: 'Plan.', value: lote.areas.embalagem.unidadesPlanejadas },
+                { label: 'Prod.', value: lote.areas.embalagem.unidadesProduzidas },
+                { label: 'Perda', value: lote.areas.embalagem.perda },
               ]}
               onUpdate={(novo) => atualizarArea('embalagem', novo)}
               onAbrirGenealogia={() => abrirGenealogia('embalagem')}
@@ -2112,9 +2163,9 @@ export default function QualidadeReconciliacaoScreen() {
               chave="fisicoQuimico"
               dados={lote.areas.fisicoQuimico}
               indicadores={[
-                { label: 'pH',        value: lote.areas.fisicoQuimico.ph },
-                { label: 'Umidade',   value: lote.areas.fisicoQuimico.umidade },
-                { label: 'Densidade', value: lote.areas.fisicoQuimico.densidade },
+                { label: 'pH',  value: lote.areas.fisicoQuimico.ph },
+                { label: 'Um.', value: lote.areas.fisicoQuimico.umidade },
+                { label: 'Dens.', value: lote.areas.fisicoQuimico.densidade },
               ]}
               onUpdate={(novo) => atualizarArea('fisicoQuimico', novo)}
               onAbrirGenealogia={() => abrirGenealogia('fisicoQuimico')}
@@ -2123,9 +2174,9 @@ export default function QualidadeReconciliacaoScreen() {
               chave="microbiologia"
               dados={lote.areas.microbiologia}
               indicadores={[
-                { label: 'Contagem Total',  value: lote.areas.microbiologia.contagemTotal },
-                { label: 'Bolor / Levedura',value: lote.areas.microbiologia.bolorLevedura },
-                { label: 'Patógenos',       value: lote.areas.microbiologia.patogenos },
+                { label: 'Cont.', value: lote.areas.microbiologia.contagemTotal },
+                { label: 'B/L',   value: lote.areas.microbiologia.bolorLevedura },
+                { label: 'Pat.',  value: lote.areas.microbiologia.patogenos },
               ]}
               onUpdate={(novo) => atualizarArea('microbiologia', novo)}
               onAbrirGenealogia={() => abrirGenealogia('microbiologia')}
@@ -2148,15 +2199,15 @@ export default function QualidadeReconciliacaoScreen() {
               reconciliação são correções documentais/operacionais
               menores. "Desvio formal" mesmo vai pro CAPA/Trackwise.) */}
           <div
-            className="card mb14"
+            className="card"
             style={{
-              padding: 14,
+              padding: 10, marginBottom: 10,
               borderTop: `3px solid ${desviosBloqueando ? 'var(--per)' : (desvios.length > 0 ? 'var(--ok)' : 'var(--border2)')}`,
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap', marginBottom: 10 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <span style={{ fontSize: 14, fontWeight: 800 }}>📝 Registros de Correção</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <span style={{ fontSize: 13, fontWeight: 800 }}>📝 Registros de Correção</span>
                 <span style={{
                   fontSize: 9, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase',
                   color: 'var(--text3)', padding: '2px 6px',
@@ -2233,10 +2284,11 @@ export default function QualidadeReconciliacaoScreen() {
           </div>
 
           {/* Resumo + Ações finais */}
-          <div className="card co" style={{ padding: 16, display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', alignItems: 'center', borderTop: '3px solid var(--ouro-claro)' }}>
-            <div style={{ minWidth: 280 }}>
-              <div className="card-title" style={{ marginBottom: 8, padding: 0, border: 'none' }}>Resumo da Análise</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
+          <div className="card co" style={{ padding: 10, display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', alignItems: 'center', borderTop: '3px solid var(--ouro-claro)' }}>
+            <div style={{ minWidth: 260 }}>
+              <div className="card-title" style={{ marginBottom: 6, padding: 0, border: 'none' }}>Resumo da Análise</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: 10 }}>
+                <ResumoItem label="Pesagem"        status={lote.areas.pesagem?.status || 'PENDENTE'} />
                 <ResumoItem label="Fabricação"     status={lote.areas.fabricacao.status} />
                 <ResumoItem label="Embalagem"      status={lote.areas.embalagem.status} />
                 <ResumoItem label="Físico-Químico" status={lote.areas.fisicoQuimico.status} />

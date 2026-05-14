@@ -12,6 +12,7 @@ import EtiquetaImpressa from './EtiquetaImpressa.jsx';
  *   microbiologia -> lims-pa
  */
 const AREA_PARA_NO = {
+  pesagem:       'pesagem',
   fabricacao:    'fabricacao',
   embalagem:     'embalagem-ean',
   fisicoQuimico: 'lims-granel',
@@ -33,6 +34,7 @@ const FASES = [
 ];
 
 const AREA_PARA_FASE = {
+  pesagem:       'pesagem',
   fabricacao:    'fabricacao',
   embalagem:     'embalagem',
   fisicoQuimico: 'qualidade',
