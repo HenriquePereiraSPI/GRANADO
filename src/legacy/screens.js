@@ -1071,7 +1071,7 @@ export const SCREENS = {
       </div>
 
       <!-- Aviso explicando a separação dos checklists -->
-      <div class="abox inf mb14"><span class="ai">ℹ️</span><div>Este checklist é específico do <strong>contexto da Ordem em pesagem</strong> (limpeza pós-lote anterior, container etc.). O checklist de <strong>Aferição de Balanças e Condições Ambientais</strong> é feito uma vez por turno na tela <a href="javascript:nav('pes-checklist-turno', null, 'mod-pes')" style="color:var(--verde);font-weight:700;text-decoration:underline">Checklist de Turno</a> e bloqueia o início de qualquer OP sem ter sido executado.</div></div>
+      <div class="abox inf mb14"><span class="ai">ℹ️</span><div>Este checklist é específico do <strong>contexto da Ordem em pesagem</strong> (limpeza pós-lote anterior, container etc.). O checklist de <strong>Aferição de Balanças e Condições Ambientais</strong> é executado conforme sua frequência na tela <a href="javascript:nav('pes-checklist-turno', null, 'mod-pes')" style="color:var(--verde);font-weight:700;text-decoration:underline">Checklist</a> e bloqueia o início de qualquer OP sem ter sido executado.</div></div>
 
       <div style="margin-bottom:14px">
         <div class="sec-lbl">🧹 Limpeza da Área e Equipamentos</div>
@@ -1098,35 +1098,35 @@ export const SCREENS = {
      Bloqueia qualquer OP da Pesagem se os críticos não foram feitos.
   ════════════════════════════════════════════════════════════════════ */
   "pes-checklist-turno": `      <div class="page-header">
-        <div><div class="ph-eyebrow">Pesagem · MF5 · Turno em Vigência</div><div class="ph-title">Checklist de Turno</div></div>
-        <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">Obrigatório no início de cada turno<br><span style="color:var(--verde)" id="cklt-meta-info">Turno A · 06:00–18:00 · J. Santos</span></div>
+        <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Checklist</div></div>
+        <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">Obrigatório no início de cada período<br><span style="color:var(--verde)" id="cklt-meta-info">06:00–18:00 · J. Santos</span></div>
       </div>
 
-      <div class="abox warn mb14"><span class="ai">⚠️</span><div>Estes checklists <strong>NÃO estão vinculados a uma Ordem específica</strong>. São executados <strong>1× por turno</strong> e bloqueiam o início de QUALQUER ordem de pesagem até serem concluídos. Frequência: <strong>Aferição de Balanças e Condições Ambientais — a cada início de turno</strong>.</div></div>
+      <div class="abox warn mb14"><span class="ai">⚠️</span><div>Estes checklists <strong>NÃO estão vinculados a uma Ordem específica</strong>. São executados conforme sua frequência (ex.: <strong>1× por turno</strong> para Aferição de Balanças e Condições Ambientais) e bloqueiam o início de QUALQUER ordem de pesagem até serem concluídos.</div></div>
 
       <!-- KPIs no topo: estado global -->
       <div class="g4 mb14" style="gap:10px">
         <div class="card cv" style="display:flex;align-items:center;gap:10px;padding:10px 14px">
           <div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--verde);line-height:1" id="cklt-kpi-ok">0</div>
-          <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">Executados<br/>neste turno</div>
+          <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">Executados<br/>no per&iacute;odo</div>
         </div>
         <div class="card cp" style="display:flex;align-items:center;gap:10px;padding:10px 14px">
           <div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--per);line-height:1" id="cklt-kpi-pend">2</div>
           <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">Pendentes<br/>(bloqueia OPs)</div>
         </div>
         <div class="card co" style="display:flex;align-items:center;gap:10px;padding:10px 14px">
-          <div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--inf);line-height:1">Turno A</div>
-          <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">06:00<br/>18:00</div>
+          <div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--inf);line-height:1">2</div>
+          <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">Total de<br/>checklists</div>
         </div>
         <div class="card" style="display:flex;align-items:center;gap:10px;padding:10px 14px">
-          <div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--ouro);line-height:1">3</div>
-          <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">Próximos<br/>turnos</div>
+          <div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--ouro);line-height:1">06:18</div>
+          <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">&Uacute;ltima<br/>execu&ccedil;&atilde;o</div>
         </div>
       </div>
 
-      <!-- ═══════════ GRID DE CHECKLISTS DO TURNO ═══════════ -->
+      <!-- ═══════════ GRID DE CHECKLISTS ═══════════ -->
       <div class="card cv mb14">
-        <div class="card-title">Checklists do Turno — Estado Atual</div>
+        <div class="card-title">Checklists — Estado Atual</div>
         <div style="overflow-x:auto">
         <table class="tbl" id="tbl-cklt-grid" style="font-size:11px;min-width:1000px">
           <thead>
@@ -1154,10 +1154,10 @@ export const SCREENS = {
             <tr id="cklt-row-amb" data-key="ambientais">
               <td>
                 <div style="font-size:13px;font-weight:700;color:var(--verde-esc)">🌡️ Condições Ambientais</div>
-                <div style="font-size:10px;color:var(--text3);margin-top:2px">Temp/Umidade · Exaustão · Impressora Zebra</div>
+                <div style="font-size:10px;color:var(--text3);margin-top:2px">Temperatura · Umidade · Pressão dif. · Exaustão · Impressora</div>
               </td>
               <td><span class="bdg bdg-inf">1× por turno</span></td>
-              <td class="mono">3</td>
+              <td class="mono">5</td>
               <td><span class="bdg bdg-alr">SIM</span></td>
               <td id="cklt-st-amb"><span class="bdg bdg-per" style="font-weight:800">⏳ PENDENTE</span></td>
               <td class="mono" id="cklt-ult-amb" style="color:var(--text3)">—</td>
@@ -1176,27 +1176,101 @@ export const SCREENS = {
 
       <!-- ═══════════ HISTÓRICO RECENTE ═══════════ -->
       <div class="card cv">
-        <div class="card-title">Histórico Recente — Últimos turnos</div>
-        <table class="tbl" style="font-size:11px">
-          <thead><tr><th>Data</th><th>Turno</th><th>Checklist</th><th>Operador</th><th>Status</th><th>Observação</th></tr></thead>
+        <div class="card-title">Histórico Recente</div>
+
+        <!-- Filtros (mesmas dimensões das colunas da tabela) -->
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:12px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px">
+          <div style="display:flex;flex-direction:column;flex:1 1 130px;min-width:120px">
+            <label class="lbl">Data (de)</label>
+            <input class="inp" id="cklh-flt-data-ini" type="date" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px;font-family:var(--font-m)">
+          </div>
+          <div style="display:flex;flex-direction:column;flex:1 1 130px;min-width:120px">
+            <label class="lbl">Data (até)</label>
+            <input class="inp" id="cklh-flt-data-fim" type="date" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px;font-family:var(--font-m)">
+          </div>
+          <div style="display:flex;flex-direction:column;flex:1.5 1 170px;min-width:150px">
+            <label class="lbl">Checklist</label>
+            <select class="sel" id="cklh-flt-checklist" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
+              <option value="">Todos</option>
+              <option value="balancas">⚖️ Aferição de Balanças</option>
+              <option value="ambientais">🌡️ Condições Ambientais</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column;flex:1.5 1 170px;min-width:150px">
+            <label class="lbl">Operador</label>
+            <input class="inp" id="cklh-flt-operador" placeholder="Nome ou matrícula" oninput="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
+          </div>
+          <div style="display:flex;flex-direction:column;flex:1.2 1 150px;min-width:130px">
+            <label class="lbl">Status</label>
+            <select class="sel" id="cklh-flt-status" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
+              <option value="">Todos</option>
+              <option value="ok">✓ Concluído</option>
+              <option value="alerta">⚠ Concluído c/ alerta</option>
+            </select>
+          </div>
+          <button class="btn btn-sm btn-ghost" onclick="cklhLimparFiltros()" style="font-size:11px;align-self:flex-end" title="Limpar todos os filtros">✕ Limpar</button>
+        </div>
+        <div id="cklh-resultado" style="font-size:10px;color:var(--text3);margin-bottom:8px;font-family:var(--font-m)">5 de 5 registros</div>
+
+        <table class="tbl" id="tbl-cklh" style="font-size:11px">
+          <thead><tr><th>Data</th><th>Checklist</th><th>Operador</th><th>Status</th><th>Observação</th></tr></thead>
           <tbody>
-            <tr><td class="mono" style="font-size:11px">12/05/2026</td><td>A (06–18h)</td><td>⚖️ Aferição de Balanças</td><td>J. Santos (155)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Todas as 3 balanças aprovadas. Concluído às 06:18.</td></tr>
-            <tr><td class="mono" style="font-size:11px">12/05/2026</td><td>A (06–18h)</td><td>🌡️ Condições Ambientais</td><td>J. Santos (155)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Temp 20,3°C · UR 47% · Exaustão OK · Impressora OK.</td></tr>
-            <tr><td class="mono" style="font-size:11px">12/05/2026</td><td>B (18–06h)</td><td>⚖️ Aferição de Balanças</td><td>C. Caily (108)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">BAL-01 nivelada — segunda leitura estável.</td></tr>
-            <tr><td class="mono" style="font-size:11px">12/05/2026</td><td>B (18–06h)</td><td>🌡️ Condições Ambientais</td><td>C. Caily (108)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Sem ocorrências.</td></tr>
-            <tr style="opacity:.7"><td class="mono" style="font-size:11px">11/05/2026</td><td>A (06–18h)</td><td>⚖️ Aferição de Balanças</td><td>A. Pereira (203)</td><td><span class="bdg bdg-alr">⚠ Concluído c/ alerta</span></td><td style="font-size:10px;color:var(--alr)">BAL-03 fora da faixa — recalibrada pela Manutenção. Liberada às 06:42.</td></tr>
+            <tr data-data="2026-05-12" data-checklist="balancas"  data-operador="j. santos 155"   data-status="ok"><td class="mono" style="font-size:11px">12/05/2026</td><td>⚖️ Aferição de Balanças</td><td>J. Santos (155)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Todas as 3 balanças aprovadas. Concluído às 06:18.</td></tr>
+            <tr data-data="2026-05-12" data-checklist="ambientais" data-operador="j. santos 155"   data-status="ok"><td class="mono" style="font-size:11px">12/05/2026</td><td>🌡️ Condições Ambientais</td><td>J. Santos (155)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Temp 20,3°C · UR 47% · Exaustão OK · Impressora OK.</td></tr>
+            <tr data-data="2026-05-12" data-checklist="balancas"  data-operador="c. caily 108"    data-status="ok"><td class="mono" style="font-size:11px">12/05/2026</td><td>⚖️ Aferição de Balanças</td><td>C. Caily (108)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">BAL-01 nivelada — segunda leitura estável.</td></tr>
+            <tr data-data="2026-05-12" data-checklist="ambientais" data-operador="c. caily 108"    data-status="ok"><td class="mono" style="font-size:11px">12/05/2026</td><td>🌡️ Condições Ambientais</td><td>C. Caily (108)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Sem ocorrências.</td></tr>
+            <tr data-data="2026-05-11" data-checklist="balancas"  data-operador="a. pereira 203"  data-status="alerta" style="opacity:.85"><td class="mono" style="font-size:11px">11/05/2026</td><td>⚖️ Aferição de Balanças</td><td>A. Pereira (203)</td><td><span class="bdg bdg-alr">⚠ Concluído c/ alerta</span></td><td style="font-size:10px;color:var(--alr)">BAL-03 fora da faixa — recalibrada pela Manutenção. Liberada às 06:42.</td></tr>
           </tbody>
         </table>
+
+        <script>
+        // Filtra a tabela do Histórico Recente usando os atributos data-* das linhas.
+        function cklhFiltrar() {
+          var fDataI = (document.getElementById('cklh-flt-data-ini').value || '').trim();
+          var fDataF = (document.getElementById('cklh-flt-data-fim').value || '').trim();
+          var fChk   = (document.getElementById('cklh-flt-checklist').value || '').trim();
+          var fOp    = (document.getElementById('cklh-flt-operador').value || '').trim().toLowerCase();
+          var fSt    = (document.getElementById('cklh-flt-status').value || '').trim();
+          var rows   = document.querySelectorAll('#tbl-cklh tbody tr');
+          var vis = 0;
+          rows.forEach(function(r){
+            var d = r.getAttribute('data-data') || '';
+            var c = r.getAttribute('data-checklist') || '';
+            var o = (r.getAttribute('data-operador') || '').toLowerCase();
+            var s = r.getAttribute('data-status') || '';
+            var ok = true;
+            if (fDataI && d < fDataI) ok = false;
+            if (fDataF && d > fDataF) ok = false;
+            if (fChk && c !== fChk) ok = false;
+            if (fOp  && o.indexOf(fOp) === -1) ok = false;
+            if (fSt  && s !== fSt) ok = false;
+            r.style.display = ok ? '' : 'none';
+            if (ok) vis++;
+          });
+          var temFiltro = fDataI || fDataF || fChk || fOp || fSt;
+          var lbl = vis + ' de ' + rows.length + ' registro(s)';
+          if (temFiltro) lbl += ' — filtros aplicados';
+          document.getElementById('cklh-resultado').textContent = lbl;
+        }
+        function cklhLimparFiltros() {
+          ['cklh-flt-data-ini','cklh-flt-data-fim','cklh-flt-operador'].forEach(function(id){
+            var el = document.getElementById(id); if (el) el.value = '';
+          });
+          document.getElementById('cklh-flt-checklist').value = '';
+          document.getElementById('cklh-flt-status').value = '';
+          cklhFiltrar();
+        }
+        </script>
       </div>
 
-      <!-- ════════ MODAL: Executar Checklist do Turno ════════ -->
+      <!-- ════════ MODAL: Executar Checklist ════════ -->
       <div id="modal-cklt-exec" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:960;align-items:flex-start;justify-content:center;padding-top:40px;backdrop-filter:blur(3px);overflow-y:auto">
         <div style="background:var(--surface);border-top:4px solid var(--ouro);border:1px solid var(--border);border-radius:10px;padding:24px 28px;max-width:640px;width:94%;box-shadow:var(--sh2);margin-bottom:40px">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
             <div>
-              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--ouro)" id="cklt-modal-eyebrow">Checklist de Turno</div>
+              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--ouro)" id="cklt-modal-eyebrow">Checklist · Pesagem</div>
               <div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin-top:2px" id="cklt-modal-titulo">—</div>
-              <div style="font-size:10px;color:var(--text2);margin-top:2px" id="cklt-modal-meta">Turno A · 06:00–18:00 · J. Santos</div>
+              <div style="font-size:10px;color:var(--text2);margin-top:2px" id="cklt-modal-meta">06:00–18:00 · J. Santos</div>
             </div>
             <button onclick="document.getElementById('modal-cklt-exec').style.display='none'" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
           </div>
@@ -1254,50 +1328,84 @@ export const SCREENS = {
         } catch (e) {}
       }
 
-      // Configuração dos checklists (lista de itens + faixas para aferição)
+      // Configuração dos checklists (lista de itens + faixas para aferição).
+      // Cada item tem um "tipo":
+      //   'aferir' → operador APONTA um valor numérico medido; sistema
+      //              valida contra [min, max] e marca OK/FORA automaticamente.
+      //   'check'  → simples checkbox visual (sem valor para registrar).
       var CKLT_DEFS = {
         balancas: {
           titulo: '⚖️ Aferição de Balanças',
-          eyebrow: 'Checklist de Turno · Aferição de Balanças',
+          eyebrow: 'Checklist · Aferição de Balanças',
           itens: [
-            { id:'bal03-zero',  nome:'Balança BAL-03 zerada e estabilizada',     desc:'Verificar zero sem carga por 60 segundos. Valor: 0,000 ±0,002 kg.', crit:true,  tipo:'aferir', faixa:'0,000 ±0,002 kg', min:-0.002, max:0.002,  unidade:'kg' },
-            { id:'bal03-10kg',  nome:'Verificação com peso padrão (10 kg)',      desc:'Peso padrão certificado. Leitura: 9,990–10,010 kg.',               crit:true,  tipo:'aferir', faixa:'9,990 a 10,010 kg', min:9.990, max:10.010, unidade:'kg' },
-            { id:'bal01-100g',  nome:'Balança BAL-01 (micropesagem) aferida',    desc:'Peso padrão 100 g. Leitura: 99,90–100,10 g.',                       crit:false, tipo:'aferir', faixa:'99,90 a 100,10 g',  min:99.90, max:100.10, unidade:'g' }
+            { id:'bal03-zero',  nome:'Balança BAL-03 zerada e estabilizada',     desc:'Verificar zero sem carga por 60 segundos.',           crit:true,  tipo:'aferir', faixa:'0,000 ±0,002 kg',   min:-0.002, max:0.002,  unidade:'kg',    step:'0.001' },
+            { id:'bal03-10kg',  nome:'Verificação com peso padrão (10 kg)',      desc:'Peso padrão certificado de 10 kg na plataforma.',     crit:true,  tipo:'aferir', faixa:'9,990 a 10,010 kg', min:9.990,  max:10.010, unidade:'kg',    step:'0.001' },
+            { id:'bal01-100g',  nome:'Balança BAL-01 (micropesagem) aferida',    desc:'Peso padrão 100 g. Registrar leitura em gramas.',     crit:false, tipo:'aferir', faixa:'99,90 a 100,10 g',  min:99.90,  max:100.10, unidade:'g',     step:'0.01'  }
           ]
         },
         ambientais: {
           titulo: '🌡️ Condições Ambientais',
-          eyebrow: 'Checklist de Turno · Condições Ambientais',
+          eyebrow: 'Checklist · Condições Ambientais',
           itens: [
-            { id:'temp-umid',   nome:'Temperatura e umidade dentro dos limites',          desc:'Temperatura: 18–22°C · Umidade: 40–60% RH. Registrar no monitoramento ambiental.', crit:false, tipo:'check' },
-            { id:'exaustao',    nome:'Sistema de exaustão e pressurização funcionando',   desc:'Pressão negativa na sala de pesagem de pós. Indicadores de fluxo OK.',           crit:false, tipo:'check' },
-            { id:'impressora',  nome:'Impressora Zebra com etiquetas e ribbon disponíveis','desc':'Bobina + ribbon. Imprimir etiqueta de teste antes de iniciar.',                  crit:false, tipo:'check' }
+            { id:'temp',       nome:'Temperatura da sala',                    desc:'Ler no termo-higrômetro fixo.',                        crit:false, tipo:'aferir', faixa:'18 a 22 °C',     min:18, max:22, unidade:'°C',    step:'0.1' },
+            { id:'umidade',    nome:'Umidade relativa do ar',                 desc:'Ler no termo-higrômetro fixo.',                        crit:false, tipo:'aferir', faixa:'40 a 60 % RH',  min:40, max:60, unidade:'% RH',  step:'1'   },
+            { id:'pressao',    nome:'Pressão diferencial da sala',            desc:'Sala de pós em pressão NEGATIVA (valor < 0).',         crit:false, tipo:'aferir', faixa:'−15 a −5 Pa',   min:-15, max:-5, unidade:'Pa',   step:'0.5' },
+            { id:'exaustao',   nome:'Sistema de exaustão funcionando',        desc:'Indicadores de fluxo OK no painel da exaustão.',       crit:false, tipo:'check'   },
+            { id:'impressora', nome:'Impressora Zebra com etiquetas e ribbon',desc:'Bobina + ribbon. Imprimir etiqueta de teste.',         crit:false, tipo:'check'   }
           ]
         }
       };
 
       // Estado em memória durante o preenchimento do modal
       var _ckltAtivo = null;     // chave: 'balancas' | 'ambientais'
-      var _ckltMarcados = {};    // { itemId: true/false }
+      var _ckltMarcados = {};    // { itemId: true/false }  ← done?
+      var _ckltValores = {};     // { itemId: number }      ← valor apontado
+                                  //   (somente para itens com tipo='aferir')
 
       function cklTurnoExecutar(key) {
         var def = CKLT_DEFS[key];
         if (!def) return;
         _ckltAtivo = key;
         _ckltMarcados = {};
+        _ckltValores = {};
         document.getElementById('cklt-modal-titulo').textContent  = def.titulo;
         document.getElementById('cklt-modal-eyebrow').textContent = def.eyebrow;
-        // Render itens
+        // Render itens — comportamento varia conforme tipo
         var html = '';
         def.itens.forEach(function(it){
-          html += '<div class="ck-item" id="cklt-item-' + it.id + '" onclick="cklTurnoToggleItem(\\'' + it.id + '\\')">' +
-            '<div class="ck-box">✓</div>' +
-            '<div style="flex:1">' +
-              '<div class="ck-nome">' + it.nome + '</div>' +
-              '<div class="ck-desc">' + it.desc + (it.faixa ? ' · <strong>Faixa: ' + it.faixa + '</strong>' : '') + '</div>' +
-            '</div>' +
-            '<span class="ck-tag ' + (it.crit ? 'crit' : 'obrig') + '">' + (it.crit ? 'Crítico' : 'Obrigatório') + '</span>' +
-          '</div>';
+          if (it.tipo === 'aferir') {
+            // Item COM VALOR: render campo de input + indicador live
+            html += '<div class="ck-item" id="cklt-item-' + it.id + '" style="flex-direction:column;align-items:stretch">' +
+              '<div style="display:flex;align-items:flex-start;gap:12px;width:100%">' +
+                '<div class="ck-box">✓</div>' +
+                '<div style="flex:1">' +
+                  '<div class="ck-nome">' + it.nome + '</div>' +
+                  '<div class="ck-desc">' + it.desc + ' · <strong>Faixa: ' + it.faixa + '</strong></div>' +
+                '</div>' +
+                '<span class="ck-tag ' + (it.crit ? 'crit' : 'obrig') + '">' + (it.crit ? 'Crítico' : 'Obrigatório') + '</span>' +
+              '</div>' +
+              '<div style="display:flex;align-items:center;gap:8px;margin-top:8px;margin-left:36px">' +
+                '<label style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Valor apontado:</label>' +
+                '<input type="number" id="cklt-val-' + it.id + '" step="' + (it.step || '0.01') + '"' +
+                  ' placeholder="' + it.faixa.split(' ')[0].replace(',','.') + '"' +
+                  ' style="width:130px;padding:6px 10px;font-family:var(--font-m);font-size:13px;font-weight:700;text-align:center;border:1px solid var(--border);border-radius:5px;background:var(--surface);color:var(--text)"' +
+                  ' oninput="cklTurnoSetValor(\\''+it.id+'\\', this.value)"' +
+                  ' onclick="event.stopPropagation()">' +
+                '<span style="font-size:11px;font-weight:700;color:var(--text2)">' + it.unidade + '</span>' +
+                '<span id="cklt-ind-' + it.id + '" style="font-size:10px;font-weight:800;padding:4px 10px;border-radius:4px;display:none">—</span>' +
+              '</div>' +
+            '</div>';
+          } else {
+            // Item de CHECK simples: clique no item alterna o estado
+            html += '<div class="ck-item" id="cklt-item-' + it.id + '" onclick="cklTurnoToggleItem(\\'' + it.id + '\\')">' +
+              '<div class="ck-box">✓</div>' +
+              '<div style="flex:1">' +
+                '<div class="ck-nome">' + it.nome + '</div>' +
+                '<div class="ck-desc">' + it.desc + '</div>' +
+              '</div>' +
+              '<span class="ck-tag ' + (it.crit ? 'crit' : 'obrig') + '">' + (it.crit ? 'Crítico' : 'Obrigatório') + '</span>' +
+            '</div>';
+          }
         });
         document.getElementById('cklt-modal-itens').innerHTML = html;
         document.getElementById('cklt-modal-obs').value = '';
@@ -1309,6 +1417,45 @@ export const SCREENS = {
         _ckltMarcados[itemId] = !_ckltMarcados[itemId];
         var el = document.getElementById('cklt-item-' + itemId);
         if (el) el.classList.toggle('done', !!_ckltMarcados[itemId]);
+        cklTurnoAtualizarProg();
+      }
+
+      // Operador apontou um valor para um item do tipo 'aferir' — valida
+      // contra a faixa e atualiza o estado visual + progresso.
+      function cklTurnoSetValor(itemId, valStr) {
+        var def = CKLT_DEFS[_ckltAtivo];
+        if (!def) return;
+        var it = null;
+        for (var i = 0; i < def.itens.length; i++) {
+          if (def.itens[i].id === itemId) { it = def.itens[i]; break; }
+        }
+        if (!it) return;
+        var v = parseFloat(String(valStr).replace(',', '.'));
+        var item = document.getElementById('cklt-item-' + itemId);
+        var ind  = document.getElementById('cklt-ind-' + itemId);
+        if (isNaN(v)) {
+          // Sem valor → resetar
+          delete _ckltValores[itemId];
+          _ckltMarcados[itemId] = false;
+          if (item) { item.classList.remove('done'); item.classList.remove('fail'); }
+          if (ind)  ind.style.display = 'none';
+          cklTurnoAtualizarProg();
+          return;
+        }
+        _ckltValores[itemId] = v;
+        var ok = v >= it.min && v <= it.max;
+        _ckltMarcados[itemId] = ok;
+        if (item) {
+          item.classList.toggle('done', ok);
+          item.classList.toggle('fail', !ok);
+        }
+        if (ind) {
+          ind.style.display = 'inline-block';
+          ind.style.background = ok ? 'var(--ok-p)' : 'var(--per-p)';
+          ind.style.color      = ok ? 'var(--ok)'   : 'var(--per)';
+          ind.style.border     = '1px solid ' + (ok ? 'var(--ok-b)' : 'var(--per-b)');
+          ind.textContent      = ok ? '✓ Dentro da faixa' : '⚠ FORA — verifique';
+        }
         cklTurnoAtualizarProg();
       }
 
@@ -1337,9 +1484,22 @@ export const SCREENS = {
         var obs = (document.getElementById('cklt-modal-obs').value || '').trim();
         var ts = new Date();
         var hora = ts.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+        // Snapshot dos valores apontados (somente itens 'aferir' têm valor)
+        var valores = {};
+        def.itens.forEach(function(it){
+          if (it.tipo === 'aferir' && _ckltValores[it.id] != null) {
+            valores[it.id] = {
+              v: _ckltValores[it.id],
+              unidade: it.unidade,
+              faixa: it.faixa,
+              dentro: _ckltMarcados[it.id]
+            };
+          }
+        });
         // Atualiza estado global
         window.PES_CHECKLIST_TURNO.itens[_ckltAtivo] = {
-          ts: ts.toISOString(), hora: hora, op: 'J. Santos (155)', obs: obs
+          ts: ts.toISOString(), hora: hora, op: 'J. Santos (155)', obs: obs,
+          valores: valores
         };
         cklTurnoSalvar();
         // Atualiza linha do grid
@@ -1354,10 +1514,10 @@ export const SCREENS = {
         alert(
           '✅ Checklist concluído com sucesso!\\n\\n' +
           def.titulo + '\\n' +
-          'Turno: ' + window.PES_CHECKLIST_TURNO.turno + ' · Hora: ' + hora + '\\n' +
+          'Hora: ' + hora + '\\n' +
           'Operador: J. Santos (155)' +
           (obs ? '\\nObservação: ' + obs : '') +
-          '\\n\\nTrilha: CKLT-' + window.PES_CHECKLIST_TURNO.turno + '-' + Date.now().toString().slice(-6)
+          '\\n\\nTrilha: CKL-' + Date.now().toString().slice(-6)
         );
       }
 
@@ -4004,10 +4164,10 @@ export const SCREENS = {
           if (!st.ok) {
             var lista = st.pendentes.map(function(p){ return '• ' + p; }).join('\\n');
             var ok = confirm(
-              '⛔ Checklist de Turno PENDENTE\\n\\n' +
-              'Antes de iniciar qualquer OP no turno corrente, os checklists abaixo precisam ser executados:\\n\\n' +
+              '⛔ Checklist PENDENTE\\n\\n' +
+              'Antes de iniciar qualquer OP, os checklists abaixo precisam ser executados:\\n\\n' +
               lista + '\\n\\n' +
-              'Deseja ir agora para a tela "Checklist (Turno)" para executar?'
+              'Deseja ir agora para a tela "Checklist" para executar?'
             );
             if (ok && typeof nav === 'function') {
               nav('pes-checklist-turno', null, 'mod-pes');

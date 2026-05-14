@@ -37,7 +37,7 @@ export const MODULES = [
       // movidas pra DENTRO de pes-ordens — só ficam acessiveis depois
       // que o usuario seleciona uma ordem na fila de pesagem.
       { id: 'pes-ordens',          label: 'Selecao de Ordem' },
-      { id: 'pes-checklist-turno', label: '🧪 Checklist (Turno)' },
+      { id: 'pes-checklist-turno', label: '🧪 Checklist' },
       { id: 'pes-oee',             label: '📊 OEE Pesagem' },
       { id: 'pes-perf-operador',   label: '📈 Performance (Operador)' },
       { id: 'pes-perf-gestao',     label: '👔 Performance Gestao' },
