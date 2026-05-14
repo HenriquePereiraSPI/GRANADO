@@ -7,6 +7,7 @@ import {
   STATUS_PROC_LABEL,
   STATUS_ANALISE_COLOR,
   STATUS_LOTE_FINAL_COLOR,
+  PRIORIDADE_PCP_COR,
 } from '../data/lotes-fila-reconciliacao.js';
 
 /**
@@ -117,6 +118,29 @@ function StatusLoteFinal({ valor }) {
   );
 }
 
+/** Wave 3.8 — Bandeirinha de Prioridade PCP. */
+function PrioridadePcpFlag({ nivel, motivo }) {
+  const cor = PRIORIDADE_PCP_COR[nivel] || PRIORIDADE_PCP_COR.normal;
+  if (nivel === 'normal' || !nivel) {
+    return <span style={{ fontSize: 10, color: 'var(--text3)' }}>—</span>;
+  }
+  return (
+    <span
+      style={{
+        display: 'inline-flex', alignItems: 'center', gap: 4,
+        padding: '2px 8px', borderRadius: 10,
+        fontSize: 9, fontWeight: 800, letterSpacing: '.04em', textTransform: 'uppercase',
+        background: cor.bg, color: cor.fg, border: `1px solid ${cor.bd}`,
+        whiteSpace: 'nowrap',
+      }}
+      title={motivo ? `Prioridade PCP — ${motivo}` : 'Prioridade PCP'}
+    >
+      <span style={{ fontSize: 11 }}>{cor.icone}</span>
+      {cor.label}
+    </span>
+  );
+}
+
 /** Coluna 'Desvio' com badge dependendo da contagem. */
 function DesvioCellInline({ desvios }) {
   const total = desvios.abertos + desvios.tratados;
@@ -174,18 +198,29 @@ export default function QualidadeFilaReconciliacaoScreen() {
   );
 
   // Itens apos filtragem.
+  // Wave 3.8 — sort: prioridade critica → alta → normal, mantendo a
+  // ordem original dentro de cada grupo.
+  const PRIORIDADE_PESO = { critica: 0, alta: 1, normal: 2 };
   const itensFiltrados = useMemo(() => {
     const q = busca.trim().toLowerCase();
-    return LOTES_FILA.filter((item) => {
-      if (filtroStatus !== 'todos' && item.statusProcesso !== filtroStatus) return false;
-      if (filtroProcesso !== 'todos' && item.processo !== filtroProcesso) return false;
-      if (filtroTipo !== 'todos' && item.tipoRelato !== filtroTipo) return false;
-      if (q) {
-        const hay = `${item.lotePA} ${item.produto} ${item.wo} ${item.descStatus}`.toLowerCase();
-        if (!hay.includes(q)) return false;
-      }
-      return true;
-    });
+    return LOTES_FILA
+      .filter((item) => {
+        if (filtroStatus !== 'todos' && item.statusProcesso !== filtroStatus) return false;
+        if (filtroProcesso !== 'todos' && item.processo !== filtroProcesso) return false;
+        if (filtroTipo !== 'todos' && item.tipoRelato !== filtroTipo) return false;
+        if (q) {
+          const hay = `${item.lotePA} ${item.produto} ${item.wo} ${item.descStatus}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      })
+      .slice()
+      .sort((a, b) => {
+        const pa = PRIORIDADE_PESO[a.prioridadePcp] ?? 9;
+        const pb = PRIORIDADE_PESO[b.prioridadePcp] ?? 9;
+        if (pa !== pb) return pa - pb;
+        return a.linha - b.linha;
+      });
   }, [filtroStatus, filtroProcesso, filtroTipo, busca]);
 
   // KPIs (calculados sobre o conjunto total — nao filtrado).
@@ -194,7 +229,9 @@ export default function QualidadeFilaReconciliacaoScreen() {
     const prontos = LOTES_FILA.filter((i) => i.statusProcesso === '10').length;
     const emCurso = LOTES_FILA.filter((i) => i.statusProcesso === '20').length;
     const aguardando = LOTES_FILA.filter((i) => i.statusProcesso === '30').length;
-    return { total, prontos, emCurso, aguardando };
+    const prioCriticos = LOTES_FILA.filter((i) => i.prioridadePcp === 'critica').length;
+    const prioAltos    = LOTES_FILA.filter((i) => i.prioridadePcp === 'alta').length;
+    return { total, prontos, emCurso, aguardando, prioCriticos, prioAltos };
   }, []);
 
   const limparFiltros = () => {
@@ -305,6 +342,7 @@ export default function QualidadeFilaReconciliacaoScreen() {
         <KpiCard label="Prontos para CQ"    valor={stats.prontos}    cor="var(--ok)"   icone="✅" hint="Status 10 — clicáveis"  />
         <KpiCard label="Em Curso"           valor={stats.emCurso}    cor="var(--inf)"  icone="🏭" hint="Fab / Emb / Pesagem"   />
         <KpiCard label="Aguardando LIMS"    valor={stats.aguardando} cor="var(--alr)"  icone="⏳" hint="Físico-Q. / Microbio." />
+        <KpiCard label="Prioridade PCP"     valor={`${stats.prioCriticos}/${stats.prioAltos}`} cor="var(--per)" icone="🚩" hint="Críticas / Altas — sobem na fila" />
       </div>
       )}
 
@@ -457,6 +495,7 @@ export default function QualidadeFilaReconciliacaoScreen() {
                 </th>
                 <th style={{ width: 38, textAlign: 'center' }}>🔍</th>
                 <th>Nº<br />Linha</th>
+                <th title="Prioridade do PCP — sinaliza lotes preferenciais">🚩 PCP</th>
                 <th>Tipo de <span style={{ color: 'var(--per)' }}>★</span><br />Relato</th>
                 <th>Descrição<br />Relato</th>
                 <th>Processo <span style={{ color: 'var(--per)' }}>★</span></th>
@@ -472,7 +511,7 @@ export default function QualidadeFilaReconciliacaoScreen() {
             <tbody>
               {itensFiltrados.length === 0 && (
                 <tr>
-                  <td colSpan={13} style={{ textAlign: 'center', padding: 32, color: 'var(--text3)' }}>
+                  <td colSpan={14} style={{ textAlign: 'center', padding: 32, color: 'var(--text3)' }}>
                     <div style={{ fontSize: 24, marginBottom: 6 }}>🔍</div>
                     Nenhum lote corresponde aos filtros aplicados.
                     <div style={{ fontSize: 11, marginTop: 4 }}>
@@ -515,6 +554,7 @@ export default function QualidadeFilaReconciliacaoScreen() {
                       )}
                     </td>
                     <td className="mono">{String(item.linha).padStart(2, '0')}</td>
+                    <td><PrioridadePcpFlag nivel={item.prioridadePcp} motivo={item.motivoPrioridade} /></td>
                     <td className="mono"><strong>{item.tipoRelato}</strong></td>
                     <td>{item.descRelato}</td>
                     <td className="mono"><strong>{item.processo}</strong></td>

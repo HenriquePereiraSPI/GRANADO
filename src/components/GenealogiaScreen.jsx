@@ -512,9 +512,67 @@ function RenderConteudoNo({ no, cores, dossie }) {
         { k: 'qtd',      label: 'Qtd.',       style: { fontFamily: 'var(--font-m)', textAlign: 'right', fontWeight: 700 } },
       ]} />;
 
-    case 'pesagem':
+    case 'pesagem': {
+      // Wave 3.12 — Pesagem destacada no dossiê. Item com qtd zerada
+      // (ex: "0,00 kg" / "0 kg" / vazio) é destacado em vermelho, pois
+      // indica MP NÃO PESADA — bloqueia a reconciliação. Reunião GQV/
+      // CQ 12/05/2026: o CQ não pode aprovar lote com peso zerado.
+      const isZerada = (qtd) => {
+        if (!qtd) return true;
+        const num = parseFloat(String(qtd).replace(/[^0-9.,]/g, '').replace(',', '.'));
+        return isNaN(num) || num <= 0;
+      };
+      const mpsZeradas = no.itens.filter((mp) => isZerada(mp.qtd));
+      const totalPeso = no.itens.reduce((acc, mp) => {
+        const num = parseFloat(String(mp.qtd || '0').replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
+        return acc + num;
+      }, 0);
+
       return (
         <div style={{ marginTop: 12 }}>
+          {/* Wave 3.12 — Banner destacado da Pesagem */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 12,
+            padding: '12px 14px', marginBottom: 10,
+            background: mpsZeradas.length > 0 ? 'var(--per-p)' : 'var(--verde-dim)',
+            border: `2px solid ${mpsZeradas.length > 0 ? 'var(--per-b)' : 'var(--ok-b)'}`,
+            borderLeft: `5px solid ${mpsZeradas.length > 0 ? 'var(--per)' : 'var(--verde)'}`,
+            borderRadius: 6,
+            flexWrap: 'wrap',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 22 }}>⚖️</span>
+              <div>
+                <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--text3)' }}>
+                  PESAGEM · DESTAQUE GMP
+                </div>
+                <div style={{ fontFamily: 'var(--font-d)', fontSize: 17, fontWeight: 700, color: 'var(--verde-esc)' }}>
+                  {no.itens.length} MPs pesadas · {totalPeso.toFixed(2).replace('.', ',')} kg
+                </div>
+              </div>
+            </div>
+            <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {mpsZeradas.length > 0 ? (
+                <span style={{
+                  fontSize: 10, fontWeight: 900, letterSpacing: '.1em', textTransform: 'uppercase',
+                  background: 'var(--per)', color: '#fff',
+                  padding: '5px 12px', borderRadius: 10,
+                  border: '1.5px solid var(--per-b)',
+                }} title="MPs com quantidade zero — bloqueia liberação">
+                  ⛔ {mpsZeradas.length} MP{mpsZeradas.length > 1 ? 's' : ''} ZERADA{mpsZeradas.length > 1 ? 'S' : ''}
+                </span>
+              ) : (
+                <span style={{
+                  fontSize: 10, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase',
+                  background: 'var(--ok)', color: '#fff',
+                  padding: '4px 10px', borderRadius: 10,
+                }}>
+                  ✓ Todas pesadas
+                </span>
+              )}
+            </div>
+          </div>
+
           {/* Cabecalho da gaiola */}
           {no.gaiola && (
             <div
@@ -551,23 +609,35 @@ function RenderConteudoNo({ no, cores, dossie }) {
               </tr>
             </thead>
             <tbody>
-              {no.itens.map((mp, i) => (
-                <tr key={i}>
-                  <td className="mono" style={{ fontWeight: 700, color: 'var(--verde)' }}>{mp.cod}</td>
-                  <td>{mp.desc}</td>
-                  <td className="mono" style={{ textAlign: 'right', fontWeight: 700 }}>{mp.qtd}</td>
-                  <td className="mono" style={{ fontSize: 11, color: 'var(--inf)', fontWeight: 700 }}>{mp.etqCodigo}</td>
-                  <td className="mono" style={{ fontSize: 11, color: 'var(--text2)' }}>{mp.etqLote}</td>
-                  <td style={{ fontSize: 11 }}>
-                    {mp.operador}
-                    <div className="mono" style={{ fontSize: 10, color: 'var(--text3)' }}>{mp.etqHora}</div>
-                  </td>
-                  <td style={{ fontSize: 11 }}>
-                    {mp.conferente || <span style={{ color: 'var(--text3)' }}>—</span>}
-                    {mp.dataConf && <div className="mono" style={{ fontSize: 10, color: 'var(--text3)' }}>{mp.dataConf}</div>}
-                  </td>
-                </tr>
-              ))}
+              {no.itens.map((mp, i) => {
+                const zerada = isZerada(mp.qtd);
+                return (
+                  <tr key={i} style={zerada ? {
+                    background: 'var(--per-p)',
+                    borderLeft: '4px solid var(--per)',
+                  } : {}}>
+                    <td className="mono" style={{ fontWeight: 700, color: zerada ? 'var(--per)' : 'var(--verde)' }}>{mp.cod}</td>
+                    <td>{mp.desc}</td>
+                    <td className="mono" style={{
+                      textAlign: 'right', fontWeight: 700,
+                      color: zerada ? 'var(--per)' : 'var(--text)',
+                      background: zerada ? 'var(--per-p)' : 'transparent',
+                    }}>
+                      {zerada ? `⚠ ${mp.qtd || '0,00 kg'}` : mp.qtd}
+                    </td>
+                    <td className="mono" style={{ fontSize: 11, color: 'var(--inf)', fontWeight: 700 }}>{mp.etqCodigo}</td>
+                    <td className="mono" style={{ fontSize: 11, color: 'var(--text2)' }}>{mp.etqLote}</td>
+                    <td style={{ fontSize: 11 }}>
+                      {mp.operador}
+                      <div className="mono" style={{ fontSize: 10, color: 'var(--text3)' }}>{mp.etqHora}</div>
+                    </td>
+                    <td style={{ fontSize: 11 }}>
+                      {mp.conferente || <span style={{ color: 'var(--text3)' }}>—</span>}
+                      {mp.dataConf && <div className="mono" style={{ fontSize: 10, color: 'var(--text3)' }}>{mp.dataConf}</div>}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 
@@ -625,42 +695,128 @@ function RenderConteudoNo({ no, cores, dossie }) {
           </div>
         </div>
       );
+    }
 
-    case 'fabricacao':
+    case 'fabricacao': {
+      // Wave 3.11 — Instructions InBatch detalhadas. Classifica cada
+      // etapa para que o CQ entenda exatamente o que ela faz (mensagem
+      // pedida na reunião GQV/CQ 12/05/2026: "ter as instructions do
+      // InBatch detalhadas, com o que o operador fez").
+      const classificaEtapa = (e) => {
+        const n = (e.nome || '').toUpperCase();
+        if (n.includes('VERIFICA')) return { tipo: 'Verificação Inicial', icon: '🔍', cor: 'var(--inf)',  manual: true };
+        if (n.includes('ADICAO_') || n.includes('ADD_')) return { tipo: 'Adição de Material', icon: '⬇️', cor: 'var(--ouro)', manual: false };
+        if (n.includes('HOMOGE') || n.includes('RECIRC')) return { tipo: 'Homogeneização',  icon: '🌀', cor: 'var(--verde)', manual: false };
+        if (e.codigo === 'CQ' || n.includes('AMOSTRA')) return { tipo: 'CQ · Amostra/Aprovação', icon: '🔬', cor: 'var(--per)', manual: true };
+        return { tipo: 'Fase InBatch', icon: '⚙️', cor: 'var(--text2)', manual: false };
+      };
+
+      // Contagens pro resumo do header (Sistema vs Manual)
+      const totalManual = no.etapas.filter((e) => classificaEtapa(e).manual).length;
+      const totalSistema = no.etapas.length - totalManual;
+
+      // Helper: calcula duração em minutos com base nas strings "DD/MM HH:MM:SS"
+      const calcMin = (inicio, fim) => {
+        try {
+          const parse = (s) => {
+            const [d, h] = s.split(' ');
+            const [dia, mes] = d.split('/');
+            const [hh, mm, ss] = (h || '00:00:00').split(':');
+            return new Date(2026, parseInt(mes) - 1, parseInt(dia), parseInt(hh), parseInt(mm), parseInt(ss || 0));
+          };
+          const ms = parse(fim) - parse(inicio);
+          return Math.max(0, Math.round(ms / 60000));
+        } catch { return null; }
+      };
+
       return (
         <div style={{ marginTop: 12 }}>
-          {no.etapas.map((e, i) => (
-            <div key={i} style={{ marginBottom: 10, padding: '10px 12px', background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 6 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8, marginBottom: 6 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--verde-esc)' }}>
-                  <span style={{ color: 'var(--ouro)', fontFamily: 'var(--font-m)', fontSize: 11, marginRight: 8 }}>{e.codigo}</span>
-                  {e.nome}
+          {/* Resumo das instructions */}
+          <div style={{
+            display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12,
+            padding: '10px 12px', background: 'var(--surface)',
+            border: '1.5px solid var(--ouro-claro)', borderRadius: 6,
+            borderLeft: '4px solid var(--ouro)',
+          }}>
+            <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--verde-esc)' }}>
+              ⚙️ Instructions InBatch:
+            </span>
+            <span style={{ fontSize: 11, color: 'var(--text2)' }}>
+              <strong>{no.etapas.length}</strong> etapas executadas
+            </span>
+            <span style={{ fontSize: 11, color: 'var(--inf)' }}>
+              · <strong>{totalManual}</strong> manuais (operador / CQ)
+            </span>
+            <span style={{ fontSize: 11, color: 'var(--text3)' }}>
+              · <strong>{totalSistema}</strong> automáticas (sistema)
+            </span>
+          </div>
+
+          {no.etapas.map((e, i) => {
+            const cls = classificaEtapa(e);
+            const dur = calcMin(e.inicio, e.fim);
+            return (
+              <div key={i} style={{
+                marginBottom: 10, padding: '10px 12px',
+                background: 'var(--surface2)', border: '1px solid var(--border)',
+                borderLeft: `4px solid ${cls.cor}`,
+                borderRadius: 6,
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8, marginBottom: 6 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--verde-esc)', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                    <span style={{
+                      fontSize: 9, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase',
+                      color: cls.cor, padding: '2px 7px', borderRadius: 8,
+                      background: 'var(--surface)', border: `1px solid ${cls.cor}`,
+                    }}>
+                      #{String(i + 1).padStart(2, '0')} · {cls.icon} {cls.tipo}
+                    </span>
+                    <span style={{ color: 'var(--ouro)', fontFamily: 'var(--font-m)', fontSize: 11 }}>{e.codigo}</span>
+                    {e.nome}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    {cls.manual && (
+                      <span style={{
+                        fontSize: 9, fontWeight: 800,
+                        color: 'var(--inf)', background: 'var(--inf-p)', border: '1px solid var(--inf-b)',
+                        padding: '2px 7px', borderRadius: 8, letterSpacing: '.06em',
+                      }} title="Etapa exigiu confirmação manual do operador / CQ">
+                        👤 INPUT MANUAL
+                      </span>
+                    )}
+                    <span className="bdg bdg-ok" style={{ fontSize: 10 }}>✓ {e.status}</span>
+                  </div>
                 </div>
-                <span className={`bdg bdg-ok`} style={{ fontSize: 10 }}>✓ {e.status}</span>
+                <div style={{
+                  fontSize: 10, color: 'var(--text3)', fontFamily: 'var(--font-m)',
+                  marginBottom: 8, display: 'flex', gap: 14, flexWrap: 'wrap',
+                }}>
+                  <span>🕐 {e.inicio} → {e.fim}</span>
+                  {dur != null && <span>⏱️ {dur} min</span>}
+                  <span>👤 {e.operador}</span>
+                </div>
+                <table className="tbl" style={{ fontSize: 11 }}>
+                  <thead>
+                    <tr><th>Parâmetro</th><th>UM</th><th>Previsto</th><th>Realizado</th><th>Status</th></tr>
+                  </thead>
+                  <tbody>
+                    {e.params.map((p, j) => (
+                      <tr key={j}>
+                        <td>{p.p}</td>
+                        <td className="mono">{p.um}</td>
+                        <td className="mono" style={{ color: 'var(--text3)' }}>{p.prev}</td>
+                        <td className="mono" style={{ fontWeight: 700, color: 'var(--verde)' }}>{p.real}</td>
+                        <td><span className="bdg bdg-ok" style={{ fontSize: 9 }}>OK</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <div style={{ fontSize: 10, color: 'var(--text3)', fontFamily: 'var(--font-m)', marginBottom: 8 }}>
-                {e.inicio} → {e.fim} · {e.operador}
-              </div>
-              <table className="tbl" style={{ fontSize: 11 }}>
-                <thead>
-                  <tr><th>Parâmetro</th><th>UM</th><th>Previsto</th><th>Realizado</th><th>Status</th></tr>
-                </thead>
-                <tbody>
-                  {e.params.map((p, j) => (
-                    <tr key={j}>
-                      <td>{p.p}</td>
-                      <td className="mono">{p.um}</td>
-                      <td className="mono" style={{ color: 'var(--text3)' }}>{p.prev}</td>
-                      <td className="mono" style={{ fontWeight: 700, color: 'var(--verde)' }}>{p.real}</td>
-                      <td><span className="bdg bdg-ok" style={{ fontSize: 9 }}>OK</span></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ))}
+            );
+          })}
         </div>
       );
+    }
 
     case 'granel':
       return (

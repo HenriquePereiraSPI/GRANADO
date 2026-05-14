@@ -258,6 +258,9 @@ export default function QualidadeCorrecoesGestaoScreen() {
         </div>
       </div>
 
+      {/* Wave 3.9 — Painel de Ofensores: Áreas que mais bloqueiam liberação */}
+      <PainelOfensoresAreas lista={lista} />
+
       {/* Painel de Ofensores (Top Classificações + Áreas) */}
       <div style={{
         display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
@@ -438,6 +441,125 @@ export default function QualidadeCorrecoesGestaoScreen() {
           </table>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* Wave 3.9 — Painel de Ofensores por Área.
+   Pra cada área (Fab/Emb/FQ/Micro), mostra: nº de lotes bloqueados,
+   nº de registros em aberto, lista dos lotes afetados. Permite ao G.Q.V.
+   identificar rapidamente qual área está segurando a fila. */
+function PainelOfensoresAreas({ lista }) {
+  const porArea = useMemo(() => {
+    const m = new Map();
+    for (const r of lista) {
+      const aberto = r.status === 'aberto' || r.status === 'analise';
+      if (!m.has(r.area)) {
+        m.set(r.area, { lotesBloqueados: new Set(), abertos: 0, total: 0, lotes: new Set() });
+      }
+      const e = m.get(r.area);
+      e.total += 1;
+      e.lotes.add(r.lotePA);
+      if (aberto) {
+        e.abertos += 1;
+        e.lotesBloqueados.add(r.lotePA);
+      }
+    }
+    return Array.from(m.entries()).map(([k, v]) => ({
+      key: k,
+      ...AREA_LABEL[k],
+      abertos: v.abertos,
+      total: v.total,
+      lotesBloqueados: Array.from(v.lotesBloqueados),
+      lotes: Array.from(v.lotes),
+    })).sort((a, b) => b.abertos - a.abertos);
+  }, [lista]);
+
+  return (
+    <div className="card mb14" style={{
+      padding: 14, borderTop: '3px solid var(--per)',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
+        <div className="card-title" style={{ padding: 0, border: 'none', margin: 0 }}>
+          🚧 Painel de Ofensores — Áreas que Bloqueiam Liberação
+        </div>
+        <span style={{
+          fontSize: 9, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase',
+          color: 'var(--per)', padding: '2px 8px',
+          border: '1.5px dashed var(--per-b)', borderRadius: 8,
+        }}>
+          🔒 RESTRITO · GESTÃO
+        </span>
+      </div>
+
+      {porArea.length === 0 ? (
+        <div style={{
+          padding: 14, background: 'var(--surface2)',
+          border: '1px dashed var(--border)', borderRadius: 6,
+          fontSize: 11, color: 'var(--text3)', textAlign: 'center',
+        }}>
+          Nenhuma área com registros pra exibir no período.
+        </div>
+      ) : (
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10,
+        }}>
+          {porArea.map((a) => {
+            const bloqueando = a.abertos > 0;
+            return (
+              <div key={a.key} style={{
+                padding: 12,
+                background: bloqueando ? 'var(--per-p)' : 'var(--ok-p)',
+                border: `1.5px solid ${bloqueando ? 'var(--per-b)' : 'var(--ok-b)'}`,
+                borderLeft: `4px solid ${a.cor}`,
+                borderRadius: 6,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 6 }}>
+                  <span style={{ fontSize: 13, fontWeight: 800, color: a.cor }}>
+                    {a.icon} {a.label}
+                  </span>
+                  {bloqueando ? (
+                    <span style={{
+                      fontSize: 9, fontWeight: 900, color: '#fff',
+                      background: 'var(--per)', padding: '2px 7px', borderRadius: 8,
+                      letterSpacing: '.06em',
+                    }}>
+                      ⛔ BLOQUEANDO
+                    </span>
+                  ) : (
+                    <span style={{
+                      fontSize: 9, fontWeight: 900, color: 'var(--ok)',
+                      background: '#fff', padding: '2px 7px', borderRadius: 8,
+                      border: '1px solid var(--ok-b)',
+                      letterSpacing: '.06em',
+                    }}>
+                      ✓ OK
+                    </span>
+                  )}
+                </div>
+                <div style={{
+                  fontFamily: 'var(--font-d)', fontSize: 26, fontWeight: 700,
+                  color: bloqueando ? 'var(--per)' : 'var(--ok)', lineHeight: 1,
+                }}>
+                  {a.abertos}<span style={{ fontSize: 14, color: 'var(--text3)', fontWeight: 600 }}> / {a.total}</span>
+                </div>
+                <div style={{ fontSize: 10, color: 'var(--text2)', marginTop: 4 }}>
+                  registros em aberto · de {a.total} no período
+                </div>
+                {a.lotesBloqueados.length > 0 && (
+                  <div style={{ fontSize: 10, marginTop: 6, color: 'var(--text2)' }}>
+                    <strong>Lotes:</strong>{' '}
+                    <span className="mono" style={{ color: 'var(--per)', fontWeight: 700 }}>
+                      {a.lotesBloqueados.slice(0, 3).join(', ')}
+                      {a.lotesBloqueados.length > 3 && ` +${a.lotesBloqueados.length - 3}`}
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

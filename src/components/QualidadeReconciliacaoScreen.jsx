@@ -32,6 +32,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 const BASE_MOCK = {
   '262417': {
     numeroReconciliacao: '137234',
+    // Wave 3.10 — RD (Receita Documental) emitida pelo JDE para o lote.
+    // Reunião GQV/CQ 12/05/2026: o RD é separado da reconciliação e
+    // viaja como cabeçalho do dossiê. Em produção vem do F4108/F4108Z.
+    rdJde: 'RD-2026-04-16-784426',
     filial: '0015 - Casa Granado',
     produtoAcabado: 'S0815B_G — Sabonete Glicerinado Tradicional 90g',
     granel: 'S0815B — TRANSP GRANADO GLICERINA',
@@ -71,6 +75,7 @@ const BASE_MOCK = {
   },
   '261892': {
     numeroReconciliacao: '137220',
+    rdJde: 'RD-2026-04-08-784301',
     filial: '0015 - Casa Granado',
     produtoAcabado: 'S0822B_G — Sabonete Glicerinado Limão Siciliano 90g',
     granel: 'S0822B — TRANSP GRANADO LIMÃO SICILIANO',
@@ -113,6 +118,7 @@ const BASE_MOCK = {
   },
   '261104': {
     numeroReconciliacao: '137199',
+    rdJde: 'RD-2026-03-28-783897',
     filial: '0015 - Casa Granado',
     produtoAcabado: 'S0830B_G — Sabonete Glicerinado Mel 90g',
     granel: 'S0830B — TRANSP GRANADO MEL',
@@ -1701,6 +1707,7 @@ function loteTemplate(numero) {
   validade.setFullYear(validade.getFullYear() + 3);
   return {
     numeroReconciliacao: numero,
+    rdJde: '',
     filial: '0015 - Casa Granado',
     produtoAcabado: '',
     granel: '',
@@ -2049,6 +2056,7 @@ export default function QualidadeReconciliacaoScreen() {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
               <Campo label="Nº Reconciliação" value={lote.numeroReconciliacao} />
+              <Campo label="RD JDE (F4108)" value={lote.rdJde} />
               <Campo label="Filial / Fábrica" value={lote.filial} />
               <Campo label="Produto Acabado" value={lote.produtoAcabado} />
               <Campo label="Granel" value={lote.granel} />

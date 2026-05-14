@@ -15,18 +15,31 @@
  *   30 — Aguardando analise (LIMS Fisico-Quimico ou Microbiologia)
  */
 
+// Wave 3.8 — Prioridade PCP. Lotes marcados pelo PCP como "preferencial"
+// (atraso na fila vai gerar atraso na entrega ao cliente) ganham uma
+// bandeirinha visual na fila do CQ — orientação da reunião GQV/CQ 12/05.
+//   normal      — sem destaque
+//   alta        — bandeirinha laranja (entregar dentro da semana)
+//   critica     — bandeirinha vermelha (cliente esperando / atraso)
 export const LOTES_FILA = [
   // ───── 3 lotes PRONTOS (sincronizados com BASE_MOCK e dossies) ─────
-  { linha: 1, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'RECN',  descProcesso: 'Reconciliação Técnica', statusProcesso: '10', descStatus: 'Pronto — Aguardando CQ',  lotePA: '262417', produto: 'Sab. Glicerinado Tradicional 90g',     wo: 'WO 784426', dataAtualizacao: '2026-04-30 08:14', filial: '0015 - Casa Granado' },
-  { linha: 2, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'RECN',  descProcesso: 'Reconciliação Técnica', statusProcesso: '10', descStatus: 'Pronto — Aguardando CQ',  lotePA: '261892', produto: 'Sab. Glicerinado Limão Siciliano 90g', wo: 'WO 784301', dataAtualizacao: '2026-04-22 11:42', filial: '0015 - Casa Granado' },
-  { linha: 3, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'RECN',  descProcesso: 'Reconciliação Técnica', statusProcesso: '10', descStatus: 'Pronto — Aguardando CQ',  lotePA: '261104', produto: 'Sab. Glicerinado Mel 90g',             wo: 'WO 783897', dataAtualizacao: '2026-04-12 16:08', filial: '0015 - Casa Granado' },
+  { linha: 1, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'RECN',  descProcesso: 'Reconciliação Técnica', statusProcesso: '10', descStatus: 'Pronto — Aguardando CQ',  lotePA: '262417', produto: 'Sab. Glicerinado Tradicional 90g',     wo: 'WO 784426', dataAtualizacao: '2026-04-30 08:14', filial: '0015 - Casa Granado', prioridadePcp: 'critica',  motivoPrioridade: 'Pedido Drogasil — entrega 14/05'  },
+  { linha: 2, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'RECN',  descProcesso: 'Reconciliação Técnica', statusProcesso: '10', descStatus: 'Pronto — Aguardando CQ',  lotePA: '261892', produto: 'Sab. Glicerinado Limão Siciliano 90g', wo: 'WO 784301', dataAtualizacao: '2026-04-22 11:42', filial: '0015 - Casa Granado', prioridadePcp: 'alta',     motivoPrioridade: 'Estoque CED baixo — DC RJ' },
+  { linha: 3, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'RECN',  descProcesso: 'Reconciliação Técnica', statusProcesso: '10', descStatus: 'Pronto — Aguardando CQ',  lotePA: '261104', produto: 'Sab. Glicerinado Mel 90g',             wo: 'WO 783897', dataAtualizacao: '2026-04-12 16:08', filial: '0015 - Casa Granado', prioridadePcp: 'normal' },
   // ───── 5 ficticios EM PROCESSO ─────
-  { linha: 4, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'EMB',   descProcesso: 'Embalagem em Curso',     statusProcesso: '20', descStatus: 'Em Embalagem',           lotePA: '262455', produto: 'Sab. Glicerinado Verbena 90g',         wo: 'WO 784512', dataAtualizacao: '2026-05-06 14:32', filial: '0015 - Casa Granado' },
-  { linha: 5, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'FAB',   descProcesso: 'Fabricação em Curso',    statusProcesso: '20', descStatus: 'Em Fabricação',          lotePA: '262489', produto: 'Sab. Glicerinado Lavanda 90g',         wo: 'WO 784599', dataAtualizacao: '2026-05-07 09:05', filial: '0015 - Casa Granado' },
-  { linha: 6, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'LIMS',  descProcesso: 'Análise Físico-Química', statusProcesso: '30', descStatus: 'Aguardando F-Q (LIMS)',  lotePA: '262512', produto: 'Sab. Glicerinado Rosa 90g',            wo: 'WO 784620', dataAtualizacao: '2026-05-05 17:20', filial: '0015 - Casa Granado' },
-  { linha: 7, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'MICR',  descProcesso: 'Análise Microbiológica', statusProcesso: '30', descStatus: 'Aguardando Microbiologia', lotePA: '262578', produto: 'Sab. Glicerinado Cedro 90g',         wo: 'WO 784671', dataAtualizacao: '2026-05-04 13:55', filial: '0015 - Casa Granado' },
-  { linha: 8, tipoRelato: 'GRAN', descRelato: 'Lote Granel (Tanque)',  processo: 'PESA',  descProcesso: 'Pesagem de MP',          statusProcesso: '20', descStatus: 'Em Pesagem',             lotePA: '262602', produto: 'Sab. Glicerinado Coco 90g',            wo: 'WO 784712', dataAtualizacao: '2026-05-07 07:48', filial: '0015 - Casa Granado' },
+  { linha: 4, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'EMB',   descProcesso: 'Embalagem em Curso',     statusProcesso: '20', descStatus: 'Em Embalagem',           lotePA: '262455', produto: 'Sab. Glicerinado Verbena 90g',         wo: 'WO 784512', dataAtualizacao: '2026-05-06 14:32', filial: '0015 - Casa Granado', prioridadePcp: 'alta', motivoPrioridade: 'Export — embarque RJ-MIA 12/05' },
+  { linha: 5, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'FAB',   descProcesso: 'Fabricação em Curso',    statusProcesso: '20', descStatus: 'Em Fabricação',          lotePA: '262489', produto: 'Sab. Glicerinado Lavanda 90g',         wo: 'WO 784599', dataAtualizacao: '2026-05-07 09:05', filial: '0015 - Casa Granado', prioridadePcp: 'normal' },
+  { linha: 6, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'LIMS',  descProcesso: 'Análise Físico-Química', statusProcesso: '30', descStatus: 'Aguardando F-Q (LIMS)',  lotePA: '262512', produto: 'Sab. Glicerinado Rosa 90g',            wo: 'WO 784620', dataAtualizacao: '2026-05-05 17:20', filial: '0015 - Casa Granado', prioridadePcp: 'normal' },
+  { linha: 7, tipoRelato: 'PA',   descRelato: 'Lote Produto Acabado',  processo: 'MICR',  descProcesso: 'Análise Microbiológica', statusProcesso: '30', descStatus: 'Aguardando Microbiologia', lotePA: '262578', produto: 'Sab. Glicerinado Cedro 90g',         wo: 'WO 784671', dataAtualizacao: '2026-05-04 13:55', filial: '0015 - Casa Granado', prioridadePcp: 'critica', motivoPrioridade: 'Cliente RD — pedido atrasado' },
+  { linha: 8, tipoRelato: 'GRAN', descRelato: 'Lote Granel (Tanque)',  processo: 'PESA',  descProcesso: 'Pesagem de MP',          statusProcesso: '20', descStatus: 'Em Pesagem',             lotePA: '262602', produto: 'Sab. Glicerinado Coco 90g',            wo: 'WO 784712', dataAtualizacao: '2026-05-07 07:48', filial: '0015 - Casa Granado', prioridadePcp: 'normal' },
 ];
+
+/** Cores e ícones por prioridade PCP. */
+export const PRIORIDADE_PCP_COR = {
+  normal:  { fg: 'var(--text3)', bg: 'transparent',     bd: 'transparent',     label: '',          icone: ''   },
+  alta:    { fg: '#fff',         bg: 'var(--ouro)',     bd: 'var(--ouro)',     label: 'PCP·Alta',   icone: '🚩' },
+  critica: { fg: '#fff',         bg: 'var(--per)',      bd: 'var(--per-b)',    label: 'PCP·Crítica',icone: '🔥' },
+};
 
 /** Cor por codigo de status (alinhado com ok/inf/alr do tema). */
 export const STATUS_PROC_COLOR = {
