@@ -33,6 +33,7 @@
   <script src="./granado-icon.js"></script>
   <script src="./granado-progress-bar.js"></script>
   <script src="./granado-stepper.js"></script>
+  <script src="./granado-submenu-pesagem.js"></script>
 
   <style>
     html,
@@ -261,6 +262,7 @@
       <a class="gd-link" href="#granado-icon">granado-icon</a>
       <a class="gd-link" href="#granado-progress-bar">granado-progress-bar</a>
       <a class="gd-link" href="#granado-stepper">granado-stepper</a>
+      <a class="gd-link" href="#granado-submenu-pesagem">granado-submenu-pesagem</a>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -6722,6 +6724,476 @@ stp.addEventListener(<span class="tk-str">'stepclick'</span>, e =&gt; {
           ];
         })();
       </script>
+
+      <!-- ============================================================
+           granado-submenu-pesagem
+           ============================================================ -->
+      <section id="granado-submenu-pesagem" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-submenu-pesagem&gt;</code></h1>
+        <p class="gd-lead">
+          Sub-navbar horizontal com botão de voltar (opcional), card de contexto
+          (ex.: "OP Ativa · OP-2026-0416") e lista de itens de menu com destaque
+          do item ativo. Replica o padrão visual da SubNavbar da tela de Pesagem,
+          mas serve para qualquer fluxo que precise de um sub-menu contextual
+          (laboratório, produção, manutenção etc.).
+        </p>
+        <p class="gd-lead">
+          O componente é <strong>data-driven</strong>: você passa a lista de itens
+          via atributo <code>items</code> (JSON inline) ou via propriedade JS
+          <code>.items</code>. O destaque do item ativo é controlado pelo atributo
+          <code>value</code> (a <code>key</code> do item).
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-submenu-pesagem.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <!-- ===== Uso básico (items inline) ===== -->
+        <h2 class="gd-h2">Uso básico</h2>
+        <p class="gd-lead">
+          Quando a lista é fixa, defina <code>items</code> como JSON inline direto
+          no atributo — não precisa de JS algum. Cada item tem <code>key</code>
+          (obrigatório na prática, usado nos handlers de click) e opcionalmente
+          <code>label</code>, <code>icon</code> e <code>disabled</code>.
+        </p>
+        <div class="gd-demo">
+          <granado-submenu-pesagem
+            backlabel="← Seleção de Ordem"
+            contextlabel="OP Ativa"
+            contextvalue="OP-2026-0416"
+            value="pes-checklist"
+            items='[{"key":"pes-cockpit","label":"Cockpit","icon":"🎯"},{"key":"pes-mps","label":"MPs","icon":"⚖️"},{"key":"pes-checklist","label":"Checklist","icon":"📋"},{"key":"pes-gaiola","label":"Gaiola","icon":"📦"},{"key":"pes-paradas","label":"Paradas","icon":"⏸️"},{"key":"pes-devol-mp","label":"Devolução","icon":"↩"},{"key":"pes-checkout","label":"Checkout","icon":"✓"}]'
+            onbackclickevent="alert('Voltar para a fila de OPs');"
+            onchangeevent="console.log('foi para', value, '→', item.label);">
+          </granado-submenu-pesagem>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-submenu-pesagem</span>
+    <span class="tk-attr">backlabel</span>=<span class="tk-str">"← Seleção de Ordem"</span>
+    <span class="tk-attr">contextlabel</span>=<span class="tk-str">"OP Ativa"</span>
+    <span class="tk-attr">contextvalue</span>=<span class="tk-str">"OP-2026-0416"</span>
+    <span class="tk-attr">value</span>=<span class="tk-str">"pes-checklist"</span>
+    <span class="tk-attr">items</span>=<span class="tk-str">'[
+        {"key":"pes-cockpit",   "label":"Cockpit",   "icon":"🎯"},
+        {"key":"pes-mps",       "label":"MPs",       "icon":"⚖️"},
+        {"key":"pes-checklist", "label":"Checklist", "icon":"📋"},
+        {"key":"pes-gaiola",    "label":"Gaiola",    "icon":"📦"},
+        {"key":"pes-paradas",   "label":"Paradas",   "icon":"⏸️"},
+        {"key":"pes-devol-mp",  "label":"Devolução", "icon":"↩"},
+        {"key":"pes-checkout",  "label":"Checkout",  "icon":"✓"}
+    ]'</span>
+    <span class="tk-attr">onbackclickevent</span>=<span class="tk-str">"history.back();"</span>
+    <span class="tk-attr">onchangeevent</span>=<span class="tk-str">"console.log('foi para', value);"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-submenu-pesagem&gt;</span></pre>
+
+        <!-- ===== Setup dinâmico via JS ===== -->
+        <h2 class="gd-h2">Setup dinâmico (lista vinda do servidor)</h2>
+        <p class="gd-lead">
+          Quando a lista é construída em runtime (ex.: vem do Apriso BC),
+          configure via <code>setAttribute('items', JSON.stringify(...))</code>.
+          Esse padrão funciona mesmo se o script da página rodar antes do
+          custom element ser <em>upgraded</em>. O componente também aceita
+          <code>el.items = [...]</code> (com proteção lazy-props no
+          <code>connectedCallback</code>).
+        </p>
+        <div class="gd-demo">
+          <granado-submenu-pesagem id="dt-sm-dyn"
+            contextlabel="Lote Ativo"
+            contextvalue="L24-1042"
+            contextcolor="#2C5A8C"
+            activecolor="#2C5A8C"
+            backgroundcolor="#EAF1F8"
+            bordercolor="#C6D6E5"
+            value="lab-fq"
+            onchangeevent="console.log('Lab · troca para', value);">
+          </granado-submenu-pesagem>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-submenu-pesagem</span> <span class="tk-attr">id</span>=<span class="tk-str">"sm"</span> <span class="tk-attr">value</span>=<span class="tk-str">"lab-fq"</span> <span class="tk-tag">&gt;&lt;/granado-submenu-pesagem&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  document.getElementById(<span class="tk-str">'sm'</span>).setAttribute(<span class="tk-str">'items'</span>, JSON.stringify([
+      { key: <span class="tk-str">'lab-amostras'</span>, label: <span class="tk-str">'Amostras'</span>,     icon: <span class="tk-str">'🧪'</span> },
+      { key: <span class="tk-str">'lab-fq'</span>,       label: <span class="tk-str">'Físico-Quím.'</span>, icon: <span class="tk-str">'⚗️'</span> },
+      { key: <span class="tk-str">'lab-micro'</span>,    label: <span class="tk-str">'Microbio.'</span>,    icon: <span class="tk-str">'🦠'</span> },
+      { key: <span class="tk-str">'lab-laudo'</span>,    label: <span class="tk-str">'Laudo'</span>,        icon: <span class="tk-str">'📄'</span> }
+  ]));
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <!-- ===== Sem botão de voltar / sem contexto ===== -->
+        <h2 class="gd-h2">Sem botão de voltar / sem contexto</h2>
+        <p class="gd-lead">
+          Tanto o botão de voltar quanto o card de contexto são opcionais. Omita
+          <code>backlabel</code> para não renderizar o botão, e omita
+          <code>contextvalue</code> para esconder o card de contexto. O bloco de
+          itens fica encostado à esquerda nesse caso.
+        </p>
+        <div class="gd-demo">
+          <granado-submenu-pesagem
+            value="prod-prod"
+            items='[{"key":"prod-mat","label":"Materiais","icon":"📦"},{"key":"prod-prod","label":"Produção","icon":"🏭"},{"key":"prod-qa","label":"Qualidade","icon":"✅"},{"key":"prod-rel","label":"Relatório","icon":"📊","disabled":true}]'>
+          </granado-submenu-pesagem>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-submenu-pesagem</span>
+    <span class="tk-attr">value</span>=<span class="tk-str">"prod-prod"</span>
+    <span class="tk-attr">items</span>=<span class="tk-str">'[
+        {"key":"prod-mat",  "label":"Materiais", "icon":"📦"},
+        {"key":"prod-prod", "label":"Produção",  "icon":"🏭"},
+        {"key":"prod-qa",   "label":"Qualidade", "icon":"✅"},
+        {"key":"prod-rel",  "label":"Relatório", "icon":"📊", "disabled":true}
+    ]'</span><span class="tk-tag">&gt;&lt;/granado-submenu-pesagem&gt;</span></pre>
+        <p class="gd-lead">
+          Itens com <code>disabled: true</code> ficam acinzentados, sem hover,
+          sem cursor pointer e não emitem nenhum evento de click.
+        </p>
+
+        <!-- ===== Paleta de cores ===== -->
+        <h2 class="gd-h2">Paleta de cores customizada</h2>
+        <p class="gd-lead">
+          Todas as cores são atributos do elemento — defaults são verde/ouro
+          Granado, mas você pode trocar tudo (item ativo, fundo, borda, contexto,
+          botão de voltar) para criar variantes contextuais. Ex.: paleta azul
+          para módulos de laboratório.
+        </p>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-submenu-pesagem</span>
+    <span class="tk-attr">activecolor</span>=<span class="tk-str">"#2C5A8C"</span>
+    <span class="tk-attr">activetextcolor</span>=<span class="tk-str">"#FFFFFF"</span>
+    <span class="tk-attr">inactivecolor</span>=<span class="tk-str">"#1B3A5C"</span>
+    <span class="tk-attr">inactivebg</span>=<span class="tk-str">"#FFFFFF"</span>
+    <span class="tk-attr">backgroundcolor</span>=<span class="tk-str">"#EAF1F8"</span>
+    <span class="tk-attr">bordercolor</span>=<span class="tk-str">"#C6D6E5"</span>
+    <span class="tk-attr">contextcolor</span>=<span class="tk-str">"#2C5A8C"</span>
+    <span class="tk-attr">backcolor</span>=<span class="tk-str">"#9A7520"</span><span class="tk-tag">&gt;</span>
+    ...
+<span class="tk-tag">&lt;/granado-submenu-pesagem&gt;</span></pre>
+
+        <!-- ===== Acesso programático ===== -->
+        <h2 class="gd-h2">Acesso programático</h2>
+        <p class="gd-lead">
+          As propriedades <code>items</code> e <code>value</code> são
+          getter/setter. Atribuir um novo <code>items</code> re-renderiza o
+          componente inteiro; atribuir <code>value</code> apenas atualiza o
+          destaque. Eventos <code>backclick</code>, <code>itemclick</code> e
+          <code>change</code> são <code>CustomEvent</code> com
+          <code>bubbles: true</code> — útil se preferir <code>addEventListener</code>
+          em vez de JS inline em atributo.
+        </p>
+        <pre class="gd-code">const sm = document.getElementById(<span class="tk-str">'sm'</span>);
+
+<span class="tk-comment">// Trocar a lista inteira (re-renderiza)</span>
+sm.items = [...newItems];
+
+<span class="tk-comment">// Mudar o item ativo em runtime (só atualiza o destaque)</span>
+sm.value = <span class="tk-str">'pes-checkout'</span>;
+
+<span class="tk-comment">// Escutar via CustomEvent (alternativa ao onchangeevent)</span>
+sm.addEventListener(<span class="tk-str">'change'</span>, e =&gt; {
+    console.log(e.detail.value, e.detail.item);
+});
+sm.addEventListener(<span class="tk-str">'backclick'</span>, () =&gt; history.back());</pre>
+
+        <!-- ===== API ===== -->
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos do elemento</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:200px">Nome</th>
+              <th style="width:170px">Tipo</th>
+              <th style="width:160px">Default</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">items</td>
+              <td class="col-type">JSON array</td>
+              <td class="col-default">[]</td>
+              <td class="col-desc">
+                Lista de itens do menu. Pode ser hardcoded inline (JSON no
+                atributo) ou setado via <code>el.items = [...]</code> /
+                <code>setAttribute('items', JSON.stringify(...))</code>. Schema
+                do item abaixo.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">value</td>
+              <td class="col-type">string</td>
+              <td class="col-default">primeiro item</td>
+              <td class="col-desc">
+                <code>key</code> do item ativo. Se ausente ou inválida, ativa o
+                primeiro item da lista.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">contextlabel</td>
+              <td class="col-type">string</td>
+              <td class="col-default">"OP Ativa"</td>
+              <td class="col-desc">Eyebrow (texto pequeno) do card de contexto.</td>
+            </tr>
+            <tr>
+              <td class="col-name">contextvalue</td>
+              <td class="col-type">string</td>
+              <td class="col-default">— (omitido)</td>
+              <td class="col-desc">
+                Valor monoespaçado do card de contexto (ex.: <code>OP-2026-0416</code>).
+                Se omitido ou vazio, o card de contexto <strong>não é renderizado</strong>.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">contextcolor</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#1C5C31"</td>
+              <td class="col-desc">
+                Cor base do card de contexto (texto + borda). O fundo é uma
+                versão clara dessa cor (mistura com branco a 88%).
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">backlabel</td>
+              <td class="col-type">string</td>
+              <td class="col-default">— (omitido)</td>
+              <td class="col-desc">
+                Texto do botão de voltar. Se ausente ou vazio, o botão
+                <strong>não é renderizado</strong>.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">backcolor</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#9A7520"</td>
+              <td class="col-desc">
+                Cor do botão de voltar (texto + borda; fundo branco no estado
+                normal, invertido no hover).
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">activecolor</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#1C5C31"</td>
+              <td class="col-desc">Cor de fundo do item ativo (o destacado).</td>
+            </tr>
+            <tr>
+              <td class="col-name">activetextcolor</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#FDFAF1"</td>
+              <td class="col-desc">Cor do texto do item ativo.</td>
+            </tr>
+            <tr>
+              <td class="col-name">inactivecolor</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#5A6B5E"</td>
+              <td class="col-desc">Cor do texto dos itens inativos.</td>
+            </tr>
+            <tr>
+              <td class="col-name">inactivebg</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#FFFFFF"</td>
+              <td class="col-desc">Cor de fundo dos itens inativos.</td>
+            </tr>
+            <tr>
+              <td class="col-name">backgroundcolor</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#F5EFD9"</td>
+              <td class="col-desc">Cor de fundo do container externo.</td>
+            </tr>
+            <tr>
+              <td class="col-name">bordercolor</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#E5DDC8"</td>
+              <td class="col-desc">Cor da borda do container e dos itens inativos.</td>
+            </tr>
+            <tr>
+              <td class="col-name">onbackclickevent</td>
+              <td class="col-type">string (JS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">
+                JS executado no click do botão de voltar. Variável: <code>event</code>.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">onitemclickevent</td>
+              <td class="col-type">string (JS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">
+                JS executado a CADA click de item (mesmo no item já ativo).
+                Variáveis: <code>key</code>, <code>item</code>, <code>index</code>,
+                <code>event</code>.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">onchangeevent</td>
+              <td class="col-type">string (JS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">
+                JS executado APENAS quando o <code>value</code> realmente muda
+                (clique em item diferente do ativo). Variáveis: <code>value</code>,
+                <code>item</code>.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Schema do objeto item</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:160px">Propriedade</th>
+              <th style="width:160px">Tipo</th>
+              <th style="width:140px">Default</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">key</td>
+              <td class="col-type">string</td>
+              <td class="col-default">— (recomendado)</td>
+              <td class="col-desc">
+                Identificador do item. Comparado contra o atributo <code>value</code>
+                pra decidir qual item está ativo. Enviado para os handlers de click.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">label</td>
+              <td class="col-type">string</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Texto exibido dentro do botão.</td>
+            </tr>
+            <tr>
+              <td class="col-name">icon</td>
+              <td class="col-type">string</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">
+                Texto/emoji/SVG bruto exibido à esquerda do label. Renderizado
+                como HTML (use SVG inline se quiser ícones vetoriais).
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">disabled</td>
+              <td class="col-type">boolean</td>
+              <td class="col-default">false</td>
+              <td class="col-desc">
+                Quando <code>true</code>, o item fica acinzentado, sem hover,
+                sem cursor pointer e não emite eventos de click.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Propriedades JS</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:160px">Propriedade</th>
+              <th style="width:140px">Tipo</th>
+              <th style="width:120px">Acesso</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">items</td>
+              <td class="col-type">object[]</td>
+              <td class="col-default">get / set</td>
+              <td class="col-desc">
+                Array de objetos item. Atribuir um novo array re-renderiza o menu.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">value</td>
+              <td class="col-type">string</td>
+              <td class="col-default">get / set</td>
+              <td class="col-desc">
+                <code>key</code> do item ativo. Atribuir atualiza o atributo
+                <code>value</code> (que re-renderiza apenas o destaque).
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Eventos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:140px">Evento</th>
+              <th style="width:240px">detail</th>
+              <th>Quando dispara</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">backclick</td>
+              <td class="col-type">{ event }</td>
+              <td class="col-desc">No click do botão de voltar. Bubbles.</td>
+            </tr>
+            <tr>
+              <td class="col-name">itemclick</td>
+              <td class="col-type">{ key, item, index }</td>
+              <td class="col-desc">
+                A cada click em item interativo (inclusive no já ativo). Bubbles.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">change</td>
+              <td class="col-type">{ value, item }</td>
+              <td class="col-desc">
+                Apenas quando o <code>value</code> realmente muda (clique em
+                item diferente do ativo). Bubbles.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Variáveis nos handlers</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:200px">Handler</th>
+              <th>Variáveis disponíveis</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">onbackclickevent</td>
+              <td class="col-desc"><code>event</code> (MouseEvent).</td>
+            </tr>
+            <tr>
+              <td class="col-name">onitemclickevent</td>
+              <td class="col-desc">
+                <code>key</code> (string), <code>item</code> (objeto inteiro),
+                <code>index</code> (índice na lista), <code>event</code> (MouseEvent).
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">onchangeevent</td>
+              <td class="col-desc">
+                <code>value</code> (string — nova key ativa), <code>item</code>
+                (objeto inteiro do item recém-ativado).
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Items inline vs dinâmicos:</strong> para listas fixas,
+            prefira <code>items='[...]'</code> direto no atributo — não precisa
+            de JS. Para listas que vêm do servidor, use
+            <code>setAttribute('items', JSON.stringify(...))</code>.</li>
+          <li><strong>Lazy-props:</strong> o <code>connectedCallback</code>
+            detecta atribuições feitas em <code>.items</code> ou <code>.value</code>
+            antes do upgrade do custom element e re-aplica via setter da classe.
+            Útil no Apriso, onde o script da página pode rodar antes do
+            <code>granado-submenu-pesagem.js</code>.</li>
+          <li><strong>change vs itemclick:</strong> <code>itemclick</code> dispara
+            em todo click (mesmo no item já ativo). <code>change</code> só
+            dispara quando o <code>value</code> realmente muda — use esse pra
+            ações de navegação.</li>
+          <li><strong>Card de contexto:</strong> o fundo é uma versão clarinha
+            (88% misturado com branco) da <code>contextcolor</code>, então
+            basta trocar uma cor pra adaptar a paleta inteira do chip.</li>
+        </ul>
+      </section>
 
     </main>
   </div>

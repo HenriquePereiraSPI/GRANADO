@@ -1297,10 +1297,11 @@ export const SCREENS = {
       <script>
       /* ════════════════ Estado global dos checklists do turno ════════════════
        * window.PES_CHECKLIST_TURNO mantém o estado do turno corrente. É
-       * verificado pelas sub-telas operacionais (pes-cockpit, pes-ordens) para
-       * BLOQUEAR o início de qualquer OP enquanto algum bloqueante estiver
-       * pendente. Persiste no localStorage para sobreviver a refreshes
-       * durante o mesmo turno (chave inclui data + turno).                  */
+       * consultado pelas sub-telas operacionais (pes-cockpit, pes-ordens)
+       * apenas para AVISAR (não-bloqueante) sobre itens pendentes — o
+       * operador pode optar por preencher agora ou iniciar a OP mesmo assim.
+       * Persiste no localStorage para sobreviver a refreshes durante o
+       * mesmo turno (chave inclui data + turno).                            */
       (function(){
         if (typeof window.PES_CHECKLIST_TURNO !== 'undefined') return;
         var hoje = new Date();
@@ -1531,8 +1532,8 @@ export const SCREENS = {
         if (pendEl) pendEl.textContent = pend;
       }
 
-      // Função utilitária consultada pelas sub-telas operacionais para
-      // BLOQUEAR início de OP quando algum checklist crítico não foi feito.
+      // Função utilitária consultada pelas sub-telas operacionais apenas
+      // para AVISAR (não-bloqueante) sobre itens pendentes do checklist.
       // Retorna { ok:bool, pendentes:[chaves] }
       window.pesChecklistTurnoStatus = function() {
         var st = window.PES_CHECKLIST_TURNO.itens;
@@ -4152,27 +4153,29 @@ export const SCREENS = {
       }
 
       // Ao clicar em "Pesar" / "Continuar" na fila: abre o modal de Sala.
-      // BLOQUEIO: se o Checklist de Turno (Aferição de Balanças + Condições
-      // Ambientais) não foi executado, redireciona o operador para a tela
-      // /pes-checklist-turno antes de permitir qualquer OP.
+      // O Checklist de Turno (Aferição de Balanças + Condições Ambientais) é
+      // RECOMENDADO mas opcional — se estiver pendente, mostra aviso com a
+      // opção de preencher agora ou seguir mesmo assim com a OP.
       function pesIrCockpit(event, tipo, opId) {
         if (event) event.stopPropagation();
         pesGarantirChecklistTurno();
-        // Validação do Checklist de Turno
+        // Aviso (não-bloqueante) do Checklist de Turno
         if (typeof window.pesChecklistTurnoStatus === 'function') {
           var st = window.pesChecklistTurnoStatus();
           if (!st.ok) {
             var lista = st.pendentes.map(function(p){ return '• ' + p; }).join('\\n');
-            var ok = confirm(
-              '⛔ Checklist PENDENTE\\n\\n' +
-              'Antes de iniciar qualquer OP, os checklists abaixo precisam ser executados:\\n\\n' +
+            var irPreencher = confirm(
+              '⚠ Checklist de Turno pendente\\n\\n' +
+              'Os itens abaixo ainda não foram executados neste turno:\\n\\n' +
               lista + '\\n\\n' +
-              'Deseja ir agora para a tela "Checklist" para executar?'
+              'OK   → ir agora para a tela "Checklist" e preencher.\\n' +
+              'Cancelar → iniciar a OP mesmo assim (checklist é opcional).'
             );
-            if (ok && typeof nav === 'function') {
-              nav('pes-checklist-turno', null, 'mod-pes');
+            if (irPreencher) {
+              if (typeof nav === 'function') nav('pes-checklist-turno', null, 'mod-pes');
+              return; // operador escolheu preencher → não abre Sala agora
             }
-            return; // não prossegue para o modal de Sala
+            // Caso contrário: segue o fluxo normal e abre o modal de Sala.
           }
         }
         // Memoriza OP e tipo para depois do modal

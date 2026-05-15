@@ -1,0 +1,271 @@
+<!-- ── Imports para teste standalone. Em Apriso, o CSS/scripts sao
+     servidos via [AprisoScripts]/... e estes <link>/<script> devem
+     ser REMOVIDOS antes do deploy (a Apriso ja injeta tudo). ── -->
+<link rel="stylesheet" href="../../fonts/granado-fonts.css">
+<link rel="stylesheet" href="./screen.css">
+<script src="../../WebComponents/granado-button.js"></script>
+<script src="../../WebComponents/granado-stepper.js"></script>
+<script src="../../WebComponents/granado-submenu-pesagem.js"></script>
+<script src="./screen.js" defer></script>
+
+<!--
+  Tela unica do fluxo de Pesagem (state machine client-side).
+
+  Estados:
+    0 SEL_MPS    - lista de MPs da ordem; operador escolhe uma
+    1 INICIAR    - confirma inicio da pesagem da MP selecionada
+    2 SCAN       - escaneia a etiqueta da MP fisica
+    3 PESAR      - le o peso na balanca
+    4 CONFIRMAR  - confirma o peso lido (tolerancia OK?)
+    5 JDE        - envia para JDE e mostra resultado
+
+  Cada step e um <div data-step="..."> montado o tempo todo. So um
+  fica visivel — o resto fica display:none. Forms NAO perdem estado
+  se o operador voltar via "Anterior".
+
+  Wiring em screen.js: ver guards, ctx, goTo() e renderByState().
+-->
+<div class="pfx" id="pfx-root">
+
+  <!-- ── Submenu contextual com OP Ativa (granado-submenu-pesagem) ── -->
+  <granado-submenu-pesagem id="pfx-submenu"
+    backlabel="← Selecao de Ordem"
+    contextlabel="OP Ativa"
+    contextvalue="OP-2026-0416"
+    value="pes-pesagem"
+    items='[{"key":"pes-cockpit","label":"Cockpit","icon":"🎯"},{"key":"pes-mps","label":"MPs","icon":"⚖️"},{"key":"pes-pesagem","label":"Pesagem","icon":"⚖"},{"key":"pes-checklist","label":"Checklist","icon":"📋"},{"key":"pes-checkout","label":"Checkout","icon":"✓"}]'>
+  </granado-submenu-pesagem>
+
+  <!-- ── Stepper que reflete o state atual ── -->
+  <div class="pfx-stepper-wrap">
+    <granado-stepper id="pfx-stepper"
+      activeiconcolor="#1C5C31"
+      activeconnectorcolor="#1C5C31"
+      currentstepcolor="#9A7520">
+    </granado-stepper>
+  </div>
+
+  <!-- ── Container dos steps. Apenas 1 fica visivel (display alternado em JS) ── -->
+  <div class="pfx-stage">
+
+    <!-- ====================================================
+         STEP 0 · SEL_MPS — Selecao de Itens da Ordem
+         ==================================================== -->
+    <div class="pfx-step" data-step="0" id="pfx-step-sel-mps">
+      <div class="pfx-step__head">
+        <div class="pfx-eyebrow">Step 1 de 5</div>
+        <h2 class="pfx-title">Selecione uma materia-prima da ordem</h2>
+        <p class="pfx-sub">Clique numa linha para escolher qual MP voce vai pesar agora.</p>
+      </div>
+
+      <div class="pfx-mps-list" id="pfx-mps-list">
+        <!-- Linhas renderizadas dinamicamente por renderSelMps(). -->
+      </div>
+
+      <div class="pfx-actions">
+        <granado-button label="Cancelar" variant="ghost"
+          onclickevent="cancelar();">
+        </granado-button>
+        <granado-button label="Iniciar pesagem da MP selecionada ›"
+          onclickevent="goTo(1);">
+        </granado-button>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         STEP 1 · INICIAR — Confirmar inicio da pesagem
+         ==================================================== -->
+    <div class="pfx-step" data-step="1" id="pfx-step-iniciar" style="display:none">
+      <div class="pfx-step__head">
+        <div class="pfx-eyebrow">Step 2 de 5</div>
+        <h2 class="pfx-title">Iniciar pesagem</h2>
+        <p class="pfx-sub">Confira a MP escolhida e a balanca antes de prosseguir.</p>
+      </div>
+
+      <div class="pfx-card">
+        <div class="pfx-card__row">
+          <span class="pfx-card__label">MP selecionada</span>
+          <span class="pfx-card__value" id="pfx-iniciar-mp">—</span>
+        </div>
+        <div class="pfx-card__row">
+          <span class="pfx-card__label">Quantidade alvo</span>
+          <span class="pfx-card__value mono" id="pfx-iniciar-qtd">—</span>
+        </div>
+        <div class="pfx-card__row">
+          <span class="pfx-card__label">Balanca</span>
+          <span class="pfx-card__value" id="pfx-iniciar-balanca">B-02 · Sala A</span>
+        </div>
+      </div>
+
+      <div class="pfx-actions">
+        <granado-button label="‹ Voltar" variant="secondary"
+          onclickevent="goTo(0);">
+        </granado-button>
+        <granado-button label="Iniciar e ir para Scan ›"
+          onclickevent="goTo(2);">
+        </granado-button>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         STEP 2 · SCAN — Scanear etiqueta da MP fisica
+         ==================================================== -->
+    <div class="pfx-step" data-step="2" id="pfx-step-scan" style="display:none">
+      <div class="pfx-step__head">
+        <div class="pfx-eyebrow">Step 3 de 5</div>
+        <h2 class="pfx-title">Escaneie a etiqueta da MP fisica</h2>
+        <p class="pfx-sub">O lote escaneado deve bater com a MP selecionada no step anterior.</p>
+      </div>
+
+      <div class="pfx-scan-box">
+        <label class="pfx-label">Lote (scan)</label>
+        <input type="text" id="pfx-scan-input" class="pfx-input mono"
+               placeholder="Aponte o leitor para a etiqueta..."
+               autocomplete="off"
+               oninput="onScanInput(this.value);">
+        <div class="pfx-scan-status" id="pfx-scan-status">Aguardando leitura…</div>
+      </div>
+
+      <div class="pfx-actions">
+        <granado-button label="‹ Voltar" variant="secondary"
+          onclickevent="goTo(1);">
+        </granado-button>
+        <granado-button id="pfx-scan-next-btn" label="Confirmar lote e pesar ›" disabled="true"
+          onclickevent="goTo(3);">
+        </granado-button>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         STEP 3 · PESAR — Le o peso da balanca
+         ==================================================== -->
+    <div class="pfx-step" data-step="3" id="pfx-step-pesar" style="display:none">
+      <div class="pfx-step__head">
+        <div class="pfx-eyebrow">Step 4 de 5</div>
+        <h2 class="pfx-title">Pesar a MP</h2>
+        <p class="pfx-sub">Aguarde a balanca estabilizar. O peso e capturado ao clicar em "Capturar peso".</p>
+      </div>
+
+      <div class="pfx-scale">
+        <div class="pfx-scale__readout mono" id="pfx-scale-readout">0,000 kg</div>
+        <div class="pfx-scale__tolerance" id="pfx-scale-tolerance">Tolerancia: ±0,500 kg</div>
+      </div>
+
+      <div class="pfx-actions">
+        <granado-button label="‹ Voltar" variant="secondary"
+          onclickevent="goTo(2);">
+        </granado-button>
+        <granado-button label="Capturar peso ›"
+          onclickevent="capturarPeso();">
+        </granado-button>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         STEP 4 · CONFIRMAR — Confere e confirma o peso
+         ==================================================== -->
+    <div class="pfx-step" data-step="4" id="pfx-step-confirmar" style="display:none">
+      <div class="pfx-step__head">
+        <div class="pfx-eyebrow">Step 5 de 5</div>
+        <h2 class="pfx-title">Confirmar o peso lido</h2>
+        <p class="pfx-sub">Esta acao envia a pesagem para o JDE. Confira tudo antes de confirmar.</p>
+      </div>
+
+      <div class="pfx-card">
+        <div class="pfx-card__row">
+          <span class="pfx-card__label">MP</span>
+          <span class="pfx-card__value" id="pfx-conf-mp">—</span>
+        </div>
+        <div class="pfx-card__row">
+          <span class="pfx-card__label">Lote</span>
+          <span class="pfx-card__value mono" id="pfx-conf-lote">—</span>
+        </div>
+        <div class="pfx-card__row">
+          <span class="pfx-card__label">Peso capturado</span>
+          <span class="pfx-card__value mono" id="pfx-conf-peso">—</span>
+        </div>
+        <div class="pfx-card__row" id="pfx-conf-desvio-row">
+          <span class="pfx-card__label">Desvio</span>
+          <span class="pfx-card__value mono" id="pfx-conf-desvio">—</span>
+        </div>
+      </div>
+
+      <div class="pfx-actions">
+        <granado-button label="‹ Voltar e re-pesar" variant="secondary"
+          onclickevent="goTo(3);">
+        </granado-button>
+        <granado-button label="✓ Confirmar e enviar pro JDE"
+          onclickevent="goTo(5);">
+        </granado-button>
+      </div>
+    </div>
+
+    <!-- ====================================================
+         STEP 5 · JDE — Envio em andamento + resultado
+         ==================================================== -->
+    <div class="pfx-step" data-step="5" id="pfx-step-jde" style="display:none">
+      <div class="pfx-step__head">
+        <div class="pfx-eyebrow">Step final</div>
+        <h2 class="pfx-title">Enviando para o JDE…</h2>
+      </div>
+
+      <div class="pfx-jde-status" id="pfx-jde-status">⏳ Enviando…</div>
+
+      <!-- Payload coletado durante o fluxo (o que esta sendo enviado pro JDE) -->
+      <div class="pfx-card pfx-jde-payload" id="pfx-jde-payload">
+        <div class="pfx-card__title">Dados enviados ao JDE</div>
+        <div class="pfx-card__row">
+          <span class="pfx-card__label">Ordem (OP)</span>
+          <span class="pfx-card__value mono" id="pfx-jde-op">—</span>
+        </div>
+        <div class="pfx-card__row">
+          <span class="pfx-card__label">Operador</span>
+          <span class="pfx-card__value" id="pfx-jde-operador">—</span>
+        </div>
+        <div class="pfx-card__row">
+          <span class="pfx-card__label">Sala · Balanca</span>
+          <span class="pfx-card__value mono" id="pfx-jde-localizacao">—</span>
+        </div>
+        <div class="pfx-card__row">
+          <span class="pfx-card__label">MP</span>
+          <span class="pfx-card__value" id="pfx-jde-mp">—</span>
+        </div>
+        <div class="pfx-card__row">
+          <span class="pfx-card__label">Quantidade alvo</span>
+          <span class="pfx-card__value mono" id="pfx-jde-alvo">—</span>
+        </div>
+        <div class="pfx-card__row">
+          <span class="pfx-card__label">Tolerancia</span>
+          <span class="pfx-card__value mono" id="pfx-jde-tol">—</span>
+        </div>
+        <div class="pfx-card__row">
+          <span class="pfx-card__label">Lote (scan)</span>
+          <span class="pfx-card__value mono" id="pfx-jde-lote">—</span>
+        </div>
+        <div class="pfx-card__row">
+          <span class="pfx-card__label">Peso capturado</span>
+          <span class="pfx-card__value mono" id="pfx-jde-peso">—</span>
+        </div>
+        <div class="pfx-card__row">
+          <span class="pfx-card__label">Desvio</span>
+          <span class="pfx-card__value mono" id="pfx-jde-desvio">—</span>
+        </div>
+        <div class="pfx-card__row">
+          <span class="pfx-card__label">Carimbo</span>
+          <span class="pfx-card__value mono" id="pfx-jde-timestamp">—</span>
+        </div>
+      </div>
+
+      <div class="pfx-actions" id="pfx-jde-actions" style="display:none">
+        <granado-button label="Pesar proxima MP da ordem"
+          onclickevent="iniciarNovaMp();">
+        </granado-button>
+        <granado-button label="Encerrar e voltar para Selecao de Ordem" variant="secondary"
+          onclickevent="encerrar();">
+        </granado-button>
+      </div>
+    </div>
+
+  </div><!-- /.pfx-stage -->
+
+</div>

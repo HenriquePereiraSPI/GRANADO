@@ -13,3 +13,4 @@ dist/
 # Utilitários locais de análise do BBP (não fazem parte do mockup)
 scripts/bbp_*.py
 scripts/read_bbp_docx.py
+/apriso/AprisoDocuments

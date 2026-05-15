@@ -33,6 +33,7 @@
   <script src="./granado-icon.js"></script>
   <script src="./granado-progress-bar.js"></script>
   <script src="./granado-stepper.js"></script>
+  <script src="./granado-submenu-pesagem.js"></script>
 </head>
 
 <body style="margin:0;padding:24px;background:#F4EED9;font-family:'Lato','DejaVu Sans',Arial,sans-serif;color:#103E20">
@@ -916,6 +917,95 @@
     `);
     tbl.setAttribute('onclickevent', "console.log('linha selecionada', row.cod);");
     tbl.setAttribute('ondoubleclickevent', "alert('Abrir detalhes de ' + row.cod);");
+  </script>
+
+  <!-- ========== Linha 22 — granado-submenu-pesagem ========== -->
+  <section style="margin-top:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-submenu-pesagem&gt;
+    </h2>
+
+    <div style="display:flex;flex-direction:column;gap:18px">
+
+      <!-- 1) Replica do submenu real de Pesagem (OP ativa + 7 telas) -->
+      <div style="background:#FDFAF1;border:1px solid #D6CDA4;border-radius:8px;padding:14px 20px">
+        <div
+          style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E;margin-bottom:10px">
+          Pesagem · OP-2026-0416 ativa (item "Checklist")
+        </div>
+        <granado-submenu-pesagem id="sm-pes"
+          backlabel="← Selecao de Ordem"
+          contextlabel="OP Ativa"
+          contextvalue="OP-2026-0416"
+          value="pes-checklist"
+          onbackclickevent="alert('Voltar para a fila de OPs');"
+          onchangeevent="console.log('Pesagem · troca para', value, '→', item && item.label);">
+        </granado-submenu-pesagem>
+      </div>
+
+      <!-- 2) Paleta alternativa (azul) sem botao de voltar -->
+      <div style="background:#FDFAF1;border:1px solid #D6CDA4;border-radius:8px;padding:14px 20px">
+        <div
+          style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E;margin-bottom:10px">
+          Paleta azul · sem botao de voltar · contexto "Lote Ativo"
+        </div>
+        <granado-submenu-pesagem id="sm-lab"
+          contextlabel="Lote Ativo"
+          contextvalue="L24-1042"
+          contextcolor="#2C5A8C"
+          activecolor="#2C5A8C"
+          backgroundcolor="#EAF1F8"
+          bordercolor="#C6D6E5"
+          value="lab-fq"
+          onchangeevent="console.log('Lab · troca para', value);">
+        </granado-submenu-pesagem>
+      </div>
+
+      <!-- 3) Items fixos inline (JSON direto no atributo, sem JS) -->
+      <div style="background:#FDFAF1;border:1px solid #D6CDA4;border-radius:8px;padding:14px 20px">
+        <div
+          style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E;margin-bottom:10px">
+          Items fixos inline · sem card de contexto · item "Relatorio" desabilitado
+        </div>
+        <granado-submenu-pesagem
+          backlabel="← Voltar"
+          value="prod-mat"
+          items='[{"key":"prod-mat","label":"Materiais","icon":"📦"},{"key":"prod-prod","label":"Producao","icon":"🏭"},{"key":"prod-qa","label":"Qualidade","icon":"✅"},{"key":"prod-rel","label":"Relatorio","icon":"📊","disabled":true}]'
+          onchangeevent="console.log('Prod · troca para', value);">
+        </granado-submenu-pesagem>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      // Padrao Apriso: setAttribute('items', JSON.stringify(...)) em vez de
+      // .items = [...] — funciona mesmo se o componente ainda nao subiu.
+
+      // 1) Replica do submenu real de Pesagem
+      document.getElementById('sm-pes').setAttribute('items', JSON.stringify([
+        { key: 'pes-cockpit',   label: 'Cockpit',    icon: '🎯' },
+        { key: 'pes-mps',       label: 'MPs',        icon: '⚖️' },
+        { key: 'pes-checklist', label: 'Checklist',  icon: '📋' },
+        { key: 'pes-gaiola',    label: 'Gaiola',     icon: '📦' },
+        { key: 'pes-paradas',   label: 'Paradas',    icon: '⏸️' },
+        { key: 'pes-devol-mp',  label: 'Devolucao',  icon: '↩' },
+        { key: 'pes-checkout',  label: 'Checkout',   icon: '✓' }
+      ]));
+
+      // 2) Paleta azul para um contexto de laboratorio
+      document.getElementById('sm-lab').setAttribute('items', JSON.stringify([
+        { key: 'lab-amostras', label: 'Amostras',     icon: '🧪' },
+        { key: 'lab-fq',       label: 'Fisico-Quim.', icon: '⚗️' },
+        { key: 'lab-micro',    label: 'Microbio.',    icon: '🦠' },
+        { key: 'lab-laudo',    label: 'Laudo',        icon: '📄' }
+      ]));
+
+      // Obs.: o 3o exemplo usa items=' [...] ' direto no HTML (JSON inline),
+      // sem JS — util quando a lista e fixa e nao precisa de carga dinamica.
+    })();
   </script>
 </body>
 

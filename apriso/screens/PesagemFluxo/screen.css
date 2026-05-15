@@ -1,0 +1,259 @@
+/* ============================================================
+   PesagemFluxo · estilos minimos. O esqueleto e proposital —
+   substituicao por componentes Granado e/ou Apriso fica a cargo
+   da implementacao final.
+   ============================================================ */
+
+.pfx {
+  font-family: 'Lato', 'DejaVu Sans', Arial, sans-serif;
+  color: #103E20;
+  padding: 16px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pfx-stepper-wrap {
+  background: #FDFAF1;
+  border: 1px solid #E5DDC8;
+  border-radius: 8px;
+  padding: 12px 18px;
+}
+
+.pfx-stage {
+  background: #FFFFFF;
+  border: 1px solid #E5DDC8;
+  border-radius: 8px;
+  padding: 22px 24px;
+  min-height: 360px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+
+.pfx-step__head {
+  margin-bottom: 18px;
+}
+
+.pfx-eyebrow {
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #8A9E8E;
+  margin-bottom: 6px;
+}
+
+.pfx-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1C5C31;
+  margin: 0 0 6px;
+}
+
+.pfx-sub {
+  font-size: 12px;
+  color: #5A6B5E;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.pfx-card {
+  background: #FDFAF1;
+  border: 1px solid #E5DDC8;
+  border-radius: 7px;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+}
+
+.pfx-card__title {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #1C5C31;
+  padding-bottom: 8px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #E5DDC8;
+}
+
+.pfx-jde-payload {
+  max-width: 640px;
+  margin: 0 auto 18px;
+}
+
+.pfx-card__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px dashed #E5DDC8;
+}
+
+.pfx-card__row:last-child {
+  border-bottom: 0;
+}
+
+.pfx-card__label {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #8A9E8E;
+}
+
+.pfx-card__value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #103E20;
+}
+
+.mono {
+  font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
+}
+
+/* ── Step 0 · lista de MPs ─────────────────────────────────── */
+.pfx-mps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.pfx-mp-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: #FDFAF1;
+  border: 1.5px solid #E5DDC8;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+}
+
+.pfx-mp-row:hover {
+  background: #F5EFD9;
+  border-color: #9A7520;
+}
+
+.pfx-mp-row.is-selected {
+  background: #E8F0EA;
+  border-color: #1C5C31;
+  box-shadow: 0 0 0 2px rgba(28,92,49,.12);
+}
+
+.pfx-mp-row.is-done {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.pfx-mp-row__code {
+  font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
+  font-weight: 800;
+  color: #1C5C31;
+  min-width: 110px;
+}
+
+.pfx-mp-row__name {
+  flex: 1;
+  font-size: 13px;
+  color: #103E20;
+}
+
+.pfx-mp-row__qty {
+  font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
+  font-weight: 700;
+  color: #5A6B5E;
+}
+
+/* ── Step 2 · scan ─────────────────────────────────────────── */
+.pfx-scan-box {
+  background: #FDFAF1;
+  border: 1px solid #E5DDC8;
+  border-radius: 7px;
+  padding: 18px;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pfx-label {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #8A9E8E;
+}
+
+.pfx-input {
+  font-size: 14px;
+  padding: 10px 12px;
+  border: 1.5px solid #E5DDC8;
+  border-radius: 6px;
+  background: #FFFFFF;
+  color: #103E20;
+  outline: none;
+  transition: border-color .12s;
+  font-family: inherit;
+}
+
+.pfx-input:focus {
+  border-color: #1C5C31;
+}
+
+.pfx-scan-status {
+  font-size: 11px;
+  color: #5A6B5E;
+  font-style: italic;
+}
+
+.pfx-scan-status.is-ok    { color: #1C7A38; font-style: normal; font-weight: 700; }
+.pfx-scan-status.is-error { color: #C0392B; font-style: normal; font-weight: 700; }
+
+/* ── Step 3 · balanca ──────────────────────────────────────── */
+.pfx-scale {
+  background: #103E20;
+  color: #FDFAF1;
+  border-radius: 8px;
+  padding: 28px 24px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.pfx-scale__readout {
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.pfx-scale__tolerance {
+  font-size: 11px;
+  color: #C9D5CC;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* ── Step 5 · JDE ──────────────────────────────────────────── */
+.pfx-jde-status {
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  padding: 40px 20px;
+  color: #5A6B5E;
+}
+
+.pfx-jde-status.is-ok    { color: #1C7A38; }
+.pfx-jde-status.is-error { color: #C0392B; }
+
+/* ── Actions row ───────────────────────────────────────────── */
+.pfx-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #E5DDC8;
+}
