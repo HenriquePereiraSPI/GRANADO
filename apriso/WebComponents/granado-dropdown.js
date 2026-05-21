@@ -116,7 +116,7 @@ class GranadoDropdown extends HTMLElement {
     this.style.display = this.style.display || 'inline-block';
 
     this.innerHTML = `
-      <div style="position:relative;display:block;font-family:'Lato','DejaVu Sans',Arial,sans-serif">
+      <div style="position:relative;display:block;font-family:'Poppins','DejaVu Sans',Arial,sans-serif">
         <button data-dd-toggle type="button" ${disabled ? 'disabled' : ''} style="
           display:inline-flex;
           align-items:center;

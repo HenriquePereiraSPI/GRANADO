@@ -5,6 +5,7 @@
 
 export const TOP_LINKS = [
   { id: 'sinotico', label: 'Sinotico da Fabrica', icon: '🗺️' },
+  { id: 'demo-fontes', label: 'Demo · Comparar Fontes', icon: '🔤' },
 ];
 
 export const MODULES = [

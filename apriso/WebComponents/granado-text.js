@@ -100,7 +100,7 @@ class GranadoText extends HTMLElement {
     this.style.display = this.style.display || 'block';
 
     this.innerHTML = `
-      <div style="font-family:'Lato','DejaVu Sans',Arial,sans-serif">
+      <div style="font-family:'Poppins','DejaVu Sans',Arial,sans-serif">
         <label data-text-label style="display:none;font-size:11px;font-weight:600;color:#103E20;margin-bottom:6px;font-family:inherit"></label>
         <div data-text-row style="position:relative">
           ${iconHtml ? `<span data-text-icon style="${iconStyle}">${iconHtml}</span>` : ''}

@@ -279,7 +279,7 @@ export default function PesPerformanceGestaoScreen() {
                   borderTop: `3px solid ${cor}`, borderRadius: 6,
                 }}>
                   <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--text3)' }}>Turno {t.turno}</div>
-                  <div style={{ fontFamily: 'var(--font-d)', fontSize: 26, fontWeight: 700, color: cor, lineHeight: 1.1, marginTop: 2 }}>
+                  <div style={{ fontFamily: 'var(--font-m)', fontSize: 26, fontWeight: 700, color: cor, lineHeight: 1.1, marginTop: 2 }}>
                     {t.eficiencia.toFixed(1)}<span style={{ fontSize: 14 }}>%</span>
                   </div>
                   <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 4 }}>
@@ -366,7 +366,7 @@ function KpiGestao({ label, valor, sub, cor, icone }) {
           {label}
         </span>
       </div>
-      <div style={{ fontFamily: 'var(--font-d)', fontSize: 28, fontWeight: 700, color: cor, lineHeight: 1.1 }}>{valor}</div>
+      <div style={{ fontFamily: 'var(--font-m)', fontSize: 28, fontWeight: 700, color: cor, lineHeight: 1.1 }}>{valor}</div>
       {sub && <div style={{ fontSize: 10, color: 'var(--text3)' }}>{sub}</div>}
     </div>
   );

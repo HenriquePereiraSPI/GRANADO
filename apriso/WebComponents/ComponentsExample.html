@@ -61,6 +61,29 @@
         onclickevent="alert('Card simples clicado')">
       </granado-simple-card>
     </div>
+
+    <!-- Variantes: border-position + icon -->
+    <div style="display:flex;gap:12px;margin-top:12px">
+      <granado-simple-card style="flex:1" title="Em Pesagem" subtitle="OP-2025-0416 · Loção Hidratante"
+        color="#1A4A8C" border-position="top" icon="🔄">
+      </granado-simple-card>
+
+      <granado-simple-card style="flex:1" title="Aprovado" subtitle="Liberado para envase"
+        color="#1C5C31" border-position="right" icon="✓">
+      </granado-simple-card>
+
+      <granado-simple-card style="flex:1" title="Atenção" subtitle="Validade próxima do limite"
+        color="#9A7B1C" border-position="bottom" icon="⚠️">
+      </granado-simple-card>
+
+      <granado-simple-card style="flex:1" title="Cor custom" subtitle="text/icon/border sobrescritos"
+        color="#C0392B" text-color="#103E20" icon-color="#9A7B1C" border-color="#E5DDC8" icon="🎨">
+      </granado-simple-card>
+
+      <granado-simple-card style="flex:1" title="Sem borda fina" subtitle="border-color=&quot;transparent&quot;"
+        color="#1A4A8C" border-position="top" border-color="transparent" icon="🔄">
+      </granado-simple-card>
+    </div>
   </section>
 
   <!-- ========== Linha 2 — granado-complete-card ========== -->
@@ -83,6 +106,25 @@
 
       <granado-complete-card style="flex:1" icon="D" title="Sala D" subtitle="6 Balancas" color="#2C5A8C"
         status="Reservada" onclickevent="alert('Sala D selecionada')">
+      </granado-complete-card>
+    </div>
+
+    <!-- Overrides de cor: text-color / icon-color / border-color / status-color -->
+    <div style="display:flex;gap:12px;margin-top:12px">
+      <granado-complete-card style="flex:1" icon="⚙️" title="Tudo na cor" subtitle="borda, ícone, título e badge"
+        color="#1A4A8C" status="Padrão">
+      </granado-complete-card>
+
+      <granado-complete-card style="flex:1" icon="🎨" title="Cores custom" subtitle="cada elemento sobrescrito"
+        color="#1A4A8C" text-color="#103E20" icon-color="#9A7B1C" status-color="#1C5C31" status="Misto">
+      </granado-complete-card>
+
+      <granado-complete-card style="flex:1" icon="✓" title="Sem borda" subtitle='border-color="transparent"'
+        color="#1C5C31" border-color="transparent" status="Aprovado">
+      </granado-complete-card>
+
+      <granado-complete-card style="flex:1" icon="⚠️" title="Badge diferente" subtitle="status-color próprio"
+        color="#6B7280" status-color="#C0392B" status="Atenção">
       </granado-complete-card>
     </div>
   </section>

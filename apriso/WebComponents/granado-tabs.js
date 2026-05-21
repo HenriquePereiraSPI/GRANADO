@@ -133,7 +133,7 @@ class GranadoTabs extends HTMLElement {
     this.style.display = this.style.display || 'block';
 
     this.innerHTML = `
-      <div class="gt-card" style="font-family:'Lato','DejaVu Sans',Arial,sans-serif">
+      <div class="gt-card" style="font-family:'Poppins','DejaVu Sans',Arial,sans-serif">
         <div class="gt-header" role="tablist" style="display:flex;flex-wrap:wrap;border-bottom:1px solid #E5DDC8;gap:2px">
           ${buttonsHtml}
         </div>

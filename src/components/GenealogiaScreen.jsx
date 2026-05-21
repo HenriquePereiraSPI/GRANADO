@@ -398,7 +398,7 @@ function Kpi({ label, valor, cor, sub }) {
       <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 4 }}>
         {label}
       </div>
-      <div style={{ fontFamily: 'var(--font-d)', fontSize: 26, fontWeight: 700, color: cor, lineHeight: 1 }}>{valor}</div>
+      <div style={{ fontFamily: 'var(--font-m)', fontSize: 26, fontWeight: 700, color: cor, lineHeight: 1 }}>{valor}</div>
       {sub && <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 4 }}>{sub}</div>}
     </div>
   );
@@ -548,7 +548,7 @@ function RenderConteudoNo({ no, cores, dossie }) {
                 <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--text3)' }}>
                   PESAGEM · DESTAQUE GMP
                 </div>
-                <div style={{ fontFamily: 'var(--font-d)', fontSize: 17, fontWeight: 700, color: 'var(--verde-esc)' }}>
+                <div style={{ fontFamily: 'var(--font-m)', fontSize: 17, fontWeight: 700, color: 'var(--verde-esc)' }}>
                   {no.itens.length} MPs pesadas · {totalPeso.toFixed(2).replace('.', ',')} kg
                 </div>
               </div>

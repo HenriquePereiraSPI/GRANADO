@@ -121,10 +121,10 @@ class GranadoProgressBar extends HTMLElement {
       }
       const itemsHtml = items.map(it => {
         if (it === 'label') return `<span data-pb-label></span>`;
-        if (it === 'value') return `<span data-pb-value style="font-weight:700;font-family:'DM Mono','DejaVu Mono',Consolas,monospace"></span>`;
+        if (it === 'value') return `<span data-pb-value style="font-weight:700;font-family:Arial,'DejaVu Sans',Helvetica,sans-serif"></span>`;
         return '';
       }).join('');
-      return `<div data-pb-slot="${slotName}" style="display:flex;align-items:center;${justify}gap:8px;font-size:11px;color:#103E20;font-family:'Lato','DejaVu Sans',Arial,sans-serif;line-height:1.2">${itemsHtml}</div>`;
+      return `<div data-pb-slot="${slotName}" style="display:flex;align-items:center;${justify}gap:8px;font-size:11px;color:#103E20;font-family:'Poppins','DejaVu Sans',Arial,sans-serif;line-height:1.2">${itemsHtml}</div>`;
     };
 
     const trackBase = `position:relative;height:4px;background:#EAE4CA;border:1px solid #D6CDA4;border-radius:3px;overflow:hidden;box-sizing:content-box`;

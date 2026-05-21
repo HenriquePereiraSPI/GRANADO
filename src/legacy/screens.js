@@ -6,10 +6,10 @@ export const SCREENS = {
         <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416 · Lote G2026-091</div>
       </div>
       <div class="g4 mb14">
-        <div class="card" style="text-align:center"><div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--verde)">4</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Total Amostras</div></div>
-        <div class="card co" style="text-align:center"><div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--ouro)">1</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Aguardando</div></div>
-        <div class="card cv" style="text-align:center"><div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--verde)">2</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Aprovadas</div></div>
-        <div class="card" style="text-align:center"><div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--inf)">1</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Em análise</div></div>
+        <div class="card" style="text-align:center"><div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--verde)">4</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Total Amostras</div></div>
+        <div class="card co" style="text-align:center"><div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--ouro)">1</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Aguardando</div></div>
+        <div class="card cv" style="text-align:center"><div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--verde)">2</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Aprovadas</div></div>
+        <div class="card" style="text-align:center"><div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--inf)">1</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Em análise</div></div>
       </div>
       <div class="card cv mb14">
         <div class="card-title">Amostras Enviadas ao LIMS</div>
@@ -111,7 +111,7 @@ export const SCREENS = {
               <div style="font-size:9px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--verde);margin-bottom:8px">Rendimento Calculado</div>
               <div style="display:flex;justify-content:space-between;align-items:center">
                 <span style="font-size:13px;color:var(--text2)">Rendimento do Processo</span>
-                <span style="font-family:var(--font-d);font-size:28px;font-weight:700;color:var(--verde)">99,72%</span>
+                <span style="font-family:var(--font-m);font-size:28px;font-weight:700;color:var(--verde)">99,72%</span>
               </div>
             </div>
           </div>
@@ -152,10 +152,10 @@ export const SCREENS = {
         <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416 · Receita R-2024-089<br><span style="color:var(--alr)">Fase 2/4 em andamento</span></div>
       </div>
       <div class="g4 mb14">
-        <div class="card" style="text-align:center"><div style="font-family:var(--font-d);font-size:32px;font-weight:700;color:var(--verde)">78°C</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Temperatura Atual</div></div>
-        <div class="card" style="text-align:center"><div style="font-family:var(--font-d);font-size:32px;font-weight:700;color:var(--inf)">42rpm</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Agitação</div></div>
-        <div class="card" style="text-align:center"><div style="font-family:var(--font-d);font-size:32px;font-weight:700;color:var(--ouro)">6,8</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">pH Atual</div></div>
-        <div class="card ca" style="text-align:center"><div style="font-family:var(--font-d);font-size:32px;font-weight:700;color:var(--alr)">38min</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Tempo na Fase</div></div>
+        <div class="card" style="text-align:center"><div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--verde)">78°C</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Temperatura Atual</div></div>
+        <div class="card" style="text-align:center"><div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--inf)">42rpm</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Agitação</div></div>
+        <div class="card" style="text-align:center"><div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--ouro)">6,8</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">pH Atual</div></div>
+        <div class="card ca" style="text-align:center"><div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--alr)">38min</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Tempo na Fase</div></div>
       </div>
       <div class="g73">
         <div class="card cv">
@@ -590,26 +590,26 @@ export const SCREENS = {
       <div class="g4 mb14" id="fab-saldo-kpis">
         <div class="card cv" style="text-align:center;padding:14px">
           <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Total Equipamentos</div>
-          <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--verde)" id="kpi-saldo-total">12</div>
+          <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--verde)" id="kpi-saldo-total">12</div>
         </div>
         <div class="card" style="text-align:center;padding:14px;background:var(--verde-dim);border-color:var(--ok-b)">
           <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--verde);margin-bottom:4px">Disponíveis</div>
-          <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--ok)" id="kpi-saldo-disp">5</div>
+          <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--ok)" id="kpi-saldo-disp">5</div>
         </div>
         <div class="card ca" style="text-align:center;padding:14px">
           <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Em Uso</div>
-          <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--alr)" id="kpi-saldo-uso">5</div>
+          <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--alr)" id="kpi-saldo-uso">5</div>
         </div>
         <div class="card" style="text-align:center;padding:14px">
           <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Manutenção / Limpeza</div>
-          <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--per)" id="kpi-saldo-man">2</div>
+          <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--per)" id="kpi-saldo-man">2</div>
         </div>
       </div>
 
       <!-- Tabela de saldos -->
       <div class="card cv">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <div class="card-title" style="margin-bottom:0">Painel de Saldo de Equipamentos — <span style="font-family:var(--font-m);color:var(--verde)" id="fab-saldo-label-tipo">Todos</span></div>
+          <div class="card-title" style="margin-bottom:0">Painel de Saldo de Equipamentos — <span style="font-family:var(--font-b);color:var(--verde)" id="fab-saldo-label-tipo">Todos</span></div>
           <button class="btn btn-sm btn-ghost" onclick="alert('📥 Exportar relatório de saldo em CSV/Excel (funcionalidade a habilitar via integração JDE).')">⬇ Exportar</button>
         </div>
         <div style="overflow-x:auto">
@@ -1107,19 +1107,19 @@ export const SCREENS = {
       <!-- KPIs no topo: estado global -->
       <div class="g4 mb14" style="gap:10px">
         <div class="card cv" style="display:flex;align-items:center;gap:10px;padding:10px 14px">
-          <div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--verde);line-height:1" id="cklt-kpi-ok">0</div>
+          <div style="font-family:var(--font-m);font-size:22px;font-weight:700;color:var(--verde);line-height:1" id="cklt-kpi-ok">0</div>
           <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">Executados<br/>no per&iacute;odo</div>
         </div>
         <div class="card cp" style="display:flex;align-items:center;gap:10px;padding:10px 14px">
-          <div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--per);line-height:1" id="cklt-kpi-pend">2</div>
+          <div style="font-family:var(--font-m);font-size:22px;font-weight:700;color:var(--per);line-height:1" id="cklt-kpi-pend">2</div>
           <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">Pendentes<br/>(bloqueia OPs)</div>
         </div>
         <div class="card co" style="display:flex;align-items:center;gap:10px;padding:10px 14px">
-          <div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--inf);line-height:1">2</div>
+          <div style="font-family:var(--font-m);font-size:22px;font-weight:700;color:var(--inf);line-height:1">2</div>
           <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">Total de<br/>checklists</div>
         </div>
         <div class="card" style="display:flex;align-items:center;gap:10px;padding:10px 14px">
-          <div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--ouro);line-height:1">06:18</div>
+          <div style="font-family:var(--font-m);font-size:22px;font-weight:700;color:var(--ouro);line-height:1">06:18</div>
           <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">&Uacute;ltima<br/>execu&ccedil;&atilde;o</div>
         </div>
       </div>
@@ -1582,22 +1582,22 @@ export const SCREENS = {
       <div class="g4 mb14">
         <div class="card cv" style="text-align:center;padding:14px">
           <div class="kpi-l">Total MPs</div>
-          <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--verde)">12<span style="font-size:16px;color:var(--text3)">/12</span></div>
+          <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--verde)">12<span style="font-size:16px;color:var(--text3)">/12</span></div>
           <div style="font-size:10px;color:var(--text3)">100% pesadas</div>
         </div>
         <div class="card" style="text-align:center;padding:14px">
           <div class="kpi-l">Dentro do Limite</div>
-          <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--ok)">11</div>
+          <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--ok)">11</div>
           <div style="font-size:10px;color:var(--text3)">MPs aprovadas</div>
         </div>
         <div class="card ca" style="text-align:center;padding:14px">
           <div class="kpi-l">Variância de pesagem Justificada</div>
-          <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--alr)">1</div>
+          <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--alr)">1</div>
           <div style="font-size:10px;color:var(--text3)">Aprovado pelo CQ</div>
         </div>
         <div class="card" style="text-align:center;padding:14px">
           <div class="kpi-l">Variação Total</div>
-          <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--ok)">–0,02<span style="font-size:16px">%</span></div>
+          <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--ok)">–0,02<span style="font-size:16px">%</span></div>
           <div style="font-size:10px;color:var(--text3)">599,87 / 600,00 kg</div>
         </div>
       </div>
@@ -2309,7 +2309,7 @@ export const SCREENS = {
                 </div>
                 <div style="text-align:right">
                   <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Alvo</div>
-                  <div style="font-family:var(--font-d);font-size:28px;font-weight:700;color:var(--verde)">412,500 <span style="font-size:14px;font-weight:400">kg</span></div>
+                  <div style="font-family:var(--font-m);font-size:28px;font-weight:700;color:var(--verde)">412,500 <span style="font-size:14px;font-weight:400">kg</span></div>
                   <div style="font-size:11px;color:var(--text3)">Variância máx: ±0,5% → permitido [410,44 – 414,56] kg</div>
                 </div>
               </div>
@@ -2318,7 +2318,7 @@ export const SCREENS = {
               <div style="background:var(--verde-esc);border-radius:10px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
                 <div>
                   <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(253,250,241,.4);margin-bottom:4px">Peso atual</div>
-                  <div style="font-family:var(--font-d);font-size:62px;font-weight:700;color:#7AE09A;letter-spacing:-.02em;line-height:1" id="bal-val">0,000</div>
+                  <div style="font-family:var(--font-m);font-size:62px;font-weight:700;color:#7AE09A;letter-spacing:-.02em;line-height:1" id="bal-val">0,000</div>
                 </div>
                 <div style="text-align:right">
                   <div style="font-size:12px;color:rgba(253,250,241,.5);margin-bottom:6px">kg</div>
@@ -2600,7 +2600,7 @@ export const SCREENS = {
                   </div>
                   <div>
                     <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(253,250,241,.45);margin-bottom:4px">Posição</div>
-                    <div id="gai-ident-pos" style="font-family:var(--font-d);font-size:22px;font-weight:700;color:#FDFAF1">—</div>
+                    <div id="gai-ident-pos" style="font-family:var(--font-m);font-size:22px;font-weight:700;color:#FDFAF1">—</div>
                   </div>
                   <div>
                     <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(253,250,241,.45);margin-bottom:4px">OF</div>
@@ -2745,17 +2745,17 @@ export const SCREENS = {
         </div>
         <div class="card ca" style="text-align:center;padding:14px">
           <div class="kpi-l">MPs a Devolver</div>
-          <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--alr)">3</div>
+          <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--alr)">3</div>
           <div style="font-size:10px;color:var(--text3)">materiais com saldo</div>
         </div>
         <div class="card ca" style="text-align:center;padding:14px">
           <div class="kpi-l">Reentiquetadas</div>
-          <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--alr)">0<span style="font-size:16px;color:var(--text3)"> / 3</span></div>
+          <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--alr)">0<span style="font-size:16px;color:var(--text3)"> / 3</span></div>
           <div style="font-size:10px;color:var(--text3)">pendente</div>
         </div>
         <div class="card ca" style="text-align:center;padding:14px">
           <div class="kpi-l">Peso Total a Devolver</div>
-          <div style="font-family:var(--font-d);font-size:30px;font-weight:700;color:var(--alr)">0,948<span style="font-size:14px"> kg</span></div>
+          <div style="font-family:var(--font-m);font-size:30px;font-weight:700;color:var(--alr)">0,948<span style="font-size:14px"> kg</span></div>
           <div style="font-size:10px;color:var(--text3)">Destino: Almoxarifado MF5</div>
         </div>
       </div>
@@ -3934,7 +3934,7 @@ export const SCREENS = {
             <span style="font-size:16px;line-height:1;background:var(--ok-p);border:1px solid var(--ok-b);color:var(--verde);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">✓</span>
           </div>
           <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
-            <div style="font-family:var(--font-d);font-size:32px;font-weight:700;color:var(--verde)">1</div>
+            <div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--verde)">1</div>
             <div style="font-size:10px;color:var(--text3);font-weight:600">ordem na fila</div>
           </div>
         </div>
@@ -3947,7 +3947,7 @@ export const SCREENS = {
             <span style="font-size:14px;line-height:1;background:var(--inf-p);border:1px solid var(--inf-b);color:var(--inf);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">🔄</span>
           </div>
           <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
-            <div style="font-family:var(--font-d);font-size:32px;font-weight:700;color:var(--inf)">1</div>
+            <div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--inf)">1</div>
             <div style="font-size:10px;color:var(--text3);font-weight:600">em execução agora</div>
           </div>
         </div>
@@ -3960,7 +3960,7 @@ export const SCREENS = {
             <span style="font-size:14px;line-height:1;background:var(--ouro-dim);border:1px solid var(--ouro-claro);color:var(--ouro);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">⭐</span>
           </div>
           <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
-            <div style="font-family:var(--font-d);font-size:32px;font-weight:700;color:var(--ouro)">14</div>
+            <div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--ouro)">14</div>
             <div style="font-size:10px;color:var(--text3);font-weight:600">ordens finalizadas</div>
           </div>
         </div>
@@ -3973,7 +3973,7 @@ export const SCREENS = {
             <span style="font-size:14px;line-height:1;background:var(--per-p);border:1px solid var(--per-b);color:var(--per);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">⚠</span>
           </div>
           <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
-            <div style="font-family:var(--font-d);font-size:32px;font-weight:700;color:var(--per)">1</div>
+            <div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--per)">1</div>
             <div style="font-size:10px;color:var(--text3);font-weight:600">requer atenção</div>
           </div>
         </div>
@@ -4585,7 +4585,7 @@ export const SCREENS = {
 
           <!-- Progresso -->
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;background:var(--surface2);padding:10px 14px;border-radius:7px;border:1px solid var(--border)">
-            <div style="font-family:var(--font-d);font-size:26px;font-weight:700;color:var(--ouro);line-height:1;min-width:54px;text-align:center" id="pes-cks-pct">0%</div>
+            <div style="font-family:var(--font-m);font-size:26px;font-weight:700;color:var(--ouro);line-height:1;min-width:54px;text-align:center" id="pes-cks-pct">0%</div>
             <div style="flex:1">
               <div style="height:8px;background:var(--bg2);border-radius:4px;overflow:hidden">
                 <div id="pes-cks-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--ouro),var(--ok));border-radius:4px;transition:width .3s"></div>
@@ -4901,7 +4901,7 @@ export const SCREENS = {
           <div class="ph-title">Check-in de Operadores</div>
         </div>
         <div class="ph-actions">
-          <div class="tb-pill ok" id="ci-enabley-status">🔗 Enabley API · Online</div>
+          <div class="tb-pill ok" id="ci-enabley-status" style="font-family:var(--font-b)">🔗 Enabley API · Online</div>
           <select class="inp" style="width:auto;font-size:12px;padding:8px 12px">
             <option>Linha B · Sabonete Barra 90g · MF5</option>
             <option>Linha A · Sabonete Líquido · MF5</option>
@@ -5329,11 +5329,11 @@ export const SCREENS = {
                 </div>
               </div>
               <div style="text-align:center;min-width:80px">
-                <div style="font-family:var(--font-d);font-size:28px;font-weight:700;color:var(--verde)">3h42</div>
+                <div style="font-family:var(--font-m);font-size:28px;font-weight:700;color:var(--verde)">3h42</div>
                 <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)">Decorrido</div>
               </div>
               <div style="text-align:center;min-width:80px">
-                <div style="font-family:var(--font-d);font-size:28px;font-weight:700;color:var(--ouro)">~2m</div>
+                <div style="font-family:var(--font-m);font-size:28px;font-weight:700;color:var(--ouro)">~2m</div>
                 <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)">Previsão término</div>
               </div>
             </div>
@@ -5427,7 +5427,7 @@ export const SCREENS = {
             <div class="card-title">Apontamento Rápido — Rejeitos</div>
             <div style="text-align:center;margin-bottom:12px">
               <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Rejeitos no Turno</div>
-              <div style="font-family:var(--font-d);font-size:36px;font-weight:700;color:var(--per)" id="ck-rej-total">38</div>
+              <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--per)" id="ck-rej-total">38</div>
               <div style="font-size:10px;color:var(--text3)">un · 0,79% da produção</div>
             </div>
             <div class="qty-w mb14">
@@ -5501,7 +5501,7 @@ export const SCREENS = {
           <div class="ph-title">Documentos da Ordem de Produção</div>
         </div>
         <div class="ph-actions">
-          <div class="tb-pill ok">🔗 SoftExpert · Online</div>
+          <div class="tb-pill ok" style="font-family:var(--font-b)">🔗 SoftExpert · Online</div>
           <select class="inp" style="width:auto;font-size:12px;padding:8px 12px" onchange="docFiltrarTipo(this.value)">
             <option value="">Todos os tipos</option>
             <option value="MPA">Manual de Produto</option>
@@ -6200,10 +6200,10 @@ export const SCREENS = {
         </div>
       </div>
       <div class="g4 mb14">
-        <div class="card cv" style="text-align:center"><div style="font-family:var(--font-d);font-size:38px;font-weight:700;color:var(--verde)">12</div><div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Em Execução</div></div>
-        <div class="card co" style="text-align:center"><div style="font-family:var(--font-d);font-size:38px;font-weight:700;color:var(--ouro)">5</div><div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Liberadas</div></div>
-        <div class="card" style="text-align:center"><div style="font-family:var(--font-d);font-size:38px;font-weight:700;color:var(--inf)">28</div><div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Finalizadas</div></div>
-        <div class="card cp" style="text-align:center"><div style="font-family:var(--font-d);font-size:38px;font-weight:700;color:var(--per)">2</div><div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Bloqueadas</div></div>
+        <div class="card cv" style="text-align:center"><div style="font-family:var(--font-m);font-size:38px;font-weight:700;color:var(--verde)">12</div><div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Em Execução</div></div>
+        <div class="card co" style="text-align:center"><div style="font-family:var(--font-m);font-size:38px;font-weight:700;color:var(--ouro)">5</div><div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Liberadas</div></div>
+        <div class="card" style="text-align:center"><div style="font-family:var(--font-m);font-size:38px;font-weight:700;color:var(--inf)">28</div><div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Finalizadas</div></div>
+        <div class="card cp" style="text-align:center"><div style="font-family:var(--font-m);font-size:38px;font-weight:700;color:var(--per)">2</div><div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Bloqueadas</div></div>
       </div>
       <div class="card cv">
         <div class="card-title">Lista de Ordens</div>
@@ -6532,7 +6532,7 @@ export const SCREENS = {
           <div class="card cp">
             <div class="card-title">Não Conformidades — Turno</div>
             <div style="text-align:center;margin-bottom:12px">
-              <div style="font-family:var(--font-d);font-size:42px;font-weight:700;color:var(--per)">3</div>
+              <div style="font-family:var(--font-m);font-size:42px;font-weight:700;color:var(--per)">3</div>
               <div style="font-size:10px;color:var(--text3)">de 5 permitidas</div>
               <div style="margin-top:8px;height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;border:1px solid var(--border)">
                 <div style="width:60%;height:100%;background:linear-gradient(90deg,var(--alr),var(--per));border-radius:4px"></div>
@@ -6566,12 +6566,12 @@ export const SCREENS = {
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
               <div style="text-align:center;padding:10px;background:var(--ok-p);border:1px solid var(--ok-b);border-radius:7px">
                 <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Cp</div>
-                <div style="font-family:var(--font-d);font-size:28px;font-weight:700;color:var(--ok)">1,38</div>
+                <div style="font-family:var(--font-m);font-size:28px;font-weight:700;color:var(--ok)">1,38</div>
                 <div style="font-size:9px;color:var(--ok)">Capaz ✓</div>
               </div>
               <div style="text-align:center;padding:10px;background:var(--alr-p);border:1px solid var(--alr-b);border-radius:7px">
                 <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Cpk</div>
-                <div style="font-family:var(--font-d);font-size:28px;font-weight:700;color:var(--alr)">1,09</div>
+                <div style="font-family:var(--font-m);font-size:28px;font-weight:700;color:var(--alr)">1,09</div>
                 <div style="font-size:9px;color:var(--alr)">Atenção ⚠</div>
               </div>
             </div>
@@ -8644,22 +8644,22 @@ export const SCREENS = {
       <div class="g4 mb14">
         <div class="card cv" style="text-align:center;padding:14px">
           <div class="kpi-l">Linhas em Produção</div>
-          <div style="font-family:var(--font-d);font-size:38px;font-weight:700;color:var(--verde)" id="sin-kpi-prod">5</div>
+          <div style="font-family:var(--font-m);font-size:38px;font-weight:700;color:var(--verde)" id="sin-kpi-prod">5</div>
           <div style="font-size:10px;color:var(--text3)" id="sin-kpi-prod-sub">de 6 linhas</div>
         </div>
         <div class="card ca" style="text-align:center;padding:14px">
           <div class="kpi-l">Máquinas em Parada</div>
-          <div style="font-family:var(--font-d);font-size:38px;font-weight:700;color:var(--per)" id="sin-kpi-paradas">3</div>
+          <div style="font-family:var(--font-m);font-size:38px;font-weight:700;color:var(--per)" id="sin-kpi-paradas">3</div>
           <div style="font-size:10px;color:var(--text3)">requerem ação</div>
         </div>
         <div class="card co" style="text-align:center;padding:14px">
           <div class="kpi-l">Alertas Ativos</div>
-          <div style="font-family:var(--font-d);font-size:38px;font-weight:700;color:var(--alr)" id="sin-kpi-alertas">1</div>
+          <div style="font-family:var(--font-m);font-size:38px;font-weight:700;color:var(--alr)" id="sin-kpi-alertas">1</div>
           <div style="font-size:10px;color:var(--text3)">velocidade abaixo do padrão</div>
         </div>
         <div class="card" style="text-align:center;padding:14px">
           <div class="kpi-l" id="sin-kpi-oee-lbl">OEE Médio MF5</div>
-          <div style="font-family:var(--font-d);font-size:38px;font-weight:700;color:var(--inf)" id="sin-kpi-oee">79<span style="font-size:18px;color:var(--text3)">%</span></div>
+          <div style="font-family:var(--font-m);font-size:38px;font-weight:700;color:var(--inf)" id="sin-kpi-oee">79<span style="font-size:18px;color:var(--text3)">%</span></div>
           <div style="font-size:10px;color:var(--text3)">meta: 85%</div>
         </div>
       </div>

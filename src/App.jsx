@@ -13,6 +13,7 @@ import QualidadeFilaReconciliacaoScreen from './components/QualidadeFilaReconcil
 import QualidadeAmostrasScreen from './components/QualidadeAmostrasScreen.jsx';
 import QualidadeCorrecoesGestaoScreen from './components/QualidadeCorrecoesGestaoScreen.jsx';
 import PesOrdemSubScreen from './components/PesOrdemSubScreen.jsx';
+import FontCompareScreen from './components/FontCompareScreen.jsx';
 
 /** Sub-telas da Pesagem que so podem ser acessadas com ?op= setado.
  *  Sao agrupadas dentro de pes-ordens (a tela "pai"). Acesso direto
@@ -68,6 +69,9 @@ export default function App() {
           {Object.entries(ALIASES).map(([from, to]) => (
             <Route key={from} path={'/' + from} element={<AliasRedirect to={to} />} />
           ))}
+
+          {/* demo de tipografia: Geist vs Poppins vs Inter */}
+          <Route path="/demo-fontes" element={<FontCompareScreen />} />
 
           {/* sinotico expandido (ERU 5.1.55): cobre Producao + Pesagem + Fabricacao */}
           <Route path="/sinotico" element={<SinoticoScreen />} />

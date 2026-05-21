@@ -77,10 +77,10 @@ class GranadoSlider extends HTMLElement {
     this.style.display = this.style.display || 'block';
 
     this.innerHTML = `
-      <div style="font-family:'Lato','DejaVu Sans',Arial,sans-serif">
+      <div style="font-family:'Poppins','DejaVu Sans',Arial,sans-serif">
         <div data-slider-header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:11px;color:#103E20">
           <label data-slider-label style="font-weight:600"></label>
-          <span data-slider-value style="font-weight:700;font-family:'DM Mono','DejaVu Mono',Consolas,monospace"></span>
+          <span data-slider-value style="font-weight:700;font-family:Arial,'DejaVu Sans',Helvetica,sans-serif"></span>
         </div>
         <div data-slider-track tabindex="0" role="slider" style="position:relative;height:6px;background:#E5DDC8;border-radius:3px;cursor:pointer;user-select:none;touch-action:none;outline:none;margin:8px 0">
           <div data-slider-fill style="position:absolute;left:0;top:0;bottom:0;background:#1C5C31;border-radius:3px;pointer-events:none"></div>

@@ -176,7 +176,7 @@ function KpiOEE({ label, valor, unidade = '%', meta, cor = 'verde', sub, destaqu
       <div className="kpi-l">{label}</div>
       <div
         style={{
-          fontFamily: 'var(--font-d)',
+          fontFamily: 'var(--font-m)',
           fontSize: destaque ? 50 : 42,
           fontWeight: 700,
           color: corValor,
@@ -237,7 +237,7 @@ function KpiMini({ label, valor, cor }) {
       <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 4 }}>
         {label}
       </div>
-      <div style={{ fontFamily: 'var(--font-d)', fontSize: 22, fontWeight: 700, color: cor, lineHeight: 1 }}>{valor}</div>
+      <div style={{ fontFamily: 'var(--font-m)', fontSize: 22, fontWeight: 700, color: cor, lineHeight: 1 }}>{valor}</div>
     </div>
   );
 }
@@ -332,7 +332,7 @@ function CardPerformanceGranel({ calc }) {
             </td>
             <td className="mono" style={{ fontWeight: 800 }}>{calc.padraoTotal}m</td>
             <td className="mono" style={{ fontWeight: 800, color: 'var(--ouro)' }}>{calc.realTotal}m</td>
-            <td style={{ textAlign: 'right', fontFamily: 'var(--font-d)', fontWeight: 700, color: 'var(--ouro)', fontSize: 16 }}>
+            <td style={{ textAlign: 'right', fontFamily: 'var(--font-m)', fontWeight: 700, color: 'var(--ouro)', fontSize: 16 }}>
               {calc.performance.toFixed(1)}%
             </td>
             <td><span className="bdg bdg-ouro" style={{ fontSize: 9 }}>Performance</span></td>
@@ -406,7 +406,7 @@ function CardDisponibilidade({ calc }) {
           }}
         >
           <span style={{ color: 'var(--verde-esc)', fontWeight: 700 }}>Disponibilidade</span>
-          <strong style={{ color: 'var(--verde)', fontFamily: 'var(--font-d)', fontSize: 14 }}>
+          <strong style={{ color: 'var(--verde)', fontFamily: 'var(--font-m)', fontSize: 14 }}>
             {calc.disponibilidade.toFixed(1)}%
           </strong>
         </div>

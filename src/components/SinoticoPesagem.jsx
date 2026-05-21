@@ -25,7 +25,7 @@ export default function SinoticoPesagem() {
       <div className="g4 mb14">
         <div className="card cv" style={{ textAlign: 'center', padding: 14 }}>
           <div className="kpi-l">Boxes de Pesagem</div>
-          <div style={{ fontFamily: 'var(--font-d)', fontSize: 38, fontWeight: 700, color: 'var(--verde)' }}>
+          <div style={{ fontFamily: 'var(--font-m)', fontSize: 38, fontWeight: 700, color: 'var(--verde)' }}>
             {BOXES_PESAGEM.length}
           </div>
           <div style={{ fontSize: 10, color: 'var(--text3)' }}>
@@ -34,21 +34,21 @@ export default function SinoticoPesagem() {
         </div>
         <div className="card cv" style={{ textAlign: 'center', padding: 14 }}>
           <div className="kpi-l">Balanças Operando</div>
-          <div style={{ fontFamily: 'var(--font-d)', fontSize: 38, fontWeight: 700, color: 'var(--ok)' }}>
+          <div style={{ fontFamily: 'var(--font-m)', fontSize: 38, fontWeight: 700, color: 'var(--ok)' }}>
             {okBalancas}
           </div>
           <div style={{ fontSize: 10, color: 'var(--text3)' }}>de {totBalancas} balanças</div>
         </div>
         <div className="card co" style={{ textAlign: 'center', padding: 14 }}>
           <div className="kpi-l">Alertas</div>
-          <div style={{ fontFamily: 'var(--font-d)', fontSize: 38, fontWeight: 700, color: 'var(--alr)' }}>
+          <div style={{ fontFamily: 'var(--font-m)', fontSize: 38, fontWeight: 700, color: 'var(--alr)' }}>
             {alrBalancas}
           </div>
           <div style={{ fontSize: 10, color: 'var(--text3)' }}>requerem atenção</div>
         </div>
         <div className="card ca" style={{ textAlign: 'center', padding: 14 }}>
           <div className="kpi-l">Paradas</div>
-          <div style={{ fontFamily: 'var(--font-d)', fontSize: 38, fontWeight: 700, color: 'var(--per)' }}>
+          <div style={{ fontFamily: 'var(--font-m)', fontSize: 38, fontWeight: 700, color: 'var(--per)' }}>
             {errBalancas}
           </div>
           <div style={{ fontSize: 10, color: 'var(--text3)' }}>balanças bloqueadas</div>

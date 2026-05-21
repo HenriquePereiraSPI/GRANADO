@@ -7,14 +7,22 @@
    Atributos (todos opcionais):
      title         - texto do titulo (ex.: "Sala A")
      subtitle      - texto secundario (ex.: "4 Balancas")
-     color         - cor principal (borda + badge). Aceita qualquer
-                     cor CSS valida (ex.: "var(--verde)" ou "#1C5C31").
+     color         - cor principal. Por padrao pinta a borda, o icone,
+                     o titulo e o badge de status. Aceita qualquer cor
+                     CSS valida (ex.: "var(--verde)" ou "#1C5C31").
      status        - texto do badge de status (ex.: "Disponivel").
                      Quando vazio, o badge nao e renderizado.
      icon          - icone exibido no topo. Aceita emoji ou qualquer
                      texto curto (ex.: "🅰️", "⚙️", "OP").
      onclickevent  - codigo JS executado no clique (opcional).
                      Quando setado, o card vira clicavel (cursor + hover).
+
+   Overrides opcionais de cor (cada um sobrepoe o default vindo de `color`):
+     text-color    - cor do titulo                 (default: color)
+     icon-color    - cor do icone                  (default: color)
+     border-color  - cor da borda 2px do card      (default: color)
+                     Use border-color="transparent" para sem borda.
+     status-color  - cor do badge de status        (default: color)
 
    Exemplo de uso:
 
@@ -39,7 +47,10 @@
 
 class GranadoCompleteCard extends HTMLElement {
     static get observedAttributes() {
-        return ['title', 'subtitle', 'color', 'status', 'icon', 'onclickevent'];
+        return [
+            'title', 'subtitle', 'color', 'status', 'icon', 'onclickevent',
+            'text-color', 'icon-color', 'border-color', 'status-color',
+        ];
     }
 
     connectedCallback() { this.render(); }
@@ -53,15 +64,21 @@ class GranadoCompleteCard extends HTMLElement {
         const icon = this.getAttribute('icon') || '';
         const onClickEvent = this.getAttribute('onclickevent');
 
+        /* Overrides opcionais — default segue `color`. */
+        const textColor = this.getAttribute('text-color') || color;
+        const iconColor = this.getAttribute('icon-color') || color;
+        const borderColor = this.getAttribute('border-color') || color;
+        const statusColor = this.getAttribute('status-color') || color;
+
         this.innerHTML = `
             <div style="
                 position: relative;
                 background: #F5EFD9;
-                border: 2px solid ${color};
+                border: 2px solid ${borderColor};
                 border-radius: 8px;
                 padding: 16px 12px;
                 text-align: center;
-                font-family: 'Lato', 'DejaVu Sans', Arial, sans-serif;
+                font-family: 'Poppins', 'DejaVu Sans', Arial, sans-serif;
                 transition: box-shadow 0.18s, transform 0.18s;
                 ${onClickEvent ? 'cursor: pointer;' : ''}
             "
@@ -75,6 +92,7 @@ class GranadoCompleteCard extends HTMLElement {
                         font-size: 28px;
                         margin-bottom: 6px;
                         line-height: 1;
+                        color: ${iconColor};
                     ">${icon}</div>
                 ` : ''}
 
@@ -82,7 +100,7 @@ class GranadoCompleteCard extends HTMLElement {
                     <div style="
                         font-size: 13px;
                         font-weight: 900;
-                        color: #1F2937;
+                        color: ${textColor};
                         margin-bottom: 4px;
                         line-height: 1.2;
                     ">${title}</div>
@@ -90,7 +108,7 @@ class GranadoCompleteCard extends HTMLElement {
 
                 ${subtitle ? `
                     <div style="
-                        font-family: 'Lato', 'DejaVu Sans', Arial, sans-serif;
+                        font-family: 'Poppins', 'DejaVu Sans', Arial, sans-serif;
                         font-size: 10px;
                         color: #6B7280;
                         line-height: 1.3;
@@ -107,9 +125,9 @@ class GranadoCompleteCard extends HTMLElement {
                             text-transform: uppercase;
                             padding: 3px 8px;
                             border-radius: 4px;
-                            background: ${color};
+                            background: ${statusColor};
                             color: #FFFFFF;
-                            border: 1px solid ${color};
+                            border: 1px solid ${statusColor};
                         ">${status}</span>
                     </div>
                 ` : ''}

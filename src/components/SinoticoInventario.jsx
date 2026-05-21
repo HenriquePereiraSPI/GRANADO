@@ -140,7 +140,7 @@ function KpiCard({ variant, label, value, color, sub }) {
   return (
     <div className={`card ${variant || ''}`} style={{ textAlign: 'center', padding: 14 }}>
       <div className="kpi-l">{label}</div>
-      <div style={{ fontFamily: 'var(--font-d)', fontSize: 38, fontWeight: 700, color }}>{value}</div>
+      <div style={{ fontFamily: 'var(--font-m)', fontSize: 38, fontWeight: 700, color }}>{value}</div>
       <div style={{ fontSize: 10, color: 'var(--text3)' }}>{sub}</div>
     </div>
   );
@@ -181,7 +181,7 @@ function MFCard({ id, mfData, onClick }) {
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: 'var(--font-d)', fontSize: 32, fontWeight: 700, color: 'var(--text)', lineHeight: 1 }}>
+          <div style={{ fontFamily: 'var(--font-m)', fontSize: 32, fontWeight: 700, color: 'var(--text)', lineHeight: 1 }}>
             {id}
           </div>
         </div>

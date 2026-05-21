@@ -54,7 +54,7 @@ class GranadoCheckbox extends HTMLElement {
   _build() {
     this.style.display = this.style.display || 'inline-block';
     this.innerHTML = `
-      <span data-cb-root role="checkbox" tabindex="0" style="display:inline-flex;align-items:center;gap:8px;user-select:none;font-family:'Lato','DejaVu Sans',Arial,sans-serif;font-size:13px;outline:none;line-height:1">
+      <span data-cb-root role="checkbox" tabindex="0" style="display:inline-flex;align-items:center;gap:8px;user-select:none;font-family:'Poppins','DejaVu Sans',Arial,sans-serif;font-size:13px;outline:none;line-height:1">
         <span data-cb-box style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:1px solid #B5AB85;background:#FDFAF1;border-radius:3px;transition:background 0.12s,border-color 0.12s;flex-shrink:0;box-sizing:border-box"><svg data-cb-check width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;visibility:hidden"><polyline points="20 6 9 17 4 12"/></svg></span><span data-cb-label></span>
       </span>
     `;

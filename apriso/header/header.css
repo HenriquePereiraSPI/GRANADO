@@ -11,9 +11,9 @@
     --grn-ok-p: #D2E8D7;
     --grn-ok-b: #98C8A8;
     --grn-per: #8C1A1A;
-    --grn-font-d: 'Lato', Georgia, serif;
-    --grn-font-b: 'Lato', sans-serif;
-    --grn-font-m: 'Lato', monospace;
+    --grn-font-d: 'Poppins', 'DejaVu Sans', Arial, sans-serif;
+    --grn-font-b: 'Poppins', 'DejaVu Sans', Arial, sans-serif;
+    --grn-font-m: Arial, 'DejaVu Sans', Helvetica, sans-serif;
 }
 
 /* === Topbar container === */

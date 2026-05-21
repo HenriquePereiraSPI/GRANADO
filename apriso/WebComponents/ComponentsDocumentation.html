@@ -274,9 +274,12 @@
       <section id="granado-simple-card">
         <h1 class="gd-h1"><code>&lt;granado-simple-card&gt;</code></h1>
         <p class="gd-lead">
-          Card minimalista com faixa lateral colorida, título e subtítulo. Indicado para listar
-          itens (ordens de produção, status de linha, lotes) onde a cor da faixa transmite o
-          contexto de forma rápida. Pode ser tornado clicável passando <code>onclickevent</code>.
+          Card minimalista com faixa de destaque colorida, título e subtítulo. Indicado para listar
+          itens (ordens de produção, status de linha, lotes) onde a cor transmite o contexto de
+          forma rápida. A faixa pode ir em qualquer lado (<code>border-position</code>), aceita um
+          <code>icon</code> opcional, e título/ícone/borda derivam de <code>color</code> (com
+          overrides por <code>text-color</code>, <code>icon-color</code>, <code>border-color</code>).
+          Pode ser tornado clicável passando <code>onclickevent</code>.
         </p>
 
         <h2 class="gd-h2">Import</h2>
@@ -364,6 +367,52 @@
     <span class="tk-attr">onclickevent</span>=<span class="tk-str">"alert('Card simples clicado')"</span><span class="tk-tag">&gt;</span>
 <span class="tk-tag">&lt;/granado-simple-card&gt;</span></pre>
 
+        <!-- ===== Posição da faixa, ícone e cores ===== -->
+        <h2 class="gd-h2">Posição da faixa, ícone e cores</h2>
+        <p class="gd-lead">
+          A faixa de destaque pode ir em qualquer lado via <code>border-position</code>
+          (<code>left</code> · <code>top</code> · <code>right</code> · <code>bottom</code>). Um
+          <code>icon</code> opcional aparece num badge circular no topo-direito. Por padrão
+          <strong>título, ícone e borda fina derivam de <code>color</code></strong>; cada um pode
+          ser sobrescrito por <code>text-color</code>, <code>icon-color</code> e
+          <code>border-color</code>. Use <code>border-color="transparent"</code> para remover a
+          borda fina.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap">
+          <granado-simple-card style="flex:1;min-width:220px"
+            title="Em Pesagem" subtitle="OP-2025-0416 · Loção Hidratante"
+            color="#1A4A8C" border-position="top" icon="🔄">
+          </granado-simple-card>
+
+          <granado-simple-card style="flex:1;min-width:220px"
+            title="Cor custom" subtitle="text/icon/border sobrescritos"
+            color="#C0392B" text-color="#103E20" icon-color="#9A7B1C" border-color="#E5DDC8" icon="🎨">
+          </granado-simple-card>
+
+          <granado-simple-card style="flex:1;min-width:220px"
+            title="Sem borda fina" subtitle="border-color transparent"
+            color="#1A4A8C" border-position="top" border-color="transparent" icon="🔄">
+          </granado-simple-card>
+        </div>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Faixa no topo + ícone; tudo derivado de color --&gt;</span>
+<span class="tk-tag">&lt;granado-simple-card</span>
+    <span class="tk-attr">title</span>=<span class="tk-str">"Em Pesagem"</span>
+    <span class="tk-attr">subtitle</span>=<span class="tk-str">"OP-2025-0416 · Loção Hidratante"</span>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span>
+    <span class="tk-attr">border-position</span>=<span class="tk-str">"top"</span>
+    <span class="tk-attr">icon</span>=<span class="tk-str">"🔄"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-simple-card&gt;</span>
+
+<span class="tk-comment">&lt;!-- Sobrescrevendo cada cor + sem borda fina --&gt;</span>
+<span class="tk-tag">&lt;granado-simple-card</span>
+    <span class="tk-attr">title</span>=<span class="tk-str">"Cor custom"</span>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#C0392B"</span>
+    <span class="tk-attr">text-color</span>=<span class="tk-str">"#103E20"</span>
+    <span class="tk-attr">icon-color</span>=<span class="tk-str">"#9A7B1C"</span>
+    <span class="tk-attr">border-color</span>=<span class="tk-str">"transparent"</span>
+    <span class="tk-attr">icon</span>=<span class="tk-str">"🎨"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-simple-card&gt;</span></pre>
+
         <!-- ===== API ===== -->
         <h2 class="gd-h2">API</h2>
 
@@ -395,9 +444,50 @@
               <td class="col-type">string (cor CSS)</td>
               <td class="col-default">"#1C5C31"</td>
               <td class="col-desc">
-                Cor da faixa lateral esquerda do card (4px de largura). Aceita qualquer cor CSS
-                válida — hex, rgb(), hsl(), nomes. É a única forma visual de transmitir contexto
-                no card simples.
+                Cor base do card. Pinta a faixa de destaque (4px) e, por padrão, também o título,
+                o ícone e a borda fina. Aceita qualquer cor CSS válida — hex, rgb(), hsl(), nomes.
+                Para os tons derivados (borda/badge) é necessário hex.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">border-position</td>
+              <td class="col-type">left | top | right | bottom</td>
+              <td class="col-default">"left"</td>
+              <td class="col-desc">
+                Posição da faixa de destaque ("borda mais forte"): à esquerda (padrão), no topo,
+                à direita ou embaixo. O <code>border-radius</code> do canto se ajusta automaticamente.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">icon</td>
+              <td class="col-type">string</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">
+                Emoji ou texto exibido num badge circular no topo-direito. O fundo e a borda do
+                badge são derivados da cor do ícone (tom claro). Quando ausente, não há badge.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">text-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">= color</td>
+              <td class="col-desc">Sobrescreve a cor do título. Se omitido, segue <code>color</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">icon-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">= color</td>
+              <td class="col-desc">
+                Sobrescreve a cor do ícone (e o tom do badge). Se omitido, segue <code>color</code>.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">border-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">tom claro de color</td>
+              <td class="col-desc">
+                Sobrescreve a cor da borda fina de 1px. Se omitido, usa um tom claro de
+                <code>color</code>. Use <code>"transparent"</code> para remover a borda fina.
               </td>
             </tr>
             <tr>
@@ -433,9 +523,11 @@
         <h1 class="gd-h1"><code>&lt;granado-complete-card&gt;</code></h1>
         <p class="gd-lead">
           Card centrado com ícone no topo, título, subtítulo e badge de status — visual
-          inspirado nos botões de seleção de sala da tela de pesagem. A cor de destaque pinta
-          tanto a borda do card quanto o fundo do badge, dando uma leitura imediata de
-          contexto. Útil para grids de seleção (salas, balanças, recursos, status de linha).
+          inspirado nos botões de seleção de sala da tela de pesagem. Por padrão a
+          <code>color</code> pinta a borda, o ícone, o título e o badge, dando leitura imediata
+          de contexto; cada elemento pode ser sobrescrito (<code>text-color</code>,
+          <code>icon-color</code>, <code>border-color</code>, <code>status-color</code>). Útil
+          para grids de seleção (salas, balanças, recursos, status de linha).
         </p>
 
         <h2 class="gd-h2">Import</h2>
@@ -561,6 +653,52 @@
     <span class="tk-attr">onclickevent</span>=<span class="tk-str">"alert('Sala D selecionada')"</span><span class="tk-tag">&gt;</span>
 <span class="tk-tag">&lt;/granado-complete-card&gt;</span></pre>
 
+        <!-- ===== Cores por elemento ===== -->
+        <h2 class="gd-h2">Cores por elemento</h2>
+        <p class="gd-lead">
+          Por padrão <strong>a borda, o ícone, o título e o badge de status derivam de
+          <code>color</code></strong>. Cada um pode ser sobrescrito individualmente com
+          <code>text-color</code> (título), <code>icon-color</code> (ícone),
+          <code>border-color</code> (borda) e <code>status-color</code> (badge). Use
+          <code>border-color="transparent"</code> para o card sem borda.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap">
+          <granado-complete-card style="flex:1;min-width:160px"
+            icon="⚙️" title="Tudo na cor" subtitle="borda · ícone · título · badge"
+            color="#1A4A8C" status="Padrão">
+          </granado-complete-card>
+
+          <granado-complete-card style="flex:1;min-width:160px"
+            icon="🎨" title="Cores custom" subtitle="cada elemento sobrescrito"
+            color="#1A4A8C" text-color="#103E20" icon-color="#9A7B1C" status-color="#1C5C31" status="Misto">
+          </granado-complete-card>
+
+          <granado-complete-card style="flex:1;min-width:160px"
+            icon="✓" title="Sem borda" subtitle="border-color transparent"
+            color="#1C5C31" border-color="transparent" status="Aprovado">
+          </granado-complete-card>
+
+          <granado-complete-card style="flex:1;min-width:160px"
+            icon="⚠️" title="Badge próprio" subtitle="status-color diferente"
+            color="#6B7280" status-color="#C0392B" status="Atenção">
+          </granado-complete-card>
+        </div>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Tudo derivado de color --&gt;</span>
+<span class="tk-tag">&lt;granado-complete-card</span> <span class="tk-attr">icon</span>=<span class="tk-str">"⚙️"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Tudo na cor"</span>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span> <span class="tk-attr">status</span>=<span class="tk-str">"Padrão"</span><span class="tk-tag">&gt;&lt;/granado-complete-card&gt;</span>
+
+<span class="tk-comment">&lt;!-- Sobrescrevendo cada elemento --&gt;</span>
+<span class="tk-tag">&lt;granado-complete-card</span> <span class="tk-attr">icon</span>=<span class="tk-str">"🎨"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Cores custom"</span>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span>
+    <span class="tk-attr">text-color</span>=<span class="tk-str">"#103E20"</span>
+    <span class="tk-attr">icon-color</span>=<span class="tk-str">"#9A7B1C"</span>
+    <span class="tk-attr">status-color</span>=<span class="tk-str">"#1C5C31"</span>
+    <span class="tk-attr">status</span>=<span class="tk-str">"Misto"</span><span class="tk-tag">&gt;&lt;/granado-complete-card&gt;</span>
+
+<span class="tk-comment">&lt;!-- Card sem borda --&gt;</span>
+<span class="tk-tag">&lt;granado-complete-card</span> <span class="tk-attr">icon</span>=<span class="tk-str">"✓"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Sem borda"</span>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#1C5C31"</span> <span class="tk-attr">border-color</span>=<span class="tk-str">"transparent"</span> <span class="tk-attr">status</span>=<span class="tk-str">"Aprovado"</span><span class="tk-tag">&gt;&lt;/granado-complete-card&gt;</span></pre>
+
         <!-- ===== API ===== -->
         <h2 class="gd-h2">API</h2>
 
@@ -603,8 +741,8 @@
               <td class="col-type">string (cor CSS)</td>
               <td class="col-default">"#1C5C31"</td>
               <td class="col-desc">
-                Cor principal aplicada à borda (2px) e ao fundo do badge de status. Aceita
-                qualquer cor CSS válida (hex, rgb, hsl, nome).
+                Cor principal do card. Por padrão pinta a borda (2px), o ícone, o título e o
+                fundo do badge de status. Aceita qualquer cor CSS válida (hex, rgb, hsl, nome).
               </td>
             </tr>
             <tr>
@@ -614,6 +752,39 @@
               <td class="col-desc">
                 Texto do badge no rodapé do card (uppercase, 9px, peso 900, fundo na cor
                 principal). Quando vazio, o badge não é renderizado.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">text-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">= color</td>
+              <td class="col-desc">Sobrescreve a cor do título. Se omitido, segue <code>color</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">icon-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">= color</td>
+              <td class="col-desc">
+                Sobrescreve a cor do ícone. Se omitido, segue <code>color</code>. (Emojis
+                mantêm suas cores próprias; afeta ícones em texto/sigla.)
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">border-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">= color</td>
+              <td class="col-desc">
+                Sobrescreve a cor da borda 2px. Se omitido, segue <code>color</code>. Use
+                <code>"transparent"</code> para o card sem borda.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">status-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">= color</td>
+              <td class="col-desc">
+                Sobrescreve a cor do badge de status (fundo + borda). Se omitido, segue
+                <code>color</code>. O texto do badge permanece branco.
               </td>
             </tr>
             <tr>

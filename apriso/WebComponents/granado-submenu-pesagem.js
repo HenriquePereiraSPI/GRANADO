@@ -184,13 +184,13 @@ class GranadoSubmenuPesagem extends HTMLElement {
     }
 
     this.style.display = this.style.display || 'block';
-    this.style.fontFamily = "'Lato','DejaVu Sans',Arial,sans-serif";
+    this.style.fontFamily = "'Poppins','DejaVu Sans',Arial,sans-serif";
 
     const contextSoftBg = this._lighten(contextColor, 0.88);
 
     const backBtnHtml = backLabel ? `<button data-sm-back type="button" style="background:#FFFFFF;border:1.5px solid ${backColor};color:${backColor};padding:6px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;line-height:1.2;transition:background 0.15s,color 0.15s">${this._escape(backLabel)}</button>` : '';
 
-    const contextHtml = contextValue ? `<div data-sm-context style="display:flex;align-items:center;gap:8px;padding:4px 12px;background:${contextSoftBg};border:1px solid ${contextColor};border-radius:6px;font-size:11px;line-height:1.3"><span style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E">${this._escape(contextLabel)}</span><span style="font-family:'DM Mono','DejaVu Mono',Consolas,monospace;font-weight:800;color:${contextColor}">${this._escape(contextValue)}</span></div>` : '';
+    const contextHtml = contextValue ? `<div data-sm-context style="display:flex;align-items:center;gap:8px;padding:4px 12px;background:${contextSoftBg};border:1px solid ${contextColor};border-radius:6px;font-size:11px;line-height:1.3"><span style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E">${this._escape(contextLabel)}</span><span style="font-family:Arial,'DejaVu Sans',Helvetica,sans-serif;font-weight:800;color:${contextColor}">${this._escape(contextValue)}</span></div>` : '';
 
     const itemsHtml = items.map((it, i) => {
       if (!it) return '';

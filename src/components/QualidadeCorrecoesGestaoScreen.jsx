@@ -538,7 +538,7 @@ function PainelOfensoresAreas({ lista }) {
                   )}
                 </div>
                 <div style={{
-                  fontFamily: 'var(--font-d)', fontSize: 26, fontWeight: 700,
+                  fontFamily: 'var(--font-m)', fontSize: 26, fontWeight: 700,
                   color: bloqueando ? 'var(--per)' : 'var(--ok)', lineHeight: 1,
                 }}>
                   {a.abertos}<span style={{ fontSize: 14, color: 'var(--text3)', fontWeight: 600 }}> / {a.total}</span>
@@ -617,7 +617,7 @@ function KpiCard({ label, value, color, hint }) {
         {label}
       </div>
       <div style={{
-        fontFamily: 'var(--font-d)', fontSize: 26, fontWeight: 700, color,
+        fontFamily: 'var(--font-m)', fontSize: 26, fontWeight: 700, color,
         lineHeight: 1,
       }}>
         {value}

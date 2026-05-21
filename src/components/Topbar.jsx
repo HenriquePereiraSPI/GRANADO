@@ -34,7 +34,7 @@ export default function Topbar({ onToggleSidebar, sidebarCollapsed }) {
         )}
       </div>
       <div className="topbar-right">
-        <div className="tb-pill ok">● Sistema Online</div>
+        <div className="tb-pill ok" style={{ fontFamily: 'var(--font-b)' }}>● Sistema Online</div>
         {/* "OP Ativa: ..." removida do topbar — informação já aparece no header
             de cada sub-tela da Pesagem (evita duplicação). */}
         <button

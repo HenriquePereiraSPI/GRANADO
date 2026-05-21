@@ -1,10 +1,10 @@
 /* ============================================================
    granado-fonts.css
 
-   Self-host das fontes oficiais do Granado:
-     - Playfair Display  (display / titulos)
-     - Lato              (body / texto geral)
-     - DM Mono           (numeros / codigos / lotes)
+   Tipografia atual do Granado:
+     - Poppins           (body / texto geral / titulos) — self-host
+     - Arial             (numeros / codigos / lotes) — fonte de sistema
+     - Lato, Playfair, DM Mono  (legado; mantidas como fallback opcional)
 
    Inclui todas as variantes presentes em assets/fonts/ com
    fallback para DejaVu (Sans/Serif/Mono) — fontes que o Apriso
@@ -41,7 +41,60 @@
 
 
 /* ============================================================
-   Lato — sans-serif (body)
+   Poppins — sans-serif (body / texto geral) — fonte atual
+   ============================================================ */
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('./poppins-300.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./poppins-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./poppins-italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./poppins-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('./poppins-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./poppins-700.woff2') format('woff2');
+}
+
+
+/* ============================================================
+   Lato — sans-serif (legado; mantida como fallback opcional)
    ============================================================ */
 
 @font-face {
@@ -235,7 +288,7 @@
    ============================================================ */
 
 :root {
-  --grn-font-d: 'Playfair Display', 'DejaVu Serif', Georgia, serif;
-  --grn-font-b: 'Lato', 'DejaVu Sans', Arial, sans-serif;
-  --grn-font-m: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
+  --grn-font-d: 'Poppins', 'DejaVu Sans', Arial, sans-serif;
+  --grn-font-b: 'Poppins', 'DejaVu Sans', Arial, sans-serif;
+  --grn-font-m: Arial, 'DejaVu Sans', Helvetica, sans-serif;
 }

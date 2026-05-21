@@ -343,7 +343,7 @@ function KpiCard({ label, value, color, hint }) {
         {label}
       </div>
       <div style={{
-        fontFamily: 'var(--font-d)', fontSize: 26, fontWeight: 700, color,
+        fontFamily: 'var(--font-m)', fontSize: 26, fontWeight: 700, color,
         lineHeight: 1,
       }}>
         {value}

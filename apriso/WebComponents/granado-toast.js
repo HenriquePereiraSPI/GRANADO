@@ -139,7 +139,7 @@ class GranadoToast extends HTMLElement {
     const icon = this._iconFor(variant);
 
     this.innerHTML = `
-      <div data-toast-card style="display:flex;align-items:flex-start;gap:12px;background:#FDFAF1;border:1px solid #E5DDC8;border-left:4px solid ${color};border-radius:8px;padding:12px 14px;box-shadow:0 6px 20px rgba(0,0,0,0.16);font-family:'Lato','DejaVu Sans',Arial,sans-serif;min-width:280px;max-width:380px;pointer-events:auto;box-sizing:border-box">
+      <div data-toast-card style="display:flex;align-items:flex-start;gap:12px;background:#FDFAF1;border:1px solid #E5DDC8;border-left:4px solid ${color};border-radius:8px;padding:12px 14px;box-shadow:0 6px 20px rgba(0,0,0,0.16);font-family:'Poppins','DejaVu Sans',Arial,sans-serif;min-width:280px;max-width:380px;pointer-events:auto;box-sizing:border-box">
         <span style="color:${color};display:flex;align-items:center;line-height:0;flex-shrink:0;margin-top:1px">${icon}</span>
         <div style="flex:1;min-width:0">
           ${heading ? `<div style="font-size:13px;font-weight:700;color:#103E20;margin:0 0 2px;font-family:inherit">${this._escape(heading)}</div>` : ''}

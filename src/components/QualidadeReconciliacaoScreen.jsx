@@ -1347,7 +1347,7 @@ function ChecklistModal({ checklist, setChecklist, onClose, lote, marcados, tota
 
         {/* Barra de progresso */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12, background: 'var(--surface2)', padding: '8px 12px', borderRadius: 6, border: '1px solid var(--border)' }}>
-          <div style={{ fontFamily: 'var(--font-d)', fontSize: 22, fontWeight: 700, color: pct === 100 ? 'var(--ok)' : 'var(--ouro)', minWidth: 48 }}>{pct}%</div>
+          <div style={{ fontFamily: 'var(--font-m)', fontSize: 22, fontWeight: 700, color: pct === 100 ? 'var(--ok)' : 'var(--ouro)', minWidth: 48 }}>{pct}%</div>
           <div style={{ flex: 1 }}>
             <div style={{ height: 6, background: 'var(--bg2)', borderRadius: 3, overflow: 'hidden' }}>
               <div style={{ width: `${pct}%`, height: '100%', background: pct === 100 ? 'var(--ok)' : 'linear-gradient(90deg, var(--ouro), var(--ok))', transition: 'width .3s' }} />

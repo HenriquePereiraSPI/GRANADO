@@ -280,7 +280,7 @@ function Resumo({ label, value, color, sub }) {
       >
         {label}
       </div>
-      <div style={{ fontFamily: 'var(--font-d)', fontSize: 22, fontWeight: 700, color, lineHeight: 1 }}>{value}</div>
+      <div style={{ fontFamily: 'var(--font-m)', fontSize: 22, fontWeight: 700, color, lineHeight: 1 }}>{value}</div>
       <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 3 }}>{sub}</div>
     </div>
   );
