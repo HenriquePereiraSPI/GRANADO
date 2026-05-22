@@ -14,9 +14,14 @@
 
    Overrides opcionais de cor (cada um sobrepoe o default vindo de `color`):
      text-color       - cor do titulo            (default: color)
+     subtitle-color   - cor do subtitulo         (default: #4B5563)
      icon-color       - cor do icone + badge     (default: color)
      border-color     - cor da borda fina 1px    (default: tom claro de color)
                         Use border-color="transparent" para SEM borda fina.
+
+   Overrides opcionais de tamanho de fonte (aceitam px, rem, etc.):
+     title-size       - tamanho da fonte do titulo    (default: 16px)
+     subtitle-size    - tamanho da fonte do subtitulo (default: 13px)
 
      onclickevent     - codigo JS executado no clique (opcional).
                         Quando setado, o card vira clicavel (cursor + hover).
@@ -56,7 +61,8 @@ class GranadoSimpleCard extends HTMLElement {
     static get observedAttributes() {
         return [
             'title', 'subtitle', 'color', 'border-position',
-            'text-color', 'icon-color', 'border-color', 'icon', 'onclickevent',
+            'text-color', 'subtitle-color', 'icon-color', 'border-color', 'icon',
+            'title-size', 'subtitle-size', 'onclickevent',
         ];
     }
 
@@ -83,8 +89,13 @@ class GranadoSimpleCard extends HTMLElement {
 
         /* Overrides opcionais — default segue `color`. */
         const textColor = this.getAttribute('text-color') || color;
+        const subtitleColor = this.getAttribute('subtitle-color') || '#4B5563';
         const iconColor = this.getAttribute('icon-color') || color;
         const borderColorAttr = this.getAttribute('border-color');
+
+        /* Overrides opcionais de tamanho de fonte. */
+        const titleSize = this.getAttribute('title-size') || '16px';
+        const subtitleSize = this.getAttribute('subtitle-size') || '13px';
 
         const RADIUS = '8px';
         const THICK = '4px';
@@ -146,7 +157,7 @@ class GranadoSimpleCard extends HTMLElement {
                     <h3 style="
                         margin: 0;
                         font-family: 'Poppins', 'DejaVu Sans', Arial, sans-serif;
-                        font-size: 16px;
+                        font-size: ${titleSize};
                         font-weight: 700;
                         color: ${textColor};
                         line-height: 1.2;
@@ -156,9 +167,9 @@ class GranadoSimpleCard extends HTMLElement {
 
                 <p style="
                     margin: 0;
-                    font-size: 13px;
+                    font-size: ${subtitleSize};
                     line-height: 1.5;
-                    color: #4B5563;
+                    color: ${subtitleColor};
                 ">${subtitle}</p>
             </div>
         `;

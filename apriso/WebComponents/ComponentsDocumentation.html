@@ -279,6 +279,8 @@
           forma rápida. A faixa pode ir em qualquer lado (<code>border-position</code>), aceita um
           <code>icon</code> opcional, e título/ícone/borda derivam de <code>color</code> (com
           overrides por <code>text-color</code>, <code>icon-color</code>, <code>border-color</code>).
+          Tamanho e cor de título e subtítulo também podem ser ajustados via
+          <code>title-size</code>, <code>subtitle-size</code> e <code>subtitle-color</code>.
           Pode ser tornado clicável passando <code>onclickevent</code>.
         </p>
 
@@ -413,6 +415,43 @@
     <span class="tk-attr">icon</span>=<span class="tk-str">"🎨"</span><span class="tk-tag">&gt;</span>
 <span class="tk-tag">&lt;/granado-simple-card&gt;</span></pre>
 
+        <!-- ===== Tipografia: tamanho e cor do título/subtítulo ===== -->
+        <h2 class="gd-h2">Tamanho e cor do título/subtítulo</h2>
+        <p class="gd-lead">
+          O tamanho da fonte do título e do subtítulo pode ser ajustado com
+          <code>title-size</code> (default <code>16px</code>) e <code>subtitle-size</code>
+          (default <code>13px</code>) — ambos aceitam qualquer unidade CSS (<code>px</code>,
+          <code>rem</code>, <code>em</code>). A cor do subtítulo é controlada por
+          <code>subtitle-color</code> (default <code>#4B5563</code>); a cor do título continua
+          em <code>text-color</code>.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap">
+          <granado-simple-card style="flex:1;min-width:220px"
+            title="Título grande" subtitle="title-size=&quot;22px&quot;"
+            color="#1A4A8C" title-size="22px">
+          </granado-simple-card>
+
+          <granado-simple-card style="flex:1;min-width:220px"
+            title="Subtítulo colorido" subtitle="subtitle-color + subtitle-size"
+            color="#9A7B1C" subtitle-color="#9A7B1C" subtitle-size="15px">
+          </granado-simple-card>
+
+          <granado-simple-card style="flex:1;min-width:220px"
+            title="Tudo custom" subtitle="size e cor de ambos"
+            color="#C0392B" text-color="#C0392B" title-size="20px"
+            subtitle-color="#C0392B" subtitle-size="15px" icon="🎨">
+          </granado-simple-card>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-simple-card</span>
+    <span class="tk-attr">title</span>=<span class="tk-str">"Tudo custom"</span>
+    <span class="tk-attr">subtitle</span>=<span class="tk-str">"size e cor de ambos"</span>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#C0392B"</span>
+    <span class="tk-attr">text-color</span>=<span class="tk-str">"#C0392B"</span>
+    <span class="tk-attr">title-size</span>=<span class="tk-str">"20px"</span>
+    <span class="tk-attr">subtitle-color</span>=<span class="tk-str">"#C0392B"</span>
+    <span class="tk-attr">subtitle-size</span>=<span class="tk-str">"15px"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-simple-card&gt;</span></pre>
+
         <!-- ===== API ===== -->
         <h2 class="gd-h2">API</h2>
 
@@ -472,6 +511,30 @@
               <td class="col-type">string (cor CSS)</td>
               <td class="col-default">= color</td>
               <td class="col-desc">Sobrescreve a cor do título. Se omitido, segue <code>color</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">subtitle-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#4B5563"</td>
+              <td class="col-desc">Sobrescreve a cor do subtítulo (cinza neutro por padrão).</td>
+            </tr>
+            <tr>
+              <td class="col-name">title-size</td>
+              <td class="col-type">string (tamanho CSS)</td>
+              <td class="col-default">"16px"</td>
+              <td class="col-desc">
+                Tamanho da fonte do título. Aceita qualquer unidade CSS (<code>px</code>,
+                <code>rem</code>, <code>em</code>).
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">subtitle-size</td>
+              <td class="col-type">string (tamanho CSS)</td>
+              <td class="col-default">"13px"</td>
+              <td class="col-desc">
+                Tamanho da fonte do subtítulo. Aceita qualquer unidade CSS (<code>px</code>,
+                <code>rem</code>, <code>em</code>).
+              </td>
             </tr>
             <tr>
               <td class="col-name">icon-color</td>
