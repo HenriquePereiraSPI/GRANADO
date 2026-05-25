@@ -1597,6 +1597,27 @@ tbl.setAttribute('ondoubleclickevent',
     <span class="tk-attr">onchangeevent</span>=<span class="tk-str">"console.log('valor:', value);"</span><span class="tk-tag">&gt;</span>
 <span class="tk-tag">&lt;/granado-calendar&gt;</span></pre>
 
+        <!-- ===== Label ===== -->
+        <h2 class="gd-h2">Label</h2>
+        <p class="gd-lead">
+          O atributo <code>label</code> exibe um rótulo acima do campo, com a mesma
+          aparência do label de <code>&lt;granado-input&gt;</code> e
+          <code>&lt;granado-text&gt;</code>. Use-o para alinhar a altura do calendário
+          com inputs rotulados na mesma linha de formulário. Sem o atributo, nenhum
+          rótulo é renderizado.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+          <granado-calendar label="Data de início" format="dd/MM/yyyy"
+            placeholder="Escolha uma data…"
+            onchangeevent="console.log('início:', value);">
+          </granado-calendar>
+
+          <granado-calendar label="Data e hora" mode="datetime" color="#2C5A8C"
+            onchangeevent="console.log('datetime:', value);">
+          </granado-calendar>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-calendar</span> <span class="tk-attr">label</span>=<span class="tk-str">"Data de início"</span> <span class="tk-attr">format</span>=<span class="tk-str">"dd/MM/yyyy"</span><span class="tk-tag">&gt;&lt;/granado-calendar&gt;</span></pre>
+
         <!-- ===== Formato customizado ===== -->
         <h2 class="gd-h2">Formato customizado</h2>
         <p class="gd-lead">
@@ -1733,6 +1754,16 @@ tbl.setAttribute('ondoubleclickevent',
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td class="col-name">label</td>
+              <td class="col-type">string</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">
+                Rótulo exibido acima do campo, com a mesma aparência do label de
+                <code>&lt;granado-input&gt;</code> / <code>&lt;granado-text&gt;</code>.
+                Quando ausente, nenhum rótulo é renderizado.
+              </td>
+            </tr>
             <tr>
               <td class="col-name">lang</td>
               <td class="col-type">"pt-br" | "en"</td>
@@ -2137,6 +2168,32 @@ document.querySelectorAll(<span class="tk-str">'.filtros granado-checkbox'</span
     <span class="tk-attr">onchangeevent</span>=<span class="tk-str">"console.log('operador:', value);"</span><span class="tk-tag">&gt;</span>
 <span class="tk-tag">&lt;/granado-dropdown&gt;</span></pre>
 
+        <!-- ===== Label ===== -->
+        <h2 class="gd-h2">Label</h2>
+        <p class="gd-lead">
+          O atributo <code>label</code> exibe um rótulo acima do gatilho, com a mesma
+          aparência do label de <code>&lt;granado-input&gt;</code> e
+          <code>&lt;granado-text&gt;</code>. Use-o para alinhar a altura do dropdown
+          com inputs rotulados na mesma linha de formulário. Sem o atributo, nenhum
+          rótulo é renderizado.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+          <granado-dropdown label="Operador" placeholder="Selecione…"
+            options='["Maria Silva","João Santos","Ana Costa","Pedro Lima"]'
+            onchangeevent="console.log('operador:', value);">
+          </granado-dropdown>
+
+          <granado-dropdown label="Status" multi="true" color="#2C5A8C" placeholder="Filtrar…"
+            options='[
+              {"value":"OK","label":"Aprovado"},
+              {"value":"DEV","label":"Desvio"},
+              {"value":"PEN","label":"Pendente"}
+            ]'
+            onchangeevent="console.log('status:', value);">
+          </granado-dropdown>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-dropdown</span> <span class="tk-attr">label</span>=<span class="tk-str">"Operador"</span> <span class="tk-attr">options</span>=<span class="tk-str">'["Maria Silva","João Santos"]'</span><span class="tk-tag">&gt;&lt;/granado-dropdown&gt;</span></pre>
+
         <!-- ===== Options como objeto ===== -->
         <h2 class="gd-h2">Opções com value e label</h2>
         <p class="gd-lead">
@@ -2301,6 +2358,16 @@ dd.value = <span class="tk-str">'OK,DEV,PEN'</span>;</pre>
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td class="col-name">label</td>
+              <td class="col-type">string</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">
+                Rótulo exibido acima do gatilho, com a mesma aparência do label de
+                <code>&lt;granado-input&gt;</code> / <code>&lt;granado-text&gt;</code>.
+                Quando ausente, nenhum rótulo é renderizado.
+              </td>
+            </tr>
             <tr>
               <td class="col-name">options</td>
               <td class="col-type">JSON array</td>

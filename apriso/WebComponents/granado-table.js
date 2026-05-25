@@ -418,6 +418,7 @@ class GranadoTable extends HTMLElement {
           font-size:11px;
           font-weight:700;
           padding:5px 10px;
+          height:auto;
           min-width:32px;
           border:1px solid #D6CDA4;
           background:${disabled ? '#F4EED9' : '#FDFAF1'};
@@ -635,6 +636,7 @@ class GranadoTable extends HTMLElement {
       border:none;
       cursor:pointer;
       padding:1px 2px;
+      height:auto;
       color:${c};
       display:inline-flex;
       align-items:center;
@@ -676,6 +678,7 @@ class GranadoTable extends HTMLElement {
         font-size:10px;
         font-weight:700;
         padding:5px 8px;
+        height:auto;
         border:1px solid #D6CDA4;
         background:#FDFAF1;
         color:#5A6B5E;

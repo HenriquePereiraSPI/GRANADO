@@ -188,7 +188,7 @@ class GranadoSubmenuPesagem extends HTMLElement {
 
     const contextSoftBg = this._lighten(contextColor, 0.88);
 
-    const backBtnHtml = backLabel ? `<button data-sm-back type="button" style="background:#FFFFFF;border:1.5px solid ${backColor};color:${backColor};padding:6px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;line-height:1.2;transition:background 0.15s,color 0.15s">${this._escape(backLabel)}</button>` : '';
+    const backBtnHtml = backLabel ? `<button data-sm-back type="button" style="background:#FFFFFF;border:1.5px solid ${backColor};color:${backColor};padding:6px 12px;height:auto;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;line-height:1.2;transition:background 0.15s,color 0.15s">${this._escape(backLabel)}</button>` : '';
 
     const contextHtml = contextValue ? `<div data-sm-context style="display:flex;align-items:center;gap:8px;padding:4px 12px;background:${contextSoftBg};border:1px solid ${contextColor};border-radius:6px;font-size:11px;line-height:1.3"><span style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E">${this._escape(contextLabel)}</span><span style="font-family:Arial,'DejaVu Sans',Helvetica,sans-serif;font-weight:800;color:${contextColor}">${this._escape(contextValue)}</span></div>` : '';
 
@@ -221,7 +221,7 @@ class GranadoSubmenuPesagem extends HTMLElement {
       const cursor = disabled ? 'not-allowed' : 'pointer';
       const opacity = disabled ? '0.6' : '1';
 
-      return `<button data-sm-item="${this._escapeAttr(key)}" data-sm-active="${active ? '1' : '0'}" data-sm-disabled="${disabled ? '1' : '0'}" type="button" ${disabled ? 'disabled' : ''} title="${this._escapeAttr(it.label != null ? String(it.label) : '')}" style="background:${bg};color:${fg};border:${border};padding:5px 10px;border-radius:5px;font-size:10px;font-weight:${weight};cursor:${cursor};font-family:inherit;letter-spacing:.03em;white-space:nowrap;opacity:${opacity};display:inline-flex;align-items:center;line-height:1.3;transition:background 0.15s,color 0.15s,border-color 0.15s">${iconHtml}${label}</button>`;
+      return `<button data-sm-item="${this._escapeAttr(key)}" data-sm-active="${active ? '1' : '0'}" data-sm-disabled="${disabled ? '1' : '0'}" type="button" ${disabled ? 'disabled' : ''} title="${this._escapeAttr(it.label != null ? String(it.label) : '')}" style="background:${bg};color:${fg};border:${border};padding:5px 10px;height:auto;border-radius:5px;font-size:10px;font-weight:${weight};cursor:${cursor};font-family:inherit;letter-spacing:.03em;white-space:nowrap;opacity:${opacity};display:inline-flex;align-items:center;line-height:1.3;transition:background 0.15s,color 0.15s,border-color 0.15s">${iconHtml}${label}</button>`;
     }).join('');
 
     this.innerHTML = `<div data-sm-root style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 14px;background:${backgroundColor};border:1px solid ${borderColor};border-radius:7px;box-shadow:0 1px 2px rgba(0,0,0,.06);box-sizing:border-box">${backBtnHtml}${contextHtml}<div data-sm-items style="display:flex;gap:4px;margin-left:auto;flex-wrap:wrap">${itemsHtml}</div></div>`;

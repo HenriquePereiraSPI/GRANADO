@@ -283,12 +283,12 @@ function ciValidarEnabley() {
   }
 
   const btn = document.getElementById('ci-btn-validar');
-  btn.textContent = '⏳ Consultando Enabley API...';
+  btn.textContent = '⏳ Consultando Matriz de Capacitação API...';
   btn.disabled = true;
 
   // Simular chamada API com delay
   setTimeout(() => {
-    btn.textContent = '🔍 Validar Enabley';
+    btn.textContent = '🔍 Validar Matriz de Capacitação';
     btn.disabled = false;
 
     const card = document.getElementById('ci-resultado-card');
@@ -336,7 +336,7 @@ function ciValidarEnabley() {
       bdg.className = 'bdg bdg-ok';
       btnLib.style.display = 'flex';
       document.getElementById('ci-alerta-geral').className = 'abox ok mb14';
-      document.getElementById('ci-alerta-geral').innerHTML = '<span class="ai">✅</span><div>Todos os operadores validados e habilitados pelo Enabley. Clique em <strong>Liberar Linha</strong> para autorizar o início da produção.</div>';
+      document.getElementById('ci-alerta-geral').innerHTML = '<span class="ai">✅</span><div>Todos os operadores validados e habilitados pela Matriz de Capacitação. Clique em <strong>Liberar Linha</strong> para autorizar o início da produção.</div>';
       document.getElementById('ci-count-hab').textContent = '5 / 5';
     } else {
       const inaptos = Object.keys(postoAlocacao).filter(p => !ciHabilitacoes[postoAlocacao[p]][ciPostoEquip[p]]);
@@ -344,7 +344,7 @@ function ciValidarEnabley() {
       bdg.className = 'bdg bdg-per';
       btnLib.style.display = 'none';
       document.getElementById('ci-alerta-geral').className = 'abox err mb14';
-      document.getElementById('ci-alerta-geral').innerHTML = '<span class="ai">❌</span><div><strong>' + inaptos.length + ' operador(es) sem habilitação</strong> no Enabley para o posto alocado. Realoque ou aguarde treinamento antes de liberar a linha.</div>';
+      document.getElementById('ci-alerta-geral').innerHTML = '<span class="ai">❌</span><div><strong>' + inaptos.length + ' operador(es) sem habilitação</strong> na Matriz de Capacitação para o posto alocado. Realoque ou aguarde treinamento antes de liberar a linha.</div>';
       document.getElementById('ci-count-hab').textContent = (5 - inaptos.length) + ' / 5';
     }
 
@@ -1580,10 +1580,10 @@ function fabValidarEnabley() {
   const todos = Object.values(fabPostoAlocacao).every(v => v !== null);
   if (!todos) { alert('⚠️ Aloque os 2 postos antes de validar.'); return; }
   const btn = document.getElementById('fab-btn-enabley');
-  btn.textContent = '⏳ Consultando Enabley API...';
+  btn.textContent = '⏳ Consultando Matriz de Capacitação API...';
   btn.disabled = true;
   setTimeout(() => {
-    btn.textContent = '🔍 Validar Habilitação Enabley';
+    btn.textContent = '🔍 Validar Habilitação Matriz de Capacitação';
     btn.disabled = false;
     const resDiv = document.getElementById('fab-enabley-resultado');
     resDiv.style.display = 'flex';
@@ -1617,12 +1617,12 @@ function fabLiberarOperadores() {
   fabMarcarAprovado('fval-4');
   fabMarcarAprovado('fval-5');
   const desc4 = document.getElementById('fval-4-desc');
-  if (desc4) desc4.innerHTML = 'Reator R-01 · <strong style="color:var(--ok)">2 operadores alocados e habilitados</strong> · Enabley validado ✓';
+  if (desc4) desc4.innerHTML = 'Reator R-01 · <strong style="color:var(--ok)">2 operadores alocados e habilitados</strong> · Matriz de Capacitação validado ✓';
   const desc5 = document.getElementById('fval-5-desc');
-  if (desc5) desc5.innerHTML = '<strong style="color:var(--ok)">Habilitação Enabley validada</strong> · José Santos e Maria Oliveira · Reator R-01 ✓';
+  if (desc5) desc5.innerHTML = '<strong style="color:var(--ok)">Habilitação Matriz de Capacitação validada</strong> · José Santos e Maria Oliveira · Reator R-01 ✓';
   closeModal('modal-fab-checkin-op');
   fabAtualizarProgresso();
-  alert('✅ Operadores liberados para fabricação!\n\nJosé Santos e Maria Oliveira habilitados no Enabley.\nCheck-in registrado no Apriso.\nValidação concluída: ' + new Date().toLocaleTimeString('pt-BR'));
+  alert('✅ Operadores liberados para fabricação!\n\nJosé Santos e Maria Oliveira habilitados na Matriz de Capacitação.\nCheck-in registrado no Apriso.\nValidação concluída: ' + new Date().toLocaleTimeString('pt-BR'));
 }
 
 function fabIniciarProducao() {
@@ -1709,7 +1709,7 @@ function fabIniciarProducao() {
       ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l+gW, y); ctx.stroke();
       ctx.restore();
       ctx.fillStyle = l.cor;
-      ctx.font = 'bold 9px DM Mono, monospace';
+      ctx.font = 'bold 9px Arial, sans-serif';
       ctx.textAlign = 'right';
       ctx.fillText(l.v + (l.lbl==='X̄'?'':' '+p.unit), pad.l - 4, y + 3.5);
     });

@@ -145,6 +145,7 @@ class GranadoInput extends HTMLElement {
         border:none;
         cursor:pointer;
         padding:4px;
+        height:auto;
         color:#8A9E8E;
         display:flex;
         align-items:center;
@@ -224,6 +225,7 @@ class GranadoInput extends HTMLElement {
       width:100%;
       box-sizing:border-box;
       font-size:13px;
+      line-height:1.4;
       padding:${isTextarea ? '10px 12px' : '8px 12px'};
       padding-left:${padLeft};
       padding-right:${padRight};

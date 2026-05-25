@@ -4,6 +4,8 @@
    Visual no mesmo padrao dos demais componentes Granado.
 
    Atributos (todos opcionais):
+     label         - texto exibido acima do campo. Mesma aparencia do
+                     label de <granado-input> / <granado-text>.
      lang          - "pt-br" (default) ou "en". Define meses/dias/labels.
      mode          - "date" (default) ou "datetime". Em datetime exibe
                      campos de hora/minuto/segundo abaixo da grade.
@@ -38,7 +40,7 @@
 
 class GranadoCalendar extends HTMLElement {
   static get observedAttributes() {
-    return ['lang', 'mode', 'format', 'value', 'color', 'placeholder', 'onchangeevent'];
+    return ['label', 'lang', 'mode', 'format', 'value', 'color', 'placeholder', 'onchangeevent'];
   }
 
   constructor() {
@@ -92,14 +94,20 @@ class GranadoCalendar extends HTMLElement {
 
     const btnBorder = this._open ? color : '#E5DDC8';
     const btnBg = this._open ? '#F5EFD9' : '#FDFAF1';
+    const label = this.getAttribute('label') || '';
 
     this.innerHTML = `
       <div style="position:relative;display:inline-block;font-family:'Poppins','DejaVu Sans',Arial,sans-serif">
+        ${label ? `<label data-cal-label style="display:block;font-size:11px;font-weight:600;color:#103E20;margin-bottom:6px;font-family:inherit"></label>` : ''}
         <button data-cal-toggle type="button" style="
           display:inline-flex;
           align-items:center;
           gap:8px;
-          font-size:12px;
+          width:100%;
+          box-sizing:border-box;
+          height:auto;
+          font-size:13px;
+          line-height:1.4;
           padding:8px 12px;
           border:1px solid ${btnBorder};
           background:${btnBg};
@@ -107,7 +115,7 @@ class GranadoCalendar extends HTMLElement {
           border-radius:6px;
           cursor:pointer;
           font-family:inherit;
-          min-width:170px;
+          min-width:180px;
         ">
           <span style="flex:1;text-align:left">${formatted || placeholder}</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -121,7 +129,38 @@ class GranadoCalendar extends HTMLElement {
       </div>
     `;
 
+    if (label) {
+      const labelEl = this.querySelector('[data-cal-label]');
+      if (labelEl) labelEl.textContent = label;
+    }
+
     this._wire(mode, fmt);
+    if (this._open) this._positionPopup();
+  }
+
+  // Posiciona o popup com position:fixed a partir do retangulo do gatilho,
+  // escapando de ancestrais com overflow:hidden / stacking context que o recortavam.
+  _positionPopup() {
+    const toggle = this.querySelector('[data-cal-toggle]');
+    const popup = this.querySelector('[data-cal-popup]');
+    if (!toggle || !popup) return;
+    const r = toggle.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    const vw = window.innerWidth || document.documentElement.clientWidth;
+    const ph = popup.offsetHeight || 300;
+    const pw = popup.offsetWidth || 260;
+    // Flip vertical se nao couber embaixo.
+    if (r.bottom + 4 + ph > vh && r.top - 4 - ph > 0) {
+      popup.style.top = '';
+      popup.style.bottom = (vh - r.top + 4) + 'px';
+    } else {
+      popup.style.bottom = '';
+      popup.style.top = (r.bottom + 4) + 'px';
+    }
+    // Mantem dentro da largura da viewport.
+    let left = r.left;
+    if (left + pw > vw - 8) left = Math.max(8, vw - pw - 8);
+    popup.style.left = left + 'px';
   }
 
   _renderPopup(color, i18n, mode) {
@@ -156,10 +195,8 @@ class GranadoCalendar extends HTMLElement {
 
     return `
       <div data-cal-popup style="
-        position:absolute;
-        top:calc(100% + 4px);
-        left:0;
-        z-index:1000;
+        position:fixed;
+        z-index:99999;
         background:#FDFAF1;
         border:1px solid #E5DDC8;
         border-radius:8px;
@@ -168,9 +205,9 @@ class GranadoCalendar extends HTMLElement {
         min-width:260px;
       ">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <button data-cal-prev type="button" style="background:transparent;border:none;cursor:pointer;color:${color};font-size:18px;font-weight:700;padding:4px 10px;font-family:inherit;border-radius:4px">‹</button>
+          <button data-cal-prev type="button" style="background:transparent;border:none;cursor:pointer;color:${color};font-size:18px;font-weight:700;padding:4px 10px;height:auto;font-family:inherit;border-radius:4px">‹</button>
           <div style="font-size:13px;font-weight:700;color:${color};text-transform:capitalize">${i18n.months[month]} ${year}</div>
-          <button data-cal-next type="button" style="background:transparent;border:none;cursor:pointer;color:${color};font-size:18px;font-weight:700;padding:4px 10px;font-family:inherit;border-radius:4px">›</button>
+          <button data-cal-next type="button" style="background:transparent;border:none;cursor:pointer;color:${color};font-size:18px;font-weight:700;padding:4px 10px;height:auto;font-family:inherit;border-radius:4px">›</button>
         </div>
         <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">
           ${weekdayHeaders}
@@ -178,10 +215,10 @@ class GranadoCalendar extends HTMLElement {
         </div>
         ${mode === 'datetime' ? this._renderTimeControls(color) : ''}
         <div style="display:flex;justify-content:space-between;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #E5DDC8">
-          <button data-cal-clear type="button" style="font-size:11px;padding:5px 10px;border:1px solid #D6CDA4;background:#FDFAF1;color:#5A6B5E;border-radius:4px;cursor:pointer;font-family:inherit">${i18n.clear}</button>
+          <button data-cal-clear type="button" style="font-size:11px;padding:5px 10px;height:auto;border:1px solid #D6CDA4;background:#FDFAF1;color:#5A6B5E;border-radius:4px;cursor:pointer;font-family:inherit">${i18n.clear}</button>
           ${mode === 'datetime'
-        ? `<button data-cal-apply type="button" style="font-size:11px;font-weight:700;padding:5px 14px;border:1px solid ${color};background:${color};color:#fff;border-radius:4px;cursor:pointer;font-family:inherit">${i18n.apply}</button>`
-        : `<button data-cal-today type="button" style="font-size:11px;font-weight:700;padding:5px 10px;border:1px solid ${color};background:${color};color:#fff;border-radius:4px;cursor:pointer;font-family:inherit">${i18n.today}</button>`
+        ? `<button data-cal-apply type="button" style="font-size:11px;font-weight:700;padding:5px 14px;height:auto;border:1px solid ${color};background:${color};color:#fff;border-radius:4px;cursor:pointer;font-family:inherit">${i18n.apply}</button>`
+        : `<button data-cal-today type="button" style="font-size:11px;font-weight:700;padding:5px 10px;height:auto;border:1px solid ${color};background:${color};color:#fff;border-radius:4px;cursor:pointer;font-family:inherit">${i18n.today}</button>`
       }
         </div>
       </div>
@@ -218,6 +255,7 @@ class GranadoCalendar extends HTMLElement {
       border:none;
       border-radius:4px;
       padding:7px 0;
+      height:auto;
       cursor:pointer;
       font-family:inherit;
       ${outline}
@@ -374,9 +412,20 @@ class GranadoCalendar extends HTMLElement {
       }
     };
     setTimeout(() => document.addEventListener('click', this._docClickHandler), 0);
+    // Reposiciona o popup fixed quando a pagina rola/redimensiona.
+    if (!this._repositionHandler) {
+      this._repositionHandler = () => this._positionPopup();
+      window.addEventListener('scroll', this._repositionHandler, true);
+      window.addEventListener('resize', this._repositionHandler);
+    }
   }
 
   _removeDocClickListener() {
+    if (this._repositionHandler) {
+      window.removeEventListener('scroll', this._repositionHandler, true);
+      window.removeEventListener('resize', this._repositionHandler);
+      this._repositionHandler = null;
+    }
     if (this._docClickHandler) {
       document.removeEventListener('click', this._docClickHandler);
       this._docClickHandler = null;

@@ -4,6 +4,8 @@
    busca opcional e visual no padrao Granado.
 
    Atributos (todos opcionais):
+     label         - texto exibido acima do campo. Mesma aparencia do
+                     label de <granado-input> / <granado-text>.
      options       - JSON array. Cada item pode ser:
                        string -> usado como value e label
                        objeto -> { value, label }
@@ -47,7 +49,7 @@
 
 class GranadoDropdown extends HTMLElement {
   static get observedAttributes() {
-    return ['options', 'value', 'placeholder', 'color', 'disabled', 'multi', 'searchable', 'onchangeevent'];
+    return ['label', 'options', 'value', 'placeholder', 'color', 'disabled', 'multi', 'searchable', 'onchangeevent'];
   }
 
   constructor() {
@@ -96,6 +98,7 @@ class GranadoDropdown extends HTMLElement {
     const disabled = this.getAttribute('disabled') === 'true';
     const multi = this.getAttribute('multi') === 'true';
     const searchable = this.getAttribute('searchable') === 'true';
+    const label = this.getAttribute('label') || '';
 
     const selected = this._currentSelected(multi);
     const selectedOptions = options.filter(o => selected.includes(o.value));
@@ -117,12 +120,16 @@ class GranadoDropdown extends HTMLElement {
 
     this.innerHTML = `
       <div style="position:relative;display:block;font-family:'Poppins','DejaVu Sans',Arial,sans-serif">
+        ${label ? `<label data-dd-label style="display:block;font-size:11px;font-weight:600;color:#103E20;margin-bottom:6px;font-family:inherit">${this._escapeHtml(label)}</label>` : ''}
         <button data-dd-toggle type="button" ${disabled ? 'disabled' : ''} style="
           display:inline-flex;
           align-items:center;
           gap:8px;
           width:100%;
-          font-size:12px;
+          box-sizing:border-box;
+          height:auto;
+          font-size:13px;
+          line-height:1.4;
           padding:8px 12px;
           border:1px solid ${btnBorder};
           background:${btnBg};
@@ -133,7 +140,6 @@ class GranadoDropdown extends HTMLElement {
           min-width:180px;
           text-align:left;
           opacity:${disabled ? 0.7 : 1};
-          box-sizing:border-box;
         ">
           <span style="flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${this._escapeHtml(triggerText)}</span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex-shrink:0;transform:${chevronRot};transition:transform 0.15s">
@@ -145,6 +151,33 @@ class GranadoDropdown extends HTMLElement {
     `;
 
     this._wire(multi, searchable);
+    if (this._open) this._positionPopup();
+  }
+
+  // Posiciona o popup com position:fixed a partir do retangulo do gatilho.
+  // Usar fixed (e nao absolute) faz o popup escapar de ancestrais com
+  // overflow:hidden / stacking context (ex.: cards do Apriso) que o recortavam.
+  _positionPopup() {
+    const toggle = this.querySelector('[data-dd-toggle]');
+    const popup = this.querySelector('[data-dd-popup]');
+    if (!toggle || !popup) return;
+    const r = toggle.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    const spaceBelow = vh - r.bottom;
+    const spaceAbove = r.top;
+    // Abre pra cima se nao couber embaixo e houver mais espaco em cima.
+    const openUp = spaceBelow < 200 && spaceAbove > spaceBelow;
+    const maxH = Math.max(120, Math.min(280, (openUp ? spaceAbove : spaceBelow) - 12));
+    popup.style.width = r.width + 'px';
+    popup.style.left = r.left + 'px';
+    popup.style.maxHeight = maxH + 'px';
+    if (openUp) {
+      popup.style.top = '';
+      popup.style.bottom = (vh - r.top + 4) + 'px';
+    } else {
+      popup.style.bottom = '';
+      popup.style.top = (r.bottom + 4) + 'px';
+    }
   }
 
   _renderPopup(options, selected, color, multi, searchable) {
@@ -159,11 +192,8 @@ class GranadoDropdown extends HTMLElement {
 
     return `
       <div data-dd-popup style="
-        position:absolute;
-        top:calc(100% + 4px);
-        left:0;
-        right:0;
-        z-index:1000;
+        position:fixed;
+        z-index:99999;
         background:#FDFAF1;
         border:1px solid #E5DDC8;
         border-radius:8px;
@@ -325,6 +355,12 @@ class GranadoDropdown extends HTMLElement {
       };
       document.addEventListener('keydown', this._escHandler);
     }
+    // Reposiciona o popup fixed quando a pagina rola/redimensiona.
+    if (!this._repositionHandler) {
+      this._repositionHandler = () => this._positionPopup();
+      window.addEventListener('scroll', this._repositionHandler, true);
+      window.addEventListener('resize', this._repositionHandler);
+    }
   }
 
   _removeOpenListeners() {
@@ -335,6 +371,11 @@ class GranadoDropdown extends HTMLElement {
     if (this._escHandler) {
       document.removeEventListener('keydown', this._escHandler);
       this._escHandler = null;
+    }
+    if (this._repositionHandler) {
+      window.removeEventListener('scroll', this._repositionHandler, true);
+      window.removeEventListener('resize', this._repositionHandler);
+      this._repositionHandler = null;
     }
   }
 

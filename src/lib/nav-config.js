@@ -5,7 +5,6 @@
 
 export const TOP_LINKS = [
   { id: 'sinotico', label: 'Sinotico da Fabrica', icon: '🗺️' },
-  { id: 'demo-fontes', label: 'Demo · Comparar Fontes', icon: '🔤' },
 ];
 
 export const MODULES = [
@@ -78,10 +77,11 @@ export const MODULES = [
     label: 'Relatorios',
     icon: '📈',
     items: [
-      // NOTA: rel-sinotico e rel-andon foram removidos daqui — sao aliases
-      // (apontam para /sinotico e /prod-chamados respectivamente). O Sinotico
-      // ja existe como TOP_LINK; os Chamados Andon estao no menu Producao.
-      // Manter aqui causaria duplo-active na sidebar quando o usuario clicasse.
+      // NOTA: rel-sinotico foi removido daqui — e um alias para /sinotico, que
+      // ja existe como TOP_LINK; mante-lo aqui causaria duplo-active na sidebar.
+      // "Chamados Andon" aponta DIRETO para a rota /prod-chamados (e nao para o
+      // alias /rel-andon) justamente para evitar esse duplo-active.
+      { id: 'prod-chamados',    label: '🚨 Chamados Andon' },
       { id: 'rel-oee',          label: '📊 OEE Dashboard' },
       { id: 'rel-visao-ordens', label: '📋 Visao de Ordens' },
       { id: 'rel-mps',          label: '⚖️ Rel. MPs Pesadas' },

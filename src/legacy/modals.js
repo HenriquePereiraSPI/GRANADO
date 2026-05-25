@@ -253,16 +253,16 @@ export const MODALS = {
 
     <!-- Passo 3: Validação Enabley -->
     <div class="card ci" style="padding:14px;margin-bottom:14px" id="fab-enabley-card">
-      <div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--ouro);margin-bottom:6px">Passo 3 — Validação Enabley · Matriz de Habilidade</div>
-      <div class="abox info" style="margin-bottom:12px"><span class="ai">ℹ</span><div>Consulta a <strong>Matriz de Habilidade Enabley</strong> verificando habilitação ativa para o Reator R-01 e o produto Loção Hidratante Rosa 200ml.</div></div>
+      <div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--ouro);margin-bottom:6px">Passo 3 — Validação Matriz de Capacitação · Matriz de Habilidade</div>
+      <div class="abox info" style="margin-bottom:12px"><span class="ai">ℹ</span><div>Consulta a <strong>Matriz de Habilidade Matriz de Capacitação</strong> verificando habilitação ativa para o Reator R-01 e o produto Loção Hidratante Rosa 200ml.</div></div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:12px">
-        <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:5px">API Enabley</div>
+        <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:5px">API Matriz de Capacitação</div>
         <div style="font-family:var(--font-m);font-size:10px;color:var(--text2);line-height:2">
           <span style="color:var(--ok);font-weight:700">POST</span> <span style="color:var(--verde)">enabley.api/v2/skills/validate</span><br>
           Recurso: <span>REATOR-R01-MF5</span> · Turno: <span>A · 31/03/2026</span>
         </div>
       </div>
-      <button class="btn btn-lg btn-v btn-full" id="fab-btn-enabley" onclick="fabValidarEnabley()" style="margin-bottom:8px">🔍 Validar Habilitação Enabley</button>
+      <button class="btn btn-lg btn-v btn-full" id="fab-btn-enabley" onclick="fabValidarEnabley()" style="margin-bottom:8px">🔍 Validar Habilitação Matriz de Capacitação</button>
       <div style="font-size:10px;color:var(--text3);text-align:center" id="fab-enabley-hint">Aloque os 2 postos antes de validar</div>
       <div id="fab-enabley-resultado" style="display:none;margin-top:12px;display:flex;flex-direction:column;gap:8px"></div>
     </div>
@@ -283,7 +283,7 @@ export const MODALS = {
         <div>✅ Granel G2026-091 aprovado pelo LIMS</div>
         <div>✅ Embalagens e materiais conferidos</div>
         <div>✅ Setup do Reator R-01 realizado</div>
-        <div>✅ Operadores habilitados (Enabley validado)</div>
+        <div>✅ Operadores habilitados (Matriz de Capacitação validado)</div>
         <div>✅ Aptidão confirmada para todos os postos</div>
       </div>
     </div>

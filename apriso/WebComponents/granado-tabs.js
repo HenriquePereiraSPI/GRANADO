@@ -120,7 +120,7 @@ class GranadoTabs extends HTMLElement {
       const disabled = tab.getAttribute('disabled') === 'true';
       const isActive = v === currentValue;
 
-      const baseStyle = 'padding:10px 14px;font-size:13px;background:transparent;border:none;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;margin-bottom:-1px;border-bottom:2px solid;line-height:1';
+      const baseStyle = 'padding:10px 14px;height:auto;font-size:13px;background:transparent;border:none;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;margin-bottom:-1px;border-bottom:2px solid;line-height:1';
       const styleActive = `${baseStyle};font-weight:700;color:${color};border-bottom-color:${color}`;
       const styleInactive = `${baseStyle};font-weight:600;color:#5A6B5E;border-bottom-color:transparent`;
       const styleDisabled = `${baseStyle};font-weight:600;color:#B5AB85;border-bottom-color:transparent;cursor:not-allowed;opacity:0.6`;

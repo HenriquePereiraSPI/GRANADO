@@ -4040,6 +4040,31 @@ export const SCREENS = {
         </div>
       </div>
 
+      <!-- ── Popup: Checklist de Turno pendente (aviso não-bloqueante ao iniciar OP) ── -->
+      <div id="modal-ckl-pendente" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:965;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);overflow-y:auto">
+        <div style="background:var(--surface);border-top:4px solid var(--alr-b);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:460px;width:94%;box-shadow:var(--sh2)">
+          <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px">
+            <div style="width:46px;height:46px;border-radius:10px;background:var(--alr-p);border:1.5px solid var(--alr-b);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">⚠️</div>
+            <div style="flex:1">
+              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--alr)">Pré-requisito de Turno</div>
+              <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-top:2px">Checklist de Turno pendente</div>
+            </div>
+            <button onclick="pesFecharAvisoChecklist()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
+          </div>
+
+          <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:12px">
+            Os itens abaixo ainda não foram executados neste turno. O preenchimento é <strong>recomendado</strong>, mas você pode iniciar a OP mesmo assim.
+          </div>
+
+          <ul id="ckl-pend-lista" style="list-style:none;margin:0 0 18px;padding:0;display:flex;flex-direction:column;gap:8px"></ul>
+
+          <div style="display:flex;gap:10px;flex-direction:column">
+            <button class="btn btn-md btn-v btn-full" onclick="pesIrPreencherChecklist()">✓ Preencher Checklist agora</button>
+            <button class="btn btn-md btn-ghost btn-full" onclick="pesSeguirSemChecklist()">Iniciar OP mesmo assim ›</button>
+          </div>
+        </div>
+      </div>
+
       <script>
       var PES_SALA_SEL = null;
       var PES_SALA_KEYS = ['A','B','C','SB'];
@@ -4159,25 +4184,19 @@ export const SCREENS = {
       function pesIrCockpit(event, tipo, opId) {
         if (event) event.stopPropagation();
         pesGarantirChecklistTurno();
-        // Aviso (não-bloqueante) do Checklist de Turno
+        // Aviso (não-bloqueante) do Checklist de Turno — popup customizado
         if (typeof window.pesChecklistTurnoStatus === 'function') {
           var st = window.pesChecklistTurnoStatus();
           if (!st.ok) {
-            var lista = st.pendentes.map(function(p){ return '• ' + p; }).join('\\n');
-            var irPreencher = confirm(
-              '⚠ Checklist de Turno pendente\\n\\n' +
-              'Os itens abaixo ainda não foram executados neste turno:\\n\\n' +
-              lista + '\\n\\n' +
-              'OK   → ir agora para a tela "Checklist" e preencher.\\n' +
-              'Cancelar → iniciar a OP mesmo assim (checklist é opcional).'
-            );
-            if (irPreencher) {
-              if (typeof nav === 'function') nav('pes-checklist-turno', null, 'mod-pes');
-              return; // operador escolheu preencher → não abre Sala agora
-            }
-            // Caso contrário: segue o fluxo normal e abre o modal de Sala.
+            pesAbrirAvisoChecklist(st.pendentes, opId, tipo);
+            return; // aguarda decisão do operador no popup
           }
         }
+        pesAbrirSelSala(opId, tipo);
+      }
+
+      // Abre o modal de seleção de Sala (continuação do fluxo de iniciar OP).
+      function pesAbrirSelSala(opId, tipo) {
         // Memoriza OP e tipo para depois do modal
         if (opId) PES_OP_SEL = opId;
         PES_TIPO_SEL = tipo || 'inicio';
@@ -4187,6 +4206,41 @@ export const SCREENS = {
         var titEl = document.getElementById('modal-sala-titulo-op');
         if (titEl) titEl.textContent = 'OP ' + (opId || '—');
         document.getElementById('modal-sala-pes').style.display = 'flex';
+      }
+
+      // ── Popup "Checklist de Turno pendente" ──────────────────────────
+      var PES_CKL_PEND_OP = null;   // OP memorizada enquanto o popup está aberto
+      var PES_CKL_PEND_TIPO = null;
+
+      function pesAbrirAvisoChecklist(pendentes, opId, tipo) {
+        PES_CKL_PEND_OP = opId || null;
+        PES_CKL_PEND_TIPO = tipo || 'inicio';
+        var ul = document.getElementById('ckl-pend-lista');
+        if (ul) {
+          ul.innerHTML = (pendentes || []).map(function(p) {
+            return '<li style="display:flex;align-items:center;gap:10px;background:var(--alr-p);border:1px solid var(--alr-b);border-radius:7px;padding:10px 12px">' +
+                     '<span style="font-size:15px;flex-shrink:0">⏳</span>' +
+                     '<span style="font-size:12px;font-weight:700;color:var(--text)">' + p + '</span>' +
+                   '</li>';
+          }).join('');
+        }
+        var pop = document.getElementById('modal-ckl-pendente');
+        if (pop) pop.style.display = 'flex';
+      }
+
+      function pesFecharAvisoChecklist() {
+        var pop = document.getElementById('modal-ckl-pendente');
+        if (pop) pop.style.display = 'none';
+      }
+
+      function pesIrPreencherChecklist() {
+        pesFecharAvisoChecklist();
+        if (typeof nav === 'function') nav('pes-checklist-turno', null, 'mod-pes');
+      }
+
+      function pesSeguirSemChecklist() {
+        pesFecharAvisoChecklist();
+        pesAbrirSelSala(PES_CKL_PEND_OP, PES_CKL_PEND_TIPO);
       }
       /* ── Checklist obrigatorio da sala — antes do INICIO da pesagem ── */
       function pesAbrirChecklistSala() {
@@ -4897,11 +4951,11 @@ export const SCREENS = {
     `,
   "prod-checkin": `      <div class="page-header">
         <div>
-          <div class="ph-eyebrow">Produção · Linha B · MF5 · ERU 4.1.9 — Matriz de Habilidade Enabley</div>
+          <div class="ph-eyebrow">Produção · Linha B · MF5 · ERU 4.1.9 — Matriz de Habilidade Matriz de Capacitação</div>
           <div class="ph-title">Check-in de Operadores</div>
         </div>
         <div class="ph-actions">
-          <div class="tb-pill ok" id="ci-enabley-status" style="font-family:var(--font-b)">🔗 Enabley API · Online</div>
+          <div class="tb-pill ok" id="ci-enabley-status" style="font-family:var(--font-b)">🔗 Matriz de Capacitação API · Online</div>
           <select class="inp" style="width:auto;font-size:12px;padding:8px 12px">
             <option>Linha B · Sabonete Barra 90g · MF5</option>
             <option>Linha A · Sabonete Líquido · MF5</option>
@@ -4921,7 +4975,7 @@ export const SCREENS = {
       </div>
 
       <!-- Alerta de status geral -->
-      <div class="abox warn mb14" id="ci-alerta-geral"><span class="ai">⚠</span><div>Validação Enabley pendente. Aloque todos os operadores aos postos e clique em <strong>Validar Enabley</strong> para liberar a linha.</div></div>
+      <div class="abox warn mb14" id="ci-alerta-geral"><span class="ai">⚠</span><div>Validação Matriz de Capacitação pendente. Aloque todos os operadores aos postos e clique em <strong>Validar Matriz de Capacitação</strong> para liberar a linha.</div></div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
 
@@ -5190,10 +5244,10 @@ export const SCREENS = {
           <div class="card ci" id="ci-enabley-card">
             <div style="margin-bottom:14px">
               <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--ouro);margin-bottom:2px">Passo 3</div>
-              <div class="card-title" style="margin-bottom:0">Validação Enabley — Matriz de Habilidade</div>
+              <div class="card-title" style="margin-bottom:0">Validação Matriz de Capacitação — Matriz de Habilidade</div>
             </div>
 
-            <div class="abox info" style="margin-bottom:14px"><span class="ai">ℹ</span><div>A validação consulta a <strong>Matriz de Habilidade Enabley</strong> verificando se cada operador possui a habilitação ativa para o equipamento alocado. Operadores <strong>não habilitados</strong> não podem iniciar a operação.</div></div>
+            <div class="abox info" style="margin-bottom:14px"><span class="ai">ℹ</span><div>A validação consulta a <strong>Matriz de Habilidade Matriz de Capacitação</strong> verificando se cada operador possui a habilitação ativa para o equipamento alocado. Operadores <strong>não habilitados</strong> não podem iniciar a operação.</div></div>
 
             <!-- Endpoint simulado -->
             <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:14px">
@@ -5208,7 +5262,7 @@ export const SCREENS = {
 
             <!-- Botão principal -->
             <button class="btn btn-lg btn-v btn-full" id="ci-btn-validar" onclick="ciValidarEnabley()" style="margin-bottom:10px;font-size:13px;padding:14px">
-              🔍 Validar Enabley
+              🔍 Validar Matriz de Capacitação
             </button>
             <div style="font-size:10px;color:var(--text3);text-align:center" id="ci-validar-hint">Aloque todos os postos antes de validar</div>
           </div>
@@ -5216,7 +5270,7 @@ export const SCREENS = {
           <!-- Resultado da validação -->
           <div class="card" id="ci-resultado-card" style="display:none">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-              <div class="card-title" style="margin-bottom:0">Resultado — Enabley</div>
+              <div class="card-title" style="margin-bottom:0">Resultado — Matriz de Capacitação</div>
               <span class="bdg" id="ci-resultado-bdg" style="font-size:10px"></span>
             </div>
 
@@ -5829,8 +5883,8 @@ export const SCREENS = {
       <div class="val-item" id="val-5" onclick="toggleVal('val-5','vi')">
         <div class="val-icon fail" id="val-5-ico">❌</div>
         <div style="flex:1">
-          <div class="val-nome">5. Aptidão dos Operadores (Enabley)</div>
-          <div class="val-desc">Habilitação no Enabley para Linha L3 e produto vigente · Aguardando alocação dos demais operadores para validar</div>
+          <div class="val-nome">5. Aptidão dos Operadores (Matriz de Capacitação)</div>
+          <div class="val-desc">Habilitação na Matriz de Capacitação para Linha L3 e produto vigente · Aguardando alocação dos demais operadores para validar</div>
         </div>
         <span class="bdg bdg-per" id="val-5-bdg">Reprovado</span>
       </div>
@@ -6689,7 +6743,7 @@ export const SCREENS = {
               <td class="mono">MF-005A · Linha B</td>
               <td style="font-size:12px">Graxa</td>
               <td class="mono" style="font-size:10px">02/03/2026<br>12:23:00</td>
-              <td style="font-size:11px;color:var(--text2);max-width:340px">O funcionário <b>GRAXA</b> fez check-in na Ordem <b>OP-2026-002</b> em 02/03/2026 12:23 — Posto: ④ Empacotadora/Encaixotadora · Habilitação Enabley: <b style="color:var(--ok)">APTO</b></td>
+              <td style="font-size:11px;color:var(--text2);max-width:340px">O funcionário <b>GRAXA</b> fez check-in na Ordem <b>OP-2026-002</b> em 02/03/2026 12:23 — Posto: ④ Empacotadora/Encaixotadora · Habilitação Matriz de Capacitação: <b style="color:var(--ok)">APTO</b></td>
             </tr>
             <tr>
               <td class="mono" style="font-size:10px;color:var(--text3)">005</td>
@@ -6757,7 +6811,7 @@ export const SCREENS = {
 
       <!-- Container do sinótico -->
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;overflow-x:auto">
-        <svg id="sin-svg" xmlns="http://www.w3.org/2000/svg" style="width:100%;min-width:1100px;font-family:Lato,sans-serif" viewBox="0 0 1140 560"></svg>
+        <svg id="sin-svg" xmlns="http://www.w3.org/2000/svg" style="width:100%;min-width:1100px;font-family:var(--font-b)" viewBox="0 0 1140 560"></svg>
       </div>
 
       <!-- Painel de detalhes da máquina selecionada -->
@@ -7422,9 +7476,9 @@ export const SCREENS = {
           <table class="tv-tbl">
             <thead><tr><th>Linha</th><th>Produto / SKU</th><th>Lote</th><th style="font-size:16px">OEE</th><th>Disponib.</th><th>Perform.</th><th>Qualidade</th><th>Paradas</th><th>Un. Produzidas</th><th>Un. Rejeitadas</th></tr></thead>
             <tbody id="oee-tbody">
-              <tr><td class="tv-mono tv-col-green" style="font-weight:700;font-size:16px">Linha A</td><td style="font-size:14px">Loção Hidratante Rosa 200ml<br><span style="font-size:12px;color:#4A7A5A">COD-0832</span></td><td class="tv-mono" style="font-size:13px">G2026-091</td><td><span style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#2FC75A">84%</span></td><td class="tv-mono" style="font-size:15px">93%</td><td class="tv-mono" style="font-size:15px">89%</td><td class="tv-mono" style="font-size:15px">98%</td><td class="tv-mono" style="color:#C8A84B;font-size:15px">18 min</td><td class="tv-mono" style="font-size:15px">4.820</td><td class="tv-mono tv-col-red" style="font-size:15px;font-weight:700">38</td></tr>
-              <tr style="background:#0D200F"><td class="tv-mono tv-col-green" style="font-weight:700;font-size:16px">Linha B</td><td style="font-size:14px">Sabonete Phebo Glicerina 90g<br><span style="font-size:12px;color:#4A7A5A">COD-0419</span></td><td class="tv-mono" style="font-size:13px">G2026-088</td><td><span style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#C8A84B">78%</span></td><td class="tv-mono" style="font-size:15px">88%</td><td class="tv-mono" style="font-size:15px">85%</td><td class="tv-mono" style="font-size:15px">96%</td><td class="tv-mono" style="color:#E05252;font-size:15px;font-weight:700">34 min</td><td class="tv-mono" style="font-size:15px">3.640</td><td class="tv-mono tv-col-red" style="font-size:15px;font-weight:700">72</td></tr>
-              <tr><td class="tv-mono tv-col-green" style="font-weight:700;font-size:16px">Linha C</td><td style="font-size:14px">Shampoo Granado Bebê 250ml<br><span style="font-size:12px;color:#4A7A5A">COD-1102</span></td><td class="tv-mono" style="font-size:13px">G2026-090</td><td><span style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#2FC75A">91%</span></td><td class="tv-mono" style="font-size:15px">95%</td><td class="tv-mono" style="font-size:15px">94%</td><td class="tv-mono" style="font-size:15px">99%</td><td class="tv-mono" style="font-size:15px">8 min</td><td class="tv-mono" style="font-size:15px">6.100</td><td class="tv-mono tv-col-green" style="font-size:15px">22</td></tr>
+              <tr><td class="tv-mono tv-col-green" style="font-weight:700;font-size:16px">Linha A</td><td style="font-size:14px">Loção Hidratante Rosa 200ml<br><span style="font-size:12px;color:#4A7A5A">COD-0832</span></td><td class="tv-mono" style="font-size:13px">G2026-091</td><td><span style="font-family:var(--font-m);font-size:28px;font-weight:700;color:#2FC75A">84%</span></td><td class="tv-mono" style="font-size:15px">93%</td><td class="tv-mono" style="font-size:15px">89%</td><td class="tv-mono" style="font-size:15px">98%</td><td class="tv-mono" style="color:#C8A84B;font-size:15px">18 min</td><td class="tv-mono" style="font-size:15px">4.820</td><td class="tv-mono tv-col-red" style="font-size:15px;font-weight:700">38</td></tr>
+              <tr style="background:#0D200F"><td class="tv-mono tv-col-green" style="font-weight:700;font-size:16px">Linha B</td><td style="font-size:14px">Sabonete Phebo Glicerina 90g<br><span style="font-size:12px;color:#4A7A5A">COD-0419</span></td><td class="tv-mono" style="font-size:13px">G2026-088</td><td><span style="font-family:var(--font-m);font-size:28px;font-weight:700;color:#C8A84B">78%</span></td><td class="tv-mono" style="font-size:15px">88%</td><td class="tv-mono" style="font-size:15px">85%</td><td class="tv-mono" style="font-size:15px">96%</td><td class="tv-mono" style="color:#E05252;font-size:15px;font-weight:700">34 min</td><td class="tv-mono" style="font-size:15px">3.640</td><td class="tv-mono tv-col-red" style="font-size:15px;font-weight:700">72</td></tr>
+              <tr><td class="tv-mono tv-col-green" style="font-weight:700;font-size:16px">Linha C</td><td style="font-size:14px">Shampoo Granado Bebê 250ml<br><span style="font-size:12px;color:#4A7A5A">COD-1102</span></td><td class="tv-mono" style="font-size:13px">G2026-090</td><td><span style="font-family:var(--font-m);font-size:28px;font-weight:700;color:#2FC75A">91%</span></td><td class="tv-mono" style="font-size:15px">95%</td><td class="tv-mono" style="font-size:15px">94%</td><td class="tv-mono" style="font-size:15px">99%</td><td class="tv-mono" style="font-size:15px">8 min</td><td class="tv-mono" style="font-size:15px">6.100</td><td class="tv-mono tv-col-green" style="font-size:15px">22</td></tr>
             </tbody>
           </table>
         </div>
@@ -7950,7 +8004,7 @@ export const SCREENS = {
                 <td class="tv-mono">5</td>
                 <td class="tv-mono">5h12m</td>
                 <td class="tv-mono tv-col-red">18 min</td>
-                <td><span style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#2FC75A">84%</span></td>
+                <td><span style="font-family:var(--font-m);font-size:20px;font-weight:700;color:#2FC75A">84%</span></td>
                 <td class="tv-mono tv-col-blue" style="font-size:12px">PLT-001<br>PLT-002</td>
                 <td class="tv-mono" style="font-size:12px">01/04 06:00</td>
                 <td class="tv-mono tv-col-dim" style="font-size:12px">—</td>
@@ -7967,7 +8021,7 @@ export const SCREENS = {
                 <td class="tv-mono">0</td>
                 <td class="tv-mono">7h45m</td>
                 <td class="tv-mono tv-col-green">8 min</td>
-                <td><span style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#2FC75A">97%</span></td>
+                <td><span style="font-family:var(--font-m);font-size:20px;font-weight:700;color:#2FC75A">97%</span></td>
                 <td class="tv-mono tv-col-blue" style="font-size:12px">PLT-003<br>a PLT-007</td>
                 <td class="tv-mono" style="font-size:12px">31/03 06:00</td>
                 <td class="tv-mono" style="font-size:12px;color:#40C8A0">31/03 13:45</td>
@@ -7984,7 +8038,7 @@ export const SCREENS = {
                 <td class="tv-mono">0</td>
                 <td class="tv-mono">5h30m</td>
                 <td class="tv-mono tv-col-green">5 min</td>
-                <td><span style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#2FC75A">98%</span></td>
+                <td><span style="font-family:var(--font-m);font-size:20px;font-weight:700;color:#2FC75A">98%</span></td>
                 <td class="tv-mono tv-col-blue" style="font-size:12px">PLT-008<br>a PLT-010</td>
                 <td class="tv-mono" style="font-size:12px">31/03 06:00</td>
                 <td class="tv-mono" style="font-size:12px;color:#40C8A0">31/03 11:30</td>
@@ -8020,9 +8074,9 @@ export const SCREENS = {
           <table class="tv-tbl">
             <thead><tr><th>Linha</th><th>Ordens</th><th>Un. Produzidas</th><th>Rejeitos</th><th>OEE Médio</th></tr></thead>
             <tbody>
-              <tr><td class="tv-mono tv-col-green" style="font-size:16px;font-weight:700">Linha A</td><td class="tv-mono" style="font-size:16px">2</td><td class="tv-mono tv-col-green" style="font-size:18px;font-weight:700">4.820</td><td class="tv-mono tv-col-red" style="font-size:18px;font-weight:700">38</td><td><span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#C8A84B">84%</span></td></tr>
-              <tr style="background:#0D200F"><td class="tv-mono tv-col-green" style="font-size:16px;font-weight:700">Linha B</td><td class="tv-mono" style="font-size:16px">1</td><td class="tv-mono tv-col-green" style="font-size:18px;font-weight:700">7.988</td><td class="tv-mono tv-col-green" style="font-size:18px">12</td><td><span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#2FC75A">97%</span></td></tr>
-              <tr><td class="tv-mono tv-col-green" style="font-size:16px;font-weight:700">Linha C</td><td class="tv-mono" style="font-size:16px">1</td><td class="tv-mono tv-col-green" style="font-size:18px;font-weight:700">5.994</td><td class="tv-mono tv-col-green" style="font-size:18px">6</td><td><span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#2FC75A">98%</span></td></tr>
+              <tr><td class="tv-mono tv-col-green" style="font-size:16px;font-weight:700">Linha A</td><td class="tv-mono" style="font-size:16px">2</td><td class="tv-mono tv-col-green" style="font-size:18px;font-weight:700">4.820</td><td class="tv-mono tv-col-red" style="font-size:18px;font-weight:700">38</td><td><span style="font-family:var(--font-m);font-size:22px;font-weight:700;color:#C8A84B">84%</span></td></tr>
+              <tr style="background:#0D200F"><td class="tv-mono tv-col-green" style="font-size:16px;font-weight:700">Linha B</td><td class="tv-mono" style="font-size:16px">1</td><td class="tv-mono tv-col-green" style="font-size:18px;font-weight:700">7.988</td><td class="tv-mono tv-col-green" style="font-size:18px">12</td><td><span style="font-family:var(--font-m);font-size:22px;font-weight:700;color:#2FC75A">97%</span></td></tr>
+              <tr><td class="tv-mono tv-col-green" style="font-size:16px;font-weight:700">Linha C</td><td class="tv-mono" style="font-size:16px">1</td><td class="tv-mono tv-col-green" style="font-size:18px;font-weight:700">5.994</td><td class="tv-mono tv-col-green" style="font-size:18px">6</td><td><span style="font-family:var(--font-m);font-size:22px;font-weight:700;color:#2FC75A">98%</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -8148,7 +8202,7 @@ export const SCREENS = {
         <div class="tv-chain-node c4">
           <div class="tv-chain-step">④ Produção · Linha A</div>
           <div class="tv-chain-main">OP-2026-0416</div>
-          <div class="tv-chain-sub">Operador: F. Costa<br>Início: 01/04 15:00<br><br>Un. produzidas: 4.820<br>Rejeitos: 38<br>Aparas: 1,2 kg<br>OEE: 84%<br><br>Checklists: 100% OK<br>Enabley: Validado</div>
+          <div class="tv-chain-sub">Operador: F. Costa<br>Início: 01/04 15:00<br><br>Un. produzidas: 4.820<br>Rejeitos: 38<br>Aparas: 1,2 kg<br>OEE: 84%<br><br>Checklists: 100% OK<br>Matriz de Capacitação: Validado</div>
         </div>
         <div style="display:flex;align-items:center;padding:0 10px;flex-shrink:0;font-size:28px;color:#2A5A38">›</div>
         <div class="tv-chain-node c5">
@@ -8175,7 +8229,7 @@ export const SCREENS = {
               <tr style="background:#0D200F"><td class="tv-mono tv-col-green">009</td><td><span class="tv-bdg ok">🧪 Fabricação</span></td><td style="font-size:13px">FASE INBATCH</td><td class="tv-mono tv-col-green">OP-2026-0416</td><td style="font-size:13px">SCADA / Sistema</td><td class="tv-mono" style="font-size:12px">01/04 10:30</td><td style="font-size:13px;color:#8AB090">Fase 1 concluída. pH: 6,2 · T: 78,5°C · rpm: 45. Dentro dos limites.</td></tr>
               <tr><td class="tv-mono" style="color:#4A7A5A">010</td><td><span class="tv-bdg ok">🧪 Fabricação</span></td><td style="font-size:13px">APROVAÇÃO LIMS</td><td class="tv-mono tv-col-green">OP-2026-0416</td><td style="font-size:13px">LIMS / Sistema</td><td class="tv-mono" style="font-size:12px">01/04 14:02</td><td style="font-size:13px;color:#8AB090">LIMS-2026-004821: <strong style="color:#2FC75A">APROVADO</strong>. pH 6,8 · Viscos. 8.240 cP · Microbiologia OK.</td></tr>
               <tr style="background:#0D200F"><td class="tv-mono tv-col-green">011</td><td><span class="tv-bdg ok">🧪 Fabricação</span></td><td style="font-size:13px">FECHAMENTO OF</td><td class="tv-mono tv-col-green">OP-2026-0416</td><td style="font-size:13px">M. Rocha</td><td class="tv-mono" style="font-size:12px">01/04 14:28</td><td style="font-size:13px;color:#8AB090">OF encerrada. Granel: 598,20 kg em TQ-001. Rendimento: 99,72%. EBR-2026-0416 gerado.</td></tr>
-              <tr><td class="tv-mono" style="color:#4A7A5A">012</td><td><span class="tv-bdg inf">🏭 Produção</span></td><td style="font-size:13px">INÍCIO OP</td><td class="tv-mono tv-col-green">OP-2026-0416</td><td style="font-size:13px">F. Costa</td><td class="tv-mono" style="font-size:12px">01/04 15:00</td><td style="font-size:13px;color:#8AB090">OP iniciada na Linha A. Gates validados: LIMS ✓ · Embalagens ✓ · Enabley ✓.</td></tr>
+              <tr><td class="tv-mono" style="color:#4A7A5A">012</td><td><span class="tv-bdg inf">🏭 Produção</span></td><td style="font-size:13px">INÍCIO OP</td><td class="tv-mono tv-col-green">OP-2026-0416</td><td style="font-size:13px">F. Costa</td><td class="tv-mono" style="font-size:12px">01/04 15:00</td><td style="font-size:13px;color:#8AB090">OP iniciada na Linha A. Gates validados: LIMS ✓ · Embalagens ✓ · Matriz de Capacitação ✓.</td></tr>
               <tr style="background:#0D200F"><td class="tv-mono tv-col-green">013</td><td><span class="tv-bdg inf">🏭 Produção</span></td><td style="font-size:13px">PALLET FECHADO</td><td class="tv-mono tv-col-green">OP-2026-0416</td><td style="font-size:13px">Sistema / F. Costa</td><td class="tv-mono" style="font-size:12px">01/04 17:12</td><td style="font-size:13px;color:#8AB090">PLT-001 fechado — 576 un (48 caixas). Realizado: F. Costa · Conferido: M. Oliveira.</td></tr>
               <tr><td class="tv-mono" style="color:#4A7A5A">014</td><td><span class="tv-bdg inf">🏭 Produção</span></td><td style="font-size:13px">PALLET FECHADO</td><td class="tv-mono tv-col-green">OP-2026-0416</td><td style="font-size:13px">Sistema / F. Costa</td><td class="tv-mono" style="font-size:12px">01/04 19:44</td><td style="font-size:13px;color:#8AB090">PLT-002 fechado (fracionado) — 244 un (20 caixas). Realizado: F. Costa · Conferido: M. Oliveira.</td></tr>
             </tbody>
@@ -8359,7 +8413,7 @@ export const SCREENS = {
               <div class="tv-apara-val" style="color:#2FC75A">0,20 kg</div>
             </div>
             <div style="border-top:1px solid #1C3A22;margin:8px 0;padding-top:12px;display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:#C8E8D0">
-              <span>Total aparas</span><span style="color:#E08040;font-family:'DM Mono',monospace">2,60 kg</span>
+              <span>Total aparas</span><span style="color:#E08040;font-family:var(--font-m)">2,60 kg</span>
             </div>
           </div>
         </div>
@@ -8511,7 +8565,7 @@ export const SCREENS = {
                 <td class="tv-mono" style="font-size:13px">G2026-091</td>
                 <td class="tv-mono">5.000</td>
                 <td class="tv-mono tv-col-green" style="font-size:16px;font-weight:700">4.820</td>
-                <td><span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#2FC75A">96,4%</span></td>
+                <td><span style="font-family:var(--font-m);font-size:22px;font-weight:700;color:#2FC75A">96,4%</span></td>
                 <td class="tv-mono tv-col-red" style="font-size:16px;font-weight:700">38</td>
                 <td class="tv-mono tv-col-red">1,2 kg</td>
                 <td class="tv-mono" style="font-size:15px;font-weight:700">80 cx</td>
@@ -8525,7 +8579,7 @@ export const SCREENS = {
                 <td class="tv-mono" style="font-size:13px">G2026-085</td>
                 <td class="tv-mono">8.000</td>
                 <td class="tv-mono tv-col-green" style="font-size:16px;font-weight:700">7.988</td>
-                <td><span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#2FC75A">99,9%</span></td>
+                <td><span style="font-family:var(--font-m);font-size:22px;font-weight:700;color:#2FC75A">99,9%</span></td>
                 <td class="tv-mono tv-col-green" style="font-size:16px">12</td>
                 <td class="tv-mono tv-col-green">0,4 kg</td>
                 <td class="tv-mono" style="font-size:15px;font-weight:700">133 cx</td>
@@ -8539,7 +8593,7 @@ export const SCREENS = {
                 <td class="tv-mono" style="font-size:13px">G2026-090</td>
                 <td class="tv-mono">600 kg</td>
                 <td class="tv-mono tv-col-green" style="font-size:16px;font-weight:700">598,2 kg</td>
-                <td><span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#2FC75A">99,7%</span></td>
+                <td><span style="font-family:var(--font-m);font-size:22px;font-weight:700;color:#2FC75A">99,7%</span></td>
                 <td class="tv-mono tv-col-dim">—</td>
                 <td class="tv-mono tv-col-red">1,8 kg</td>
                 <td class="tv-mono tv-col-dim">—</td>
@@ -8553,7 +8607,7 @@ export const SCREENS = {
                 <td class="tv-mono tv-col-dim">—</td>
                 <td class="tv-mono">600 kg</td>
                 <td class="tv-mono tv-col-green" style="font-size:16px;font-weight:700">599,87 kg</td>
-                <td><span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#2FC75A">99,98%</span></td>
+                <td><span style="font-family:var(--font-m);font-size:22px;font-weight:700;color:#2FC75A">99,98%</span></td>
                 <td class="tv-mono tv-col-dim">—</td>
                 <td class="tv-mono tv-col-green">0,1 kg</td>
                 <td class="tv-mono tv-col-dim">—</td>
@@ -8581,7 +8635,7 @@ export const SCREENS = {
                 <td class="tv-mono" style="font-size:13px">G2026-095</td>
                 <td class="tv-mono">500 kg</td>
                 <td class="tv-mono tv-col-gold" style="font-size:16px;font-weight:700">320 kg</td>
-                <td><span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#C8A84B">64%</span></td>
+                <td><span style="font-family:var(--font-m);font-size:22px;font-weight:700;color:#C8A84B">64%</span></td>
                 <td class="tv-mono tv-col-dim">—</td>
                 <td class="tv-mono tv-col-gold">0,6 kg</td>
                 <td class="tv-mono tv-col-dim">—</td>

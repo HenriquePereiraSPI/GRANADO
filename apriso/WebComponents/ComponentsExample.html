@@ -206,18 +206,18 @@
       &lt;granado-calendar&gt;
     </h2>
     <div style="display:flex;gap:12px;flex-wrap:wrap">
-      <granado-calendar mode="date" onchangeevent="console.log('Cal 1 (date PT-BR):', value)">
+      <granado-calendar label="Data de inicio" mode="date" onchangeevent="console.log('Cal 1 (date PT-BR):', value)">
       </granado-calendar>
 
-      <granado-calendar mode="date" format="dd/MM/yyyy" placeholder="Escolha uma data..." color="#9A7B1C"
+      <granado-calendar label="Data de entrega" mode="date" format="dd/MM/yyyy" placeholder="Escolha uma data..." color="#9A7B1C"
         onchangeevent="console.log('Cal 2 (dd/MM/yyyy):', value)">
       </granado-calendar>
 
-      <granado-calendar mode="datetime" value="2026-05-06 14:30:00" color="#2C5A8C"
+      <granado-calendar label="Data e hora" mode="datetime" value="2026-05-06 14:30:00" color="#2C5A8C"
         onchangeevent="console.log('Cal 3 (datetime):', value)">
       </granado-calendar>
 
-      <granado-calendar mode="datetime" lang="en" format="MM/dd/yyyy HH:mm" color="#C0392B"
+      <granado-calendar label="Date & time" mode="datetime" lang="en" format="MM/dd/yyyy HH:mm" color="#C0392B"
         onchangeevent="console.log('Cal 4 (EN datetime):', value)">
       </granado-calendar>
     </div>
@@ -252,12 +252,12 @@
       &lt;granado-dropdown&gt;
     </h2>
     <div style="display:flex;gap:12px;flex-wrap:wrap">
-      <granado-dropdown placeholder="Selecione um operador..."
+      <granado-dropdown label="Operador" placeholder="Selecione um operador..."
         options='["Maria Silva","Joao Santos","Ana Costa","Pedro Lima","Carla Souza"]'
         onchangeevent="console.log('Operador:', value)">
       </granado-dropdown>
 
-      <granado-dropdown placeholder="Selecione um material..." searchable="true" color="#9A7B1C" options='[
+      <granado-dropdown label="Material" placeholder="Selecione um material..." searchable="true" color="#9A7B1C" options='[
           {"value":"GLI","label":"Glicerina USP"},
           {"value":"FEN","label":"Fenoxietanol"},
           {"value":"CIT","label":"Acido Citrico"},
@@ -271,7 +271,7 @@
         ]' onchangeevent="console.log('Material:', value, option)">
       </granado-dropdown>
 
-      <granado-dropdown multi="true" color="#2C5A8C" placeholder="Filtrar status..." value="OK,DEV" options='[
+      <granado-dropdown label="Status" multi="true" color="#2C5A8C" placeholder="Filtrar status..." value="OK,DEV" options='[
           {"value":"OK","label":"Aprovado"},
           {"value":"DEV","label":"Desvio"},
           {"value":"PEN","label":"Pendente"},
@@ -279,7 +279,7 @@
         ]' onchangeevent="console.log('Status:', value)">
       </granado-dropdown>
 
-      <granado-dropdown disabled="true" placeholder="Desabilitado" options='["A","B","C"]'>
+      <granado-dropdown label="Bloqueado" disabled="true" placeholder="Desabilitado" options='["A","B","C"]'>
       </granado-dropdown>
     </div>
   </section>
