@@ -1579,26 +1579,20 @@ export const SCREENS = {
         </div>
       </div>
       <!-- KPIs topo — Validação Final -->
-      <div class="g4 mb14">
+      <div class="g3 mb14">
         <div class="card cv" style="text-align:center;padding:14px">
           <div class="kpi-l">Total MPs</div>
           <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--verde)">12<span style="font-size:16px;color:var(--text3)">/12</span></div>
           <div style="font-size:10px;color:var(--text3)">100% pesadas</div>
         </div>
         <div class="card" style="text-align:center;padding:14px">
-          <div class="kpi-l">Dentro do Limite</div>
-          <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--ok)">11</div>
-          <div style="font-size:10px;color:var(--text3)">MPs aprovadas</div>
-        </div>
-        <div class="card ca" style="text-align:center;padding:14px">
-          <div class="kpi-l">Variância de pesagem Justificada</div>
-          <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--alr)">1</div>
-          <div style="font-size:10px;color:var(--text3)">Aprovado pelo CQ</div>
+          <div class="kpi-l">Total Pesado × Alvo</div>
+          <div style="font-family:var(--font-m);font-size:28px;font-weight:700;color:var(--ok)">599,87 <span style="font-size:16px;color:var(--text3)">/ 600,00 kg</span></div>
+          <div style="font-size:10px;color:var(--text3)">Pesado / Alvo</div>
         </div>
         <div class="card" style="text-align:center;padding:14px">
           <div class="kpi-l">Variação Total</div>
           <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--ok)">–0,02<span style="font-size:16px">%</span></div>
-          <div style="font-size:10px;color:var(--text3)">599,87 / 600,00 kg</div>
         </div>
       </div>
 
@@ -1606,15 +1600,15 @@ export const SCREENS = {
         <div class="card-title">Resumo de Pesagens — OP-2026-0416</div>
         <div style="overflow-x:auto">
           <table class="tbl" style="min-width:780px">
-            <thead><tr><th>#</th><th>Código</th><th>Lote</th><th>Material</th><th>Nº Gaiola</th><th>Alvo (kg)</th><th>Pesado (kg)</th><th>Variância de pesagem</th><th>Status</th></tr></thead>
+            <thead><tr><th>#</th><th>Código</th><th>Lote</th><th>Material</th><th>Nº Gaiola</th><th>Alvo</th><th>Pesado</th><th>Variância de pesagem</th><th>Status</th></tr></thead>
             <tbody>
-              <tr><td class="mono" style="color:var(--ok)">1</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-4821</td><td class="mono" style="font-size:11px;color:var(--text3)">GLI-2026-08</td><td style="font-size:12px">Glicerina USP</td><td class="mono" style="font-size:11px;color:var(--inf)">563944</td><td class="mono">45,000</td><td class="mono">44,983</td><td class="mono" style="color:var(--ok)">–0,017</td><td><span class="bdg bdg-ok">OK</span></td></tr>
-              <tr><td class="mono" style="color:var(--ok)">2</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-3307</td><td class="mono" style="font-size:11px;color:var(--text3)">PPG-2026-12</td><td style="font-size:12px">Propilenoglicol</td><td class="mono" style="font-size:11px;color:var(--inf)">563945</td><td class="mono">18,000</td><td class="mono">18,005</td><td class="mono" style="color:var(--ok)">+0,005</td><td><span class="bdg bdg-ok">OK</span></td></tr>
-              <tr><td class="mono" style="color:var(--ok)">3</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-0914</td><td class="mono" style="font-size:11px;color:var(--text3)">CAR-2026-05</td><td style="font-size:12px">Carbopol 940</td><td class="mono" style="font-size:11px;color:var(--inf)">563946</td><td class="mono">2,500</td><td class="mono">2,498</td><td class="mono" style="color:var(--ok)">–0,002</td><td><span class="bdg bdg-ok">OK</span></td></tr>
-              <tr style="background:var(--alr-p)"><td class="mono" style="color:var(--alr)">4</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-2256</td><td class="mono" style="font-size:11px;color:var(--text3)">FEN-2026-03</td><td style="font-size:12px">Fenoxietanol</td><td class="mono" style="font-size:11px;color:var(--inf)">563947</td><td class="mono">3,000</td><td class="mono">3,028</td><td class="mono" style="color:var(--alr);font-weight:700">+0,028</td><td><span class="bdg bdg-alr">Desv. Justif.</span></td></tr>
-              <tr><td class="mono" style="color:var(--ok)">5</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-5593</td><td class="mono" style="font-size:11px;color:var(--text3)">TEA-2026-07</td><td style="font-size:12px">TEA 99%</td><td class="mono" style="font-size:11px;color:var(--inf)">563948</td><td class="mono">1,800</td><td class="mono">1,801</td><td class="mono" style="color:var(--ok)">+0,001</td><td><span class="bdg bdg-ok">OK</span></td></tr>
-              <tr><td class="mono" style="color:var(--ok)">6</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-1872</td><td class="mono" style="font-size:11px;color:var(--text3)">PAN-2026-02</td><td style="font-size:12px">Pantenol</td><td class="mono" style="font-size:11px;color:var(--inf)">563949</td><td class="mono">2,000</td><td class="mono">1,999</td><td class="mono" style="color:var(--ok)">–0,001</td><td><span class="bdg bdg-ok">OK</span></td></tr>
-              <tr><td class="mono" style="color:var(--ok)">7</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-3341</td><td class="mono" style="font-size:11px;color:var(--text3)">EXT-2026-09</td><td style="font-size:12px">Extrato Rosa Mosqueta</td><td class="mono" style="font-size:11px;color:var(--inf)">563950</td><td class="mono">1,200</td><td class="mono">1,201</td><td class="mono" style="color:var(--ok)">+0,001</td><td><span class="bdg bdg-ok">OK</span></td></tr>
+              <tr><td class="mono" style="color:var(--ok)">1</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-4821</td><td class="mono" style="font-size:11px;color:var(--text3)">GLI-2026-08</td><td style="font-size:12px">Glicerina USP</td><td class="mono" style="font-size:11px;color:var(--inf)">563944</td><td class="mono">45,000 kg</td><td class="mono">44,983 kg</td><td class="mono" style="color:var(--ok)">–0,017</td><td><span class="bdg bdg-ok">OK</span></td></tr>
+              <tr><td class="mono" style="color:var(--ok)">2</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-3307</td><td class="mono" style="font-size:11px;color:var(--text3)">PPG-2026-12</td><td style="font-size:12px">Propilenoglicol</td><td class="mono" style="font-size:11px;color:var(--inf)">563945</td><td class="mono">18,000 kg</td><td class="mono">18,005 kg</td><td class="mono" style="color:var(--ok)">+0,005</td><td><span class="bdg bdg-ok">OK</span></td></tr>
+              <tr><td class="mono" style="color:var(--ok)">3</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-0914</td><td class="mono" style="font-size:11px;color:var(--text3)">CAR-2026-05</td><td style="font-size:12px">Carbopol 940</td><td class="mono" style="font-size:11px;color:var(--inf)">563946</td><td class="mono">2,500 kg</td><td class="mono">2,498 kg</td><td class="mono" style="color:var(--ok)">–0,002</td><td><span class="bdg bdg-ok">OK</span></td></tr>
+              <tr style="background:var(--alr-p)"><td class="mono" style="color:var(--alr)">4</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-2256</td><td class="mono" style="font-size:11px;color:var(--text3)">FEN-2026-03</td><td style="font-size:12px">Fenoxietanol</td><td class="mono" style="font-size:11px;color:var(--inf)">563947</td><td class="mono">3,000 kg</td><td class="mono">3,028 kg</td><td class="mono" style="color:var(--alr);font-weight:700">+0,028</td><td><span class="bdg bdg-ok">OK</span></td></tr>
+              <tr><td class="mono" style="color:var(--ok)">5</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-5593</td><td class="mono" style="font-size:11px;color:var(--text3)">TEA-2026-07</td><td style="font-size:12px">TEA 99%</td><td class="mono" style="font-size:11px;color:var(--inf)">563948</td><td class="mono">1,800 kg</td><td class="mono">1,801 kg</td><td class="mono" style="color:var(--ok)">+0,001</td><td><span class="bdg bdg-ok">OK</span></td></tr>
+              <tr><td class="mono" style="color:var(--ok)">6</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-1872</td><td class="mono" style="font-size:11px;color:var(--text3)">PAN-2026-02</td><td style="font-size:12px">Pantenol</td><td class="mono" style="font-size:11px;color:var(--inf)">563949</td><td class="mono">2,000 kg</td><td class="mono">1,999 kg</td><td class="mono" style="color:var(--ok)">–0,001</td><td><span class="bdg bdg-ok">OK</span></td></tr>
+              <tr><td class="mono" style="color:var(--ok)">7</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-3341</td><td class="mono" style="font-size:11px;color:var(--text3)">EXT-2026-09</td><td style="font-size:12px">Extrato Rosa Mosqueta</td><td class="mono" style="font-size:11px;color:var(--inf)">563950</td><td class="mono">1,200 kg</td><td class="mono">1,201 kg</td><td class="mono" style="color:var(--ok)">+0,001</td><td><span class="bdg bdg-ok">OK</span></td></tr>
               <tr><td class="mono" style="color:var(--ok)">8–12</td><td style="font-size:12px;color:var(--ok)" colspan="3">Demais MPs (5 itens)</td><td class="mono" style="font-size:11px;color:var(--inf)">563951+</td><td class="mono" style="color:var(--ok)">—</td><td class="mono" style="color:var(--ok)">Dentro limite</td><td class="mono" style="color:var(--ok)">—</td><td><span class="bdg bdg-ok">OK</span></td></tr>
             </tbody>
           </table>
