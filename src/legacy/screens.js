@@ -1633,12 +1633,6 @@ export const SCREENS = {
         <div class="ph-actions" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <button
             class="btn btn-sm"
-            style="background:var(--alr-p);color:var(--alr);border:1.5px solid var(--alr-b);font-weight:700"
-            onclick="pesCockpitHold()"
-            title="Colocar a ordem em Hold (Aguardando)"
-          >⏸ Hold</button>
-          <button
-            class="btn btn-sm"
             style="background:var(--per-p);color:var(--per);border:1.5px solid var(--per-b);font-weight:700"
             onclick="pesCockpitCancelar()"
             title="Cancelar esta Ordem"
@@ -1648,11 +1642,6 @@ export const SCREENS = {
       </div>
 
       <script>
-      function pesCockpitHold() {
-        var motivo = prompt('⏸ Colocar OP-2026-0416 em HOLD (Aguardando)?\\n\\nInforme o motivo:');
-        if (!motivo) return;
-        alert('⏸ Ordem em HOLD\\n\\nOP-2026-0416 · Loção Rosa\\nMotivo: ' + motivo + '\\nRegistrado em: ' + new Date().toLocaleString('pt-BR') + ' por J. Santos\\nNotificação enviada ao Líder de Pesagem.\\n\\nAviso: se permanecer em hold por mais de 30 dias, supervisão de produção será notificada automaticamente.');
-      }
       function pesCockpitCancelar() {
         if (!confirm('⛔ CANCELAR OP-2026-0416?\\n\\nEsta ação é IRREVERSÍVEL:\\n• Pesagens em andamento serão descartadas\\n• MPs já pesadas voltam pro estoque (mov. reverso JDE)\\n• OF será reaberta para análise\\n• Auditoria registrada\\n\\nConfirmar cancelamento?')) return;
         var motivo = prompt('Informe o motivo do cancelamento:');
@@ -1898,7 +1887,7 @@ export const SCREENS = {
                     <td class="mono" style="color:var(--text3)">—</td>
                     <td class="mono" style="color:var(--per);font-weight:700">1,800 kg</td>
                     <td class="mono" style="color:var(--text3)">±0,5%</td>
-                    <td><span class="bdg bdg-per" style="font-weight:800">CANCELADA · DESVIO</span></td>
+                    <td><span class="bdg bdg-per" style="font-weight:800">Cancelada</span></td>
                     <td>
                       <span style="font-size:10px;color:var(--text3);font-style:italic">Ações na aba MPs</span>
                     </td>
@@ -1916,8 +1905,8 @@ export const SCREENS = {
                     <td class="mono" style="color:var(--text3)">—</td>
                     <td class="mono" style="color:var(--text3)">0,150 kg</td>
                     <td class="mono" style="color:var(--text3)">±0,5%</td>
-                    <td><span class="bdg bdg-ney">Aguardando</span></td>
-                    <td><button class="btn btn-sm btn-v" onclick="pesSetMP(this.closest('tr'));event.stopPropagation()">Selecionar</button></td>
+                    <td></td>
+                    <td><button class="btn btn-sm btn-v" onclick="pesSetMP(this.closest('tr'));event.stopPropagation()">Pesar</button></td>
                   </tr>
 
                   <!-- 3. Fenoxietanol — Pesada (dentro da variância máx. ±0,015 kg) · disp +5,000 kg -->
@@ -1932,7 +1921,7 @@ export const SCREENS = {
                     <td class="mono" style="color:var(--ok)">3,012 kg</td>
                     <td class="mono" style="color:var(--text3)">0,000 kg</td>
                     <td class="mono">±0,5%</td>
-                    <td><span class="bdg bdg-ok">Pesada</span></td>
+                    <td><span class="bdg bdg-ok">Concluído</span></td>
                     <td><span style="font-size:10px;color:var(--text3);font-style:italic">—</span></td>
                   </tr>
 
@@ -1948,7 +1937,7 @@ export const SCREENS = {
                     <td class="mono" style="color:var(--ok)">1,801 kg</td>
                     <td class="mono" style="color:var(--text3)">0,000 kg</td>
                     <td class="mono">±0,5%</td>
-                    <td><span class="bdg bdg-ok">Pesada</span></td>
+                    <td><span class="bdg bdg-ok">Concluído</span></td>
                     <td></td>
                   </tr>
 
@@ -1964,8 +1953,8 @@ export const SCREENS = {
                     <td class="mono" style="color:var(--text3)">—</td>
                     <td class="mono" style="color:var(--verde);font-weight:700">412,500 kg</td>
                     <td class="mono">±0,5%</td>
-                    <td><span class="bdg bdg-alr">Próxima</span></td>
-                    <td><button class="btn btn-sm btn-v" onclick="pesSetMP(this.closest('tr'));event.stopPropagation()">Selecionar</button></td>
+                    <td></td>
+                    <td><button class="btn btn-sm btn-v" onclick="pesSetMP(this.closest('tr'));event.stopPropagation()">Pesar</button></td>
                   </tr>
                 </tbody>
               </table>
@@ -3165,18 +3154,6 @@ export const SCREENS = {
       <div class="card cv">
         <div class="card-title">Registro de Pesagens Confirmadas — Clique na linha para ações</div>
 
-        <!-- Filtro por classe (Normal / Adicional) -->
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px">
-          <span style="font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)">Classe:</span>
-          <button id="mps-flt-todas"    class="btn btn-sm btn-v"     onclick="mpsFiltrarClasse('todas')"    style="font-size:11px;font-weight:700">Todas (6)</button>
-          <button id="mps-flt-normal"   class="btn btn-sm btn-ghost" onclick="mpsFiltrarClasse('normal')"   style="font-size:11px">📦 Normais (5)</button>
-          <button id="mps-flt-adicional" class="btn btn-sm btn-ghost" onclick="mpsFiltrarClasse('adicional')" style="font-size:11px">➕ Adicionais (1)</button>
-          <span style="font-size:9px;color:var(--text3);font-style:italic;margin-left:4px">+ 3 sub-pesagens fracionadas</span>
-          <div style="margin-left:auto;font-size:10px;color:var(--text3);font-style:italic">
-            <strong>Adicional</strong>: MP solicitada após o início da fabricação (reprocesso, ajuste de variância ou complemento)
-          </div>
-        </div>
-
         <div style="overflow-x:auto">
         <table class="tbl" id="tbl-mps-pesadas" style="font-size:11px;min-width:1180px">
           <thead>
@@ -3363,32 +3340,6 @@ export const SCREENS = {
         </div><!-- /overflow-x:auto -->
 
         <script>
-        function mpsFiltrarClasse(classe) {
-          var rows = document.querySelectorAll('#tbl-mps-pesadas tbody tr');
-          rows.forEach(function(r){
-            // Filhas de fracionadas seguem o estado do pai — pulamos aqui
-            if (r.getAttribute('data-frac-child')) return;
-            var c = r.getAttribute('data-classe') || 'normal';
-            if (classe === 'todas') r.style.display = '';
-            else r.style.display = (c === classe) ? '' : 'none';
-          });
-          // Ao trocar de filtro, recolhe as fracionadas expandidas (estado limpo)
-          document.querySelectorAll('#tbl-mps-pesadas tbody tr[data-frac-child]').forEach(function(r){
-            r.style.display = 'none';
-          });
-          document.querySelectorAll('#tbl-mps-pesadas tbody .mps-frac-arrow').forEach(function(a){
-            a.style.transform = 'rotate(0deg)';
-            a.textContent = '▸';
-          });
-          // Atualiza visual dos botões
-          ['todas','normal','adicional'].forEach(function(k){
-            var btn = document.getElementById('mps-flt-' + (k==='adicional' ? 'adicional' : k));
-            if (!btn) return;
-            if (k === classe) { btn.classList.remove('btn-ghost'); btn.classList.add('btn-v'); }
-            else { btn.classList.remove('btn-v'); btn.classList.add('btn-ghost'); }
-          });
-        }
-
         // Toggle pai-filho: clica na linha pai de MP fracionada → mostra/esconde sub-pesagens
         function mpsToggleFrac(parentRow) {
           var parentId = parentRow.getAttribute('data-frac-parent');
@@ -3441,19 +3392,13 @@ export const SCREENS = {
 
           <!-- Aba: Solicitar MP -->
           <div id="mps-aba-desvio">
-            <div class="abox inf" style="margin-bottom:14px"><span class="ai">📦</span><div>Solicite uma nova MP ao Almoxarifado. Selecione o <strong>Tipo de solicitação</strong>; quando for <strong>Desvio</strong>, informe o número do desvio.</div></div>
+            <div class="abox inf" style="margin-bottom:14px"><span class="ai">📦</span><div>Solicite uma nova MP ao Almoxarifado. Selecione o <strong>Tipo de solicitação</strong> — <strong>Ajuste</strong> ou <strong>Perda</strong> (a Perda cancela a MP).</div></div>
             <div style="margin-bottom:12px">
               <label class="lbl">Tipo de solicitação</label>
               <select class="sel" id="mps-desvio-tipo" onchange="mpsToggleNumDesvio()">
                 <option value="">Selecione o tipo...</option>
-                <option value="exc">Excesso de pesagem</option>
-                <option value="fal">Falta de material</option>
-                <option value="cont">Contaminação/troca de lote</option>
-                <option value="equip">Falha de equipamento (balança)</option>
-                <option value="proc">Pesagem de procedimento</option>
-                <option value="desvio">Desvio</option>
+                <option value="ajuste">Ajuste</option>
                 <option value="perda">Perda (cancela a MP)</option>
-                <option value="outro">Outro</option>
               </select>
               <div id="mps-perda-aviso" style="display:none;margin-top:8px;padding:8px 12px;background:var(--per-p);border:1px solid var(--per-b);border-radius:6px;font-size:11px;color:var(--per);line-height:1.4">
                 <strong>⚠ Perda — atenção:</strong> ao confirmar, o status da MP <strong id="mps-perda-mp-nome">selecionada</strong> será alterado para <span class="bdg bdg-per" style="font-size:9px">⛔ Cancelado</span> e a linha será marcada como cancelada na tabela de pesagens.
@@ -4362,7 +4307,7 @@ export const SCREENS = {
               <th>Pagamento MP</th>
               <th>Status</th>
               <th>Data Prev.<br/>Fabricação</th>
-              <th>Desvio</th>
+              <th>Observação</th>
               <th title="Sala onde o granel será fabricado (vem da OF do PCP — não confundir com a sala de pesagem)">Sala de<br/>Fabricação ⓘ</th>
               <th></th>
             </tr>
@@ -4383,12 +4328,12 @@ export const SCREENS = {
               </td>
               <td><span class="bdg bdg-inf">🔄 Pesando</span></td>
               <td class="mono" style="font-size:11px">17/05/2026</td>
-              <td><span class="bdg bdg-ok" style="font-size:9px">Sem desvio</span></td>
+              <td style="font-size:11px;color:var(--text2);max-width:170px"></td>
               <td style="font-size:11px">
                 Sala 4
                 <div class="mono" style="font-size:10px;color:var(--text3)">MF5 · Reator R-04</div>
               </td>
-              <td><button class="btn btn-sm btn-v" onclick="pesIrCockpit(event, 'continuar', 'OP-2026-0414')">Continuar</button></td>
+              <td><button class="btn btn-sm btn-v" onclick="pesIrCockpit(event, 'continuar', 'OP-2026-0414')">Pesar</button></td>
             </tr>
 
             <!-- OP-2026-0416 — PRONTA PARA PESAGEM -->
@@ -4406,7 +4351,7 @@ export const SCREENS = {
               </td>
               <td><span class="bdg bdg-ok">✓ Pronta para Pesagem</span></td>
               <td class="mono" style="font-size:11px">18/05/2026</td>
-              <td style="font-size:11px;color:var(--text3)">—</td>
+              <td style="font-size:11px;color:var(--text2);max-width:170px"></td>
               <td style="font-size:11px">
                 Sala 2
                 <div class="mono" style="font-size:10px;color:var(--text3)">MF5 · Reator R-02</div>
@@ -4429,7 +4374,7 @@ export const SCREENS = {
               </td>
               <td><span class="bdg bdg-ok">✅ Finalizada</span></td>
               <td class="mono" style="font-size:11px">14/05/2026</td>
-              <td><span class="bdg bdg-alr" style="font-size:9px" title="Fenoxietanol +0,028 kg">⚠ 1 variância</span></td>
+              <td style="font-size:11px;color:var(--text2);max-width:170px"></td>
               <td style="font-size:11px">
                 Sala 1
                 <div class="mono" style="font-size:10px;color:var(--text3)">MF5 · Reator R-01</div>
@@ -4452,7 +4397,7 @@ export const SCREENS = {
               </td>
               <td><span class="bdg bdg-per" style="font-weight:800">🚦 Aguardando Liberação Fabricação</span></td>
               <td class="mono" style="font-size:11px">13/05/2026</td>
-              <td><span class="bdg bdg-ok" style="font-size:9px">Sem desvio</span></td>
+              <td style="font-size:11px;color:var(--text2);max-width:170px"></td>
               <td style="font-size:11px">
                 Sala 3
                 <div class="mono" style="font-size:10px;color:var(--text3)">MF5 · Reator R-03</div>
@@ -4480,10 +4425,10 @@ export const SCREENS = {
                 </div>
               </td>
               <td class="mono" style="font-size:11px;color:var(--text3)">—</td>
-              <td style="font-size:11px;color:var(--text3)">—</td>
+              <td style="font-size:11px;color:var(--text2);max-width:170px"></td>
               <td style="font-size:11px;color:var(--text3)">—</td>
               <td>
-                <button class="btn btn-sm btn-v" onclick="alert('▶ Retomar OP-2026-0411?\\n\\nA OP estava em hold por 32 dias.\\nMotivo do hold: Aguardando MP importada (Vitamina E).\\nMP recebida em: 09/05/2026.\\n\\nLiberar para fila de pesagem?')">▶ Retomar</button>
+                <button class="btn btn-sm btn-ghost" onclick="alert('📋 OP-2026-0411 — Hold (Aguardando)\\n\\nEm hold há 32 dias.\\nMotivo do hold: Aguardando MP importada (Vitamina E).\\nMP recebida em: 09/05/2026.\\nProgresso de pesagem: 6/10 MPs.')" style="text-decoration:none">Detalhes</button>
               </td>
             </tr>
 
@@ -4495,10 +4440,10 @@ export const SCREENS = {
               <td><span style="font-size:10px;color:var(--text3)">N/A</span></td>
               <td><span class="bdg bdg-per" style="font-weight:800">⛔ Cancelada</span></td>
               <td class="mono" style="font-size:11px;color:var(--text3)">—</td>
-              <td><span class="bdg bdg-per" style="font-size:9px" title="MP indisponível">⚠ MP crítica indisponível</span></td>
+              <td style="font-size:11px;color:var(--text2);max-width:170px"></td>
               <td style="font-size:11px;color:var(--text3)">—</td>
               <td>
-                <button class="btn btn-sm btn-ghost" onclick="alert('📋 OP-2026-0410 — Detalhes do Cancelamento\\n\\nCancelada por: M. Oliveira (Líder PCP)\\nData: 05/05/2026 14:38\\nMotivo: Fornecedor de Camomila indisponível, MP descontinuada.\\nFOLOW-UP: nova OP gerada (OP-2026-0418) com fórmula alternativa.')" style="text-decoration:none">Ver Detalhes</button>
+                <button class="btn btn-sm btn-ghost" onclick="alert('📋 OP-2026-0410 — Detalhes do Cancelamento\\n\\nCancelada por: M. Oliveira (Líder PCP)\\nData: 05/05/2026 14:38\\nMotivo: Fornecedor de Camomila indisponível, MP descontinuada.\\nFOLOW-UP: nova OP gerada (OP-2026-0418) com fórmula alternativa.')" style="text-decoration:none">Detalhes</button>
               </td>
             </tr>
           </tbody>
