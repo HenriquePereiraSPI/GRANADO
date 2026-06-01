@@ -29,6 +29,8 @@
      rows           - linhas iniciais quando type="textarea". Default: 4.
      oninputevent   - JS executado a cada digitacao. Vars: value, event.
      onchangeevent  - JS executado ao perder foco com mudanca. Vars: value, event.
+     onkeydownevent - JS executado a cada tecla pressionada. Vars: value, event, key.
+                      "key" e um atalho para event.key (ex.: "Enter", "Escape").
 
    Propriedades JS:
      elemento.value -> valor atual (ler/setar)
@@ -65,7 +67,7 @@
 class GranadoInput extends HTMLElement {
   static get observedAttributes() {
     return ['label', 'placeholder', 'value', 'type', 'icon', 'mask', 'color',
-      'disabled', 'readonly', 'rows', 'ispassword', 'oninputevent', 'onchangeevent'];
+      'disabled', 'readonly', 'rows', 'ispassword', 'oninputevent', 'onchangeevent', 'onkeydownevent'];
   }
 
   connectedCallback() {
@@ -170,6 +172,7 @@ class GranadoInput extends HTMLElement {
     const field = this.querySelector('[data-input-field]');
     field.addEventListener('input', (e) => this._handleInput(e));
     field.addEventListener('change', (e) => this._handleChange(e));
+    field.addEventListener('keydown', (e) => this._handleKeydown(e));
     field.addEventListener('focus', () => this._setFocus(true));
     field.addEventListener('blur', () => this._setFocus(false));
 
@@ -261,6 +264,11 @@ class GranadoInput extends HTMLElement {
   _handleChange(e) {
     const handler = this.getAttribute('onchangeevent');
     if (handler) new Function('value', 'event', handler).call(this, e.target.value, e);
+  }
+
+  _handleKeydown(e) {
+    const handler = this.getAttribute('onkeydownevent');
+    if (handler) new Function('value', 'event', 'key', handler).call(this, e.target.value, e, e.key);
   }
 
   _setFocus(focused) {

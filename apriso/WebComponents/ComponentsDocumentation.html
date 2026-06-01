@@ -2731,6 +2731,28 @@ console.log(inp.value);
 inp.focus();
 inp.blur();</pre>
 
+        <!-- ===== Evento de tecla (keydown) ===== -->
+        <h2 class="gd-h2">Evento de tecla (keydown)</h2>
+        <p class="gd-lead">
+          O atributo <code>onkeydownevent</code> executa JS a cada tecla pressionada
+          (evento <code>keydown</code>). Além de <code>value</code> e <code>event</code>,
+          expõe <code>key</code> — atalho para <code>event.key</code> (ex.:
+          <code>"Enter"</code>, <code>"Escape"</code>). Útil para confirmar com Enter,
+          limpar com Esc ou bloquear teclas. Abra o console e teste abaixo.
+        </p>
+        <div class="gd-demo">
+          <granado-input style="max-width:360px"
+            label="Buscar (Enter confirma · Esc limpa)" icon="search"
+            placeholder="Digite e tecle Enter…"
+            onkeydownevent="if (key === 'Enter') console.log('buscar:', value); else if (key === 'Escape') event.target.value = '';">
+          </granado-input>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-input</span>
+    <span class="tk-attr">label</span>=<span class="tk-str">"Buscar"</span>
+    <span class="tk-attr">icon</span>=<span class="tk-str">"search"</span>
+    <span class="tk-attr">onkeydownevent</span>=<span class="tk-str">"if (key === 'Enter') buscar(value);"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-input&gt;</span></pre>
+
         <!-- ===== API ===== -->
         <h2 class="gd-h2">API</h2>
 
@@ -2836,6 +2858,12 @@ inp.blur();</pre>
               <td class="col-default">—</td>
               <td class="col-desc">JS executado ao perder foco com mudança (evento <code>change</code>). Variáveis: <code>value</code>, <code>event</code>.</td>
             </tr>
+            <tr>
+              <td class="col-name">onkeydownevent</td>
+              <td class="col-type">string (JS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">JS executado a cada tecla pressionada (evento <code>keydown</code>). Variáveis: <code>value</code>, <code>event</code>, <code>key</code> (atalho para <code>event.key</code>).</td>
+            </tr>
           </tbody>
         </table>
 
@@ -2892,6 +2920,14 @@ inp.blur();</pre>
               <td class="col-desc">
                 <code>value</code>, <code>event</code> (<code>Event</code>). Dispara só quando
                 o campo perde foco e o valor mudou.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">onkeydownevent</td>
+              <td class="col-desc">
+                <code>value</code>, <code>event</code> (<code>KeyboardEvent</code>),
+                <code>key</code> (atalho para <code>event.key</code>, ex.: <code>"Enter"</code>,
+                <code>"Escape"</code>). Dispara a cada tecla pressionada.
               </td>
             </tr>
           </tbody>
