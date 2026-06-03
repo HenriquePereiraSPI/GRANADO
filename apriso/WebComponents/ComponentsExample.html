@@ -932,54 +932,56 @@
 
 
   <script>
-    const rows = [
-      { cod: 'MP-01001', lote: 'L24-1001', mat: 'Glicerina USP', pesado: '44983,210', balanca: 'B-01', operador: 'Maria Silva', horario: '08:15', status: 'OK' },
-      { cod: 'MP-01002', lote: 'L24-1002', mat: 'Fenoxietanol', pesado: '3028,500', balanca: 'B-02', operador: 'Joao Santos', horario: '08:24', status: 'Desvio' },
-      { cod: 'MP-01003', lote: 'L24-1003', mat: 'Acido Citrico', pesado: '12450,000', balanca: 'B-01', operador: 'Ana Costa', horario: '08:31', status: 'Pendente' },
-      { cod: 'MP-01004', lote: 'L24-1004', mat: 'Lauril Sulfato', pesado: '8721,640', balanca: 'B-03', operador: 'Pedro Lima', horario: '08:42', status: 'Aprovado' },
-      { cod: 'MP-01005', lote: 'L24-1005', mat: 'Cera de Abelha', pesado: '2100,000', balanca: 'B-02', operador: 'Carla Souza', horario: '08:55', status: 'OK' },
-      { cod: 'MP-01006', lote: 'L24-1006', mat: 'Oleo de Amendoa', pesado: '15890,330', balanca: 'B-04', operador: 'Maria Silva', horario: '09:08', status: 'Desvio' },
-      { cod: 'MP-01007', lote: 'L24-1007', mat: 'Manteiga de Karite', pesado: '4567,890', balanca: 'B-01', operador: 'Joao Santos', horario: '09:21', status: 'OK' },
-      { cod: 'MP-01008', lote: 'L24-1008', mat: 'Vitamina E', pesado: '320,150', balanca: 'B-03', operador: 'Ana Costa', horario: '09:34', status: 'Aprovado' },
-      { cod: 'MP-01009', lote: 'L24-1009', mat: 'Extrato de Camomila', pesado: '985,420', balanca: 'B-02', operador: 'Pedro Lima', horario: '09:47', status: 'Pendente' },
-      { cod: 'MP-01010', lote: 'L24-1010', mat: 'Mentol Cristal', pesado: '1240,000', balanca: 'B-04', operador: 'Carla Souza', horario: '10:02', status: 'OK' },
-      { cod: 'MP-01011', lote: 'L24-1011', mat: 'Acido Salicilico', pesado: '670,800', balanca: 'B-01', operador: 'Maria Silva', horario: '10:15', status: 'Desvio' },
-      { cod: 'MP-01012', lote: 'L24-1012', mat: 'Ureia', pesado: '5430,250', balanca: 'B-03', operador: 'Joao Santos', horario: '10:28', status: 'OK' },
-      { cod: 'MP-01013', lote: 'L24-1013', mat: 'Pantenol', pesado: '1890,470', balanca: 'B-02', operador: 'Ana Costa', horario: '10:41', status: 'Aprovado' },
-      { cod: 'MP-01014', lote: 'L24-1014', mat: 'Niacinamida', pesado: '2230,000', balanca: 'B-04', operador: 'Pedro Lima', horario: '10:55', status: 'Pendente' },
-      { cod: 'MP-01015', lote: 'L24-1015', mat: 'Acido Hialuronico', pesado: '95,780', balanca: 'B-01', operador: 'Carla Souza', horario: '11:08', status: 'OK' }
-    ];
+    (function () {
+      const rows = [
+        { cod: 'MP-01001', lote: 'L24-1001', mat: 'Glicerina USP', pesado: '44983,210', balanca: 'B-01', operador: 'Maria Silva', horario: '08:15', status: 'OK' },
+        { cod: 'MP-01002', lote: 'L24-1002', mat: 'Fenoxietanol', pesado: '3028,500', balanca: 'B-02', operador: 'Joao Santos', horario: '08:24', status: 'Desvio' },
+        { cod: 'MP-01003', lote: 'L24-1003', mat: 'Acido Citrico', pesado: '12450,000', balanca: 'B-01', operador: 'Ana Costa', horario: '08:31', status: 'Pendente' },
+        { cod: 'MP-01004', lote: 'L24-1004', mat: 'Lauril Sulfato', pesado: '8721,640', balanca: 'B-03', operador: 'Pedro Lima', horario: '08:42', status: 'Aprovado' },
+        { cod: 'MP-01005', lote: 'L24-1005', mat: 'Cera de Abelha', pesado: '2100,000', balanca: 'B-02', operador: 'Carla Souza', horario: '08:55', status: 'OK' },
+        { cod: 'MP-01006', lote: 'L24-1006', mat: 'Oleo de Amendoa', pesado: '15890,330', balanca: 'B-04', operador: 'Maria Silva', horario: '09:08', status: 'Desvio' },
+        { cod: 'MP-01007', lote: 'L24-1007', mat: 'Manteiga de Karite', pesado: '4567,890', balanca: 'B-01', operador: 'Joao Santos', horario: '09:21', status: 'OK' },
+        { cod: 'MP-01008', lote: 'L24-1008', mat: 'Vitamina E', pesado: '320,150', balanca: 'B-03', operador: 'Ana Costa', horario: '09:34', status: 'Aprovado' },
+        { cod: 'MP-01009', lote: 'L24-1009', mat: 'Extrato de Camomila', pesado: '985,420', balanca: 'B-02', operador: 'Pedro Lima', horario: '09:47', status: 'Pendente' },
+        { cod: 'MP-01010', lote: 'L24-1010', mat: 'Mentol Cristal', pesado: '1240,000', balanca: 'B-04', operador: 'Carla Souza', horario: '10:02', status: 'OK' },
+        { cod: 'MP-01011', lote: 'L24-1011', mat: 'Acido Salicilico', pesado: '670,800', balanca: 'B-01', operador: 'Maria Silva', horario: '10:15', status: 'Desvio' },
+        { cod: 'MP-01012', lote: 'L24-1012', mat: 'Ureia', pesado: '5430,250', balanca: 'B-03', operador: 'Joao Santos', horario: '10:28', status: 'OK' },
+        { cod: 'MP-01013', lote: 'L24-1013', mat: 'Pantenol', pesado: '1890,470', balanca: 'B-02', operador: 'Ana Costa', horario: '10:41', status: 'Aprovado' },
+        { cod: 'MP-01014', lote: 'L24-1014', mat: 'Niacinamida', pesado: '2230,000', balanca: 'B-04', operador: 'Pedro Lima', horario: '10:55', status: 'Pendente' },
+        { cod: 'MP-01015', lote: 'L24-1015', mat: 'Acido Hialuronico', pesado: '95,780', balanca: 'B-01', operador: 'Carla Souza', horario: '11:08', status: 'OK' }
+      ];
 
-    const columns = [
-      { key: 'cod', label: 'Codigo MP', align: 'left', width: '100px', mono: true },
-      { key: 'lote', label: 'Lote', align: 'left', width: '95px', mono: true },
-      { key: 'mat', label: 'Material', align: 'left', width: '180px' },
-      { key: 'pesado', label: 'Pesado (kg)', align: 'left', width: '110px', mono: true },
-      { key: 'balanca', label: 'Balanca', align: 'left', width: '80px' },
-      { key: 'operador', label: 'Operador', align: 'left', width: '130px' },
-      { key: 'horario', label: 'Horario', align: 'left', width: '85px', mono: true },
-      { key: 'status', label: 'Status', align: 'left', width: '110px' },
-      { key: 'acao', label: 'Acao', align: 'left', width: '110px', filterable: false, sortable: false }
-    ];
+      const columns = [
+        { key: 'cod', label: 'Codigo MP', align: 'left', width: '100px', mono: true },
+        { key: 'lote', label: 'Lote', align: 'left', width: '95px', mono: true },
+        { key: 'mat', label: 'Material', align: 'left', width: '180px' },
+        { key: 'pesado', label: 'Pesado (kg)', align: 'left', width: '110px', mono: true },
+        { key: 'balanca', label: 'Balanca', align: 'left', width: '80px' },
+        { key: 'operador', label: 'Operador', align: 'left', width: '130px' },
+        { key: 'horario', label: 'Horario', align: 'left', width: '85px', mono: true },
+        { key: 'status', label: 'Status', align: 'left', width: '110px' },
+        { key: 'acao', label: 'Acao', align: 'left', width: '110px', filterable: false, sortable: false }
+      ];
 
-    const tbl = document.getElementById('tbl');
-    tbl.setAttribute('columns', JSON.stringify(columns));
-    tbl.setAttribute('rows', JSON.stringify(rows));
-    tbl.setAttribute('onrender', `
-      if (col.key === 'status') {
-        var bg = row.status === 'OK' ? '#1C7A38'
-               : row.status === 'Desvio' ? '#9A5A00'
-               : row.status === 'Aprovado' ? '#2C5A8C'
-               : '#6B6B6B';
-        return '<span style="display:inline-block;font-size:9px;font-weight:900;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:' + bg + ';color:#fff">' + cell + '</span>';
-      }
-      if (col.key === 'acao') {
-        return '<button style="font-size:10px;font-weight:700;padding:5px 10px;border:1px solid #1C5C31;background:#FDFAF1;color:#1C5C31;border-radius:4px;cursor:pointer;font-family:inherit" onclick="event.stopPropagation(); alert(\\'Acao em \\' + \\''+ row.cod +'\\')">Detalhes</button>';
-      }
-      return cell;
-    `);
-    tbl.setAttribute('onclickevent', "console.log('linha selecionada', row.cod);");
-    tbl.setAttribute('ondoubleclickevent', "alert('Abrir detalhes de ' + row.cod);");
+      const tbl = document.getElementById('tbl');
+      tbl.setAttribute('columns', JSON.stringify(columns));
+      tbl.setAttribute('rows', JSON.stringify(rows));
+      tbl.setAttribute('onrender', `
+        if (col.key === 'status') {
+          var bg = row.status === 'OK' ? '#1C7A38'
+                 : row.status === 'Desvio' ? '#9A5A00'
+                 : row.status === 'Aprovado' ? '#2C5A8C'
+                 : '#6B6B6B';
+          return '<span style="display:inline-block;font-size:9px;font-weight:900;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:' + bg + ';color:#fff">' + cell + '</span>';
+        }
+        if (col.key === 'acao') {
+          return '<button style="font-size:10px;font-weight:700;padding:5px 10px;border:1px solid #1C5C31;background:#FDFAF1;color:#1C5C31;border-radius:4px;cursor:pointer;font-family:inherit" onclick="event.stopPropagation(); alert(\\'Acao em \\' + \\''+ row.cod +'\\')">Detalhes</button>';
+        }
+        return cell;
+      `);
+      tbl.setAttribute('onclickevent', "console.log('linha selecionada', row.cod);");
+      tbl.setAttribute('ondoubleclickevent', "alert('Abrir detalhes de ' + row.cod);");
+    })();
   </script>
 
   <!-- ========== Linha 22 — granado-submenu-pesagem ========== -->

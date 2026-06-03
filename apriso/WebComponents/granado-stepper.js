@@ -80,221 +80,226 @@
    </script>
    ============================================================ */
 
-class GranadoStepper extends HTMLElement {
-  static get observedAttributes() {
-    return [
-      'steps',
-      'activeiconcolor', 'desactiveiconcolor',
-      'activetextcolor', 'desactivetextcolor',
-      'activeconnectorcolor', 'desactiveconnectorcolor',
-      'currentstepcolor',
-      'onstepclickevent'
-    ];
-  }
-
-  connectedCallback() {
-    // Lazy-props pattern: se alguem atribuiu el.steps = [...] ANTES do
-    // upgrade do custom element (cenario tipico em Apriso quando o script
-    // de setup roda antes do granado-stepper.js terminar de carregar),
-    // a atribuicao virou uma own property no HTMLElement e o setter da
-    // classe nunca foi chamado. Detectamos isso aqui, capturamos o valor,
-    // removemos a own property e re-atribuimos via o setter real.
-    if (Object.prototype.hasOwnProperty.call(this, 'steps')) {
-      const pending = this.steps;
-      delete this.steps;
-      this.steps = pending;
+/* __granado_guard__ */
+if (!customElements.get('granado-stepper')) {
+  class GranadoStepper extends HTMLElement {
+    static get observedAttributes() {
+      return [
+        'steps',
+        'activeiconcolor', 'desactiveiconcolor',
+        'activetextcolor', 'desactivetextcolor',
+        'activeconnectorcolor', 'desactiveconnectorcolor',
+        'currentstepcolor',
+        'onstepclickevent'
+      ];
     }
-    this._render();
-  }
 
-  attributeChangedCallback() {
-    if (this.isConnected) this._render();
-  }
-
-  get steps() {
-    if (this._steps) return this._steps;
-    return this._parseStepsAttr();
-  }
-  set steps(arr) {
-    this._steps = Array.isArray(arr) ? arr : [];
-    if (this.isConnected) this._render();
-  }
-
-  _parseStepsAttr() {
-    const raw = this.getAttribute('steps');
-    if (!raw) return [];
-    try {
-      const v = JSON.parse(raw);
-      return Array.isArray(v) ? v : [];
-    } catch {
-      return [];
+    connectedCallback() {
+      // Lazy-props pattern: se alguem atribuiu el.steps = [...] ANTES do
+      // upgrade do custom element (cenario tipico em Apriso quando o script
+      // de setup roda antes do granado-stepper.js terminar de carregar),
+      // a atribuicao virou uma own property no HTMLElement e o setter da
+      // classe nunca foi chamado. Detectamos isso aqui, capturamos o valor,
+      // removemos a own property e re-atribuimos via o setter real.
+      if (Object.prototype.hasOwnProperty.call(this, 'steps')) {
+        const pending = this.steps;
+        delete this.steps;
+        this.steps = pending;
+      }
+      this._render();
     }
-  }
 
-  _normShape(s) {
-    if (s === 'square') return '0';
-    if (s === 'rounded' || s === 'rounded-square' || s === 'squircle') return '6px';
-    return '50%';
-  }
+    attributeChangedCallback() {
+      if (this.isConnected) this._render();
+    }
 
-  _render() {
-    const steps = this._steps || this._parseStepsAttr();
+    get steps() {
+      if (this._steps) return this._steps;
+      return this._parseStepsAttr();
+    }
+    set steps(arr) {
+      this._steps = Array.isArray(arr) ? arr : [];
+      if (this.isConnected) this._render();
+    }
 
-    const activeIconColor      = this.getAttribute('activeiconcolor')      || '#1C5C31';
-    const desactiveIconColor   = this.getAttribute('desactiveiconcolor')   || '#1C5C31';
-    const currentStepColor     = this.getAttribute('currentstepcolor')     || '#9A7520';
-    const activeTextColor      = this.getAttribute('activetextcolor');     // optional
-    const desactiveTextColor   = this.getAttribute('desactivetextcolor');  // optional
-    const activeConnectorColor    = this.getAttribute('activeconnectorcolor')    || '#1C5C31';
-    const desactiveConnectorColor = this.getAttribute('desactiveconnectorcolor') || '#D6CDA4';
-
-    this.style.display = this.style.display || 'flex';
-    this.style.alignItems = 'center';
-    this.style.gap = '0';
-    this.style.overflowX = 'auto';
-    // overflow-x:auto faz o navegador setar overflow-y:auto tambem, o que
-    // clipa o scale(1.08) do hover no topo da bolinha. Padding vertical
-    // garante folga para a animacao crescer sem cortar.
-    this.style.paddingTop = this.style.paddingTop || '6px';
-    this.style.paddingBottom = this.style.paddingBottom || '6px';
-    this.style.fontFamily = "'Poppins','DejaVu Sans',Arial,sans-serif";
-
-    let html = '';
-    steps.forEach((st, i) => {
-      const filled = !!st.isFilled;
-      const clickable = !!st.onClickEvent;
-      const current = !!st.isCurrent;
-      const radius = this._normShape(st.shapeFormat);
-
-      // Resolucao de iconColor: per-step override > current > active/desactive
-      let iconColor;
-      if (st.iconColor) iconColor = st.iconColor;
-      else if (current) iconColor = currentStepColor;
-      else if (clickable) iconColor = activeIconColor;
-      else iconColor = desactiveIconColor;
-
-      // Resolucao de textColor: per-step override > current > active/desactive
-      // Defaults seguem a logica antiga: igual ao iconColor quando filled,
-      // "#8A9E8E" quando vazado.
-      let textColor;
-      if (st.textColor) {
-        textColor = st.textColor;
-      } else if (current) {
-        textColor = currentStepColor;
-      } else if (clickable) {
-        textColor = activeTextColor || (filled ? iconColor : '#8A9E8E');
-      } else {
-        textColor = desactiveTextColor || (filled ? iconColor : '#8A9E8E');
+    _parseStepsAttr() {
+      const raw = this.getAttribute('steps');
+      if (!raw) return [];
+      try {
+        const v = JSON.parse(raw);
+        return Array.isArray(v) ? v : [];
+      } catch {
+        return [];
       }
+    }
 
-      const bg = filled ? iconColor : 'transparent';
-      const innerColor = filled ? '#FFFFFF' : iconColor;
-      const cursor = clickable ? 'pointer' : 'default';
-      // Step "current" sempre full opacity (e onde o usuario esta agora).
-      // Steps nao-clicaveis e nao-current ficam apagados.
-      const cellOpacity = (clickable || current) ? '1' : '0.45';
+    _normShape(s) {
+      if (s === 'square') return '0';
+      if (s === 'rounded' || s === 'rounded-square' || s === 'squircle') return '6px';
+      return '50%';
+    }
 
-      const titleStr = (st.title != null && st.title !== '') ? this._escape(String(st.title)) : '';
-      const subtitleStr = st.subtitle ? this._escape(String(st.subtitle)) : '';
-      const fwSubtitle = filled ? '700' : '500';
+    _render() {
+      const steps = this._steps || this._parseStepsAttr();
 
-      const circleStyle = [
-        'width:32px',
-        'height:32px',
-        `border-radius:${radius}`,
-        `background:${bg}`,
-        'display:flex',
-        'align-items:center',
-        'justify-content:center',
-        'font-size:13px',
-        `color:${innerColor}`,
-        'font-weight:700',
-        `border:2px solid ${iconColor}`,
-        `cursor:${cursor}`,
-        'box-sizing:border-box',
-        'transition:transform .12s ease,box-shadow .12s ease',
-        'user-select:none'
-      ].join(';');
+      const activeIconColor      = this.getAttribute('activeiconcolor')      || '#1C5C31';
+      const desactiveIconColor   = this.getAttribute('desactiveiconcolor')   || '#1C5C31';
+      const currentStepColor     = this.getAttribute('currentstepcolor')     || '#9A7520';
+      const activeTextColor      = this.getAttribute('activetextcolor');     // optional
+      const desactiveTextColor   = this.getAttribute('desactivetextcolor');  // optional
+      const activeConnectorColor    = this.getAttribute('activeconnectorcolor')    || '#1C5C31';
+      const desactiveConnectorColor = this.getAttribute('desactiveconnectorcolor') || '#D6CDA4';
 
-      const subtitleStyle = [
-        'font-size:9px',
-        `font-weight:${fwSubtitle}`,
-        'letter-spacing:.07em',
-        'text-transform:uppercase',
-        `color:${textColor}`,
-        'white-space:nowrap'
-      ].join(';');
+      this.style.display = this.style.display || 'flex';
+      this.style.alignItems = 'center';
+      this.style.gap = '0';
+      this.style.overflowX = 'auto';
+      // overflow-x:auto faz o navegador setar overflow-y:auto tambem, o que
+      // clipa o scale(1.08) do hover no topo da bolinha. Padding vertical
+      // garante folga para a animacao crescer sem cortar.
+      this.style.paddingTop = this.style.paddingTop || '6px';
+      this.style.paddingBottom = this.style.paddingBottom || '6px';
+      this.style.fontFamily = "'Poppins','DejaVu Sans',Arial,sans-serif";
 
-      // Wrapper de cada step (cell + conector). align-items:center alinha
-      // o conector verticalmente ao centro da bolinha+subtitle. O conector
-      // recebe margin-bottom para subir ate a altura da bolinha quando ha
-      // subtitle abaixo.
-      html += '<div style="display:flex;align-items:center;gap:0;flex-shrink:0">';
-      html +=   `<div style="display:flex;flex-direction:column;align-items:center;gap:6px;opacity:${cellOpacity};transition:opacity .15s ease">`;
-      html +=     `<div data-stp-circle data-stp-i="${i}" style="${circleStyle}">${titleStr}</div>`;
-      if (subtitleStr) {
-        html +=   `<div style="${subtitleStyle}">${subtitleStr}</div>`;
-      }
-      html +=   '</div>';
+      let html = '';
+      steps.forEach((st, i) => {
+        const filled = !!st.isFilled;
+        const clickable = !!st.onClickEvent;
+        const current = !!st.isCurrent;
+        const radius = this._normShape(st.shapeFormat);
 
-      if (i < steps.length - 1) {
-        const lineColor = filled ? activeConnectorColor : desactiveConnectorColor;
-        const lineMb = subtitleStr ? 'margin-bottom:18px;' : '';
-        html += `<div style="width:36px;height:2px;background:${lineColor};margin:0 4px;${lineMb}flex-shrink:0"></div>`;
-      }
-      html += '</div>';
-    });
+        // Resolucao de iconColor: per-step override > current > active/desactive
+        let iconColor;
+        if (st.iconColor) iconColor = st.iconColor;
+        else if (current) iconColor = currentStepColor;
+        else if (clickable) iconColor = activeIconColor;
+        else iconColor = desactiveIconColor;
 
-    this.innerHTML = html;
-    this._wire(steps);
-  }
+        // Resolucao de textColor: per-step override > current > active/desactive
+        // Defaults seguem a logica antiga: igual ao iconColor quando filled,
+        // "#8A9E8E" quando vazado.
+        let textColor;
+        if (st.textColor) {
+          textColor = st.textColor;
+        } else if (current) {
+          textColor = currentStepColor;
+        } else if (clickable) {
+          textColor = activeTextColor || (filled ? iconColor : '#8A9E8E');
+        } else {
+          textColor = desactiveTextColor || (filled ? iconColor : '#8A9E8E');
+        }
 
-  _wire(steps) {
-    const hostHandler = this.getAttribute('onstepclickevent');
+        const bg = filled ? iconColor : 'transparent';
+        const innerColor = filled ? '#FFFFFF' : iconColor;
+        const cursor = clickable ? 'pointer' : 'default';
+        // Step "current" sempre full opacity (e onde o usuario esta agora).
+        // Steps nao-clicaveis e nao-current ficam apagados.
+        const cellOpacity = (clickable || current) ? '1' : '0.45';
 
-    this.querySelectorAll('[data-stp-circle]').forEach(circle => {
-      const idx = parseInt(circle.getAttribute('data-stp-i'), 10);
-      const step = steps[idx];
-      if (!step) return;
-      const clickable = !!step.onClickEvent;
+        const titleStr = (st.title != null && st.title !== '') ? this._escape(String(st.title)) : '';
+        const subtitleStr = st.subtitle ? this._escape(String(st.subtitle)) : '';
+        const fwSubtitle = filled ? '700' : '500';
 
-      if (clickable) {
-        circle.addEventListener('click', (ev) => {
-          ev.stopPropagation();
-          try {
-            new Function('key', 'step', 'index', step.onClickEvent).call(this, step.key, step, idx);
-          } catch (err) {
-            console.error('[granado-stepper] onClickEvent error:', err);
-          }
-          if (hostHandler) {
+        const circleStyle = [
+          'width:32px',
+          'height:32px',
+          `border-radius:${radius}`,
+          `background:${bg}`,
+          'display:flex',
+          'align-items:center',
+          'justify-content:center',
+          'font-size:13px',
+          `color:${innerColor}`,
+          'font-weight:700',
+          `border:2px solid ${iconColor}`,
+          `cursor:${cursor}`,
+          'box-sizing:border-box',
+          'transition:transform .12s ease,box-shadow .12s ease',
+          'user-select:none'
+        ].join(';');
+
+        const subtitleStyle = [
+          'font-size:9px',
+          `font-weight:${fwSubtitle}`,
+          'letter-spacing:.07em',
+          'text-transform:uppercase',
+          `color:${textColor}`,
+          'white-space:nowrap'
+        ].join(';');
+
+        // Wrapper de cada step (cell + conector). align-items:center alinha
+        // o conector verticalmente ao centro da bolinha+subtitle. O conector
+        // recebe margin-bottom para subir ate a altura da bolinha quando ha
+        // subtitle abaixo.
+        html += '<div style="display:flex;align-items:center;gap:0;flex-shrink:0">';
+        html +=   `<div style="display:flex;flex-direction:column;align-items:center;gap:6px;opacity:${cellOpacity};transition:opacity .15s ease">`;
+        html +=     `<div data-stp-circle data-stp-i="${i}" style="${circleStyle}">${titleStr}</div>`;
+        if (subtitleStr) {
+          html +=   `<div style="${subtitleStyle}">${subtitleStr}</div>`;
+        }
+        html +=   '</div>';
+
+        if (i < steps.length - 1) {
+          const lineColor = filled ? activeConnectorColor : desactiveConnectorColor;
+          const lineMb = subtitleStr ? 'margin-bottom:18px;' : '';
+          html += `<div style="width:36px;height:2px;background:${lineColor};margin:0 4px;${lineMb}flex-shrink:0"></div>`;
+        }
+        html += '</div>';
+      });
+
+      this.innerHTML = html;
+      this._wire(steps);
+    }
+
+    _wire(steps) {
+      const hostHandler = this.getAttribute('onstepclickevent');
+
+      this.querySelectorAll('[data-stp-circle]').forEach(circle => {
+        const idx = parseInt(circle.getAttribute('data-stp-i'), 10);
+        const step = steps[idx];
+        if (!step) return;
+        const clickable = !!step.onClickEvent;
+
+        if (clickable) {
+          circle.addEventListener('click', (ev) => {
+            ev.stopPropagation();
             try {
-              new Function('key', 'step', 'index', hostHandler).call(this, step.key, step, idx);
+              new Function('key', 'step', 'index', step.onClickEvent).call(this, step.key, step, idx);
             } catch (err) {
-              console.error('[granado-stepper] onstepclickevent error:', err);
+              console.error('[granado-stepper] onClickEvent error:', err);
             }
-          }
-          this.dispatchEvent(new CustomEvent('stepclick', {
-            detail: { key: step.key, step, index: idx },
-            bubbles: true
-          }));
-        });
+            if (hostHandler) {
+              try {
+                new Function('key', 'step', 'index', hostHandler).call(this, step.key, step, idx);
+              } catch (err) {
+                console.error('[granado-stepper] onstepclickevent error:', err);
+              }
+            }
+            this.dispatchEvent(new CustomEvent('stepclick', {
+              detail: { key: step.key, step, index: idx },
+              bubbles: true
+            }));
+          });
 
-        circle.addEventListener('mouseenter', () => {
-          circle.style.transform = 'scale(1.08)';
-          circle.style.boxShadow = '0 2px 6px rgba(0,0,0,0.18)';
-        });
-        circle.addEventListener('mouseleave', () => {
-          circle.style.transform = '';
-          circle.style.boxShadow = '';
-        });
-      }
-    });
+          circle.addEventListener('mouseenter', () => {
+            circle.style.transform = 'scale(1.08)';
+            circle.style.boxShadow = '0 2px 6px rgba(0,0,0,0.18)';
+          });
+          circle.addEventListener('mouseleave', () => {
+            circle.style.transform = '';
+            circle.style.boxShadow = '';
+          });
+        }
+      });
+    }
+
+    _escape(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, ch =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+    }
   }
 
-  _escape(s) {
-    return String(s == null ? '' : s).replace(/[&<>"']/g, ch =>
-      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-  }
+  customElements.define('granado-stepper', GranadoStepper);
+
+  window.GranadoStepper = GranadoStepper;
 }
-
-customElements.define('granado-stepper', GranadoStepper);

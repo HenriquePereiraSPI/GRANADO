@@ -22,13 +22,18 @@
    </granado-tabs>
    ============================================================ */
 
-class GranadoTab extends HTMLElement {
-  // Sem observedAttributes/callbacks: o <granado-tabs> pai observa
-  // mudancas via MutationObserver com subtree+attribute-filter.
-  // Manter callbacks aqui geraria loop ao reposicionar tabs durante render.
-  connectedCallback() {
-    if (!this.style.display) this.style.display = 'block';
+/* __granado_guard__ */
+if (!customElements.get('granado-tab')) {
+  class GranadoTab extends HTMLElement {
+    // Sem observedAttributes/callbacks: o <granado-tabs> pai observa
+    // mudancas via MutationObserver com subtree+attribute-filter.
+    // Manter callbacks aqui geraria loop ao reposicionar tabs durante render.
+    connectedCallback() {
+      if (!this.style.display) this.style.display = 'block';
+    }
   }
-}
 
-customElements.define('granado-tab', GranadoTab);
+  customElements.define('granado-tab', GranadoTab);
+
+  window.GranadoTab = GranadoTab;
+}

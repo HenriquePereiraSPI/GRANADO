@@ -45,101 +45,106 @@
    </granado-complete-card>
    ============================================================ */
 
-class GranadoCompleteCard extends HTMLElement {
-    static get observedAttributes() {
-        return [
-            'title', 'subtitle', 'color', 'status', 'icon', 'onclickevent',
-            'text-color', 'icon-color', 'border-color', 'status-color',
-        ];
-    }
+/* __granado_guard__ */
+if (!customElements.get('granado-complete-card')) {
+  class GranadoCompleteCard extends HTMLElement {
+      static get observedAttributes() {
+          return [
+              'title', 'subtitle', 'color', 'status', 'icon', 'onclickevent',
+              'text-color', 'icon-color', 'border-color', 'status-color',
+          ];
+      }
 
-    connectedCallback() { this.render(); }
-    attributeChangedCallback() { this.render(); }
+      connectedCallback() { this.render(); }
+      attributeChangedCallback() { this.render(); }
 
-    render() {
-        const title = this.getAttribute('title') || '';
-        const subtitle = this.getAttribute('subtitle') || '';
-        const color = this.getAttribute('color') || '#1C5C31';
-        const status = this.getAttribute('status') || '';
-        const icon = this.getAttribute('icon') || '';
-        const onClickEvent = this.getAttribute('onclickevent');
+      render() {
+          const title = this.getAttribute('title') || '';
+          const subtitle = this.getAttribute('subtitle') || '';
+          const color = this.getAttribute('color') || '#1C5C31';
+          const status = this.getAttribute('status') || '';
+          const icon = this.getAttribute('icon') || '';
+          const onClickEvent = this.getAttribute('onclickevent');
 
-        /* Overrides opcionais — default segue `color`. */
-        const textColor = this.getAttribute('text-color') || color;
-        const iconColor = this.getAttribute('icon-color') || color;
-        const borderColor = this.getAttribute('border-color') || color;
-        const statusColor = this.getAttribute('status-color') || color;
+          /* Overrides opcionais — default segue `color`. */
+          const textColor = this.getAttribute('text-color') || color;
+          const iconColor = this.getAttribute('icon-color') || color;
+          const borderColor = this.getAttribute('border-color') || color;
+          const statusColor = this.getAttribute('status-color') || color;
 
-        this.innerHTML = `
-            <div style="
-                position: relative;
-                background: #F5EFD9;
-                border: 2px solid ${borderColor};
-                border-radius: 8px;
-                padding: 16px 12px;
-                text-align: center;
-                font-family: 'Poppins', 'DejaVu Sans', Arial, sans-serif;
-                transition: box-shadow 0.18s, transform 0.18s;
-                ${onClickEvent ? 'cursor: pointer;' : ''}
-            "
-            ${onClickEvent ? `
-                onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.12)'; this.style.transform='translateY(-1px)';"
-                onmouseout="this.style.boxShadow='none'; this.style.transform='translateY(0)';"
-            ` : ''}
-            >
-                ${icon ? `
-                    <div style="
-                        font-size: 28px;
-                        margin-bottom: 6px;
-                        line-height: 1;
-                        color: ${iconColor};
-                    ">${icon}</div>
-                ` : ''}
+          this.innerHTML = `
+              <div style="
+                  position: relative;
+                  background: #F5EFD9;
+                  border: 2px solid ${borderColor};
+                  border-radius: 8px;
+                  padding: 16px 12px;
+                  text-align: center;
+                  font-family: 'Poppins', 'DejaVu Sans', Arial, sans-serif;
+                  transition: box-shadow 0.18s, transform 0.18s;
+                  ${onClickEvent ? 'cursor: pointer;' : ''}
+              "
+              ${onClickEvent ? `
+                  onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.12)'; this.style.transform='translateY(-1px)';"
+                  onmouseout="this.style.boxShadow='none'; this.style.transform='translateY(0)';"
+              ` : ''}
+              >
+                  ${icon ? `
+                      <div style="
+                          font-size: 28px;
+                          margin-bottom: 6px;
+                          line-height: 1;
+                          color: ${iconColor};
+                      ">${icon}</div>
+                  ` : ''}
 
-                ${title ? `
-                    <div style="
-                        font-size: 13px;
-                        font-weight: 900;
-                        color: ${textColor};
-                        margin-bottom: 4px;
-                        line-height: 1.2;
-                    ">${title}</div>
-                ` : ''}
+                  ${title ? `
+                      <div style="
+                          font-size: 13px;
+                          font-weight: 900;
+                          color: ${textColor};
+                          margin-bottom: 4px;
+                          line-height: 1.2;
+                      ">${title}</div>
+                  ` : ''}
 
-                ${subtitle ? `
-                    <div style="
-                        font-family: 'Poppins', 'DejaVu Sans', Arial, sans-serif;
-                        font-size: 10px;
-                        color: #6B7280;
-                        line-height: 1.3;
-                    ">${subtitle}</div>
-                ` : ''}
+                  ${subtitle ? `
+                      <div style="
+                          font-family: 'Poppins', 'DejaVu Sans', Arial, sans-serif;
+                          font-size: 10px;
+                          color: #6B7280;
+                          line-height: 1.3;
+                      ">${subtitle}</div>
+                  ` : ''}
 
-                ${status ? `
-                    <div style="margin-top: 8px;">
-                        <span style="
-                            display: inline-block;
-                            font-size: 9px;
-                            font-weight: 900;
-                            letter-spacing: .06em;
-                            text-transform: uppercase;
-                            padding: 3px 8px;
-                            border-radius: 4px;
-                            background: ${statusColor};
-                            color: #FFFFFF;
-                            border: 1px solid ${statusColor};
-                        ">${status}</span>
-                    </div>
-                ` : ''}
-            </div>
-        `;
+                  ${status ? `
+                      <div style="margin-top: 8px;">
+                          <span style="
+                              display: inline-block;
+                              font-size: 9px;
+                              font-weight: 900;
+                              letter-spacing: .06em;
+                              text-transform: uppercase;
+                              padding: 3px 8px;
+                              border-radius: 4px;
+                              background: ${statusColor};
+                              color: #FFFFFF;
+                              border: 1px solid ${statusColor};
+                          ">${status}</span>
+                      </div>
+                  ` : ''}
+              </div>
+          `;
 
-        if (onClickEvent) {
-            this.querySelector('div').addEventListener('click', () => {
-                new Function(onClickEvent).call(this);
-            });
-        }
-    }
+          if (onClickEvent) {
+              this.querySelector('div').addEventListener('click', () => {
+                  new Function(onClickEvent).call(this);
+              });
+          }
+      }
+  }
+
+  customElements.define('granado-complete-card', GranadoCompleteCard);
+
+  window.GranadoCompleteCard = GranadoCompleteCard;
 }
-
-customElements.define('granado-complete-card', GranadoCompleteCard);
