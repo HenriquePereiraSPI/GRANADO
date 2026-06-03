@@ -34,6 +34,7 @@
   <script src="./granado-progress-bar.js"></script>
   <script src="./granado-stepper.js"></script>
   <script src="./granado-submenu-pesagem.js"></script>
+  <script src="./granado-preloader.js"></script>
 </head>
 
 <body style="margin:0;padding:24px;background:#F4EED9;font-family:'Lato','DejaVu Sans',Arial,sans-serif;color:#103E20">
@@ -1069,6 +1070,71 @@
       // sem JS — util quando a lista e fixa e nao precisa de carga dinamica.
     })();
   </script>
+
+  <!-- ========== Linha 23 — granado-preloader ========== -->
+  <section style="margin-top:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-preloader&gt;
+    </h2>
+    <p style="font-size:11px;color:#5A6B5E;margin:0 0 10px">
+      Overlay de loading fullscreen. Bloqueia toda a tela enquanto exibe um icone animado
+      e um texto dinamico. API tipica: <code
+        style="background:#F5EFD9;padding:2px 5px;border-radius:3px;font-size:11px">GranadoPreloader.show('texto')</code>.
+    </p>
+
+    <!-- Variants do icone -->
+    <p style="font-size:11px;color:#5A6B5E;margin:14px 0 6px"><strong>Variants de icone:</strong> brand (default Granado) e 5 estilos genericos para outros projetos.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <granado-button label="brand (Granado)" icon="refresh"
+        onclickevent="GranadoPreloader.show({ icon:'brand', text:'Aguarde...' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+      </granado-button>
+
+      <granado-button label="spinner" variant="secondary" color="#2C5A8C"
+        onclickevent="GranadoPreloader.show({ icon:'spinner', text:'Carregando...', color:'#2C5A8C' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+      </granado-button>
+
+      <granado-button label="dots" variant="secondary" color="#1C5C31"
+        onclickevent="GranadoPreloader.show({ icon:'dots', text:'Processando...', color:'#1C5C31' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+      </granado-button>
+
+      <granado-button label="bars" variant="secondary" color="#9A5A00"
+        onclickevent="GranadoPreloader.show({ icon:'bars', text:'Sincronizando...', color:'#9A5A00' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+      </granado-button>
+
+      <granado-button label="pulse" variant="secondary" color="#C0392B"
+        onclickevent="GranadoPreloader.show({ icon:'pulse', text:'Conectando...', color:'#C0392B' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+      </granado-button>
+
+      <granado-button label="ring" variant="secondary"
+        onclickevent="GranadoPreloader.show({ icon:'ring', text:'Aguarde...', color:'#C8A85A' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+      </granado-button>
+    </div>
+
+    <!-- Casos de uso adicionais -->
+    <p style="font-size:11px;color:#5A6B5E;margin:18px 0 6px"><strong>Casos de uso:</strong> texto custom, texto dinamico, troca de icone em runtime, overlay custom.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <granado-button label="Texto custom" variant="ghost"
+        onclickevent="GranadoPreloader.show('Salvando pesagem...'); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+      </granado-button>
+
+      <granado-button label="Texto dinamico" variant="ghost"
+        onclickevent="GranadoPreloader.show({ icon:'spinner', text:'Conectando...', color:'#2C5A8C' }); setTimeout(function(){ GranadoPreloader.setText('Validando dados...'); }, 900); setTimeout(function(){ GranadoPreloader.setText('Concluindo...'); }, 1800); setTimeout(function(){ GranadoPreloader.hide(); }, 2800)">
+      </granado-button>
+
+      <granado-button label="Troca de icone" variant="ghost"
+        onclickevent="GranadoPreloader.show({ icon:'dots', text:'Etapa 1...' }); setTimeout(function(){ GranadoPreloader.setIcon('bars'); GranadoPreloader.setText('Etapa 2...'); }, 1000); setTimeout(function(){ GranadoPreloader.setIcon('ring'); GranadoPreloader.setText('Finalizando...'); }, 2000); setTimeout(function(){ GranadoPreloader.hide(); }, 3000)">
+      </granado-button>
+
+      <granado-button label="Overlay custom" variant="ghost"
+        onclickevent="GranadoPreloader.show({ icon:'pulse', text:'Aguardando aprovacao...', color:'#9A5A00', textcolor:'#FDFAF1', backgroundcolor:'rgba(60,30,10,0.78)' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+      </granado-button>
+
+      <granado-button label="Fechar agora" variant="ghost" icon="x"
+        onclickevent="GranadoPreloader.hide()">
+      </granado-button>
+    </div>
+  </section>
 </body>
 
 </html>

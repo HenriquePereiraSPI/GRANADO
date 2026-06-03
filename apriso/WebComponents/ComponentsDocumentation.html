@@ -34,6 +34,7 @@
   <script src="./granado-progress-bar.js"></script>
   <script src="./granado-stepper.js"></script>
   <script src="./granado-submenu-pesagem.js"></script>
+  <script src="./granado-preloader.js"></script>
 
   <style>
     html,
@@ -263,6 +264,7 @@
       <a class="gd-link" href="#granado-progress-bar">granado-progress-bar</a>
       <a class="gd-link" href="#granado-stepper">granado-stepper</a>
       <a class="gd-link" href="#granado-submenu-pesagem">granado-submenu-pesagem</a>
+      <a class="gd-link" href="#granado-preloader">granado-preloader</a>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -7529,6 +7531,519 @@ sm.addEventListener(<span class="tk-str">'backclick'</span>, () =&gt; history.ba
           <li><strong>Card de contexto:</strong> o fundo é uma versão clarinha
             (88% misturado com branco) da <code>contextcolor</code>, então
             basta trocar uma cor pra adaptar a paleta inteira do chip.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-preloader
+           ============================================================ -->
+      <section id="granado-preloader" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-preloader&gt;</code></h1>
+        <p class="gd-lead">
+          Overlay de loading <strong>fullscreen</strong> que bloqueia toda a interação
+          da tela enquanto exibe um <strong>ícone animado</strong> (escolhido via
+          <code>icon</code>) e um texto dinâmico (default: <code>"Aguarde..."</code>).
+          O padrão é a marca Granado (G dourado com pulse), mas o componente também
+          oferece 5 variantes genéricas — <code>spinner</code>, <code>dots</code>,
+          <code>bars</code>, <code>pulse</code>, <code>ring</code> — pensadas para
+          reuso em outros projetos. <strong>Não é colocado manualmente no
+          HTML</strong> — usa-se via API estática <code>GranadoPreloader.show(...)</code>,
+          que cria a instância (singleton) no <code>document.body</code>, trava o scroll
+          enquanto está visível e restaura o estado original ao fechar. Todas as
+          animações são feitas via <strong>Web Animations API</strong> (sem injetar
+          <code>@keyframes</code>).
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-preloader.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <!-- ===== Uso recomendado ===== -->
+        <h2 class="gd-h2">Uso recomendado · API estática</h2>
+        <p class="gd-lead">
+          A API estática é a forma idiomática. <code>GranadoPreloader.show()</code>
+          usa o texto default; <code>GranadoPreloader.show('texto')</code> sobrescreve
+          o texto na hora; <code>GranadoPreloader.show({...})</code> aceita opções
+          completas (texto, cores, blur, z-index).
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <granado-button label="Mostrar (default)" icon="refresh"
+            onclickevent="GranadoPreloader.show(); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+          </granado-button>
+
+          <granado-button label="Com texto" variant="secondary"
+            onclickevent="GranadoPreloader.show('Salvando pesagem...'); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+          </granado-button>
+
+          <granado-button label="Fechar agora" variant="ghost" icon="x"
+            onclickevent="GranadoPreloader.hide()">
+          </granado-button>
+        </div>
+        <pre class="gd-code"><span class="tk-comment">// Default ("Aguarde...")</span>
+GranadoPreloader.show();
+
+<span class="tk-comment">// Texto custom</span>
+GranadoPreloader.show(<span class="tk-str">'Salvando pesagem...'</span>);
+
+<span class="tk-comment">// Fechar</span>
+GranadoPreloader.hide();</pre>
+
+        <!-- ===== Texto dinâmico ===== -->
+        <h2 class="gd-h2">Texto dinâmico</h2>
+        <p class="gd-lead">
+          <code>GranadoPreloader.setText(texto)</code> atualiza apenas o texto, sem
+          fechar e reabrir o overlay (a animação do G continua sem reset). Útil para
+          loadings de múltiplas etapas (conectando → validando → concluindo).
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <granado-button label="Loading em 3 etapas" variant="secondary" color="#2C5A8C"
+            onclickevent="GranadoPreloader.show('Conectando...'); setTimeout(function(){ GranadoPreloader.setText('Validando dados...'); }, 900); setTimeout(function(){ GranadoPreloader.setText('Concluindo...'); }, 1800); setTimeout(function(){ GranadoPreloader.hide(); }, 2800)">
+          </granado-button>
+        </div>
+        <pre class="gd-code">GranadoPreloader.show(<span class="tk-str">'Conectando...'</span>);
+setTimeout(<span class="tk-key">() =&gt;</span> GranadoPreloader.setText(<span class="tk-str">'Validando dados...'</span>), 900);
+setTimeout(<span class="tk-key">() =&gt;</span> GranadoPreloader.setText(<span class="tk-str">'Concluindo...'</span>),    1800);
+setTimeout(<span class="tk-key">() =&gt;</span> GranadoPreloader.hide(),                            2800);</pre>
+
+        <!-- ===== Variants de ícone ===== -->
+        <h2 class="gd-h2">Variants de ícone</h2>
+        <p class="gd-lead">
+          O atributo <code>icon</code> escolhe o estilo do ícone animado. O padrão é
+          <code>"brand"</code> (marca Granado). Os outros 5 são genéricos e usam o
+          atributo <code>color</code> como cor do traço/preenchimento, então funcionam
+          em qualquer projeto independente da paleta.
+        </p>
+
+        <table class="gd-api" style="margin-bottom:14px">
+          <thead>
+            <tr>
+              <th style="width:120px">Variant</th>
+              <th style="width:200px">Visual</th>
+              <th>Quando usar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">brand</td>
+              <td class="col-type">Quadrado dourado "G" com<br>respiração + halo expandindo</td>
+              <td class="col-desc">
+                <strong>Default.</strong> Identidade visual Granado. Use em telas do
+                Apriso onde o branding é importante (login, splash, ações críticas).
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">spinner</td>
+              <td class="col-type">Arco rotativo (clássico)</td>
+              <td class="col-desc">
+                Universal e reconhecível. Ideal para loads curtos (&lt; 3 s) — barras
+                de progresso indeterminado, requisições rápidas.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">dots</td>
+              <td class="col-type">Três bolinhas pulando<br>em sequência</td>
+              <td class="col-desc">
+                "Pensando..." — bom para esperas de IA, processamento em background,
+                ou onde o usuário precisa sentir que algo está acontecendo
+                continuamente.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">bars</td>
+              <td class="col-type">Quatro barras tipo<br>equalizer (scaleY)</td>
+              <td class="col-desc">
+                Sugere fluxo de dados / sincronização. Ideal para upload/download,
+                streaming, integração entre sistemas.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">pulse</td>
+              <td class="col-type">Círculo com ondas<br>expandindo (ripple)</td>
+              <td class="col-desc">
+                Visual "vivo" e orgânico. Use em conexões em tempo real
+                (websocket, polling, broadcast).
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">ring</td>
+              <td class="col-type">Dois anéis concêntricos<br>girando em sentidos opostos</td>
+              <td class="col-desc">
+                Visual "tech" / engenharia. Combina com dashboards técnicos, integração
+                com equipamentos (balança, scanner, MES).
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <granado-button label="brand" variant="secondary"
+            onclickevent="GranadoPreloader.show({ icon:'brand', text:'Aguarde...' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+          </granado-button>
+          <granado-button label="spinner" variant="secondary" color="#2C5A8C"
+            onclickevent="GranadoPreloader.show({ icon:'spinner', text:'Carregando...', color:'#2C5A8C' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+          </granado-button>
+          <granado-button label="dots" variant="secondary" color="#1C5C31"
+            onclickevent="GranadoPreloader.show({ icon:'dots', text:'Processando...', color:'#1C5C31' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+          </granado-button>
+          <granado-button label="bars" variant="secondary" color="#9A5A00"
+            onclickevent="GranadoPreloader.show({ icon:'bars', text:'Sincronizando...', color:'#9A5A00' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+          </granado-button>
+          <granado-button label="pulse" variant="secondary" color="#C0392B"
+            onclickevent="GranadoPreloader.show({ icon:'pulse', text:'Conectando...', color:'#C0392B' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+          </granado-button>
+          <granado-button label="ring" variant="secondary"
+            onclickevent="GranadoPreloader.show({ icon:'ring', text:'Aguarde...', color:'#C8A85A' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+          </granado-button>
+        </div>
+        <pre class="gd-code"><span class="tk-comment">// Default Granado</span>
+GranadoPreloader.show();
+
+<span class="tk-comment">// Genéricos (use em qualquer projeto)</span>
+GranadoPreloader.show({ icon: <span class="tk-str">'spinner'</span>, text: <span class="tk-str">'Carregando...'</span>, color: <span class="tk-str">'#2C5A8C'</span> });
+GranadoPreloader.show({ icon: <span class="tk-str">'dots'</span>,    text: <span class="tk-str">'Processando...'</span>, color: <span class="tk-str">'#1C5C31'</span> });
+GranadoPreloader.show({ icon: <span class="tk-str">'bars'</span>,    text: <span class="tk-str">'Sincronizando...'</span>, color: <span class="tk-str">'#9A5A00'</span> });
+GranadoPreloader.show({ icon: <span class="tk-str">'pulse'</span>,   text: <span class="tk-str">'Conectando...'</span>, color: <span class="tk-str">'#C0392B'</span> });
+GranadoPreloader.show({ icon: <span class="tk-str">'ring'</span>,    text: <span class="tk-str">'Aguarde...'</span>,    color: <span class="tk-str">'#C8A85A'</span> });</pre>
+
+        <h3 class="gd-h3">Troca de ícone em runtime</h3>
+        <p class="gd-lead">
+          <code>GranadoPreloader.setIcon(name)</code> troca o ícone sem fechar o
+          overlay. Útil quando o significado da espera muda no meio (ex.: começou
+          como "conectando" → spinner, virou "sincronizando" → bars).
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <granado-button label="Troca de ícone em 3 etapas" variant="ghost"
+            onclickevent="GranadoPreloader.show({ icon:'dots', text:'Etapa 1...' }); setTimeout(function(){ GranadoPreloader.setIcon('bars'); GranadoPreloader.setText('Etapa 2...'); }, 1000); setTimeout(function(){ GranadoPreloader.setIcon('ring'); GranadoPreloader.setText('Finalizando...'); }, 2000); setTimeout(function(){ GranadoPreloader.hide(); }, 3000)">
+          </granado-button>
+        </div>
+        <pre class="gd-code">GranadoPreloader.show({ icon: <span class="tk-str">'dots'</span>, text: <span class="tk-str">'Etapa 1...'</span> });
+setTimeout(<span class="tk-key">() =&gt;</span> { GranadoPreloader.setIcon(<span class="tk-str">'bars'</span>); GranadoPreloader.setText(<span class="tk-str">'Etapa 2...'</span>); }, 1000);
+setTimeout(<span class="tk-key">() =&gt;</span> { GranadoPreloader.setIcon(<span class="tk-str">'ring'</span>); GranadoPreloader.setText(<span class="tk-str">'Finalizando...'</span>); }, 2000);
+setTimeout(<span class="tk-key">() =&gt;</span> GranadoPreloader.hide(), 3000);</pre>
+
+        <!-- ===== Cores custom ===== -->
+        <h2 class="gd-h2">Cores e overlay</h2>
+        <p class="gd-lead">
+          As cores padrão seguem a marca (G dourado <code>#C8A85A</code>, texto bege
+          claro, fundo verde escuro semitransparente com <code>backdrop-filter: blur</code>).
+          Você pode sobrescrever via opções: <code>color</code> (cor da marca),
+          <code>textcolor</code> (cor do texto), <code>backgroundcolor</code> (cor do
+          overlay) e <code>blur</code> (<code>"false"</code> desativa o blur).
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <granado-button label="Paleta âmbar" variant="secondary" color="#9A5A00"
+            onclickevent="GranadoPreloader.show({ text:'Aguardando aprovação...', color:'#9A5A00', textcolor:'#FDFAF1', backgroundcolor:'rgba(60,30,10,0.78)' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+          </granado-button>
+
+          <granado-button label="Sem blur" variant="ghost"
+            onclickevent="GranadoPreloader.show({ text:'Sem backdrop blur', blur:'false' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+          </granado-button>
+        </div>
+        <pre class="gd-code">GranadoPreloader.show({
+    text: <span class="tk-str">'Aguardando aprovação...'</span>,
+    color: <span class="tk-str">'#9A5A00'</span>,
+    textcolor: <span class="tk-str">'#FDFAF1'</span>,
+    backgroundcolor: <span class="tk-str">'rgba(60,30,10,0.78)'</span>,
+    blur: <span class="tk-str">'false'</span>
+});</pre>
+
+        <!-- ===== Casamento com requisições ===== -->
+        <h2 class="gd-h2">Casamento com requisições</h2>
+        <p class="gd-lead">
+          O caso típico é envolver uma chamada assíncrona em
+          <code>try/finally</code> para garantir que o overlay sempre feche, mesmo em
+          caso de erro.
+        </p>
+        <pre class="gd-code"><span class="tk-key">async function</span> salvarPesagem(payload) {
+    GranadoPreloader.show(<span class="tk-str">'Salvando pesagem...'</span>);
+    <span class="tk-key">try</span> {
+        <span class="tk-key">const</span> resp = <span class="tk-key">await</span> fetch(<span class="tk-str">'/api/pesagem'</span>, { method: <span class="tk-str">'POST'</span>, body: JSON.stringify(payload) });
+        <span class="tk-key">if</span> (!resp.ok) <span class="tk-key">throw new</span> Error(<span class="tk-str">'Falha'</span>);
+        GranadoToast.success(<span class="tk-str">'Pesagem salva'</span>);
+    } <span class="tk-key">catch</span> (e) {
+        GranadoToast.error(<span class="tk-str">'Falha ao salvar'</span>, { heading: <span class="tk-str">'Erro'</span> });
+    } <span class="tk-key">finally</span> {
+        GranadoPreloader.hide();
+    }
+}</pre>
+
+        <!-- ===== Uso no Apriso (passo a passo) ===== -->
+        <h2 class="gd-h2">Uso no Apriso (passo a passo)</h2>
+        <p class="gd-lead">
+          Nas telas do Apriso onde você for usar chamadas <code>async</code> de DFC, o
+          fluxo recomendado combina <strong>granado-preloader</strong> (bloqueia a tela
+          + feedback visual) com <strong>granado-base-api</strong> (encapsula o
+          <code>try/catch</code> e padroniza o objeto de resposta). Em 3 passos:
+        </p>
+
+        <h3 class="gd-h3">1° — Importar os dois scripts</h3>
+        <p class="gd-lead">
+          No <code>&lt;head&gt;</code> da tela (ou no display global do Apriso),
+          importe <strong>granado-preloader.js</strong> e
+          <strong>granado-base-api.js</strong>:
+        </p>
+        <pre class="gd-code"><span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-preloader.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-base-api.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h3 class="gd-h3">2° — Adicionar a DFC no menu "Advanced" do display</h3>
+        <p class="gd-lead">
+          No FlexNet Studio, abra o display em que a chamada vai rodar e, no
+          menu <strong>Advanced</strong> &rarr; <strong>DFCs</strong>, adicione o DFC
+          que será chamado (ex.: <code>GRD_API_SyncJDEOrder</code>). Sem esse cadastro
+          o Apriso não expõe o DFC para o <code>context.callDFC(...)</code> da página,
+          e a chamada falha com erro de DFC não encontrado.
+        </p>
+
+        <h3 class="gd-h3">3° — Exemplo de uso</h3>
+        <p class="gd-lead">
+          A função <code>callDFCAsync(context, dfc, inputs, revisao?)</code> exposta
+          pelo <code>granado-base-api.js</code> <strong>já encapsula o
+          try/catch</strong> — você não precisa mais tratar exceções manualmente.
+          Basta mostrar o preloader antes da chamada, validar a resposta padronizada
+          e esconder o preloader no fim:
+        </p>
+        <pre class="gd-code"><span class="tk-key">async function</span> callMyDFCAsync() {
+    _context = window.AprisoContext;
+    GranadoPreloader.show(<span class="tk-str">'Sincronizando Ordem, aguarde...'</span>);
+
+    <span class="tk-key">await new</span> Promise(e =&gt; setTimeout(() =&gt; e(), 1000)); <span class="tk-comment">// APENAS DEMONSTRACAO</span>
+
+    <span class="tk-key">var</span> response = <span class="tk-key">await</span> callDFCAsync(
+        _context,
+        <span class="tk-str">'GRD_API_SyncJDEOrder'</span>,
+        { orderNumber: <span class="tk-str">'1000000002'</span> }
+    );
+
+    <span class="tk-key">if</span> (response.responseResultData == <span class="tk-key">null</span> || !response.responseResultData.success) {
+        console.log(<span class="tk-str">"Erro ao executar DFC xx"</span>);
+        GranadoPreloader.hide();
+        <span class="tk-key">return</span>;
+    }
+
+    console.log(response);
+    GranadoPreloader.hide();
+}</pre>
+
+        <h3 class="gd-h3">Formato da resposta</h3>
+        <p class="gd-lead">
+          <code>callDFCAsync</code> retorna <strong>sempre</strong> um objeto com a
+          mesma forma — tanto no sucesso quanto quando a DFC dispara erro. Não há
+          exceção propagada para o chamador; basta inspecionar
+          <code>responseHTTPStatus</code> e <code>responseResultData</code>:
+        </p>
+        <pre class="gd-code">{
+    responseHTTPStatus: 200,           <span class="tk-comment">// STATUS HTTP</span>
+    responseHTTPMessage: <span class="tk-str">'OK'</span>,          <span class="tk-comment">// MESSAGE HTTP</span>
+    responseResultData: result         <span class="tk-comment">// OBJETO DE RETORNO DA DFC</span>
+}</pre>
+
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:200px">Propriedade</th>
+              <th style="width:160px">Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">responseHTTPStatus</td>
+              <td class="col-type">number</td>
+              <td class="col-desc">
+                Status HTTP. <code>200</code> no sucesso; em erro, usa
+                <code>ex.status</code>/<code>ex.httpStatus</code> da exceção do
+                Apriso ou cai para <code>500</code>.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">responseHTTPMessage</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">
+                Mensagem HTTP. <code>"OK"</code> no sucesso; em erro, vem de
+                <code>ex.message</code> da exceção (Apriso Literal Errors trazem
+                informação adicional em <code>ex.literalId</code>).
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">responseResultData</td>
+              <td class="col-type">object | null</td>
+              <td class="col-desc">
+                Objeto retornado pela DFC (External Outputs) no sucesso;
+                <code>null</code> quando a chamada cai no catch. <strong>Sempre
+                cheque por <code>null</code> antes de acessar
+                <code>response.responseResultData.xxx</code></strong>.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="gd-lead" style="margin-top:14px">
+          <strong>DFC em múltiplas etapas:</strong> entre <code>await</code>s
+          sequenciais, use <code>GranadoPreloader.setText()</code> para informar ao
+          operador em qual passo está (validar → gravar → confirmar):
+        </p>
+        <pre class="gd-code">GranadoPreloader.show(<span class="tk-str">'Validando dados...'</span>);
+<span class="tk-key">var</span> r1 = <span class="tk-key">await</span> callDFCAsync(_context, <span class="tk-str">'GRD_API_Validar'</span>,    inputs);
+<span class="tk-key">if</span> (r1.responseResultData == <span class="tk-key">null</span>) { GranadoPreloader.hide(); <span class="tk-key">return</span>; }
+
+GranadoPreloader.setText(<span class="tk-str">'Gravando pesagem...'</span>);
+<span class="tk-key">var</span> r2 = <span class="tk-key">await</span> callDFCAsync(_context, <span class="tk-str">'GRD_API_Gravar'</span>,     inputs);
+<span class="tk-key">if</span> (r2.responseResultData == <span class="tk-key">null</span>) { GranadoPreloader.hide(); <span class="tk-key">return</span>; }
+
+GranadoPreloader.setText(<span class="tk-str">'Confirmando...'</span>);
+<span class="tk-key">var</span> r3 = <span class="tk-key">await</span> callDFCAsync(_context, <span class="tk-str">'GRD_API_Confirmar'</span>, inputs);
+
+GranadoPreloader.hide();</pre>
+
+        <!-- ===== API ===== -->
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Métodos estáticos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:220px">Método</th>
+              <th style="width:230px">Argumentos</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">GranadoPreloader.show</td>
+              <td class="col-type">() | string | object</td>
+              <td class="col-desc">
+                Cria (se necessário) e exibe o singleton. Sem argumento, usa o texto
+                default. String → sobrescreve apenas o texto. Objeto aceita
+                <code>text</code>, <code>color</code>, <code>textcolor</code>,
+                <code>backgroundcolor</code>, <code>blur</code>, <code>zindex</code>.
+                Retorna o elemento <code>&lt;granado-preloader&gt;</code>.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">GranadoPreloader.hide</td>
+              <td class="col-type">()</td>
+              <td class="col-desc">
+                Esconde o overlay e restaura o <code>overflow</code> original do
+                <code>&lt;body&gt;</code>. A animação do G é parada.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">GranadoPreloader.setText</td>
+              <td class="col-type">(text)</td>
+              <td class="col-desc">
+                Atualiza o texto sem recriar o overlay (a animação não reseta). Use
+                para loadings de múltiplas etapas.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">GranadoPreloader.setIcon</td>
+              <td class="col-type">(name)</td>
+              <td class="col-desc">
+                Troca o ícone animado em runtime. Aceita
+                <code>"brand" | "spinner" | "dots" | "bars" | "pulse" | "ring"</code>.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">GranadoPreloader.isVisible</td>
+              <td class="col-type">()</td>
+              <td class="col-desc">
+                Retorna <code>true</code> se o overlay está visível.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Atributos (uso direto, opcional)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:160px">Atributo</th>
+              <th style="width:170px">Tipo</th>
+              <th style="width:170px">Default</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">visible</td>
+              <td class="col-type">"true" | "false"</td>
+              <td class="col-default">"false"</td>
+              <td class="col-desc">Controla a exibição do overlay.</td>
+            </tr>
+            <tr>
+              <td class="col-name">text</td>
+              <td class="col-type">string</td>
+              <td class="col-default">"Aguarde..."</td>
+              <td class="col-desc">Texto exibido abaixo do ícone.</td>
+            </tr>
+            <tr>
+              <td class="col-name">icon</td>
+              <td class="col-type">"brand" | "spinner"<br>| "dots" | "bars"<br>| "pulse" | "ring"</td>
+              <td class="col-default">"brand"</td>
+              <td class="col-desc">
+                Estilo do ícone animado. <code>"brand"</code> é a marca Granado; os
+                outros 5 são genéricos e podem ser reutilizados em outros projetos.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#C8A85A"</td>
+              <td class="col-desc">
+                Cor principal do ícone. No <code>"brand"</code>, é o fundo do quadrado
+                (G); nos outros variants, é a cor do traço/preenchimento.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">textcolor</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#FDFAF1"</td>
+              <td class="col-desc">Cor do texto abaixo da marca.</td>
+            </tr>
+            <tr>
+              <td class="col-name">backgroundcolor</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"rgba(15, 51, 25, 0.72)"</td>
+              <td class="col-desc">Cor do overlay fullscreen (atrás da marca).</td>
+            </tr>
+            <tr>
+              <td class="col-name">blur</td>
+              <td class="col-type">"true" | "false"</td>
+              <td class="col-default">"true"</td>
+              <td class="col-desc">
+                Aplica <code>backdrop-filter: blur(2px)</code> no overlay. Desligue
+                em telas antigas se necessário.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">zindex</td>
+              <td class="col-type">number</td>
+              <td class="col-default">99999</td>
+              <td class="col-desc">
+                Z-index do overlay. Garanta valor maior que outros modais/popups da
+                tela.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Singleton:</strong> a primeira chamada a
+            <code>show()</code> cria a instância no <code>document.body</code>;
+            chamadas seguintes reaproveitam o mesmo elemento.</li>
+          <li><strong>Scroll do body:</strong> enquanto visível, o componente seta
+            <code>document.body.style.overflow = 'hidden'</code> e restaura o valor
+            original no <code>hide()</code>.</li>
+          <li><strong>Animação:</strong> usa <code>element.animate()</code> (Web
+            Animations API) para o pulse — evita injetar <code>@keyframes</code> no
+            documento, mantendo o componente self-contained.</li>
+          <li><strong>HTML estático:</strong> embora seja possível colocar
+            <code>&lt;granado-preloader&gt;</code> no HTML e controlar via
+            <code>visible</code>, a API estática é quase sempre a forma correta.</li>
+          <li><strong>Casamento com requisições:</strong> sempre prefira
+            <code>try/finally</code> com <code>hide()</code> no <code>finally</code>
+            para garantir que o overlay não fique travado em caso de erro.</li>
         </ul>
       </section>
 
