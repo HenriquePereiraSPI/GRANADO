@@ -35,6 +35,8 @@
   <script src="./granado-stepper.js"></script>
   <script src="./granado-submenu-pesagem.js"></script>
   <script src="./granado-preloader.js"></script>
+  <script src="./granado-page-title.js"></script>
+  <script src="./granado-information.js"></script>
 
   <style>
     html,
@@ -265,6 +267,8 @@
       <a class="gd-link" href="#granado-stepper">granado-stepper</a>
       <a class="gd-link" href="#granado-submenu-pesagem">granado-submenu-pesagem</a>
       <a class="gd-link" href="#granado-preloader">granado-preloader</a>
+      <a class="gd-link" href="#granado-page-title">granado-page-title</a>
+      <a class="gd-link" href="#granado-information">granado-information</a>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -8044,6 +8048,416 @@ GranadoPreloader.hide();</pre>
           <li><strong>Casamento com requisições:</strong> sempre prefira
             <code>try/finally</code> com <code>hide()</code> no <code>finally</code>
             para garantir que o overlay não fique travado em caso de erro.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-page-title
+           ============================================================ -->
+      <section id="granado-page-title" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-page-title&gt;</code></h1>
+        <p class="gd-lead">
+          Cabeçalho de página no padrão visual das telas do sistema: uma linha pequena
+          dourada em maiúsculas (<em>eyebrow</em>) acima de um título grande verde, com
+          borda inferior verde e um detalhe dourado curto no canto inferior esquerdo.
+          Reproduz o <code>.page-header</code> existente, mas encapsulado num componente
+          — basta passar <code>title</code> e <code>subtitle</code>.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-page-title.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <!-- ===== Uso básico ===== -->
+        <h2 class="gd-h2">Uso básico</h2>
+        <p class="gd-lead">
+          O mínimo é <code>subtitle</code> (a linha pequena dourada acima) +
+          <code>title</code> (o título grande). O componente já aplica a borda inferior
+          verde e o detalhe dourado automaticamente.
+        </p>
+        <div class="gd-demo">
+          <granado-page-title
+            subtitle="Pesagem · MF5"
+            title="Seleção de Ordem de Pesagem">
+          </granado-page-title>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-page-title</span>
+    <span class="tk-attr">subtitle</span>=<span class="tk-str">"Pesagem · MF5"</span>
+    <span class="tk-attr">title</span>=<span class="tk-str">"Seleção de Ordem de Pesagem"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-page-title&gt;</span></pre>
+
+        <!-- ===== Meta à direita ===== -->
+        <h2 class="gd-h2">Com meta à direita (<code>custom-text</code>)</h2>
+        <p class="gd-lead">
+          <code>custom-text</code> renderiza um texto alinhado à direita do cabeçalho,
+          no mesmo formato do <code>.screen-meta</code> das telas. <strong>Aceita HTML</strong>
+          — use <code>&lt;br&gt;</code> para múltiplas linhas e <code>&lt;span style="color:…"&gt;</code>
+          para destacar status.
+        </p>
+        <div class="gd-demo">
+          <granado-page-title
+            subtitle="Fabricação · CQ · MF5"
+            main-title="Controle de Amostras — Laboratório"
+            custom-text="OP-2026-0416 · Lote G2026-091<br><span style='color:#1C5C31'>Granel aprovado pelo CQ</span>">
+          </granado-page-title>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-page-title</span>
+    <span class="tk-attr">subtitle</span>=<span class="tk-str">"Fabricação · CQ · MF5"</span>
+    <span class="tk-attr">main-title</span>=<span class="tk-str">"Controle de Amostras — Laboratório"</span>
+    <span class="tk-attr">custom-text</span>=<span class="tk-str">"OP-2026-0416 · Lote G2026-091&lt;br&gt;&lt;span style='color:#1C5C31'&gt;Granel aprovado&lt;/span&gt;"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-page-title&gt;</span></pre>
+
+        <!-- ===== Só o título ===== -->
+        <h2 class="gd-h2">Só o título</h2>
+        <p class="gd-lead">
+          <code>subtitle</code> e <code>custom-text</code> são opcionais — omita-os e
+          o cabeçalho exibe apenas o título grande (sem o eyebrow nem o meta).
+        </p>
+        <div class="gd-demo">
+          <granado-page-title main-title="Cockpit de Pesagem"></granado-page-title>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-page-title</span> <span class="tk-attr">main-title</span>=<span class="tk-str">"Cockpit de Pesagem"</span><span class="tk-tag">&gt;&lt;/granado-page-title&gt;</span></pre>
+
+        <!-- ===== Via JS ===== -->
+        <h2 class="gd-h2">Via JavaScript</h2>
+        <p class="gd-lead">
+          O conteúdo também pode ser definido por propriedades JS — útil quando o
+          cabeçalho é preenchido dinamicamente (ex.: dados do Apriso). Funciona mesmo se
+          a propriedade for setada antes do upgrade do elemento (<em>lazy-props</em>).
+          Coloque o elemento no HTML com um <code>id</code>, pegue-o com
+          <code>document.getElementById()</code> e atribua as propriedades:
+        </p>
+        <div class="gd-demo">
+          <granado-page-title id="ph-recon-demo"></granado-page-title>
+        </div>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- 1) Declare o elemento (vazio) no HTML, com um id --&gt;</span>
+<span class="tk-tag">&lt;granado-page-title</span> <span class="tk-attr">id</span>=<span class="tk-str">"ph-recon"</span><span class="tk-tag">&gt;&lt;/granado-page-title&gt;</span>
+
+<span class="tk-comment">&lt;!-- 2) Preencha via JS --&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  var el = <span class="tk-attr">document</span>.getElementById(<span class="tk-str">"ph-recon"</span>);
+  el.subtitle   = <span class="tk-str">"Qualidade · MF5"</span>;
+  el.mainTitle  = <span class="tk-str">"Fila de Reconciliação"</span>;
+  el.customText = <span class="tk-str">"Turno A&lt;br&gt;3 lotes pendentes"</span>;
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        <script>
+          (function () {
+            var el = document.getElementById('ph-recon-demo');
+            if (!el) return;
+            el.subtitle = 'Qualidade · MF5';
+            el.mainTitle = 'Fila de Reconciliação';
+            el.customText = 'Turno A<br>3 lotes pendentes';
+          })();
+        </script>
+
+        <!-- ===== API ===== -->
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:140px">Nome</th>
+              <th style="width:200px">Tipo</th>
+              <th style="width:140px">Default</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">title</td>
+              <td class="col-type">string</td>
+              <td class="col-default">""</td>
+              <td class="col-desc">
+                Título principal (texto grande verde). <strong>Atenção:</strong>
+                <code>title</code> é um atributo nativo do HTML, então o navegador
+                também exibe um <em>tooltip</em> ao passar o mouse. Para evitar isso,
+                use <code>main-title</code>.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">main-title</td>
+              <td class="col-type">string</td>
+              <td class="col-default">""</td>
+              <td class="col-desc">
+                Alias de <code>title</code> sem o efeito de tooltip. Tem
+                <strong>prioridade</strong> sobre <code>title</code> quando ambos estão
+                presentes.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">subtitle</td>
+              <td class="col-type">string</td>
+              <td class="col-default">""</td>
+              <td class="col-desc">
+                Linha pequena dourada em maiúsculas (<em>eyebrow</em>), exibida
+                <strong>acima</strong> do título. Ex.: <code>"Pesagem · MF5"</code>.
+                Omitida quando vazia.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">custom-text</td>
+              <td class="col-type">string (HTML)</td>
+              <td class="col-default">""</td>
+              <td class="col-desc">
+                Texto/meta alinhado à direita do cabeçalho, no formato do
+                <code>.screen-meta</code>. <strong>Renderizado como HTML</strong> (aceita
+                <code>&lt;br&gt;</code>, <code>&lt;span style&gt;</code> etc). Também aceito como
+                <code>customtext</code>. Omitido quando vazio.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Propriedades JS</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:140px">Nome</th>
+              <th style="width:200px">Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">subtitle</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">Lê/seta o atributo <code>subtitle</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">mainTitle</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">
+                Lê/seta o título principal (reflete em <code>main-title</code>; na
+                leitura, cai para <code>title</code> se <code>main-title</code> estiver
+                ausente).
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">customText</td>
+              <td class="col-type">string (HTML)</td>
+              <td class="col-desc">Lê/seta o atributo <code>custom-text</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Estilo fixo:</strong> cores, fonte e espaçamentos são
+            <em>hardcoded</em> para casar exatamente com o <code>.page-header</code> das
+            telas — título verde-escuro <code>#0F3319</code> em Poppins 26px, eyebrow
+            dourado <code>#9A7520</code>, borda verde <code>#1C5C31</code> e detalhe
+            <code>#C8A84B</code>.</li>
+          <li><strong>Detalhe dourado:</strong> o tracinho no canto inferior esquerdo é
+            um elemento real (não <code>::after</code>), já que os componentes não
+            injetam stylesheets.</li>
+          <li><strong><code>title</code> vs <code>main-title</code>:</strong> ambos
+            funcionam; prefira <code>main-title</code> para não disparar o tooltip
+            nativo do navegador sobre o cabeçalho inteiro.</li>
+          <li><strong>Escape:</strong> <code>title</code>/<code>subtitle</code> são
+            escapados (texto puro); apenas <code>custom-text</code> é renderizado como
+            HTML.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-information
+           ============================================================ -->
+      <section id="granado-information" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-information&gt;</code></h1>
+        <p class="gd-lead">
+          Caixa de aviso/informação no padrão visual das telas (o <code>.abox</code>):
+          ícone circular à esquerda + texto, com fundo, borda e cor conforme a variante.
+          Quatro variantes (<code>info</code>, <code>warn</code>, <code>ok</code>,
+          <code>err</code>). Use para instruções, alertas e observações no topo de
+          listas, cards e formulários.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-information.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <!-- ===== Uso básico ===== -->
+        <h2 class="gd-h2">Uso básico</h2>
+        <p class="gd-lead">
+          O mínimo é <code>text</code>. Sem <code>variant</code>, a caixa fica em
+          <code>info</code> (azul) com o ícone <code>ℹ</code>.
+        </p>
+        <div class="gd-demo">
+          <granado-information
+            text="Esta fila mostra ordens em diferentes estágios — desde pagamento de MPs até liberação para fabricação. Linhas vermelhas piscando indicam ordens aguardando liberação para fabricação.">
+          </granado-information>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-information</span>
+    <span class="tk-attr">text</span>=<span class="tk-str">"Esta fila mostra ordens em diferentes estágios…"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-information&gt;</span></pre>
+
+        <!-- ===== Variantes ===== -->
+        <h2 class="gd-h2">Variantes</h2>
+        <p class="gd-lead">
+          <strong>info</strong> (default): azul, informação neutra.
+          <strong>warn</strong>: âmbar, atenção.
+          <strong>ok</strong>: verde, sucesso/confirmação.
+          <strong>err</strong>: vermelho, erro/bloqueio. Cada variante define também o
+          ícone padrão (<code>ℹ</code> / <code>⚠</code> / <code>✓</code> / <code>✕</code>).
+        </p>
+        <div class="gd-demo" style="display:flex;flex-direction:column;gap:10px">
+          <granado-information variant="info"
+            text="Informação neutra — contexto sobre a tela ou a lista atual.">
+          </granado-information>
+          <granado-information variant="warn"
+            text="Conclua o checklist de limpeza <strong>antes</strong> de iniciar a pesagem desta OP.">
+          </granado-information>
+          <granado-information variant="ok"
+            text="Pesagem confirmada e etiqueta da MP impressa com sucesso.">
+          </granado-information>
+          <granado-information variant="err"
+            text="Pesagem bloqueada — o desvio excede a Variância Máxima cadastrada.">
+          </granado-information>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-information</span> <span class="tk-attr">variant</span>=<span class="tk-str">"warn"</span> <span class="tk-attr">text</span>=<span class="tk-str">"Conclua o checklist…"</span><span class="tk-tag">&gt;&lt;/granado-information&gt;</span>
+<span class="tk-tag">&lt;granado-information</span> <span class="tk-attr">variant</span>=<span class="tk-str">"ok"</span>   <span class="tk-attr">text</span>=<span class="tk-str">"Pesagem confirmada…"</span><span class="tk-tag">&gt;&lt;/granado-information&gt;</span>
+<span class="tk-tag">&lt;granado-information</span> <span class="tk-attr">variant</span>=<span class="tk-str">"err"</span>  <span class="tk-attr">text</span>=<span class="tk-str">"Pesagem bloqueada…"</span><span class="tk-tag">&gt;&lt;/granado-information&gt;</span></pre>
+
+        <!-- ===== Texto com HTML ===== -->
+        <h2 class="gd-h2">Texto com HTML</h2>
+        <p class="gd-lead">
+          <code>text</code> é renderizado como <strong>HTML</strong>, no mesmo formato dos
+          avisos das telas — use <code>&lt;strong&gt;</code> para destacar trechos,
+          <code>&lt;br&gt;</code> para quebras, etc.
+        </p>
+        <div class="gd-demo">
+          <granado-information variant="warn"
+            text="Estes checklists <strong>NÃO estão vinculados a uma Ordem específica</strong>.<br>São executados conforme a frequência (ex.: <strong>1× por turno</strong>).">
+          </granado-information>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-information</span> <span class="tk-attr">variant</span>=<span class="tk-str">"warn"</span>
+    <span class="tk-attr">text</span>=<span class="tk-str">"Estes checklists &lt;strong&gt;NÃO estão vinculados…&lt;/strong&gt;&lt;br&gt;São executados 1× por turno."</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-information&gt;</span></pre>
+
+        <!-- ===== Ícone ===== -->
+        <h2 class="gd-h2">Ícone customizado / sem ícone</h2>
+        <p class="gd-lead">
+          O atributo <code>icon</code> sobrescreve o glyph padrão (aceita texto, emoji ou
+          SVG bruto). Use <code>icon=""</code> para ocultar o ícone — o texto ocupa toda
+          a largura.
+        </p>
+        <div class="gd-demo" style="display:flex;flex-direction:column;gap:10px">
+          <granado-information variant="info" icon="📦"
+            text="3 gaiolas sugeridas pelo MES com base no histórico do SKU + lote.">
+          </granado-information>
+          <granado-information variant="warn" icon=""
+            text="Aviso sem ícone — o texto ocupa toda a largura da caixa.">
+          </granado-information>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-information</span> <span class="tk-attr">variant</span>=<span class="tk-str">"info"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"📦"</span> <span class="tk-attr">text</span>=<span class="tk-str">"3 gaiolas sugeridas…"</span><span class="tk-tag">&gt;&lt;/granado-information&gt;</span>
+<span class="tk-tag">&lt;granado-information</span> <span class="tk-attr">variant</span>=<span class="tk-str">"warn"</span> <span class="tk-attr">icon</span>=<span class="tk-str">""</span> <span class="tk-attr">text</span>=<span class="tk-str">"Aviso sem ícone…"</span><span class="tk-tag">&gt;&lt;/granado-information&gt;</span></pre>
+
+        <!-- ===== Via JS ===== -->
+        <h2 class="gd-h2">Via JavaScript</h2>
+        <p class="gd-lead">
+          Conteúdo e variante também podem ser definidos por propriedades JS — útil para
+          avisos dinâmicos. Funciona mesmo se setado antes do upgrade (<em>lazy-props</em>).
+        </p>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- 1) Declare o elemento no HTML, com um id --&gt;</span>
+<span class="tk-tag">&lt;granado-information</span> <span class="tk-attr">id</span>=<span class="tk-str">"aviso-op"</span><span class="tk-tag">&gt;&lt;/granado-information&gt;</span>
+
+<span class="tk-comment">&lt;!-- 2) Preencha via JS --&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  var el = <span class="tk-attr">document</span>.getElementById(<span class="tk-str">"aviso-op"</span>);
+  el.variant = <span class="tk-str">"err"</span>;
+  el.text    = <span class="tk-str">"Pesagem bloqueada — desvio acima da Variância Máxima."</span>;
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <!-- ===== API ===== -->
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:140px">Nome</th>
+              <th style="width:220px">Tipo</th>
+              <th style="width:120px">Default</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">text</td>
+              <td class="col-type">string (HTML)</td>
+              <td class="col-default">""</td>
+              <td class="col-desc">
+                Mensagem exibida. <strong>Renderizada como HTML</strong> (aceita
+                <code>&lt;strong&gt;</code>, <code>&lt;br&gt;</code> etc), no mesmo formato dos
+                avisos das telas.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">variant</td>
+              <td class="col-type">"info" | "warn" | "ok" | "err"</td>
+              <td class="col-default">"info"</td>
+              <td class="col-desc">
+                Define cores (fundo, borda, texto) e o ícone padrão.
+                <code>info</code> azul <code>#1A4A8C</code>, <code>warn</code> âmbar
+                <code>#9A5A00</code>, <code>ok</code> verde <code>#1C7A38</code>,
+                <code>err</code> vermelho <code>#8C1A1A</code>.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">icon</td>
+              <td class="col-type">string (texto/emoji/SVG)</td>
+              <td class="col-default">glyph da variante</td>
+              <td class="col-desc">
+                Sobrescreve o ícone (exibido num círculo com contorno na cor da
+                variante). Default por variante: <code>ℹ</code> / <code>⚠</code> /
+                <code>✓</code> / <code>✕</code>. Use <code>icon=""</code> para ocultar.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Propriedades JS</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:140px">Nome</th>
+              <th style="width:220px">Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">text</td>
+              <td class="col-type">string (HTML)</td>
+              <td class="col-desc">Lê/seta o atributo <code>text</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">variant</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">Lê/seta o atributo <code>variant</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">icon</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">Lê/seta o atributo <code>icon</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Estilo fixo:</strong> cores e espaçamentos são <em>hardcoded</em>
+            para casar com o <code>.abox</code> das telas (border-radius 8px, padding
+            11×15, fonte 12px).</li>
+          <li><strong>Ícone circular:</strong> o glyph fica num círculo de 20px com
+            apenas o contorno na cor da variante, centralizado para alinhar com a
+            primeira linha do texto.</li>
+          <li><strong>HTML no texto:</strong> <code>text</code> não é escapado — é o que
+            permite reproduzir os avisos atuais com trechos em negrito. Não passe
+            conteúdo não confiável.</li>
+          <li><strong>Multilinha:</strong> em textos longos o ícone permanece alinhado ao
+            topo (o container usa <code>align-items:flex-start</code>).</li>
         </ul>
       </section>
 

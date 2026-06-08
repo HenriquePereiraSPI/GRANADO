@@ -35,6 +35,8 @@
   <script src="./granado-stepper.js"></script>
   <script src="./granado-submenu-pesagem.js"></script>
   <script src="./granado-preloader.js"></script>
+  <script src="./granado-page-title.js"></script>
+  <script src="./granado-information.js"></script>
 </head>
 
 <body style="margin:0;padding:24px;background:#F4EED9;font-family:'Lato','DejaVu Sans',Arial,sans-serif;color:#103E20">
@@ -1135,6 +1137,85 @@
       <granado-button label="Fechar agora" variant="ghost" icon="x"
         onclickevent="GranadoPreloader.hide()">
       </granado-button>
+    </div>
+  </section>
+
+  <!-- ========== Linha 24 — granado-page-title ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-page-title&gt;
+    </h2>
+    <div style="display:flex;flex-direction:column;gap:22px">
+
+      <!-- Padrao: subtitle (eyebrow) + title -->
+      <granado-page-title
+        subtitle="Pesagem · MF5"
+        title="Selecao de Ordem de Pesagem">
+      </granado-page-title>
+
+      <!-- Com custom-text (meta a direita, aceita HTML) -->
+      <granado-page-title
+        subtitle="Fabricacao · CQ · MF5"
+        main-title="Controle de Amostras — Laboratorio"
+        custom-text="OP-2026-0416 · Lote G2026-091<br><span style='color:#1C5C31'>Granel aprovado pelo CQ</span>">
+      </granado-page-title>
+
+      <!-- So o titulo (sem eyebrow nem meta) -->
+      <granado-page-title
+        main-title="Cockpit de Pesagem">
+      </granado-page-title>
+
+      <!-- Setado via JS (lazy-props / propriedades) -->
+      <granado-page-title id="pt-demo"></granado-page-title>
+      <script>
+        (function () {
+          var el = document.getElementById('pt-demo');
+          el.subtitle = 'Qualidade · MF5';
+          el.mainTitle = 'Fila de Reconciliacao';
+          el.customText = 'Turno A<br><span style="color:#9A5A00">3 lotes pendentes</span>';
+        })();
+      </script>
+
+    </div>
+  </section>
+
+  <!-- ========== Linha 25 — granado-information ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-information&gt;
+    </h2>
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <!-- Padrao (info) — caso do exemplo da tela -->
+      <granado-information
+        text="Esta fila mostra ordens em diferentes estagios — desde pagamento de MPs ate liberacao para fabricacao. Linhas vermelhas piscando indicam ordens aguardando liberacao para fabricacao.">
+      </granado-information>
+
+      <!-- Variantes -->
+      <granado-information variant="warn"
+        text="Conclua o checklist de limpeza <strong>antes</strong> de iniciar a pesagem desta OP.">
+      </granado-information>
+
+      <granado-information variant="ok"
+        text="Pesagem confirmada e etiqueta da MP impressa com sucesso.">
+      </granado-information>
+
+      <granado-information variant="err"
+        text="Pesagem bloqueada — o desvio excede a Variancia Maxima cadastrada.">
+      </granado-information>
+
+      <!-- Icone customizado (emoji) -->
+      <granado-information variant="info" icon="📦"
+        text="3 gaiolas sugeridas pelo MES com base no historico do SKU + lote.">
+      </granado-information>
+
+      <!-- Sem icone -->
+      <granado-information variant="warn" icon=""
+        text="Aviso sem icone — texto ocupa toda a largura da caixa.">
+      </granado-information>
+
     </div>
   </section>
 </body>
