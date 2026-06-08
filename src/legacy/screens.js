@@ -1625,25 +1625,9 @@ export const SCREENS = {
   "pes-cockpit": `      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · Box 3 · MF5</div><div class="ph-title">Cockpit de Pesagem</div></div>
         <div class="ph-actions" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <button
-            class="btn btn-sm"
-            style="background:var(--per-p);color:var(--per);border:1.5px solid var(--per-b);font-weight:700"
-            onclick="pesCockpitCancelar()"
-            title="Cancelar esta Ordem"
-          >⛔ Cancelar Ordem</button>
           <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2);margin-left:8px">OP-2026-0416<br>Loção Hidratante Rosa 200ml<br><span style="color:var(--verde)">J. Santos · Box 3</span></div>
         </div>
       </div>
-
-      <script>
-      function pesCockpitCancelar() {
-        if (!confirm('⛔ CANCELAR OP-2026-0416?\\n\\nEsta ação é IRREVERSÍVEL:\\n• Pesagens em andamento serão descartadas\\n• MPs já pesadas voltam pro estoque (mov. reverso JDE)\\n• OF será reaberta para análise\\n• Auditoria registrada\\n\\nConfirmar cancelamento?')) return;
-        var motivo = prompt('Informe o motivo do cancelamento:');
-        if (!motivo) { alert('Cancelamento abortado — motivo obrigatório.'); return; }
-        alert('⛔ Ordem CANCELADA\\n\\nOP-2026-0416 cancelada por J. Santos\\nMotivo: ' + motivo + '\\nData/hora: ' + new Date().toLocaleString('pt-BR') + '\\nRegistro de auditoria: CANC-PES-' + Date.now() + '\\n\\nFabricação notificada. Voltando para Seleção de Ordem...');
-        setTimeout(function(){ nav('pes-ordens',null,null); }, 800);
-      }
-      </script>
 
       <!-- ── Stepper ── -->
       <div id="pes-stepper" style="display:flex;align-items:center;gap:0;margin-bottom:22px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 20px;overflow-x:auto">
@@ -1836,6 +1820,8 @@ export const SCREENS = {
             return;
           }
           if (PES_BAL_INTERVAL) clearInterval(PES_BAL_INTERVAL);
+          // Abre direto o popup de confirmação (Step 6 tradicional foi descontinuado).
+          if (typeof p5AbrirConfirmacao === 'function') { p5AbrirConfirmacao(); return; }
           pesSetStep(7);
         }
 
@@ -2535,6 +2521,45 @@ export const SCREENS = {
             }
             </script>
 
+            <!-- ── Seletor de versão do Step 6 (Etiqueta / Gaiola) ── -->
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap">
+              <div style="display:flex;gap:0;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:4px;width:fit-content">
+                <button id="p7-tab-v1" onclick="p7SwitchTab('v1')"
+                  style="border:none;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.04em;padding:7px 16px;border-radius:6px;background:var(--surface);color:var(--text);box-shadow:var(--sh)">Versão Atual</button>
+                <button id="p7-tab-v2" onclick="p7SwitchTab('v2')"
+                  style="border:none;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.04em;padding:7px 16px;border-radius:6px;background:transparent;color:var(--text3)">✨ Nova Versão</button>
+              </div>
+              <div id="p7-tab-hint" style="font-size:10px;color:var(--text3)">Mostrando o fluxo atual de Etiqueta / Gaiola.</div>
+            </div>
+
+            <script>
+            function p7SwitchTab(v) {
+              var v1 = document.getElementById('pes-p7-v1');
+              var v2 = document.getElementById('pes-p7-v2');
+              var t1 = document.getElementById('p7-tab-v1');
+              var t2 = document.getElementById('p7-tab-v2');
+              var hint = document.getElementById('p7-tab-hint');
+              var on = { background:'var(--surface)', color:'var(--text)', boxShadow:'var(--sh)' };
+              var off = { background:'transparent', color:'var(--text3)', boxShadow:'none' };
+              function apply(btn, s){ btn.style.background=s.background; btn.style.color=s.color; btn.style.boxShadow=s.boxShadow; }
+              if (v === 'v2') {
+                if (v1) v1.style.display = 'none';
+                if (v2) v2.style.display = 'block';
+                apply(t1, off); apply(t2, on);
+                if (hint) hint.textContent = 'Nova proposta — gaiolas visuais + impressão via interface externa.';
+                if (typeof g2Init === 'function') g2Init();
+              } else {
+                if (v1) v1.style.display = 'block';
+                if (v2) v2.style.display = 'none';
+                apply(t1, on); apply(t2, off);
+                if (hint) hint.textContent = 'Mostrando o fluxo atual de Etiqueta / Gaiola.';
+              }
+            }
+            </script>
+
+            <!-- ══════════════════ VERSÃO ATUAL (v1) ══════════════════ -->
+            <div id="pes-p7-v1">
+
             <!-- Bloco 1: Gaiolas — agora primeiro -->
             <div class="card co mb14" style="border:2px solid var(--ouro-claro)">
               <div class="card-title">🏷️ Gaiolas — Imprimir e Associar</div>
@@ -2691,10 +2716,472 @@ export const SCREENS = {
               </script>
             </div>
 
+            </div><!-- /pes-p7-v1 -->
+
+            <!-- ══════════════════ NOVA VERSÃO (v2) ══════════════════ -->
+            <div id="pes-p7-v2" style="display:none">
+
+              <script>
+              /* ─── Estado da nova versão (v2) ─── */
+              var G2_SUGESTAO_MES = 3;          // qtd sugerida pelo MES
+              var G2_PROX_SEQ     = 563944;     // próximo nº sequencial a gerar
+              var G2_GAIOLAS      = [];         // [{seq, num}] — gaiolas existentes/criadas
+              var G2_BASE_H       = 0;          // altura-base compartilhada dos 2 blocos (px)
+
+              function g2Init() {
+                // Por padrão nenhuma gaiola é criada — o operador cria conforme a necessidade.
+                if (!G2_GAIOLAS.__init) {
+                  G2_GAIOLAS = [];
+                  G2_GAIOLAS.__init = true;
+                }
+                g2RenderGaiolas();
+                g2AtualizarConfirmacao();
+              }
+
+              // Desenho de uma gaiola (roll cage / carrinho-gaiola) — grade + rodas.
+              function g2CageSvg(color) {
+                color = color || '#0F3319';
+                return '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="1.4" stroke-linecap="round" style="margin-bottom:2px">' +
+                  '<rect x="4" y="3" width="14" height="13" rx="1"/>' +
+                  '<line x1="4" y1="7.3" x2="18" y2="7.3"/>' +
+                  '<line x1="4" y1="11.6" x2="18" y2="11.6"/>' +
+                  '<line x1="8.7" y1="3" x2="8.7" y2="16"/>' +
+                  '<line x1="13.3" y1="3" x2="13.3" y2="16"/>' +
+                  '<line x1="6" y1="16" x2="6" y2="19"/>' +
+                  '<line x1="16" y1="16" x2="16" y2="19"/>' +
+                  '<circle cx="7" cy="20.4" r="1.4" fill="#0F3319"/>' +
+                  '<circle cx="15" cy="20.4" r="1.4" fill="#0F3319"/>' +
+                '</svg>';
+              }
+
+              function g2RenderGaiolas() {
+                var grid = document.getElementById('g2-gaiolas-grid');
+                if (!grid) return;
+                var ultimoIdx = G2_GAIOLAS.length - 1;
+                var html = '';
+                G2_GAIOLAS.forEach(function(g, i) {
+                  // O link de reimpressão é sempre na última gaiola — o card INTEIRO fica selecionado
+                  // (fundo dourado, borda dourada e animação de pulso) para deixar claro o destaque.
+                  var sel = (i === ultimoIdx);
+                  var cardStyle = sel
+                    ? 'border:2.5px solid var(--ouro);background:var(--ouro-dim);animation:pulse 1.6s ease-in-out infinite'
+                    : 'border:2px solid var(--verde-esc);background:var(--verde-dim);box-shadow:var(--sh)';
+                  var cor    = sel ? '#9A7520' : 'var(--verde-esc)';
+                  var corSvg = sel ? '#9A7520' : '#0F3319';
+                  html +=
+                    '<div style="position:relative;width:128px;height:112px;border-radius:10px;' +
+                      'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;' + cardStyle + '">' +
+                      (sel ? '<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#fff;font-size:8px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap;box-shadow:var(--sh)">✓ Selecionada</div>' : '') +
+                      '<button title="Reimprimir etiqueta desta gaiola" onclick="g2ReimprimirGaiola(' + g.seq + ')" ' +
+                        'style="position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid ' + (sel ? 'var(--ouro)' : 'var(--verde)') + '">🖨️</button>' +
+                      g2CageSvg(corSvg) +
+                      '<div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:' + cor + '">Gaiola ' + g.num + '</div>' +
+                      '<div class="mono" style="font-size:14px;font-weight:900;color:' + cor + ';line-height:1">' + g.seq + '</div>' +
+                    '</div>';
+                });
+                // Tile "+" para criar nova gaiola
+                html +=
+                  '<button onclick="g2AdicionarGaiola()" title="Criar nova gaiola" ' +
+                    'style="width:128px;height:112px;border:2.5px dashed var(--border2);border-radius:10px;background:var(--surface2);cursor:pointer;' +
+                    'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text3)">' +
+                    '<div style="font-size:30px;font-weight:300;line-height:1">+</div>' +
+                    '<div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Nova Gaiola</div>' +
+                  '</button>';
+                grid.innerHTML = html;
+                g2EqualizeHeights();
+              }
+
+              // Os 2 blocos começam na mesma altura. No 1º render (sem gaiolas) calculamos a
+              // altura-base = a maior das duas alturas naturais e aplicamos nos dois blocos.
+              // O bloco da direita fica fixo nessa base; o da esquerda usa a base como mínimo,
+              // então ao adicionar gaiolas só ele cresce e a direita permanece no padrão.
+              function g2EqualizeHeights() {
+                var left  = document.getElementById('g2-card-gaiolas');
+                var right = document.getElementById('g2-card-mp');
+                if (!left || !right) return;
+                if (!G2_BASE_H) {
+                  left.style.minHeight = '0px';
+                  right.style.minHeight = '0px';
+                  var h = Math.max(left.offsetHeight, right.offsetHeight);
+                  if (h > 0) G2_BASE_H = h;
+                }
+                if (G2_BASE_H) {
+                  right.style.minHeight = G2_BASE_H + 'px';
+                  left.style.minHeight  = G2_BASE_H + 'px';
+                }
+              }
+
+              function g2AdicionarGaiola() {
+                var num = G2_GAIOLAS.length + 1;
+                G2_GAIOLAS.push({ seq: G2_PROX_SEQ++, num: num });
+                g2RenderGaiolas();
+                g2AtualizarConfirmacao();
+              }
+
+              function g2CriarSugestao() {
+                while (G2_GAIOLAS.length < G2_SUGESTAO_MES) {
+                  G2_GAIOLAS.push({ seq: G2_PROX_SEQ++, num: G2_GAIOLAS.length + 1 });
+                }
+                g2RenderGaiolas();
+                g2AtualizarConfirmacao();
+              }
+
+              function g2AtualizarConfirmacao() {
+                var btn = document.getElementById('g2-btn-confirmar');
+                if (!btn) return;
+                var ok = G2_GAIOLAS.length > 0;
+                btn.disabled = !ok;
+                btn.style.opacity = ok ? '1' : '.5';
+                btn.style.cursor = ok ? 'pointer' : 'not-allowed';
+              }
+
+              /* ─── Popup base (position:fixed para escapar do overflow dos cards Apriso) ─── */
+              function g2OpenModal(innerHtml) {
+                var ov = document.getElementById('g2-modal');
+                var bx = document.getElementById('g2-modal-box');
+                if (!ov || !bx) return;
+                bx.innerHTML = innerHtml;
+                ov.style.display = 'flex';
+              }
+              function g2CloseModal() {
+                var ov = document.getElementById('g2-modal');
+                if (ov) ov.style.display = 'none';
+              }
+
+              /* ─── Reimprimir etiqueta de uma gaiola existente ─── */
+              function g2ReimprimirGaiola(seq) {
+                var g = null;
+                G2_GAIOLAS.forEach(function(x){ if (x.seq === seq) g = x; });
+                if (!g) return;
+                g2OpenModal(
+                  '<div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">🏷️ Reimprimir Etiqueta — Gaiola ' + g.num + '</div>' +
+                  '<div style="font-size:12px;color:var(--text2);margin-bottom:16px">Confira os dados antes de reenviar para a impressora.</div>' +
+                  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:18px">' +
+                    '<div><div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Nº da Gaiola</div><div class="mono" style="font-size:18px;font-weight:900;color:var(--verde-esc)">' + g.seq + '</div></div>' +
+                    '<div><div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Posição</div><div class="mono" style="font-size:18px;font-weight:700">' + g.num + ' / ' + G2_GAIOLAS.length + '</div></div>' +
+                    '<div><div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">OF</div><div class="mono" style="font-size:13px;font-weight:700">771166</div></div>' +
+                    '<div><div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Impressora</div><div class="mono" style="font-size:13px;font-weight:700">PRN-BOX3</div></div>' +
+                  '</div>' +
+                  '<div style="display:flex;gap:10px;justify-content:flex-end">' +
+                    '<button class="btn btn-md btn-ghost" onclick="g2CloseModal()">Fechar</button>' +
+                    '<button class="btn btn-md btn-v" onclick="g2ConfirmarReimpressaoGaiola(' + g.seq + ',' + g.num + ')">🖨️ Reimprimir Etiqueta</button>' +
+                  '</div>'
+                );
+              }
+
+              function g2ConfirmarReimpressaoGaiola(seq, num) {
+                g2OpenModal(
+                  '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:8px 0">' +
+                    '<div style="width:34px;height:34px;border:4px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px"></div>' +
+                    '<div style="font-size:13px;font-weight:700;color:var(--inf)">Enviando etiqueta da Gaiola ' + num + ' para PRN-BOX3...</div>' +
+                  '</div>'
+                );
+                setTimeout(function(){
+                  g2OpenModal(
+                    '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 8px">' +
+                      '<div style="font-size:40px;margin-bottom:6px">✅</div>' +
+                      '<div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">Etiqueta reimpressa</div>' +
+                      '<div style="font-size:12px;color:var(--text2);margin-bottom:18px">Gaiola ' + num + ' (Nº ' + seq + ') enviada à impressora PRN-BOX3.</div>' +
+                      '<button class="btn btn-md btn-v" onclick="g2CloseModal()">Concluir</button>' +
+                    '</div>'
+                  );
+                }, 1600);
+              }
+
+              /* ─── Confirmar pesagem + imprimir etiqueta da MP (via interface externa) ─── */
+              function g2ConfirmarPesagem() {
+                if (G2_GAIOLAS.length === 0) {
+                  alert('🚫 Crie ao menos uma gaiola antes de confirmar a pesagem.');
+                  return;
+                }
+                // 1) Loading enquanto "comunica" com a interface externa
+                g2OpenModal(
+                  '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:10px 0">' +
+                    '<div style="width:38px;height:38px;border:4px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px"></div>' +
+                    '<div style="font-size:14px;font-weight:700;color:var(--inf)">Comunicando com a interface externa...</div>' +
+                    '<div style="font-size:11px;color:var(--text2);margin-top:4px">Confirmando a pesagem e enviando a etiqueta da MP para impressão.</div>' +
+                  '</div>'
+                );
+                // 2) Após o retorno da interface, abre o popup de sucesso
+                setTimeout(function(){
+                  g2OpenModal(
+                    '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 8px">' +
+                      '<div style="font-size:44px;margin-bottom:6px">✅</div>' +
+                      '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">Comunicação realizada com sucesso</div>' +
+                      '<div style="font-size:12px;color:var(--text2);max-width:340px;margin-bottom:18px">A pesagem foi confirmada na interface externa e a <strong>etiqueta da MP foi impressa</strong> na PRN-BOX3.</div>' +
+                      '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">' +
+                        '<button class="btn btn-md btn-ghost" onclick="g2ReimprimirMP()">↩ Reimprimir Etiqueta da MP</button>' +
+                        '<button class="btn btn-md btn-v" onclick="g2Concluir()">✔ Concluir</button>' +
+                      '</div>' +
+                    '</div>'
+                  );
+                }, 2200);
+              }
+
+              function g2ReimprimirMP() {
+                g2OpenModal(
+                  '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:10px 0">' +
+                    '<div style="width:34px;height:34px;border:4px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px"></div>' +
+                    '<div style="font-size:13px;font-weight:700;color:var(--inf)">Reenviando etiqueta da MP para PRN-BOX3...</div>' +
+                  '</div>'
+                );
+                setTimeout(function(){
+                  g2OpenModal(
+                    '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 8px">' +
+                      '<div style="font-size:40px;margin-bottom:6px">✅</div>' +
+                      '<div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">Etiqueta da MP reimpressa</div>' +
+                      '<div style="font-size:12px;color:var(--text2);max-width:340px;margin-bottom:18px">Enviada novamente à impressora PRN-BOX3.</div>' +
+                      '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">' +
+                        '<button class="btn btn-md btn-ghost" onclick="g2ReimprimirMP()">↩ Reimprimir novamente</button>' +
+                        '<button class="btn btn-md btn-v" onclick="g2Concluir()">✔ Concluir</button>' +
+                      '</div>' +
+                    '</div>'
+                  );
+                }, 1600);
+              }
+
+              function g2Concluir() {
+                g2CloseModal();
+                if (typeof pesConcluir === 'function') pesConcluir();
+              }
+              </script>
+
+              <!-- Layout em 2 blocos: esquerda = criação de gaiolas · direita = MP + confirmar -->
+              <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+
+              <!-- Bloco esquerdo: Gaiolas (visual) -->
+              <div id="g2-card-gaiolas" class="card co mb14" style="border:2px solid var(--ouro-claro);flex:1 1 360px;min-width:300px">
+                <div class="card-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="vertical-align:-3px;margin-right:5px"><rect x="4" y="3" width="14" height="13" rx="1"/><line x1="4" y1="7.3" x2="18" y2="7.3"/><line x1="4" y1="11.6" x2="18" y2="11.6"/><line x1="8.7" y1="3" x2="8.7" y2="16"/><line x1="13.3" y1="3" x2="13.3" y2="16"/><line x1="6" y1="16" x2="6" y2="19"/><line x1="16" y1="16" x2="16" y2="19"/><circle cx="7" cy="20.4" r="1.4" fill="currentColor"/><circle cx="15" cy="20.4" r="1.4" fill="currentColor"/></svg>Gaiolas desta Ordem</div>
+                <div class="abox inf mb14"><span class="ai">📦</span><div>Estas são as gaiolas já associadas a esta OP. Clique no ícone <strong>🖨️</strong> de uma gaiola para reimprimir a etiqueta, ou em <strong>"+ Nova Gaiola"</strong> para criar mais. O MES sugere <strong>3 gaiolas</strong> para este SKU/lote.</div></div>
+
+                <!-- Sugestão MES -->
+                <div style="background:var(--ouro-dim);border:1.5px solid var(--ouro-claro);border-radius:7px;padding:11px 14px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                  <div style="font-size:22px">🧠</div>
+                  <div style="flex:1;min-width:220px">
+                    <div style="font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--ouro);margin-bottom:2px">Sugestão do MES</div>
+                    <div style="font-size:12px;color:var(--text2)"><span class="mono" style="font-size:18px;color:var(--ouro)">3 gaiolas</span> · baseado no histórico do SKU <strong>S0815B</strong> + lote <strong>600 kg</strong></div>
+                  </div>
+                  <button class="btn btn-sm" style="background:var(--ouro);color:#fff;border:none;font-weight:700;white-space:nowrap" onclick="g2CriarSugestao()">✓ Criar gaiolas sugeridas</button>
+                </div>
+
+                <!-- Grid de gaiolas (desenhos) + tile "+" -->
+                <div id="g2-gaiolas-grid" style="display:flex;gap:14px;flex-wrap:wrap"></div>
+              </div>
+
+              <!-- Bloco direito: Confirmar pesagem + imprimir etiqueta MP -->
+              <div id="g2-card-mp" class="card cv mb14" style="border:2px solid var(--verde);flex:1 1 360px;min-width:300px">
+                <div class="card-title">✔ Confirmar Pesagem &amp; Imprimir Etiqueta da MP</div>
+
+                <!-- Resumo compacto da MP -->
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;margin-bottom:14px">
+                  <div><div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">MP</div><div style="font-size:12px;font-weight:700">M9808 — Aqua (Água Purificada)</div></div>
+                  <div><div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Lote MP</div><div class="mono" style="font-size:12px;font-weight:700">AGUA-2026-03</div></div>
+                  <div><div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Peso Líquido</div><div class="mono" style="font-size:14px;font-weight:900;color:var(--verde)">411,840 kg</div></div>
+                  <div><div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Balança</div><div class="mono" style="font-size:12px;font-weight:700">BAL-01</div></div>
+                </div>
+
+                <div class="abox inf mb14"><span class="ai">📡</span><div>Ao confirmar, o sistema comunica a pesagem à <strong>interface externa</strong>. A etiqueta da MP só é impressa <strong>após o retorno da comunicação</strong>.</div></div>
+
+                <button class="btn btn-lg btn-v" id="g2-btn-confirmar" onclick="g2ConfirmarPesagem()" style="width:100%">✔ Confirmar Pesagem &amp; Imprimir Etiqueta da MP</button>
+              </div>
+
+              </div><!-- /layout 2 blocos -->
+
+              <!-- Popup (position:fixed) compartilhado da nova versão -->
+              <div id="g2-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:950;align-items:center;justify-content:center">
+                <div id="g2-modal-box" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:26px 30px;max-width:480px;width:90%;box-shadow:var(--sh2)"></div>
+              </div>
+
+            </div><!-- /pes-p7-v2 -->
+
           </div>
 
         </div>
 
+
+      <!-- ════════ Popup do Step 5: escolha de fluxo + confirmação (escolha de gaiola + impressão) ════════ -->
+      <div id="p5-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:960;align-items:center;justify-content:center">
+        <div id="p5-modal-box" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:26px 30px;max-width:560px;width:92%;box-shadow:var(--sh2);max-height:90vh;overflow:auto"></div>
+      </div>
+
+      <script>
+      /* ─── Estado do popup do Step 5 ─── */
+      var P5_SUGESTAO_MES = 3;
+      var P5_PROX_SEQ     = 563944;
+      // Gaiolas já existentes para esta OP (simulado: 2 já criadas).
+      var P5_GAIOLAS      = [{ seq: 563944, num: 1 }, { seq: 563945, num: 2 }];
+      var P5_SEL          = P5_GAIOLAS.length - 1;   // seleção padrão = última
+
+      function p5Fechar() {
+        var ov = document.getElementById('p5-modal');
+        if (ov) ov.style.display = 'none';
+      }
+
+      /* ── Confirmação com escolha de gaiola ── */
+      function p5AbrirConfirmacao() {
+        P5_PROX_SEQ = 563944 + P5_GAIOLAS.length;
+        if (P5_SEL == null && P5_GAIOLAS.length > 0) P5_SEL = P5_GAIOLAS.length - 1;
+        p5Render();
+        document.getElementById('p5-modal').style.display = 'flex';
+      }
+
+      function p5Render() {
+        var box = document.getElementById('p5-modal-box');
+        if (!box) return;
+        var tem = P5_GAIOLAS.length > 0;
+        var html =
+          '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">✔ Confirmar Pesagem &amp; Imprimir Etiqueta</div>' +
+          '<div style="font-size:12px;color:var(--text2);margin-bottom:16px">Aqua (Água Purificada) · <strong>411,840 kg</strong> · BAL-01</div>' +
+          '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Gaiola a vincular</div>';
+
+        if (tem) {
+          html += '<div style="font-size:11px;color:var(--text2);margin-bottom:10px">Selecione a gaiola que receberá esta MP (por padrão, a última).</div>';
+          html += '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px">';
+          P5_GAIOLAS.forEach(function(g, i) {
+            var sel = (i === P5_SEL);
+            var cardStyle = sel
+              ? 'border:2.5px solid var(--ouro);background:var(--ouro-dim);animation:pulse 1.6s ease-in-out infinite'
+              : 'border:2px solid var(--verde-esc);background:var(--verde-dim);box-shadow:var(--sh)';
+            var cor    = sel ? '#9A7520' : 'var(--verde-esc)';
+            var corSvg = sel ? '#9A7520' : '#0F3319';
+            html +=
+              '<div onclick="p5Selecionar(' + i + ')" style="cursor:pointer;position:relative;width:120px;height:110px;border-radius:10px;' +
+                'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;' + cardStyle + '">' +
+                (sel ? '<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#fff;font-size:8px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap;box-shadow:var(--sh)">✓ Selecionada</div>' : '') +
+                '<button onclick="event.stopPropagation();p5ReimprimirGaiola(' + i + ')" title="Reimprimir etiqueta desta gaiola" style="position:absolute;top:5px;right:5px;width:24px;height:24px;padding:0;line-height:1;border:1px solid ' + cor + ';border-radius:6px;background:var(--surface);color:' + cor + ';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px">🖨️</button>' +
+                (typeof g2CageSvg === 'function' ? g2CageSvg(corSvg) : '<div style="font-size:30px">📦</div>') +
+                '<div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:' + cor + '">Gaiola ' + g.num + '</div>' +
+                '<div class="mono" style="font-size:14px;font-weight:900;color:' + cor + ';line-height:1">' + g.seq + '</div>' +
+              '</div>';
+          });
+          // Tile "+" para criar nova gaiola
+          html +=
+            '<button onclick="p5Adicionar()" title="Criar nova gaiola" style="width:120px;height:110px;border:2.5px dashed var(--border2);border-radius:10px;background:var(--surface2);cursor:pointer;' +
+              'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text3)">' +
+              '<div style="font-size:28px;font-weight:300;line-height:1">+</div>' +
+              '<div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Nova Gaiola</div>' +
+            '</button>';
+          html += '</div>';
+        } else {
+          // Nenhuma gaiola → sugestão do MES
+          html +=
+            '<div style="background:var(--ouro-dim);border:1.5px solid var(--ouro-claro);border-radius:7px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">' +
+              '<div style="font-size:22px">🧠</div>' +
+              '<div style="flex:1;min-width:200px">' +
+                '<div style="font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--ouro);margin-bottom:2px">Nenhuma gaiola criada · Sugestão do MES</div>' +
+                '<div style="font-size:12px;color:var(--text2)"><span class="mono" style="font-size:18px;color:var(--ouro)">' + P5_SUGESTAO_MES + ' gaiolas</span> · histórico do SKU <strong>S0815B</strong> + lote <strong>600 kg</strong></div>' +
+              '</div>' +
+              '<button class="btn btn-sm" style="background:var(--ouro);color:#fff;border:none;font-weight:700;white-space:nowrap" onclick="p5CriarSugestao()">✓ Criar sugeridas</button>' +
+            '</div>' +
+            '<div style="display:flex;margin-bottom:18px">' +
+              '<button onclick="p5Adicionar()" style="width:120px;height:110px;border:2.5px dashed var(--border2);border-radius:10px;background:var(--surface2);cursor:pointer;' +
+                'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text3)">' +
+                '<div style="font-size:28px;font-weight:300;line-height:1">+</div>' +
+                '<div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Nova Gaiola</div>' +
+              '</button>' +
+            '</div>';
+        }
+
+        // Botão confirmar + voltar
+        var disabled = tem ? '' : 'disabled';
+        var op = tem ? '1' : '.5';
+        var cur = tem ? 'pointer' : 'not-allowed';
+        html +=
+          '<button class="btn btn-lg btn-v" style="width:100%;opacity:' + op + ';cursor:' + cur + '" ' + disabled + ' onclick="p5ConfirmarPesagem()">✔ Confirmar Pesagem &amp; Imprimir Etiqueta da MP</button>' +
+          '<button class="btn btn-md btn-ghost" style="width:100%;margin-top:8px" onclick="p5Fechar()">‹ Voltar</button>';
+
+        box.innerHTML = html;
+      }
+
+      function p5Selecionar(i) { P5_SEL = i; p5Render(); }
+
+      function p5Adicionar() {
+        P5_GAIOLAS.push({ seq: P5_PROX_SEQ++, num: P5_GAIOLAS.length + 1 });
+        P5_SEL = P5_GAIOLAS.length - 1;   // nova gaiola já fica selecionada
+        p5Render();
+      }
+
+      function p5CriarSugestao() {
+        while (P5_GAIOLAS.length < P5_SUGESTAO_MES) {
+          P5_GAIOLAS.push({ seq: P5_PROX_SEQ++, num: P5_GAIOLAS.length + 1 });
+        }
+        P5_SEL = P5_GAIOLAS.length - 1;
+        p5Render();
+      }
+
+      /* ── Confirmação: loading → interface externa → sucesso ── */
+      function p5ConfirmarPesagem() {
+        if (P5_GAIOLAS.length === 0) { alert('🚫 Crie ao menos uma gaiola antes de confirmar.'); return; }
+        var g = P5_GAIOLAS[P5_SEL] || P5_GAIOLAS[P5_GAIOLAS.length - 1];
+        var box = document.getElementById('p5-modal-box');
+        box.innerHTML =
+          '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:12px 0">' +
+            '<div style="width:38px;height:38px;border:4px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px"></div>' +
+            '<div style="font-size:14px;font-weight:700;color:var(--inf)">Comunicando com a interface externa...</div>' +
+            '<div style="font-size:11px;color:var(--text2);margin-top:4px">Confirmando a pesagem e enviando a etiqueta da MP para impressão.</div>' +
+          '</div>';
+        setTimeout(function(){
+          box.innerHTML =
+            '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 8px">' +
+              '<div style="font-size:44px;margin-bottom:6px">✅</div>' +
+              '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">Comunicação realizada com sucesso</div>' +
+              '<div style="font-size:12px;color:var(--text2);max-width:360px;margin-bottom:18px">A pesagem foi confirmada na interface externa e a <strong>etiqueta da MP foi impressa</strong> na PRN-BOX3, vinculada à <strong>Gaiola ' + g.num + ' (Nº ' + g.seq + ')</strong>.</div>' +
+              '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">' +
+                '<button class="btn btn-md btn-ghost" onclick="p5ReimprimirMP()">↩ Reimprimir Etiqueta da MP</button>' +
+                '<button class="btn btn-md btn-v" onclick="p5Concluir()">✔ Concluir</button>' +
+              '</div>' +
+            '</div>';
+        }, 2200);
+      }
+
+      function p5ReimprimirMP() {
+        var box = document.getElementById('p5-modal-box');
+        box.innerHTML =
+          '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:12px 0">' +
+            '<div style="width:34px;height:34px;border:4px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px"></div>' +
+            '<div style="font-size:13px;font-weight:700;color:var(--inf)">Reenviando etiqueta da MP para PRN-BOX3...</div>' +
+          '</div>';
+        setTimeout(function(){
+          box.innerHTML =
+            '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 8px">' +
+              '<div style="font-size:40px;margin-bottom:6px">✅</div>' +
+              '<div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">Etiqueta da MP reimpressa</div>' +
+              '<div style="font-size:12px;color:var(--text2);max-width:360px;margin-bottom:18px">Enviada novamente à impressora PRN-BOX3.</div>' +
+              '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">' +
+                '<button class="btn btn-md btn-ghost" onclick="p5ReimprimirMP()">↩ Reimprimir novamente</button>' +
+                '<button class="btn btn-md btn-v" onclick="p5Concluir()">✔ Concluir</button>' +
+              '</div>' +
+            '</div>';
+        }, 1600);
+      }
+
+      /* Reimpressão da etiqueta de uma gaiola específica (a partir do card). */
+      function p5ReimprimirGaiola(i) {
+        var g = P5_GAIOLAS[i];
+        if (!g) return;
+        var box = document.getElementById('p5-modal-box');
+        if (!box) return;
+        box.innerHTML =
+          '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:12px 0">' +
+            '<div style="width:34px;height:34px;border:4px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px"></div>' +
+            '<div style="font-size:13px;font-weight:700;color:var(--inf)">Reenviando etiqueta da Gaiola ' + g.num + ' para PRN-BOX3...</div>' +
+          '</div>';
+        setTimeout(function(){
+          box.innerHTML =
+            '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 8px">' +
+              '<div style="font-size:40px;margin-bottom:6px">✅</div>' +
+              '<div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">Etiqueta da Gaiola ' + g.num + ' reimpressa</div>' +
+              '<div style="font-size:12px;color:var(--text2);max-width:360px;margin-bottom:18px">Gaiola <strong>Nº ' + g.seq + '</strong> enviada novamente à impressora PRN-BOX3.</div>' +
+              '<button class="btn btn-md btn-v" onclick="p5Render()">‹ Voltar à seleção</button>' +
+            '</div>';
+        }, 1600);
+      }
+
+      function p5Concluir() {
+        p5Fechar();
+        if (typeof pesConcluir === 'function') pesConcluir();
+      }
+      </script>
 
       <!-- Modal: Confirmar Início de Pesagem -->
       <div id="modal-pes-confirm" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:900;align-items:center;justify-content:center">
