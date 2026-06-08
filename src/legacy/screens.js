@@ -1637,15 +1637,14 @@ export const SCREENS = {
         var PES_BAL_LEITURA_ATIVA = false;
         var PES_BAL_INTERVAL = null;
 
-        // Stepper de 6 etapas — Step 6 (Confirmação) foi removido; após "Pesagem"
-        // o sistema avança direto para "Etiqueta / Gaiola" (panel-7 internamente).
+        // Stepper de 5 etapas — após "Pesagem" o sistema abre direto o popup
+        // de confirmação (escolha de gaiola + impressão da etiqueta da MP).
         var PES_STEPS_DATA = [
           {n:1, ico:'📋', lbl:'Selecionar MP'},
           {n:2, ico:'▶', lbl:'Iniciar'},
           {n:3, ico:'🏷️', lbl:'Scan Etiqueta'},
           {n:4, ico:'⚖️', lbl:'Selecionar Balança'},
-          {n:5, ico:'📡', lbl:'Pesagem'},
-          {n:7, ico:'🖨️', lbl:'Etiqueta / Gaiola'}
+          {n:5, ico:'📡', lbl:'Pesagem'}
         ];
 
         function pesRenderStepper() {
@@ -1677,37 +1676,13 @@ export const SCREENS = {
           PES_STEP = n;
           pesRenderStepper();
           // Show/hide panels
-          for (var i = 1; i <= 7; i++) {
+          for (var i = 1; i <= 5; i++) {
             var p = document.getElementById('pes-panel-' + i);
             if (p) p.style.display = (i === n) ? 'block' : 'none';
           }
           // Ao entrar no step 4: validar balanças contra o alvo da MP
           if (n === 4) {
             setTimeout(function(){ if (typeof pesValidarBalancas === 'function') pesValidarBalancas(); }, 30);
-          }
-          // Ao entrar no step 7: resetar estado de gaiolas e renderizar config
-          if (n === 7) {
-            GAI_IMPRESSAS = [];
-            GAI_PROX_SEQ = 563944 + Math.floor(Math.random() * 10);
-            setTimeout(function(){
-              var qtdEl = document.getElementById('gai-qtd');
-              if (qtdEl) { GAI_TOTAL = parseInt(qtdEl.value)||1; }
-              gaiRenderConfig();
-              var roEl = document.getElementById('gai-cod-readonly');
-              if (roEl) roEl.value = '— aguardando geração —';
-              var pa = document.getElementById('gai-etq-preview-area');
-              if (pa) pa.innerHTML = '';
-              // Resetar card de identificação
-              var identCard = document.getElementById('gai-ident-card');
-              if (identCard) identCard.style.display = 'none';
-              // Resetar alertas e botão imprimir MP
-              var alertaSem = document.getElementById('alerta-sem-gaiola');
-              var alertaOk  = document.getElementById('alerta-pesagem-ok');
-              var btnImp    = document.getElementById('btn-imprimir-mp');
-              if (alertaSem) alertaSem.style.display = 'flex';
-              if (alertaOk)  alertaOk.style.display  = 'none';
-              if (btnImp)    { btnImp.disabled = true; btnImp.classList.remove('btn-v'); btnImp.classList.add('btn-ghost'); }
-            }, 50);
           }
         }
 
@@ -1752,7 +1727,6 @@ export const SCREENS = {
               setTimeout(function(){ pesSetStep(4); }, 1200);
             }, 1200);
           }, 1800);
-          setTimeout(function(){ pesSetStep(4); }, 900);
         }
         function pesEscolherBalanca(id, nome, cap, ul) {
           PES_BAL_SEL = {id: id, nome: nome, cap: cap, ul: ul};
@@ -1791,11 +1765,6 @@ export const SCREENS = {
           }, 180);
         }
 
-        function pesConfirmarPesagem() {
-          if (PES_BAL_INTERVAL) clearInterval(PES_BAL_INTERVAL);
-          pesSetStep(7);
-        }
-
         // Valida a Variância Máxima cadastrada antes de confirmar a pesagem.
         // Se desvio > variância máx., BLOQUEIA. Caso contrário, avança direto.
         function pesValidarLimiteEAvancar() {
@@ -1821,8 +1790,7 @@ export const SCREENS = {
           }
           if (PES_BAL_INTERVAL) clearInterval(PES_BAL_INTERVAL);
           // Abre direto o popup de confirmação (Step 6 tradicional foi descontinuado).
-          if (typeof p5AbrirConfirmacao === 'function') { p5AbrirConfirmacao(); return; }
-          pesSetStep(7);
+          p5AbrirConfirmacao();
         }
 
         function pesConcluir() {
@@ -2349,652 +2317,7 @@ export const SCREENS = {
             </div>
           </div>
 
-          <!-- ── PAINEL 6 REMOVIDO ── (a confirmação manual foi suprimida; o
-               sistema valida a Variância máxima automaticamente em pesValidarLimiteEAvancar() ) -->
-
-          <!-- ── PAINEL 7 (último step): Etiqueta MP + Gaiolas ── -->
-          <div id="pes-panel-7" style="display:none">
-
-            <script>
-            /* ─── Estado de gaiolas ─── */
-            var GAI_TOTAL    = 1;   // qtd informada pelo usuário
-            var GAI_SEQ_BASE = 563940; // base do sequencial (simulado)
-            var GAI_IMPRESSAS = [];  // [{seq, num}]
-            var GAI_PROX_SEQ = 563944; // próximo a gerar
-
-            function gaiRenderConfig() {
-              GAI_TOTAL = parseInt(document.getElementById('gai-qtd').value) || 1;
-              var impressas = GAI_IMPRESSAS.length;
-              var restantes = GAI_TOTAL - impressas;
-              document.getElementById('gai-status-txt').textContent =
-                impressas + ' de ' + GAI_TOTAL + ' gaiola(s) impressa(s)' +
-                (restantes > 0 ? ' · ' + restantes + ' restante(s)' : ' · ✓ Completo');
-              gaiRenderLista();
-            }
-
-            function gaiAdicionarGaiola() {
-              GAI_TOTAL = parseInt(document.getElementById('gai-qtd').value) || 1;
-              if (GAI_IMPRESSAS.length >= GAI_TOTAL) {
-                alert('⚠ Todas as ' + GAI_TOTAL + ' gaiola(s) já foram geradas.\\nAumente a quantidade se necessário.');
-                return;
-              }
-              var proxNum = GAI_IMPRESSAS.length + 1;
-              var seqNovo = GAI_PROX_SEQ++;
-              var entrada = { seq: seqNovo, num: proxNum };
-              GAI_IMPRESSAS.push(entrada);
-              // Atualizar campo readonly com o último número gerado
-              var roEl = document.getElementById('gai-cod-readonly');
-              if (roEl) roEl.value = String(seqNovo);
-              // Atualizar card de identificação da gaiola ativa
-              var now = new Date();
-              var hora = now.toLocaleTimeString('pt-BR');
-              var identCard = document.getElementById('gai-ident-card');
-              if (identCard) identCard.style.display = 'block';
-              var elSeq = document.getElementById('gai-ident-seq');
-              var elPos = document.getElementById('gai-ident-pos');
-              var elHora = document.getElementById('gai-ident-hora');
-              if (elSeq)  elSeq.textContent  = String(seqNovo);
-              if (elPos)  elPos.textContent  = proxNum + ' / ' + GAI_TOTAL;
-              if (elHora) elHora.textContent = hora;
-              // Liberar botão imprimir MP e trocar alertas
-              var alertaSem = document.getElementById('alerta-sem-gaiola');
-              var alertaOk  = document.getElementById('alerta-pesagem-ok');
-              var btnImp    = document.getElementById('btn-imprimir-mp');
-              if (alertaSem) alertaSem.style.display = 'none';
-              if (alertaOk)  alertaOk.style.display  = 'flex';
-              if (btnImp)    { btnImp.disabled = false; btnImp.classList.remove('btn-ghost'); btnImp.classList.add('btn-v'); }
-              gaiRenderConfig();
-              // Preview removido — só aparece quando o usuário clica em "Ver / Imprimir"
-              // na lista de gaiolas geradas. Limpamos qualquer preview residual:
-              var prev = document.getElementById('gai-etq-preview-area');
-              if (prev) prev.innerHTML = '';
-            }
-
-            function gaiVerificarEImprimir() {
-              if (GAI_IMPRESSAS.length === 0) {
-                alert('🚫 Gaiola não gerada!\\nGere ao menos uma etiqueta de gaiola antes de imprimir a etiqueta da MP.');
-                document.getElementById('gai-qtd').focus();
-                return;
-              }
-              alert('🖨️ Etiqueta de Pesagem de Material enviada.\\nImpressora: PRN-BOX3 · Gaiola associada: ' + GAI_IMPRESSAS[GAI_IMPRESSAS.length-1].seq + ' · Status: Concluído.');
-            }
-
-            function gaiRenderLista() {
-              var el = document.getElementById('gai-lista-impressas');
-              if (!el) return;
-              if (GAI_IMPRESSAS.length === 0) {
-                el.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:10px 0">Nenhuma gaiola gerada ainda.</div>';
-                return;
-              }
-              var html = '';
-              GAI_IMPRESSAS.forEach(function(g) {
-                html += '<div style="display:flex;align-items:center;gap:10px;padding:7px 10px;background:var(--verde-dim);border:1px solid var(--ok-b);border-radius:6px;margin-bottom:6px">' +
-                  '<span style="font-size:16px">🏷️</span>' +
-                  '<div style="flex:1">' +
-                    '<div style="font-size:12px;font-weight:700;color:var(--verde-esc)">Gaiola ' + g.num + '/' + GAI_TOTAL +
-                      ' <span style="font-family:var(--font-m);font-size:11px;color:var(--text2)">Nº ' + g.seq + '</span></div>' +
-                  '</div>' +
-                  '<button class="btn btn-sm btn-ghost" onclick="gaiRenderEtiquetaGaiola({seq:' + g.seq + ',num:' + g.num + '})">🖨️ Ver / Reimprimir</button>' +
-                '</div>';
-              });
-              el.innerHTML = html;
-            }
-
-            function gaiRenderEtiquetaGaiola(g) {
-              var now = new Date();
-              var dd = String(now.getDate()).padStart(2,'0');
-              var mm = String(now.getMonth()+1).padStart(2,'0');
-              var yyyy = now.getFullYear();
-              var hh = String(now.getHours()).padStart(2,'0');
-              var mi = String(now.getMinutes()).padStart(2,'0');
-              var dataImp = dd + '/' + mm + '/' + yyyy;
-              var barcode = '#G1' + g.seq + '7711667953072';
-
-              var html = '<div id="etq-gaiola-preview-' + g.seq + '" style="background:#fff;border:2px solid #222;border-radius:4px;padding:0;max-width:520px;font-family:Arial,sans-serif;font-size:12px;color:#000;margin-bottom:14px;overflow:hidden">' +
-                /* Header */
-                '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 14px 8px;border-bottom:2px solid #222">' +
-                  '<div style="font-size:17px;font-weight:900;letter-spacing:-.01em">PESAGEM DE MATERIAL – GAIOLA</div>' +
-                  '<div style="text-align:right;font-size:10px;line-height:1.6"><div style="font-weight:700;letter-spacing:.06em">DATA IMPRESSÃO</div><div style="font-size:13px;font-weight:900">' + dataImp + '</div></div>' +
-                '</div>' +
-                /* Row 2: OF + Gaiola */
-                '<div style="display:flex;border-bottom:1px solid #999">' +
-                  '<div style="flex:1;padding:8px 14px;border-right:1px solid #999">' +
-                    '<div style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">ORDEM DE FABRICAÇÃO</div>' +
-                    '<div style="font-size:34px;font-weight:900;letter-spacing:.02em;line-height:1.1">771166</div>' +
-                  '</div>' +
-                  '<div style="padding:8px 14px;min-width:110px;text-align:center">' +
-                    '<div style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">GAIOLA</div>' +
-                    '<div style="font-size:40px;font-weight:900;letter-spacing:.02em;line-height:1.1">' + g.num + '/' + GAI_TOTAL + '</div>' +
-                  '</div>' +
-                '</div>' +
-                /* Row 3: Granel + Nº Etiqueta */
-                '<div style="display:flex;border-bottom:1px solid #999">' +
-                  '<div style="flex:1;padding:8px 14px;border-right:1px solid #999">' +
-                    '<div style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">GRANEL RESULTANTE</div>' +
-                    '<div style="font-size:14px;font-weight:700;margin-top:2px">S0835B – SAB. PH LIMAO SICILIANO</div>' +
-                  '</div>' +
-                  '<div style="padding:8px 14px;min-width:110px">' +
-                    '<div style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Nº DA ETIQUETA</div>' +
-                    '<div style="font-size:18px;font-weight:900;margin-top:2px">7951496</div>' +
-                  '</div>' +
-                '</div>' +
-                /* Row 4: Lote / Usuário / Matrícula / Nº Gaiola */
-                '<div style="display:flex;border-bottom:1px solid #999">' +
-                  '<div style="flex:1;padding:7px 14px;border-right:1px solid #999">' +
-                    '<div style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">LOTE</div>' +
-                    '<div style="font-size:15px;font-weight:900">1621/2026</div>' +
-                  '</div>' +
-                  '<div style="flex:1;padding:7px 14px;border-right:1px solid #999">' +
-                    '<div style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">USUÁRIO</div>' +
-                    '<div style="font-size:13px;font-weight:700">J. SANTOS</div>' +
-                  '</div>' +
-                  '<div style="flex:1;padding:7px 14px;border-right:1px solid #999">' +
-                    '<div style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">MATRÍCULA</div>' +
-                    '<div style="font-size:13px;font-weight:700">102266</div>' +
-                  '</div>' +
-                  '<div style="padding:7px 14px;min-width:90px">' +
-                    '<div style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Nº DA GAIOLA</div>' +
-                    '<div style="font-size:15px;font-weight:900">' + g.seq + '</div>' +
-                  '</div>' +
-                '</div>' +
-                /* Barcode area */
-                '<div style="padding:10px 14px 6px;text-align:center">' +
-                  '<div style="letter-spacing:.18em;font-size:28px;font-family:monospace;font-weight:900;color:#000;line-height:1">|||||||||||||||||||||||||||||||||||||||||||||</div>' +
-                  '<div style="font-size:10px;margin-top:2px;letter-spacing:.06em">' + barcode + '</div>' +
-                '</div>' +
-                /* Footer */
-                '<div style="display:flex;justify-content:space-between;padding:4px 14px 8px;font-size:9px;color:#555;border-top:1px solid #ddd">' +
-                  '<span>Impresso por: J. Santos</span>' +
-                  '<span>Impresso em: ' + dd + '/' + mm + '/' + yyyy + ' ' + hh + ':' + mi + '</span>' +
-                '</div>' +
-              '</div>';
-
-              // Inject into preview area
-              var previewEl = document.getElementById('gai-etq-preview-area');
-              if (previewEl) {
-                previewEl.innerHTML = '<div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Preview — Etiqueta Gaiola ' + g.num + '/' + GAI_TOTAL + '</div>' + html +
-                  '<div style="display:flex;gap:8px">' +
-                    '<button class="btn btn-sm btn-v" onclick="alert(\\'🖨️ Etiqueta Gaiola ' + g.num + '/' + GAI_TOTAL + ' enviada à impressora PRN-BOX3.\\')">🖨️ Imprimir</button>' +
-                    '<button class="btn btn-sm btn-ghost" onclick="alert(\\'🖨️ Reimpressão da Gaiola ' + g.num + '/' + GAI_TOTAL + ' solicitada.\\')">↩ Reimprimir</button>' +
-                  '</div>';
-              }
-            }
-            </script>
-
-            <!-- ── Seletor de versão do Step 6 (Etiqueta / Gaiola) ── -->
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap">
-              <div style="display:flex;gap:0;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:4px;width:fit-content">
-                <button id="p7-tab-v1" onclick="p7SwitchTab('v1')"
-                  style="border:none;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.04em;padding:7px 16px;border-radius:6px;background:var(--surface);color:var(--text);box-shadow:var(--sh)">Versão Atual</button>
-                <button id="p7-tab-v2" onclick="p7SwitchTab('v2')"
-                  style="border:none;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.04em;padding:7px 16px;border-radius:6px;background:transparent;color:var(--text3)">✨ Nova Versão</button>
-              </div>
-              <div id="p7-tab-hint" style="font-size:10px;color:var(--text3)">Mostrando o fluxo atual de Etiqueta / Gaiola.</div>
-            </div>
-
-            <script>
-            function p7SwitchTab(v) {
-              var v1 = document.getElementById('pes-p7-v1');
-              var v2 = document.getElementById('pes-p7-v2');
-              var t1 = document.getElementById('p7-tab-v1');
-              var t2 = document.getElementById('p7-tab-v2');
-              var hint = document.getElementById('p7-tab-hint');
-              var on = { background:'var(--surface)', color:'var(--text)', boxShadow:'var(--sh)' };
-              var off = { background:'transparent', color:'var(--text3)', boxShadow:'none' };
-              function apply(btn, s){ btn.style.background=s.background; btn.style.color=s.color; btn.style.boxShadow=s.boxShadow; }
-              if (v === 'v2') {
-                if (v1) v1.style.display = 'none';
-                if (v2) v2.style.display = 'block';
-                apply(t1, off); apply(t2, on);
-                if (hint) hint.textContent = 'Nova proposta — gaiolas visuais + impressão via interface externa.';
-                if (typeof g2Init === 'function') g2Init();
-              } else {
-                if (v1) v1.style.display = 'block';
-                if (v2) v2.style.display = 'none';
-                apply(t1, on); apply(t2, off);
-                if (hint) hint.textContent = 'Mostrando o fluxo atual de Etiqueta / Gaiola.';
-              }
-            }
-            </script>
-
-            <!-- ══════════════════ VERSÃO ATUAL (v1) ══════════════════ -->
-            <div id="pes-p7-v1">
-
-            <!-- Bloco 1: Gaiolas — agora primeiro -->
-            <div class="card co mb14" style="border:2px solid var(--ouro-claro)">
-              <div class="card-title">🏷️ Gaiolas — Imprimir e Associar</div>
-              <div class="abox inf mb14"><span class="ai">📦</span><div>Informe a quantidade de gaiolas necessárias para esta pesagem. Clique em <strong>"+ Nova Gaiola"</strong> para gerar o número sequencial e imprimir a etiqueta de cada gaiola individualmente. O campo de código é somente leitura — gerado automaticamente pelo sistema.</div></div>
-
-              <!-- Sugestão do Sistema baseada em histórico (aprendizado por SKU+lote) -->
-              <div style="background:var(--ouro-dim);border:1.5px solid var(--ouro-claro);border-radius:7px;padding:11px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-                <div style="font-size:22px">🧠</div>
-                <div style="flex:1;min-width:240px">
-                  <div style="font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--ouro);margin-bottom:2px">Sugestão do Sistema</div>
-                  <div style="font-size:12px;color:var(--text);font-weight:700">
-                    <span class="mono" style="font-size:18px;color:var(--ouro)">3 gaiolas</span>
-                    <span style="font-weight:400;color:var(--text2)"> · baseado no histórico do SKU <strong>S0815B</strong> (Loção Hidratante Rosa) + tamanho de lote <strong>600 kg</strong></span>
-                  </div>
-                  <div style="font-size:10px;color:var(--text3);margin-top:3px">
-                    📊 Últimas 8 pesagens deste SKU/lote usaram: 3× (6 vezes), 2× (1 vez), 4× (1 vez) · média ponderada 3,0
-                  </div>
-                </div>
-                <button class="btn btn-sm" style="background:var(--ouro);color:#fff;border:none;font-weight:700;white-space:nowrap" onclick="var el=document.getElementById('gai-qtd');el.value=3;gaiRenderConfig()">✓ Aceitar Sugestão</button>
-              </div>
-
-              <!-- Qtd de gaiolas -->
-              <div style="display:flex;gap:14px;align-items:flex-end;margin-bottom:16px;flex-wrap:wrap">
-                <div class="fg" style="min-width:160px">
-                  <label class="lbl">Quantidade de Gaiolas Necessárias <span style="font-size:9px;color:var(--text3);font-weight:400">(edite se quiser ignorar a sugestão)</span></label>
-                  <div class="qty-w">
-                    <button class="qty-b" onclick="var el=document.getElementById('gai-qtd');el.value=Math.max(1,parseInt(el.value||1)-1);gaiRenderConfig()">−</button>
-                    <input class="qty-i" id="gai-qtd" type="number" value="3" min="1" max="20" style="font-size:26px" onchange="gaiRenderConfig()">
-                    <span class="qty-u">gaiola(s)</span>
-                    <button class="qty-b" onclick="var el=document.getElementById('gai-qtd');el.value=Math.min(20,parseInt(el.value||1)+1);gaiRenderConfig()">+</button>
-                  </div>
-                </div>
-                <div style="flex:1">
-                  <div id="gai-status-txt" style="font-family:var(--font-m);font-size:11px;color:var(--text2);padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:7px">0 de 3 gaiola(s) impressa(s) · 3 restante(s)</div>
-                </div>
-                <button class="btn btn-md btn-v" onclick="gaiAdicionarGaiola()" style="white-space:nowrap">+ Nova Gaiola</button>
-              </div>
-
-              <!-- Card de identificação da gaiola ativa (última gerada) -->
-              <div id="gai-ident-card" style="display:none;margin-bottom:16px;background:var(--verde-esc);border-radius:10px;padding:16px 20px;color:#FDFAF1">
-                <div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--ouro-claro);margin-bottom:12px">🏷️ Gaiola Ativa — Será utilizada para esta pesagem</div>
-                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
-                  <div>
-                    <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(253,250,241,.45);margin-bottom:4px">Nº da Gaiola</div>
-                    <div id="gai-ident-seq" style="font-family:var(--font-m);font-size:22px;font-weight:900;color:var(--ouro-claro)">—</div>
-                  </div>
-                  <div>
-                    <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(253,250,241,.45);margin-bottom:4px">Posição</div>
-                    <div id="gai-ident-pos" style="font-family:var(--font-m);font-size:22px;font-weight:700;color:#FDFAF1">—</div>
-                  </div>
-                  <div>
-                    <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(253,250,241,.45);margin-bottom:4px">OF</div>
-                    <div style="font-family:var(--font-m);font-size:14px;font-weight:700;color:#FDFAF1">771166</div>
-                  </div>
-                  <div>
-                    <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(253,250,241,.45);margin-bottom:4px">Gerada em</div>
-                    <div id="gai-ident-hora" style="font-family:var(--font-m);font-size:12px;font-weight:700;color:#FDFAF1">—</div>
-                  </div>
-                </div>
-                <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12);font-size:11px;color:rgba(253,250,241,.55)">
-                  ⚠ A etiqueta desta gaiola será impressa abaixo. Verifique o número antes de afixar no recipiente.
-                </div>
-              </div>
-
-              <!-- Campo Nº Gaiola — somente leitura -->
-              <div style="margin-bottom:16px">
-                <label class="lbl">Nº da Gaiola (gerado automaticamente — somente leitura)</label>
-                <input class="inp" id="gai-cod-readonly" readonly value="— aguardando geração —"
-                  style="font-family:var(--font-m);font-size:15px;background:var(--surface2);color:var(--text3);cursor:not-allowed;border-style:dashed">
-              </div>
-
-              <!-- Lista de gaiolas geradas -->
-              <div style="margin-bottom:16px">
-                <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Gaiolas Geradas</div>
-                <div id="gai-lista-impressas">
-                  <div style="font-size:11px;color:var(--text3);padding:6px 0">Nenhuma gaiola gerada ainda. Clique em "+ Nova Gaiola".</div>
-                </div>
-              </div>
-
-              <!-- Preview da última etiqueta de gaiola gerada -->
-              <div id="gai-etq-preview-area" style="margin-top:14px;border-top:1px solid var(--border);padding-top:14px"></div>
-
-              <script>
-              // Inicializar ao abrir o painel
-              document.addEventListener('DOMContentLoaded', function(){
-                gaiRenderConfig();
-              });
-              </script>
-            </div>
-
-            <!-- Bloco 2: Etiqueta de Pesagem de Material (MP Pesada) — sem preview -->
-            <div class="card cv mb14" style="border:2px solid var(--verde)">
-              <div class="card-title">⑦ Etiqueta de Pesagem de Material — MP Confirmada</div>
-
-              <!-- Alerta: gaiola obrigatória -->
-              <div id="alerta-sem-gaiola" class="abox err mb14"><span class="ai">🚫</span><div><strong>Gaiola não gerada!</strong> Gere e imprima ao menos uma etiqueta de gaiola antes de imprimir a etiqueta da MP.</div></div>
-
-              <div class="abox ok mb14" id="alerta-pesagem-ok" style="display:none"><span class="ai">✅</span><div><strong>Pesagem confirmada!</strong> Imprima a etiqueta da MP pesada e associe à gaiola gerada. O preview da etiqueta abre ao clicar em "Ver / Imprimir".</div></div>
-
-              <!-- Resumo compacto da MP -->
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;margin-bottom:14px">
-                <div>
-                  <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">MP</div>
-                  <div style="font-size:12px;font-weight:700">M9808 — Aqua (Água Purificada)</div>
-                </div>
-                <div>
-                  <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Lote MP</div>
-                  <div class="mono" style="font-size:12px;font-weight:700">AGUA-2026-03</div>
-                </div>
-                <div>
-                  <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Peso Líquido</div>
-                  <div class="mono" style="font-size:14px;font-weight:900;color:var(--verde)">411,840 kg</div>
-                </div>
-                <div>
-                  <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Balança</div>
-                  <div class="mono" style="font-size:12px;font-weight:700">BAL-01</div>
-                </div>
-                <div>
-                  <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Nº Etiqueta</div>
-                  <div class="mono" style="font-size:12px;font-weight:700">7953072</div>
-                </div>
-              </div>
-
-              <!-- Preview da Etiqueta MP — vazio por padrão; aparece ao clicar em "Ver / Imprimir" -->
-              <div id="etq-mp-preview-area"></div>
-
-              <div style="display:flex;gap:10px;margin-bottom:4px;flex-wrap:wrap">
-                <button class="btn btn-md btn-v" id="btn-imprimir-mp" onclick="gaiVerificarEImprimir()">🖨️ Imprimir Etiqueta MP</button>
-                <button class="btn btn-md btn-ghost" onclick="mostrarPreviewMP()">👁️ Ver / Pré-visualizar</button>
-                <button class="btn btn-md btn-ghost" onclick="alert('🖨️ Reimpressão solicitada.')">↩ Reimprimir</button>
-                <div style="flex:1"></div>
-                <button class="btn btn-md btn-v" style="background:var(--verde-esc);border:2px solid var(--verde)" onclick="pesSetStep(1)">▶ Próxima MP</button>
-                <button class="btn btn-md btn-ghost" onclick="pesConcluir()">✔ Concluir — MPs Pesadas</button>
-              </div>
-
-              <script>
-              function mostrarPreviewMP() {
-                var area = document.getElementById('etq-mp-preview-area');
-                if (!area) return;
-                if (area.innerHTML.trim() !== '') {
-                  // Já tem preview — toggle pra esconder
-                  area.innerHTML = '';
-                  return;
-                }
-                area.innerHTML = '<div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin:6px 0 8px">Preview — Etiqueta de Pesagem de Material</div>' +
-                '<div style="background:#fff;border:2px solid #222;border-radius:4px;max-width:560px;font-family:Arial,sans-serif;font-size:12px;color:#000;margin-bottom:14px;overflow:hidden">' +
-                  '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 14px 8px;border-bottom:2px solid #222"><div style="font-size:17px;font-weight:900">PESAGEM DE MATERIAL</div><div style="text-align:right;font-size:10px;line-height:1.6"><div style="font-weight:700;letter-spacing:.06em">DATA IMPRESSÃO</div><div style="font-size:13px;font-weight:900">01/04/2026</div></div></div>' +
-                  '<div style="display:flex;border-bottom:1px solid #999"><div style="padding:7px 14px;border-right:1px solid #999;min-width:120px"><div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">ORDEM DE FABRICAÇÃO</div><div style="font-size:26px;font-weight:900;line-height:1.1">771166</div></div><div style="padding:7px 14px;flex:1;border-right:1px solid #999"><div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">LOTE GRANEL</div><div style="font-size:22px;font-weight:900;line-height:1.1">1621/2026</div></div><div style="padding:7px 14px;display:flex;align-items:center;justify-content:center;min-width:100px"><div style="border:2px solid #000;padding:6px 12px;font-size:14px;font-weight:900;letter-spacing:.1em">APROVADO</div></div></div>' +
-                  '<div style="padding:7px 14px;border-bottom:1px solid #999"><div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase">MATÉRIA PRIMA</div><div style="font-size:13px;font-weight:700;margin-top:2px">M9808 – AQUA (ÁGUA PURIFICADA)</div></div>' +
-                  '<div style="display:flex;border-bottom:1px solid #999"><div style="flex:1;padding:10px 14px"><div style="font-family:monospace;font-size:30px;letter-spacing:.1em;line-height:1;color:#000">|||||||||||||||||||||||||||||||||||||||||||||</div><div style="font-size:9px;margin-top:3px">#P12814471417953072</div></div><div style="min-width:150px;background:#000;color:#fff;padding:10px 14px;display:flex;flex-direction:column;justify-content:center"><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">PESO LÍQUIDO</div><div style="font-size:32px;font-weight:900;line-height:1">411,840</div><div style="font-size:14px;font-weight:900;margin-top:2px">KG</div></div></div>' +
-                  '<div style="display:flex;justify-content:space-between;padding:4px 14px 6px;font-size:9px;color:#555"><span>J. Santos · Mat. 102266</span><span>BAL-01 · Tara 0,021 kg · ETQ 7953072</span></div>' +
-                '</div>';
-              }
-              </script>
-            </div>
-
-            </div><!-- /pes-p7-v1 -->
-
-            <!-- ══════════════════ NOVA VERSÃO (v2) ══════════════════ -->
-            <div id="pes-p7-v2" style="display:none">
-
-              <script>
-              /* ─── Estado da nova versão (v2) ─── */
-              var G2_SUGESTAO_MES = 3;          // qtd sugerida pelo MES
-              var G2_PROX_SEQ     = 563944;     // próximo nº sequencial a gerar
-              var G2_GAIOLAS      = [];         // [{seq, num}] — gaiolas existentes/criadas
-              var G2_BASE_H       = 0;          // altura-base compartilhada dos 2 blocos (px)
-
-              function g2Init() {
-                // Por padrão nenhuma gaiola é criada — o operador cria conforme a necessidade.
-                if (!G2_GAIOLAS.__init) {
-                  G2_GAIOLAS = [];
-                  G2_GAIOLAS.__init = true;
-                }
-                g2RenderGaiolas();
-                g2AtualizarConfirmacao();
-              }
-
-              // Desenho de uma gaiola (roll cage / carrinho-gaiola) — grade + rodas.
-              function g2CageSvg(color) {
-                color = color || '#0F3319';
-                return '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="1.4" stroke-linecap="round" style="margin-bottom:2px">' +
-                  '<rect x="4" y="3" width="14" height="13" rx="1"/>' +
-                  '<line x1="4" y1="7.3" x2="18" y2="7.3"/>' +
-                  '<line x1="4" y1="11.6" x2="18" y2="11.6"/>' +
-                  '<line x1="8.7" y1="3" x2="8.7" y2="16"/>' +
-                  '<line x1="13.3" y1="3" x2="13.3" y2="16"/>' +
-                  '<line x1="6" y1="16" x2="6" y2="19"/>' +
-                  '<line x1="16" y1="16" x2="16" y2="19"/>' +
-                  '<circle cx="7" cy="20.4" r="1.4" fill="#0F3319"/>' +
-                  '<circle cx="15" cy="20.4" r="1.4" fill="#0F3319"/>' +
-                '</svg>';
-              }
-
-              function g2RenderGaiolas() {
-                var grid = document.getElementById('g2-gaiolas-grid');
-                if (!grid) return;
-                var ultimoIdx = G2_GAIOLAS.length - 1;
-                var html = '';
-                G2_GAIOLAS.forEach(function(g, i) {
-                  // O link de reimpressão é sempre na última gaiola — o card INTEIRO fica selecionado
-                  // (fundo dourado, borda dourada e animação de pulso) para deixar claro o destaque.
-                  var sel = (i === ultimoIdx);
-                  var cardStyle = sel
-                    ? 'border:2.5px solid var(--ouro);background:var(--ouro-dim);animation:pulse 1.6s ease-in-out infinite'
-                    : 'border:2px solid var(--verde-esc);background:var(--verde-dim);box-shadow:var(--sh)';
-                  var cor    = sel ? '#9A7520' : 'var(--verde-esc)';
-                  var corSvg = sel ? '#9A7520' : '#0F3319';
-                  html +=
-                    '<div style="position:relative;width:128px;height:112px;border-radius:10px;' +
-                      'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;' + cardStyle + '">' +
-                      (sel ? '<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#fff;font-size:8px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap;box-shadow:var(--sh)">✓ Selecionada</div>' : '') +
-                      '<button title="Reimprimir etiqueta desta gaiola" onclick="g2ReimprimirGaiola(' + g.seq + ')" ' +
-                        'style="position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid ' + (sel ? 'var(--ouro)' : 'var(--verde)') + '">🖨️</button>' +
-                      g2CageSvg(corSvg) +
-                      '<div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:' + cor + '">Gaiola ' + g.num + '</div>' +
-                      '<div class="mono" style="font-size:14px;font-weight:900;color:' + cor + ';line-height:1">' + g.seq + '</div>' +
-                    '</div>';
-                });
-                // Tile "+" para criar nova gaiola
-                html +=
-                  '<button onclick="g2AdicionarGaiola()" title="Criar nova gaiola" ' +
-                    'style="width:128px;height:112px;border:2.5px dashed var(--border2);border-radius:10px;background:var(--surface2);cursor:pointer;' +
-                    'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text3)">' +
-                    '<div style="font-size:30px;font-weight:300;line-height:1">+</div>' +
-                    '<div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Nova Gaiola</div>' +
-                  '</button>';
-                grid.innerHTML = html;
-                g2EqualizeHeights();
-              }
-
-              // Os 2 blocos começam na mesma altura. No 1º render (sem gaiolas) calculamos a
-              // altura-base = a maior das duas alturas naturais e aplicamos nos dois blocos.
-              // O bloco da direita fica fixo nessa base; o da esquerda usa a base como mínimo,
-              // então ao adicionar gaiolas só ele cresce e a direita permanece no padrão.
-              function g2EqualizeHeights() {
-                var left  = document.getElementById('g2-card-gaiolas');
-                var right = document.getElementById('g2-card-mp');
-                if (!left || !right) return;
-                if (!G2_BASE_H) {
-                  left.style.minHeight = '0px';
-                  right.style.minHeight = '0px';
-                  var h = Math.max(left.offsetHeight, right.offsetHeight);
-                  if (h > 0) G2_BASE_H = h;
-                }
-                if (G2_BASE_H) {
-                  right.style.minHeight = G2_BASE_H + 'px';
-                  left.style.minHeight  = G2_BASE_H + 'px';
-                }
-              }
-
-              function g2AdicionarGaiola() {
-                var num = G2_GAIOLAS.length + 1;
-                G2_GAIOLAS.push({ seq: G2_PROX_SEQ++, num: num });
-                g2RenderGaiolas();
-                g2AtualizarConfirmacao();
-              }
-
-              function g2CriarSugestao() {
-                while (G2_GAIOLAS.length < G2_SUGESTAO_MES) {
-                  G2_GAIOLAS.push({ seq: G2_PROX_SEQ++, num: G2_GAIOLAS.length + 1 });
-                }
-                g2RenderGaiolas();
-                g2AtualizarConfirmacao();
-              }
-
-              function g2AtualizarConfirmacao() {
-                var btn = document.getElementById('g2-btn-confirmar');
-                if (!btn) return;
-                var ok = G2_GAIOLAS.length > 0;
-                btn.disabled = !ok;
-                btn.style.opacity = ok ? '1' : '.5';
-                btn.style.cursor = ok ? 'pointer' : 'not-allowed';
-              }
-
-              /* ─── Popup base (position:fixed para escapar do overflow dos cards Apriso) ─── */
-              function g2OpenModal(innerHtml) {
-                var ov = document.getElementById('g2-modal');
-                var bx = document.getElementById('g2-modal-box');
-                if (!ov || !bx) return;
-                bx.innerHTML = innerHtml;
-                ov.style.display = 'flex';
-              }
-              function g2CloseModal() {
-                var ov = document.getElementById('g2-modal');
-                if (ov) ov.style.display = 'none';
-              }
-
-              /* ─── Reimprimir etiqueta de uma gaiola existente ─── */
-              function g2ReimprimirGaiola(seq) {
-                var g = null;
-                G2_GAIOLAS.forEach(function(x){ if (x.seq === seq) g = x; });
-                if (!g) return;
-                g2OpenModal(
-                  '<div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">🏷️ Reimprimir Etiqueta — Gaiola ' + g.num + '</div>' +
-                  '<div style="font-size:12px;color:var(--text2);margin-bottom:16px">Confira os dados antes de reenviar para a impressora.</div>' +
-                  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:18px">' +
-                    '<div><div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Nº da Gaiola</div><div class="mono" style="font-size:18px;font-weight:900;color:var(--verde-esc)">' + g.seq + '</div></div>' +
-                    '<div><div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Posição</div><div class="mono" style="font-size:18px;font-weight:700">' + g.num + ' / ' + G2_GAIOLAS.length + '</div></div>' +
-                    '<div><div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">OF</div><div class="mono" style="font-size:13px;font-weight:700">771166</div></div>' +
-                    '<div><div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Impressora</div><div class="mono" style="font-size:13px;font-weight:700">PRN-BOX3</div></div>' +
-                  '</div>' +
-                  '<div style="display:flex;gap:10px;justify-content:flex-end">' +
-                    '<button class="btn btn-md btn-ghost" onclick="g2CloseModal()">Fechar</button>' +
-                    '<button class="btn btn-md btn-v" onclick="g2ConfirmarReimpressaoGaiola(' + g.seq + ',' + g.num + ')">🖨️ Reimprimir Etiqueta</button>' +
-                  '</div>'
-                );
-              }
-
-              function g2ConfirmarReimpressaoGaiola(seq, num) {
-                g2OpenModal(
-                  '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:8px 0">' +
-                    '<div style="width:34px;height:34px;border:4px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px"></div>' +
-                    '<div style="font-size:13px;font-weight:700;color:var(--inf)">Enviando etiqueta da Gaiola ' + num + ' para PRN-BOX3...</div>' +
-                  '</div>'
-                );
-                setTimeout(function(){
-                  g2OpenModal(
-                    '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 8px">' +
-                      '<div style="font-size:40px;margin-bottom:6px">✅</div>' +
-                      '<div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">Etiqueta reimpressa</div>' +
-                      '<div style="font-size:12px;color:var(--text2);margin-bottom:18px">Gaiola ' + num + ' (Nº ' + seq + ') enviada à impressora PRN-BOX3.</div>' +
-                      '<button class="btn btn-md btn-v" onclick="g2CloseModal()">Concluir</button>' +
-                    '</div>'
-                  );
-                }, 1600);
-              }
-
-              /* ─── Confirmar pesagem + imprimir etiqueta da MP (via interface externa) ─── */
-              function g2ConfirmarPesagem() {
-                if (G2_GAIOLAS.length === 0) {
-                  alert('🚫 Crie ao menos uma gaiola antes de confirmar a pesagem.');
-                  return;
-                }
-                // 1) Loading enquanto "comunica" com a interface externa
-                g2OpenModal(
-                  '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:10px 0">' +
-                    '<div style="width:38px;height:38px;border:4px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px"></div>' +
-                    '<div style="font-size:14px;font-weight:700;color:var(--inf)">Comunicando com a interface externa...</div>' +
-                    '<div style="font-size:11px;color:var(--text2);margin-top:4px">Confirmando a pesagem e enviando a etiqueta da MP para impressão.</div>' +
-                  '</div>'
-                );
-                // 2) Após o retorno da interface, abre o popup de sucesso
-                setTimeout(function(){
-                  g2OpenModal(
-                    '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 8px">' +
-                      '<div style="font-size:44px;margin-bottom:6px">✅</div>' +
-                      '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">Comunicação realizada com sucesso</div>' +
-                      '<div style="font-size:12px;color:var(--text2);max-width:340px;margin-bottom:18px">A pesagem foi confirmada na interface externa e a <strong>etiqueta da MP foi impressa</strong> na PRN-BOX3.</div>' +
-                      '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">' +
-                        '<button class="btn btn-md btn-ghost" onclick="g2ReimprimirMP()">↩ Reimprimir Etiqueta da MP</button>' +
-                        '<button class="btn btn-md btn-v" onclick="g2Concluir()">✔ Concluir</button>' +
-                      '</div>' +
-                    '</div>'
-                  );
-                }, 2200);
-              }
-
-              function g2ReimprimirMP() {
-                g2OpenModal(
-                  '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:10px 0">' +
-                    '<div style="width:34px;height:34px;border:4px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px"></div>' +
-                    '<div style="font-size:13px;font-weight:700;color:var(--inf)">Reenviando etiqueta da MP para PRN-BOX3...</div>' +
-                  '</div>'
-                );
-                setTimeout(function(){
-                  g2OpenModal(
-                    '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 8px">' +
-                      '<div style="font-size:40px;margin-bottom:6px">✅</div>' +
-                      '<div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">Etiqueta da MP reimpressa</div>' +
-                      '<div style="font-size:12px;color:var(--text2);max-width:340px;margin-bottom:18px">Enviada novamente à impressora PRN-BOX3.</div>' +
-                      '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">' +
-                        '<button class="btn btn-md btn-ghost" onclick="g2ReimprimirMP()">↩ Reimprimir novamente</button>' +
-                        '<button class="btn btn-md btn-v" onclick="g2Concluir()">✔ Concluir</button>' +
-                      '</div>' +
-                    '</div>'
-                  );
-                }, 1600);
-              }
-
-              function g2Concluir() {
-                g2CloseModal();
-                if (typeof pesConcluir === 'function') pesConcluir();
-              }
-              </script>
-
-              <!-- Layout em 2 blocos: esquerda = criação de gaiolas · direita = MP + confirmar -->
-              <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
-
-              <!-- Bloco esquerdo: Gaiolas (visual) -->
-              <div id="g2-card-gaiolas" class="card co mb14" style="border:2px solid var(--ouro-claro);flex:1 1 360px;min-width:300px">
-                <div class="card-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" style="vertical-align:-3px;margin-right:5px"><rect x="4" y="3" width="14" height="13" rx="1"/><line x1="4" y1="7.3" x2="18" y2="7.3"/><line x1="4" y1="11.6" x2="18" y2="11.6"/><line x1="8.7" y1="3" x2="8.7" y2="16"/><line x1="13.3" y1="3" x2="13.3" y2="16"/><line x1="6" y1="16" x2="6" y2="19"/><line x1="16" y1="16" x2="16" y2="19"/><circle cx="7" cy="20.4" r="1.4" fill="currentColor"/><circle cx="15" cy="20.4" r="1.4" fill="currentColor"/></svg>Gaiolas desta Ordem</div>
-                <div class="abox inf mb14"><span class="ai">📦</span><div>Estas são as gaiolas já associadas a esta OP. Clique no ícone <strong>🖨️</strong> de uma gaiola para reimprimir a etiqueta, ou em <strong>"+ Nova Gaiola"</strong> para criar mais. O MES sugere <strong>3 gaiolas</strong> para este SKU/lote.</div></div>
-
-                <!-- Sugestão MES -->
-                <div style="background:var(--ouro-dim);border:1.5px solid var(--ouro-claro);border-radius:7px;padding:11px 14px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-                  <div style="font-size:22px">🧠</div>
-                  <div style="flex:1;min-width:220px">
-                    <div style="font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--ouro);margin-bottom:2px">Sugestão do MES</div>
-                    <div style="font-size:12px;color:var(--text2)"><span class="mono" style="font-size:18px;color:var(--ouro)">3 gaiolas</span> · baseado no histórico do SKU <strong>S0815B</strong> + lote <strong>600 kg</strong></div>
-                  </div>
-                  <button class="btn btn-sm" style="background:var(--ouro);color:#fff;border:none;font-weight:700;white-space:nowrap" onclick="g2CriarSugestao()">✓ Criar gaiolas sugeridas</button>
-                </div>
-
-                <!-- Grid de gaiolas (desenhos) + tile "+" -->
-                <div id="g2-gaiolas-grid" style="display:flex;gap:14px;flex-wrap:wrap"></div>
-              </div>
-
-              <!-- Bloco direito: Confirmar pesagem + imprimir etiqueta MP -->
-              <div id="g2-card-mp" class="card cv mb14" style="border:2px solid var(--verde);flex:1 1 360px;min-width:300px">
-                <div class="card-title">✔ Confirmar Pesagem &amp; Imprimir Etiqueta da MP</div>
-
-                <!-- Resumo compacto da MP -->
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;margin-bottom:14px">
-                  <div><div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">MP</div><div style="font-size:12px;font-weight:700">M9808 — Aqua (Água Purificada)</div></div>
-                  <div><div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Lote MP</div><div class="mono" style="font-size:12px;font-weight:700">AGUA-2026-03</div></div>
-                  <div><div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Peso Líquido</div><div class="mono" style="font-size:14px;font-weight:900;color:var(--verde)">411,840 kg</div></div>
-                  <div><div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Balança</div><div class="mono" style="font-size:12px;font-weight:700">BAL-01</div></div>
-                </div>
-
-                <div class="abox inf mb14"><span class="ai">📡</span><div>Ao confirmar, o sistema comunica a pesagem à <strong>interface externa</strong>. A etiqueta da MP só é impressa <strong>após o retorno da comunicação</strong>.</div></div>
-
-                <button class="btn btn-lg btn-v" id="g2-btn-confirmar" onclick="g2ConfirmarPesagem()" style="width:100%">✔ Confirmar Pesagem &amp; Imprimir Etiqueta da MP</button>
-              </div>
-
-              </div><!-- /layout 2 blocos -->
-
-              <!-- Popup (position:fixed) compartilhado da nova versão -->
-              <div id="g2-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:950;align-items:center;justify-content:center">
-                <div id="g2-modal-box" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:26px 30px;max-width:480px;width:90%;box-shadow:var(--sh2)"></div>
-              </div>
-
-            </div><!-- /pes-p7-v2 -->
-
-          </div>
+          <!-- ── PAINEL 6 e PAINEL 7 REMOVIDOS ── (confirmação manual + tela Etiqueta/Gaiola descontinuadas; após o Step 5 "Pesagem" o fluxo abre direto o popup de confirmação em pesValidarLimiteEAvancar() ) -->
 
         </div>
 
@@ -3015,6 +2338,22 @@ export const SCREENS = {
       function p5Fechar() {
         var ov = document.getElementById('p5-modal');
         if (ov) ov.style.display = 'none';
+      }
+
+      // Desenho de uma gaiola (roll cage / carrinho-gaiola) — grade + rodas.
+      function p5CageSvg(color) {
+        color = color || '#0F3319';
+        return '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="1.4" stroke-linecap="round" style="margin-bottom:2px">' +
+          '<rect x="4" y="3" width="14" height="13" rx="1"/>' +
+          '<line x1="4" y1="7.3" x2="18" y2="7.3"/>' +
+          '<line x1="4" y1="11.6" x2="18" y2="11.6"/>' +
+          '<line x1="8.7" y1="3" x2="8.7" y2="16"/>' +
+          '<line x1="13.3" y1="3" x2="13.3" y2="16"/>' +
+          '<line x1="6" y1="16" x2="6" y2="19"/>' +
+          '<line x1="16" y1="16" x2="16" y2="19"/>' +
+          '<circle cx="7" cy="20.4" r="1.4" fill="#0F3319"/>' +
+          '<circle cx="15" cy="20.4" r="1.4" fill="#0F3319"/>' +
+        '</svg>';
       }
 
       /* ── Confirmação com escolha de gaiola ── */
@@ -3049,7 +2388,7 @@ export const SCREENS = {
                 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;' + cardStyle + '">' +
                 (sel ? '<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#fff;font-size:8px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap;box-shadow:var(--sh)">✓ Selecionada</div>' : '') +
                 '<button onclick="event.stopPropagation();p5ReimprimirGaiola(' + i + ')" title="Reimprimir etiqueta desta gaiola" style="position:absolute;top:5px;right:5px;width:24px;height:24px;padding:0;line-height:1;border:1px solid ' + cor + ';border-radius:6px;background:var(--surface);color:' + cor + ';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px">🖨️</button>' +
-                (typeof g2CageSvg === 'function' ? g2CageSvg(corSvg) : '<div style="font-size:30px">📦</div>') +
+                p5CageSvg(corSvg) +
                 '<div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:' + cor + '">Gaiola ' + g.num + '</div>' +
                 '<div class="mono" style="font-size:14px;font-weight:900;color:' + cor + ';line-height:1">' + g.seq + '</div>' +
               '</div>';
