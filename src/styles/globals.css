@@ -695,7 +695,11 @@ table th, table td { font-family:var(--font-m); }
 }
 
 /* Animations */
-@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+/* NOTA: sem transform aqui — um transform (mesmo translateY(0)/none com
+   fill-mode:both) faz a .screen.active virar containing block de qualquer
+   position:fixed descendente, prendendo modais/popups à área da tela em vez
+   da viewport. Fade puro evita isso. */
+@keyframes fadeUp { from{opacity:0} to{opacity:1} }
 .screen.active {
   display: block;
   animation: fadeUp .25s ease both;

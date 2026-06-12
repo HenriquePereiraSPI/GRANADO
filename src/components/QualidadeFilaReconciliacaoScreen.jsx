@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import {
   LOTES_FILA,
   LOTES_FINALIZADOS,
-  STATUS_PROC_COLOR,
-  STATUS_PROC_LABEL,
+  CATALOGO_LOTES,
+  STATUS_RECONCILIACAO,
   STATUS_ANALISE_COLOR,
   STATUS_LOTE_FINAL_COLOR,
   PRIORIDADE_PCP_COR,
 } from '../data/lotes-fila-reconciliacao.js';
+import { findDossie } from '../data/dossie-wo-784426.js';
 
 /**
  * Tela: Qualidade > Fila de Reconciliacoes Pendentes
@@ -27,21 +28,20 @@ import {
    Helpers de UI
 ───────────────────────────────────────────────────────────── */
 
-function StatusProcPill({ codigo, descricao }) {
-  const c = STATUS_PROC_COLOR[codigo] || STATUS_PROC_COLOR['20'];
+function StatusReconcPill({ status }) {
+  const c = STATUS_RECONCILIACAO[status] || STATUS_RECONCILIACAO.novo;
   return (
     <span
       style={{
-        display: 'inline-flex', alignItems: 'center', gap: 6,
-        padding: '3px 9px', borderRadius: 12,
+        display: 'inline-flex', alignItems: 'center',
+        padding: '3px 11px', borderRadius: 12,
         fontSize: 10, fontWeight: 800, letterSpacing: '.04em',
         background: c.bg, color: c.fg, border: `1px solid ${c.bd}`,
         whiteSpace: 'nowrap',
       }}
-      title={descricao}
+      title={`Reconciliação ${c.label}`}
     >
-      <span style={{ fontFamily: 'var(--font-m)', fontWeight: 900 }}>{codigo}</span>
-      <span style={{ opacity: .85 }}>{descricao}</span>
+      {c.label}
     </span>
   );
 }
@@ -187,14 +187,45 @@ export default function QualidadeFilaReconciliacaoScreen() {
   const [aviso, setAviso] = useState('');
   const [info, setInfo] = useState('');
 
+  // Fila em estado local — permite adicionar novas reconciliações em sessão.
+  const [lotes, setLotes] = useState(LOTES_FILA);
+  // Popup "Adicionar nova reconciliação" — só o lote; o resto vem da busca.
+  const [modalAberto, setModalAberto] = useState(false);
+  const [novoLote, setNovoLote] = useState('');
+  const [erroModal, setErroModal] = useState('');
+
+  // Busca os dados do lote (produto/WO) nos dossiês, no histórico de
+  // finalizados e no catálogo de lotes disponíveis. Retorna {lotePA, produto, wo}.
+  const buscarDadosDoLote = (termo) => {
+    const t = (termo || '').trim();
+    if (!t) return null;
+    const tl = t.toLowerCase();
+    const semWo = tl.replace(/^wo\s*/, '');
+    const d = findDossie(t);
+    if (d) return { lotePA: d.lotePA, produto: d.produto, wo: `WO ${d.wo}` };
+    const casaWo = (wo) => {
+      const w = (wo || '').toLowerCase();
+      return w === tl || w.replace(/^wo\s*/, '') === semWo;
+    };
+    const f = LOTES_FINALIZADOS.find((l) => l.lotePA.toLowerCase() === tl || casaWo(l.wo));
+    if (f) return { lotePA: f.lotePA, produto: f.produto, wo: f.wo };
+    const c = CATALOGO_LOTES.find((l) => l.lotePA.toLowerCase() === tl || casaWo(l.wo));
+    if (c) return { lotePA: c.lotePA, produto: c.produto, wo: c.wo };
+    return null;
+  };
+
+  // Preview ao vivo enquanto o usuário digita o lote no popup.
+  const loteEncontrado = useMemo(() => buscarDadosDoLote(novoLote), [novoLote]); // eslint-disable-line react-hooks/exhaustive-deps
+  const loteJaNaFila = loteEncontrado && lotes.some((l) => l.lotePA === loteEncontrado.lotePA);
+
   // Listas unicas pra filtros (dropdowns).
   const processosUnicos = useMemo(
-    () => [...new Set(LOTES_FILA.map((i) => i.processo))],
-    []
+    () => [...new Set(lotes.map((i) => i.processo))],
+    [lotes]
   );
   const tiposUnicos = useMemo(
-    () => [...new Set(LOTES_FILA.map((i) => i.tipoRelato))],
-    []
+    () => [...new Set(lotes.map((i) => i.tipoRelato))],
+    [lotes]
   );
 
   // Itens apos filtragem.
@@ -203,9 +234,9 @@ export default function QualidadeFilaReconciliacaoScreen() {
   const PRIORIDADE_PESO = { critica: 0, alta: 1, normal: 2 };
   const itensFiltrados = useMemo(() => {
     const q = busca.trim().toLowerCase();
-    return LOTES_FILA
+    return lotes
       .filter((item) => {
-        if (filtroStatus !== 'todos' && item.statusProcesso !== filtroStatus) return false;
+        if (filtroStatus !== 'todos' && item.statusReconciliacao !== filtroStatus) return false;
         if (filtroProcesso !== 'todos' && item.processo !== filtroProcesso) return false;
         if (filtroTipo !== 'todos' && item.tipoRelato !== filtroTipo) return false;
         if (q) {
@@ -221,18 +252,18 @@ export default function QualidadeFilaReconciliacaoScreen() {
         if (pa !== pb) return pa - pb;
         return a.linha - b.linha;
       });
-  }, [filtroStatus, filtroProcesso, filtroTipo, busca]);
+  }, [lotes, filtroStatus, filtroProcesso, filtroTipo, busca]);
 
   // KPIs (calculados sobre o conjunto total — nao filtrado).
   const stats = useMemo(() => {
-    const total = LOTES_FILA.length;
-    const prontos = LOTES_FILA.filter((i) => i.statusProcesso === '10').length;
-    const emCurso = LOTES_FILA.filter((i) => i.statusProcesso === '20').length;
-    const aguardando = LOTES_FILA.filter((i) => i.statusProcesso === '30').length;
-    const prioCriticos = LOTES_FILA.filter((i) => i.prioridadePcp === 'critica').length;
-    const prioAltos    = LOTES_FILA.filter((i) => i.prioridadePcp === 'alta').length;
-    return { total, prontos, emCurso, aguardando, prioCriticos, prioAltos };
-  }, []);
+    const total = lotes.length;
+    const novos       = lotes.filter((i) => i.statusReconciliacao === 'novo').length;
+    const emExecucao  = lotes.filter((i) => i.statusReconciliacao === 'execucao').length;
+    const finalizados = lotes.filter((i) => i.statusReconciliacao === 'finalizado').length;
+    const prioCriticos = lotes.filter((i) => i.prioridadePcp === 'critica').length;
+    const prioAltos    = lotes.filter((i) => i.prioridadePcp === 'alta').length;
+    return { total, novos, emExecucao, finalizados, prioCriticos, prioAltos };
+  }, [lotes]);
 
   const limparFiltros = () => {
     setFiltroStatus('todos');
@@ -244,16 +275,62 @@ export default function QualidadeFilaReconciliacaoScreen() {
   };
 
   const abrirReconciliacao = (item) => {
-    if (item.statusProcesso !== '10') {
-      setAviso(
-        `Lote PA ${item.lotePA} ainda em processo: ${item.descStatus}. ` +
-        'Aguarde a conclusão da etapa anterior para iniciar a Reconciliação.'
-      );
-      setInfo('');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigate(`/qual-reconciliacao?lote=${item.lotePA}`);
+  };
+
+  // ── Popup "Adicionar nova reconciliação" ──
+  const abrirModalNovo = () => {
+    setNovoLote('');
+    setErroModal('');
+    setModalAberto(true);
+  };
+
+  const adicionarReconciliacao = () => {
+    const termo = novoLote.trim();
+    if (!termo) {
+      setErroModal('Informe o lote para criar a reconciliação.');
       return;
     }
-    navigate(`/qual-reconciliacao?lote=${item.lotePA}`);
+    const dados = buscarDadosDoLote(termo);
+    if (!dados) {
+      setErroModal(`Lote "${termo}" não encontrado na base. Ex.: 262690, 260847, 784426 ou S0815B.`);
+      return;
+    }
+    if (lotes.some((l) => l.lotePA === dados.lotePA)) {
+      setErroModal(`O lote ${dados.lotePA} já está na fila.`);
+      return;
+    }
+    const agora = new Date();
+    const z = (n) => String(n).padStart(2, '0');
+    const dataFmt =
+      `${agora.getFullYear()}-${z(agora.getMonth() + 1)}-${z(agora.getDate())} ` +
+      `${z(agora.getHours())}:${z(agora.getMinutes())}`;
+    const numeroReconciliacao = String(
+      lotes.reduce((m, l) => Math.max(m, parseInt(l.numeroReconciliacao, 10) || 0), 137233) + 1
+    );
+    const novoItem = {
+      linha: lotes.reduce((m, l) => Math.max(m, l.linha), 0) + 1,
+      numeroReconciliacao,
+      statusReconciliacao: 'novo',
+      tipoRelato: 'PA',
+      descRelato: 'Lote Produto Acabado',
+      processo: 'RECN',
+      descProcesso: 'Reconciliação Técnica',
+      statusProcesso: '10',
+      descStatus: 'Pronto — Aguardando CQ',
+      lotePA: dados.lotePA,
+      produto: dados.produto,
+      wo: dados.wo,
+      dataAtualizacao: dataFmt,
+      filial: '0015 - Casa Granado',
+      prioridadePcp: 'normal',
+    };
+    setLotes((prev) => [...prev, novoItem]);
+    setModalAberto(false);
+    setAba('pendentes');
+    setInfo(`✓ Reconciliação #${numeroReconciliacao} (Lote PA ${dados.lotePA}) adicionada à fila.`);
+    setAviso('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const atualizarMock = () => {
@@ -277,11 +354,8 @@ export default function QualidadeFilaReconciliacaoScreen() {
           <div className="ph-title">{aba === 'pendentes' ? 'Fila de Reconciliações Pendentes' : 'Reconciliações Finalizadas'}</div>
         </div>
         <div className="ph-actions" style={{ display: 'flex', gap: 8 }}>
-          <button className="btn btn-sm btn-ghost" onClick={atualizarMock} title="Atualizar via JDE">
-            ↻ Atualizar
-          </button>
-          <button className="btn btn-sm btn-ghost" onClick={exportarMock} title="Exportar lista filtrada">
-            📥 Exportar
+          <button className="btn btn-sm btn-v" onClick={abrirModalNovo} title="Adicionar uma nova reconciliação à fila">
+            ➕ Adicionar nova reconciliação
           </button>
         </div>
       </div>
@@ -294,7 +368,7 @@ export default function QualidadeFilaReconciliacaoScreen() {
         }}
       >
         {[
-          { id: 'pendentes',   label: '📋 Pendentes',   sub: `${LOTES_FILA.length} na fila` },
+          { id: 'pendentes',   label: '📋 Pendentes',   sub: `${lotes.length} na fila` },
           { id: 'finalizadas', label: '✅ Finalizadas', sub: `${LOTES_FINALIZADOS.length} reconciliados` },
         ].map((a) => {
           const ativa = aba === a.id;
@@ -338,11 +412,11 @@ export default function QualidadeFilaReconciliacaoScreen() {
           gap: 12, marginBottom: 14,
         }}
       >
-        <KpiCard label="Total na Fila"      valor={stats.total}      cor="var(--text)" icone="📋" hint="Lotes na fila do CQ" />
-        <KpiCard label="Prontos para CQ"    valor={stats.prontos}    cor="var(--ok)"   icone="✅" hint="Status 10 — clicáveis"  />
-        <KpiCard label="Em Curso"           valor={stats.emCurso}    cor="var(--inf)"  icone="🏭" hint="Fab / Emb / Pesagem"   />
-        <KpiCard label="Aguardando LIMS"    valor={stats.aguardando} cor="var(--alr)"  icone="⏳" hint="Físico-Q. / Microbio." />
-        <KpiCard label="Prioridade PCP"     valor={`${stats.prioCriticos}/${stats.prioAltos}`} cor="var(--per)" icone="🚩" hint="Críticas / Altas — sobem na fila" />
+        <KpiCard label="Total na Fila"  valor={stats.total}       cor="var(--text)" icone="📋" hint="Reconciliações na fila" />
+        <KpiCard label="Novos"          valor={stats.novos}       cor="var(--inf)"  icone="🆕" hint="Ainda não iniciadas" />
+        <KpiCard label="Em Execução"    valor={stats.emExecucao}  cor="var(--alr)"  icone="🔄" hint="CQ em análise" />
+        <KpiCard label="Finalizados"    valor={stats.finalizados} cor="var(--ok)"   icone="✅" hint="Reconciliação concluída" />
+        <KpiCard label="Prioridade PCP" valor={`${stats.prioCriticos}/${stats.prioAltos}`} cor="var(--per)" icone="🚩" hint="Críticas / Altas — sobem na fila" />
       </div>
       )}
 
@@ -397,9 +471,9 @@ export default function QualidadeFilaReconciliacaoScreen() {
             style={{ fontSize: 12, padding: '7px 10px' }}
           >
             <option value="todos">Todos</option>
-            <option value="10">10 — Pronto</option>
-            <option value="20">20 — Em Curso</option>
-            <option value="30">30 — Aguardando</option>
+            <option value="novo">Novo</option>
+            <option value="execucao">Em execução</option>
+            <option value="finalizado">Finalizado</option>
           </select>
         </div>
 
@@ -475,7 +549,7 @@ export default function QualidadeFilaReconciliacaoScreen() {
             Registros 1 - {itensFiltrados.length}
             {filtroAtivo && (
               <span style={{ color: 'var(--inf)', marginLeft: 8 }}>
-                (filtrado de {LOTES_FILA.length})
+                (filtrado de {lotes.length})
               </span>
             )}
           </span>
@@ -487,31 +561,23 @@ export default function QualidadeFilaReconciliacaoScreen() {
         </div>
 
         <div style={{ overflowX: 'auto' }}>
-          <table className="tbl" style={{ minWidth: 1200 }}>
+          <table className="tbl" style={{ minWidth: 760 }}>
             <thead>
               <tr>
-                <th style={{ width: 32, textAlign: 'center' }}>
-                  <input type="checkbox" disabled style={{ cursor: 'not-allowed' }} />
-                </th>
-                <th style={{ width: 38, textAlign: 'center' }}>🔍</th>
-                <th>Nº<br />Linha</th>
-                <th title="Prioridade do PCP — sinaliza lotes preferenciais">🚩 PCP</th>
-                <th>Tipo de <span style={{ color: 'var(--per)' }}>★</span><br />Relato</th>
-                <th>Descrição<br />Relato</th>
-                <th>Processo <span style={{ color: 'var(--per)' }}>★</span></th>
-                <th>Descrição<br />Processo</th>
-                <th>Status do <span style={{ color: 'var(--per)' }}>★</span><br />Processo</th>
-                <th>Descrição<br />Status</th>
+                <th title="ID da reconciliação">#</th>
                 <th>Lote<br />PA</th>
                 <th>Produto</th>
-                <th>Ordem<br />(WO)</th>
+                <th title="Prioridade do PCP — sinaliza lotes preferenciais">🚩 PCP</th>
+                <th>Processo</th>
+                <th>Status do<br />Processo</th>
                 <th>Última<br />Atualização</th>
+                <th style={{ textAlign: 'center' }}>Ação</th>
               </tr>
             </thead>
             <tbody>
               {itensFiltrados.length === 0 && (
                 <tr>
-                  <td colSpan={14} style={{ textAlign: 'center', padding: 32, color: 'var(--text3)' }}>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: 32, color: 'var(--text3)' }}>
                     <div style={{ fontSize: 24, marginBottom: 6 }}>🔍</div>
                     Nenhum lote corresponde aos filtros aplicados.
                     <div style={{ fontSize: 11, marginTop: 4 }}>
@@ -521,60 +587,32 @@ export default function QualidadeFilaReconciliacaoScreen() {
                 </tr>
               )}
 
-              {itensFiltrados.map((item) => {
-                const ehPronto = item.statusProcesso === '10';
-                return (
-                  <tr
-                    key={item.linha}
-                    onClick={() => abrirReconciliacao(item)}
-                    style={{
-                      cursor: ehPronto ? 'pointer' : 'not-allowed',
-                      background: ehPronto ? 'transparent' : 'var(--surface2)',
-                      opacity: ehPronto ? 1 : 0.78,
-                    }}
-                    title={
-                      ehPronto
-                        ? `Clique para abrir a Reconciliação do Lote PA ${item.lotePA}`
-                        : `Lote ${item.lotePA} ainda em processo: ${item.descStatus}`
-                    }
-                  >
-                    <td style={{ textAlign: 'center' }} onClick={(e) => e.stopPropagation()}>
-                      <input
-                        type="checkbox"
-                        readOnly
-                        disabled={!ehPronto}
-                        style={{ cursor: ehPronto ? 'pointer' : 'not-allowed' }}
-                      />
-                    </td>
-                    <td style={{ textAlign: 'center', fontSize: 14 }}>
-                      {ehPronto ? (
-                        <span title="Abrir reconciliação" style={{ color: 'var(--verde)' }}>▶</span>
-                      ) : (
-                        <span title="Em processo" style={{ color: 'var(--text3)' }}>⏳</span>
-                      )}
-                    </td>
-                    <td className="mono">{String(item.linha).padStart(2, '0')}</td>
-                    <td><PrioridadePcpFlag nivel={item.prioridadePcp} motivo={item.motivoPrioridade} /></td>
-                    <td className="mono"><strong>{item.tipoRelato}</strong></td>
-                    <td>{item.descRelato}</td>
-                    <td className="mono"><strong>{item.processo}</strong></td>
-                    <td>{item.descProcesso}</td>
-                    <td>
-                      <StatusProcPill
-                        codigo={item.statusProcesso}
-                        descricao={STATUS_PROC_LABEL[item.statusProcesso] || item.descStatus}
-                      />
-                    </td>
-                    <td>{item.descStatus}</td>
-                    <td className="mono" style={{ color: ehPronto ? 'var(--verde)' : 'var(--text)', fontWeight: 800 }}>
-                      {item.lotePA}
-                    </td>
-                    <td style={{ fontSize: 12 }}>{item.produto}</td>
-                    <td className="mono">{item.wo}</td>
-                    <td className="mono" style={{ fontSize: 11, color: 'var(--text3)' }}>{item.dataAtualizacao}</td>
-                  </tr>
-                );
-              })}
+              {itensFiltrados.map((item) => (
+                <tr
+                  key={item.linha}
+                  onClick={() => abrirReconciliacao(item)}
+                  style={{ cursor: 'pointer' }}
+                  title={`Abrir a reconciliação do Lote PA ${item.lotePA}`}
+                >
+                  <td className="mono" style={{ fontWeight: 700, color: 'var(--ouro)' }}>{item.numeroReconciliacao}</td>
+                  <td className="mono" style={{ color: 'var(--verde)', fontWeight: 800 }}>{item.lotePA}</td>
+                  <td style={{ fontSize: 12 }}>{item.produto}</td>
+                  <td><PrioridadePcpFlag nivel={item.prioridadePcp} motivo={item.motivoPrioridade} /></td>
+                  <td className="mono"><strong>{item.processo}</strong></td>
+                  <td><StatusReconcPill status={item.statusReconciliacao} /></td>
+                  <td className="mono" style={{ fontSize: 11, color: 'var(--text3)' }}>{item.dataAtualizacao}</td>
+                  <td style={{ textAlign: 'center' }} onClick={(e) => e.stopPropagation()}>
+                    <button
+                      className="btn btn-sm btn-v"
+                      onClick={() => abrirReconciliacao(item)}
+                      style={{ whiteSpace: 'nowrap' }}
+                      title={`Entrar na reconciliação do Lote PA ${item.lotePA}`}
+                    >
+                      Entrar →
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -590,11 +628,11 @@ export default function QualidadeFilaReconciliacaoScreen() {
           }}
         >
           <span>
-            <strong style={{ color: 'var(--ok)' }}>10</strong> Pronto · clique para abrir &nbsp;|&nbsp;
-            <strong style={{ color: 'var(--inf)' }}>20</strong> Em curso (Fab/Emb/Pesa) &nbsp;|&nbsp;
-            <strong style={{ color: 'var(--alr)' }}>30</strong> Aguardando análise (LIMS/Micro)
+            Status da reconciliação:{' '}
+            <strong style={{ color: 'var(--inf)' }}>Novo</strong> &nbsp;|&nbsp;
+            <strong style={{ color: 'var(--alr)' }}>Em execução</strong> &nbsp;|&nbsp;
+            <strong style={{ color: 'var(--ok)' }}>Finalizado</strong> · clique em Entrar para abrir
           </span>
-          <span style={{ marginLeft: 'auto' }}>★ campo obrigatório</span>
         </div>
       </div>
       )}
@@ -692,6 +730,102 @@ export default function QualidadeFilaReconciliacaoScreen() {
           </span>
         </div>
       </div>
+      )}
+
+      {/* Popup: Adicionar nova reconciliação */}
+      {modalAberto && (
+        <div
+          onClick={() => setModalAberto(false)}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,.45)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="card"
+            style={{ width: '92%', maxWidth: 480, padding: 22, boxShadow: 'var(--sh2)' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+              <div style={{ fontFamily: 'var(--font-d)', fontSize: 18, fontWeight: 700, color: 'var(--verde-esc)' }}>
+                ➕ Nova Reconciliação
+              </div>
+              <button
+                onClick={() => setModalAberto(false)}
+                title="Fechar"
+                style={{ border: 'none', background: 'transparent', cursor: 'pointer', fontSize: 18, color: 'var(--text3)', lineHeight: 1 }}
+              >
+                ✕
+              </button>
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--text2)', marginBottom: 16 }}>
+              Informe o lote — os demais dados (produto e ordem) são buscados automaticamente.
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <label className="lbl">
+                Lote <span style={{ color: 'var(--per)' }}>*</span>{' '}
+                <span style={{ fontSize: 9, color: 'var(--text3)' }}>— Lote PA · WO · código</span>
+              </label>
+              <input
+                className="inp"
+                autoFocus
+                value={novoLote}
+                onChange={(e) => { setNovoLote(e.target.value); setErroModal(''); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') adicionarReconciliacao(); }}
+                placeholder="Ex.: 262690  ·  784426  ·  S0815B"
+                style={{ fontFamily: 'var(--font-m)' }}
+              />
+            </div>
+
+            {/* Preview ao vivo do resultado da busca do lote */}
+            {novoLote.trim() && (
+              loteEncontrado ? (
+                <div
+                  style={{
+                    marginTop: 12, padding: '10px 14px', borderRadius: 7,
+                    background: loteJaNaFila ? 'var(--alr-p)' : 'var(--ok-p)',
+                    border: `1px solid ${loteJaNaFila ? 'var(--alr-b)' : 'var(--ok-b)'}`,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <span style={{ fontSize: 14 }}>{loteJaNaFila ? '⚠' : '✓'}</span>
+                    <span style={{ fontSize: 11, fontWeight: 800, color: loteJaNaFila ? 'var(--alr)' : 'var(--ok)' }}>
+                      {loteJaNaFila ? 'Lote já está na fila' : 'Lote encontrado'}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--text)', fontWeight: 700 }}>{loteEncontrado.produto}</div>
+                  <div className="mono" style={{ fontSize: 11, color: 'var(--text2)', marginTop: 2 }}>
+                    Lote PA {loteEncontrado.lotePA} · {loteEncontrado.wo}
+                  </div>
+                </div>
+              ) : (
+                <div style={{ marginTop: 12, fontSize: 11, color: 'var(--text3)' }}>
+                  Nenhum lote encontrado para “{novoLote.trim()}”.
+                </div>
+              )
+            )}
+
+            {erroModal && (
+              <div className="abox err" style={{ marginTop: 12, marginBottom: 0 }}>
+                <span className="ai">⚠</span>
+                <div>{erroModal}</div>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 18 }}>
+              <button className="btn btn-md btn-ghost" onClick={() => setModalAberto(false)}>Cancelar</button>
+              <button
+                className="btn btn-md btn-v"
+                onClick={adicionarReconciliacao}
+                disabled={!loteEncontrado || loteJaNaFila}
+                style={{ opacity: !loteEncontrado || loteJaNaFila ? 0.5 : 1 }}
+              >
+                ✓ Adicionar à fila
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

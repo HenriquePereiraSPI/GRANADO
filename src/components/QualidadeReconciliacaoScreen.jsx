@@ -219,6 +219,30 @@ const MOCK_ANEXOS = {
   },
 };
 
+// Categorias de anexo. As obrigatorias (foto da etiqueta + boletim LIMS)
+// bloqueiam a liberacao para o CED enquanto nao houver ao menos 1 anexo
+// de cada uma.
+const CATEGORIAS_ANEXO = [
+  { key: 'foto_etiqueta', label: 'Foto da Etiqueta do Granel', obrigatorio: true },
+  { key: 'boletim_lims',  label: 'Boletim LIMS (FQ / Micro)',  obrigatorio: true },
+  { key: 'dados_brutos',  label: 'Dados Brutos da Análise',    obrigatorio: false },
+  { key: 'outro',         label: 'Outro documento',            obrigatorio: false },
+];
+const ANEXOS_OBRIGATORIOS = CATEGORIAS_ANEXO.filter((c) => c.obrigatorio).map((c) => c.key);
+const catAnexoLabel = (key) => (CATEGORIAS_ANEXO.find((c) => c.key === key) || {}).label || key;
+
+/** Converte o mock { categoria: {nome,tamanho,data} } numa lista de anexos. */
+function objToAnexos(obj) {
+  if (!obj) return [];
+  return Object.entries(obj).map(([categoria, v], i) => ({
+    id: `${categoria}-seed-${i}`,
+    categoria,
+    nome: v.nome,
+    tamanho: v.tamanho,
+    data: v.data,
+  }));
+}
+
 const STATUS_COLOR = {
   APROVADO:  { bg: 'var(--ok-p)',   fg: 'var(--ok)',    bd: 'var(--ok-b)'  },
   REPROVADO: { bg: 'var(--per-p)',  fg: 'var(--per)',   bd: 'var(--per-b)' },
@@ -499,99 +523,6 @@ function CampoSelect({ label, value, opcoes, onChange, obrigatorio }) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   MultibatchBlock — exibe N granéis que compõem 1 lote PA.
-   Render no cabeçalho de Identificação, logo abaixo da grid 4×N
-   de campos. Mostra Lote/WO/Peso/Status de cada granel.
-───────────────────────────────────────────────────────────── */
-function MultibatchBlock({ granelLotes, loteGranelLegacy }) {
-  // Fallback pra mocks/templates legados que ainda só tem loteGranel string
-  const lotes = (granelLotes && granelLotes.length > 0)
-    ? granelLotes
-    : (loteGranelLegacy
-        ? [{ lote: loteGranelLegacy, wo: '—', peso: '—', status: 'PENDENTE' }]
-        : []);
-  const isMulti = lotes.length > 1;
-  return (
-    <div style={{ marginTop: 12, borderTop: '1px dashed var(--border)', paddingTop: 12 }}>
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
-        marginBottom: 6,
-      }}>
-        <span style={{
-          fontSize: 10, fontWeight: 900, letterSpacing: '.14em', textTransform: 'uppercase',
-          color: 'var(--text3)',
-        }}>
-          {isMulti ? '🔀 Multibatch — Granéis que compõem o PA' : 'Granel de Origem'}
-        </span>
-        {isMulti && (
-          <span className="bdg" style={{
-            fontSize: 9, background: 'var(--ouro-claro)', color: '#fff',
-            border: '1px solid var(--ouro)', fontWeight: 800,
-          }}>
-            {lotes.length} GRANÉIS
-          </span>
-        )}
-        {lotes.length === 0 && (
-          <span style={{ fontSize: 10, color: 'var(--text3)', fontStyle: 'italic' }}>
-            — sem granéis vinculados
-          </span>
-        )}
-      </div>
-
-      {lotes.length > 0 && (
-        <div style={{
-          background: 'var(--surface2)',
-          border: '1px solid var(--border)',
-          borderRadius: 6,
-          overflow: 'hidden',
-        }}>
-          {/* Header */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '40px 1.2fr 1.2fr 1fr 110px',
-            gap: 0,
-            fontSize: 9, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase',
-            color: 'var(--text3)', background: 'var(--bg2)',
-            padding: '6px 10px', borderBottom: '1px solid var(--border)',
-          }}>
-            <div>#</div>
-            <div>Lote Granel</div>
-            <div>Ordem (WO)</div>
-            <div>Peso</div>
-            <div style={{ textAlign: 'right' }}>Status</div>
-          </div>
-          {lotes.map((g, i) => (
-            <div
-              key={`${g.lote}-${i}`}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '40px 1.2fr 1.2fr 1fr 110px',
-                gap: 0,
-                fontSize: 12, fontFamily: 'var(--font-m)', fontWeight: 600,
-                padding: '7px 10px',
-                background: i % 2 === 0 ? 'var(--surface)' : 'var(--surface2)',
-                borderBottom: i < lotes.length - 1 ? '1px solid var(--border)' : 'none',
-                alignItems: 'center',
-              }}
-            >
-              <div style={{
-                fontSize: 10, fontWeight: 900, color: 'var(--text3)',
-              }}>{i + 1}</div>
-              <div style={{ color: 'var(--text)' }}>{g.lote}</div>
-              <div style={{ color: 'var(--text2)' }}>{g.wo}</div>
-              <div style={{ color: 'var(--text2)' }}>{g.peso}</div>
-              <div style={{ textAlign: 'right' }}>
-                <StatusPill status={g.status} />
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
    AnexosCard — 3 slots de anexo do lote
    (Foto da Etiqueta do Granel · Boletim LIMS · Dados Brutos).
    Reunião GQV/CQ 12/05/2026 — discutido a partir do minuto 18:53
@@ -599,162 +530,106 @@ function MultibatchBlock({ granelLotes, loteGranelLegacy }) {
    anexada NO MOMENTO da fabricação. Anexo ausente = bloqueia
    liberação. Mockup: drag-and-drop / clique pra adicionar.
 ───────────────────────────────────────────────────────────── */
-function AnexoSlot({ slot, anexo, onUpload, onRemove }) {
-  const tem = !!anexo;
-  return (
-    <div style={{
-      flex: 1, minWidth: 200,
-      background: 'var(--surface)',
-      border: `1.5px ${tem ? 'solid' : 'dashed'} ${tem ? 'var(--ok-b)' : (slot.obrigatorio ? 'var(--alr-b)' : 'var(--border2)')}`,
-      borderRadius: 6, padding: '6px 8px',
-      display: 'flex', flexDirection: 'column', gap: 4,
-      position: 'relative',
-    }}>
-      {slot.obrigatorio && !tem && (
-        <span style={{
-          position: 'absolute', top: -7, right: 8,
-          fontSize: 8, fontWeight: 900, letterSpacing: '.08em',
-          background: 'var(--alr)', color: '#fff',
-          padding: '1px 6px', borderRadius: 7,
-          border: '1px solid var(--alr-b)',
-        }}>
-          OBRIGATÓRIO
-        </span>
-      )}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <span style={{ fontSize: 14 }}>{slot.icon}</span>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text)' }}>{slot.titulo}</div>
-          <div style={{ fontSize: 9, color: 'var(--text3)' }}>{slot.descricao}</div>
-        </div>
-      </div>
-      {tem ? (
-        <div style={{
-          background: 'var(--ok-p)', border: '1px solid var(--ok-b)',
-          borderRadius: 4, padding: '4px 6px',
-          fontSize: 10, color: 'var(--ok)',
-          display: 'flex', alignItems: 'center', gap: 6,
-        }}>
-          <span>✓</span>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {anexo.nome}
-            </div>
-            <div style={{ fontSize: 8, color: 'var(--text3)' }}>
-              {anexo.tamanho} · {anexo.data}
-            </div>
-          </div>
-          <button
-            onClick={onRemove}
-            style={{
-              background: 'none', border: '1px solid var(--per-b)', color: 'var(--per)',
-              borderRadius: 3, padding: '1px 5px', fontSize: 9,
-              cursor: 'pointer', fontFamily: 'inherit',
-            }}
-            title="Remover anexo"
-          >
-            ✕
-          </button>
-        </div>
-      ) : (
-        <button
-          type="button"
-          onClick={onUpload}
-          style={{
-            background: 'var(--surface2)', border: '1px dashed var(--border)',
-            color: 'var(--text2)', borderRadius: 4, padding: '6px 8px',
-            fontSize: 10, fontFamily: 'inherit', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
-          }}
-        >
-          📎 Clique para anexar
-        </button>
-      )}
-    </div>
-  );
-}
+function AnexosCard({ anexos, setAnexos }) {
+  const fmtTamanho = (b) =>
+    b >= 1048576 ? `${(b / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`;
 
-function AnexosCard({ anexos, setAnexos, ordemParcial }) {
-  const SLOTS = [
-    { key: 'foto_etiqueta', icon: '📸', titulo: 'Foto da Etiqueta do Granel',
-      descricao: 'Anexada no momento do envase (Fabricação)', obrigatorio: true },
-    { key: 'boletim_lims',  icon: '📊', titulo: 'Boletim LIMS (FQ / Micro)',
-      descricao: 'PDF gerado pelo Customer Report do LIMS', obrigatorio: true },
-    { key: 'dados_brutos',  icon: '🗂️', titulo: 'Dados Brutos da Análise',
-      descricao: 'CSV/PDF/XLS — análise tabulada', obrigatorio: false },
-  ];
-
-  const simularUpload = (key) => {
-    // Mock: simula seleção de arquivo
-    const fakeNomes = {
-      foto_etiqueta: 'etiqueta_granel_2551.jpg',
-      boletim_lims:  'boletim_lims_118502.pdf',
-      dados_brutos:  'analise_fq_dados_brutos.xlsx',
-    };
-    const fakeTamanhos = {
-      foto_etiqueta: '1,4 MB',
-      boletim_lims:  '328 KB',
-      dados_brutos:  '64 KB',
-    };
-    setAnexos((prev) => ({
-      ...prev,
-      [key]: {
-        nome: fakeNomes[key] || `${key}.pdf`,
-        tamanho: fakeTamanhos[key] || '— KB',
-        data: new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }),
-      },
+  const onArquivo = (e) => {
+    const arquivos = Array.from(e.target.files || []);
+    if (!arquivos.length) return;
+    const data = new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+    const novos = arquivos.map((f, i) => ({
+      id: `anexo-${data}-${i}-${f.name}`,
+      categoria: 'outro',
+      nome: f.name,
+      tamanho: fmtTamanho(f.size),
+      data,
     }));
-  };
-  const remover = (key) => {
-    setAnexos((prev) => {
-      const { [key]: _, ...rest } = prev;
-      return rest;
-    });
+    setAnexos((prev) => [...prev, ...novos]);
+    e.target.value = '';
   };
 
-  const obrigatoriosFaltando = SLOTS.filter((s) => s.obrigatorio && !anexos[s.key]);
+  const remover = (id) => setAnexos((prev) => prev.filter((a) => a.id !== id));
+
+  const faltando = ANEXOS_OBRIGATORIOS.filter((k) => !anexos.some((a) => a.categoria === k));
+  const ok = faltando.length === 0;
 
   return (
     <div className="card" style={{
       padding: 10, marginBottom: 10,
-      borderTop: `3px solid ${obrigatoriosFaltando.length === 0 ? 'var(--ok)' : 'var(--alr)'}`,
+      borderTop: `3px solid ${ok ? 'var(--ok)' : 'var(--alr)'}`,
     }}>
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        gap: 8, flexWrap: 'wrap', marginBottom: 6,
+        gap: 8, flexWrap: 'wrap', marginBottom: 8,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 13, fontWeight: 800 }}>📎 Anexos do Lote</span>
-          {obrigatoriosFaltando.length === 0 ? (
-            <span className="bdg bdg-ok" style={{ fontSize: 10 }}>
-              ✓ Todos obrigatórios anexados
-            </span>
-          ) : (
-            <span className="bdg bdg-alr" style={{ fontSize: 10 }}>
-              ⚠ Faltam {obrigatoriosFaltando.length} anexo(s) obrigatório(s)
-            </span>
-          )}
-          <span style={{
-            fontSize: 9, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase',
-            color: 'var(--text3)', padding: '2px 6px',
-            border: '1px dashed var(--border2)', borderRadius: 8,
-          }}>
-            evidência GMP
-          </span>
-        </div>
+        <span style={{ fontSize: 13, fontWeight: 800 }}>📎 Anexos do Lote</span>
+
+        {/* Adicionar novo anexo */}
+        <label className="btn btn-sm btn-v" style={{ cursor: 'pointer', whiteSpace: 'nowrap' }}>
+          📎 Adicionar anexo
+          <input type="file" multiple style={{ display: 'none' }} onChange={onArquivo} />
+        </label>
       </div>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-        {SLOTS.map((s) => (
-          <AnexoSlot
-            key={s.key}
-            slot={s}
-            anexo={anexos[s.key]}
-            onUpload={() => simularUpload(s.key)}
-            onRemove={() => remover(s.key)}
-          />
-        ))}
-      </div>
+      <table className="tbl">
+        <thead>
+          <tr>
+            <th>Categoria</th>
+            <th>Arquivo</th>
+            <th>Tamanho</th>
+            <th>Data do anexo</th>
+            <th style={{ textAlign: 'center', width: 60 }}>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {anexos.length === 0 ? (
+            <tr>
+              <td colSpan={5} style={{ textAlign: 'center', color: 'var(--text3)', padding: 16, fontSize: 12 }}>
+                Nenhum anexo adicionado. Selecione a categoria e clique em <strong>Adicionar anexo</strong>.
+              </td>
+            </tr>
+          ) : (
+            anexos.map((a) => {
+              const obrig = ANEXOS_OBRIGATORIOS.includes(a.categoria);
+              return (
+                <tr key={a.id}>
+                  <td style={{ fontSize: 12 }}>
+                    {catAnexoLabel(a.categoria)}
+                    {obrig && (
+                      <span style={{ fontSize: 8, fontWeight: 900, letterSpacing: '.06em', color: 'var(--alr)', marginLeft: 6 }}>
+                        OBRIGATÓRIO
+                      </span>
+                    )}
+                  </td>
+                  <td className="mono" style={{ fontSize: 11 }}>📎 {a.nome}</td>
+                  <td className="mono" style={{ fontSize: 11, color: 'var(--text2)' }}>{a.tamanho}</td>
+                  <td className="mono" style={{ fontSize: 11, color: 'var(--text3)' }}>{a.data}</td>
+                  <td style={{ textAlign: 'center' }}>
+                    <button
+                      onClick={() => remover(a.id)}
+                      style={{
+                        background: 'none', border: '1px solid var(--per-b)', color: 'var(--per)',
+                        borderRadius: 4, padding: '2px 8px', fontSize: 11,
+                        cursor: 'pointer', fontFamily: 'inherit',
+                      }}
+                      title="Remover anexo"
+                    >
+                      ✕
+                    </button>
+                  </td>
+                </tr>
+              );
+            })
+          )}
+        </tbody>
+      </table>
+
+      {!ok && (
+        <div style={{ fontSize: 10, color: 'var(--alr)', marginTop: 6 }}>
+          Pendente(s): {faltando.map((k) => catAnexoLabel(k)).join(' · ')} — obrigatório(s) para liberar o lote.
+        </div>
+      )}
     </div>
   );
 }
@@ -1184,15 +1059,6 @@ function CardArea({ chave, dados, indicadores, onUpdate, onAbrirGenealogia }) {
                 title="Pendente"
               >
                 ⏳
-              </button>
-              <button
-                type="button"
-                onClick={() => handleChange('status', 'NA')}
-                className="btn btn-sm btn-ghost"
-                style={{ borderColor: 'var(--text3)', color: 'var(--text2)', fontSize: 9, padding: '2px 6px' }}
-                title="Não se aplica"
-              >
-                —
               </button>
               <button
                 type="button"
@@ -1794,11 +1660,10 @@ export default function QualidadeReconciliacaoScreen() {
   // grava direto na base do Estoque de Retenção (acessivel pela tela
   // gerencial /qual-amostras).
   const [amostras, setAmostras] = useState([]);
-  // Wave 2.5 — Anexos do Lote (Foto Etiqueta, Boletim LIMS, Dados Brutos).
-  // Mapa { slot_key: { nome, tamanho, data } } — em produção vira upload
-  // pro repositório de evidências (S3 / SharePoint). Foto Etiqueta e
-  // Boletim LIMS são obrigatórios → bloqueiam liberação.
-  const [anexos, setAnexos] = useState({});
+  // Wave 2.5 — Anexos do Lote. Lista [{ id, categoria, nome, tamanho, data }]
+  // — em produção vira upload pro repositório de evidências (S3 / SharePoint).
+  // Foto Etiqueta e Boletim LIMS são obrigatórios → bloqueiam liberação.
+  const [anexos, setAnexos] = useState([]);
 
   // Quando aberta a partir da Fila (/qual-fila) com ?lote=<PA>,
   // mostramos um botao "Voltar para Fila" no header.
@@ -1826,7 +1691,7 @@ export default function QualidadeReconciliacaoScreen() {
     setNumeroLote('NOVO-' + numero);
     setLote(loteTemplate(numero));
     setAmostras([]);
-    setAnexos({});
+    setAnexos([]);
     setModo('criacao');
     setErro('');
     setMensagem('🆕 Nova Reconciliação iniciada — Nº ' + numero + ' (gerado via integração JDE).');
@@ -1853,14 +1718,14 @@ export default function QualidadeReconciliacaoScreen() {
         setErro(`Lote PA "${alvo}" não encontrado ou ainda não finalizou a etapa de embalagem.`);
         setLote(null);
         setAmostras([]);
-        setAnexos({});
+        setAnexos([]);
       } else {
         setLote(JSON.parse(JSON.stringify(dados)));
         // Mock seed: lotes conhecidos já vêm com amostras coletadas
         // do envase (Início/Meio/Fim + Micro + FQ).
         setAmostras(MOCK_AMOSTRAS[key] || []);
         // Mock seed dos anexos — em produção vem do repositório.
-        setAnexos(MOCK_ANEXOS[key] || {});
+        setAnexos(objToAnexos(MOCK_ANEXOS[key]));
         // Sincroniza flag de Ordem Parcial vinda do JDE com o
         // checklist (Anexo 2 do POP-GQV-0009) — afeta a obrigatoriedade
         // de amostras Início/Meio/Fim.
@@ -1889,8 +1754,7 @@ export default function QualidadeReconciliacaoScreen() {
   const desviosBloqueando = desviosAbertos.length > 0;
 
   // Wave 2.5 — Anexos obrigatórios faltando bloqueiam a liberação.
-  const anexosObrigatorios = ['foto_etiqueta', 'boletim_lims'];
-  const anexosFaltando = anexosObrigatorios.filter((k) => !anexos[k]);
+  const anexosFaltando = ANEXOS_OBRIGATORIOS.filter((k) => !anexos.some((a) => a.categoria === k));
   const anexosBloqueando = anexosFaltando.length > 0;
 
   const podeLiberar = todasAprovadas && checklistCompleto && !desviosBloqueando && !anexosBloqueando;
@@ -1948,7 +1812,7 @@ export default function QualidadeReconciliacaoScreen() {
         <div>
           <div className="ph-eyebrow">Qualidade · CQ · ERU 6.1.x — Reconciliação Técnica</div>
           <div className="ph-title" style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-            Reconciliação Técnica & Liberação de Lote
+            Visão Geral da Reconciliação
             {lote && checklist.ordemParcial && (
               <span
                 className="bdg"
@@ -1965,91 +1829,21 @@ export default function QualidadeReconciliacaoScreen() {
             )}
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          {veioDaFila && (
-            <button
-              className="btn btn-sm btn-ghost"
-              onClick={() => navigate('/qual-fila')}
-              style={{ borderColor: 'var(--ouro)', color: 'var(--ouro)', fontWeight: 700 }}
-              title="Voltar para a Fila de Reconciliações"
-            >
-              ← Voltar para Fila
-            </button>
-          )}
-          <div style={{ textAlign: 'right', fontFamily: 'var(--font-m)', fontSize: 10, color: 'var(--text2)', lineHeight: 1.6 }}>
-            Tela [JPD920-CQ]<br />
-            <span style={{ color: 'var(--verde)', fontWeight: 700 }}>Bárbara C. O. Peixoto</span>
-          </div>
-        </div>
       </div>
 
-      {/* Bloco de busca */}
-      <div className="card cv mb14" style={{ padding: 18 }}>
-        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 12, flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 280, maxWidth: 460 }}>
-            <label className="lbl" style={{ fontWeight: 700 }}>
-              Nº Lote PA (Produto Acabado) <span style={{ color: 'var(--per)' }}>*</span>
-            </label>
-            <input
-              className="inp"
-              type="text"
-              value={numeroLote}
-              onChange={(e) => setNumeroLote(e.target.value)}
-              placeholder="Ex.: 262417, 261892, 261104"
-              onKeyDown={(e) => e.key === 'Enter' && buscarLote()}
-              style={{ fontFamily: 'var(--font-m)', fontSize: 14 }}
-            />
-            <span style={{ fontSize: 10, color: 'var(--text3)', marginTop: 4 }}>
-              Mesmo Lote PA usado no Dossiê de Genealogia. Indica que Fabricação e Embalagem foram concluídas.
-            </span>
-          </div>
-          <button
-            className="btn btn-md btn-v"
-            onClick={() => buscarLote()}
-            disabled={carregando}
-            style={{ minWidth: 130 }}
-          >
-            {carregando ? 'Buscando…' : '🔍 Buscar Lote'}
-          </button>
-          <button
-            className="btn btn-md btn-ghost"
-            onClick={() => { setNumeroLote(''); setLote(null); setAmostras([]); setAnexos({}); setErro(''); setMensagem(''); setModo('analise'); }}
-          >
-            Limpar
-          </button>
-          <div style={{ width: 1, height: 36, background: 'var(--border)', margin: '0 4px' }} />
-          <button
-            className="btn btn-md"
-            onClick={novaReconciliacao}
-            style={{
-              minWidth: 200,
-              background: 'var(--ouro)',
-              color: '#fff',
-              borderColor: 'var(--ouro)',
-            }}
-            title="Cria uma nova reconciliação com número gerado pelo JDE"
-          >
-            + Nova Reconciliação
-          </button>
+      {/* Mensagens (erro / sucesso) */}
+      {erro && (
+        <div className="abox err mb14">
+          <span className="ai">⚠</span>
+          <div>{erro}</div>
         </div>
-
-        {erro && (
-          <div className="abox err" style={{ marginTop: 12 }}>
-            <span className="ai">⚠</span>
-            <div>{erro}</div>
-          </div>
-        )}
-
-        {mensagem && (
-          <div
-            className={`abox ${mensagem.startsWith('✓') ? 'ok' : 'err'}`}
-            style={{ marginTop: 12 }}
-          >
-            <span className="ai">{mensagem.startsWith('✓') ? '✅' : '⛔'}</span>
-            <div>{mensagem}</div>
-          </div>
-        )}
-      </div>
+      )}
+      {mensagem && (
+        <div className={`abox ${mensagem.startsWith('✓') ? 'ok' : 'err'} mb14`}>
+          <span className="ai">{mensagem.startsWith('✓') ? '✅' : '⛔'}</span>
+          <div>{mensagem}</div>
+        </div>
+      )}
 
       {/* Lote carregado */}
       {lote && (
@@ -2069,24 +1863,11 @@ export default function QualidadeReconciliacaoScreen() {
           <div className="card" style={{ padding: 10, marginBottom: 10 }}>
             <div className="card-title" style={{ marginBottom: 8, padding: '0 0 6px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
               <span>Identificação do Lote</span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                {modo === 'criacao' && (
-                  <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--ouro)' }}>
-                    ✏️ Editável (modo criação)
-                  </span>
-                )}
-                {lote.lotePA && (
-                  <button
-                    type="button"
-                    onClick={() => abrirGenealogia()}
-                    className="btn btn-sm btn-ghost"
-                    style={{ fontSize: 10, borderColor: 'var(--verde)', color: 'var(--verde)' }}
-                    title={`Abrir Dossiê de Genealogia do Lote PA ${lote.lotePA}`}
-                  >
-                    🧬 Ver Dossiê de Genealogia (Lote PA {lote.lotePA})
-                  </button>
-                )}
-              </div>
+              {modo === 'criacao' && (
+                <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--ouro)' }}>
+                  ✏️ Editável (modo criação)
+                </span>
+              )}
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
               <Campo label="Nº Reconciliação" value={lote.numeroReconciliacao} />
@@ -2108,14 +1889,6 @@ export default function QualidadeReconciliacaoScreen() {
               <Campo label="Status Documentação" value={lote.statusDocumentacao} />
             </div>
 
-            {/* ── Multibatch: N granéis fechando 1 PA ──────────
-                Reunião GQV/CQ 12/05/2026, Carlos Lima @22:41 —
-                "aqui na fábrica a gente tem uma coisa que a gente
-                chama de multibatch". O cabeçalho não pode mais
-                exibir um único Lote Granel — precisa listar todos
-                os granéis (cada um com sua WO e peso) que
-                contribuíram para o lote PA. */}
-            <MultibatchBlock granelLotes={lote.granelLotes || []} loteGranelLegacy={lote.loteGranel} />
           </div>
 
           {/* Grid das 5 áreas — auto-fit com cards compactos.
@@ -2184,7 +1957,7 @@ export default function QualidadeReconciliacaoScreen() {
           </div>
 
           {/* ── Wave 2.5 — Anexos do Lote ──────────────── */}
-          <AnexosCard anexos={anexos} setAnexos={setAnexos} ordemParcial={checklist.ordemParcial} />
+          <AnexosCard anexos={anexos} setAnexos={setAnexos} />
 
           {/* ── Wave 1.1 — Amostras de Retenção ─────────── */}
           <AmostrasRetencaoCard
@@ -2394,8 +2167,9 @@ export default function QualidadeReconciliacaoScreen() {
         />
       )}
 
-      {/* Dica para o usuario quando nao ha lote carregado */}
-      {!lote && !erro && (
+      {/* Dica só quando a tela é aberta sem um lote no contexto (acesso direto,
+          fora do fluxo "Entrar" da Fila). No fluxo normal vem sempre com ?lote. */}
+      {!lote && !erro && !veioDaFila && (
         <div
           style={{
             padding: '12px 14px',
@@ -2409,9 +2183,8 @@ export default function QualidadeReconciliacaoScreen() {
         >
           <span style={{ fontSize: 18 }}>💡</span>
           <span style={{ flex: 1, minWidth: 220 }}>
-            Informe o Nº Lote PA no campo acima para iniciar a análise — ou
-            abra a tela <strong>Fila de Reconciliações</strong> para selecionar um
-            lote pronto diretamente da lista.
+            Abra a <strong>Fila de Reconciliações</strong> e clique em
+            <strong> Entrar</strong> numa linha para selecionar o lote e iniciar a análise.
           </span>
           <button
             className="btn btn-sm btn-ghost"

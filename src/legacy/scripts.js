@@ -1330,6 +1330,19 @@ function updateValProg(){
   document.getElementById('vi-note').style.color=ok?'var(--ok)':'';
 }
 
+/* ── Popup "Iniciar Ordem" (validacoes) — acionado em Ordens de Producao ── */
+function prodAbrirIniciar(){
+  // Reseta as validacoes pro estado inicial (val-1/2 ok · val-3/4/5 pendentes)
+  valOk[0]=true; valOk[1]=true; valOk[2]=false; valOk[3]=false; valOk[4]=false;
+  if(document.getElementById('vi-pct')) updateValProg();
+  const m=document.getElementById('prod-iniciar-modal');
+  if(m) m.style.display='flex';
+}
+function prodFecharIniciar(){
+  const m=document.getElementById('prod-iniciar-modal');
+  if(m) m.style.display='none';
+}
+
 /* ── Checklists genéricos ────────────────────────────── */
 function tck2(el){ el.classList.toggle('done'); upCkG('screen-pes-checklist','ck2'); }
 function upCkG(screenId, prefix){
@@ -1634,6 +1647,81 @@ function fabIniciarProducao() {
   openModal('modal-fab-cockpit-launch');
   const el = document.getElementById('fab-cockpit-hora');
   if(el) el.textContent = hora + ' · ' + data;
+}
+
+/* ── Popup "Iniciar Ordem" da Fabricacao (verificacoes de setup) ──
+   Acionado pelo botao "Iniciar" em Selecao de Ordens de Fabricacao. */
+function fabConfirmarItem(id) {
+  var ico = document.getElementById(id + '-ico');
+  if (!ico || ico.classList.contains('ok')) return; // ja confirmado
+  var bdg = document.getElementById(id + '-bdg');
+  var iniEl = document.getElementById(id + '-ini');
+  var fimEl = document.getElementById(id + '-fim');
+  var respEl = document.getElementById(id + '-resp');
+  var agora = new Date();
+  var hh = String(agora.getHours()).padStart(2,'0') + ':' + String(agora.getMinutes()).padStart(2,'0') + ':' + String(agora.getSeconds()).padStart(2,'0');
+  var dd = String(agora.getDate()).padStart(2,'0') + '/' + String(agora.getMonth()+1).padStart(2,'0') + '/' + agora.getFullYear();
+  ico.className = 'val-icon ok';
+  ico.textContent = '✅';
+  bdg.className = 'bdg bdg-ok';
+  bdg.textContent = 'Sim';
+  bdg.style.fontSize = '10px';
+  if (iniEl) iniEl.textContent = dd + ' ' + hh;
+  var fim = new Date(agora.getTime() + 3000);
+  var fhh = String(fim.getHours()).padStart(2,'0') + ':' + String(fim.getMinutes()).padStart(2,'0') + ':' + String(fim.getSeconds()).padStart(2,'0');
+  if (fimEl) fimEl.textContent = dd + ' ' + fhh;
+  if (respEl) {
+    respEl.innerHTML = '<strong>Ricardo H. Cunha</strong><br><span style="font-size:9px;color:var(--text3)">Mat. 103415 · PRD</span>';
+    respEl.style.color = 'var(--text)';
+  }
+  var total = 5, done = 0;
+  for (var i=1; i<=5; i++) {
+    var x = document.getElementById('fval-' + i + '-ico');
+    if (x && x.classList.contains('ok')) done++;
+  }
+  var pct = Math.round(done/total*100);
+  var bar = document.getElementById('fvi-bar');
+  var pctEl = document.getElementById('fvi-pct');
+  var txt = document.getElementById('fvi-txt');
+  var fvIco = document.getElementById('fvi-ico');
+  var btn = document.getElementById('fvi-btn');
+  var note = document.getElementById('fvi-note');
+  if (bar) bar.style.width = pct + '%';
+  if (pctEl) pctEl.textContent = pct + '%';
+  if (txt) txt.textContent = done + ' de ' + total + ' verificações realizadas — todas obrigatórias';
+  if (done === total) {
+    if (fvIco) fvIco.textContent = '✅';
+    if (btn) btn.disabled = false;
+    if (note) { note.textContent = '✓ Todas as verificações realizadas — pronto para iniciar!'; note.style.color = 'var(--ok)'; }
+  } else {
+    if (fvIco) fvIco.textContent = done > 2 ? '⚡' : '⏳';
+  }
+}
+
+function fabAbrirIniciar() {
+  // Reseta as 5 verificacoes pro estado pendente
+  for (var i=1; i<=5; i++) {
+    var ico = document.getElementById('fval-' + i + '-ico');
+    var bdg = document.getElementById('fval-' + i + '-bdg');
+    var ini = document.getElementById('fval-' + i + '-ini');
+    var fim = document.getElementById('fval-' + i + '-fim');
+    var resp = document.getElementById('fval-' + i + '-resp');
+    if (ico) { ico.className = 'val-icon pend'; ico.textContent = '⏳'; }
+    if (bdg) { bdg.className = 'bdg bdg-alr'; bdg.textContent = 'Pendente'; bdg.style.fontSize = '10px'; }
+    if (ini) ini.textContent = '—';
+    if (fim) fim.textContent = '—';
+    if (resp) { resp.innerHTML = '—'; resp.style.color = 'var(--text3)'; }
+  }
+  var bar = document.getElementById('fvi-bar'); if (bar) bar.style.width = '0%';
+  var pct = document.getElementById('fvi-pct'); if (pct) pct.textContent = '0%';
+  var txt = document.getElementById('fvi-txt'); if (txt) txt.textContent = '0 de 5 verificações realizadas — todas obrigatórias para iniciar a fabricação';
+  var fvIco = document.getElementById('fvi-ico'); if (fvIco) fvIco.textContent = '⏳';
+  var btn = document.getElementById('fvi-btn'); if (btn) btn.disabled = true;
+  var note = document.getElementById('fvi-note'); if (note) { note.textContent = 'Confirme as 5 verificações para habilitar o início.'; note.style.color = ''; }
+  var m = document.getElementById('fab-iniciar-modal'); if (m) m.style.display = 'flex';
+}
+function fabFecharIniciar() {
+  var m = document.getElementById('fab-iniciar-modal'); if (m) m.style.display = 'none';
 }
 
 // Remover bloco de init redundante

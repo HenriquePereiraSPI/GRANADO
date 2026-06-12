@@ -342,7 +342,7 @@ export const SCREENS = {
         <table class="tbl">
           <thead><tr><th>Ordem</th><th>Produto / Fórmula</th><th>Lote</th><th>Volume</th><th>Pesagem</th><th>Inbatch</th><th>Status</th><th></th></tr></thead>
           <tbody>
-            <tr onclick="nav('fab-iniciar',null,null)" style="background:var(--verde-dim)">
+            <tr onclick="fabAbrirIniciar()" style="background:var(--verde-dim)">
               <td class="mono" style="color:var(--verde)">OP-2026-0416</td>
               <td style="font-size:12px">Loção Hidratante Rosa 200ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-089</span></td>
               <td class="mono" style="font-size:11px">G2026-091</td>
@@ -350,7 +350,7 @@ export const SCREENS = {
               <td><span class="bdg bdg-ok">✓ Liberada</span></td>
               <td><span class="bdg bdg-alr">Aguardando</span></td>
               <td><span class="bdg bdg-ouro">Pronta p/ Fabricar</span></td>
-              <td><button class="btn btn-sm btn-v" onclick="nav('fab-iniciar',null,null);event.stopPropagation()">Iniciar</button></td>
+              <td><button class="btn btn-sm btn-v" onclick="fabAbrirIniciar();event.stopPropagation()">Iniciar</button></td>
             </tr>
             <tr>
               <td class="mono" style="color:var(--verde)">OP-2026-0418</td>
@@ -364,6 +364,79 @@ export const SCREENS = {
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Popup: Iniciar Ordem — Verificacoes de Setup (acionado pelo botao "Iniciar") -->
+      <div id="fab-iniciar-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:950;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 12px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px 26px;max-width:900px;width:96%;margin:auto;box-shadow:var(--sh2)">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px">
+            <div>
+              <div class="ph-eyebrow">Fabricação · Reator R-01 · MF5 · SABONETE / ETAPA 01.00</div>
+              <div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc)">Iniciar Ordem — Verificações de Setup</div>
+              <div style="font-size:11px;color:var(--text2);margin-top:2px">OP-2026-0416 · Lote G2026-091 · Loção Hidratante Rosa 200ml</div>
+            </div>
+            <button onclick="fabFecharIniciar()" title="Fechar" style="border:none;background:transparent;cursor:pointer;font-size:18px;color:var(--text3);line-height:1">✕</button>
+          </div>
+
+          <div class="prog-wrap mb14">
+            <div class="prog-pct" id="fvi-pct">0%</div>
+            <div style="flex:1"><div class="prog-out"><div class="prog-in" id="fvi-bar" style="width:0%"></div></div><div class="prog-txt" id="fvi-txt">0 de 5 verificações realizadas — todas obrigatórias para iniciar a fabricação</div></div>
+            <span id="fvi-ico" style="font-size:26px">⏳</span>
+          </div>
+          <div class="abox warn mb14"><span class="ai">⚠</span><div>SABONETE / ETAPA 01.00 — Todas as verificações abaixo são <strong>pré-requisitos obrigatórios</strong>. Cada item registra timestamp de início, fim e responsável (assinatura eletrônica).</div></div>
+
+          <div style="display:grid;grid-template-columns:60px 1fr 80px 130px 130px 200px;gap:0;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-bottom:none;border-radius:6px 6px 0 0;font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)">
+            <div>Item</div><div>Verificação</div><div style="text-align:center">Resposta</div><div>Início</div><div>Fim</div><div>Realizado / Verificado Por</div>
+          </div>
+
+          <div class="val-item" id="fval-1" style="cursor:pointer;display:grid;grid-template-columns:60px 1fr 80px 130px 130px 200px;align-items:center;gap:0;padding:10px 12px;border-radius:0;border-bottom:none" onclick="fabConfirmarItem('fval-1')">
+            <div class="val-icon pend" id="fval-1-ico">⏳</div>
+            <div><div class="val-nome" style="font-size:12px">EQUIP/SALA IDENTIF PROD/LOTE PROCESSO?</div><div class="val-desc" style="font-size:10px;margin-top:2px">Confirme que equipamento e sala estão identificados com o produto/lote em processo</div></div>
+            <div style="text-align:center"><span class="bdg bdg-alr" id="fval-1-bdg" style="font-size:10px">Pendente</span></div>
+            <div class="mono" id="fval-1-ini" style="font-size:10px;color:var(--text3)">—</div>
+            <div class="mono" id="fval-1-fim" style="font-size:10px;color:var(--text3)">—</div>
+            <div id="fval-1-resp" style="font-size:11px;color:var(--text3)">—</div>
+          </div>
+          <div class="val-item" id="fval-2" style="cursor:pointer;display:grid;grid-template-columns:60px 1fr 80px 130px 130px 200px;align-items:center;gap:0;padding:10px 12px;border-radius:0;border-bottom:none" onclick="fabConfirmarItem('fval-2')">
+            <div class="val-icon pend" id="fval-2-ico">⏳</div>
+            <div><div class="val-nome" style="font-size:12px">SALA/ÁREA LIMPA E ORGANIZADA?</div><div class="val-desc" style="font-size:10px;margin-top:2px">Verifique limpeza de bancadas, piso, ausência de resíduos do lote anterior</div></div>
+            <div style="text-align:center"><span class="bdg bdg-alr" id="fval-2-bdg" style="font-size:10px">Pendente</span></div>
+            <div class="mono" id="fval-2-ini" style="font-size:10px;color:var(--text3)">—</div>
+            <div class="mono" id="fval-2-fim" style="font-size:10px;color:var(--text3)">—</div>
+            <div id="fval-2-resp" style="font-size:11px;color:var(--text3)">—</div>
+          </div>
+          <div class="val-item" id="fval-3" style="cursor:pointer;display:grid;grid-template-columns:60px 1fr 80px 130px 130px 200px;align-items:center;gap:0;padding:10px 12px;border-radius:0;border-bottom:none" onclick="fabConfirmarItem('fval-3')">
+            <div class="val-icon pend" id="fval-3-ico">⏳</div>
+            <div><div class="val-nome" style="font-size:12px">CONFERÊNCIA DO PROD/LOTE REALIZADO?</div><div class="val-desc" style="font-size:10px;margin-top:2px">Confirme conferência do produto e lote contra a Ordem de Fabricação (WO)</div></div>
+            <div style="text-align:center"><span class="bdg bdg-alr" id="fval-3-bdg" style="font-size:10px">Pendente</span></div>
+            <div class="mono" id="fval-3-ini" style="font-size:10px;color:var(--text3)">—</div>
+            <div class="mono" id="fval-3-fim" style="font-size:10px;color:var(--text3)">—</div>
+            <div id="fval-3-resp" style="font-size:11px;color:var(--text3)">—</div>
+          </div>
+          <div class="val-item" id="fval-4" style="cursor:pointer;display:grid;grid-template-columns:60px 1fr 80px 130px 130px 200px;align-items:center;gap:0;padding:10px 12px;border-radius:0;border-bottom:none" onclick="fabConfirmarItem('fval-4')">
+            <div class="val-icon pend" id="fval-4-ico">⏳</div>
+            <div><div class="val-nome" style="font-size:12px">UTENSÍLIOS LIMPOS E SECOS?</div><div class="val-desc" style="font-size:10px;margin-top:2px">Bombonas, recipientes, sondas e instrumentos lavados, secos e identificados</div></div>
+            <div style="text-align:center"><span class="bdg bdg-alr" id="fval-4-bdg" style="font-size:10px">Pendente</span></div>
+            <div class="mono" id="fval-4-ini" style="font-size:10px;color:var(--text3)">—</div>
+            <div class="mono" id="fval-4-fim" style="font-size:10px;color:var(--text3)">—</div>
+            <div id="fval-4-resp" style="font-size:11px;color:var(--text3)">—</div>
+          </div>
+          <div class="val-item" id="fval-5" style="cursor:pointer;display:grid;grid-template-columns:60px 1fr 80px 130px 130px 200px;align-items:center;gap:0;padding:10px 12px;border-radius:0 0 6px 6px;border-top:none" onclick="fabConfirmarItem('fval-5')">
+            <div class="val-icon pend" id="fval-5-ico">⏳</div>
+            <div><div class="val-nome" style="font-size:12px">WO, LOTE E BATCH OK? <span style="color:var(--per)">SE NÃO, ABORTE</span></div><div class="val-desc" style="font-size:10px;margin-top:2px">Última checagem crítica — WO ativa, lote correto, batch InBatch aberto. Caso contrário, aborte e reabra a OF</div></div>
+            <div style="text-align:center"><span class="bdg bdg-alr" id="fval-5-bdg" style="font-size:10px">Pendente</span></div>
+            <div class="mono" id="fval-5-ini" style="font-size:10px;color:var(--text3)">—</div>
+            <div class="mono" id="fval-5-fim" style="font-size:10px;color:var(--text3)">—</div>
+            <div id="fval-5-resp" style="font-size:11px;color:var(--text3)">—</div>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border);flex-wrap:wrap">
+            <button class="btn btn-lg btn-v" id="fvi-btn" disabled onclick="nav('fab-inbatch?op=OP-2026-0416',null,null)">🚀 Iniciar Fabricação</button>
+            <button class="btn btn-lg btn-p" onclick="if(confirm('Abortar Ordem? A WO precisará ser reaberta no JDE.')){alert('⛔ Ordem abortada. Notificação enviada ao supervisor.');fabFecharIniciar();}">⛔ Abortar Ordem</button>
+            <button class="btn btn-lg btn-ghost" onclick="fabFecharIniciar()">Cancelar</button>
+            <div style="margin-left:auto;font-size:11px;color:var(--text3);align-self:center" id="fvi-note">Confirme as 5 verificações para habilitar o início.</div>
+          </div>
+        </div>
       </div>
     `,
   "fab-rastr": `      <div class="page-header">
@@ -5655,8 +5728,8 @@ export const SCREENS = {
       </div>
 
       <div style="display:flex;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
-        <button class="btn btn-lg btn-v" id="vi-btn" disabled>Iniciar Produção</button>
-        <button class="btn btn-lg btn-ghost">Cancelar</button>
+        <button class="btn btn-lg btn-v" id="vi-btn" disabled onclick="nav('prod-cockpit?op=OP-2026-0416',null,null)">🚀 Iniciar Produção</button>
+        <button class="btn btn-lg btn-ghost" onclick="nav('prod-ordens',null,null)">Cancelar</button>
         <div style="margin-left:auto;font-size:11px;color:var(--text3);align-self:center" id="vi-note">Resolva as pendências para habilitar o início.</div>
       </div>
     `,
@@ -6051,7 +6124,7 @@ export const SCREENS = {
               <td><span class="bdg bdg-per">Bloqueada</span></td>
               <td><button class="btn btn-sm btn-ghost" onclick="nav('prod-paradas',null,null);event.stopPropagation()">Ver Parada</button></td>
             </tr>
-            <tr onclick="nav('prod-iniciar',null,null)">
+            <tr onclick="prodAbrirIniciar()">
               <td class="mono" style="color:var(--verde)">OP-2026-0416</td>
               <td style="font-size:12px">Loção Hidratante Rosa 200ml</td>
               <td class="mono" style="font-size:11px">G2026-091</td>
@@ -6060,7 +6133,7 @@ export const SCREENS = {
               <td class="mono" style="color:var(--text3)">—</td>
               <td style="color:var(--text3);font-size:11px">Aguardando</td>
               <td><span class="bdg bdg-ouro">Liberada</span></td>
-              <td><button class="btn btn-sm btn-o" onclick="nav('prod-iniciar',null,null);event.stopPropagation()">Iniciar</button></td>
+              <td><button class="btn btn-sm btn-o" onclick="prodAbrirIniciar();event.stopPropagation()">Iniciar</button></td>
             </tr>
             <tr>
               <td class="mono" style="color:var(--verde)">OP-2026-0417</td>
@@ -6087,66 +6160,293 @@ export const SCREENS = {
           </tbody>
         </table>
       </div>
-    `,
-  "prod-paradas": `      <div class="page-header">
-        <div><div class="ph-eyebrow">Produção · MF5</div><div class="ph-title">Paradas de Máquina</div></div>
-        <div class="ph-actions">
-          <button class="btn btn-sm btn-o" onclick="openModal('modal-tractian')">🔧 Abrir Solicitação Tractian</button>
-          <button class="btn btn-sm btn-p">+ Registrar Parada</button>
+
+      <!-- Popup: Iniciar Ordem — Validacoes (acionado pelo botao "Iniciar") -->
+      <div id="prod-iniciar-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:950;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 12px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px 26px;max-width:720px;width:94%;margin:auto;box-shadow:var(--sh2)">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px">
+            <div>
+              <div class="ph-eyebrow">Produção · L3 · MF5</div>
+              <div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc)">Iniciar Ordem — Validações</div>
+              <div style="font-size:11px;color:var(--text2);margin-top:2px">OP-2026-0416 · Loção Hidratante Rosa 200ml</div>
+            </div>
+            <button onclick="prodFecharIniciar()" title="Fechar" style="border:none;background:transparent;cursor:pointer;font-size:18px;color:var(--text3);line-height:1">✕</button>
+          </div>
+
+          <div class="prog-wrap mb14">
+            <div class="prog-pct" id="vi-pct">0%</div>
+            <div style="flex:1"><div class="prog-out"><div class="prog-in" id="vi-bar" style="width:0%"></div></div><div class="prog-txt" id="vi-txt">0 de 5 validações aprovadas — todas são obrigatórias para iniciar</div></div>
+            <span id="vi-ico" style="font-size:26px">⏳</span>
+          </div>
+          <div class="abox warn mb14"><span class="ai">⚠</span><div>Todas as validações abaixo são <strong>pré-requisitos obrigatórios</strong> para iniciar a ordem. Itens com status pendente ou reprovado bloqueiam o início da produção.</div></div>
+
+          <div class="val-item" id="val-1" onclick="toggleVal('val-1','vi')">
+            <div class="val-icon ok" id="val-1-ico">✅</div>
+            <div style="flex:1">
+              <div class="val-nome">1. Aprovação do Granel (LIMS)</div>
+              <div class="val-desc">Lote G2026-091 · Status LIMS: <strong style="color:var(--ok)">Aprovado</strong> · CQ liberou em 18/03/2026 às 16:42</div>
+            </div>
+            <span class="bdg bdg-ok" id="val-1-bdg">Aprovado</span>
+          </div>
+          <div class="val-item" id="val-2" onclick="toggleVal('val-2','vi')">
+            <div class="val-icon ok" id="val-2-ico">✅</div>
+            <div style="flex:1">
+              <div class="val-nome">2. Embalagens Conferidas</div>
+              <div class="val-desc">Kitting recebido e conferido · Frascos, tampas, rótulos e caixas verificados · Sem divergências</div>
+            </div>
+            <span class="bdg bdg-ok" id="val-2-bdg">Aprovado</span>
+          </div>
+          <div class="val-item" id="val-3" onclick="toggleVal('val-3','vi')">
+            <div class="val-icon pend" id="val-3-ico">⏳</div>
+            <div style="flex:1">
+              <div class="val-nome">3. Setup da Linha Realizado</div>
+              <div class="val-desc">Velocidade, torque e dosagem ajustados conforme FT · Impressoras Zebra calibradas · Balanças aferidas</div>
+            </div>
+            <span class="bdg bdg-alr" id="val-3-bdg">Pendente</span>
+          </div>
+          <div class="val-item" id="val-4" onclick="toggleVal('val-4','vi')">
+            <div class="val-icon fail" id="val-4-ico">❌</div>
+            <div style="flex:1">
+              <div class="val-nome">4. Funcionários Alocados na Linha</div>
+              <div class="val-desc">L3 requer mínimo 3 operadores · Alocados: <strong style="color:var(--per)">1 de 3</strong> · Check-in realizado por: J. Santos</div>
+            </div>
+            <span class="bdg bdg-per" id="val-4-bdg">Reprovado</span>
+          </div>
+          <div class="val-item" id="val-5" onclick="toggleVal('val-5','vi')">
+            <div class="val-icon fail" id="val-5-ico">❌</div>
+            <div style="flex:1">
+              <div class="val-nome">5. Aptidão dos Operadores (Matriz de Capacitação)</div>
+              <div class="val-desc">Habilitação na Matriz de Capacitação para Linha L3 e produto vigente · Aguardando alocação dos demais operadores para validar</div>
+            </div>
+            <span class="bdg bdg-per" id="val-5-bdg">Reprovado</span>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
+            <button class="btn btn-lg btn-v" id="vi-btn" disabled onclick="nav('prod-cockpit?op=OP-2026-0416',null,null)">🚀 Iniciar Produção</button>
+            <button class="btn btn-lg btn-ghost" onclick="prodFecharIniciar()">Cancelar</button>
+            <div style="margin-left:auto;font-size:11px;color:var(--text3);align-self:center" id="vi-note">Resolva as pendências para habilitar o início.</div>
+          </div>
         </div>
       </div>
-      <div class="abox warn mb14"><span class="ai">⚠</span><div>Linha L4 com parada crítica há <strong>32 minutos</strong>. Solicitação de serviço obrigatória para paradas &gt; 30 min.</div></div>
-      <div class="card cv mb14">
-        <div class="card-title">Paradas em Aberto</div>
-        <table class="tbl">
-          <thead><tr><th>Linha</th><th>Início</th><th>Duração</th><th>Equipamento</th><th>Categoria</th><th>Responsável</th><th>Status</th><th>Ações</th></tr></thead>
-          <tbody>
-            <tr style="background:var(--per-p)">
-              <td class="mono" style="font-weight:700;color:var(--per)">L4</td>
-              <td class="mono">07:14</td>
-              <td class="mono" style="color:var(--per);font-weight:700">32m ⚠</td>
-              <td style="font-size:12px">Tamponadora · TAM-04</td>
-              <td><span class="bdg bdg-per">Manutenção Corretiva</span></td>
-              <td style="font-size:12px">Manutenção</td>
-              <td><span class="bdg bdg-per">Aberta</span></td>
-              <td style="display:flex;gap:6px;flex-wrap:wrap">
-                <button class="btn btn-sm btn-ghost" onclick="openModal('modal-just')">Justificar</button>
-                <button class="btn btn-sm btn-o" onclick="openModal('modal-tractian')">Tractian</button>
-              </td>
-            </tr>
-            <tr>
-              <td class="mono" style="font-weight:700">L2</td>
-              <td class="mono">06:42</td>
-              <td class="mono" style="color:var(--alr)">18m</td>
-              <td style="font-size:12px">Linha completa · L2</td>
-              <td><span class="bdg bdg-ouro">Setup</span></td>
-              <td style="font-size:12px">Operação</td>
-              <td><span class="bdg bdg-alr">Em andamento</span></td>
-              <td><button class="btn btn-sm btn-ghost" onclick="openModal('modal-just')">Justificar</button></td>
-            </tr>
-            <tr>
-              <td class="mono" style="font-weight:700">L3</td>
-              <td class="mono">06:08</td>
-              <td class="mono" style="color:var(--ok)">7m</td>
-              <td style="font-size:12px">Dosadora · DOS-03</td>
-              <td><span class="bdg bdg-inf">Ajuste Qualidade</span></td>
-              <td style="font-size:12px">Qualidade</td>
-              <td><span class="bdg bdg-ok">Encerrada</span></td>
-              <td><span style="font-size:11px;color:var(--text3)">Encerrada 06:15</span></td>
-            </tr>
-          </tbody>
-        </table>
+    `,
+  "prod-paradas": `      <div class="page-header">
+        <div><div class="ph-eyebrow">Produção · L3 · MF5</div><div class="ph-title">Apontamento de Paradas</div></div>
+        <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416 · Linha L3<br>Loção Hidratante Rosa 200ml<br><span style="color:var(--verde)">J. Santos (155)</span></div>
       </div>
+
+      <div class="abox info mb14"><span class="ai">⏸</span><div>Registre aqui todas as <strong>paradas/eventos não-produtivos</strong> ocorridos durante a produção da OP. Estes apontamentos são consumidos pelo <strong>OEE</strong> para cálculo do indicador de Disponibilidade.</div></div>
+
+      <!-- Apontar Nova Parada -->
+      <div class="card cv mb14" style="border:2px solid var(--verde)">
+        <div class="card-title">+ Apontar Nova Parada</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:12px">
+          <div style="display:flex;flex-direction:column">
+            <label class="lbl">Categoria *</label>
+            <select class="sel" id="par-cat" style="font-size:12px;padding:7px 10px">
+              <option value="">Selecione...</option>
+              <option value="manutencao">🔧 Manutenção (corretiva)</option>
+              <option value="preventiva">🛠️ Manutenção Preventiva</option>
+              <option value="setup">⚙ Setup / Troca de Formato</option>
+              <option value="falta-mp">📦 Falta de MP / Embalagem</option>
+              <option value="falta-op">👷 Falta de Operador</option>
+              <option value="qualidade">🔬 Aguardando Qualidade</option>
+              <option value="energia">⚡ Falta de Energia / Utilidades</option>
+              <option value="cipa">🛡 Reunião CIPA / Segurança</option>
+              <option value="refeicao">🍴 Refeição / Pausa Regulamentar</option>
+              <option value="ginastica">🧘 Ginástica Laboral</option>
+              <option value="treinamento">🎓 Treinamento</option>
+              <option value="outro">Outro (especificar)</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <label class="lbl">Tipo *</label>
+            <select class="sel" id="par-tipo" style="font-size:12px;padding:7px 10px">
+              <option value="planejada">Planejada (não afeta OEE)</option>
+              <option value="nao-planejada" selected>Não Planejada (afeta OEE)</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <label class="lbl">Início *</label>
+            <input class="inp" id="par-inicio" type="datetime-local" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+          </div>
+          <div style="display:flex;flex-direction:column">
+            <label class="lbl">Fim</label>
+            <input class="inp" id="par-fim" type="datetime-local" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+            <span style="font-size:9px;color:var(--text3);margin-top:2px">Deixe em branco se ainda em andamento</span>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <label class="lbl">Descrição / Justificativa *</label>
+          <textarea class="txta" id="par-just" rows="2" placeholder="Ex.: tamponadora TAM-04 travada; aguardando manutenção corretiva..."></textarea>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-md btn-v" onclick="prodAdicionarParada()">✔ Registrar Parada</button>
+          <button class="btn btn-md btn-ghost" onclick="prodLimparFormParada()">Limpar</button>
+          <div style="margin-left:auto;font-size:10px;color:var(--text3)">Cada parada gera registro de auditoria + sincroniza com OEE em tempo real.</div>
+        </div>
+      </div>
+
+      <!-- Histórico de Paradas -->
       <div class="card">
-        <div class="card-title">Histórico do Turno — Paradas Encerradas</div>
-        <table class="tbl">
-          <thead><tr><th>Linha</th><th>Período</th><th>Duração</th><th>Categoria</th><th>Justificativa</th><th>OS Tractian</th></tr></thead>
-          <tbody>
-            <tr><td class="mono">L1</td><td class="mono" style="font-size:11px">05:58 – 06:04</td><td class="mono" style="color:var(--ok)">6m</td><td><span class="bdg bdg-ouro">Setup</span></td><td style="font-size:12px">Troca de rótulo no início do turno</td><td class="mono" style="color:var(--text3)">—</td></tr>
-            <tr><td class="mono">L3</td><td class="mono" style="font-size:11px">06:08 – 06:15</td><td class="mono" style="color:var(--ok)">7m</td><td><span class="bdg bdg-inf">Qualidade</span></td><td style="font-size:12px">Ajuste de dosagem fora do limite</td><td class="mono" style="color:var(--text3)">—</td></tr>
-          </tbody>
-        </table>
+        <div class="card-title">Histórico de Paradas — OP-2026-0416 · Turno A</div>
+        <div style="overflow-x:auto">
+          <table class="tbl" id="par-tabela" style="min-width:1180px;font-size:11px">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Categoria</th>
+                <th>Tipo</th>
+                <th>Início</th>
+                <th>Fim</th>
+                <th>Duração</th>
+                <th title="Padrão / Mínimo / Máximo (histórico do sistema)">Padrão<br/><span style="font-weight:400;font-size:8px;color:var(--text3)">min ↓ · max ↑</span></th>
+                <th>Justificativa</th>
+                <th>Operador</th>
+                <th>Afeta OEE</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono" style="color:var(--text3)">01</td>
+                <td>🔧 Manutenção</td>
+                <td><span class="bdg bdg-per" style="font-size:9px">Não Planejada</span></td>
+                <td class="mono" style="font-size:10px">14/05 07:14</td>
+                <td class="mono" style="font-size:10px">14/05 07:46</td>
+                <td class="mono" style="color:var(--alr);font-weight:700">32 min</td>
+                <td class="mono" style="font-size:10px">
+                  <strong>25 min</strong>
+                  <div style="font-size:9px;color:var(--text3);font-weight:400">↓ 15 · ↑ 45</div>
+                </td>
+                <td style="font-size:11px">Tamponadora TAM-04 travada — manutenção corretiva</td>
+                <td style="font-size:11px">M. Rocha</td>
+                <td><span class="bdg bdg-per" style="font-size:9px">SIM</span></td>
+                <td><span class="bdg bdg-ok">✓ Fechada</span></td>
+                <td><button class="btn btn-sm btn-ghost" style="font-size:9px">Detalhes</button></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color:var(--text3)">02</td>
+                <td>⚙ Setup / Troca de Formato</td>
+                <td><span class="bdg bdg-ok" style="font-size:9px">Planejada</span></td>
+                <td class="mono" style="font-size:10px">14/05 06:00</td>
+                <td class="mono" style="font-size:10px">14/05 06:18</td>
+                <td class="mono">18 min</td>
+                <td class="mono" style="font-size:10px">
+                  <strong>20 min</strong>
+                  <div style="font-size:9px;color:var(--text3);font-weight:400">↓ 10 · ↑ 35</div>
+                </td>
+                <td style="font-size:11px">Setup da Linha L3 — troca de formato para 200ml</td>
+                <td style="font-size:11px">Equipe L3</td>
+                <td><span class="bdg bdg-ney" style="font-size:9px">NÃO</span></td>
+                <td><span class="bdg bdg-ok">✓ Fechada</span></td>
+                <td><button class="btn btn-sm btn-ghost" style="font-size:9px">Detalhes</button></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color:var(--text3)">03</td>
+                <td>📦 Falta de MP / Embalagem</td>
+                <td><span class="bdg bdg-per" style="font-size:9px">Não Planejada</span></td>
+                <td class="mono" style="font-size:10px">14/05 10:22</td>
+                <td class="mono" style="font-size:10px">14/05 10:45</td>
+                <td class="mono" style="color:var(--alr);font-weight:700">23 min</td>
+                <td class="mono" style="font-size:10px">
+                  <strong>15 min</strong>
+                  <div style="font-size:9px;color:var(--text3);font-weight:400">↓ 5 · ↑ 30</div>
+                </td>
+                <td style="font-size:11px">Aguardando entrega de frascos 200ml — almoxarifado</td>
+                <td style="font-size:11px">J. Santos</td>
+                <td><span class="bdg bdg-per" style="font-size:9px">SIM</span></td>
+                <td><span class="bdg bdg-ok">✓ Fechada</span></td>
+                <td><button class="btn btn-sm btn-ghost" style="font-size:9px">Detalhes</button></td>
+              </tr>
+              <tr>
+                <td class="mono" style="color:var(--text3)">04</td>
+                <td>🍴 Refeição</td>
+                <td><span class="bdg bdg-ok" style="font-size:9px">Planejada</span></td>
+                <td class="mono" style="font-size:10px">14/05 12:00</td>
+                <td class="mono" style="font-size:10px">14/05 13:00</td>
+                <td class="mono">1h 00</td>
+                <td class="mono" style="font-size:10px">
+                  <strong>1h 00</strong>
+                  <div style="font-size:9px;color:var(--text3);font-weight:400">↓ 0h 45 · ↑ 1h 15</div>
+                </td>
+                <td style="font-size:11px">Pausa regulamentar (CCT)</td>
+                <td style="font-size:11px">Equipe L3</td>
+                <td><span class="bdg bdg-ney" style="font-size:9px">NÃO</span></td>
+                <td><span class="bdg bdg-ok">✓ Fechada</span></td>
+                <td><button class="btn btn-sm btn-ghost" style="font-size:9px">Detalhes</button></td>
+              </tr>
+              <tr style="background:var(--alr-p)">
+                <td class="mono" style="color:var(--alr);font-weight:800">05</td>
+                <td>🔬 Aguardando Qualidade</td>
+                <td><span class="bdg bdg-per" style="font-size:9px">Não Planejada</span></td>
+                <td class="mono" style="font-size:10px">14/05 16:48</td>
+                <td class="mono" style="font-size:10px;color:var(--alr);font-weight:700">— em andamento</td>
+                <td class="mono" style="color:var(--alr);font-weight:700">23+ min</td>
+                <td class="mono" style="font-size:10px">
+                  <strong>18 min</strong>
+                  <div style="font-size:9px;color:var(--text3);font-weight:400">↓ 10 · ↑ 30</div>
+                </td>
+                <td style="font-size:11px;color:var(--alr)">⚠ Dosadora DOS-03 fora do limite — aguardando análise CQ</td>
+                <td style="font-size:11px">J. Santos</td>
+                <td><span class="bdg bdg-per" style="font-size:9px">SIM</span></td>
+                <td><span class="bdg bdg-alr">⏳ Em Aberto</span></td>
+                <td><button class="btn btn-sm btn-v" style="font-size:9px" onclick="alert('Fechando parada 05...\\nInforme o motivo de encerramento')">✔ Fechar</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Rodape -->
+        <div style="display:flex;gap:10px;padding-top:14px;margin-top:14px;border-top:1px solid var(--border);flex-wrap:wrap;align-items:center">
+          <div style="font-size:11px;color:var(--text2)">
+            <strong style="color:var(--alr)">78 min</strong> de paradas <strong>não-planejadas</strong> afetam o cálculo do OEE da OP.
+          </div>
+          <div style="margin-left:auto;display:flex;gap:8px">
+            <button class="btn btn-md btn-ghost">📥 Exportar CSV</button>
+          </div>
+        </div>
       </div>
+
+      <script>
+      // Pré-preenche o início com data/hora atual ao abrir a tela
+      setTimeout(function(){
+        var ini = document.getElementById('par-inicio');
+        if (ini && !ini.value) {
+          var n = new Date();
+          var iso = n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0') + '-' + String(n.getDate()).padStart(2,'0') + 'T' + String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+          ini.value = iso;
+        }
+      }, 50);
+
+      function prodAdicionarParada() {
+        var cat = document.getElementById('par-cat');
+        var tipo = document.getElementById('par-tipo');
+        var ini = document.getElementById('par-inicio');
+        var fim = document.getElementById('par-fim');
+        var just = document.getElementById('par-just');
+        if (!cat.value) { alert('⚠ Selecione a categoria'); return; }
+        if (!ini.value) { alert('⚠ Informe a data/hora de início'); return; }
+        if (!just.value.trim()) { alert('⚠ A justificativa é obrigatória'); return; }
+        var emAndamento = !fim.value;
+        var afetaOee = tipo.value === 'nao-planejada';
+        var protocolo = 'PAR-' + Date.now().toString().slice(-6);
+        alert('✔ Parada registrada!\\n\\nProtocolo: ' + protocolo + '\\nCategoria: ' + cat.options[cat.selectedIndex].text + '\\nStatus: ' + (emAndamento ? 'EM ABERTO (em andamento)' : 'FECHADA') + '\\nAfeta OEE: ' + (afetaOee ? 'SIM' : 'NÃO') + '\\n\\nSincronizando com OEE em tempo real...');
+        prodLimparFormParada();
+      }
+
+      function prodLimparFormParada() {
+        document.getElementById('par-cat').value = '';
+        document.getElementById('par-just').value = '';
+        document.getElementById('par-fim').value = '';
+        var ini = document.getElementById('par-inicio');
+        if (ini) {
+          var n = new Date();
+          var iso = n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0') + '-' + String(n.getDate()).padStart(2,'0') + 'T' + String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+          ini.value = iso;
+        }
+      }
+      </script>
     `,
   "prod-qualidade": `      <div class="page-header">
         <div>

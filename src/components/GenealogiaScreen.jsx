@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { DOSSIES, findDossie, listarDossies } from '../data/dossie-wo-784426.js';
+import { useSearchParams } from 'react-router-dom';
+import { DOSSIES, findDossie } from '../data/dossie-wo-784426.js';
 import EtiquetaImpressa from './EtiquetaImpressa.jsx';
 
 /**
@@ -28,8 +28,8 @@ const FASES = [
   { id: 'todos',     label: 'Todos',     icon: '🧬', ids: null },
   { id: 'pesagem',   label: 'Pesagem',   icon: '⚖️', ids: ['mp', 'pesagem'] },
   { id: 'fabricacao',label: 'Fabricação',icon: '🧪', ids: ['fabricacao', 'granel'] },
-  { id: 'qualidade', label: 'Qualidade', icon: '🔬', ids: ['lims-granel', 'cama-indiana', 'cq-ean', 'lims-pa'] },
-  { id: 'embalagem', label: 'Embalagem', icon: '📦', ids: ['embalagem-ean', 'embalagem-dun'] },
+  { id: 'embalagem', label: 'Embalagem', icon: '📦', ids: ['embalagem-ean', 'embalagem-dun', 'cq-ean'] },
+  { id: 'qualidade', label: 'Qualidade', icon: '🔬', ids: ['lims-granel', 'lims-pa', 'qa-reconciliacao'] },
   { id: 'liberacao', label: 'Liberação', icon: '✓',  ids: ['liberacao'] },
 ];
 
@@ -60,13 +60,7 @@ const COR_VARS = {
 };
 
 export default function GenealogiaScreen() {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-
-  // Quando a tela eh aberta a partir da Reconciliacao de Qualidade,
-  // a URL traz ?lote= e/ou ?area=. Nesse caso mostramos um botao
-  // "Voltar para Reconciliacao" no header da tela.
-  const veioDeReconciliacao = !!(searchParams.get('lote') || searchParams.get('area'));
 
   // Le ?lote=... e ?area=... da URL (vem da Reconciliacao de Qualidade).
   // Lote (Lote PA, lote granel, WO ou codigo) seleciona o dossie inicial.
@@ -85,7 +79,7 @@ export default function GenealogiaScreen() {
     return a ? AREA_PARA_NO[a] : null;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const [DOSSIE, setDossie] = useState(dossieInicial);
+  const [DOSSIE] = useState(dossieInicial);
 
   // Wave 2.6 — Aba de fase ativa. Se a tela foi aberta com ?area=...,
   // pré-seleciona a aba correspondente (ex: ?area=fabricacao → fabricacao).
@@ -129,8 +123,6 @@ export default function GenealogiaScreen() {
       return n;
     });
   };
-  const expandirTodos = () => setExpandidos(new Set(DOSSIE.cadeia.map((n) => n.id)));
-  const colapsarTodos = () => setExpandidos(new Set());
 
   return (
     <div className="screen active" style={{ display: 'block' }}>
@@ -141,77 +133,18 @@ export default function GenealogiaScreen() {
           <div className="ph-title">Genealogia de Lote — {DOSSIE.lote}</div>
         </div>
         <div className="ph-actions">
-          {veioDeReconciliacao && (
-            <button
-              className="btn btn-sm btn-ghost"
-              onClick={() => navigate('/qual-reconciliacao')}
-              style={{ borderColor: 'var(--ouro)', color: 'var(--ouro)', fontWeight: 700 }}
-              title="Voltar para a Reconciliação Técnica"
-            >
-              ← Voltar para Reconciliação
-            </button>
-          )}
-          <button className="btn btn-sm btn-ghost" onClick={expandirTodos}>⊕ Expandir tudo</button>
-          <button className="btn btn-sm btn-ghost" onClick={colapsarTodos}>⊖ Colapsar tudo</button>
-          <button className="btn btn-sm btn-ghost" onClick={() => alert('🖨 Imprimindo dossiê em PDF...')}>🖨 Imprimir</button>
           <button className="btn btn-sm btn-v" onClick={() => alert('⬇ Baixando PDF assinado eletronicamente...')}>⬇ Baixar PDF</button>
         </div>
       </div>
 
-      {/* ── Filtro de busca por lote / WO / código ─────────── */}
-      <FiltroDossie atual={DOSSIE} onSelecionar={setDossie} />
-
-
       {/* ── Hero card com resumo da WO ──────────────────────── */}
       <div className="card cv mb14" style={{ padding: 18 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 24, alignItems: 'center' }}>
-          <div>
-            <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 4 }}>
-              {DOSSIE.codigoProduto} · {DOSSIE.codigoGranel} · Sala {DOSSIE.sala}
-            </div>
-            <div style={{ fontFamily: 'var(--font-d)', fontSize: 28, fontWeight: 700, color: 'var(--verde-esc)', lineHeight: 1.1, marginBottom: 6 }}>
-              {DOSSIE.produto}
-            </div>
-            <div style={{ fontFamily: 'var(--font-m)', fontSize: 12, color: 'var(--text2)' }}>
-              <strong>{DOSSIE.granel}</strong> · Lote granel <strong style={{ color: 'var(--verde)' }}>{DOSSIE.lote}</strong> · Lote PA{' '}
-              <strong style={{ color: 'var(--verde)' }}>{DOSSIE.lotePA}</strong>
-            </div>
-            <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 8, lineHeight: 1.6 }}>
-              Início fabricação: <strong style={{ color: 'var(--text)' }}>{DOSSIE.inicio}</strong> · Fim:{' '}
-              <strong style={{ color: 'var(--text)' }}>{DOSSIE.fim}</strong> · Validade:{' '}
-              <strong style={{ color: 'var(--text)' }}>{DOSSIE.validade}</strong>
-              <br />
-              Líder: <strong>{DOSSIE.lider.nome}</strong> (chapa {DOSSIE.lider.chapa}) · CQ liberou:{' '}
-              <strong>{DOSSIE.cqLiberacao.nome}</strong> em {DOSSIE.cqLiberacao.data}
-            </div>
-          </div>
-          <div style={{ textAlign: 'right' }}>
-            <span className="bdg bdg-ok" style={{ fontSize: 14, padding: '6px 16px', display: 'inline-block', marginBottom: 8 }}>
-              ✓ APROVADO
-            </span>
-            <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.16em', textTransform: 'uppercase', color: 'var(--text3)' }}>
-              Documento eletrônico
-            </div>
-            <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 4 }}>
-              Emitido em <strong style={{ color: 'var(--text2)' }}>{DOSSIE.emitido}</strong>
-            </div>
-            {DOSSIE.conformidades.map((c) => (
-              <div key={c} style={{ fontSize: 9, color: 'var(--text3)', fontFamily: 'var(--font-m)', marginTop: 2 }}>
-                {c}
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* KPIs */}
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
             gap: 12,
-            marginTop: 16,
-            paddingTop: 14,
-            borderTop: '1px solid var(--border)',
           }}
         >
           <Kpi label="Tamanho do Batch" valor={DOSSIE.batchSize} cor="var(--verde)" />
@@ -404,6 +337,22 @@ function Kpi({ label, valor, cor, sub }) {
   );
 }
 
+/* Grade compacta de KPIs (label + valor) — usada em Pesagem, Fórmula,
+   Controle de Peso. Aceita itens no formato { lbl, val, ok }. */
+function KpiRow({ kpis }) {
+  if (!kpis || kpis.length === 0) return null;
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 8, marginBottom: 12 }}>
+      {kpis.map((k, i) => (
+        <div key={i} style={{ background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 6, padding: '8px 12px' }}>
+          <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 3 }}>{k.lbl}</div>
+          <div className="mono" style={{ fontSize: 15, fontWeight: 700, color: k.ok ? 'var(--ok)' : 'var(--text)' }}>{k.val}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function NoCadeia({ no, ordem, total, expandido, onToggle, dossie }) {
   const cores = COR_VARS[no.cor] || COR_VARS.verde;
   return (
@@ -575,6 +524,13 @@ function RenderConteudoNo({ no, cores, dossie }) {
             </div>
           </div>
 
+          {/* KPIs da pesagem (sincronizado InBatch) */}
+          <KpiRow kpis={no.kpis} />
+
+          <div className="card-title" style={{ marginBottom: 8 }}>
+            Relatório de Pesagem + Etiquetas de Matéria-Prima
+          </div>
+
           {/* Cabecalho da gaiola */}
           {no.gaiola && (
             <div
@@ -601,13 +557,17 @@ function RenderConteudoNo({ no, cores, dossie }) {
           <table className="tbl" style={{ marginTop: 0 }}>
             <thead>
               <tr>
+                <th>Etq Nº</th>
                 <th>Código</th>
                 <th>Descrição</th>
-                <th style={{ textAlign: 'right' }}>Qtd.</th>
-                <th>Etiqueta</th>
                 <th>Lote MP</th>
-                <th>Operador (Pesagem)</th>
-                <th>Conferente (CQ)</th>
+                <th>Validade</th>
+                <th style={{ textAlign: 'right' }}>Teórico</th>
+                <th style={{ textAlign: 'right' }}>Real</th>
+                <th style={{ textAlign: 'right' }}>Variância</th>
+                <th>Pesador</th>
+                <th>Data/Hora</th>
+                <th style={{ textAlign: 'center' }}>Assin.</th>
               </tr>
             </thead>
             <tbody>
@@ -618,30 +578,66 @@ function RenderConteudoNo({ no, cores, dossie }) {
                     background: 'var(--per-p)',
                     borderLeft: '4px solid var(--per)',
                   } : {}}>
+                    <td className="mono" style={{ fontSize: 11, color: 'var(--inf)', fontWeight: 700 }}>{mp.etqCodigo}</td>
                     <td className="mono" style={{ fontWeight: 700, color: zerada ? 'var(--per)' : 'var(--verde)' }}>{mp.cod}</td>
                     <td>{mp.desc}</td>
+                    <td className="mono" style={{ fontSize: 11, color: 'var(--text2)' }}>{mp.etqLote}</td>
+                    <td className="mono" style={{ fontSize: 11, color: 'var(--text2)' }}>{mp.validade}</td>
+                    <td className="mono" style={{ textAlign: 'right', color: 'var(--text3)' }}>{mp.teorico}</td>
                     <td className="mono" style={{
                       textAlign: 'right', fontWeight: 700,
                       color: zerada ? 'var(--per)' : 'var(--text)',
-                      background: zerada ? 'var(--per-p)' : 'transparent',
                     }}>
-                      {zerada ? `⚠ ${mp.qtd || '0,00 kg'}` : mp.qtd}
+                      {zerada ? `⚠ ${mp.real || mp.qtd || '0,00 kg'}` : mp.real}
                     </td>
-                    <td className="mono" style={{ fontSize: 11, color: 'var(--inf)', fontWeight: 700 }}>{mp.etqCodigo}</td>
-                    <td className="mono" style={{ fontSize: 11, color: 'var(--text2)' }}>{mp.etqLote}</td>
-                    <td style={{ fontSize: 11 }}>
-                      {mp.operador}
-                      <div className="mono" style={{ fontSize: 10, color: 'var(--text3)' }}>{mp.etqHora}</div>
-                    </td>
-                    <td style={{ fontSize: 11 }}>
-                      {mp.conferente || <span style={{ color: 'var(--text3)' }}>—</span>}
-                      {mp.dataConf && <div className="mono" style={{ fontSize: 10, color: 'var(--text3)' }}>{mp.dataConf}</div>}
-                    </td>
+                    <td className="mono" style={{ textAlign: 'right', fontWeight: 700, color: 'var(--ok)' }}>{mp.variancia}</td>
+                    <td style={{ fontSize: 11 }}>{mp.operador}</td>
+                    <td className="mono" style={{ fontSize: 10, color: 'var(--text3)' }}>{mp.etqHora}</td>
+                    <td style={{ textAlign: 'center', color: 'var(--ok)', fontWeight: 700 }}>{mp.assinatura}</td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
+
+          {/* Relatorio de Insumos Consumidos */}
+          {no.insumos && (
+            <>
+              <div className="card-title" style={{ marginTop: 14, marginBottom: 8 }}>Relatório de Insumos Consumidos</div>
+              <table className="tbl">
+                <thead>
+                  <tr>
+                    <th>MP</th>
+                    <th style={{ textAlign: 'right' }}>Saldo Inicial</th>
+                    <th style={{ textAlign: 'right' }}>Consumido</th>
+                    <th style={{ textAlign: 'right' }}>Devolvido</th>
+                    <th style={{ textAlign: 'right' }}>Saldo Final</th>
+                    <th>Origem (Almox.)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {no.insumos.map((ins, i) => (
+                    <tr key={i}>
+                      <td style={{ fontWeight: 600 }}>{ins.mp}</td>
+                      <td className="mono" style={{ textAlign: 'right' }}>{ins.saldoIni}</td>
+                      <td className="mono" style={{ textAlign: 'right' }}>{ins.consumido}</td>
+                      <td className="mono" style={{ textAlign: 'right', color: 'var(--text3)' }}>{ins.devolvido}</td>
+                      <td className="mono" style={{ textAlign: 'right', fontWeight: 700 }}>{ins.saldoFim}</td>
+                      <td style={{ fontSize: 11, color: 'var(--text2)' }}>{ins.origem}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+
+          {/* Formula Padrao / Tamanho do Lote */}
+          {no.formula && (
+            <>
+              <div className="card-title" style={{ marginTop: 14, marginBottom: 8 }}>Fórmula Padrão / Tamanho do Lote</div>
+              <KpiRow kpis={no.formula} />
+            </>
+          )}
 
           {/* Sub-volumes (quando uma MP tem mais de 1 etiqueta) */}
           {no.itens.some((mp) => mp.subVolumes && mp.subVolumes.length > 1) && (
@@ -733,6 +729,55 @@ function RenderConteudoNo({ no, cores, dossie }) {
 
       return (
         <div style={{ marginTop: 12 }}>
+          {/* Identificacao do Lote de Fabricacao */}
+          {no.identificacao && (
+            <>
+              <div className="card-title" style={{ marginBottom: 8 }}>Identificação do Lote de Fabricação</div>
+              <DadosLista dados={[
+                ['Código', no.identificacao.codigo],
+                ['Nome do Produto', no.identificacao.nome],
+                ['Sala', no.identificacao.sala],
+                ['Tamanho', no.identificacao.tamanho],
+                ['Lote Granel', no.identificacao.loteGranel],
+                ['WO Fab.', no.identificacao.wo],
+                ['Data Fab.', no.identificacao.dataFab],
+                ['Em Campanha?', no.identificacao.campanha],
+                ['Balança Zerada?', no.identificacao.balancaZerada],
+                ['Utensílios Limpos?', no.identificacao.utensiliosLimpos],
+                ['Último Prod. Reator Principal', no.identificacao.ultimoReatorPrincipal],
+                ['Último Prod. Reator Auxiliar', no.identificacao.ultimoReatorAuxiliar],
+              ]} />
+            </>
+          )}
+
+          {/* Etiqueta Status do Equipamento / Peca */}
+          {no.statusEquipamento && (
+            <>
+              <div className="card-title" style={{ marginTop: 14, marginBottom: 8 }}>Status do Equipamento / Peça</div>
+              <table className="tbl" style={{ marginBottom: 4 }}>
+                <thead>
+                  <tr><th>Equipamento</th><th>Sala</th><th>Tipo Limpeza</th><th>Prod. Anterior</th><th>Lote Ant.</th><th>Data Limpeza</th><th>Assinatura</th></tr>
+                </thead>
+                <tbody>
+                  {no.statusEquipamento.map((eq, i) => (
+                    <tr key={i}>
+                      <td style={{ fontWeight: 600 }}>{eq.equipamento}</td>
+                      <td>{eq.sala}</td>
+                      <td><span className={`bdg ${eq.ok ? 'bdg-ok' : 'bdg-alr'}`} style={{ fontSize: 10 }}>{eq.tipoLimpeza}</span></td>
+                      <td className="mono" style={{ fontSize: 11 }}>{eq.prodAnterior}</td>
+                      <td className="mono" style={{ fontSize: 11, color: 'var(--text2)' }}>{eq.loteAnterior}</td>
+                      <td className="mono" style={{ fontSize: 11 }}>{eq.dataLimpeza}</td>
+                      <td style={{ fontSize: 11 }}>{eq.assinatura}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+
+          {/* Relatorio do InBatch — Sequencia de Fases */}
+          <div className="card-title" style={{ marginTop: 14, marginBottom: 8 }}>Relatório do InBatch — Sequência de Fases</div>
+
           {/* Resumo das instructions */}
           <div style={{
             display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12,
@@ -830,10 +875,13 @@ function RenderConteudoNo({ no, cores, dossie }) {
               ['Rendimento Real', no.rendimento.real],
               ['Calculado', no.rendimento.calc],
               ['Limite Mín / Máx', `${no.rendimento.limMin} / ${no.rendimento.limMax}`],
+              ['Perda', no.rendimento.perda],
               ['Status', no.rendimento.status],
+              ['Responsável', no.rendimento.responsavel],
+              ['Data', no.rendimento.data],
               ['Rendimento de Embalagem', no.rendimento.rendEmb],
               ['Último Produto Fabricado', `${no.rendimento.ultimoProduto} · ${no.rendimento.ultimoLote}`],
-            ]} />
+            ].filter(([, v]) => v != null)} />
           </div>
           <div>
             <div className="card-title" style={{ marginBottom: 8 }}>Etiqueta de Fabricação (Zebra)</div>
@@ -895,6 +943,28 @@ function RenderConteudoNo({ no, cores, dossie }) {
                   <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 4 }}>Assinatura: {m.assinatura}</div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Boletim Microbiologico (LIMS) */}
+          {no.microbiologico && (
+            <div style={{ marginTop: 14 }}>
+              <div className="card-title" style={{ marginBottom: 8 }}>
+                Boletim Microbiológico · LIMS Nº {no.microbiologico.numero}
+              </div>
+              <table className="tbl">
+                <thead><tr><th>Análise</th><th>Especificação</th><th>Resultado</th><th>Status</th></tr></thead>
+                <tbody>
+                  {no.microbiologico.ensaios.map((e, i) => (
+                    <tr key={i}>
+                      <td style={{ fontWeight: 600 }}>{e.ensaio}</td>
+                      <td className="mono" style={{ color: 'var(--text2)' }}>{e.esp}</td>
+                      <td className="mono" style={{ fontWeight: 700, color: 'var(--verde)' }}>{e.resultado}</td>
+                      <td><span className="bdg bdg-ok" style={{ fontSize: 10 }}>{e.status}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </div>
@@ -967,6 +1037,50 @@ function RenderConteudoNo({ no, cores, dossie }) {
             ['Perdas', no.resumo.perdas],
             ['Rendimento de Embalagem', no.resumo.rend],
           ]} />
+
+          {/* Documentacao Eletronica de Producao — Rendimento */}
+          {no.documentacao && (
+            <>
+              <div className="card-title" style={{ marginTop: 14, marginBottom: 8 }}>Documentação Eletrônica de Produção — Rendimento</div>
+              <table className="tbl">
+                <thead>
+                  <tr><th>Filial</th><th>Tipo</th><th>Lote</th><th>Produto</th><th>Quantidades</th><th>Rend.</th><th>Prod. Ant.</th><th>Lote Ant.</th><th>Justificativa</th><th>Usuário</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="mono">{no.documentacao.filial}</td>
+                    <td>{no.documentacao.tipoOrdem}</td>
+                    <td className="mono">{no.documentacao.lote}</td>
+                    <td className="mono">{no.documentacao.produto}</td>
+                    <td className="mono">{no.documentacao.quantidades}</td>
+                    <td className="mono" style={{ color: 'var(--alr)', fontWeight: 700 }}>{no.documentacao.rendimento}</td>
+                    <td className="mono">{no.documentacao.prodAnterior}</td>
+                    <td className="mono">{no.documentacao.loteAnterior}</td>
+                    <td style={{ fontSize: 11 }}>{no.documentacao.justificativa}</td>
+                    <td className="mono" style={{ fontSize: 11 }}>{no.documentacao.usuario}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </>
+          )}
+
+          {/* Resumo do Lote — Amostras Inicio/Meio/Fim */}
+          {no.resumoAmostras && (
+            <>
+              <div className="card-title" style={{ marginTop: 14, marginBottom: 8 }}>Resumo do Lote — Amostras Início/Meio/Fim</div>
+              <DadosLista dados={[
+                ['Lote Granel', no.resumoAmostras.loteGranel],
+                ['Início', no.resumoAmostras.inicio],
+                ['Término', no.resumoAmostras.termino],
+                ['Amostra Início', no.resumoAmostras.amInicio],
+                ['Amostra Meio', no.resumoAmostras.amMeio],
+                ['Amostra Fim', no.resumoAmostras.amFim],
+                ['Processo', no.resumoAmostras.processo],
+                ['Usuário', no.resumoAmostras.usuario],
+              ]} />
+            </>
+          )}
+
           {no.liberacao && (
             <>
               <div className="card-title" style={{ marginTop: 14, marginBottom: 8 }}>Liberação de Linha</div>
@@ -1036,73 +1150,94 @@ function RenderConteudoNo({ no, cores, dossie }) {
     case 'cq-ean':
       return (
         <div style={{ marginTop: 12 }}>
-          <div className="card-title" style={{ marginBottom: 8 }}>Liberação de Linha</div>
-          <table className="tbl" style={{ marginBottom: 14 }}>
-            <thead><tr><th>Hora</th><th>Verificação</th><th>Resultado</th><th>Usuário</th></tr></thead>
-            <tbody>
-              {no.liberacao.map((l, i) => (
-                <tr key={i}>
-                  <td className="mono" style={{ fontSize: 11 }}>{l.hora}</td>
-                  <td>{l.item}</td>
-                  <td><span className="bdg bdg-ok" style={{ fontSize: 10 }}>{l.resultado}</span></td>
-                  <td className="mono" style={{ fontSize: 11 }}>{l.user}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <div className="card-title" style={{ marginBottom: 8 }}>Controle de Peso (Checkweigher)</div>
-          <table className="tbl" style={{ marginBottom: 14 }}>
-            <thead><tr><th>Hora</th><th>Amostra</th><th>Peso (g)</th><th>Declarado (g)</th><th>Δ</th><th>Usuário</th></tr></thead>
-            <tbody>
-              {no.pesos.map((p, i) => {
-                const delta = (p.peso - p.declarado).toFixed(2);
-                return (
-                  <tr key={i}>
-                    <td className="mono" style={{ fontSize: 11 }}>{p.hora}</td>
-                    <td className="mono">{p.amostra}</td>
-                    <td className="mono" style={{ fontWeight: 700, color: 'var(--verde)' }}>{p.peso.toFixed(2)}</td>
-                    <td className="mono" style={{ color: 'var(--text3)' }}>{p.declarado}</td>
-                    <td className="mono" style={{ color: 'var(--ouro)' }}>+{delta}</td>
-                    <td className="mono" style={{ fontSize: 11 }}>{p.user}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          <div style={{ fontSize: 11, color: 'var(--text2)', marginBottom: 14 }}>
-            Média: <strong style={{ color: 'var(--verde)' }}>101,60 g</strong> · Total amostras:{' '}
-            <strong>{no.pesos.length}</strong>
-          </div>
-
-          <div className="card-title" style={{ marginBottom: 8 }}>Inspeções de Processo (a cada 60 min)</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 8, marginBottom: 14 }}>
-            {no.inspecoes.map((cat, i) => (
-              <div key={i} style={{ background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 6, padding: 10 }}>
-                <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--verde)', marginBottom: 6 }}>{cat.categoria}</div>
-                <ul style={{ margin: 0, padding: 0, listStyle: 'none', fontSize: 11, lineHeight: 1.7, color: 'var(--text2)' }}>
-                  {cat.itens.map((it, j) => (
-                    <li key={j}>✓ {it}</li>
-                  ))}
-                </ul>
+          {/* Liberacao de Linha (timeline) */}
+          {no.liberacaoLinhaTL && (
+            <>
+              <div className="card-title" style={{ marginBottom: 10 }}>Liberação de Linha</div>
+              <div style={{ borderLeft: '2px solid var(--ouro-claro)', paddingLeft: 18, marginBottom: 16, marginLeft: 4 }}>
+                {no.liberacaoLinhaTL.map((ev, i) => (
+                  <div key={i} style={{ position: 'relative', paddingBottom: i < no.liberacaoLinhaTL.length - 1 ? 14 : 0 }}>
+                    <div aria-hidden style={{ position: 'absolute', left: -25, top: 3, width: 10, height: 10, borderRadius: '50%', background: ev.tipo === 'warn' ? 'var(--alr)' : 'var(--ok)' }} />
+                    <div className="mono" style={{ fontSize: 11, fontWeight: 700, color: 'var(--inf)' }}>{ev.hora}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text)' }}>
+                      <strong>{ev.titulo}.</strong> {ev.desc}{' '}
+                      <span className={`bdg ${ev.tipo === 'warn' ? 'bdg-alr' : 'bdg-ok'}`} style={{ fontSize: 10 }}>{ev.resultado}</span>{' '}
+                      · <span style={{ color: 'var(--text3)' }}>Por: {ev.por}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
 
-          <div className="card-title" style={{ marginBottom: 8 }}>Justificativas de Parada</div>
-          <table className="tbl">
-            <thead><tr><th>Hora</th><th>Código</th><th>Justificativa</th><th>Usuário</th></tr></thead>
-            <tbody>
-              {no.paradas.map((p, i) => (
-                <tr key={i}>
-                  <td className="mono" style={{ fontSize: 11 }}>{p.hora}</td>
-                  <td className="mono">{p.codigo}</td>
-                  <td>{p.motivo}</td>
-                  <td className="mono" style={{ fontSize: 11 }}>{p.user}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {/* Controle de Peso — Amostras de Envase */}
+          {no.controlePeso && (
+            <>
+              <div className="card-title" style={{ marginBottom: 8 }}>Controle de Peso — Amostras de Envase</div>
+              <KpiRow kpis={no.controlePeso.kpis} />
+              <table className="tbl" style={{ marginBottom: 14 }}>
+                <thead>
+                  <tr><th>#</th><th>Data</th><th>Hora</th><th>Tara Emb.</th><th>Densidade</th><th>Peso Decl.</th><th>Peso Real</th><th>Status</th><th>Usuário</th></tr>
+                </thead>
+                <tbody>
+                  {no.controlePeso.amostras.map((a, i) => (
+                    <tr key={i}>
+                      <td className="mono" style={{ color: 'var(--text3)' }}>{a.n}</td>
+                      <td className="mono" style={{ fontSize: 11 }}>{a.data}</td>
+                      <td className="mono" style={{ fontSize: 11 }}>{a.hora}</td>
+                      <td className="mono" style={{ fontSize: 11 }}>{a.tara}</td>
+                      <td className="mono" style={{ fontSize: 11 }}>{a.densidade}</td>
+                      <td className="mono" style={{ color: 'var(--text3)' }}>{a.decl}</td>
+                      <td className="mono" style={{ fontWeight: 700, color: 'var(--verde)' }}>{a.real}</td>
+                      <td><span className="bdg bdg-ok" style={{ fontSize: 10 }}>{a.status}</span></td>
+                      <td className="mono" style={{ fontSize: 11 }}>{a.usuario}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+
+          {/* Controle de Processo — Caixa de Embarque + Refil */}
+          {no.controleProcesso && (
+            <>
+              <div className="card-title" style={{ marginBottom: 8 }}>Controle de Processo — Caixa de Embarque + Refil</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 8, marginBottom: 14 }}>
+                {no.controleProcesso.map((c, i) => (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    background: 'var(--surface)', border: '1px solid var(--border)',
+                    borderLeft: `4px solid ${c.ok ? 'var(--ok)' : 'var(--per)'}`,
+                    padding: '7px 10px', borderRadius: 4, fontSize: 11,
+                  }}>
+                    <span>{c.ok ? '✅' : '⚠'}</span>
+                    <div style={{ flex: 1, fontWeight: 600 }}>{c.n}. {c.item}</div>
+                    <div className="mono" style={{ fontSize: 9, color: 'var(--text3)' }}>{c.por}</div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Anexos da Ordem de Embalagem */}
+          {no.anexos && (
+            <>
+              <div className="card-title" style={{ marginBottom: 8 }}>Anexos da Ordem de Embalagem</div>
+              <table className="tbl">
+                <thead><tr><th>Anexo</th><th>Status</th><th>Anexado por</th><th>Data</th></tr></thead>
+                <tbody>
+                  {no.anexos.map((a, i) => (
+                    <tr key={i}>
+                      <td>{a.anexo}</td>
+                      <td><span className="bdg bdg-ok" style={{ fontSize: 10 }}>{a.status}</span></td>
+                      <td className="mono" style={{ fontSize: 11 }}>{a.por}</td>
+                      <td className="mono" style={{ fontSize: 11 }}>{a.data}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
         </div>
       );
 
@@ -1129,6 +1264,109 @@ function RenderConteudoNo({ no, cores, dossie }) {
               ))}
             </tbody>
           </table>
+        </div>
+      );
+
+    case 'qa-reconciliacao':
+      return (
+        <div style={{ marginTop: 12 }}>
+          {/* Multibatch — graneis que compoem o PA */}
+          {no.multibatch && (
+            <>
+              <div className="card-title" style={{ marginBottom: 8 }}>Multibatch — Granéis que compõem o PA</div>
+              <table className="tbl" style={{ marginBottom: 14 }}>
+                <thead><tr><th>#</th><th>Lote Granel</th><th>WO Fab.</th><th>Peso</th><th>Status</th></tr></thead>
+                <tbody>
+                  {no.multibatch.map((m, i) => (
+                    <tr key={i}>
+                      <td className="mono" style={{ color: 'var(--text3)' }}>{m.n}</td>
+                      <td className="mono" style={{ fontWeight: 700, color: 'var(--verde)' }}>{m.loteGranel}</td>
+                      <td className="mono">{m.wo}</td>
+                      <td className="mono" style={{ fontWeight: 700 }}>{m.peso}</td>
+                      <td><span className="bdg bdg-ok" style={{ fontSize: 10 }}>{m.status}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+
+          {/* Amostras de Retencao */}
+          {no.amostrasRetencao && (
+            <>
+              <div className="card-title" style={{ marginBottom: 8 }}>
+                Amostras de Retenção{' '}
+                <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text3)' }}>· ANVISA RDC 658/2022 · 1 ano após validade</span>
+              </div>
+              <table className="tbl" style={{ marginBottom: 14 }}>
+                <thead><tr><th>#</th><th>Tipo</th><th>Caixa</th><th>Pallet</th><th>Posição</th><th>Qtd.</th><th>Observação</th></tr></thead>
+                <tbody>
+                  {no.amostrasRetencao.map((a, i) => (
+                    <tr key={i}>
+                      <td className="mono" style={{ color: 'var(--text3)' }}>{a.n}</td>
+                      <td>{a.tipo}</td>
+                      <td className="mono">{a.caixa}</td>
+                      <td className="mono">{a.pallet}</td>
+                      <td style={{ fontSize: 11 }}>{a.posicao}</td>
+                      <td className="mono">{a.qtd}</td>
+                      <td style={{ fontSize: 11, color: 'var(--text2)' }}>{a.obs}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+
+          {/* Registros de Correcao */}
+          {no.registrosCorrecao && (
+            <>
+              <div className="card-title" style={{ marginBottom: 8 }}>
+                Registros de Correção{' '}
+                <span className="bdg bdg-per" style={{ fontSize: 10 }}>{no.registrosCorrecao.length} em aberto</span>
+              </div>
+              <table className="tbl" style={{ marginBottom: 14 }}>
+                <thead><tr><th>Nº</th><th>Classificação</th><th>Tipo</th><th>Severidade</th><th>Área</th><th>Título</th><th>Status</th><th>Aberto</th></tr></thead>
+                <tbody>
+                  {no.registrosCorrecao.map((r, i) => (
+                    <tr key={i}>
+                      <td className="mono" style={{ fontWeight: 700, color: 'var(--per)' }}>{r.numero}</td>
+                      <td style={{ fontSize: 11 }}>{r.classificacao}</td>
+                      <td style={{ fontSize: 11 }}>{r.tipo}</td>
+                      <td><span className="bdg bdg-alr" style={{ fontSize: 10 }}>{r.severidade}</span></td>
+                      <td style={{ fontSize: 11 }}>{r.area}</td>
+                      <td style={{ fontSize: 11 }}>{r.titulo}</td>
+                      <td><span className="bdg bdg-per" style={{ fontSize: 10 }}>{r.status}</span></td>
+                      <td className="mono" style={{ fontSize: 11 }}>{r.aberto}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+
+          {/* Checklist POP-GQV-0009 */}
+          {no.checklistPOP && (
+            <>
+              <div className="card-title" style={{ marginBottom: 8 }}>
+                Check List de Reconciliação · POP-GQV-0009/05 · Anexo 2{' '}
+                <span className="bdg bdg-ok" style={{ fontSize: 10 }}>
+                  {no.checklistPOP.filter((c) => c.ok).length}/{no.checklistPOP.length} marcados
+                </span>
+              </div>
+              <table className="tbl">
+                <thead><tr><th>#</th><th>Item documental</th><th>Status</th></tr></thead>
+                <tbody>
+                  {no.checklistPOP.map((c, i) => (
+                    <tr key={i}>
+                      <td className="mono" style={{ color: 'var(--text3)' }}>{c.n}</td>
+                      <td>{c.item}</td>
+                      <td><span className={`bdg ${c.ok ? 'bdg-ok' : 'bdg-per'}`} style={{ fontSize: 10 }}>{c.ok ? '✓ Concluído' : 'Pendente'}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
         </div>
       );
 
@@ -1191,167 +1429,3 @@ function Tag({ label, valor, cor }) {
     </div>
   );
 }
-
-/* ─────────────────────────────────────────────────────────────
-   Filtro de busca por lote do granel / WO / codigo / produto
-───────────────────────────────────────────────────────────── */
-
-function FiltroDossie({ atual, onSelecionar }) {
-  const [termo, setTermo] = useState('');
-  const [erro, setErro] = useState(null);
-  const [showSug, setShowSug] = useState(false);
-
-  const lista = useMemo(() => listarDossies(), []);
-  const sugestoes = useMemo(() => {
-    if (!termo.trim()) return lista;
-    const t = termo.trim().toLowerCase();
-    return lista.filter(
-      (d) =>
-        d.lote.toLowerCase().includes(t) ||
-        d.wo.toLowerCase().includes(t) ||
-        d.lotePA.toLowerCase().includes(t) ||
-        d.codigo.toLowerCase().includes(t) ||
-        d.produto.toLowerCase().includes(t),
-    );
-  }, [termo, lista]);
-
-  const buscar = (valor) => {
-    const v = (valor != null ? valor : termo).trim();
-    if (!v) {
-      setErro('Informe um lote, WO ou código de produto.');
-      return;
-    }
-    const d = findDossie(v);
-    if (!d) {
-      setErro(`Nenhum dossiê encontrado para "${v}". Tente um lote (ex.: 2551/2026), WO (ex.: 784426) ou código (ex.: S0815B).`);
-      return;
-    }
-    setErro(null);
-    setShowSug(false);
-    setTermo('');
-    onSelecionar(d);
-  };
-
-  return (
-    <div className="card co mb14" style={{ padding: 14, position: 'relative', borderTop: '3px solid var(--ouro-claro)' }}>
-      <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end', flexWrap: 'wrap' }}>
-        <div style={{ flex: 1, minWidth: 280, position: 'relative' }}>
-          <label className="lbl" style={{ display: 'block', marginBottom: 4 }}>
-            Buscar Dossiê — <span style={{ fontSize: 9, fontWeight: 600, color: 'var(--text3)' }}>por Lote do Granel · WO · Lote PA · Código · Nome do Produto</span>
-          </label>
-          <input
-            className="inp"
-            value={termo}
-            onChange={(e) => { setTermo(e.target.value); setErro(null); setShowSug(true); }}
-            onFocus={() => setShowSug(true)}
-            onBlur={() => setTimeout(() => setShowSug(false), 200)}
-            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); buscar(); } }}
-            placeholder="Ex.: 2551/2026  ·  784426  ·  S0815B  ·  Limão Siciliano"
-            style={{ width: '100%' }}
-          />
-          {showSug && sugestoes.length > 0 && (
-            <div
-              style={{
-                position: 'absolute',
-                top: 'calc(100% + 4px)',
-                left: 0,
-                right: 0,
-                background: 'var(--surface)',
-                border: '1px solid var(--border)',
-                borderRadius: 6,
-                boxShadow: 'var(--sh2)',
-                zIndex: 30,
-                maxHeight: 280,
-                overflowY: 'auto',
-              }}
-            >
-              {sugestoes.map((s) => (
-                <button
-                  key={s.wo}
-                  type="button"
-                  onMouseDown={(e) => { e.preventDefault(); buscar(s.lote); }}
-                  style={{
-                    width: '100%',
-                    background: atual.wo === s.wo ? 'var(--verde-dim)' : 'transparent',
-                    border: 'none',
-                    borderBottom: '1px solid var(--border)',
-                    padding: '10px 12px',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    font: 'inherit',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    gap: 12,
-                    alignItems: 'baseline',
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--surface2)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = atual.wo === s.wo ? 'var(--verde-dim)' : 'transparent')}
-                >
-                  <div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--verde-esc)' }}>
-                      {s.produto}
-                    </div>
-                    <div style={{ fontSize: 10, color: 'var(--text3)', fontFamily: 'var(--font-m)', marginTop: 2 }}>
-                      <strong style={{ color: 'var(--ouro)' }}>WO {s.wo}</strong> · Granel{' '}
-                      <strong style={{ color: 'var(--verde)' }}>{s.lote}</strong> · PA{' '}
-                      <strong style={{ color: 'var(--verde)' }}>{s.lotePA}</strong> · Cód.{' '}
-                      <strong>{s.codigo}</strong>
-                    </div>
-                  </div>
-                  <div style={{ fontSize: 10, color: 'var(--text3)', whiteSpace: 'nowrap', alignSelf: 'center' }}>
-                    {s.inicio.split(' ')[0]}
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <button className="btn btn-md btn-v" onClick={() => buscar()} style={{ minWidth: 110 }}>🔍 Buscar</button>
-        <button
-          className="btn btn-md btn-ghost"
-          onClick={() => { setTermo(''); setErro(null); setShowSug(false); onSelecionar(DOSSIES[0]); }}
-        >
-          Limpar
-        </button>
-      </div>
-
-      {erro && (
-        <div className="abox err" style={{ marginTop: 10, marginBottom: 0 }}>
-          <span className="ai">⚠</span>
-          <div>{erro}</div>
-        </div>
-      )}
-
-      {/* Resumo do dossiê atual */}
-      <div
-        style={{
-          marginTop: 10,
-          padding: '8px 12px',
-          background: 'var(--ouro-dim)',
-          border: '1px dashed var(--ouro-claro)',
-          borderRadius: 6,
-          display: 'flex',
-          justifyContent: 'space-between',
-          gap: 12,
-          flexWrap: 'wrap',
-          fontSize: 11,
-          color: 'var(--text2)',
-        }}
-      >
-        <div>
-          <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--ouro)', marginRight: 8 }}>
-            Exibindo:
-          </span>
-          <strong style={{ color: 'var(--verde-esc)' }}>{atual.granel}</strong> · WO{' '}
-          <strong style={{ color: 'var(--ouro)', fontFamily: 'var(--font-m)' }}>{atual.wo}</strong> · Lote granel{' '}
-          <strong style={{ color: 'var(--verde)', fontFamily: 'var(--font-m)' }}>{atual.lote}</strong>
-        </div>
-        <div style={{ color: 'var(--text3)', fontFamily: 'var(--font-m)' }}>
-          {DOSSIES.length} dossiês disponíveis nesta base
-        </div>
-      </div>
-    </div>
-  );
-}
-

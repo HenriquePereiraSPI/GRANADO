@@ -13,6 +13,9 @@ import QualidadeFilaReconciliacaoScreen from './components/QualidadeFilaReconcil
 import QualidadeAmostrasScreen from './components/QualidadeAmostrasScreen.jsx';
 import QualidadeCorrecoesGestaoScreen from './components/QualidadeCorrecoesGestaoScreen.jsx';
 import PesOrdemSubScreen from './components/PesOrdemSubScreen.jsx';
+import ReconciliacaoContexto from './components/ReconciliacaoContexto.jsx';
+import ProdOrdemContexto from './components/ProdOrdemContexto.jsx';
+import FabOrdemContexto from './components/FabOrdemContexto.jsx';
 
 /** Sub-telas da Pesagem que so podem ser acessadas com ?op= setado.
  *  Sao agrupadas dentro de pes-ordens (a tela "pai"). Acesso direto
@@ -21,6 +24,22 @@ const PES_ORDEM_SUBSCREENS = new Set([
   'pes-cockpit', 'pes-mps',
   'pes-checklist', 'pes-gaiola', 'pes-devol-mp', 'pes-checkout',
   'pes-paradas',
+]);
+
+/** Sub-telas da Ordem de Producao — apos iniciar a ordem (prod-iniciar)
+ *  o sistema entra no contexto com ?op= e estas telas ganham a sub-navbar.
+ *  Acesso direto (sem ?op) renderiza a tela sem a sub-navbar.
+ *  prod-cockpit tem rota propria (ProdCockpitScreen) — envelopada a parte. */
+const PROD_ORDEM_SUBSCREENS = new Set([
+  'prod-materiais', 'prod-paradas', 'prod-qualidade', 'prod-docs', 'prod-devol',
+  'prod-finalizar',
+]);
+
+/** Sub-telas da Ordem de Fabricacao — apos iniciar a ordem (popup) o sistema
+ *  entra no contexto com ?op= e estas telas ganham a sub-navbar.
+ *  Acesso direto (sem ?op) renderiza a tela sem a sub-navbar. */
+const FAB_ORDEM_SUBSCREENS = new Set([
+  'fab-inbatch', 'fab-checkin', 'fab-tanque', 'fab-amostras', 'fab-fechar',
 ]);
 import { ModalProvider, useModal } from './components/ModalProvider.jsx';
 import { injectLegacyScripts, installNavBridges, resolveScreenId } from './lib/legacy-bridge.js';
@@ -72,11 +91,12 @@ export default function App() {
           {/* sinotico expandido (ERU 5.1.55): cobre Producao + Pesagem + Fabricacao */}
           <Route path="/sinotico" element={<SinoticoScreen />} />
 
-          {/* prod-cockpit: wrapper React que injeta o grafico hora-a-hora */}
-          <Route path="/prod-cockpit" element={<ProdCockpitScreen />} />
+          {/* prod-cockpit: wrapper React que injeta o grafico hora-a-hora.
+              Envelopado no contexto da OP (sub-navbar quando ?op presente). */}
+          <Route path="/prod-cockpit" element={<ProdOrdemContexto id="prod-cockpit"><ProdCockpitScreen /></ProdOrdemContexto>} />
 
           {/* genealogia de lote: dossie eletronico EBR (WO 784426) */}
-          <Route path="/dash-genealogia" element={<GenealogiaScreen />} />
+          <Route path="/dash-genealogia" element={<ReconciliacaoContexto id="dash-genealogia"><GenealogiaScreen /></ReconciliacaoContexto>} />
 
           {/* OEE Pesagem (componente React) */}
           <Route path="/pes-oee" element={<PesagemOeeScreen />} />
@@ -91,10 +111,10 @@ export default function App() {
           <Route path="/qual-fila" element={<QualidadeFilaReconciliacaoScreen />} />
 
           {/* Qualidade — Reconciliacao Tecnica e Liberacao de Lote */}
-          <Route path="/qual-reconciliacao" element={<QualidadeReconciliacaoScreen />} />
+          <Route path="/qual-reconciliacao" element={<ReconciliacaoContexto id="qual-reconciliacao"><QualidadeReconciliacaoScreen /></ReconciliacaoContexto>} />
 
           {/* Qualidade — Amostras de Retencao (gerencial, RDC 658/2022) */}
-          <Route path="/qual-amostras" element={<QualidadeAmostrasScreen />} />
+          <Route path="/qual-amostras" element={<ReconciliacaoContexto id="qual-amostras"><QualidadeAmostrasScreen /></ReconciliacaoContexto>} />
 
           {/* Qualidade — Dashboard de Correcoes (gerencial, perfil Q-MGMT) */}
           <Route path="/qual-correcoes-gestao" element={<QualidadeCorrecoesGestaoScreen />} />
@@ -109,6 +129,14 @@ export default function App() {
             // Sub-telas da Pesagem: envelopadas no wrapper que valida ?op=
             if (PES_ORDEM_SUBSCREENS.has(id)) {
               return <Route key={id} path={'/' + id} element={<PesOrdemSubScreen id={id} />} />;
+            }
+            // Sub-telas da Ordem de Producao: contexto com sub-navbar quando ?op=
+            if (PROD_ORDEM_SUBSCREENS.has(id)) {
+              return <Route key={id} path={'/' + id} element={<ProdOrdemContexto id={id}><LegacyScreen id={id} /></ProdOrdemContexto>} />;
+            }
+            // Sub-telas da Ordem de Fabricacao: contexto com sub-navbar quando ?op=
+            if (FAB_ORDEM_SUBSCREENS.has(id)) {
+              return <Route key={id} path={'/' + id} element={<FabOrdemContexto id={id}><LegacyScreen id={id} /></FabOrdemContexto>} />;
             }
             return <Route key={id} path={'/' + id} element={<LegacyScreen id={id} />} />;
           })}

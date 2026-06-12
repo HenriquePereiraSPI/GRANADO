@@ -9,25 +9,6 @@ export const TOP_LINKS = [
 
 export const MODULES = [
   {
-    id: 'mod-prod',
-    label: 'Producao',
-    icon: '🏭',
-    items: [
-      { id: 'prod-ordens',     label: 'Ordens de Producao' },
-      { id: 'prod-materiais',  label: 'Materiais da OP' },
-      { id: 'prod-checkin',    label: '👷 Check-in de Operadores' },
-      { id: 'prod-iniciar',    label: 'Iniciar Ordem' },
-      { id: 'prod-finalizar',  label: 'Finalizar Ordem' },
-      { id: 'prod-paradas',    label: 'Paradas de Maquina' },
-      { id: 'prod-cockpit',    label: 'Cockpit de Execucao' },
-      { id: 'prod-qualidade',  label: 'Qualidade em Processo' },
-      { id: 'prod-docs',       label: '📄 Documentos' },
-      { id: 'prod-rastr',      label: '📋 Rastreabilidade' },
-      { id: 'prod-sinotico',   label: '🏭 Sinotico da Fabrica' },
-      { id: 'prod-devol',      label: 'Devolucao de Embalagens' },
-    ],
-  },
-  {
     id: 'mod-pes',
     label: 'Pesagem',
     icon: '⚖️',
@@ -49,15 +30,27 @@ export const MODULES = [
     label: 'Fabricacao',
     icon: '🧪',
     items: [
-      { id: 'fab-ordens',      label: '① Selecao de Ordens' },
-      { id: 'fab-iniciar',     label: '② Iniciar Ordem' },
-      { id: 'fab-checkin',     label: '③ Check-in de MPs' },
-      { id: 'fab-inbatch',     label: '④ Fases InBatch' },
-      { id: 'fab-amostras',    label: '⑤ Controle de Amostras' },
-      { id: 'fab-tanque',      label: '⑥ Selecao de Tanque' },
-      { id: 'fab-fechar',      label: '⑦ Fechamento da Ordem' },
+      // "Iniciar Ordem" virou um popup (acionado em fab-ordens) e as
+      // sub-telas da ordem (fab-inbatch/checkin/tanque/amostras/fechar)
+      // foram movidas pra DENTRO da ordem — so ficam acessiveis depois
+      // de iniciar (contexto com ?op=), via a sub-navbar.
+      { id: 'fab-ordens',      label: 'Selecao de Ordens' },
       { id: 'fab-rastr',       label: '📋 Rastreabilidade' },
       { id: 'fab-saldo',       label: '🛢️ Saldo de Equipamentos' },
+    ],
+  },
+  {
+    id: 'mod-prod',
+    label: 'Producao',
+    icon: '🏭',
+    items: [
+      // Subtelas da ordem (prod-cockpit, prod-materiais, prod-paradas,
+      // prod-qualidade, prod-docs, prod-devol) foram movidas pra DENTRO
+      // da ordem — so ficam acessiveis depois de iniciar a ordem
+      // (contexto com ?op=), via a sub-navbar.
+      { id: 'prod-ordens',     label: 'Ordens de Producao' },
+      { id: 'prod-checkin',    label: '👷 Check-in de Operadores' },
+      { id: 'prod-rastr',      label: '📋 Rastreabilidade' },
     ],
   },
   {
@@ -65,11 +58,11 @@ export const MODULES = [
     label: 'Qualidade',
     icon: '🔬',
     items: [
+      // Subtelas da reconciliacao (qual-reconciliacao, qual-amostras,
+      // dash-genealogia) foram movidas pra DENTRO da Fila — so ficam
+      // acessiveis via "Entrar" numa linha (contexto com ?lote=).
       { id: 'qual-fila',             label: '📋 Fila de Reconciliacoes' },
-      { id: 'qual-reconciliacao',    label: '✓ Reconciliacao Tec. & Liberacao' },
-      { id: 'qual-amostras',         label: '📦 Amostras de Retencao' },
       { id: 'qual-correcoes-gestao', label: '📈 Dashboard de Correcoes 🔒' },
-      { id: 'dash-genealogia',       label: '🧬 Genealogia de Lote' },
     ],
   },
   {
