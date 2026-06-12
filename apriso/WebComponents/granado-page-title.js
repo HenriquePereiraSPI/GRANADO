@@ -107,10 +107,14 @@ if (!customElements.get('granado-page-title')) {
         ? `<div style="text-align:right;font-family:'Arial',Helvetica,sans-serif;font-size:10px;line-height:1.9;color:#4A6250;flex-shrink:0">${customText}</div>`
         : '';
 
+      // Custom element e display:inline por padrao — forca bloco de largura total
+      // para o cabecalho ocupar 100% independente do container onde for colocado.
       this.style.display = this.style.display || 'block';
+      if (!this.style.width) this.style.width = '100%';
+      this.style.boxSizing = 'border-box';
 
       this.innerHTML =
-        `<div style="position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px;padding-bottom:14px;border-bottom:2px solid #1C5C31;box-sizing:border-box">` +
+        `<div style="width:100%;position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px;padding-bottom:14px;border-bottom:2px solid #1C5C31;box-sizing:border-box">` +
           `<div>${eyebrowHtml}${titleHtml}</div>` +
           metaHtml +
           // detalhe dourado curto (substitui o ::after do .page-header)

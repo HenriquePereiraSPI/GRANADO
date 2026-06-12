@@ -103,14 +103,18 @@ if (!customElements.get('granado-information')) {
             `font-size:12px;line-height:1;margin-top:-1px">${icon}</span>`
         : '';
 
+      // Custom element e display:inline por padrao — forca bloco de largura total
+      // para a caixa ocupar 100% independente do container onde for colocada.
       this.style.display = this.style.display || 'block';
+      if (!this.style.width) this.style.width = '100%';
+      this.style.boxSizing = 'border-box';
 
       this.innerHTML =
-        `<div style="border-radius:8px;padding:11px 15px;display:flex;gap:10px;align-items:flex-start;` +
+        `<div style="width:100%;border-radius:8px;padding:11px 15px;display:flex;gap:10px;align-items:flex-start;` +
           `font-size:12px;line-height:1.55;background:${v.bg};border:1px solid ${v.border};color:${v.fg};` +
           `font-family:'Poppins','DejaVu Sans',Arial,sans-serif;box-sizing:border-box">` +
           iconHtml +
-          `<div>${text}</div>` +
+          `<div style="flex:1 1 auto;min-width:0">${text}</div>` +
         `</div>`;
     }
   }
