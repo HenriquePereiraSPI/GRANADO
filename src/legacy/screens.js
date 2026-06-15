@@ -1760,6 +1760,16 @@ export const SCREENS = {
         var PES_BAL_LEITURA_ATIVA = false;
         var PES_BAL_INTERVAL = null;
 
+        // Etiqueta "mockada" usada no modo Sem Balança (SB): o peso vem da
+        // própria etiqueta lida — não há pesagem na balança.
+        var PES_ETIQUETA_MOCK = {
+          codigo: 'ETQ-SB-7788',
+          mp: 'Aqua (Água Purificada)',
+          lote: 'AGUA-2026-03',
+          validade: '12/2026',
+          peso: 411.84,   // kg — peso impresso na etiqueta
+        };
+
         // Stepper de 5 etapas — após "Pesagem" o sistema abre direto o popup
         // de confirmação (escolha de gaiola + impressão da etiqueta da MP).
         var PES_STEPS_DATA = [
@@ -1843,13 +1853,37 @@ export const SCREENS = {
                 '</div>' +
               '</div>';
 
-            // Após mais 1.2s: mostrar msg de embalagens abaixo
+            // Após mais 1.2s: embalagens + ramifica conforme Sala / Sem Balança
             setTimeout(function() {
               resultEl.innerHTML +=
                 '<div class="abox ok" style="margin-top:10px"><span class="ai">✅</span><div>Não foram encontradas embalagens abertas.</div></div>';
-              setTimeout(function(){ pesSetStep(4); }, 1200);
+              if (window.PES_SALA_SEL === 'SB') {
+                // Sem balança: peso vem da etiqueta — pula Selecionar Balança + Pesagem.
+                var et = PES_ETIQUETA_MOCK;
+                _pesBalVal = et.peso;
+                resultEl.innerHTML +=
+                  '<div style="background:var(--ouro-dim);border:1.5px solid var(--ouro-claro);border-radius:7px;padding:14px 16px;margin-top:10px">' +
+                    '<div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro);margin-bottom:8px">⚠ Modo Sem Balança — peso lido da etiqueta</div>' +
+                    '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">' +
+                      '<div><div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Peso (etiqueta)</div>' +
+                        '<div class="mono" style="font-size:24px;font-weight:900;color:var(--verde);line-height:1">' + et.peso.toFixed(3).replace(".", ",") + ' kg</div></div>' +
+                      '<div style="font-size:11px;color:var(--text2);flex:1;min-width:180px">A pesagem não é executada. O peso é obtido automaticamente da etiqueta lida <strong class="mono">' + et.codigo + '</strong> — sem uso de balança.</div>' +
+                      '<button class="btn btn-md btn-v" onclick="pesConfirmarSemBalanca()">✔ Confirmar Pesagem (Sem Balança) ›</button>' +
+                    '</div>' +
+                  '</div>';
+              } else {
+                setTimeout(function(){ pesSetStep(4); }, 1200);
+              }
             }, 1200);
           }, 1800);
+        }
+
+        // Sem Balança: confirma direto com o peso lido da etiqueta (sem pesar).
+        function pesConfirmarSemBalanca() {
+          _pesBalVal = PES_ETIQUETA_MOCK.peso;
+          if (PES_BAL_INTERVAL) clearInterval(PES_BAL_INTERVAL);
+          if (typeof p5AbrirConfirmacao === 'function') { p5AbrirConfirmacao(); return; }
+          pesSetStep(5);
         }
         function pesEscolherBalanca(id, nome, cap, ul) {
           PES_BAL_SEL = {id: id, nome: nome, cap: cap, ul: ul};
@@ -1938,8 +1972,8 @@ export const SCREENS = {
             <div class="card cv mb14" style="border:2px solid var(--verde)">
               <div class="card-title">① Selecionar Matéria-Prima para Pesagem</div>
               <div style="margin-bottom:12px">
-                <label class="lbl">Filtrar MP <span style="font-size:9px;font-weight:600;color:var(--text3);margin-left:8px">— ou escaneie no formato <code style="background:var(--bg2);padding:1px 6px;border-radius:3px;font-family:var(--font-m);color:var(--verde-esc)">MP-XXXX;LOTE-XXXX-XX</code></span></label>
-                <input class="inp" id="pes-mp-filtro" placeholder="Digite código/descrição OU escaneie ex.: MP-0001;AGUA-2026-03" oninput="pesFiltrarMPs(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();pesScanRapido(this.value);}" style="margin-bottom:6px">
+                <label class="lbl">Filtrar MP <span style="font-size:9px;font-weight:600;color:var(--text3);margin-left:8px">— Escaneie o número da etiqueta, exemplo: <code style="background:var(--bg2);padding:1px 6px;border-radius:3px;font-family:var(--font-m);color:var(--verde-esc)">ETQ-SB-7788</code> ou <code style="background:var(--bg2);padding:1px 6px;border-radius:3px;font-family:var(--font-m);color:var(--verde-esc)">ETQ-SB-3050</code></span></label>
+                <input class="inp" id="pes-mp-filtro" placeholder="Filtre a MP ou escaneie a etiqueta, ex.: ETQ-SB-7788" oninput="pesFiltrarMPs(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();pesScanEtiquetaSB(this.value);}" style="margin-bottom:6px">
                 <div id="pes-scan-feedback" style="display:none;font-size:11px;font-weight:700;padding:6px 10px;border-radius:4px;margin-bottom:4px"></div>
               </div>
               <table class="tbl" id="pes-mp-tabela" style="font-size:11px">
@@ -2078,6 +2112,11 @@ export const SCREENS = {
                 </div>
               </div>
 
+              <!-- ── Popup: Pesagem Sem Balança (info da etiqueta → gaiola) ── -->
+              <div id="modal-sb-pes" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:967;align-items:flex-start;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto">
+                <div id="modal-sb-box" style="background:var(--surface);border-top:4px solid var(--ouro);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:560px;width:94%;box-shadow:var(--sh2);margin:auto"></div>
+              </div>
+
               <style>
                 @keyframes row-blink {
                   0%,100% { background: var(--per-p); }
@@ -2139,6 +2178,138 @@ export const SCREENS = {
                 document.getElementById('solic-mp-just').value = '';
               }
               /**
+               * Disparado no ENTER do campo de filtro. Se o valor for um
+               * codigo de etiqueta valido (formato ETQ-...), abre o fluxo de
+               * pesagem "Sem Balanca" via popup (peso vem da propria etiqueta).
+               * Caso contrario, mantem o comportamento de scan MP-XXXX;LOTE.
+               */
+              function pesScanEtiquetaSB(raw) {
+                var v = (raw || '').trim();
+                if (/^ETQ-[A-Za-z0-9-]+$/i.test(v)) {
+                  sbAbrir(v.toUpperCase());
+                  return;
+                }
+                pesScanRapido(v);
+              }
+
+              // ════════ Fluxo "Sem Balança" — popups: info da etiqueta → gaiola ════════
+              // Catálogo de etiquetas mockadas. "alvoNum" = quantidade-alvo da OP para a MP.
+              // Se o peso da etiqueta ultrapassa o alvo, a pesagem sem balança é bloqueada.
+              var SB_ETIQUETAS = {
+                'ETQ-SB-7788': { mp: 'Aqua (Água Purificada)',                 lote: 'AGUA-2026-03', validade: '12/2026', peso: '411,840 kg', pesoNum: 411.840, alvo: '450,000 kg', alvoNum: 450.000 },
+                'ETQ-SB-3050': { mp: 'Lauril Éter Sulfato de Sódio (SLES 28%)', lote: 'SLES-2026-07', validade: '08/2026', peso: '620,500 kg', pesoNum: 620.500, alvo: '500,000 kg', alvoNum: 500.000 }
+              };
+              var SB_ETIQUETA = SB_ETIQUETAS['ETQ-SB-7788'];
+              var SB_CODIGO = 'ETQ-SB-7788', SB_GAIOLAS = [], SB_GAIOLA_SEL = null, SB_PROX_SEQ = 563944;
+
+              function sbBox() { return document.getElementById('modal-sb-box'); }
+              function sbFechar() {
+                var m = document.getElementById('modal-sb-pes'); if (m) m.style.display = 'none';
+                var f = document.getElementById('pes-mp-filtro'); if (f) f.value = '';
+              }
+
+              function sbAbrir(codigo) {
+                SB_CODIGO = codigo || 'ETQ-SB-7788';
+                SB_ETIQUETA = SB_ETIQUETAS[SB_CODIGO] || SB_ETIQUETAS['ETQ-SB-7788'];
+                SB_GAIOLAS = [{ seq: 563944, num: 1 }, { seq: 563945, num: 2 }];
+                SB_GAIOLA_SEL = SB_GAIOLAS.length - 1;
+                SB_PROX_SEQ = 563946;
+                var m = document.getElementById('modal-sb-pes');
+                if (m) m.style.display = 'flex';
+                // Peso da etiqueta ultrapassa o alvo da OP -> bloqueia pesagem sem balança.
+                if (SB_ETIQUETA.pesoNum > SB_ETIQUETA.alvoNum) { sbRenderExcedeAlvo(); } else { sbRenderInfo(); }
+              }
+
+              function sbRenderExcedeAlvo() {
+                var box = sbBox(); if (!box) return;
+                var e = SB_ETIQUETA;
+                var excesso = (e.pesoNum - e.alvoNum).toFixed(3).replace('.', ',') + ' kg';
+                box.innerHTML =
+                  '<div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--per)">🚫⚖️ Pesagem Sem Balança · Bloqueada</div>' +
+                  '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--per);margin:2px 0 12px">Peso da etiqueta ultrapassa o alvo</div>' +
+                  '<div class="abox err mb14"><span class="ai">⛔</span><div>A etiqueta <strong class="mono">' + SB_CODIGO + '</strong> (' + e.mp + ') possui <strong>' + e.peso + '</strong>, acima do alvo de <strong>' + e.alvo + '</strong> desta OP (excesso de <strong>' + excesso + '</strong>).<br>Não é possível seguir com a pesagem sem balança — o peso integral da etiqueta excederia a quantidade necessária.</div></div>' +
+                  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:14px 16px;margin-bottom:14px">' +
+                    '<div><div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Peso da etiqueta</div><div class="mono" style="font-size:18px;font-weight:900;color:var(--per)">' + e.peso + '</div></div>' +
+                    '<div><div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Alvo da OP</div><div class="mono" style="font-size:18px;font-weight:900;color:var(--verde)">' + e.alvo + '</div></div>' +
+                  '</div>' +
+                  '<div class="abox info mb14"><span class="ai">💡</span><div>Carregue esta MP em uma <strong>sala com balança</strong> e pese a <strong>quantidade fracionada</strong> (' + e.alvo + ') diretamente na balança, retornando o saldo ao estoque.</div></div>' +
+                  '<div style="display:flex;gap:8px;justify-content:flex-end">' +
+                    '<button class="btn btn-md btn-v" onclick="sbFechar()">Entendi</button>' +
+                  '';
+              }
+
+              function sbRenderInfo() {
+                var box = sbBox(); if (!box) return;
+                var e = SB_ETIQUETA;
+                var campo = function(lbl, val, big) {
+                  return '<div><div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">' + lbl + '</div>' +
+                    '<div class="mono" style="font-size:' + (big ? '20px' : '12px') + ';font-weight:' + (big ? '900' : '700') + ';color:' + (big ? 'var(--verde)' : 'var(--text)') + '">' + val + '</div></div>';
+                };
+                box.innerHTML =
+                  '<div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--ouro)">🚫⚖️ Pesagem Sem Balança · Etapa 1/2</div>' +
+                  '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin:2px 0 12px">Informações da Etiqueta</div>' +
+                  '<div class="abox ok mb14"><span class="ai">✅</span><div>Etiqueta <strong class="mono">' + SB_CODIGO + '</strong> lida com sucesso — peso obtido da etiqueta, sem necessidade de pesar.</div></div>' +
+                  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:14px 16px">' +
+                    campo('Matéria-Prima', e.mp) + campo('Lote', e.lote) +
+                    campo('Validade', e.validade) + campo('Peso (etiqueta)', e.peso, true) +
+                  '</div>' +
+                  '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px">' +
+                    '<button class="btn btn-md btn-ghost" onclick="sbFechar()">Cancelar</button>' +
+                    '<button class="btn btn-md btn-v" onclick="sbRenderGaiola()">Continuar › Gaiola</button>' +
+                  '</div>';
+              }
+
+              function sbGaiolaSel(i) { SB_GAIOLA_SEL = i; sbRenderGaiola(); }
+              function sbGaiolaAdd() { SB_GAIOLAS.push({ seq: SB_PROX_SEQ++, num: SB_GAIOLAS.length + 1 }); SB_GAIOLA_SEL = SB_GAIOLAS.length - 1; sbRenderGaiola(); }
+
+              function sbRenderGaiola() {
+                var box = sbBox(); if (!box) return;
+                var cards = SB_GAIOLAS.map(function(g, i) {
+                  var sel = (i === SB_GAIOLA_SEL);
+                  var cor = sel ? '#9A7520' : 'var(--verde-esc)';
+                  var bg = sel ? 'var(--ouro-dim)' : 'var(--verde-dim)';
+                  var bd = sel ? 'var(--ouro)' : 'var(--ok-b)';
+                  return '<div onclick="sbGaiolaSel(' + i + ')" style="cursor:pointer;position:relative;width:120px;height:96px;border-radius:10px;border:2px solid ' + bd + ';background:' + bg + ';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">' +
+                    (sel ? '<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#fff;font-size:8px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap">✓ Selecionada</div>' : '') +
+                    '<div style="font-size:26px">📦</div>' +
+                    '<div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:' + cor + '">Gaiola ' + g.num + '</div>' +
+                    '<div class="mono" style="font-size:13px;font-weight:900;color:' + cor + ';line-height:1">' + g.seq + '</div>' +
+                  '</div>';
+                }).join('');
+                var add = '<button onclick="sbGaiolaAdd()" title="Criar nova gaiola" style="width:120px;height:96px;border:2.5px dashed var(--border2);border-radius:10px;background:var(--surface2);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text3)"><div style="font-size:26px;font-weight:300;line-height:1">+</div><div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Nova Gaiola</div></button>';
+                box.innerHTML =
+                  '<div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--ouro)">🚫⚖️ Pesagem Sem Balança · Etapa 2/2</div>' +
+                  '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin:2px 0 4px">Confirmar &amp; Vincular Gaiola</div>' +
+                  '<div style="font-size:12px;color:var(--text2);margin-bottom:14px">' + SB_ETIQUETA.mp + ' · <strong>' + SB_ETIQUETA.peso + '</strong> · sem balança</div>' +
+                  '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Gaiola a vincular</div>' +
+                  '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px">' + cards + add + '</div>' +
+                  '<div style="display:flex;gap:8px;justify-content:flex-end">' +
+                    '<button class="btn btn-md btn-ghost" onclick="sbRenderInfo()">‹ Voltar</button>' +
+                    '<button class="btn btn-md btn-v" onclick="sbConfirmar()">✔ Confirmar &amp; Imprimir Etiqueta da MP</button>' +
+                  '</div>';
+              }
+
+              function sbConfirmar() {
+                var box = sbBox(); if (!box) return;
+                box.innerHTML =
+                  '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:14px 0">' +
+                    '<div style="width:38px;height:38px;border:4px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px"></div>' +
+                    '<div style="font-size:14px;font-weight:700;color:var(--inf)">Confirmando pesagem (sem balança)...</div>' +
+                    '<div style="font-size:11px;color:var(--text2);margin-top:4px">Registrando o peso da etiqueta e enviando a etiqueta da MP para impressão.</div>' +
+                  '</div>';
+                setTimeout(function(){
+                  var g = SB_GAIOLAS[SB_GAIOLA_SEL] || SB_GAIOLAS[SB_GAIOLAS.length - 1] || { num: 1, seq: 563944 };
+                  box.innerHTML =
+                    '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 0 8px">' +
+                      '<div style="font-size:44px;margin-bottom:6px">✅</div>' +
+                      '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">Pesagem confirmada (sem balança)</div>' +
+                      '<div style="font-size:12px;color:var(--text2);max-width:380px;margin-bottom:18px">Peso <strong>' + SB_ETIQUETA.peso + '</strong> registrado a partir da etiqueta <strong class="mono">' + SB_CODIGO + '</strong>. Etiqueta da MP impressa na PRN-BOX3, vinculada à <strong>Gaiola ' + g.num + ' (Nº ' + g.seq + ')</strong>.</div>' +
+                      '<button class="btn btn-md btn-v" onclick="sbFechar()">✔ Concluir</button>' +
+                    '</div>';
+                }, 1600);
+              }
+
+              /**
                * Scan rapido: parseia formato MP-XXXX;LOTE-XXXX-XX, valida e
                * salta direto para o step 4 (Selecionar Balanca), pulando o
                * modal de confirmacao (step 2) e o scan da etiqueta (step 3),
@@ -2162,13 +2333,11 @@ export const SCREENS = {
                 }
                 var v = (raw || '').trim();
                 if (!v) {
-                  showFeedback('err', '⚠ Informe o código + lote (ex.: MP-0001;AGUA-2026-03) ou clique em Selecionar.');
                   return;
                 }
                 // Sem ';' — trata como busca normal (filtro).
                 if (v.indexOf(';') === -1) {
                   pesFiltrarMPs(v);
-                  showFeedback('err', 'ℹ Formato de scan esperado: MP-XXXX;LOTE-XXXX-XX. Sem ";" o sistema apenas filtrou a tabela.');
                   return;
                 }
                 var parts = v.split(';').map(function(s){ return s.trim(); });
@@ -2493,7 +2662,7 @@ export const SCREENS = {
         var tem = P5_GAIOLAS.length > 0;
         var html =
           '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">✔ Confirmar Pesagem &amp; Imprimir Etiqueta</div>' +
-          '<div style="font-size:12px;color:var(--text2);margin-bottom:16px">Aqua (Água Purificada) · <strong>411,840 kg</strong> · BAL-01</div>' +
+          '<div style="font-size:12px;color:var(--text2);margin-bottom:16px">Aqua (Água Purificada) · <strong>411,840 kg</strong> · ' + (window.PES_SALA_SEL === 'SB' ? 'Sem balança · etiqueta ' + PES_ETIQUETA_MOCK.codigo : 'BAL-01') + '</div>' +
           '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Gaiola a vincular</div>';
 
         if (tem) {
@@ -3915,12 +4084,6 @@ export const SCREENS = {
             <button class="btn btn-sm btn-ghost" onclick="pesLimparSala()">Trocar</button>
           </div>
 
-          <div id="sala-pes-justif-box" style="display:none;margin-top:12px">
-            <div class="abox warn mb14"><span class="ai">⚠️</span><div><strong>Pesagem sem balança requer justificativa.</strong> Registrada no log de auditoria.</div></div>
-            <label class="lbl">Justificativa</label>
-            <textarea class="txta" id="sala-pes-justif-txt" placeholder="Ex.: Balanças em manutenção — pesagem por volume com recipiente calibrado..." rows="2"></textarea>
-          </div>
-
           <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;margin-top:14px;border-top:1px solid var(--border)">
             <button class="btn btn-md btn-ghost" onclick="pesFecharSelSala()">Cancelar</button>
             <button class="btn btn-md btn-v" id="btn-sala-confirmar" onclick="pesConfirmarSelSala()" disabled style="opacity:.5;cursor:not-allowed">✓ Confirmar e Iniciar Pesagem ›</button>
@@ -3979,16 +4142,14 @@ export const SCREENS = {
           'A':  { lbl: '✅ Sala A selecionada',              sub: '4 balanças disponíveis — Box integrado à Sala A' },
           'B':  { lbl: '✅ Sala B selecionada',              sub: '3 balanças (1 em uso) — verifique disponibilidade antes de iniciar' },
           'C':  { lbl: '✅ Sala C selecionada',              sub: '2 balanças disponíveis — Box integrado à Sala C' },
-          'SB': { lbl: '⚠ Pesagem sem balança selecionada',  sub: 'Modo manual — preencha a justificativa obrigatória abaixo' }
+          'SB': { lbl: '⚠ Pesagem sem balança selecionada',  sub: 'Modo manual — o peso será obtido da etiqueta da MP no cockpit' }
         };
         var info = labels[sala];
         var confEl = document.getElementById('sala-pes-confirmada');
         document.getElementById('sala-pes-label').textContent = info.lbl;
         document.getElementById('sala-pes-sub').textContent = info.sub;
         confEl.style.display = 'flex';
-        var justifBox = document.getElementById('sala-pes-justif-box');
-        justifBox.style.display = (sala === 'SB') ? 'block' : 'none';
-        // Habilita o botão Confirmar (a menos que precise de justificativa em SB)
+        // Habilita o botão Confirmar
         var btn = document.getElementById('btn-sala-confirmar');
         if (btn) {
           btn.disabled = false;
@@ -4010,7 +4171,6 @@ export const SCREENS = {
           if (el) { el.style.border = '2px solid var(--border)'; el.style.background = 'var(--surface2)'; }
         });
         document.getElementById('sala-pes-confirmada').style.display = 'none';
-        document.getElementById('sala-pes-justif-box').style.display = 'none';
         var btn = document.getElementById('btn-sala-confirmar');
         if (btn) { btn.disabled = true; btn.style.opacity = '.5'; btn.style.cursor = 'not-allowed'; }
       }
@@ -4023,13 +4183,6 @@ export const SCREENS = {
       // Confirma a Sala escolhida no modal e avança o fluxo.
       function pesConfirmarSelSala() {
         if (!PES_SALA_SEL) { alert('⚠ Selecione uma Sala.'); return; }
-        if (PES_SALA_SEL === 'SB') {
-          var justif = document.getElementById('sala-pes-justif-txt');
-          if (!justif || !justif.value.trim()) {
-            alert('⚠ Pesagem sem balança requer justificativa. Preencha o campo antes de continuar.');
-            return;
-          }
-        }
         document.getElementById('modal-sala-pes').style.display = 'none';
         var qs = PES_OP_SEL ? '?op=' + encodeURIComponent(PES_OP_SEL) : '';
         if (PES_TIPO_SEL === 'continuar') {
