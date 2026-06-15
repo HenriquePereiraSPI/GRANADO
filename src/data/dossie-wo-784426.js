@@ -92,13 +92,6 @@ export const DOSSIE = {
           etqCodigo: 'E-87418', etqLote: '—',         validade: '—',      operador: 'J.Santos (108)', etqHora: '16/04 08:25',
           conferente: '✓', dataConf: '16/04 08:25', balanca: 'BAL-A-04', barcode: 'E87418-5501', assinatura: '✓' },
       ],
-      // Relatorio de Insumos Consumidos (sincronizado InBatch).
-      insumos: [
-        { mp: 'SLES 70%',                saldoIni: '40,000 kg', consumido: '40,015 kg', devolvido: '0 kg',     saldoFim: '-0,015 kg', origem: 'ALMOX-A · prateleira P3' },
-        { mp: 'Cocoamidopropil Betaína', saldoIni: '18,000 kg', consumido: '18,022 kg', devolvido: '0 kg',     saldoFim: '-0,022 kg', origem: 'ALMOX-A · prateleira P5' },
-        { mp: 'Glicerina USP',           saldoIni: '30,000 kg', consumido: '29,995 kg', devolvido: '0 kg',     saldoFim: '+0,005 kg', origem: 'ALMOX-B · tanque T2' },
-        { mp: 'Fenoxietanol',            saldoIni: '2,000 kg',  consumido: '1,505 kg',  devolvido: '0,495 kg', saldoFim: '+0,000 kg', origem: 'ALMOX-C · armário Q' },
-      ],
       // Formula Padrao / Tamanho do Lote (sincronizado BOM JDE).
       formula: [
         { lbl: 'Tam. Lote (BOM)', val: '6.000,00 kg' },
@@ -157,6 +150,13 @@ export const DOSSIE = {
         { codigo: '', nome: 'Fase Transfer',              inicio: '16/04 15:10', fim: '16/04 16:20', operador: 'M.Rocha',     status: 'OK', params: [{ p: 'Transferir granel p/ envase', um: 'kg', prev: '6.006', real: '6.006' }] },
         { codigo: '', nome: 'Finalizar Etapa',            inicio: '16/04 16:21', fim: '16/04 16:22', operador: 'M.Rocha',     status: 'OK', params: [{ p: 'Encerrar lote granel', um: '—', prev: 'OK', real: 'OK' }] },
         { codigo: '', nome: 'Último Prod. Equip.',        inicio: '16/04 16:22', fim: '16/04 16:22', operador: 'Sistema',     status: 'OK', params: [{ p: 'Marcar S0815B no histórico', um: '—', prev: 'OK', real: 'OK' }] },
+      ],
+      // Relatorio de Insumos Consumidos — o consumo ocorre na fabricacao (InBatch).
+      insumos: [
+        { mp: 'SLES 70%',                saldoIni: '40,000 kg', consumido: '40,015 kg', devolvido: '0 kg',     saldoFim: '-0,015 kg', origem: 'ALMOX-A · prateleira P3' },
+        { mp: 'Cocoamidopropil Betaína', saldoIni: '18,000 kg', consumido: '18,022 kg', devolvido: '0 kg',     saldoFim: '-0,022 kg', origem: 'ALMOX-A · prateleira P5' },
+        { mp: 'Glicerina USP',           saldoIni: '30,000 kg', consumido: '29,995 kg', devolvido: '0 kg',     saldoFim: '+0,005 kg', origem: 'ALMOX-B · tanque T2' },
+        { mp: 'Fenoxietanol',            saldoIni: '2,000 kg',  consumido: '1,505 kg',  devolvido: '0,495 kg', saldoFim: '+0,000 kg', origem: 'ALMOX-C · armário Q' },
       ],
     },
     {

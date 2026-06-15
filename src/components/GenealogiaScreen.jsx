@@ -26,7 +26,7 @@ const AREA_PARA_NO = {
  */
 const FASES = [
   { id: 'todos',     label: 'Todos',     icon: '🧬', ids: null },
-  { id: 'pesagem',   label: 'Pesagem',   icon: '⚖️', ids: ['mp', 'pesagem'] },
+  { id: 'pesagem',   label: 'Pesagem',   icon: '⚖️', ids: ['pesagem'] },
   { id: 'fabricacao',label: 'Fabricação',icon: '🧪', ids: ['fabricacao', 'granel'] },
   { id: 'embalagem', label: 'Embalagem', icon: '📦', ids: ['embalagem-ean', 'embalagem-dun', 'cq-ean'] },
   { id: 'qualidade', label: 'Qualidade', icon: '🔬', ids: ['lims-granel', 'lims-pa', 'qa-reconciliacao'] },
@@ -600,37 +600,6 @@ function RenderConteudoNo({ no, cores, dossie }) {
             </tbody>
           </table>
 
-          {/* Relatorio de Insumos Consumidos */}
-          {no.insumos && (
-            <>
-              <div className="card-title" style={{ marginTop: 14, marginBottom: 8 }}>Relatório de Insumos Consumidos</div>
-              <table className="tbl">
-                <thead>
-                  <tr>
-                    <th>MP</th>
-                    <th style={{ textAlign: 'right' }}>Saldo Inicial</th>
-                    <th style={{ textAlign: 'right' }}>Consumido</th>
-                    <th style={{ textAlign: 'right' }}>Devolvido</th>
-                    <th style={{ textAlign: 'right' }}>Saldo Final</th>
-                    <th>Origem (Almox.)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {no.insumos.map((ins, i) => (
-                    <tr key={i}>
-                      <td style={{ fontWeight: 600 }}>{ins.mp}</td>
-                      <td className="mono" style={{ textAlign: 'right' }}>{ins.saldoIni}</td>
-                      <td className="mono" style={{ textAlign: 'right' }}>{ins.consumido}</td>
-                      <td className="mono" style={{ textAlign: 'right', color: 'var(--text3)' }}>{ins.devolvido}</td>
-                      <td className="mono" style={{ textAlign: 'right', fontWeight: 700 }}>{ins.saldoFim}</td>
-                      <td style={{ fontSize: 11, color: 'var(--text2)' }}>{ins.origem}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </>
-          )}
-
           {/* Formula Padrao / Tamanho do Lote */}
           {no.formula && (
             <>
@@ -665,32 +634,6 @@ function RenderConteudoNo({ no, cores, dossie }) {
             </div>
           )}
 
-          <div className="card-title" style={{ marginTop: 14, marginBottom: 10 }}>Etiquetas Filhas Impressas (Zebra)</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
-            {no.itens.map((mp, i) => (
-              <EtiquetaImpressa
-                key={i}
-                tipo="ETIQUETA FILHA · MP"
-                codigo={mp.etqCodigo}
-                cor="verde"
-                fields={[
-                  ['CÓDIGO MP',    mp.cod],
-                  ['DESCRIÇÃO',    mp.desc],
-                  ['LOTE FORN.',   mp.etqLote],
-                  ['QUANTIDADE',   mp.qtd],
-                  ['BALANÇA',      mp.balanca],
-                  ['OPERADOR',     mp.operador],
-                  ['DATA / HORA',  mp.etqHora],
-                  ['CONFERENTE',   mp.conferente || '—'],
-                  ['DATA CONF.',   mp.dataConf || '—'],
-                  ['POSIÇÃO',      mp.gaiolaPosicao || '—'],
-                  ['WO',           dossie.wo],
-                ]}
-                barcodeValue={mp.barcode}
-                barcodeFormat="Code 128"
-              />
-            ))}
-          </div>
         </div>
       );
     }
@@ -799,68 +742,79 @@ function RenderConteudoNo({ no, cores, dossie }) {
             </span>
           </div>
 
-          {no.etapas.map((e, i) => {
-            const cls = classificaEtapa(e);
-            const dur = calcMin(e.inicio, e.fim);
-            return (
-              <div key={i} style={{
-                marginBottom: 10, padding: '10px 12px',
-                background: 'var(--surface2)', border: '1px solid var(--border)',
-                borderLeft: `4px solid ${cls.cor}`,
-                borderRadius: 6,
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8, marginBottom: 6 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--verde-esc)', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                    <span style={{
-                      fontSize: 9, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase',
-                      color: cls.cor, padding: '2px 7px', borderRadius: 8,
-                      background: 'var(--surface)', border: `1px solid ${cls.cor}`,
-                    }}>
-                      #{String(i + 1).padStart(2, '0')} · {cls.icon} {cls.tipo}
-                    </span>
-                    <span style={{ color: 'var(--ouro)', fontFamily: 'var(--font-m)', fontSize: 11 }}>{e.codigo}</span>
-                    {e.nome}
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    {cls.manual && (
-                      <span style={{
-                        fontSize: 9, fontWeight: 800,
-                        color: 'var(--inf)', background: 'var(--inf-p)', border: '1px solid var(--inf-b)',
-                        padding: '2px 7px', borderRadius: 8, letterSpacing: '.06em',
-                      }} title="Etapa exigiu confirmação manual do operador / CQ">
-                        👤 INPUT MANUAL
-                      </span>
-                    )}
-                    <span className="bdg bdg-ok" style={{ fontSize: 10 }}>✓ {e.status}</span>
-                  </div>
-                </div>
-                <div style={{
-                  fontSize: 10, color: 'var(--text3)', fontFamily: 'var(--font-m)',
-                  marginBottom: 8, display: 'flex', gap: 14, flexWrap: 'wrap',
-                }}>
-                  <span>🕐 {e.inicio} → {e.fim}</span>
-                  {dur != null && <span>⏱️ {dur} min</span>}
-                  <span>👤 {e.operador}</span>
-                </div>
-                <table className="tbl" style={{ fontSize: 11 }}>
-                  <thead>
-                    <tr><th>Parâmetro</th><th>UM</th><th>Previsto</th><th>Realizado</th><th>Status</th></tr>
-                  </thead>
-                  <tbody>
-                    {e.params.map((p, j) => (
-                      <tr key={j}>
-                        <td>{p.p}</td>
-                        <td className="mono">{p.um}</td>
-                        <td className="mono" style={{ color: 'var(--text3)' }}>{p.prev}</td>
-                        <td className="mono" style={{ fontWeight: 700, color: 'var(--verde)' }}>{p.real}</td>
-                        <td><span className="bdg bdg-ok" style={{ fontSize: 9 }}>OK</span></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            );
-          })}
+          <div style={{ overflowX: 'auto' }}>
+            <table className="tbl" style={{ fontSize: 11, minWidth: 960 }}>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Fase</th>
+                  <th>Evento / Parâmetro</th>
+                  <th>UM</th>
+                  <th style={{ textAlign: 'right' }}>Previsto</th>
+                  <th style={{ textAlign: 'right' }}>Realizado</th>
+                  <th>Início → Fim</th>
+                  <th style={{ textAlign: 'right' }}>Dur.</th>
+                  <th>Operador</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {no.etapas.map((e, i) => {
+                  const cls = classificaEtapa(e);
+                  const dur = calcMin(e.inicio, e.fim);
+                  const p = e.params[0] || {};
+                  return (
+                    <tr key={i} style={{ borderLeft: `3px solid ${cls.cor}` }}>
+                      <td className="mono" style={{ color: 'var(--text3)' }}>{String(i + 1).padStart(2, '0')}</td>
+                      <td style={{ fontWeight: 600 }}>
+                        <span title={cls.tipo} style={{ marginRight: 4 }}>{cls.icon}</span>{e.nome}
+                        {cls.manual && <span title="Input manual (operador / CQ)" style={{ marginLeft: 4 }}>👤</span>}
+                      </td>
+                      <td style={{ fontSize: 11 }}>{p.p}</td>
+                      <td className="mono" style={{ fontSize: 10 }}>{p.um}</td>
+                      <td className="mono" style={{ textAlign: 'right', color: 'var(--text3)' }}>{p.prev}</td>
+                      <td className="mono" style={{ textAlign: 'right', fontWeight: 700, color: 'var(--verde)' }}>{p.real}</td>
+                      <td className="mono" style={{ fontSize: 10, color: 'var(--text2)', whiteSpace: 'nowrap' }}>{e.inicio} → {e.fim}</td>
+                      <td className="mono" style={{ textAlign: 'right', fontSize: 10 }}>{dur != null ? `${dur} min` : '—'}</td>
+                      <td style={{ fontSize: 10 }}>{e.operador}</td>
+                      <td><span className="bdg bdg-ok" style={{ fontSize: 9 }}>✓ {e.status}</span></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Relatorio de Insumos Consumidos — consumo ocorre na fabricacao */}
+          {no.insumos && (
+            <>
+              <div className="card-title" style={{ marginTop: 14, marginBottom: 8 }}>Relatório de Insumos Consumidos</div>
+              <table className="tbl">
+                <thead>
+                  <tr>
+                    <th>MP</th>
+                    <th style={{ textAlign: 'right' }}>Saldo Inicial</th>
+                    <th style={{ textAlign: 'right' }}>Consumido</th>
+                    <th style={{ textAlign: 'right' }}>Devolvido</th>
+                    <th style={{ textAlign: 'right' }}>Saldo Final</th>
+                    <th>Origem (Almox.)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {no.insumos.map((ins, i) => (
+                    <tr key={i}>
+                      <td style={{ fontWeight: 600 }}>{ins.mp}</td>
+                      <td className="mono" style={{ textAlign: 'right' }}>{ins.saldoIni}</td>
+                      <td className="mono" style={{ textAlign: 'right' }}>{ins.consumido}</td>
+                      <td className="mono" style={{ textAlign: 'right', color: 'var(--text3)' }}>{ins.devolvido}</td>
+                      <td className="mono" style={{ textAlign: 'right', fontWeight: 700 }}>{ins.saldoFim}</td>
+                      <td style={{ fontSize: 11, color: 'var(--text2)' }}>{ins.origem}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
         </div>
       );
     }
