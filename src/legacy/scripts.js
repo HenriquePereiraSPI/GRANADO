@@ -1343,6 +1343,55 @@ function prodFecharIniciar(){
   if(m) m.style.display='none';
 }
 
+/* ── Popup "Escolha de Sala" da Producao (apos as verificacoes;
+   sem a opcao "sem balança", so salas) ── */
+var PROD_SALA_SEL = null;
+var PROD_SALA_KEYS = ['A','B','C'];
+function prodAbrirSala(){
+  prodLimparSala();
+  var m=document.getElementById('modal-sala-prod');
+  if(m) m.style.display='flex';
+}
+function prodSelSala(sala){
+  PROD_SALA_SEL = sala;
+  PROD_SALA_KEYS.forEach(function(k){
+    var el=document.getElementById('sala-prod-btn-'+k);
+    if(el){el.style.border='2px solid var(--border)';el.style.background='var(--surface2)';}
+  });
+  var sel=document.getElementById('sala-prod-btn-'+sala);
+  if(sel){sel.style.border='2px solid var(--verde)';sel.style.background='var(--verde-dim)';}
+  var labels={
+    'A':{lbl:'✅ Sala A selecionada',sub:'Linhas L1 · L2 — disponíveis'},
+    'B':{lbl:'✅ Sala B selecionada',sub:'Linhas L3 · L4 (1 em uso) — verifique disponibilidade'},
+    'C':{lbl:'✅ Sala C selecionada',sub:'Linha L5 — disponível'}
+  };
+  var info=labels[sala]||{lbl:'Sala '+sala+' selecionada',sub:''};
+  var lab=document.getElementById('sala-prod-label'); if(lab)lab.textContent=info.lbl;
+  var sub=document.getElementById('sala-prod-sub'); if(sub)sub.textContent=info.sub;
+  var conf=document.getElementById('sala-prod-confirmada'); if(conf)conf.style.display='flex';
+  var btn=document.getElementById('btn-sala-prod-confirmar');
+  if(btn){btn.disabled=false;btn.style.opacity='1';btn.style.cursor='pointer';}
+}
+function prodLimparSala(){
+  PROD_SALA_SEL=null;
+  PROD_SALA_KEYS.forEach(function(k){
+    var el=document.getElementById('sala-prod-btn-'+k);
+    if(el){el.style.border='2px solid var(--border)';el.style.background='var(--surface2)';}
+  });
+  var conf=document.getElementById('sala-prod-confirmada'); if(conf)conf.style.display='none';
+  var btn=document.getElementById('btn-sala-prod-confirmar');
+  if(btn){btn.disabled=true;btn.style.opacity='.5';btn.style.cursor='not-allowed';}
+}
+function prodFecharSala(){
+  var m=document.getElementById('modal-sala-prod'); if(m)m.style.display='none';
+  prodLimparSala();
+}
+function prodConfirmarSala(){
+  if(!PROD_SALA_SEL){alert('⚠ Selecione uma Sala.');return;}
+  var m=document.getElementById('modal-sala-prod'); if(m)m.style.display='none';
+  nav('prod-cockpit?op=OP-2026-0416',null,null);
+}
+
 /* ── Checklists genéricos ────────────────────────────── */
 function tck2(el){ el.classList.toggle('done'); upCkG('screen-pes-checklist','ck2'); }
 function upCkG(screenId, prefix){
@@ -1722,6 +1771,55 @@ function fabAbrirIniciar() {
 }
 function fabFecharIniciar() {
   var m = document.getElementById('fab-iniciar-modal'); if (m) m.style.display = 'none';
+}
+
+/* ── Popup "Escolha de Sala" da Fabricacao (apos as verificacoes;
+   sem a opcao "sem balança", so salas) ── */
+var FAB_SALA_SEL = null;
+var FAB_SALA_KEYS = ['A','B','C'];
+function fabAbrirSala(){
+  fabLimparSala();
+  var m=document.getElementById('modal-sala-fab');
+  if(m) m.style.display='flex';
+}
+function fabSelSala(sala){
+  FAB_SALA_SEL = sala;
+  FAB_SALA_KEYS.forEach(function(k){
+    var el=document.getElementById('sala-fab-btn-'+k);
+    if(el){el.style.border='2px solid var(--border)';el.style.background='var(--surface2)';}
+  });
+  var sel=document.getElementById('sala-fab-btn-'+sala);
+  if(sel){sel.style.border='2px solid var(--verde)';sel.style.background='var(--verde-dim)';}
+  var labels={
+    'A':{lbl:'✅ Sala 1 selecionada',sub:'Reator R-301 — disponível'},
+    'B':{lbl:'✅ Sala 2 selecionada',sub:'Reator R-302 (1 em uso) — verifique disponibilidade'},
+    'C':{lbl:'✅ Sala 3 selecionada',sub:'Reator R-303 — disponível'}
+  };
+  var info=labels[sala]||{lbl:'Sala '+sala+' selecionada',sub:''};
+  var lab=document.getElementById('sala-fab-label'); if(lab)lab.textContent=info.lbl;
+  var sub=document.getElementById('sala-fab-sub'); if(sub)sub.textContent=info.sub;
+  var conf=document.getElementById('sala-fab-confirmada'); if(conf)conf.style.display='flex';
+  var btn=document.getElementById('btn-sala-fab-confirmar');
+  if(btn){btn.disabled=false;btn.style.opacity='1';btn.style.cursor='pointer';}
+}
+function fabLimparSala(){
+  FAB_SALA_SEL=null;
+  FAB_SALA_KEYS.forEach(function(k){
+    var el=document.getElementById('sala-fab-btn-'+k);
+    if(el){el.style.border='2px solid var(--border)';el.style.background='var(--surface2)';}
+  });
+  var conf=document.getElementById('sala-fab-confirmada'); if(conf)conf.style.display='none';
+  var btn=document.getElementById('btn-sala-fab-confirmar');
+  if(btn){btn.disabled=true;btn.style.opacity='.5';btn.style.cursor='not-allowed';}
+}
+function fabFecharSala(){
+  var m=document.getElementById('modal-sala-fab'); if(m)m.style.display='none';
+  fabLimparSala();
+}
+function fabConfirmarSala(){
+  if(!FAB_SALA_SEL){alert('⚠ Selecione uma Sala.');return;}
+  var m=document.getElementById('modal-sala-fab'); if(m)m.style.display='none';
+  nav('fab-inbatch?op=OP-2026-0416',null,null);
 }
 
 // Remover bloco de init redundante

@@ -431,10 +431,60 @@ export const SCREENS = {
           </div>
 
           <div style="display:flex;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border);flex-wrap:wrap">
-            <button class="btn btn-lg btn-v" id="fvi-btn" disabled onclick="nav('fab-inbatch?op=OP-2026-0416',null,null)">🚀 Iniciar Fabricação</button>
+            <button class="btn btn-lg btn-v" id="fvi-btn" disabled onclick="fabFecharIniciar();fabAbrirSala()">🚀 Iniciar Fabricação</button>
             <button class="btn btn-lg btn-p" onclick="if(confirm('Abortar Ordem? A WO precisará ser reaberta no JDE.')){alert('⛔ Ordem abortada. Notificação enviada ao supervisor.');fabFecharIniciar();}">⛔ Abortar Ordem</button>
             <button class="btn btn-lg btn-ghost" onclick="fabFecharIniciar()">Cancelar</button>
             <div style="margin-left:auto;font-size:11px;color:var(--text3);align-self:center" id="fvi-note">Confirme as 5 verificações para habilitar o início.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Popup: Escolha de Sala (apos as verificacoes de Iniciar Ordem) -->
+      <div id="modal-sala-fab" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:960;align-items:flex-start;justify-content:center;padding-top:60px;backdrop-filter:blur(3px);overflow-y:auto">
+        <div style="background:var(--surface);border-top:4px solid var(--ouro);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:720px;width:94%;box-shadow:var(--sh2);margin-bottom:40px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+            <div>
+              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--ouro)">🧪 Iniciar Fabricação · Escolha a Sala</div>
+              <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-top:2px">OP-2026-0416 · Loção Hidratante Rosa 200ml</div>
+            </div>
+            <button onclick="fabFecharSala()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
+          </div>
+
+          <div class="abox inf mb14"><span class="ai">ℹ️</span><div>Cada Sala tem reatores e equipamentos dedicados. Selecione a Sala onde esta ordem será fabricada.</div></div>
+
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px" id="sala-fab-grid">
+            <div id="sala-fab-btn-A" onclick="fabSelSala('A')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px 10px;background:var(--surface2);text-align:center;transition:all .18s">
+              <div style="font-size:24px;margin-bottom:4px">🅰️</div>
+              <div style="font-size:12px;font-weight:900;color:var(--text);margin-bottom:2px">Sala 1</div>
+              <div style="font-family:var(--font-m);font-size:10px;color:var(--text3)">Reator R-301</div>
+              <div style="margin-top:6px"><span class="bdg bdg-ok" style="font-size:9px">Disponível</span></div>
+            </div>
+            <div id="sala-fab-btn-B" onclick="fabSelSala('B')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px 10px;background:var(--surface2);text-align:center;transition:all .18s">
+              <div style="font-size:24px;margin-bottom:4px">🅱️</div>
+              <div style="font-size:12px;font-weight:900;color:var(--text);margin-bottom:2px">Sala 2</div>
+              <div style="font-family:var(--font-m);font-size:10px;color:var(--text3)">Reator R-302</div>
+              <div style="margin-top:6px"><span class="bdg bdg-alr" style="font-size:9px">1 em uso</span></div>
+            </div>
+            <div id="sala-fab-btn-C" onclick="fabSelSala('C')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px 10px;background:var(--surface2);text-align:center;transition:all .18s">
+              <div style="font-size:24px;margin-bottom:4px">🇨</div>
+              <div style="font-size:12px;font-weight:900;color:var(--text);margin-bottom:2px">Sala 3</div>
+              <div style="font-family:var(--font-m);font-size:10px;color:var(--text3)">Reator R-303</div>
+              <div style="margin-top:6px"><span class="bdg bdg-ok" style="font-size:9px">Disponível</span></div>
+            </div>
+          </div>
+
+          <div id="sala-fab-confirmada" style="display:none;margin-top:14px;background:var(--verde-dim);border:1px solid var(--ok-b);border-radius:7px;padding:10px 14px;align-items:center;gap:10px">
+            <span style="font-size:18px">✅</span>
+            <div style="flex:1">
+              <div id="sala-fab-label" style="font-size:12px;font-weight:700;color:var(--verde)">—</div>
+              <div id="sala-fab-sub" style="font-size:10px;color:var(--text2);margin-top:2px">—</div>
+            </div>
+            <button class="btn btn-sm btn-ghost" onclick="fabLimparSala()">Trocar</button>
+          </div>
+
+          <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;margin-top:14px;border-top:1px solid var(--border)">
+            <button class="btn btn-md btn-ghost" onclick="fabFecharSala()">Cancelar</button>
+            <button class="btn btn-md btn-v" id="btn-sala-fab-confirmar" onclick="fabConfirmarSala()" disabled style="opacity:.5;cursor:not-allowed">✓ Confirmar e Iniciar Fabricação ›</button>
           </div>
         </div>
       </div>
@@ -6222,9 +6272,59 @@ export const SCREENS = {
           </div>
 
           <div style="display:flex;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
-            <button class="btn btn-lg btn-v" id="vi-btn" disabled onclick="nav('prod-cockpit?op=OP-2026-0416',null,null)">🚀 Iniciar Produção</button>
+            <button class="btn btn-lg btn-v" id="vi-btn" disabled onclick="prodFecharIniciar();prodAbrirSala()">🚀 Iniciar Produção</button>
             <button class="btn btn-lg btn-ghost" onclick="prodFecharIniciar()">Cancelar</button>
             <div style="margin-left:auto;font-size:11px;color:var(--text3);align-self:center" id="vi-note">Resolva as pendências para habilitar o início.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Popup: Escolha de Sala (apos as verificacoes de Iniciar Ordem) -->
+      <div id="modal-sala-prod" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:960;align-items:flex-start;justify-content:center;padding-top:60px;backdrop-filter:blur(3px);overflow-y:auto">
+        <div style="background:var(--surface);border-top:4px solid var(--ouro);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:720px;width:94%;box-shadow:var(--sh2);margin-bottom:40px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+            <div>
+              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--ouro)">🏭 Iniciar Produção · Escolha a Sala</div>
+              <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-top:2px">OP-2026-0416 · Loção Hidratante Rosa 200ml</div>
+            </div>
+            <button onclick="prodFecharSala()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
+          </div>
+
+          <div class="abox inf mb14"><span class="ai">ℹ️</span><div>Cada Sala tem linhas e equipamentos dedicados. Selecione a Sala onde esta ordem será produzida.</div></div>
+
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px" id="sala-prod-grid">
+            <div id="sala-prod-btn-A" onclick="prodSelSala('A')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px 10px;background:var(--surface2);text-align:center;transition:all .18s">
+              <div style="font-size:24px;margin-bottom:4px">🅰️</div>
+              <div style="font-size:12px;font-weight:900;color:var(--text);margin-bottom:2px">Sala A</div>
+              <div style="font-family:var(--font-m);font-size:10px;color:var(--text3)">Linhas L1 · L2</div>
+              <div style="margin-top:6px"><span class="bdg bdg-ok" style="font-size:9px">Disponível</span></div>
+            </div>
+            <div id="sala-prod-btn-B" onclick="prodSelSala('B')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px 10px;background:var(--surface2);text-align:center;transition:all .18s">
+              <div style="font-size:24px;margin-bottom:4px">🅱️</div>
+              <div style="font-size:12px;font-weight:900;color:var(--text);margin-bottom:2px">Sala B</div>
+              <div style="font-family:var(--font-m);font-size:10px;color:var(--text3)">Linhas L3 · L4</div>
+              <div style="margin-top:6px"><span class="bdg bdg-alr" style="font-size:9px">1 em uso</span></div>
+            </div>
+            <div id="sala-prod-btn-C" onclick="prodSelSala('C')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px 10px;background:var(--surface2);text-align:center;transition:all .18s">
+              <div style="font-size:24px;margin-bottom:4px">🇨</div>
+              <div style="font-size:12px;font-weight:900;color:var(--text);margin-bottom:2px">Sala C</div>
+              <div style="font-family:var(--font-m);font-size:10px;color:var(--text3)">Linha L5</div>
+              <div style="margin-top:6px"><span class="bdg bdg-ok" style="font-size:9px">Disponível</span></div>
+            </div>
+          </div>
+
+          <div id="sala-prod-confirmada" style="display:none;margin-top:14px;background:var(--verde-dim);border:1px solid var(--ok-b);border-radius:7px;padding:10px 14px;align-items:center;gap:10px">
+            <span style="font-size:18px">✅</span>
+            <div style="flex:1">
+              <div id="sala-prod-label" style="font-size:12px;font-weight:700;color:var(--verde)">—</div>
+              <div id="sala-prod-sub" style="font-size:10px;color:var(--text2);margin-top:2px">—</div>
+            </div>
+            <button class="btn btn-sm btn-ghost" onclick="prodLimparSala()">Trocar</button>
+          </div>
+
+          <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;margin-top:14px;border-top:1px solid var(--border)">
+            <button class="btn btn-md btn-ghost" onclick="prodFecharSala()">Cancelar</button>
+            <button class="btn btn-md btn-v" id="btn-sala-prod-confirmar" onclick="prodConfirmarSala()" disabled style="opacity:.5;cursor:not-allowed">✓ Confirmar e Iniciar Produção ›</button>
           </div>
         </div>
       </div>
