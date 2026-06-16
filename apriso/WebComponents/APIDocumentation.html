@@ -63,6 +63,60 @@
       padding: 16px 14px 8px;
     }
 
+    /* Categoria expansível (árvore) */
+    .gd-cat-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1C5C31;
+      padding: 8px 12px;
+      text-align: left;
+      border-left: 2px solid transparent;
+      border-radius: 0 4px 4px 0;
+      transition: background .12s ease;
+    }
+
+    .gd-cat-toggle:hover {
+      background: #ECE3BD;
+      border-left-color: #1C5C31;
+    }
+
+    .gd-cat-chevron {
+      font-size: 10px;
+      color: #8A9E8E;
+      transition: transform .15s ease;
+      flex-shrink: 0;
+    }
+
+    .gd-cat-toggle[aria-expanded="true"] .gd-cat-chevron {
+      transform: rotate(90deg);
+    }
+
+    .gd-cat-items {
+      overflow: hidden;
+      display: none;
+    }
+
+    .gd-cat-items a.gd-link {
+      padding-left: 30px;
+    }
+
+    .gd-cat-items .gd-subgroup {
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: #B0AC93;
+      padding: 8px 12px 4px 30px;
+    }
+
     /* Code block */
     .gd-code {
       margin: 0;
@@ -84,6 +138,9 @@
     .gd-code .tk-bool { color: #93C5FD; }
     .gd-code .tk-punc { color: #94A3B8; }
     .gd-code .tk-comment { color: #94A3B8; font-style: italic; }
+    /* SQL */
+    .gd-code .tk-kw { color: #C4B5FD; font-weight: 700; }
+    .gd-code .tk-fn { color: #7DD3FC; }
 
     /* API table */
     .gd-api {
@@ -147,6 +204,10 @@
     .gd-api td.col-name.gd-nest::before {
       content: "↳ ";
       color: #B0AC93;
+    }
+
+    .gd-api td.col-name.gd-nest2 {
+      padding-left: 44px;
     }
 
     /* Section pieces */
@@ -253,8 +314,33 @@
     <nav class="gd-side"
       style="width:260px;flex-shrink:0;position:sticky;top:0;height:calc(100vh - 49px);overflow-y:auto;background:#F8F1D8;border-right:1px solid #D6CDA4;padding:18px 0 32px">
 
-      <div class="gd-group" style="padding-top:0">Checklist</div>
-      <a class="gd-link" href="#GRD_API_AppointChecklist">GRD_API_AppointChecklist</a>
+      <div class="gd-cat">
+        <button class="gd-cat-toggle" aria-expanded="false" onclick="gdToggleCat(this)">
+          <span class="gd-cat-chevron">▸</span> Checklist
+        </button>
+        <div class="gd-cat-items">
+          <div class="gd-subgroup">API</div>
+          <a class="gd-link" href="#GRD_API_AppointChecklist">GRD_API_AppointChecklist</a>
+
+          <div class="gd-subgroup">SQL</div>
+          <a class="gd-link" href="#sql-buscar-checklist-code">Buscar checklist pelo CODE</a>
+          <a class="gd-link" href="#sql-historico-checklist-percentual">Histórico com % de preenchimento</a>
+          <a class="gd-link" href="#sql-detalhe-respostas-checklist">Detalhe das respostas</a>
+        </div>
+      </div>
+
+      <div class="gd-cat">
+        <button class="gd-cat-toggle" aria-expanded="false" onclick="gdToggleCat(this)">
+          <span class="gd-cat-chevron">▸</span> Pesagem
+        </button>
+        <div class="gd-cat-items">
+          <div class="gd-subgroup">API</div>
+          <a class="gd-link" href="#GRD_API_CreateCage">GRD_API_CreateCage</a>
+          <a class="gd-link" href="#GRD_API_AppointWeight">GRD_API_AppointWeight</a>
+          <a class="gd-link" href="#GRD_API_CancelWeight">GRD_API_CancelWeight</a>
+          <a class="gd-link" href="#GRD_API_MoveMPCage">GRD_API_MoveMPCage</a>
+        </div>
+      </div>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -303,10 +389,10 @@
   <span class="tk-key">"WIPOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000001"</span><span class="tk-punc">,</span>
   <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000032"</span><span class="tk-punc">,</span>
   <span class="tk-key">"CheckPoints"</span><span class="tk-punc">:</span> [
-    { <span class="tk-key">"CheckpointID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckpointValue"</span><span class="tk-punc">:</span> <span class="tk-num">1</span> }<span class="tk-punc">,</span>
-    { <span class="tk-key">"CheckpointID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000003"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckpointValue"</span><span class="tk-punc">:</span> <span class="tk-num">1</span> }<span class="tk-punc">,</span>
-    { <span class="tk-key">"CheckpointID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000004"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckpointValue"</span><span class="tk-punc">:</span> <span class="tk-num">0</span> }<span class="tk-punc">,</span>
-    { <span class="tk-key">"CheckpointID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000005"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckpointValue"</span><span class="tk-punc">:</span> <span class="tk-num">1</span> }
+    { <span class="tk-key">"CheckpointID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckpointValue"</span><span class="tk-punc">:</span> { <span class="tk-key">"Checked"</span><span class="tk-punc">:</span> <span class="tk-num">1</span><span class="tk-punc">,</span> <span class="tk-key">"CustomValue"</span><span class="tk-punc">:</span> <span class="tk-str">"1.500"</span><span class="tk-punc">,</span> <span class="tk-key">"AditionalInformation"</span><span class="tk-punc">:</span> <span class="tk-str">"Alguma informação do checklist"</span> } }<span class="tk-punc">,</span>
+    { <span class="tk-key">"CheckpointID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000003"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckpointValue"</span><span class="tk-punc">:</span> { <span class="tk-key">"Checked"</span><span class="tk-punc">:</span> <span class="tk-num">1</span><span class="tk-punc">,</span> <span class="tk-key">"CustomValue"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"AditionalInformation"</span><span class="tk-punc">:</span> <span class="tk-str">""</span> } }<span class="tk-punc">,</span>
+    { <span class="tk-key">"CheckpointID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000004"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckpointValue"</span><span class="tk-punc">:</span> { <span class="tk-key">"Checked"</span><span class="tk-punc">:</span> <span class="tk-num">0</span><span class="tk-punc">,</span> <span class="tk-key">"CustomValue"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"AditionalInformation"</span><span class="tk-punc">:</span> <span class="tk-str">""</span> } }<span class="tk-punc">,</span>
+    { <span class="tk-key">"CheckpointID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000005"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckpointValue"</span><span class="tk-punc">:</span> { <span class="tk-key">"Checked"</span><span class="tk-punc">:</span> <span class="tk-num">1</span><span class="tk-punc">,</span> <span class="tk-key">"CustomValue"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"AditionalInformation"</span><span class="tk-punc">:</span> <span class="tk-str">""</span> } }
   ]
 }</pre>
 
@@ -353,11 +439,35 @@
             </tr>
             <tr>
               <td class="col-name gd-nest">CheckpointValue</td>
+              <td class="col-type">object</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Valor apontado para o checkpoint. Contém os campos abaixo.</td>
+            </tr>
+            <tr>
+              <td class="col-name gd-nest gd-nest2">Checked</td>
               <td class="col-type">number (0 | 1)</td>
               <td class="col-req">Sim</td>
               <td class="col-desc">
-                Valor apontado para o checkpoint: <code>1</code> = conforme / sim,
+                Estado do checkpoint: <code>1</code> = conforme / sim,
                 <code>0</code> = não conforme / não.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name gd-nest gd-nest2">CustomValue</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Não</td>
+              <td class="col-desc">
+                Valor customizado do checkpoint (ex.: medição <code>"1.500"</code>). Envie
+                <code>""</code> quando não houver valor.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name gd-nest gd-nest2">AditionalInformation</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Não</td>
+              <td class="col-desc">
+                Observação/texto livre associado ao apontamento do checkpoint. Envie
+                <code>""</code> quando não houver.
               </td>
             </tr>
           </tbody>
@@ -409,13 +519,806 @@
             opcionais — quando não houver valor a informar, envie <code>"-1"</code> no lugar.</li>
           <li><strong>CheckPoints:</strong> envie um item para cada checkpoint do checklist; itens
             ausentes não são apontados.</li>
-          <li><strong>Valores:</strong> <code>CheckpointValue</code> aceita apenas
-            <code>0</code> ou <code>1</code>.</li>
+          <li><strong>Valores:</strong> dentro de <code>CheckpointValue</code>,
+            <code>Checked</code> aceita apenas <code>0</code> ou <code>1</code>;
+            <code>CustomValue</code> e <code>AditionalInformation</code> são opcionais
+            (envie <code>""</code> quando não houver).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           SQL — Buscar checklist pelo CODE
+           ============================================================ -->
+      <section id="sql-buscar-checklist-code">
+        <h1 class="gd-h1" style="margin-top:24px">Buscar checklist pelo CODE</h1>
+        <p class="gd-lead">
+          Retorna os <strong>checkpoints de um checklist</strong> a partir do seu código
+          (<code>CheckListCode</code>), já na ordem de execução (<code>SequenceNo</code>). Útil para
+          montar o checklist na tela antes de apontar via <code>GRD_API_AppointChecklist</code> — o
+          <code>CheckPointID</code> retornado é o mesmo usado no payload de apontamento.
+        </p>
+
+        <h2 class="gd-h2">Query</h2>
+        <pre class="gd-code"><span class="tk-kw">SELECT</span>
+  CheckList.ID <span class="tk-kw">AS</span> ChecklistID<span class="tk-punc">,</span>
+  CheckList.CheckListCode<span class="tk-punc">,</span>
+  CheckPoints.ID <span class="tk-kw">AS</span> CheckPointID<span class="tk-punc">,</span>
+  dbo.<span class="tk-fn">fnGetTranslation</span>(CheckPoints.TextID<span class="tk-punc">,</span> <span class="tk-num">1033</span>) <span class="tk-kw">AS</span> CheckPointDescription<span class="tk-punc">,</span>
+  CheckListCheckPoint.SequenceNo
+<span class="tk-kw">FROM</span> CHECK_LIST_CHECK_POINT CheckListCheckPoint
+<span class="tk-kw">INNER JOIN</span> CHECK_LIST CheckList <span class="tk-kw">ON</span> CheckListCheckPoint.CheckListID = CheckList.ID
+<span class="tk-kw">INNER JOIN</span> CHECK_POINT CheckPoints <span class="tk-kw">ON</span> CheckListCheckPoint.CheckPointID = CheckPoints.ID
+<span class="tk-kw">WHERE</span> CheckList.CheckListCode = <span class="tk-str">'CHECKLIST_PESAGEM'</span>
+<span class="tk-kw">ORDER BY</span> CheckListCheckPoint.SequenceNo</pre>
+
+        <h3 class="gd-h3">Parâmetro</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:200px">Filtro</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">CheckList.CheckListCode</td>
+              <td class="col-desc">
+                Código do checklist a buscar (ex.: <code>'CHECKLIST_PESAGEM'</code>). Troque pelo
+                código desejado.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Colunas retornadas</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:200px">Coluna</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">ChecklistID</td>
+              <td class="col-desc">ID interno do checklist (<code>CHECK_LIST.ID</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">CheckListCode</td>
+              <td class="col-desc">Código do checklist (o mesmo usado no filtro).</td>
+            </tr>
+            <tr>
+              <td class="col-name">CheckPointID</td>
+              <td class="col-desc">ID do checkpoint (<code>CHECK_POINT.ID</code>) — usado em <code>CheckPoints[].CheckpointID</code> no apontamento.</td>
+            </tr>
+            <tr>
+              <td class="col-name">CheckPointDescription</td>
+              <td class="col-desc">Descrição traduzida do checkpoint via <code>dbo.fnGetTranslation</code> (LCID <code>1033</code> = inglês).</td>
+            </tr>
+            <tr>
+              <td class="col-name">SequenceNo</td>
+              <td class="col-desc">Ordem de exibição/execução do checkpoint dentro do checklist.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Tabelas:</strong> <code>CHECK_LIST</code> (cabeçalho),
+            <code>CHECK_POINT</code> (checkpoints) e a associativa
+            <code>CHECK_LIST_CHECK_POINT</code> (vínculo + sequência).</li>
+          <li><strong>Tradução:</strong> <code>dbo.fnGetTranslation(TextID, LCID)</code> resolve o
+            texto do checkpoint no idioma informado — <code>1033</code> (en-US). Use o LCID do
+            idioma desejado (ex.: <code>1046</code> para pt-BR).</li>
+          <li><strong>Ordenação:</strong> os checkpoints já vêm por <code>SequenceNo</code>, na
+            mesma ordem em que devem aparecer/apontar.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           SQL — Histórico com % de preenchimento (header)
+           ============================================================ -->
+      <section id="sql-historico-checklist-percentual">
+        <h1 class="gd-h1" style="margin-top:24px">Histórico com % de preenchimento</h1>
+        <p class="gd-lead">
+          Lista o <strong>histórico de apontamentos de checklist</strong> (somente o cabeçalho)
+          de uma ordem, com totais e o <strong>percentual de checkpoints marcados</strong>
+          (<code>Checked = 1</code>) em cada apontamento. Usa uma CTE que agrega
+          <code>CHECK_POINT_HISTORY</code> por <code>CheckListHistoryID</code>, extraindo
+          <code>$.Checked</code> do JSON com <code>JSON_VALUE</code>.
+        </p>
+
+        <h2 class="gd-h2">Query</h2>
+        <pre class="gd-code"><span class="tk-punc">;</span><span class="tk-kw">WITH</span> cteCheckPointHistory <span class="tk-kw">AS</span>
+(
+  <span class="tk-kw">SELECT</span>
+    CheckListHistoryID<span class="tk-punc">,</span>
+    <span class="tk-fn">COUNT</span>(*) <span class="tk-kw">AS</span> TotalChecks<span class="tk-punc">,</span>
+    <span class="tk-fn">SUM</span>(<span class="tk-fn">CAST</span>(<span class="tk-fn">JSON_VALUE</span>(Value_<span class="tk-punc">,</span> <span class="tk-str">'$.Checked'</span>) <span class="tk-kw">AS</span> <span class="tk-kw">INT</span>)) <span class="tk-kw">AS</span> SumChecked<span class="tk-punc">,</span>
+    <span class="tk-fn">CAST</span>(<span class="tk-fn">SUM</span>(<span class="tk-fn">CAST</span>(<span class="tk-fn">JSON_VALUE</span>(Value_<span class="tk-punc">,</span> <span class="tk-str">'$.Checked'</span>) <span class="tk-kw">AS</span> <span class="tk-kw">INT</span>)) * <span class="tk-num">100.0</span> / <span class="tk-fn">COUNT</span>(*) <span class="tk-kw">AS</span> <span class="tk-kw">DECIMAL</span>(<span class="tk-num">5</span><span class="tk-punc">,</span><span class="tk-num">2</span>)) <span class="tk-kw">AS</span> PercentOfTotalChecked
+  <span class="tk-kw">FROM</span> CHECK_POINT_HISTORY
+  <span class="tk-kw">GROUP BY</span> CheckListHistoryID
+)
+<span class="tk-kw">SELECT</span>
+  CheckListHistory.ID <span class="tk-kw">AS</span> CheckListHistoryID<span class="tk-punc">,</span>
+  CheckListBase.CheckListCode<span class="tk-punc">,</span>
+  CheckListHistory.ResourceName<span class="tk-punc">,</span>
+  CheckListHistory.WipOrderNo<span class="tk-punc">,</span>
+  CheckListHistory.CreatedBy<span class="tk-punc">,</span>
+  CheckListHistory.CreatedOn<span class="tk-punc">,</span>
+  cte.*
+<span class="tk-kw">FROM</span> CHECK_LIST_HISTORY CheckListHistory
+<span class="tk-kw">INNER JOIN</span> cteCheckPointHistory cte <span class="tk-kw">ON</span> CheckListHistory.ID = cte.CheckListHistoryID
+<span class="tk-kw">INNER JOIN</span> CHECK_LIST CheckListBase <span class="tk-kw">ON</span> CheckListHistory.CheckListID = CheckListBase.ID
+<span class="tk-kw">WHERE</span> CheckListHistory.WipOrderNo = <span class="tk-str">'1000000001'</span>
+<span class="tk-kw">ORDER BY</span> CheckListHistory.CreatedOn</pre>
+
+        <h3 class="gd-h3">Parâmetro</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:240px">Filtro</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">CheckListHistory.WipOrderNo</td>
+              <td class="col-desc">Número da ordem (WIP Order) cujos apontamentos de checklist se deseja listar.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Colunas retornadas</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:220px">Coluna</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">CheckListHistoryID</td>
+              <td class="col-desc">ID do apontamento de checklist (<code>CHECK_LIST_HISTORY.ID</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">CheckListCode</td>
+              <td class="col-desc">Código do checklist apontado.</td>
+            </tr>
+            <tr>
+              <td class="col-name">ResourceName</td>
+              <td class="col-desc">Recurso/equipamento onde o checklist foi apontado.</td>
+            </tr>
+            <tr>
+              <td class="col-name">WipOrderNo</td>
+              <td class="col-desc">Número da ordem vinculada ao apontamento.</td>
+            </tr>
+            <tr>
+              <td class="col-name">CreatedBy</td>
+              <td class="col-desc">Usuário que registrou o apontamento.</td>
+            </tr>
+            <tr>
+              <td class="col-name">CreatedOn</td>
+              <td class="col-desc">Data/hora do apontamento (usada na ordenação).</td>
+            </tr>
+            <tr>
+              <td class="col-name">TotalChecks</td>
+              <td class="col-desc">Total de checkpoints do apontamento.</td>
+            </tr>
+            <tr>
+              <td class="col-name">SumChecked</td>
+              <td class="col-desc">Quantidade de checkpoints marcados (<code>Checked = 1</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">PercentOfTotalChecked</td>
+              <td class="col-desc">Percentual de preenchimento: <code>SumChecked × 100 / TotalChecks</code> (DECIMAL 5,2).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Header apenas:</strong> traz uma linha por apontamento
+            (<code>CHECK_LIST_HISTORY</code>) — para o detalhe de cada resposta use a query
+            <em>Detalhe das respostas</em>.</li>
+          <li><strong>JSON:</strong> <code>Value_</code> guarda o valor do checkpoint em JSON;
+            <code>JSON_VALUE(Value_, '$.Checked')</code> extrai o flag 0/1 para agregação.</li>
+          <li><strong>Percentual:</strong> <code>PercentOfTotalChecked</code> usa
+            <code>100.0</code> (decimal) para evitar divisão inteira e arredonda em
+            <code>DECIMAL(5,2)</code>.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           SQL — Detalhe das respostas
+           ============================================================ -->
+      <section id="sql-detalhe-respostas-checklist">
+        <h1 class="gd-h1" style="margin-top:24px">Detalhe das respostas</h1>
+        <p class="gd-lead">
+          Retorna o <strong>detalhe de cada checkpoint respondido</strong> de um apontamento
+          específico, com a descrição traduzida do checkpoint e os campos do valor
+          (<code>Checked</code>, <code>CustomValue</code>, <code>AditionalInformation</code>)
+          extraídos do JSON em <code>CHECK_POINT_HISTORY.Value_</code>.
+        </p>
+
+        <h2 class="gd-h2">Query</h2>
+        <pre class="gd-code"><span class="tk-kw">SELECT</span>
+  CheckListHistory.ID <span class="tk-kw">AS</span> CheckListHistoryID<span class="tk-punc">,</span>
+  CheckListHistory.ResourceName<span class="tk-punc">,</span>
+  CheckListHistory.WipOrderNo<span class="tk-punc">,</span>
+  CheckListHistory.CreatedBy<span class="tk-punc">,</span>
+  CheckListHistory.CreatedOn<span class="tk-punc">,</span>
+  dbo.<span class="tk-fn">fnGetTranslation</span>(CheckPoints.TextID<span class="tk-punc">,</span> <span class="tk-num">1033</span>) <span class="tk-kw">AS</span> CheckPointDescription<span class="tk-punc">,</span>
+  <span class="tk-fn">JSON_VALUE</span>(CheckPointHistory.Value_<span class="tk-punc">,</span> <span class="tk-str">'$.Checked'</span>)   <span class="tk-kw">AS</span> Checked<span class="tk-punc">,</span>
+  <span class="tk-fn">JSON_VALUE</span>(CheckPointHistory.Value_<span class="tk-punc">,</span> <span class="tk-str">'$.CustomValue'</span>)    <span class="tk-kw">AS</span> CustomValue<span class="tk-punc">,</span>
+  <span class="tk-fn">JSON_VALUE</span>(CheckPointHistory.Value_<span class="tk-punc">,</span> <span class="tk-str">'$.AditionalInformation'</span>)  <span class="tk-kw">AS</span> AditionalInformation
+<span class="tk-kw">FROM</span> CHECK_LIST_HISTORY CheckListHistory
+<span class="tk-kw">INNER JOIN</span> CHECK_POINT_HISTORY CheckPointHistory <span class="tk-kw">ON</span> CheckListHistory.ID = CheckPointHistory.CheckListHistoryID
+<span class="tk-kw">LEFT JOIN</span> CHECK_POINT CheckPoints <span class="tk-kw">ON</span> CheckPointHistory.CheckPointID = CheckPoints.ID
+<span class="tk-kw">WHERE</span> CheckPointHistory.CheckListHistoryID = <span class="tk-str">'100000004'</span></pre>
+
+        <h3 class="gd-h3">Parâmetro</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:290px">Filtro</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">CheckPointHistory.CheckListHistoryID</td>
+              <td class="col-desc">
+                ID do apontamento de checklist (<code>CHECK_LIST_HISTORY.ID</code>) — o mesmo
+                <code>CheckListHistoryID</code> retornado pela query de histórico.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Colunas retornadas</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:220px">Coluna</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">CheckListHistoryID</td>
+              <td class="col-desc">ID do apontamento de checklist.</td>
+            </tr>
+            <tr>
+              <td class="col-name">ResourceName</td>
+              <td class="col-desc">Recurso/equipamento do apontamento.</td>
+            </tr>
+            <tr>
+              <td class="col-name">WipOrderNo</td>
+              <td class="col-desc">Número da ordem vinculada.</td>
+            </tr>
+            <tr>
+              <td class="col-name">CreatedBy</td>
+              <td class="col-desc">Usuário que registrou o apontamento.</td>
+            </tr>
+            <tr>
+              <td class="col-name">CreatedOn</td>
+              <td class="col-desc">Data/hora do apontamento.</td>
+            </tr>
+            <tr>
+              <td class="col-name">CheckPointDescription</td>
+              <td class="col-desc">Descrição traduzida do checkpoint via <code>dbo.fnGetTranslation</code> (LCID <code>1033</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">Checked</td>
+              <td class="col-desc">Flag 0/1 do checkpoint, extraído de <code>$.Checked</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">CustomValue</td>
+              <td class="col-desc">Valor customizado, extraído de <code>$.CustomValue</code> (pode vir vazio).</td>
+            </tr>
+            <tr>
+              <td class="col-name">AditionalInformation</td>
+              <td class="col-desc">Observação livre, extraída de <code>$.AditionalInformation</code> (pode vir vazia).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Detalhe por linha:</strong> uma linha por checkpoint respondido do
+            apontamento informado.</li>
+          <li><strong>LEFT JOIN:</strong> o join com <code>CHECK_POINT</code> é
+            <code>LEFT</code> para não perder respostas cujo checkpoint base tenha sido removido —
+            nesses casos <code>CheckPointDescription</code> vem <code>NULL</code>.</li>
+          <li><strong>JSON:</strong> os três últimos campos saem de
+            <code>CHECK_POINT_HISTORY.Value_</code> (o mesmo objeto enviado em
+            <code>CheckpointValue</code> no apontamento via API).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_CreateCage
+           ============================================================ -->
+      <section id="GRD_API_CreateCage">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_CreateCage</code></h1>
+        <p class="gd-lead">
+          Cria uma <strong>gaiola vinculada a uma ordem</strong>. Recebe o número da ordem e
+          devolve o número da gaiola gerada (<code>CageNo</code>), pronto para receber as
+          pesagens das matérias-primas daquela ordem.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_CreateCage</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>CageNo</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"OrderNumber"</span><span class="tk-punc">:</span> <span class="tk-str">"847489877"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">OrderNumber</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Número da ordem à qual a nova gaiola será vinculada.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Gaiola criada com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"CageNo"</span><span class="tk-punc">:</span> <span class="tk-str">"100000015"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">Success</td>
+              <td class="col-type">boolean</td>
+              <td class="col-desc">Indica se a gaiola foi criada com sucesso.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Message</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">Mensagem de retorno — confirmação em caso de sucesso ou detalhe do erro.</td>
+            </tr>
+            <tr>
+              <td class="col-name">CageNo</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">Número da gaiola criada e vinculada à ordem.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Retorno:</strong> esta API retorna <code>CageNo</code> (e não
+            <code>Data</code>) com o número da gaiola gerada. Verifique <code>Success</code>
+            antes de usá-lo.</li>
+          <li><strong>Vínculo:</strong> a gaiola já nasce associada à <code>OrderNumber</code>
+            informada.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_AppointWeight
+           ============================================================ -->
+      <section id="GRD_API_AppointWeight">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_AppointWeight</code></h1>
+        <p class="gd-lead">
+          Registra o <strong>apontamento de pesagem de uma matéria-prima</strong>. Recebe os pesos
+          (tara, bruto e líquido), a unidade, a balança/recurso, o centro de trabalho, a gaiola e a
+          ordem; devolve o ID do apontamento gerado.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_AppointWeight</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. O retorno é sempre o envelope padrão
+          (<code>Success</code> / <code>Message</code> / <code>Data</code>).
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ResourceIDScale"</span><span class="tk-punc">:</span> <span class="tk-str">"100000082"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"TareWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"GrossWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"NetWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"150.00"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"UOMCode"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"CageNo"</span><span class="tk-punc">:</span> <span class="tk-str">"G000010"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000001"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">WeighLineID</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ID da linha de pesagem (item da ordem) que está sendo apontada.</td>
+            </tr>
+            <tr>
+              <td class="col-name">ResourceIDScale</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ID do recurso da balança utilizada na pesagem.</td>
+            </tr>
+            <tr>
+              <td class="col-name">TareWeight</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Peso de tara (embalagem/recipiente). Use <code>"0"</code> quando não aplicável.</td>
+            </tr>
+            <tr>
+              <td class="col-name">GrossWeight</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Peso bruto (líquido + tara). Use <code>"0"</code> quando não aplicável.</td>
+            </tr>
+            <tr>
+              <td class="col-name">NetWeight</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Peso líquido apontado da matéria-prima.</td>
+            </tr>
+            <tr>
+              <td class="col-name">UOMCode</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Código da unidade de medida dos pesos (ex.: <code>"KG"</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">Workcenter</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Centro de trabalho/sala onde a pesagem foi realizada (ex.: <code>"MD1_SALA1"</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">CageNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Número da gaiola que recebe a pesagem (ver <code>GRD_API_CreateCage</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">WipOrderNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Número da ordem (WIP Order) à qual o apontamento se vincula.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Apontamento realizado com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Data"</span><span class="tk-punc">:</span> <span class="tk-str">"100014"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">Success</td>
+              <td class="col-type">boolean</td>
+              <td class="col-desc">Indica se o apontamento de pesagem foi concluído com sucesso.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Message</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">Mensagem de retorno — confirmação em caso de sucesso ou detalhe do erro.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Data</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">ID do registro de apontamento de pesagem gerado.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Pesos como string:</strong> <code>TareWeight</code>,
+            <code>GrossWeight</code> e <code>NetWeight</code> são enviados como texto, com ponto
+            decimal (ex.: <code>"150.00"</code>).</li>
+          <li><strong>Gaiola:</strong> <code>CageNo</code> deve referenciar uma gaiola já criada
+            e vinculada à ordem (<code>GRD_API_CreateCage</code>).</li>
+          <li><strong>Não aplicável:</strong> quando tara/bruto não se aplicam, envie
+            <code>"0"</code>; o peso considerado é o <code>NetWeight</code>.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_CancelWeight
+           ============================================================ -->
+      <section id="GRD_API_CancelWeight">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_CancelWeight</code></h1>
+        <p class="gd-lead">
+          Cancela o <strong>apontamento de pesagem de uma matéria-prima</strong>. Recebe a ordem,
+          o centro de trabalho e o detalhe da linha de pesagem a cancelar.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_CancelWeight</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>).
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000001"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WorkCenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100012"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">WipOrderNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Número da ordem (WIP Order) do apontamento a cancelar.</td>
+            </tr>
+            <tr>
+              <td class="col-name">WorkCenter</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Centro de trabalho/sala onde a pesagem foi apontada (ex.: <code>"MD1_SALA1"</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">WeighLineDetailID</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ID do detalhe da linha de pesagem a ser cancelada.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Cancelamento executado com sucesso."</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">Success</td>
+              <td class="col-type">boolean</td>
+              <td class="col-desc">Indica se o cancelamento foi executado com sucesso.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Message</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">Mensagem de retorno — confirmação em caso de sucesso ou detalhe do erro.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Sem <code>Data</code>:</strong> esta API retorna apenas
+            <code>Success</code> e <code>Message</code>.</li>
+          <li><strong>Detalhe da linha:</strong> <code>WeighLineDetailID</code> identifica o
+            apontamento específico a estornar (não confundir com <code>WeighLineID</code> do
+            apontamento de pesagem).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_MoveMPCage
+           ============================================================ -->
+      <section id="GRD_API_MoveMPCage">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_MoveMPCage</code></h1>
+        <p class="gd-lead">
+          Move uma <strong>matéria-prima já pesada para outra gaiola</strong>. Recebe a ordem, o
+          centro de trabalho, o detalhe da linha de pesagem e a gaiola de destino.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_MoveMPCage</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>).
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000001"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WorkCenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100005"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"DestinationContainer"</span><span class="tk-punc">:</span> <span class="tk-str">"G000019"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:200px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">WipOrderNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Número da ordem (WIP Order) da MP a ser movida.</td>
+            </tr>
+            <tr>
+              <td class="col-name">WorkCenter</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Centro de trabalho/sala onde a pesagem foi apontada (ex.: <code>"MD1_SALA1"</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">WeighLineDetailID</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ID do detalhe da linha de pesagem (a MP que será movida).</td>
+            </tr>
+            <tr>
+              <td class="col-name">DestinationContainer</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Gaiola de destino para onde a MP será movida (ex.: <code>"G000019"</code>).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"MP movida para outra gaiola com sucesso."</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">Success</td>
+              <td class="col-type">boolean</td>
+              <td class="col-desc">Indica se a movimentação foi executada com sucesso.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Message</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">Mensagem de retorno — confirmação em caso de sucesso ou detalhe do erro.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Sem <code>Data</code>:</strong> esta API retorna apenas
+            <code>Success</code> e <code>Message</code>.</li>
+          <li><strong>Destino:</strong> <code>DestinationContainer</code> deve referenciar uma
+            gaiola existente (ver <code>GRD_API_CreateCage</code>).</li>
         </ul>
       </section>
 
     </main>
   </div>
+
+  <script>
+    // Expande/colapsa uma categoria da sidebar.
+    function gdToggleCat(btn) {
+      var aberto = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!aberto));
+      var itens = btn.nextElementSibling;
+      if (itens) itens.style.display = aberto ? 'none' : 'block';
+    }
+
+    // Ao clicar num link de tópico, garante que a categoria pai esteja aberta.
+    document.addEventListener('click', function (ev) {
+      var a = ev.target.closest && ev.target.closest('.gd-cat-items a.gd-link');
+      if (!a) return;
+      var itens = a.closest('.gd-cat-items');
+      var toggle = itens && itens.previousElementSibling;
+      if (toggle && toggle.getAttribute('aria-expanded') === 'false') {
+        gdToggleCat(toggle);
+      }
+    });
+  </script>
 
 </body>
 
