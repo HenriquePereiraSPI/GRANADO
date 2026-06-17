@@ -1222,10 +1222,7 @@ export const SCREENS = {
   ════════════════════════════════════════════════════════════════════ */
   "pes-checklist-turno": `      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Checklist</div></div>
-        <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">Obrigatório no início de cada período<br><span style="color:var(--verde)" id="cklt-meta-info">06:00–18:00 · J. Santos</span></div>
       </div>
-
-      <div class="abox warn mb14"><span class="ai">⚠️</span><div>Estes checklists <strong>NÃO estão vinculados a uma Ordem específica</strong>. São executados conforme sua frequência (ex.: <strong>1× por turno</strong> para Aferição de Balanças e Condições Ambientais) e bloqueiam o início de QUALQUER ordem de pesagem até serem concluídos.</div></div>
 
       <!-- KPIs no topo: estado global -->
       <div class="g4 mb14" style="gap:10px">
@@ -1977,7 +1974,7 @@ export const SCREENS = {
                 <div id="pes-scan-feedback" style="display:none;font-size:11px;font-weight:700;padding:6px 10px;border-radius:4px;margin-bottom:4px"></div>
               </div>
               <table class="tbl" id="pes-mp-tabela" style="font-size:11px">
-                <thead><tr><th>#</th><th>Código</th><th>Lote</th><th>Material</th><th>Qtd. Estoque</th><th>Qtd. Alvo</th><th title="Disponibilidade = Estoque − Alvo">Disponibilidade</th><th>Pesado</th><th>Pendente</th><th>Tolerância</th><th>Status</th><th>Ações</th></tr></thead>
+                <thead><tr><th>#</th><th>Código</th><th>Lote</th><th>Material</th><th>Qtd. Estoque</th><th>Qtd. Alvo</th><th title="Disponibilidade = Estoque − Alvo">Disponibilidade</th><th>Pesado</th><th>Pendente</th><th>Local</th><th>Status</th><th>Ações</th></tr></thead>
                 <tbody>
                   <!-- ORDENADO POR MENOR DISPONIBILIDADE PRIMEIRO (Estoque − Alvo) — valores negativos = falta de MP -->
                   <!-- 1. Conservante BHT — CANCELADA · disp −0,600 kg (estoque INSUFICIENTE) -->
@@ -1991,7 +1988,7 @@ export const SCREENS = {
                     <td class="mono" style="color:var(--per);font-weight:800">−0,600 kg</td>
                     <td class="mono" style="color:var(--text3)">—</td>
                     <td class="mono" style="color:var(--per);font-weight:700">1,800 kg</td>
-                    <td class="mono" style="color:var(--text3)">±0,5%</td>
+                    <td><select title="Local da MP" onclick="event.stopPropagation()" style="font-size:16px;padding:0;border:none;outline:none;background:transparent;-webkit-appearance:none;-moz-appearance:none;appearance:none;cursor:pointer;text-align:center;color:inherit"><option value="PESAGEM" title="Pesagem">⚖️</option><option value="ALMOX" title="Almoxarifado">📦</option></select></td>
                     <td><span class="bdg bdg-per" style="font-weight:800">Cancelada</span></td>
                     <td>
                       <span style="font-size:10px;color:var(--text3);font-style:italic">Ações na aba MPs</span>
@@ -2009,7 +2006,7 @@ export const SCREENS = {
                     <td class="mono" style="color:var(--alr);font-weight:700">+0,650 kg</td>
                     <td class="mono" style="color:var(--text3)">—</td>
                     <td class="mono" style="color:var(--text3)">0,150 kg</td>
-                    <td class="mono" style="color:var(--text3)">±0,5%</td>
+                    <td><select title="Local da MP" onclick="event.stopPropagation()" style="font-size:16px;padding:0;border:none;outline:none;background:transparent;-webkit-appearance:none;-moz-appearance:none;appearance:none;cursor:pointer;text-align:center;color:inherit"><option value="PESAGEM" title="Pesagem">⚖️</option><option value="ALMOX" title="Almoxarifado" selected>📦</option></select></td>
                     <td></td>
                     <td><button class="btn btn-sm btn-v" onclick="pesSetMP(this.closest('tr'));event.stopPropagation()">Pesar</button></td>
                   </tr>
@@ -2025,7 +2022,7 @@ export const SCREENS = {
                     <td class="mono" style="color:var(--text2)">+5,000 kg</td>
                     <td class="mono" style="color:var(--ok)">3,012 kg</td>
                     <td class="mono" style="color:var(--text3)">0,000 kg</td>
-                    <td class="mono">±0,5%</td>
+                    <td><select title="Local da MP" onclick="event.stopPropagation()" style="font-size:16px;padding:0;border:none;outline:none;background:transparent;-webkit-appearance:none;-moz-appearance:none;appearance:none;cursor:pointer;text-align:center;color:inherit"><option value="PESAGEM" title="Pesagem">⚖️</option><option value="ALMOX" title="Almoxarifado">📦</option></select></td>
                     <td><span class="bdg bdg-ok">Concluído</span></td>
                     <td><span style="font-size:10px;color:var(--text3);font-style:italic">—</span></td>
                   </tr>
@@ -2041,7 +2038,7 @@ export const SCREENS = {
                     <td class="mono" style="color:var(--text2)">+93,200 kg</td>
                     <td class="mono" style="color:var(--ok)">1,801 kg</td>
                     <td class="mono" style="color:var(--text3)">0,000 kg</td>
-                    <td class="mono">±0,5%</td>
+                    <td><select title="Local da MP" onclick="event.stopPropagation()" style="font-size:16px;padding:0;border:none;outline:none;background:transparent;-webkit-appearance:none;-moz-appearance:none;appearance:none;cursor:pointer;text-align:center;color:inherit"><option value="PESAGEM" title="Pesagem">⚖️</option><option value="ALMOX" title="Almoxarifado" selected>📦</option></select></td>
                     <td><span class="bdg bdg-ok">Concluído</span></td>
                     <td></td>
                   </tr>
@@ -2057,7 +2054,7 @@ export const SCREENS = {
                     <td class="mono" style="color:var(--ok);font-weight:700">+9.087,500 kg</td>
                     <td class="mono" style="color:var(--text3)">—</td>
                     <td class="mono" style="color:var(--verde);font-weight:700">412,500 kg</td>
-                    <td class="mono">±0,5%</td>
+                    <td><select title="Local da MP" onclick="event.stopPropagation()" style="font-size:16px;padding:0;border:none;outline:none;background:transparent;-webkit-appearance:none;-moz-appearance:none;appearance:none;cursor:pointer;text-align:center;color:inherit"><option value="PESAGEM" title="Pesagem">⚖️</option><option value="ALMOX" title="Almoxarifado">📦</option></select></td>
                     <td></td>
                     <td><button class="btn btn-sm btn-v" onclick="pesSetMP(this.closest('tr'));event.stopPropagation()">Pesar</button></td>
                   </tr>
@@ -2117,6 +2114,18 @@ export const SCREENS = {
                 <div id="modal-sb-box" style="background:var(--surface);border-top:4px solid var(--ouro);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:560px;width:94%;box-shadow:var(--sh2);margin:auto"></div>
               </div>
 
+              <!-- ── Popup: Aviso Sala Parada (bloqueia início de pesagem) ── -->
+              <div id="modal-sala-parada-aviso" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:968;align-items:flex-start;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto">
+                <div style="background:var(--surface);border-top:4px solid var(--per);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:480px;width:94%;box-shadow:var(--sh2);margin:auto">
+                  <div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--per)">⏸ Sala Parada</div>
+                  <div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--per);margin:2px 0 12px">Não é possível pesar</div>
+                  <div class="abox err mb14"><span class="ai">⛔</span><div>A pesagem não pode ser iniciada porque a <strong>sala está PARADA</strong>. Retome a sala em <strong>Paradas</strong> (botão <strong>Iniciar</strong>) para continuar.</div></div>
+                  <div style="display:flex;gap:8px;justify-content:flex-end">
+                    <button class="btn btn-md btn-v" onclick="pesFecharAvisoSalaParada()">Entendi</button>
+                  </div>
+                </div>
+              </div>
+
               <style>
                 @keyframes row-blink {
                   0%,100% { background: var(--per-p); }
@@ -2125,6 +2134,8 @@ export const SCREENS = {
               </style>
               <script>
               function pesSetMP(tr) {
+                // Sala parada: bloqueia o início da pesagem.
+                if (window.PES_SALA_PARADA) { pesAbrirAvisoSalaParada(); return; }
                 var d = tr.dataset;
                 // Mantém os campos ocultos populados — pesObterAlvoKg() e o fluxo
                 // de Balança/Pesagem leem destes elementos.
@@ -2145,6 +2156,16 @@ export const SCREENS = {
                 // Abre o popup de confirmação imediatamente
                 pesIniciarPesagem();
               }
+
+              function pesAbrirAvisoSalaParada() {
+                var m = document.getElementById('modal-sala-parada-aviso');
+                if (m) m.style.display = 'flex';
+              }
+              function pesFecharAvisoSalaParada() {
+                var m = document.getElementById('modal-sala-parada-aviso');
+                if (m) m.style.display = 'none';
+              }
+
               function pesFiltrarMPs(v) {
                 // Se o valor parece um codigo de scan (contem ';'), nao filtra ainda — espera Enter.
                 if (v && v.indexOf(';') !== -1) return;
@@ -2196,11 +2217,12 @@ export const SCREENS = {
               // Catálogo de etiquetas mockadas. "alvoNum" = quantidade-alvo da OP para a MP.
               // Se o peso da etiqueta ultrapassa o alvo, a pesagem sem balança é bloqueada.
               var SB_ETIQUETAS = {
-                'ETQ-SB-7788': { mp: 'Aqua (Água Purificada)',                 lote: 'AGUA-2026-03', validade: '12/2026', peso: '411,840 kg', pesoNum: 411.840, alvo: '450,000 kg', alvoNum: 450.000 },
+                'ETQ-SB-7788': { mp: 'Aqua (Água Purificada)',                 lote: 'AGUA-2026-03', validade: '12/2026', peso: '411,840 kg', pesoNum: 411.840, alvo: '1.250,000 kg', alvoNum: 1250.000 },
                 'ETQ-SB-3050': { mp: 'Lauril Éter Sulfato de Sódio (SLES 28%)', lote: 'SLES-2026-07', validade: '08/2026', peso: '620,500 kg', pesoNum: 620.500, alvo: '500,000 kg', alvoNum: 500.000 }
               };
               var SB_ETIQUETA = SB_ETIQUETAS['ETQ-SB-7788'];
-              var SB_CODIGO = 'ETQ-SB-7788', SB_GAIOLAS = [], SB_GAIOLA_SEL = null, SB_PROX_SEQ = 563944;
+              var SB_CODIGO = 'ETQ-SB-7788', SB_LIDAS = [], SB_GAIOLAS = [], SB_GAIOLA_SEL = null, SB_PROX_SEQ = 563944;
+              var SB_LENDO = false, SB_PEND = null, SB_REVERT = null;  // comunicação com o JDE em andamento
 
               function sbBox() { return document.getElementById('modal-sb-box'); }
               function sbFechar() {
@@ -2209,19 +2231,27 @@ export const SCREENS = {
               }
 
               function sbAbrir(codigo) {
+                // Sala parada: bloqueia também o início via "Sem Balança".
+                if (window.PES_SALA_PARADA) { pesAbrirAvisoSalaParada(); return; }
                 SB_CODIGO = codigo || 'ETQ-SB-7788';
                 SB_ETIQUETA = SB_ETIQUETAS[SB_CODIGO] || SB_ETIQUETAS['ETQ-SB-7788'];
-                SB_GAIOLAS = [{ seq: 563944, num: 1 }, { seq: 563945, num: 2 }];
-                SB_GAIOLA_SEL = SB_GAIOLAS.length - 1;
-                SB_PROX_SEQ = 563946;
                 var m = document.getElementById('modal-sb-pes');
                 if (m) m.style.display = 'flex';
-                // Peso da etiqueta ultrapassa o alvo da OP -> bloqueia pesagem sem balança.
-                if (SB_ETIQUETA.pesoNum > SB_ETIQUETA.alvoNum) { sbRenderExcedeAlvo(); } else { sbRenderInfo(); }
+                // Uma única etiqueta já ultrapassa o alvo da OP -> bloqueia pesagem sem balança.
+                if (SB_ETIQUETA.pesoNum > SB_ETIQUETA.alvoNum) { sbRenderExcedeAlvo(); return; }
+                // Inicia a sessão de leitura: gaiolas + a primeira etiqueta escaneada.
+                SB_GAIOLAS = [{ seq: 563944, num: 1 }, { seq: 563945, num: 2 }];
+                SB_GAIOLA_SEL = 0;
+                SB_PROX_SEQ = 563946;
+                SB_LIDAS = [];
+                SB_LENDO = false; SB_PEND = null;
+                sbRenderLeitura();
+                sbLerCodigo(SB_CODIGO); // 1ª etiqueta passa pela validação no JDE
               }
 
               function sbRenderExcedeAlvo() {
                 var box = sbBox(); if (!box) return;
+                box.style.maxWidth = '560px';
                 var e = SB_ETIQUETA;
                 var excesso = (e.pesoNum - e.alvoNum).toFixed(3).replace('.', ',') + ' kg';
                 box.innerHTML =
@@ -2235,75 +2265,179 @@ export const SCREENS = {
                   '<div class="abox info mb14"><span class="ai">💡</span><div>Carregue esta MP em uma <strong>sala com balança</strong> e pese a <strong>quantidade fracionada</strong> (' + e.alvo + ') diretamente na balança, retornando o saldo ao estoque.</div></div>' +
                   '<div style="display:flex;gap:8px;justify-content:flex-end">' +
                     '<button class="btn btn-md btn-v" onclick="sbFechar()">Entendi</button>' +
-                  '';
-              }
-
-              function sbRenderInfo() {
-                var box = sbBox(); if (!box) return;
-                var e = SB_ETIQUETA;
-                var campo = function(lbl, val, big) {
-                  return '<div><div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">' + lbl + '</div>' +
-                    '<div class="mono" style="font-size:' + (big ? '20px' : '12px') + ';font-weight:' + (big ? '900' : '700') + ';color:' + (big ? 'var(--verde)' : 'var(--text)') + '">' + val + '</div></div>';
-                };
-                box.innerHTML =
-                  '<div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--ouro)">🚫⚖️ Pesagem Sem Balança · Etapa 1/2</div>' +
-                  '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin:2px 0 12px">Informações da Etiqueta</div>' +
-                  '<div class="abox ok mb14"><span class="ai">✅</span><div>Etiqueta <strong class="mono">' + SB_CODIGO + '</strong> lida com sucesso — peso obtido da etiqueta, sem necessidade de pesar.</div></div>' +
-                  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:14px 16px">' +
-                    campo('Matéria-Prima', e.mp) + campo('Lote', e.lote) +
-                    campo('Validade', e.validade) + campo('Peso (etiqueta)', e.peso, true) +
-                  '</div>' +
-                  '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:18px">' +
-                    '<button class="btn btn-md btn-ghost" onclick="sbFechar()">Cancelar</button>' +
-                    '<button class="btn btn-md btn-v" onclick="sbRenderGaiola()">Continuar › Gaiola</button>' +
                   '</div>';
               }
 
-              function sbGaiolaSel(i) { SB_GAIOLA_SEL = i; sbRenderGaiola(); }
-              function sbGaiolaAdd() { SB_GAIOLAS.push({ seq: SB_PROX_SEQ++, num: SB_GAIOLAS.length + 1 }); SB_GAIOLA_SEL = SB_GAIOLAS.length - 1; sbRenderGaiola(); }
+              function sbAcumulado() { return SB_LIDAS.reduce(function(s, l){ return s + l.qtd; }, 0); }
+              function sbFmtKg(n) { return n.toLocaleString('pt-BR', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + ' kg'; }
 
-              function sbRenderGaiola() {
+              // Adiciona uma leitura da etiqueta atual, vinculada à gaiola selecionada.
+              function sbAddLeitura(codigo) {
+                var g = SB_GAIOLAS[SB_GAIOLA_SEL] || SB_GAIOLAS[SB_GAIOLAS.length - 1] || { num: 1, seq: 563944 };
+                SB_LIDAS.push({ codigo: codigo || SB_CODIGO, material: SB_ETIQUETA.mp, lote: SB_ETIQUETA.lote, qtd: SB_ETIQUETA.pesoNum, gaiolaNum: g.num, gaiolaSeq: g.seq });
+              }
+
+              // Remove uma etiqueta: simula a reversão do movimento no JDE antes de tirar da lista.
+              function sbRemoverLeitura(i) {
+                if (SB_LENDO) return;
+                var l = SB_LIDAS[i];
+                SB_REVERT = i;
+                SB_PEND = l ? l.codigo : '';
+                SB_LENDO = true;
+                sbRenderLeitura();
+                setTimeout(function(){
+                  SB_LIDAS.splice(i, 1);
+                  SB_LENDO = false; SB_PEND = null; SB_REVERT = null;
+                  sbRenderLeitura();
+                }, 1100);
+              }
+
+              // Lê um código de etiqueta: simula a comunicação com o JDE e só
+              // então adiciona a leitura à tabela de "Etiquetas lidas".
+              function sbLerCodigo(codigo) {
+                if (SB_LENDO) return;
+                if (!/^ETQ-/.test(codigo || '')) { alert('⚠ Código de etiqueta inválido.'); return; }
+                SB_PEND = codigo;
+                SB_LENDO = true;
+                sbRenderLeitura();
+                setTimeout(function(){
+                  sbAddLeitura(SB_PEND);
+                  SB_LENDO = false; SB_PEND = null;
+                  sbRenderLeitura();
+                }, 1100);
+              }
+
+              // Escaneia mais uma etiqueta do mesmo material + lote.
+              function sbLerMais() {
+                if (SB_LENDO) return;
+                var inp = document.getElementById('sb-scan-mais');
+                var v = (inp && inp.value.trim()) ? inp.value.trim().toUpperCase() : SB_CODIGO;
+                if (inp) inp.value = '';
+                sbLerCodigo(v);
+              }
+
+              // Seleciona a gaiola — vincula automaticamente à ÚLTIMA etiqueta lida.
+              function sbGaiolaSel(i) {
+                SB_GAIOLA_SEL = i;
+                if (SB_LIDAS.length) {
+                  var g = SB_GAIOLAS[i];
+                  var last = SB_LIDAS[SB_LIDAS.length - 1];
+                  last.gaiolaNum = g.num; last.gaiolaSeq = g.seq;
+                }
+                sbRenderLeitura();
+              }
+              function sbGaiolaAdd() {
+                SB_GAIOLAS.push({ seq: SB_PROX_SEQ++, num: SB_GAIOLAS.length + 1 });
+                sbGaiolaSel(SB_GAIOLAS.length - 1);
+              }
+
+              function sbRenderLeitura() {
                 var box = sbBox(); if (!box) return;
+                box.style.maxWidth = '900px';
+                var e = SB_ETIQUETA;
+                var acumulado = sbAcumulado();
+                var pct = e.alvoNum ? Math.min(100, Math.round(acumulado / e.alvoNum * 100)) : 0;
+                var acExcede = acumulado > e.alvoNum;
+                var corAc = acExcede ? 'var(--per)' : 'var(--ouro)';
+                var linhas = SB_LIDAS.map(function(l, i) {
+                  var ult = (i === SB_LIDAS.length - 1);
+                  var revertendo = (SB_REVERT === i);
+                  var trStyle = (ult ? 'background:var(--ouro-dim);' : '') + (revertendo ? 'opacity:.45;' : '');
+                  var acaoCell = revertendo
+                    ? '<td style="text-align:center"><span style="display:inline-block;width:12px;height:12px;border:2px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:spin .7s linear infinite" title="Revertendo no JDE…"></span></td>'
+                    : '<td style="text-align:center"><button onclick="sbRemoverLeitura(' + i + ')" title="Remover etiqueta" style="background:none;border:none;cursor:pointer;color:var(--per);font-size:13px;line-height:1;padding:2px 4px">✕</button></td>';
+                  return '<tr' + (trStyle ? ' style="' + trStyle + '"' : '') + '>' +
+                    '<td class="mono" style="font-size:11px;white-space:nowrap;font-weight:700;color:var(--verde-esc)">' + l.codigo + '</td>' +
+                    '<td style="font-size:11px">' + l.material + '</td>' +
+                    '<td class="mono" style="font-size:11px">' + l.lote + '</td>' +
+                    '<td class="mono" style="font-size:11px;text-align:right">' + sbFmtKg(l.qtd) + '</td>' +
+                    '<td class="mono" style="font-size:11px;white-space:nowrap">📦 ' + l.gaiolaNum + ' · ' + l.gaiolaSeq + '</td>' +
+                    acaoCell +
+                  '</tr>';
+                }).join('');
+                if (!SB_LIDAS.length) {
+                  linhas = '<tr><td colspan="6" style="font-size:11px;color:var(--text3);text-align:center;padding:14px">Nenhuma etiqueta lida ainda — escaneie acima.</td></tr>';
+                }
                 var cards = SB_GAIOLAS.map(function(g, i) {
                   var sel = (i === SB_GAIOLA_SEL);
                   var cor = sel ? '#9A7520' : 'var(--verde-esc)';
                   var bg = sel ? 'var(--ouro-dim)' : 'var(--verde-dim)';
                   var bd = sel ? 'var(--ouro)' : 'var(--ok-b)';
-                  return '<div onclick="sbGaiolaSel(' + i + ')" style="cursor:pointer;position:relative;width:120px;height:96px;border-radius:10px;border:2px solid ' + bd + ';background:' + bg + ';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">' +
+                  return '<div onclick="sbGaiolaSel(' + i + ')" style="cursor:pointer;position:relative;width:104px;height:84px;border-radius:10px;border:2px solid ' + bd + ';background:' + bg + ';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">' +
                     (sel ? '<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#fff;font-size:8px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap">✓ Selecionada</div>' : '') +
-                    '<div style="font-size:26px">📦</div>' +
+                    '<div style="font-size:22px">📦</div>' +
                     '<div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:' + cor + '">Gaiola ' + g.num + '</div>' +
-                    '<div class="mono" style="font-size:13px;font-weight:900;color:' + cor + ';line-height:1">' + g.seq + '</div>' +
+                    '<div class="mono" style="font-size:12px;font-weight:900;color:' + cor + ';line-height:1">' + g.seq + '</div>' +
                   '</div>';
                 }).join('');
-                var add = '<button onclick="sbGaiolaAdd()" title="Criar nova gaiola" style="width:120px;height:96px;border:2.5px dashed var(--border2);border-radius:10px;background:var(--surface2);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text3)"><div style="font-size:26px;font-weight:300;line-height:1">+</div><div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Nova Gaiola</div></button>';
+                var add = '<button onclick="sbGaiolaAdd()" title="Criar nova gaiola" style="width:104px;height:84px;border:2.5px dashed var(--border2);border-radius:10px;background:var(--surface2);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text3)"><div style="font-size:24px;font-weight:300;line-height:1">+</div><div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Nova Gaiola</div></button>';
+                var scan = SB_LENDO
+                  ? '<div style="margin-bottom:12px"><label class="lbl">Comunicando com o JDE…</label>' +
+                      '<div style="display:flex;align-items:center;gap:12px;border:1.5px dashed var(--inf);border-radius:8px;background:var(--inf-p);padding:12px 14px">' +
+                        '<div style="width:20px;height:20px;border:3px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0"></div>' +
+                        '<div style="font-size:12px;font-weight:700;color:var(--inf)">' + (SB_REVERT != null ? 'Revertendo movimento da etiqueta ' : 'Validando etiqueta ') + '<span class="mono">' + (SB_PEND || '') + '</span> no JDE…</div>' +
+                      '</div></div>'
+                  : '<div style="margin-bottom:12px"><label class="lbl">Escanear próxima etiqueta (mesmo material + lote)</label>' +
+                      '<div style="display:flex;align-items:center;gap:12px;border:1.5px dashed var(--ouro);border-radius:8px;background:var(--ouro-dim);padding:10px 14px">' +
+                        '<div style="width:20px;height:20px;border:3px solid var(--ouro-claro);border-top-color:var(--ouro);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0"></div>' +
+                        '<input id="sb-scan-mais" placeholder="Aguardando leitura da próxima etiqueta… (ou digite o código)" autocomplete="off" style="flex:1;border:none;outline:none;background:transparent;font-family:var(--font-m);font-size:13px;color:var(--text)" onkeydown="if(event.keyCode===13){event.preventDefault();sbLerMais();}">' +
+                      '</div></div>';
                 box.innerHTML =
-                  '<div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--ouro)">🚫⚖️ Pesagem Sem Balança · Etapa 2/2</div>' +
-                  '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin:2px 0 4px">Confirmar &amp; Vincular Gaiola</div>' +
-                  '<div style="font-size:12px;color:var(--text2);margin-bottom:14px">' + SB_ETIQUETA.mp + ' · <strong>' + SB_ETIQUETA.peso + '</strong> · sem balança</div>' +
-                  '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Gaiola a vincular</div>' +
-                  '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px">' + cards + add + '</div>' +
-                  '<div style="display:flex;gap:8px;justify-content:flex-end">' +
-                    '<button class="btn btn-md btn-ghost" onclick="sbRenderInfo()">‹ Voltar</button>' +
-                    '<button class="btn btn-md btn-v" onclick="sbConfirmar()">✔ Confirmar &amp; Imprimir Etiqueta da MP</button>' +
+                  '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">' +
+                    '<div>' +
+                      '<div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--ouro)">🚫⚖️ Pesagem Sem Balança · Leitura de Etiquetas</div>' +
+                      '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc)">Leitura de Etiquetas</div>' +
+                    '</div>' +
+                    '<button onclick="sbFechar()" title="Fechar" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>' +
+                  '</div>' +
+                  scan +
+                  '<div style="font-size:12px;color:var(--text2);margin-bottom:8px"><span style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-right:6px">Material · Lote</span>' + e.mp + ' · <span class="mono">' + e.lote + '</span></div>' +
+                  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px">' +
+                    '<div style="background:' + (acExcede ? 'var(--per-p)' : 'var(--ouro-dim)') + ';border:1px solid ' + (acExcede ? 'var(--per-b)' : 'var(--ouro-claro)') + ';border-radius:8px;padding:12px 16px">' +
+                      '<div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">📦 Acumulado · ' + SB_LIDAS.length + ' etiq.</div>' +
+                      '<div class="mono" style="font-size:22px;font-weight:900;color:' + corAc + ';line-height:1">' + sbFmtKg(acumulado) + '</div>' +
+                    '</div>' +
+                    '<div style="background:var(--verde-dim);border:1px solid var(--ok-b);border-radius:8px;padding:12px 16px">' +
+                      '<div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">🎯 Quantidade Alvo</div>' +
+                      '<div class="mono" style="font-size:22px;font-weight:900;color:var(--verde);line-height:1">' + e.alvo + '</div>' +
+                    '</div>' +
+                  '</div>' +
+                  '<div style="margin-bottom:14px">' +
+                    '<div style="display:flex;justify-content:space-between;font-size:9px;font-weight:700;color:var(--text3);margin-bottom:3px"><span>' + pct + '% do alvo</span><span>' + (acExcede ? '⚠ acima do alvo' : 'restante: ' + sbFmtKg(Math.max(0, e.alvoNum - acumulado))) + '</span></div>' +
+                    '<div style="height:8px;border-radius:4px;background:var(--border);overflow:hidden"><div style="height:100%;width:' + pct + '%;background:' + (acExcede ? 'var(--per)' : 'var(--verde)') + '"></div></div>' +
+                  '</div>' +
+                  '<div style="display:grid;grid-template-columns:1.25fr 1fr;gap:16px;margin-bottom:16px">' +
+                    '<div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;align-self:start">' +
+                      '<div style="background:var(--surface2);padding:8px 12px;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Etiquetas lidas</div>' +
+                      '<table class="tbl" style="font-size:11px;width:100%"><thead><tr><th>Etiqueta</th><th>Material</th><th>Lote</th><th style="text-align:right">Qtd.</th><th>Gaiola</th><th></th></tr></thead><tbody>' + linhas + '</tbody></table>' +
+                    '</div>' +
+                    '<div>' +
+                      '<div style="font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Gaiola <span style="font-weight:600;text-transform:none;letter-spacing:0">(vincula à última etiqueta lida)</span></div>' +
+                      '<div style="display:flex;gap:10px;flex-wrap:wrap">' + cards + add + '</div>' +
+                    '</div>' +
                   '</div>';
+                setTimeout(function(){ var i = document.getElementById('sb-scan-mais'); if (i) i.focus(); }, 40);
               }
 
               function sbConfirmar() {
+                if (!SB_LIDAS.length) { alert('⚠ Nenhuma etiqueta lida.'); return; }
                 var box = sbBox(); if (!box) return;
+                box.style.maxWidth = '560px';
                 box.innerHTML =
                   '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:14px 0">' +
                     '<div style="width:38px;height:38px;border:4px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px"></div>' +
                     '<div style="font-size:14px;font-weight:700;color:var(--inf)">Confirmando pesagem (sem balança)...</div>' +
-                    '<div style="font-size:11px;color:var(--text2);margin-top:4px">Registrando o peso da etiqueta e enviando a etiqueta da MP para impressão.</div>' +
+                    '<div style="font-size:11px;color:var(--text2);margin-top:4px">Registrando as etiquetas lidas e enviando para impressão.</div>' +
                   '</div>';
                 setTimeout(function(){
-                  var g = SB_GAIOLAS[SB_GAIOLA_SEL] || SB_GAIOLAS[SB_GAIOLAS.length - 1] || { num: 1, seq: 563944 };
+                  var n = SB_LIDAS.length;
+                  var total = sbFmtKg(sbAcumulado());
+                  var gaiolas = SB_LIDAS.map(function(l){ return l.gaiolaNum; }).filter(function(v, i, a){ return a.indexOf(v) === i; }).length;
                   box.innerHTML =
                     '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 0 8px">' +
                       '<div style="font-size:44px;margin-bottom:6px">✅</div>' +
                       '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">Pesagem confirmada (sem balança)</div>' +
-                      '<div style="font-size:12px;color:var(--text2);max-width:380px;margin-bottom:18px">Peso <strong>' + SB_ETIQUETA.peso + '</strong> registrado a partir da etiqueta <strong class="mono">' + SB_CODIGO + '</strong>. Etiqueta da MP impressa na PRN-BOX3, vinculada à <strong>Gaiola ' + g.num + ' (Nº ' + g.seq + ')</strong>.</div>' +
+                      '<div style="font-size:12px;color:var(--text2);max-width:400px;margin-bottom:18px"><strong>' + n + '</strong> etiqueta(s) de <strong>' + SB_ETIQUETA.mp + '</strong> registrada(s) — total <strong>' + total + '</strong>, distribuída(s) em <strong>' + gaiolas + '</strong> gaiola(s). Etiquetas da MP impressas na PRN-BOX3.</div>' +
                       '<button class="btn btn-md btn-v" onclick="sbFechar()">✔ Concluir</button>' +
                     '</div>';
                 }, 1600);
@@ -3261,8 +3395,6 @@ export const SCREENS = {
         </div>
       </div>
 
-      <div class="abox inf mb14"><span class="ai">ℹ️</span><div>Clique em qualquer linha para abrir as <strong>Ações da MP</strong> (adicionar pesagem, reimprimir etiqueta, solicitar mais MP ou reprocessar integração JDE). MPs <strong>fracionadas</strong> mostram uma linha-pai com o total — clique nela para expandir e ver as sub-pesagens.<br/><span style="font-size:10px;color:var(--text3)">A coluna <strong>Variância máx.</strong> mostra o limite cadastrado por MP — pesagens fora desse limite são bloqueadas no Cockpit antes da confirmação.</span></div></div>
-
       <div class="card cv">
         <div class="card-title">Registro de Pesagens Confirmadas — Clique na linha para ações</div>
 
@@ -3341,13 +3473,10 @@ export const SCREENS = {
             <!-- Linha 5: MP-5593 TEA 99% — FRACIONADA em 3 pesagens
                  Padrão pai-filho: linha pai exibe TOTAIS (Alvo 1,800 kg / Pesado 1,801 kg / Variância +0,001 kg)
                  e ao clicar na seta ▸ expande as 3 sub-pesagens (etiquetas A/B/C, mesma gaiola). -->
-            <tr data-classe="normal" data-frac-parent="MP-5593" style="cursor:pointer;background:var(--surface2)" onclick="mpsToggleFrac(this);event.stopPropagation()">
+            <tr data-classe="normal" data-frac-parent="MP-5593" style="background:rgba(124,168,255,.14);border-left:3px solid var(--inf)">
               <td class="mono" style="color:var(--ok)">5</td>
               <td><span class="bdg bdg-ok" style="font-size:9px">Normal</span></td>
-              <td class="mono" style="font-size:10px;color:var(--text2)">
-                <span class="mps-frac-arrow" style="display:inline-block;width:10px;color:var(--inf);font-weight:700;transition:transform .15s">▸</span>
-                MP-5593
-              </td>
+              <td class="mono" style="font-size:10px;color:var(--text2)">MP-5593</td>
               <td style="font-size:12px;font-weight:600">
                 TEA 99%
                 <div style="font-size:9px;color:var(--inf);font-weight:700;margin-top:2px">⛓ Fracionada · 3 sub-pesagens</div>
@@ -3364,10 +3493,10 @@ export const SCREENS = {
               <td class="mono" style="font-size:10px">BAL-01</td>
               <td style="font-size:10px;color:var(--text2)">Sala A · Box 1</td>
               <td><span class="bdg bdg-ok">✓ Impressa</span></td>
-              <td><span style="font-size:10px;color:var(--text3);font-style:italic" title="Esta linha é o agregado das sub-pesagens. As ações ficam disponíveis em cada sub-pesagem (expanda ▸).">Ações na sub-pesagem ↓</span></td>
+              <td><span style="font-size:10px;color:var(--text3);font-style:italic" title="Esta linha é o agregado das sub-pesagens. As ações ficam disponíveis em cada sub-pesagem listada abaixo.">Ações nas sub-pesagens</span></td>
             </tr>
-            <!-- Sub-pesagens (filhas) — começam recolhidas; mpsToggleFrac() expande/recolhe -->
-            <tr data-classe="normal" data-frac-child="MP-5593" style="display:none;cursor:pointer;background:rgba(124,168,255,.04)" onclick="pesAbrirDesvio({n:'5.1',mat:'TEA 99% — sub-pesagem 1 de 3',lote:'TEA-2026-07',alvo:'0,600',pesado:'0,601',desv:'+0,001',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005-A',status:'ok'})">
+            <!-- Sub-pesagens (filhas) — sempre visíveis, com tonalidade de grupo -->
+            <tr data-classe="normal" data-frac-child="MP-5593" style="cursor:pointer;background:rgba(124,168,255,.06);border-left:3px solid var(--inf)" onclick="pesAbrirDesvio({n:'5.1',mat:'TEA 99% — sub-pesagem 1 de 3',lote:'TEA-2026-07',alvo:'0,600',pesado:'0,601',desv:'+0,001',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005-A',status:'ok'})">
               <td class="mono" style="color:var(--text3);font-size:10px;padding-left:18px">└ 5.1</td>
               <td><span class="bdg" style="font-size:8px;background:rgba(124,168,255,.15);color:var(--inf);border:1px solid rgba(124,168,255,.4)">Sub-pesagem</span></td>
               <td class="mono" style="font-size:10px;color:var(--text3);padding-left:18px">MP-5593</td>
@@ -3386,7 +3515,7 @@ export const SCREENS = {
               <td><span class="bdg bdg-ok">✓ Impressa</span></td>
               <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'5.1',mat:'TEA 99% — sub-pesagem 1 de 3',lote:'TEA-2026-07',alvo:'0,600',pesado:'0,601',desv:'+0,001',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005-A',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
             </tr>
-            <tr data-classe="normal" data-frac-child="MP-5593" style="display:none;cursor:pointer;background:rgba(124,168,255,.04)" onclick="pesAbrirDesvio({n:'5.2',mat:'TEA 99% — sub-pesagem 2 de 3',lote:'TEA-2026-07',alvo:'0,600',pesado:'0,598',desv:'–0,002',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005-B',status:'ok'})">
+            <tr data-classe="normal" data-frac-child="MP-5593" style="cursor:pointer;background:rgba(124,168,255,.06);border-left:3px solid var(--inf)" onclick="pesAbrirDesvio({n:'5.2',mat:'TEA 99% — sub-pesagem 2 de 3',lote:'TEA-2026-07',alvo:'0,600',pesado:'0,598',desv:'–0,002',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005-B',status:'ok'})">
               <td class="mono" style="color:var(--text3);font-size:10px;padding-left:18px">└ 5.2</td>
               <td><span class="bdg" style="font-size:8px;background:rgba(124,168,255,.15);color:var(--inf);border:1px solid rgba(124,168,255,.4)">Sub-pesagem</span></td>
               <td class="mono" style="font-size:10px;color:var(--text3);padding-left:18px">MP-5593</td>
@@ -3405,7 +3534,7 @@ export const SCREENS = {
               <td><span class="bdg bdg-ok">✓ Impressa</span></td>
               <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'5.2',mat:'TEA 99% — sub-pesagem 2 de 3',lote:'TEA-2026-07',alvo:'0,600',pesado:'0,598',desv:'–0,002',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005-B',status:'ok'});event.stopPropagation()">⋮ Ações</button></td>
             </tr>
-            <tr data-classe="normal" data-frac-child="MP-5593" style="display:none;cursor:pointer;background:rgba(124,168,255,.04)" onclick="pesAbrirDesvio({n:'5.3',mat:'TEA 99% — sub-pesagem 3 de 3',lote:'TEA-2026-07',alvo:'0,600',pesado:'0,602',desv:'+0,002',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005-C',status:'ok'})">
+            <tr data-classe="normal" data-frac-child="MP-5593" style="cursor:pointer;background:rgba(124,168,255,.06);border-left:3px solid var(--inf)" onclick="pesAbrirDesvio({n:'5.3',mat:'TEA 99% — sub-pesagem 3 de 3',lote:'TEA-2026-07',alvo:'0,600',pesado:'0,602',desv:'+0,002',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005-C',status:'ok'})">
               <td class="mono" style="color:var(--text3);font-size:10px;padding-left:18px">└ 5.3</td>
               <td><span class="bdg" style="font-size:8px;background:rgba(124,168,255,.15);color:var(--inf);border:1px solid rgba(124,168,255,.4)">Sub-pesagem</span></td>
               <td class="mono" style="font-size:10px;color:var(--text3);padding-left:18px">MP-5593</td>
@@ -3452,19 +3581,20 @@ export const SCREENS = {
         </div><!-- /overflow-x:auto -->
 
         <script>
-        // Toggle pai-filho: clica na linha pai de MP fracionada → mostra/esconde sub-pesagens
-        function mpsToggleFrac(parentRow) {
-          var parentId = parentRow.getAttribute('data-frac-parent');
-          if (!parentId) return;
-          var children = document.querySelectorAll('#tbl-mps-pesadas tbody tr[data-frac-child="' + parentId + '"]');
-          var arrow = parentRow.querySelector('.mps-frac-arrow');
-          var isOpen = children.length > 0 && children[0].style.display !== 'none';
-          children.forEach(function(c){ c.style.display = isOpen ? 'none' : ''; });
-          if (arrow) {
-            arrow.textContent = isOpen ? '▸' : '▾';
-            arrow.style.color = isOpen ? 'var(--inf)' : 'var(--verde)';
+        // Remove as colunas "Desvio" (índice 7) e "Variância máx." (índice 8)
+        // de todas as linhas (thead + tbody). Idempotente por carga da tela.
+        (function mpsRemoverColunasDesvioVar() {
+          function run() {
+            var tbl = document.getElementById('tbl-mps-pesadas');
+            if (!tbl) { setTimeout(run, 50); return; }
+            tbl.querySelectorAll('tr').forEach(function(tr) {
+              var c = tr.children;
+              if (c[8]) tr.removeChild(c[8]); // Variância máx.
+              if (c[7]) tr.removeChild(c[7]); // Desvio
+            });
           }
-        }
+          run();
+        })();
         </script>
       </div><!-- /card -->
 
@@ -3483,28 +3613,14 @@ export const SCREENS = {
           <!-- Info da MP selecionada -->
           <div id="mps-popup-info" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:18px;font-size:11px;color:var(--text2);display:grid;grid-template-columns:1fr 1fr;gap:6px"></div>
 
-          <!-- Ação rápida: Reprocessar integração JDE (botão único, sem aba) -->
-          <div style="display:flex;align-items:center;gap:10px;background:var(--alr-p);border:1px solid var(--alr-b);border-radius:8px;padding:10px 14px;margin-bottom:14px">
-            <span style="font-size:18px">↻</span>
-            <div style="flex:1;font-size:11px;color:var(--text2);line-height:1.4">
-              <strong style="color:var(--alr)">Reprocessar integração JDE</strong> — use quando o JDE não recebeu as informações desta pesagem e a integração não foi concluída corretamente.
-            </div>
-            <button class="btn btn-sm btn-alr" onclick="mpsReprocessarJDE()" style="font-size:10px;font-weight:700;white-space:nowrap">↻ Reprocessar</button>
-          </div>
-
           <!-- Abas de ação -->
           <div style="display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:18px;flex-wrap:wrap" id="mps-popup-tabs">
-            <button onclick="mpsPoupupAba('desvio')" id="mps-tab-desvio" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--verde);border-bottom:3px solid var(--verde);margin-bottom:-2px">📦 Solicitar MP</button>
+            <button onclick="mpsPoupupAba('desvio')" id="mps-tab-desvio" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--verde);border-bottom:3px solid var(--verde);margin-bottom:-2px">📦 Ajuste MP</button>
             <button onclick="mpsPoupupAba('reimprimir')" id="mps-tab-reimprimir" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--text3);border-bottom:3px solid transparent;margin-bottom:-2px">🖨️ Reimprimir</button>
-            <div style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:10px;color:var(--text3)">
-              <span style="font-weight:900;letter-spacing:.1em;text-transform:uppercase">Status MP:</span>
-              <span class="bdg bdg-alr" id="mps-popup-status" style="font-size:9px">—</span>
-            </div>
           </div>
 
           <!-- Aba: Solicitar MP -->
           <div id="mps-aba-desvio">
-            <div class="abox inf" style="margin-bottom:14px"><span class="ai">📦</span><div>Solicite uma nova MP ao Almoxarifado. Selecione o <strong>Tipo de solicitação</strong> — <strong>Ajuste</strong> ou <strong>Perda</strong> (a Perda cancela a MP).</div></div>
             <div style="margin-bottom:12px">
               <label class="lbl">Tipo de solicitação</label>
               <select class="sel" id="mps-desvio-tipo" onchange="mpsToggleNumDesvio()">
@@ -3526,7 +3642,7 @@ export const SCREENS = {
               <textarea class="txta" id="mps-desvio-justif" placeholder="Descreva a causa e ação tomada..."></textarea>
             </div>
             <div style="display:flex;gap:10px">
-              <button class="btn btn-md btn-v" style="flex:1" onclick="mpsSalvarDesvio()">📨 Solicitar MP</button>
+              <button class="btn btn-md btn-v" style="flex:1" onclick="mpsSalvarDesvio()">📨 Ajuste MP</button>
               <button class="btn btn-md btn-ghost" onclick="document.getElementById('modal-mps-desvio').style.display='none'">Cancelar</button>
             </div>
           </div>
@@ -3582,17 +3698,6 @@ export const SCREENS = {
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Balança</span><div style="font-family:var(--font-m);font-size:12px;margin-top:2px">' + d.bal + '</div></div>' +
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Operador</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + opLabel + '</div></div>' +
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Sala · Box</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + salaLabel + '</div></div>';
-        // Atualiza badge de status MP
-        var statusEl = document.getElementById('mps-popup-status');
-        if (statusEl) {
-          if (d.status === 'desv') {
-            statusEl.textContent = '⚠ Com Variância';
-            statusEl.className = 'bdg bdg-alr';
-          } else {
-            statusEl.textContent = '✓ OK';
-            statusEl.className = 'bdg bdg-ok';
-          }
-        }
         // Sempre abre na aba "Solicitar MP" (a antiga "Solicitar Mais MP" foi unificada aqui).
         // Se a MP estiver com desvio, pré-seleciona o tipo "Desvio".
         mpsPoupupAba('desvio');
@@ -3765,53 +3870,92 @@ export const SCREENS = {
 
       <div class="abox info mb14"><span class="ai">⏸</span><div>Registre aqui todas as <strong>paradas/eventos não-produtivos</strong> ocorridos durante a pesagem da OP. Estes apontamentos são consumidos pelo <strong>OEE Pesagem</strong> para cálculo do indicador de Disponibilidade.</div></div>
 
-      <!-- Apontar Nova Parada -->
+      <!-- Controle da Sala (Parar / Iniciar) -->
       <div class="card cv mb14" style="border:2px solid var(--verde)">
-        <div class="card-title">+ Apontar Nova Parada</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:12px">
-          <div style="display:flex;flex-direction:column">
-            <label class="lbl">Categoria *</label>
-            <select class="sel" id="par-cat" style="font-size:12px;padding:7px 10px">
-              <option value="">Selecione...</option>
-              <option value="manutencao">🔧 Manutenção (corretiva)</option>
-              <option value="preventiva">🛠️ Manutenção Preventiva</option>
-              <option value="setup">⚙ Setup / Limpeza</option>
-              <option value="falta-mp">📦 Falta de MP</option>
-              <option value="falta-op">👷 Falta de Operador</option>
-              <option value="qualidade">🔬 Aguardando Qualidade</option>
-              <option value="energia">⚡ Falta de Energia / Utilidades</option>
-              <option value="cipa">🛡 Reunião CIPA / Segurança</option>
-              <option value="refeicao">🍴 Refeição / Pausa Regulamentar</option>
-              <option value="ginastica">🧘 Ginástica Laboral</option>
-              <option value="treinamento">🎓 Treinamento</option>
-              <option value="outro">Outro (especificar)</option>
-            </select>
-          </div>
-          <div style="display:flex;flex-direction:column">
-            <label class="lbl">Tipo *</label>
-            <select class="sel" id="par-tipo" style="font-size:12px;padding:7px 10px">
-              <option value="planejada">Planejada (não afeta OEE)</option>
-              <option value="nao-planejada" selected>Não Planejada (afeta OEE)</option>
-            </select>
-          </div>
-          <div style="display:flex;flex-direction:column">
-            <label class="lbl">Início *</label>
-            <input class="inp" id="par-inicio" type="datetime-local" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
-          </div>
-          <div style="display:flex;flex-direction:column">
-            <label class="lbl">Fim</label>
-            <input class="inp" id="par-fim" type="datetime-local" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
-            <span style="font-size:9px;color:var(--text3);margin-top:2px">Deixe em branco se ainda em andamento</span>
-          </div>
+        <div class="card-title">Controle da Sala</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <button id="btn-par-parar" class="btn btn-p" onclick="pesAbrirParar()" style="font-size:22px;font-weight:900;letter-spacing:.06em;padding:26px 16px;border-radius:12px;border-width:2px;display:flex;align-items:center;justify-content:center;gap:10px">⏸ PARAR</button>
+          <button id="btn-par-iniciar" class="btn btn-v" onclick="pesIniciarSala()" style="font-size:22px;font-weight:900;letter-spacing:.06em;padding:26px 16px;border-radius:12px;border-width:2px;display:flex;align-items:center;justify-content:center;gap:10px">▶ INICIAR</button>
         </div>
-        <div style="margin-bottom:12px">
-          <label class="lbl">Descrição / Justificativa *</label>
-          <textarea class="txta" id="par-just" rows="2" placeholder="Ex.: balança BAL-01 apresentou descalibração; aguardando técnico Tractian..."></textarea>
-        </div>
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <button class="btn btn-md btn-v" onclick="pesAdicionarParada()">✔ Registrar Parada</button>
-          <button class="btn btn-md btn-ghost" onclick="pesLimparFormParada()">Limpar</button>
-          <div style="margin-left:auto;font-size:10px;color:var(--text3)">Cada parada gera registro de auditoria + sincroniza com OEE em tempo real.</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:12px;text-align:center">Cada parada gera registro de auditoria + sincroniza com OEE em tempo real.</div>
+      </div>
+
+      <!-- Popup: Parar Sala -->
+      <div id="modal-parar-sala" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:965;align-items:flex-start;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto">
+        <div style="background:var(--surface);border-top:4px solid var(--per);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:560px;width:94%;box-shadow:var(--sh2);margin:auto">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+            <div>
+              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--per)">⏸ Parada de Sala</div>
+              <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-top:2px">Apontar Parada</div>
+            </div>
+            <button onclick="pesFecharParar()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">O que será parado? *</label>
+              <div style="position:relative">
+                <button type="button" id="par-alvo-trigger" onclick="pesToggleAlvoMenu(event)" style="width:100%;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12px;font-family:inherit;color:var(--text);cursor:pointer;text-align:left">
+                  <span id="par-alvo-label" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🏭 SALA (ID: 878787122)</span>
+                  <span style="color:var(--text3);font-size:10px">▾</span>
+                </button>
+                <div id="par-alvo-menu" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:20;background:var(--surface);border:1px solid var(--border);border-radius:7px;box-shadow:var(--sh2);padding:6px;max-height:210px;overflow-y:auto">
+                  <label style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:5px;cursor:pointer;font-size:12px" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"><input type="checkbox" class="par-alvo-cb" value="878787122" data-nome="SALA (ID: 878787122)" checked onchange="pesAlvoChanged()"> 🏭 SALA (ID: 878787122)</label>
+                  <label style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:5px;cursor:pointer;font-size:12px" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"><input type="checkbox" class="par-alvo-cb" value="871584874" data-nome="BALANÇA 01 (ID: 871584874)" onchange="pesAlvoChanged()"> ⚖ BALANÇA 01 (ID: 871584874)</label>
+                  <label style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:5px;cursor:pointer;font-size:12px" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"><input type="checkbox" class="par-alvo-cb" value="871884874" data-nome="BALANÇA 02 (ID: 871884874)" onchange="pesAlvoChanged()"> ⚖ BALANÇA 02 (ID: 871884874)</label>
+                  <label style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:5px;cursor:pointer;font-size:12px" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"><input type="checkbox" class="par-alvo-cb" value="87178874" data-nome="BALANÇA 03 (ID: 87178874)" onchange="pesAlvoChanged()"> ⚖ BALANÇA 03 (ID: 87178874)</label>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Categoria *</label>
+              <select class="sel" id="par-cat" style="font-size:12px;padding:7px 10px">
+                <option value="">Selecione...</option>
+                <option value="manutencao">🔧 Manutenção (corretiva)</option>
+                <option value="preventiva">🛠️ Manutenção Preventiva</option>
+                <option value="setup">⚙ Setup / Limpeza</option>
+                <option value="falta-mp">📦 Falta de MP</option>
+                <option value="falta-op">👷 Falta de Operador</option>
+                <option value="qualidade">🔬 Aguardando Qualidade</option>
+                <option value="energia">⚡ Falta de Energia / Utilidades</option>
+                <option value="cipa">🛡 Reunião CIPA / Segurança</option>
+                <option value="refeicao">🍴 Refeição / Pausa Regulamentar</option>
+                <option value="ginastica">🧘 Ginástica Laboral</option>
+                <option value="treinamento">🎓 Treinamento</option>
+                <option value="outro">Outro (especificar)</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Tipo *</label>
+              <select class="sel" id="par-tipo" style="font-size:12px;padding:7px 10px">
+                <option value="planejada">Planejada (não afeta OEE)</option>
+                <option value="nao-planejada" selected>Não Planejada (afeta OEE)</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Justificativa *</label>
+              <select class="sel" id="par-just" style="font-size:12px;padding:7px 10px">
+                <option value="">Selecione...</option>
+                <option value="Aguardando manutenção corretiva">Aguardando manutenção corretiva</option>
+                <option value="Aguardando peça / insumo">Aguardando peça / insumo</option>
+                <option value="Falha de equipamento">Falha de equipamento</option>
+                <option value="Limpeza / sanitização">Limpeza / sanitização</option>
+                <option value="Setup / troca de formato">Setup / troca de formato</option>
+                <option value="Aguardando liberação da Qualidade">Aguardando liberação da Qualidade</option>
+                <option value="Falta de matéria-prima">Falta de matéria-prima</option>
+                <option value="Falta de operador">Falta de operador</option>
+                <option value="Pausa regulamentar / refeição">Pausa regulamentar / refeição</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Observação <span style="font-weight:400;color:var(--text3);font-size:9px">(opcional)</span></label>
+              <textarea class="txta" id="par-obs" rows="2" placeholder="Detalhes adicionais sobre a parada (opcional)…"></textarea>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;margin-top:14px;border-top:1px solid var(--border)">
+            <button class="btn btn-md btn-ghost" onclick="pesFecharParar()">Cancelar</button>
+            <button class="btn btn-md btn-p" onclick="pesConfirmarParar()">⏸ Confirmar Parada</button>
+          </div>
         </div>
       </div>
 
@@ -3939,43 +4083,396 @@ export const SCREENS = {
       </div>
 
       <script>
-      // Pré-preenche o início com data/hora atual ao abrir a tela
-      setTimeout(function(){
-        var ini = document.getElementById('par-inicio');
-        if (ini && !ini.value) {
-          var n = new Date();
-          var iso = n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0') + '-' + String(n.getDate()).padStart(2,'0') + 'T' + String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
-          ini.value = iso;
-        }
-      }, 50);
+      // Hora atual formatada como "DD/MM HH:MM"
+      function pesParAgora() {
+        var n = new Date();
+        return String(n.getDate()).padStart(2,'0') + '/' + String(n.getMonth()+1).padStart(2,'0') + ' ' +
+               String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+      }
 
-      function pesAdicionarParada() {
+      // Atualiza o estado (habilitado/desabilitado) dos botões conforme window.PES_SALA_PARADA
+      function pesRenderStatusParada() {
+        var parado = !!window.PES_SALA_PARADA;
+        var bParar = document.getElementById('btn-par-parar');
+        var bIniciar = document.getElementById('btn-par-iniciar');
+        if (!bParar && !bIniciar) return;
+        if (bParar) { bParar.disabled = parado; bParar.style.opacity = parado ? '.5' : '1'; bParar.style.cursor = parado ? 'not-allowed' : 'pointer'; }
+        if (bIniciar) { bIniciar.disabled = !parado; bIniciar.style.opacity = parado ? '1' : '.5'; bIniciar.style.cursor = parado ? 'pointer' : 'not-allowed'; }
+      }
+
+      // Notifica o sub-navbar (React) sobre a mudança de status da sala
+      function pesNotificarStatusParada(parada) {
+        try { window.dispatchEvent(new CustomEvent('pes-sala-status', { detail: { parada: !!parada } })); } catch (e) {}
+      }
+
+      // ── Dropdown multi-seleção (checkbox) de "O que será parado?" ──
+      function pesGetAlvosSel() {
+        return Array.prototype.filter.call(document.querySelectorAll('#par-alvo-menu .par-alvo-cb'), function(cb){ return cb.checked; })
+          .map(function(cb){ return { value: cb.value, nome: cb.getAttribute('data-nome') }; });
+      }
+      function pesAlvoChanged() {
+        var lbl = document.getElementById('par-alvo-label');
+        if (!lbl) return;
+        var sel = pesGetAlvosSel();
+        if (!sel.length) { lbl.textContent = 'Selecione...'; lbl.style.color = 'var(--text3)'; }
+        else { lbl.textContent = sel.map(function(s){ return s.nome; }).join(', '); lbl.style.color = ''; }
+      }
+      function pesToggleAlvoMenu(ev) {
+        if (ev) ev.stopPropagation();
+        var m = document.getElementById('par-alvo-menu');
+        if (!m) return;
+        m.style.display = (!m.style.display || m.style.display === 'none') ? 'block' : 'none';
+      }
+      // Fecha o menu ao clicar fora (registra só uma vez)
+      if (!window.__pesAlvoMenuBound) {
+        window.__pesAlvoMenuBound = true;
+        document.addEventListener('click', function(e){
+          var menu = document.getElementById('par-alvo-menu');
+          var trig = document.getElementById('par-alvo-trigger');
+          if (!menu || menu.style.display === 'none') return;
+          if (menu.contains(e.target) || (trig && trig.contains(e.target))) return;
+          menu.style.display = 'none';
+        });
+      }
+
+      function pesAbrirParar() {
+        if (window.PES_SALA_PARADA) { alert('⚠ A sala já está parada. Use Iniciar para retomá-la.'); return; }
+        var m = document.getElementById('modal-parar-sala');
+        if (m) m.style.display = 'flex';
+      }
+      function pesFecharParar() {
+        var m = document.getElementById('modal-parar-sala');
+        if (m) m.style.display = 'none';
+      }
+
+      function pesConfirmarParar() {
         var cat = document.getElementById('par-cat');
         var tipo = document.getElementById('par-tipo');
-        var ini = document.getElementById('par-inicio');
-        var fim = document.getElementById('par-fim');
         var just = document.getElementById('par-just');
+        var obs = document.getElementById('par-obs');
+        var alvosSel = pesGetAlvosSel();
+        if (!alvosSel.length) { alert('⚠ Selecione o que será parado'); return; }
         if (!cat.value) { alert('⚠ Selecione a categoria'); return; }
-        if (!ini.value) { alert('⚠ Informe a data/hora de início'); return; }
-        if (!just.value.trim()) { alert('⚠ A justificativa é obrigatória'); return; }
-        var emAndamento = !fim.value;
-        var afetaOee = tipo.value === 'nao-planejada';
-        var protocolo = 'PAR-' + Date.now().toString().slice(-6);
-        alert('✔ Parada registrada!\\n\\nProtocolo: ' + protocolo + '\\nCategoria: ' + cat.options[cat.selectedIndex].text + '\\nStatus: ' + (emAndamento ? 'EM ABERTO (em andamento)' : 'FECHADA') + '\\nAfeta OEE: ' + (afetaOee ? 'SIM' : 'NÃO') + '\\n\\nSincronizando com OEE Pesagem...');
-        pesLimparFormParada();
+        if (!just.value) { alert('⚠ Selecione a justificativa'); return; }
+        var alvosTxt = alvosSel.map(function(o){ return o.nome; });
+        // Regra: a SALA (ID 878787122) é o que de fato "para" o sistema.
+        // Equipamentos (balanças) sozinhos só geram registro, sem afetar nada.
+        var salaIncluida = alvosSel.some(function(o){ return o.value === '878787122'; });
+        var parada = {
+          alvos: alvosTxt,
+          alvo: alvosTxt.join(', '),
+          categoria: cat.options[cat.selectedIndex].text,
+          tipo: tipo.value,
+          justificativa: just.options[just.selectedIndex].text,
+          observacao: obs ? obs.value.trim() : '',
+          inicio: pesParAgora()
+        };
+        pesParAddHistorico(parada);
+        if (salaIncluida) {
+          window.PES_SALA_PARADA = true;
+          window.PES_PARADA_ATUAL = parada;
+          pesNotificarStatusParada(true);
+        }
+        pesFecharParar();
+        pesRenderStatusParada();
+        // reset: deixa só a SALA marcada e fecha o menu
+        Array.prototype.forEach.call(document.querySelectorAll('#par-alvo-menu .par-alvo-cb'), function(cb){ cb.checked = (cb.value === '878787122'); });
+        var menu = document.getElementById('par-alvo-menu'); if (menu) menu.style.display = 'none';
+        pesAlvoChanged();
+        cat.value = ''; just.value = ''; if (obs) obs.value = '';
       }
 
-      function pesLimparFormParada() {
-        document.getElementById('par-cat').value = '';
-        document.getElementById('par-just').value = '';
-        document.getElementById('par-fim').value = '';
-        var ini = document.getElementById('par-inicio');
-        if (ini) {
-          var n = new Date();
-          var iso = n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0') + '-' + String(n.getDate()).padStart(2,'0') + 'T' + String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
-          ini.value = iso;
-        }
+      function pesIniciarSala() {
+        if (!window.PES_SALA_PARADA) { alert('ℹ A sala já está em operação.'); return; }
+        window.PES_SALA_PARADA = false;
+        window.PES_PARADA_ATUAL = null;
+        pesParFecharHistorico(pesParAgora());
+        pesNotificarStatusParada(false);
+        pesRenderStatusParada();
       }
+
+      // Prepend de uma parada "em aberto" no histórico
+      function pesParAddHistorico(info) {
+        var tb = document.querySelector('#par-tabela tbody');
+        if (!tb) return;
+        var afeta = info.tipo === 'nao-planejada';
+        var tr = document.createElement('tr');
+        tr.setAttribute('data-parada-aberta', '1');
+        tr.style.background = 'var(--alr-p)';
+        tr.innerHTML =
+          '<td class="mono" style="color:var(--alr);font-weight:800">novo</td>' +
+          '<td>' + info.categoria + '</td>' +
+          '<td><span class="bdg ' + (afeta ? 'bdg-per' : 'bdg-ok') + '" style="font-size:9px">' + (afeta ? 'Não Planejada' : 'Planejada') + '</span></td>' +
+          '<td class="mono" style="font-size:10px">' + info.inicio + '</td>' +
+          '<td class="mono" style="font-size:10px;color:var(--alr);font-weight:700">— em andamento</td>' +
+          '<td class="mono" style="color:var(--alr);font-weight:700">0+ min</td>' +
+          '<td class="mono" style="font-size:10px"><strong>—</strong></td>' +
+          '<td style="font-size:11px">' + (info.alvos || [info.alvo || '']).map(function(a){ return '<span class="bdg bdg-ney" style="font-size:8px;margin-right:4px">' + a + '</span>'; }).join('') + info.justificativa + '</td>' +
+          '<td style="font-size:11px">J. Santos</td>' +
+          '<td><span class="bdg ' + (afeta ? 'bdg-per' : 'bdg-ney') + '" style="font-size:9px">' + (afeta ? 'SIM' : 'NÃO') + '</span></td>' +
+          '<td><span class="bdg bdg-alr">⏳ Em Aberto</span></td>' +
+          '<td></td>';
+        tb.insertBefore(tr, tb.firstChild);
+      }
+
+      // Fecha a parada "em aberto" mais recente
+      function pesParFecharHistorico(fim) {
+        var tr = document.querySelector('#par-tabela tbody tr[data-parada-aberta="1"]');
+        if (!tr) return;
+        tr.removeAttribute('data-parada-aberta');
+        tr.style.background = '';
+        var tds = tr.children;
+        if (tds[4]) { tds[4].textContent = fim; tds[4].style.color = ''; tds[4].style.fontWeight = ''; }
+        if (tds[10]) { tds[10].innerHTML = '<span class="bdg bdg-ok">✓ Fechada</span>'; }
+      }
+
+      setTimeout(pesRenderStatusParada, 50);
+      </script>
+    `,
+  "manut-paradas": `      <div class="page-header">
+        <div><div class="ph-eyebrow">Manutenção · MF5</div><div class="ph-title">Paradas — Estrutura Organizacional</div></div>
+      </div>
+
+      <div class="abox info mb14"><span class="ai">⏸</span><div>Navegue do nível mais alto (<strong>Facility</strong>) até o mais baixo (<strong>Equipamento</strong>). Em <strong>Workcenters</strong> e <strong>Equipamentos</strong> é possível <strong>ativar ou encerrar uma parada</strong>.</div></div>
+
+      <div class="card"><div id="manut-root"></div></div>
+
+      <!-- Popup: Ativar Parada (workcenter / equipamento) -->
+      <div id="modal-manut-parar" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:965;align-items:flex-start;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto">
+        <div style="background:var(--surface);border-top:4px solid var(--per);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:520px;width:94%;box-shadow:var(--sh2);margin:auto">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+            <div>
+              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--per)">⏸ Ativar Parada</div>
+              <div id="manut-parar-nome" style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-top:2px">—</div>
+            </div>
+            <button onclick="manutFecharParar()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Categoria *</label>
+              <select class="sel" id="manut-cat" style="font-size:12px;padding:7px 10px">
+                <option value="">Selecione...</option>
+                <option value="manutencao">🔧 Manutenção (corretiva)</option>
+                <option value="preventiva">🛠️ Manutenção Preventiva</option>
+                <option value="setup">⚙ Setup / Limpeza</option>
+                <option value="falta-op">👷 Falta de Operador</option>
+                <option value="qualidade">🔬 Aguardando Qualidade</option>
+                <option value="energia">⚡ Falta de Energia / Utilidades</option>
+                <option value="outro">Outro (especificar)</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Tipo *</label>
+              <select class="sel" id="manut-tipo" style="font-size:12px;padding:7px 10px">
+                <option value="planejada">Planejada</option>
+                <option value="nao-planejada" selected>Não Planejada</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Justificativa *</label>
+              <select class="sel" id="manut-just" style="font-size:12px;padding:7px 10px">
+                <option value="">Selecione...</option>
+                <option value="Aguardando manutenção corretiva">Aguardando manutenção corretiva</option>
+                <option value="Aguardando peça / insumo">Aguardando peça / insumo</option>
+                <option value="Falha de equipamento">Falha de equipamento</option>
+                <option value="Limpeza / sanitização">Limpeza / sanitização</option>
+                <option value="Setup / troca de formato">Setup / troca de formato</option>
+                <option value="Falta de operador">Falta de operador</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Observação <span style="font-weight:400;color:var(--text3);font-size:9px">(opcional)</span></label>
+              <textarea class="txta" id="manut-obs" rows="2" placeholder="Detalhes adicionais sobre a parada (opcional)…"></textarea>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;margin-top:14px;border-top:1px solid var(--border)">
+            <button class="btn btn-md btn-ghost" onclick="manutFecharParar()">Cancelar</button>
+            <button class="btn btn-md btn-p" onclick="manutConfirmarParar()">⏸ Confirmar Parada</button>
+          </div>
+        </div>
+      </div>
+
+      <script>
+      // Estrutura organizacional: Facility › Production Line › Workcenter › Equipamento
+      var MANUT_DATA = {
+        'Pesagem': {
+          'MD1': { 'Pesagem Central MD1': ['Balança BAL-01','Balança BAL-02'], 'Dosagem MD1': ['Dosador DOS-01','Esteira EST-01'] },
+          'MD2': { 'Pesagem Central MD2': ['Balança BAL-03','Balança BAL-04'], 'Dosagem MD2': ['Dosador DOS-02'] }
+        },
+        'Fabricação': {
+          'Production Line A': { 'Mistura A': ['Reator REA-01','Agitador AGI-01'], 'Aquecimento A': ['Trocador de Calor TRC-01'] },
+          'Production Line B': { 'Mistura B': ['Reator REA-02','Agitador AGI-02'], 'Envase Granel B': ['Bomba BMB-01'] },
+          'Production Line C': { 'Mistura C': ['Reator REA-03'] }
+        },
+        'Produção': {
+          'Production Line A': { 'Envase A': ['Envasadora ENV-01','Rotuladora ROT-01'], 'Embalagem A': ['Encartuchadora ENC-01'] },
+          'Production Line B': { 'Envase B': ['Envasadora ENV-02','Rotuladora ROT-02'] },
+          'Production Line C': { 'Envase C': ['Envasadora ENV-03'] },
+          'Production Line D': { 'Embalagem D': ['Encaixotadora CX-01','Seladora SEL-01'] },
+          'Production Line E': { 'Paletização E': ['Paletizadora PAL-01'] }
+        }
+      };
+      window.MANUT_PARADAS = window.MANUT_PARADAS || {};
+      var MANUT_EXP = {};      // nós expandidos (key -> true)
+      var MANUT_SEL = null;    // nó selecionado (key)
+      var MANUT_PARA = null;   // alvo do popup de parada (key)
+      var MANUT_FILTRO = '';   // termo de busca da árvore
+
+      function manutFacilities() { return Object.keys(MANUT_DATA); }
+      function manutAgora() { var n = new Date(); return String(n.getDate()).padStart(2,'0') + '/' + String(n.getMonth()+1).padStart(2,'0') + ' ' + String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0'); }
+
+      function manutParts(key) { return key ? key.split('|') : []; }
+      function manutNivel(key) { return manutParts(key).length; }
+      function manutNome(key) { var p = manutParts(key); return p[p.length - 1]; }
+      function manutIconNivel(n) { return n === 1 ? '🏭' : n === 2 ? '🏗️' : n === 3 ? '🏬' : '⚙'; }
+      function manutLabelNivel(n) { return n === 1 ? 'Facility' : n === 2 ? 'Production Line' : n === 3 ? 'Workcenter' : 'Equipamento'; }
+      function manutPodeParar(key) { var n = manutNivel(key); return n === 3 || n === 4; }
+      function manutTemFilhos(key) { return manutNivel(key) < 4; }
+      function manutFilhos(key) {
+        var p = manutParts(key);
+        if (p.length === 1) return Object.keys(MANUT_DATA[p[0]]).map(function(x){ return key + '|' + x; });
+        if (p.length === 2) return Object.keys(MANUT_DATA[p[0]][p[1]]).map(function(x){ return key + '|' + x; });
+        if (p.length === 3) return MANUT_DATA[p[0]][p[1]][p[2]].map(function(x){ return key + '|' + x; });
+        return [];
+      }
+
+      function manutSel(key) { MANUT_SEL = key; if (manutTemFilhos(key)) MANUT_EXP[key] = true; manutRender(); }
+      function manutToggle(key) { MANUT_EXP[key] = !MANUT_EXP[key]; manutRender(); }
+
+      // Filtro da árvore: casa o termo no nome do nó ou em qualquer descendente.
+      function manutMatch(nome, q) { return nome.toLowerCase().indexOf(q) !== -1; }
+      function manutTreeMatch(key, q) {
+        if (manutMatch(manutNome(key), q)) return true;
+        if (!manutTemFilhos(key)) return false;
+        return manutFilhos(key).some(function(k) { return manutTreeMatch(k, q); });
+      }
+      function manutFiltrar(v) {
+        MANUT_FILTRO = v || '';
+        manutRender();
+        var el = document.getElementById('manut-filtro');
+        if (el) { el.focus(); var L = el.value.length; try { el.setSelectionRange(L, L); } catch (e) {} }
+      }
+
+      function manutPararSel() {
+        var key = MANUT_SEL;
+        if (key && manutPodeParar(key) && !window.MANUT_PARADAS[key]) manutAbrirParar(key);
+      }
+      function manutIniciarSel() {
+        var key = MANUT_SEL;
+        if (key && manutPodeParar(key) && window.MANUT_PARADAS[key]) manutIniciar(key);
+      }
+      // Status agregado: parado se o próprio nó ou algum descendente estiver parado.
+      function manutNodeParado(key) {
+        if (window.MANUT_PARADAS[key]) return true;
+        var pref = key + '|';
+        return Object.keys(window.MANUT_PARADAS).some(function(k){ return k.indexOf(pref) === 0; });
+      }
+      function manutAbrirParar(key) {
+        MANUT_PARA = key;
+        var el = document.getElementById('manut-parar-nome');
+        if (el) el.textContent = manutLabelNivel(manutNivel(key)) + ' · ' + manutNome(key);
+        var m = document.getElementById('modal-manut-parar'); if (m) m.style.display = 'flex';
+      }
+      function manutFecharParar() { var m = document.getElementById('modal-manut-parar'); if (m) m.style.display = 'none'; }
+      function manutConfirmarParar() {
+        if (!MANUT_PARA) return;
+        var cat = document.getElementById('manut-cat');
+        var tipo = document.getElementById('manut-tipo');
+        var just = document.getElementById('manut-just');
+        var obs = document.getElementById('manut-obs');
+        if (!cat.value) { alert('⚠ Selecione a categoria'); return; }
+        if (!just.value) { alert('⚠ Selecione a justificativa'); return; }
+        window.MANUT_PARADAS[MANUT_PARA] = {
+          categoria: cat.options[cat.selectedIndex].text,
+          tipo: tipo.value,
+          justificativa: just.options[just.selectedIndex].text,
+          observacao: obs ? obs.value.trim() : '',
+          inicio: manutAgora()
+        };
+        manutFecharParar();
+        cat.value = ''; just.value = ''; if (obs) obs.value = '';
+        manutRender();
+      }
+      function manutIniciar(key) { delete window.MANUT_PARADAS[key]; manutRender(); }
+
+      // Nó recursivo da árvore (esquerda)
+      function manutTreeNode(key, depth) {
+        var q = (MANUT_FILTRO || '').trim().toLowerCase();
+        if (q && !manutTreeMatch(key, q)) return '';
+        var nivel = manutNivel(key);
+        var nome = manutNome(key);
+        var tem = manutTemFilhos(key);
+        var exp = !!MANUT_EXP[key];
+        if (q && tem) exp = true; // auto-expande os ramos com correspondência
+        var direct = q && manutMatch(nome, q);
+        var sel = (MANUT_SEL === key);
+        var parado = !!window.MANUT_PARADAS[key];
+        var chevron = tem
+          ? '<span onclick="event.stopPropagation();manutToggle(\\'' + key + '\\')" style="cursor:pointer;width:16px;flex-shrink:0;text-align:center;color:var(--text3);font-size:10px">' + (exp ? '▾' : '▸') + '</span>'
+          : '<span style="width:16px;flex-shrink:0"></span>';
+        // Status (bolinha) só nos níveis 3 (Workcenter) e 4 (Equipamento).
+        var dot = '';
+        if (manutPodeParar(key)) {
+          dot = parado
+            ? '<span title="Parado" style="width:9px;height:9px;border-radius:50%;background:var(--per);flex-shrink:0;animation:pesSubmenuPulse 1.2s ease-in-out infinite"></span>'
+            : '<span title="Operando" style="width:9px;height:9px;border-radius:50%;background:var(--ok);flex-shrink:0"></span>';
+        }
+        var nomeCor = parado ? 'var(--per)' : (sel ? 'var(--verde-esc)' : 'var(--text)');
+        var row = '<div onclick="manutSel(\\'' + key + '\\')" style="cursor:pointer;display:flex;align-items:center;gap:6px;padding:5px 8px;padding-left:' + (8 + depth * 16) + 'px;border-radius:6px;' + (sel ? 'background:var(--verde-dim);box-shadow:inset 3px 0 0 var(--verde);' : '') + '">' +
+          chevron +
+          '<span style="font-size:15px;flex-shrink:0">' + manutIconNivel(nivel) + '</span>' +
+          '<span style="flex:1;min-width:0;font-size:12px;font-weight:' + (direct || sel ? '700' : '500') + ';color:' + nomeCor + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis' + (direct ? ';background:var(--ouro-dim);border-radius:3px;padding:0 4px' : '') + '">' + nome + '</span>' +
+          dot +
+        '</div>';
+        var filhos = '';
+        if (tem && exp) filhos = manutFilhos(key).map(function(k){ return manutTreeNode(k, depth + 1); }).join('');
+        return row + filhos;
+      }
+
+      // Painel de detalhes (direita)
+      function manutPainel() {
+        var key = MANUT_SEL;
+        if (!key) {
+          return '<div style="border:1px dashed var(--border);border-radius:10px;padding:48px 24px;text-align:center;color:var(--text3);background:var(--surface)">' +
+            '<div style="font-size:42px;margin-bottom:10px">👈</div>' +
+            '<div style="font-size:13px">Selecione um item na árvore para ver os detalhes e ativar paradas.</div>' +
+          '</div>';
+        }
+        var nivel = manutNivel(key);
+        var parts = manutParts(key);
+        var parado = !!window.MANUT_PARADAS[key];
+        var info = window.MANUT_PARADAS[key] || {};
+        var podePara = manutPodeParar(key);
+        var nFilhos = manutTemFilhos(key) ? manutFilhos(key).length : 0;
+        var acao = podePara
+          ? '<div style="display:flex;gap:12px">' +
+              '<button onclick="manutPararSel()" class="btn btn-md btn-p" ' + (parado ? 'disabled' : '') + ' style="flex:1;font-size:15px;font-weight:800;padding:14px 18px;' + (parado ? 'opacity:.45;cursor:not-allowed' : '') + '">⏸ Parar</button>' +
+              '<button onclick="manutIniciarSel()" class="btn btn-md btn-v" ' + (parado ? '' : 'disabled') + ' style="flex:1;font-size:15px;font-weight:800;padding:14px 18px;' + (parado ? '' : 'opacity:.45;cursor:not-allowed') + '">▶ Iniciar</button>' +
+            '</div>'
+          : '<div class="abox info" style="margin-bottom:0"><span class="ai">ℹ️</span><div>Paradas só podem ser ativadas em <strong>Workcenters</strong> e <strong>Equipamentos</strong>. Expanda a árvore até esses níveis.</div></div>';
+        return '<div style="border:1px solid ' + (parado ? 'var(--per)' : 'var(--border)') + ';border-top:4px solid ' + (parado ? 'var(--per)' : 'var(--verde)') + ';border-radius:10px;background:var(--surface);box-shadow:var(--sh);padding:20px 22px' + (parado ? ';animation:pesSubmenuPulse 1.2s ease-in-out infinite' : '') + '">' +
+          '<div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro)">Nível ' + nivel + ' · ' + manutLabelNivel(nivel) + '</div>' +
+          '<div style="display:flex;align-items:center;gap:10px;margin:4px 0 2px"><span style="font-size:28px">' + manutIconNivel(nivel) + '</span><span style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--verde-esc)">' + manutNome(key) + '</span></div>' +
+          '<div style="font-size:11px;color:var(--text3);margin-bottom:16px">' + parts.join(' › ') + '</div>' +
+          acao +
+        '</div>';
+      }
+
+      function manutRender() {
+        var root = document.getElementById('manut-root'); if (!root) return;
+        var tree = manutFacilities().map(function(f){ return manutTreeNode(f, 0); }).join('');
+        root.innerHTML = '<div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">' +
+          '<div style="flex:0 0 340px;min-width:280px;max-width:100%;border:1px solid var(--border);border-radius:10px;background:var(--surface);box-shadow:var(--sh);overflow:hidden">' +
+            '<div style="background:var(--surface2);padding:10px 14px;border-bottom:1px solid var(--border);font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Estrutura Organizacional</div>' +
+            '<div style="padding:10px 12px;border-bottom:1px solid var(--border)"><input id="manut-filtro" class="inp" placeholder="🔍 Filtrar…" autocomplete="off" value="' + (MANUT_FILTRO || '').split('"').join('&quot;') + '" oninput="manutFiltrar(this.value)" style="font-size:12px;width:100%;box-sizing:border-box"></div>' +
+            '<div style="padding:8px;max-height:600px;overflow:auto">' + tree + '</div>' +
+          '</div>' +
+          '<div style="flex:1;min-width:280px">' + manutPainel() + '</div>' +
+        '</div>';
+      }
+
+      setTimeout(manutRender, 30);
       </script>
     `,
   "pes-ordens": `      <div class="page-header">

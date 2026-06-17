@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import LegacyScreen from './LegacyScreen.jsx';
 
@@ -80,8 +81,26 @@ export default function PesOrdemSubScreen({ id }) {
 }
 
 function SubNavbar({ op, idAtual, navigate }) {
+  // Status de parada da sala — compartilhado via window + CustomEvent,
+  // disparado pela tela legada pes-paradas (Parar / Iniciar).
+  const [paradaSala, setParadaSala] = useState(
+    () => typeof window !== 'undefined' && !!window.PES_SALA_PARADA
+  );
+
+  useEffect(() => {
+    const handler = (e) => {
+      const parada = e && e.detail ? !!e.detail.parada : !!window.PES_SALA_PARADA;
+      setParadaSala(parada);
+    };
+    window.addEventListener('pes-sala-status', handler);
+    // Sincroniza ao montar (status pode ter mudado em outra sub-tela)
+    setParadaSala(!!window.PES_SALA_PARADA);
+    return () => window.removeEventListener('pes-sala-status', handler);
+  }, []);
+
   return (
     <div
+      className={paradaSala ? 'pes-submenu-parado' : undefined}
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -131,6 +150,12 @@ function SubNavbar({ op, idAtual, navigate }) {
         </span>
         <span className="mono" style={{ fontWeight: 800, color: 'var(--verde)' }}>{op}</span>
       </div>
+
+      {paradaSala && (
+        <span className="pes-sala-parada-badge" title="A sala está parada — registre a retomada em Paradas">
+          ⏸ SALA PARADA
+        </span>
+      )}
 
       <div
         style={{

@@ -66,6 +66,14 @@ export const MODULES = [
     ],
   },
   {
+    id: 'mod-manut',
+    label: 'Manutencao',
+    icon: '🔧',
+    items: [
+      { id: 'manut-paradas', label: '⏸️ Paradas' },
+    ],
+  },
+  {
     id: 'mod-rel',
     label: 'Relatorios',
     icon: '📈',
