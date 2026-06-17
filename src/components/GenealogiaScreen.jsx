@@ -124,6 +124,13 @@ export default function GenealogiaScreen() {
     });
   };
 
+  // Anexos por módulo (aba de fase). Chave = id da fase.
+  const [anexos, setAnexos] = useState({});
+  const addAnexo = (nome) =>
+    setAnexos((s) => ({ ...s, [faseAtiva]: [...(s[faseAtiva] || []), { nome }] }));
+  const removeAnexo = (i) =>
+    setAnexos((s) => ({ ...s, [faseAtiva]: (s[faseAtiva] || []).filter((_, idx) => idx !== i) }));
+
   return (
     <div className="screen active" style={{ display: 'block' }}>
       {/* ── Cabeçalho da página ─────────────────────────────── */}
@@ -211,7 +218,7 @@ export default function GenealogiaScreen() {
       {/* ── Cadeia genealógica ──────────────────────────────── */}
       <div style={{ position: 'relative' }}>
         {/* linha vertical de fundo conectando os nós */}
-        {cadeiaFiltrada.length > 1 && (
+        {cadeiaFiltrada.length >= 1 && (
           <div
             aria-hidden
             style={{
@@ -227,27 +234,29 @@ export default function GenealogiaScreen() {
           />
         )}
 
-        {cadeiaFiltrada.length === 0 ? (
-          <div style={{
-            padding: 30, textAlign: 'center', color: 'var(--text3)',
-            background: 'var(--surface2)', border: '1px dashed var(--border)',
-            borderRadius: 6, fontSize: 12,
-          }}>
-            Nenhum nó da cadeia para esta fase neste dossiê.
-          </div>
-        ) : (
-          cadeiaFiltrada.map((no, idx) => (
-            <NoCadeia
-              key={no.id}
-              no={no}
-              ordem={idx + 1}
-              total={cadeiaFiltrada.length}
-              expandido={expandidos.has(no.id)}
-              onToggle={() => toggle(no.id)}
-              dossie={DOSSIE}
-            />
-          ))
-        )}
+        {cadeiaFiltrada.map((no, idx) => (
+          <NoCadeia
+            key={no.id}
+            no={no}
+            ordem={idx + 1}
+            total={cadeiaFiltrada.length + 1}
+            expandido={expandidos.has(no.id)}
+            onToggle={() => toggle(no.id)}
+            dossie={DOSSIE}
+          />
+        ))}
+
+        {/* ── Etapa final: Anexar Documento (em todos os módulos) ── */}
+        <AnexarNo
+          ordem={cadeiaFiltrada.length + 1}
+          total={cadeiaFiltrada.length + 1}
+          faseLabel={FASES.find((f) => f.id === faseAtiva)?.label || ''}
+          lista={anexos[faseAtiva] || []}
+          expandido={expandidos.has('anexar')}
+          onToggle={() => toggle('anexar')}
+          onAdd={addAnexo}
+          onRemove={removeAnexo}
+        />
       </div>
     </div>
   );
@@ -256,6 +265,111 @@ export default function GenealogiaScreen() {
 /* ─────────────────────────────────────────────────────────────
    Componentes auxiliares
 ───────────────────────────────────────────────────────────── */
+
+/* Etapa "Anexar Documento" — nó final da cadeia, no mesmo padrão visual
+   do NoCadeia. Aparece em todos os módulos (abas de fase). Permite anexar
+   documentos (simulado via input file) e removê-los. */
+function AnexarNo({ ordem, total, faseLabel, lista, expandido, onToggle, onAdd, onRemove }) {
+  const cores = COR_VARS.inf;
+  return (
+    <div style={{ position: 'relative', marginBottom: 14, paddingLeft: 70, zIndex: 1 }}>
+      {/* Marcador na linha (círculo) */}
+      <div
+        style={{
+          position: 'absolute', left: 12, top: 12, width: 38, height: 38,
+          borderRadius: '50%', background: cores.bg, border: `3px solid ${cores.fg}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 18, boxShadow: 'var(--sh)', zIndex: 2,
+        }}
+        title={`Etapa ${ordem} de ${total}`}
+      >
+        📎
+      </div>
+
+      {/* Card */}
+      <div
+        className="card"
+        style={{
+          background: 'var(--surface)', border: `2px solid ${cores.bd}`,
+          borderLeft: `5px solid ${cores.fg}`, padding: 0, overflow: 'hidden',
+        }}
+      >
+        {/* Header clicável */}
+        <button
+          type="button"
+          onClick={onToggle}
+          style={{
+            width: '100%', background: 'transparent', border: 'none',
+            padding: '14px 18px', cursor: 'pointer', textAlign: 'left',
+            display: 'flex', alignItems: 'center', gap: 12, font: 'inherit',
+          }}
+        >
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'baseline', marginBottom: 2 }}>
+              <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.16em', textTransform: 'uppercase', color: cores.fg, fontFamily: 'var(--font-m)' }}>
+                Etapa {ordem}/{total}
+              </span>
+              <span style={{ fontFamily: 'var(--font-d)', fontSize: 16, fontWeight: 700, color: 'var(--verde-esc)' }}>Anexar Documento</span>
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--text2)' }}>
+              Documentos do módulo {faseLabel}{lista.length ? ` · ${lista.length} anexo(s)` : ''}
+            </div>
+          </div>
+          <span style={{ fontSize: 18, color: cores.fg, fontWeight: 900, transform: expandido ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform .18s', minWidth: 18 }}>›</span>
+        </button>
+
+        {/* Body expandido */}
+        {expandido && (
+          <div style={{ padding: '0 18px 16px', borderTop: `1px solid ${cores.bd}` }}>
+            <div style={{ marginTop: 12 }}>
+              {lista.length === 0 ? (
+                <div style={{ fontSize: 12, color: 'var(--text3)', marginBottom: 12 }}>
+                  Nenhum documento anexado neste módulo.
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
+                  {lista.map((a, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        padding: '8px 12px', background: 'var(--surface2)',
+                        border: '1px solid var(--border)', borderRadius: 6, fontSize: 12,
+                      }}
+                    >
+                      <span style={{ fontSize: 16 }}>📄</span>
+                      <span style={{ flex: 1, wordBreak: 'break-all' }}>{a.nome}</span>
+                      <button
+                        type="button"
+                        onClick={() => onRemove(i)}
+                        title="Remover anexo"
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--per)', fontSize: 13, lineHeight: 1, padding: '2px 4px' }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <label className="btn btn-sm btn-v" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                📎 Anexar documento
+                <input
+                  type="file"
+                  style={{ display: 'none' }}
+                  onChange={(e) => {
+                    const f = e.target.files && e.target.files[0];
+                    if (f) onAdd(f.name);
+                    e.target.value = '';
+                  }}
+                />
+              </label>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 /* Timeline horizontal mostrando o ciclo de vida da OF (datas) */
 function CronogramaTimeline({ cronograma }) {
