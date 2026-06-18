@@ -7192,6 +7192,37 @@ stp.addEventListener(<span class="tk-str">'stepclick'</span>, e =&gt; {
           sem cursor pointer e não emitem nenhum evento de click.
         </p>
 
+        <!-- ===== Estado de alerta (sala parada) ===== -->
+        <h2 class="gd-h2">Estado de alerta (ex.: sala parada)</h2>
+        <p class="gd-lead">
+          Com <code>alertpulse</code>, o submenu inteiro pulsa na <code>alertcolor</code> e a borda
+          assume essa cor. Com <code>alertlabel</code>, aparece um botão de aviso piscando ao lado
+          do chip de contexto (ex.: <strong>SALA PARADA</strong>). Combine os dois para sinalizar
+          uma sala parada de forma bem destacada.
+        </p>
+        <div class="gd-demo">
+          <granado-submenu-pesagem
+            contextlabel="OP Ativa"
+            contextvalue="OP-2026-0416"
+            value="pes-mps"
+            alertpulse
+            alertlabel="SALA PARADA"
+            alertcolor="#8C1A1A"
+            items='[{"key":"pes-cockpit","label":"Cockpit","icon":"🎯"},{"key":"pes-mps","label":"MPs","icon":"⚖️"},{"key":"pes-checklist","label":"Checklist","icon":"📋"},{"key":"pes-gaiola","label":"Gaiola","icon":"📦"},{"key":"pes-paradas","label":"Paradas","icon":"⏸️"}]'>
+          </granado-submenu-pesagem>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-submenu-pesagem</span>
+    <span class="tk-attr">contextlabel</span>=<span class="tk-str">"OP Ativa"</span> <span class="tk-attr">contextvalue</span>=<span class="tk-str">"OP-2026-0416"</span>
+    <span class="tk-attr">value</span>=<span class="tk-str">"pes-mps"</span>
+    <span class="tk-attr">alertpulse</span>
+    <span class="tk-attr">alertlabel</span>=<span class="tk-str">"SALA PARADA"</span>
+    <span class="tk-attr">alertcolor</span>=<span class="tk-str">"#8C1A1A"</span>
+    <span class="tk-attr">items</span>=<span class="tk-str">'[ ... ]'</span><span class="tk-tag">&gt;&lt;/granado-submenu-pesagem&gt;</span></pre>
+        <p class="gd-lead">
+          Para ligar/desligar em runtime: <code>el.setAttribute('alertpulse','')</code> /
+          <code>el.removeAttribute('alertpulse')</code> e <code>el.setAttribute('alertlabel','SALA PARADA')</code>.
+        </p>
+
         <!-- ===== Paleta de cores ===== -->
         <h2 class="gd-h2">Paleta de cores customizada</h2>
         <p class="gd-lead">
@@ -7348,6 +7379,31 @@ sm.addEventListener(<span class="tk-str">'backclick'</span>, () =&gt; history.ba
               <td class="col-type">string (cor CSS)</td>
               <td class="col-default">"#E5DDC8"</td>
               <td class="col-desc">Cor da borda do container e dos itens inativos.</td>
+            </tr>
+            <tr>
+              <td class="col-name">alertpulse</td>
+              <td class="col-type">boolean (presença)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">
+                Quando presente, <strong>anima o submenu inteiro</strong> (pulse) e troca a
+                borda para a <code>alertcolor</code>. Use para sinalizar, por ex., sala parada.
+                A animação usa Web Animations API (sem stylesheet injetado).
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">alertlabel</td>
+              <td class="col-type">string</td>
+              <td class="col-default">— (omitido)</td>
+              <td class="col-desc">
+                Texto de um <strong>botão de aviso piscando</strong> ao lado do card de contexto
+                (ex.: <code>"SALA PARADA"</code>). Se ausente/vazio, o botão não é renderizado.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">alertcolor</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#8C1A1A"</td>
+              <td class="col-desc">Cor usada no pulse do submenu e no botão de aviso.</td>
             </tr>
             <tr>
               <td class="col-name">onbackclickevent</td>

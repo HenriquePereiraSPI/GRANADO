@@ -1045,6 +1045,22 @@
         </granado-submenu-pesagem>
       </div>
 
+      <!-- 4) Estado de alerta (sala parada): pulse + botao "SALA PARADA" -->
+      <div style="background:#FDFAF1;border:1px solid #D6CDA4;border-radius:8px;padding:14px 20px">
+        <div
+          style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E;margin-bottom:10px">
+          Estado de alerta · sala parada (alertpulse + alertlabel + alertcolor)
+        </div>
+        <granado-submenu-pesagem id="sm-alerta"
+          contextlabel="OP Ativa"
+          contextvalue="OP-2026-0416"
+          value="pes-mps"
+          alertpulse
+          alertlabel="SALA PARADA"
+          alertcolor="#8C1A1A">
+        </granado-submenu-pesagem>
+      </div>
+
     </div>
   </section>
 
@@ -1070,6 +1086,15 @@
         { key: 'lab-fq',       label: 'Fisico-Quim.', icon: '⚗️' },
         { key: 'lab-micro',    label: 'Microbio.',    icon: '🦠' },
         { key: 'lab-laudo',    label: 'Laudo',        icon: '📄' }
+      ]));
+
+      // 4) Estado de alerta (sala parada): submenu pulsando + botao "SALA PARADA"
+      document.getElementById('sm-alerta').setAttribute('items', JSON.stringify([
+        { key: 'pes-cockpit',   label: 'Cockpit',    icon: '🎯' },
+        { key: 'pes-mps',       label: 'MPs',        icon: '⚖️' },
+        { key: 'pes-checklist', label: 'Checklist',  icon: '📋' },
+        { key: 'pes-gaiola',    label: 'Gaiola',     icon: '📦' },
+        { key: 'pes-paradas',   label: 'Paradas',    icon: '⏸️' }
       ]));
 
       // Obs.: o 3o exemplo usa items=' [...] ' direto no HTML (JSON inline),

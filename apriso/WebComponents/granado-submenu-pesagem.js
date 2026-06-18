@@ -48,6 +48,16 @@
      bordercolor      - cor da borda do container e dos itens
                         inativos. Default: "#E5DDC8".
 
+     alertpulse       - boolean (presenca). Quando ativo, anima o
+                        submenu inteiro (pulse) e troca a borda para a
+                        cor de alerta. Use para sinalizar, p.ex., sala
+                        parada.
+     alertlabel       - texto de um botao de "aviso" piscando ao lado
+                        do chip de contexto (ex.: "SALA PARADA"). Se
+                        ausente/vazio, o botao NAO e renderizado.
+     alertcolor       - cor usada no pulse e no botao de aviso.
+                        Default: "#8C1A1A".
+
      onbackclickevent - JS executado no click do botao de voltar.
                         Variavel: event.
      onitemclickevent - JS executado no click de qualquer item.
@@ -101,6 +111,7 @@ if (!customElements.get('granado-submenu-pesagem')) {
         'activecolor', 'activetextcolor',
         'inactivecolor', 'inactivebg',
         'backgroundcolor', 'bordercolor',
+        'alertpulse', 'alertlabel', 'alertcolor',
         'onbackclickevent', 'onitemclickevent', 'onchangeevent'
       ];
     }
@@ -170,6 +181,11 @@ if (!customElements.get('granado-submenu-pesagem')) {
       const inactiveBg      = this.getAttribute('inactivebg')      || '#FFFFFF';
       const backgroundColor = this.getAttribute('backgroundcolor') || '#F5EFD9';
       const borderColor     = this.getAttribute('bordercolor')     || '#E5DDC8';
+      // Estado de alerta (ex.: sala parada): anima o submenu inteiro com a
+      // cor escolhida e/ou mostra um botão de aviso piscando ao lado do chip.
+      const alertColor      = this.getAttribute('alertcolor')      || '#8C1A1A';
+      const alertLabel      = this.getAttribute('alertlabel')      || '';
+      const alertPulse      = this.hasAttribute('alertpulse') && this.getAttribute('alertpulse') !== 'false';
 
       // Resolucao do item ativo: prioridade pra value setada; se ela
       // nao bate com nenhum item, cai pro primeiro disponivel.
@@ -193,6 +209,14 @@ if (!customElements.get('granado-submenu-pesagem')) {
       const backBtnHtml = backLabel ? `<button data-sm-back type="button" style="background:#FFFFFF;border:1.5px solid ${backColor};color:${backColor};padding:6px 12px;height:auto;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;line-height:1.2;transition:background 0.15s,color 0.15s">${this._escape(backLabel)}</button>` : '';
 
       const contextHtml = contextValue ? `<div data-sm-context style="display:flex;align-items:center;gap:8px;padding:4px 12px;background:${contextSoftBg};border:1px solid ${contextColor};border-radius:6px;font-size:11px;line-height:1.3"><span style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E">${this._escape(contextLabel)}</span><span style="font-family:Arial,'DejaVu Sans',Helvetica,sans-serif;font-weight:800;color:${contextColor}">${this._escape(contextValue)}</span></div>` : '';
+
+      // Botão de aviso (ex.: "SALA PARADA") ao lado do chip de contexto.
+      const alertHtml = alertLabel ? `<span data-sm-alert style="display:inline-flex;align-items:center;gap:6px;background:${alertColor};color:#FFFFFF;font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:6px;white-space:nowrap">${this._escape(alertLabel)}</span>` : '';
+
+      // Quando em alerta, a borda do submenu assume a cor do alerta e o fundo
+      // fica levemente tingido (igual ao submenu de Pesagem em sala parada).
+      const rootBorder = alertPulse ? `2px solid ${alertColor}` : `1px solid ${borderColor}`;
+      const rootBg = alertPulse ? this._lighten(alertColor, 0.85) : backgroundColor;
 
       const itemsHtml = items.map((it, i) => {
         if (!it) return '';
@@ -226,12 +250,36 @@ if (!customElements.get('granado-submenu-pesagem')) {
         return `<button data-sm-item="${this._escapeAttr(key)}" data-sm-active="${active ? '1' : '0'}" data-sm-disabled="${disabled ? '1' : '0'}" type="button" ${disabled ? 'disabled' : ''} title="${this._escapeAttr(it.label != null ? String(it.label) : '')}" style="background:${bg};color:${fg};border:${border};padding:5px 10px;height:auto;border-radius:5px;font-size:10px;font-weight:${weight};cursor:${cursor};font-family:inherit;letter-spacing:.03em;white-space:nowrap;opacity:${opacity};display:inline-flex;align-items:center;line-height:1.3;transition:background 0.15s,color 0.15s,border-color 0.15s">${iconHtml}${label}</button>`;
       }).join('');
 
-      this.innerHTML = `<div data-sm-root style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 14px;background:${backgroundColor};border:1px solid ${borderColor};border-radius:7px;box-shadow:0 1px 2px rgba(0,0,0,.06);box-sizing:border-box">${backBtnHtml}${contextHtml}<div data-sm-items style="display:flex;gap:4px;margin-left:auto;flex-wrap:wrap">${itemsHtml}</div></div>`;
+      this.innerHTML = `<div data-sm-root style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 14px;background:${rootBg};border:${rootBorder};border-radius:7px;box-shadow:0 1px 2px rgba(0,0,0,.06);box-sizing:border-box">${backBtnHtml}${contextHtml}${alertHtml}<div data-sm-items style="display:flex;gap:4px;margin-left:auto;flex-wrap:wrap">${itemsHtml}</div></div>`;
 
       this._wire(items, currentValue, {
         backColor, activeColor, activeTextColor,
         inactiveColor, inactiveBg, borderColor
       });
+
+      this._applyAlerts(alertPulse, alertColor);
+    }
+
+    // Animações de alerta (pulse no submenu + piscar do botão de aviso) via
+    // Web Animations API — sem injetar stylesheet (componente autossuficiente).
+    _applyAlerts(alertPulse, alertColor) {
+      const c = this._hexToRgb(alertColor);
+      // Mesma keyframe do submenu real (pesSubmenuPulse): anel que expande.
+      const pulse = [
+        { boxShadow: `0 0 0 0 rgba(${c.r},${c.g},${c.b},0.55)` },
+        { boxShadow: `0 0 0 7px rgba(${c.r},${c.g},${c.b},0)` },
+      ];
+      const timing = { duration: 1200, iterations: Infinity, easing: 'ease-in-out' };
+      const root = this.querySelector('[data-sm-root]');
+      if (alertPulse && root && root.animate) root.animate(pulse, timing);
+      const badge = this.querySelector('[data-sm-alert]');
+      if (badge && badge.animate) badge.animate(pulse, timing);
+    }
+
+    _hexToRgb(hex) {
+      const m = /^#?([0-9a-f]{6})$/i.exec(String(hex || '').trim());
+      if (m) { const n = parseInt(m[1], 16); return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 }; }
+      return { r: 140, g: 26, b: 26 };
     }
 
     _wire(items, currentValue, palette) {
