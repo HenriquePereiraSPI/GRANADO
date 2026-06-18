@@ -37,6 +37,8 @@
   <script src="./granado-preloader.js"></script>
   <script src="./granado-page-title.js"></script>
   <script src="./granado-information.js"></script>
+  <script src="./granado-tree.js"></script>
+  <script src="./granado-zpl.js"></script>
 
   <style>
     html,
@@ -269,6 +271,8 @@
       <a class="gd-link" href="#granado-preloader">granado-preloader</a>
       <a class="gd-link" href="#granado-page-title">granado-page-title</a>
       <a class="gd-link" href="#granado-information">granado-information</a>
+      <a class="gd-link" href="#granado-tree">granado-tree</a>
+      <a class="gd-link" href="#granado-zpl">granado-zpl</a>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -8458,6 +8462,340 @@ GranadoPreloader.hide();</pre>
             conteúdo não confiável.</li>
           <li><strong>Multilinha:</strong> em textos longos o ícone permanece alinhado ao
             topo (o container usa <code>align-items:flex-start</code>).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-tree
+           ============================================================ -->
+      <section id="granado-tree" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-tree&gt;</code></h1>
+        <p class="gd-lead">
+          Árvore hierárquica expansível (estrutura organizacional), no mesmo padrão visual da tela
+          <em>Manutenção &gt; Paradas</em>: nós aninhados com chevron (▸/▾), ícone, rótulo,
+          <code>badge</code> e um <code>dot</code> de status opcional (com pulse). Recebe um
+          <strong>array de nós</strong> (atributo <code>nodes</code> em JSON ou a propriedade
+          <code>.nodes</code>), suporta <strong>filtro</strong> com auto-expansão e emite eventos de
+          <strong>click</strong> e <strong>double-click</strong> com os dados do nó.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-tree.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso básico (nodes inline + filtro + dot animado)</h2>
+        <p class="gd-lead">
+          Passe o array de nós como JSON no atributo <code>nodes</code>. <code>default-expanded="all"</code>
+          abre todos os níveis; <code>searchable</code> mostra o campo de filtro; um nó com
+          <code>"dotPulse": true</code> tem a bolinha animada.
+        </p>
+        <div class="gd-demo">
+          <granado-tree default-expanded="all" searchable nodes='[
+            {"id":"pes","label":"Pesagem","icon":"fabrica","children":[
+              {"id":"md1","label":"MD1","icon":"linha","children":[
+                {"id":"s1","label":"Sala 1","icon":"sala","badge":"2 balanças","children":[
+                  {"id":"b1","label":"Balança BAL-01","icon":"balanca","dot":"#1C7A38"},
+                  {"id":"b2","label":"Balança BAL-02","icon":"balanca","dot":"#8C1A1A","dotPulse":true}
+                ]}
+              ]}
+            ]}
+          ]'></granado-tree>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-tree</span> <span class="tk-attr">default-expanded</span>=<span class="tk-str">"all"</span> <span class="tk-attr">searchable</span>
+    <span class="tk-attr">nodes</span>=<span class="tk-str">'[
+      { "id":"pes", "label":"Pesagem", "icon":"fabrica", "children":[
+        { "id":"md1", "label":"MD1", "icon":"linha", "children":[
+          { "id":"s1", "label":"Sala 1", "icon":"sala", "badge":"2 balanças", "children":[
+            { "id":"b1", "label":"Balança BAL-01", "icon":"balanca", "dot":"#1C7A38" },
+            { "id":"b2", "label":"Balança BAL-02", "icon":"balanca", "dot":"#8C1A1A", "dotPulse":true }
+          ]}
+        ]}
+      ]}
+    ]'</span><span class="tk-tag">&gt;&lt;/granado-tree&gt;</span></pre>
+
+        <h2 class="gd-h2">Via JavaScript + eventos</h2>
+        <p class="gd-lead">
+          Passe o array direto pela propriedade <code>.nodes</code> e escute
+          <code>node-click</code> / <code>node-dblclick</code>. O <code>event.detail</code> traz
+          <code>{ id, label, node, path }</code> — <code>node</code> é o objeto completo (inclui
+          o seu <code>data</code>) e <code>path</code> é o caminho de ids da raiz até o nó.
+        </p>
+        <div class="gd-demo">
+          <granado-tree id="doc-tree" accent-color="#1A4A8C"></granado-tree>
+          <div id="doc-tree-log" style="margin-top:8px;font-size:12px;color:#5A6B5E;font-family:'DM Mono','DejaVu Mono',Consolas,monospace">Clique ou dê duplo-clique num nó…</div>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-tree</span> <span class="tk-attr">id</span>=<span class="tk-str">"arvore"</span><span class="tk-tag">&gt;&lt;/granado-tree&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-attr">const</span> tree = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'arvore'</span>);
+  tree.nodes = [
+    { id: <span class="tk-str">'fab'</span>, label: <span class="tk-str">'Fabricação'</span>, icon: <span class="tk-str">'fabrica'</span>, expanded: <span class="tk-attr">true</span>, children: [
+      { id: <span class="tk-str">'mix'</span>, label: <span class="tk-str">'Mistura A'</span>, icon: <span class="tk-str">'sala'</span>, badge: <span class="tk-str">'2 equip.'</span>, children: [
+        { id: <span class="tk-str">'rea'</span>, label: <span class="tk-str">'Reator REA-01'</span>, icon: <span class="tk-str">'reator'</span>, dot: <span class="tk-str">'#1C7A38'</span> },
+        { id: <span class="tk-str">'agi'</span>, label: <span class="tk-str">'Agitador AGI-01'</span>, icon: <span class="tk-str">'equipamento'</span>, dot: <span class="tk-str">'#8C1A1A'</span>, dotPulse: <span class="tk-attr">true</span> }
+      ]}
+    ]}
+  ];
+  tree.<span class="tk-attr">addEventListener</span>(<span class="tk-str">'node-click'</span>,    (e) =&gt; console.log(e.detail));
+  tree.<span class="tk-attr">addEventListener</span>(<span class="tk-str">'node-dblclick'</span>, (e) =&gt; console.log(e.detail.path));
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        <script>
+          (function () {
+            var t = document.getElementById('doc-tree');
+            var log = document.getElementById('doc-tree-log');
+            if (!t) return;
+            t.nodes = [
+              { id: 'fab', label: 'Fabricação', icon: 'fabrica', expanded: true, children: [
+                { id: 'mix', label: 'Mistura A', icon: 'sala', badge: '2 equip.', children: [
+                  { id: 'rea', label: 'Reator REA-01', icon: 'reator', dot: '#1C7A38' },
+                  { id: 'agi', label: 'Agitador AGI-01', icon: 'equipamento', dot: '#8C1A1A', dotPulse: true }
+                ]}
+              ]}
+            ];
+            t.addEventListener('node-click', function (e) { log.textContent = 'click › ' + e.detail.label + '  (id: ' + e.detail.id + ')'; });
+            t.addEventListener('node-dblclick', function (e) { log.textContent = 'dblclick › ' + e.detail.label + '  · path: ' + e.detail.path.join(' / '); });
+          })();
+        </script>
+
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Nome</th><th style="width:160px">Tipo</th><th style="width:120px">Default</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">nodes</td>
+              <td class="col-type">JSON (array)</td>
+              <td class="col-default">[]</td>
+              <td class="col-desc">Array de nós em JSON. Em JS prefira a propriedade <code>.nodes</code> (array). Para dados grandes use <code>setAttribute('nodes', JSON.stringify(arr))</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">default-expanded</td>
+              <td class="col-type">roots | all | none</td>
+              <td class="col-default">"roots"</td>
+              <td class="col-desc">Expansão inicial: só a raiz, todos os nós, ou nenhum. O campo <code>expanded</code> de cada nó tem prioridade sobre esse modo.</td>
+            </tr>
+            <tr>
+              <td class="col-name">searchable</td>
+              <td class="col-type">boolean (presença)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Exibe um campo de filtro embutido no topo da árvore.</td>
+            </tr>
+            <tr>
+              <td class="col-name">filter</td>
+              <td class="col-type">string</td>
+              <td class="col-default">""</td>
+              <td class="col-desc">Termo de filtro (também setável por <code>.filter</code>). Mostra só os ramos com correspondência, auto-expande o caminho e destaca os nós que casam.</td>
+            </tr>
+            <tr>
+              <td class="col-name">accent-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#1C5C31"</td>
+              <td class="col-desc">Cor de destaque do nó selecionado (faixa + rótulo).</td>
+            </tr>
+            <tr>
+              <td class="col-name">selectable</td>
+              <td class="col-type">boolean</td>
+              <td class="col-default">true</td>
+              <td class="col-desc"><code>selectable="false"</code> desativa o highlight de seleção (eventos continuam disparando).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada nó</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:130px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">id</td><td class="col-type">string</td><td class="col-desc">Identificador (opcional — usa o índice se ausente). Volta no <code>detail</code> dos eventos.</td></tr>
+            <tr><td class="col-name">label</td><td class="col-type">string</td><td class="col-desc">Texto exibido.</td></tr>
+            <tr><td class="col-name">icon</td><td class="col-type">string</td><td class="col-desc">Nome do ícone (ver tabela abaixo) ou um emoji/texto literal.</td></tr>
+            <tr><td class="col-name">badge</td><td class="col-type">string</td><td class="col-desc">Chip curto à direita do rótulo (ex.: "2 balanças").</td></tr>
+            <tr><td class="col-name">dot</td><td class="col-type">string (cor CSS)</td><td class="col-desc">Bolinha de status à direita, na cor informada.</td></tr>
+            <tr><td class="col-name">dotPulse</td><td class="col-type">boolean</td><td class="col-desc">Anima a bolinha (pulse) — usa Web Animations API, sem stylesheet.</td></tr>
+            <tr><td class="col-name">color</td><td class="col-type">string (cor CSS)</td><td class="col-desc">Sobrescreve a cor do rótulo do nó.</td></tr>
+            <tr><td class="col-name">expanded</td><td class="col-type">boolean</td><td class="col-desc">Inicia o nó aberto (<code>true</code>) ou fechado (<code>false</code>), com prioridade sobre <code>default-expanded</code>.</td></tr>
+            <tr><td class="col-name">children</td><td class="col-type">array&lt;nó&gt;</td><td class="col-desc">Filhos do nó.</td></tr>
+            <tr><td class="col-name">data</td><td class="col-type">any</td><td class="col-desc">Qualquer informação extra — devolvida em <code>event.detail.node</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Eventos &amp; Métodos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:180px">Nome</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">node-click</td><td class="col-desc">Clique simples num nó. <code>event.detail = { id, label, node, path }</code>.</td></tr>
+            <tr><td class="col-name">node-dblclick</td><td class="col-desc">Duplo clique num nó. Mesmo <code>detail</code> do node-click.</td></tr>
+            <tr><td class="col-name">.nodes</td><td class="col-desc">Propriedade — lê/seta o array de nós.</td></tr>
+            <tr><td class="col-name">.filter</td><td class="col-desc">Propriedade — lê/seta o termo de filtro.</td></tr>
+            <tr><td class="col-name">.expandAll() / .collapseAll()</td><td class="col-desc">Métodos — expandem/recolhem todos os nós.</td></tr>
+            <tr><td class="col-name">GranadoTree.ICONS</td><td class="col-desc">Estático — mapa <code>nome → glyph</code> com todos os ícones disponíveis.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Ícones disponíveis</h3>
+        <p class="gd-lead">
+          Passe o <strong>nome</strong> no campo <code>icon</code> (ex.: <code>"icon":"sala"</code>) e o
+          componente faz o de→para para o glyph. Nomes desconhecidos são usados como valor literal,
+          então emojis diretos (<code>"icon":"🏭"</code>) também funcionam.
+        </p>
+        <div id="doc-tree-icons" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin-bottom:10px"></div>
+        <script>
+          (function () {
+            var alvo = document.getElementById('doc-tree-icons');
+            var ICONS = (window.GranadoTree && window.GranadoTree.ICONS) || {};
+            if (!alvo) return;
+            alvo.innerHTML = Object.keys(ICONS).map(function (nome) {
+              return '<div style="display:flex;align-items:center;gap:8px;border:1px solid #E5DDC8;border-radius:6px;padding:6px 10px;background:#FDFAF1">' +
+                '<span style="font-size:18px">' + ICONS[nome] + '</span>' +
+                '<code style="font-family:\'DM Mono\',\'DejaVu Mono\',Consolas,monospace;font-size:11px;color:#1C5C31">' + nome + '</code>' +
+              '</div>';
+            }).join('');
+          })();
+        </script>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores
+            hardcoded. O pulse do <code>dot</code> usa <code>element.animate()</code> (Web Animations
+            API), mantendo o componente autossuficiente.</li>
+          <li><strong>Clique vs chevron:</strong> clicar no nó seleciona (e abre, se tiver filhos);
+            o chevron (▸/▾) expande/recolhe sem alterar a seleção.</li>
+          <li><strong>Filtro:</strong> ao filtrar, a árvore mostra apenas os ramos com
+            correspondência, auto-expande o caminho e destaca os nós que casam diretamente.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-zpl
+           ============================================================ -->
+      <section id="granado-zpl" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-zpl&gt;</code></h1>
+        <p class="gd-lead">
+          Pré-visualização (<em>preview</em>) de etiquetas <strong>ZPL</strong>, reproduzindo o
+          layout aproximado da etiqueta como ela sai na impressora térmica — sem precisar enviar
+          para a Zebra. Suporta vários <strong>tipos</strong> de etiqueta via o atributo
+          <code>type</code>; cada tipo define quais campos são esperados em <code>data</code>.
+          Campos não informados ficam <strong>em branco</strong> (sem defaults).
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-zpl.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — type="pesagem"</h2>
+        <p class="gd-lead">
+          Reproduz a etiqueta de <strong>Pesagem de Material</strong>. Passe os dados via a
+          propriedade <code>.data</code> (objeto) ou via o atributo <code>data</code> (JSON).
+        </p>
+        <div class="gd-demo">
+          <granado-zpl type="pesagem" data='{
+            "titulo":"PESAGEM DE MATERIAL","dataImpressao":"24/03/2026",
+            "ordemFabricacao":"771166","loteGranel":"1621/2026","dataPesagem":"24/03/2026 07:42","aprovado":true,
+            "granelResultante":"S0835B - SAB. PH LIMAO SICILIANO","materiaPrima":"M9808 - MANTEIGA DE MURUMURU STD (SAB)",
+            "loteMP":"0273826","validade":"30/07/2028","tipoPesagem":"SIMPLES","qtdOrdem":"37,440 KG",
+            "pesadoPor":"VALMIR MENDES","matricula":"102266","balanca":"16","tara":"0,021 KG","pesoBruto":"3,141 KG","noEtiqueta":"7953072",
+            "barcode":"#P12814471417953072","pesoLiquido":"3,120 KG",
+            "impressoPor":"Claudinei","impressoEm":"31/03/2026 08:05"
+          }'></granado-zpl>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-zpl</span> <span class="tk-attr">id</span>=<span class="tk-str">"etq"</span> <span class="tk-attr">type</span>=<span class="tk-str">"pesagem"</span><span class="tk-tag">&gt;&lt;/granado-zpl&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'etq'</span>).data = {
+    titulo: <span class="tk-str">'PESAGEM DE MATERIAL'</span>, dataImpressao: <span class="tk-str">'24/03/2026'</span>,
+    ordemFabricacao: <span class="tk-str">'771166'</span>, loteGranel: <span class="tk-str">'1621/2026'</span>, dataPesagem: <span class="tk-str">'24/03/2026 07:42'</span>, aprovado: <span class="tk-attr">true</span>,
+    granelResultante: <span class="tk-str">'S0835B - SAB. PH LIMAO SICILIANO'</span>,
+    materiaPrima: <span class="tk-str">'M9808 - MANTEIGA DE MURUMURU STD (SAB)'</span>,
+    loteMP: <span class="tk-str">'0273826'</span>, validade: <span class="tk-str">'30/07/2028'</span>, tipoPesagem: <span class="tk-str">'SIMPLES'</span>, qtdOrdem: <span class="tk-str">'37,440 KG'</span>,
+    pesadoPor: <span class="tk-str">'VALMIR MENDES'</span>, matricula: <span class="tk-str">'102266'</span>, balanca: <span class="tk-str">'16'</span>,
+    tara: <span class="tk-str">'0,021 KG'</span>, pesoBruto: <span class="tk-str">'3,141 KG'</span>, noEtiqueta: <span class="tk-str">'7953072'</span>,
+    barcode: <span class="tk-str">'#P12814471417953072'</span>, pesoLiquido: <span class="tk-str">'3,120 KG'</span>,
+    impressoPor: <span class="tk-str">'Claudinei'</span>, impressoEm: <span class="tk-str">'31/03/2026 08:05'</span>
+  };
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:120px">Nome</th><th style="width:150px">Tipo</th><th style="width:120px">Default</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">type</td>
+              <td class="col-type">string</td>
+              <td class="col-default">"pesagem"</td>
+              <td class="col-desc">Tipo da etiqueta. Define o layout e os campos esperados em <code>data</code>. Atual: <code>pesagem</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">data</td>
+              <td class="col-type">JSON (objeto)</td>
+              <td class="col-default">{}</td>
+              <td class="col-desc">Campos da etiqueta. Em JS prefira a propriedade <code>.data</code> (objeto). Para dados grandes use <code>setAttribute('data', JSON.stringify(obj))</code>. Campos ausentes ficam em branco.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de <code>data</code> — type="pesagem"</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:120px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">titulo</td><td class="col-type">string</td><td class="col-desc">Título da etiqueta (barra superior).</td></tr>
+            <tr><td class="col-name">dataImpressao</td><td class="col-type">string</td><td class="col-desc">Data de impressão (canto superior direito).</td></tr>
+            <tr><td class="col-name">ordemFabricacao</td><td class="col-type">string</td><td class="col-desc">Número da Ordem de Fabricação.</td></tr>
+            <tr><td class="col-name">loteGranel</td><td class="col-type">string</td><td class="col-desc">Lote do granel.</td></tr>
+            <tr><td class="col-name">dataPesagem</td><td class="col-type">string</td><td class="col-desc">Data/hora da pesagem.</td></tr>
+            <tr><td class="col-name">aprovado</td><td class="col-type">boolean</td><td class="col-desc"><code>true</code> → "APROVADO"; <code>false</code> → "REPROVADO"; ausente → em branco.</td></tr>
+            <tr><td class="col-name">granelResultante</td><td class="col-type">string</td><td class="col-desc">Granel resultante (código + descrição).</td></tr>
+            <tr><td class="col-name">materiaPrima</td><td class="col-type">string</td><td class="col-desc">Matéria-prima (código + descrição).</td></tr>
+            <tr><td class="col-name">loteMP</td><td class="col-type">string</td><td class="col-desc">Lote da matéria-prima.</td></tr>
+            <tr><td class="col-name">validade</td><td class="col-type">string</td><td class="col-desc">Validade (exibida em destaque reverso).</td></tr>
+            <tr><td class="col-name">tipoPesagem</td><td class="col-type">string</td><td class="col-desc">Tipo de pesagem (ex.: SIMPLES).</td></tr>
+            <tr><td class="col-name">qtdOrdem</td><td class="col-type">string</td><td class="col-desc">Quantidade da ordem.</td></tr>
+            <tr><td class="col-name">pesadoPor</td><td class="col-type">string</td><td class="col-desc">Nome de quem pesou.</td></tr>
+            <tr><td class="col-name">matricula</td><td class="col-type">string</td><td class="col-desc">Matrícula do operador.</td></tr>
+            <tr><td class="col-name">balanca</td><td class="col-type">string</td><td class="col-desc">Balança utilizada.</td></tr>
+            <tr><td class="col-name">tara</td><td class="col-type">string</td><td class="col-desc">Tara.</td></tr>
+            <tr><td class="col-name">pesoBruto</td><td class="col-type">string</td><td class="col-desc">Peso bruto.</td></tr>
+            <tr><td class="col-name">noEtiqueta</td><td class="col-type">string</td><td class="col-desc">Número da etiqueta.</td></tr>
+            <tr><td class="col-name">barcode</td><td class="col-type">string</td><td class="col-desc">Conteúdo do código de barras (renderizado como barras + texto).</td></tr>
+            <tr><td class="col-name">pesoLiquido</td><td class="col-type">string</td><td class="col-desc">Peso líquido (caixa preta em destaque).</td></tr>
+            <tr><td class="col-name">impressoPor</td><td class="col-type">string</td><td class="col-desc">Rodapé — quem imprimiu.</td></tr>
+            <tr><td class="col-name">impressoEm</td><td class="col-type">string</td><td class="col-desc">Rodapé — data/hora da impressão.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Propriedades JS</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:120px">Nome</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">.type</td><td class="col-desc">Lê/seta o tipo da etiqueta.</td></tr>
+            <tr><td class="col-name">.data</td><td class="col-desc">Lê/seta o objeto de dados.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Preview, não impressão:</strong> é uma representação visual aproximada do ZPL
+            (moldura, divisórias, campos reversos, código de barras estilizado) — não gera o ZPL
+            nem imprime.</li>
+          <li><strong>Sem defaults:</strong> qualquer campo ausente em <code>data</code> fica em
+            branco, preservando a estrutura da etiqueta.</li>
+          <li><strong>Extensível:</strong> novos tipos (ex.: gaiola, PA) são adicionados como um
+            novo <code>type</code> com o respectivo layout.</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; tinta
+            preta sobre fundo branco, em fonte monoespaçada (térmica).</li>
         </ul>
       </section>
 

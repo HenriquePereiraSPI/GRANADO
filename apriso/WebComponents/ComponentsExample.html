@@ -37,6 +37,8 @@
   <script src="./granado-preloader.js"></script>
   <script src="./granado-page-title.js"></script>
   <script src="./granado-information.js"></script>
+  <script src="./granado-tree.js"></script>
+  <script src="./granado-zpl.js"></script>
 </head>
 
 <body style="margin:0;padding:24px;background:#F4EED9;font-family:'Lato','DejaVu Sans',Arial,sans-serif;color:#103E20">
@@ -1217,6 +1219,128 @@
       </granado-information>
 
     </div>
+  </section>
+
+  <!-- ========== Linha 26 — granado-tree ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-tree&gt;
+    </h2>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+
+      <!-- Exemplo 1 — JSON hardcoded direto no atributo "nodes" -->
+      <div style="flex:1 1 320px;min-width:280px;border:1px solid #D6CDA4;border-radius:8px;padding:10px;background:#FDFAF1">
+        <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E;margin-bottom:6px">nodes inline (JSON) · ícones por nome · filtro · dot animado</div>
+        <granado-tree default-expanded="all" searchable nodes='[
+          {"id":"pes","label":"Pesagem","icon":"fabrica","children":[
+            {"id":"md1","label":"MD1","icon":"linha","children":[
+              {"id":"s1","label":"Sala 1","icon":"sala","badge":"2 balanças","children":[
+                {"id":"b1","label":"Balança BAL-01","icon":"balanca","dot":"#1C7A38"},
+                {"id":"b2","label":"Balança BAL-02","icon":"balanca","dot":"#8C1A1A","dotPulse":true}
+              ]}
+            ]}
+          ]}
+        ]'></granado-tree>
+      </div>
+
+      <!-- Exemplo 2 — via JavaScript (.nodes) + eventos click/dblclick -->
+      <div style="flex:1 1 320px;min-width:280px;border:1px solid #D6CDA4;border-radius:8px;padding:10px;background:#FDFAF1">
+        <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E;margin-bottom:6px">via JS + eventos</div>
+        <granado-tree id="tree-demo" default-expanded="roots" accent-color="#1A4A8C"></granado-tree>
+        <div id="tree-demo-log" style="margin-top:8px;font-size:11px;color:#5A6B5E;font-family:'DM Mono','DejaVu Mono',Consolas,monospace">Clique ou dê duplo-clique num nó…</div>
+      </div>
+
+    </div>
+    <script>
+      (function () {
+        var t = document.getElementById('tree-demo');
+        var log = document.getElementById('tree-demo-log');
+        if (!t) return;
+        t.nodes = [
+          { id: 'fab', label: 'Fabricação', icon: 'fabrica', children: [
+            { id: 'la', label: 'Production Line A', icon: 'linha', children: [
+              { id: 'mix', label: 'Mistura A', icon: 'sala', badge: '2 equip.', children: [
+                { id: 'rea', label: 'Reator REA-01', icon: 'reator', dot: '#1C7A38' },
+                { id: 'agi', label: 'Agitador AGI-01', icon: 'equipamento', dot: '#8C1A1A', dotPulse: true }
+              ]}
+            ]}
+          ]}
+        ];
+        t.addEventListener('node-click', function (e) {
+          log.textContent = 'click › ' + e.detail.label + '  (id: ' + e.detail.id + ')';
+        });
+        t.addEventListener('node-dblclick', function (e) {
+          log.textContent = 'dblclick › ' + e.detail.label + '  · path: ' + e.detail.path.join(' / ');
+        });
+      })();
+    </script>
+
+    <!-- Ícones disponíveis (passe o NOME em icon) -->
+    <div style="margin-top:18px">
+      <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E;margin-bottom:8px">Ícones disponíveis (use o nome no campo <code>icon</code>)</div>
+      <div id="tree-icons-tabela"
+        style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px"></div>
+    </div>
+    <script>
+      (function () {
+        var alvo = document.getElementById('tree-icons-tabela');
+        var ICONS = (window.GranadoTree && window.GranadoTree.ICONS) || {};
+        if (!alvo) return;
+        alvo.innerHTML = Object.keys(ICONS).map(function (nome) {
+          return '<div style="display:flex;align-items:center;gap:8px;border:1px solid #E5DDC8;border-radius:6px;padding:6px 10px;background:#FDFAF1">' +
+            '<span style="font-size:18px">' + ICONS[nome] + '</span>' +
+            '<code style="font-family:\'DM Mono\',\'DejaVu Mono\',Consolas,monospace;font-size:11px;color:#1C5C31">' + nome + '</code>' +
+          '</div>';
+        }).join('');
+      })();
+    </script>
+  </section>
+
+  <!-- ========== Linha 27 — granado-zpl ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-zpl&gt;
+    </h2>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+
+      <!-- Exemplo — type="pesagem" com data inline (JSON) -->
+      <div>
+        <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E;margin-bottom:6px">type="pesagem" · data inline (JSON)</div>
+        <granado-zpl type="pesagem" data='{
+          "titulo":"PESAGEM DE MATERIAL","dataImpressao":"24/03/2026",
+          "ordemFabricacao":"771166","loteGranel":"1621/2026","dataPesagem":"24/03/2026 07:42","aprovado":true,
+          "granelResultante":"S0835B - SAB. PH LIMAO SICILIANO","materiaPrima":"M9808 - MANTEIGA DE MURUMURU STD (SAB)",
+          "loteMP":"0273826","validade":"30/07/2028","tipoPesagem":"SIMPLES","qtdOrdem":"37,440 KG",
+          "pesadoPor":"VALMIR MENDES","matricula":"102266","balanca":"16","tara":"0,021 KG","pesoBruto":"3,141 KG","noEtiqueta":"7953072",
+          "barcode":"#P12814471417953072","pesoLiquido":"3,120 KG",
+          "impressoPor":"Claudinei","impressoEm":"31/03/2026 08:05"
+        }'></granado-zpl>
+      </div>
+
+      <!-- Exemplo — via JavaScript (.data) -->
+      <div>
+        <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E;margin-bottom:6px">via JS (.data)</div>
+        <granado-zpl id="zpl-demo" type="pesagem"></granado-zpl>
+      </div>
+
+    </div>
+    <script>
+      (function () {
+        var z = document.getElementById('zpl-demo');
+        if (!z) return;
+        z.data = {
+          titulo: 'PESAGEM DE MATERIAL', dataImpressao: '31/03/2026',
+          ordemFabricacao: '784426', loteGranel: '0262/2026', dataPesagem: '31/03/2026 09:10', aprovado: true,
+          granelResultante: 'PA 262417 - SHAMPOO PHEBO', materiaPrima: 'MP-0001 - AQUA (AGUA PURIFICADA)',
+          loteMP: 'AGUA-2026-03', validade: '12/2026', tipoPesagem: 'SIMPLES', qtdOrdem: '412,500 KG',
+          pesadoPor: 'J. SANTOS', matricula: '000155', balanca: '03', tara: '0,000 KG', pesoBruto: '411,840 KG', noEtiqueta: '8112045',
+          barcode: '#P26241708112045', pesoLiquido: '411,840 KG',
+          impressoPor: 'J. Santos', impressoEm: '31/03/2026 09:11'
+        };
+      })();
+    </script>
   </section>
 </body>
 

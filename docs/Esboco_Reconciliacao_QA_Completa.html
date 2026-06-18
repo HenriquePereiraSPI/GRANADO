@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Esboço · Reconciliação Q.A. Completa — MES Granado</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Granado palette */
+    --bg:#f7f3e2;
+    --surface:#fdfbf3;
+    --surface2:#f1ecd5;
+    --bg2:#e7e1c5;
+    --text:#2b2c25;
+    --text2:#4f4d3f;
+    --text3:#7d7a65;
+    --border:#d6d0b6;
+    --border2:#bdb693;
+    --verde:#5e8a4a;
+    --verde-esc:#2f4a2c;
+    --verde-meio:#3f6231;
+    --ouro:#b8902f;
+    --ouro-claro:#dca94a;
+    --ouro-dim:#fbe9b6;
+    --per:#b94a3a;
+    --per-p:#fce5df;
+    --per-b:#e8a597;
+    --ok:#3f7d3f;
+    --ok-p:#dfeed4;
+    --ok-b:#a8d09c;
+    --alr:#a86420;
+    --alr-p:#fbe9c8;
+    --alr-b:#dec18a;
+    --inf:#3a5f93;
+    --inf-p:#dde6f3;
+    --inf-b:#abc1dd;
+    --font-m:'JetBrains Mono', monospace;
+    --r:6px;
+    --sh:0 1px 2px rgba(0,0,0,.04);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);font-family:Inter,sans-serif;color:var(--text);padding:0;font-size:13px;line-height:1.4}
+  .header{background:var(--verde-esc);color:#fff;padding:22px 36px;display:flex;justify-content:space-between;align-items:center}
+  .header h1{margin:0;font-size:24px;font-weight:800}
+  .header .sub{font-size:13px;color:#d8dac3;margin-top:5px}
+  .brand .name{color:var(--ouro);font-size:30px;font-weight:800;letter-spacing:1.4px;text-align:right;line-height:1}
+  .brand .since{color:var(--ouro);font-size:11.5px;letter-spacing:3.5px;text-align:right;margin-top:3px}
+
+  .container{padding:18px 28px 40px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:14px;box-shadow:var(--sh)}
+  .card-title{font-size:14px;font-weight:800;color:var(--verde-esc);margin-bottom:10px;letter-spacing:.02em;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  .card-subtitle{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
+
+  .section-banner{background:var(--verde-esc);color:#fff;padding:10px 18px;border-radius:6px 6px 0 0;font-weight:700;font-size:13px;letter-spacing:.04em;display:flex;align-items:center;justify-content:space-between}
+  .section-banner.fab{background:#1f497d}
+  .section-banner.emb{background:#8a6018}
+  .section-banner.bol{background:#5b3a82}
+  .section-card{background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;padding:16px;margin-bottom:18px;box-shadow:var(--sh)}
+
+  /* Tabelas */
+  table.qtab{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:6px}
+  table.qtab th{background:var(--bg2);color:var(--text);font-weight:700;text-align:left;padding:6px 9px;border:1px solid var(--border);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase}
+  table.qtab td{padding:6px 9px;border:1px solid var(--border);font-family:var(--font-m);font-size:11.5px;background:var(--surface)}
+  table.qtab tr:nth-child(even) td{background:var(--surface2)}
+  table.qtab td.ok{color:var(--ok);font-weight:700}
+  table.qtab td.alr{color:var(--alr);font-weight:700}
+  table.qtab td.per{color:var(--per);font-weight:700}
+  table.qtab td.muted{color:var(--text3)}
+  table.qtab caption{font-size:12px;font-weight:700;color:var(--verde-esc);text-align:left;padding-bottom:6px}
+
+  /* Badge sincronizado (vem do sistema) */
+  .badge-sync{display:inline-block;background:var(--inf-p);color:var(--inf);border:1px solid var(--inf-b);padding:2px 8px;border-radius:11px;font-size:9.5px;font-weight:700;letter-spacing:.06em;margin-left:8px}
+  .badge-pdf{display:inline-block;background:var(--per-p);color:var(--per);border:1px solid var(--per-b);padding:2px 8px;border-radius:11px;font-size:9.5px;font-weight:700;letter-spacing:.06em}
+  .badge-lims{display:inline-block;background:#e3dafa;color:#5b3a82;border:1px solid #b39be0;padding:2px 8px;border-radius:11px;font-size:9.5px;font-weight:700;letter-spacing:.06em}
+  .badge-ok{background:var(--ok-p);color:var(--ok);border:1px solid var(--ok-b);padding:2px 8px;border-radius:11px;font-size:9.5px;font-weight:800;display:inline-block;letter-spacing:.06em}
+  .badge-warn{background:var(--alr-p);color:var(--alr);border:1px solid var(--alr-b);padding:2px 8px;border-radius:11px;font-size:9.5px;font-weight:800;display:inline-block;letter-spacing:.06em}
+  .badge-per{background:var(--per-p);color:var(--per);border:1px solid var(--per-b);padding:2px 8px;border-radius:11px;font-size:9.5px;font-weight:800;display:inline-block;letter-spacing:.06em}
+
+  /* Grid de KPIs */
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(170px, 1fr));gap:8px;margin-bottom:10px}
+  .kpi{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:8px 10px}
+  .kpi-lbl{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:3px}
+  .kpi-val{font-family:var(--font-m);font-size:13px;font-weight:700;color:var(--text)}
+  .kpi-val.alert{color:var(--per)}
+
+  /* Sub-title */
+  .sub-title{font-size:12px;font-weight:700;color:var(--verde-meio);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.06em;border-left:3px solid var(--ouro);padding-left:8px}
+
+  /* Etiqueta preview (mockup de impressão) */
+  .etiqueta-preview{background:#fff;border:2px dashed #888;border-radius:4px;padding:10px 14px;font-family:var(--font-m);font-size:10.5px;color:#000;display:inline-block;min-width:280px;line-height:1.5}
+  .etiqueta-preview .etq-tit{font-size:11px;font-weight:800;text-align:center;margin-bottom:6px;border-bottom:1px solid #555;padding-bottom:3px}
+  .etiqueta-preview .etq-line{display:flex;justify-content:space-between}
+  .etiqueta-preview b{color:#000}
+
+  /* Timeline */
+  .timeline{position:relative;padding-left:22px;border-left:2px solid var(--ouro);margin:6px 0}
+  .tl-item{position:relative;padding-bottom:8px}
+  .tl-item::before{content:'';position:absolute;left:-28px;top:3px;width:10px;height:10px;border-radius:50%;background:var(--ouro)}
+  .tl-time{font-family:var(--font-m);font-size:10.5px;font-weight:700;color:var(--inf)}
+  .tl-desc{font-size:11.5px;color:var(--text)}
+
+  /* Checklist visual (refil) */
+  .check-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:8px;margin-top:8px}
+  .check-item{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--ok);padding:7px 10px;border-radius:4px;display:flex;align-items:center;gap:8px;font-size:11.5px}
+  .check-item.fail{border-left-color:var(--per)}
+  .check-item .nm{flex:1;font-weight:600}
+  .check-item .by{font-family:var(--font-m);font-size:9.5px;color:var(--text3)}
+
+  .legend-bar{display:flex;align-items:center;gap:18px;padding:8px 12px;background:var(--inf-p);border:1px solid var(--inf-b);border-radius:5px;font-size:11px;color:var(--inf);margin:8px 0 14px}
+  .legend-bar .lb-it{display:flex;align-items:center;gap:6px}
+  .dot{width:10px;height:10px;border-radius:50%}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Esboço · Reconciliação Q.A. Completa</h1>
+    <div class="sub">Mockup MES Granado · proposta de tela unificada com TODOS os dados do documento de Q.A. (15/05/2026) · Lote PA <b>262417</b></div>
+  </div>
+  <div class="brand">
+    <div class="name">GRANADO</div>
+    <div class="since">DESDE 1870</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- LEGENDA -->
+  <div class="legend-bar">
+    <div class="lb-it"><span class="badge-sync">🔄 SINC. SISTEMA</span> dado vindo automaticamente de InBatch / Ordem MES</div>
+    <div class="lb-it"><span class="badge-lims">🧪 LIMS</span> análise vinda do LIMS via integração</div>
+    <div class="lb-it"><span class="badge-pdf">📎 ANEXO</span> documento físico digitalizado</div>
+  </div>
+
+  <!-- ───────────────────────────────────────────────────── -->
+  <!-- IDENTIFICAÇÃO + MULTIBATCH (já existe no mockup) -->
+  <!-- ───────────────────────────────────────────────────── -->
+  <div class="card">
+    <div class="card-title">📋 Identificação do Lote</div>
+    <table class="qtab">
+      <tr>
+        <th>Nº Reconciliação</th><td>137234</td>
+        <th>Filial</th><td>0015 - Casa Granado</td>
+        <th>Status Lote</th><td><span class="badge-warn">Q — Sob Quarentena</span></td>
+      </tr>
+      <tr>
+        <th>Produto Acabado</th><td colspan="3">S0815B_G — Sabonete Glicerinado Tradicional 90g</td>
+        <th>Lote PA</th><td><b>262417</b></td>
+      </tr>
+      <tr>
+        <th>Granel</th><td colspan="3">S0815B — TRANSP GRANADO GLICERINA</td>
+        <th>RD JDE (F4108)</th><td>RD-2026-04162</td>
+      </tr>
+      <tr>
+        <th>Data Fabricação</th><td>16/04/2026</td>
+        <th>Data Validade</th><td>30/04/2029</td>
+        <th>Status Reconc.</th><td>10 — Aberto</td>
+      </tr>
+    </table>
+
+    <div class="sub-title">🔀 Multibatch — granéis que compõem o PA</div>
+    <table class="qtab">
+      <tr><th>#</th><th>Lote Granel</th><th>WO Fab.</th><th>Peso</th><th>Status</th></tr>
+      <tr><td>1</td><td>2551/2026</td><td>WO 784426</td><td>4.000 kg</td><td class="ok">APROVADO</td></tr>
+      <tr><td>2</td><td>2552/2026</td><td>WO 784427</td><td>2.000 kg</td><td class="ok">APROVADO</td></tr>
+    </table>
+  </div>
+
+  <!-- ───────────────────────────────────────────────────── -->
+  <!-- PESAGEM -->
+  <!-- ───────────────────────────────────────────────────── -->
+  <div class="section-banner">⚖️ ANÁLISE DA PESAGEM <span class="badge-ok">APROVADO</span></div>
+  <div class="section-card">
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-lbl">MPs Pesadas</div><div class="kpi-val">7 / 7</div></div>
+      <div class="kpi"><div class="kpi-lbl">Peso Total</div><div class="kpi-val">178,75 kg</div></div>
+      <div class="kpi"><div class="kpi-lbl">Volumes</div><div class="kpi-val">4 fracionados</div></div>
+      <div class="kpi"><div class="kpi-lbl">MPs Zeradas</div><div class="kpi-val" style="color:var(--ok)">0</div></div>
+      <div class="kpi"><div class="kpi-lbl">Variância Máx.</div><div class="kpi-val">0,32%</div></div>
+    </div>
+
+    <div class="sub-title">Relatório de Pesagem + Etiquetas de Matéria-Prima <span class="badge-sync">🔄 InBatch</span></div>
+    <table class="qtab">
+      <tr>
+        <th>Etq Nº</th><th>MP Código</th><th>Descrição MP</th><th>Lote MP</th><th>Validade MP</th>
+        <th>Peso Teórico</th><th>Peso Real</th><th>Variância</th><th>Pesador</th><th>Data/Hora</th><th>Assinat.</th>
+      </tr>
+      <tr><td>E-87412</td><td>5001</td><td>SLES 70%</td><td>2401/2025</td><td>10/2027</td>
+        <td>40,000 kg</td><td>40,015 kg</td><td class="ok">+0,04%</td><td>J.Santos (108)</td><td>16/04 07:12</td><td class="ok">✓</td></tr>
+      <tr><td>E-87413</td><td>5012</td><td>Cocoamidopropil Betaína</td><td>2382/2025</td><td>09/2027</td>
+        <td>18,000 kg</td><td>18,022 kg</td><td class="ok">+0,12%</td><td>J.Santos (108)</td><td>16/04 07:25</td><td class="ok">✓</td></tr>
+      <tr><td>E-87414</td><td>5101</td><td>Glicerina USP</td><td>1142/2026</td><td>12/2028</td>
+        <td>30,000 kg</td><td>29,995 kg</td><td class="ok">-0,02%</td><td>J.Santos (108)</td><td>16/04 07:38</td><td class="ok">✓</td></tr>
+      <tr><td>E-87415</td><td>5203</td><td>Fenoxietanol</td><td>2876/2025</td><td>03/2027</td>
+        <td>1,500 kg</td><td>1,505 kg</td><td class="ok">+0,33%</td><td>J.Santos (108)</td><td>16/04 07:51</td><td class="ok">✓</td></tr>
+      <tr><td>E-87416</td><td>5304</td><td>EDTA</td><td>2104/2026</td><td>04/2028</td>
+        <td>0,250 kg</td><td>0,251 kg</td><td class="ok">+0,40%</td><td>J.Santos (108)</td><td>16/04 08:03</td><td class="ok">✓</td></tr>
+      <tr><td>E-87417</td><td>5410</td><td>Essência Granado</td><td>3201/2026</td><td>06/2028</td>
+        <td>4,000 kg</td><td>4,012 kg</td><td class="ok">+0,30%</td><td>J.Santos (108)</td><td>16/04 08:14</td><td class="ok">✓</td></tr>
+      <tr><td>E-87418</td><td>5501</td><td>Água Purificada</td><td>—</td><td>—</td>
+        <td>85,000 kg</td><td>84,950 kg</td><td class="ok">-0,06%</td><td>J.Santos (108)</td><td>16/04 08:25</td><td class="ok">✓</td></tr>
+    </table>
+
+    <div class="sub-title">Relatório de Insumos Consumidos <span class="badge-sync">🔄 InBatch</span></div>
+    <table class="qtab">
+      <tr><th>MP</th><th>Saldo Inicial</th><th>Consumido</th><th>Devolvido</th><th>Saldo Final</th><th>Origem (Almox.)</th></tr>
+      <tr><td>SLES 70%</td><td>40,000 kg</td><td>40,015 kg</td><td>0 kg</td><td>-0,015 kg</td><td>ALMOX-A · prateleira P3</td></tr>
+      <tr><td>Cocoamidopropil Betaína</td><td>18,000 kg</td><td>18,022 kg</td><td>0 kg</td><td>-0,022 kg</td><td>ALMOX-A · prateleira P5</td></tr>
+      <tr><td>Glicerina USP</td><td>30,000 kg</td><td>29,995 kg</td><td>0 kg</td><td>+0,005 kg</td><td>ALMOX-B · tanque T2</td></tr>
+      <tr><td>Fenoxietanol</td><td>2,000 kg</td><td>1,505 kg</td><td>0,495 kg</td><td>+0,000 kg</td><td>ALMOX-C · armário Q</td></tr>
+    </table>
+
+    <div class="sub-title">Fórmula Padrão / Tamanho do Lote <span class="badge-sync">🔄 BOM JDE</span></div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-lbl">Tam. Lote (BOM)</div><div class="kpi-val">6.000,00 kg</div></div>
+      <div class="kpi"><div class="kpi-lbl">Pesado (Total)</div><div class="kpi-val">178,75 kg</div></div>
+      <div class="kpi"><div class="kpi-lbl">Multiplicador</div><div class="kpi-val">33,57×</div></div>
+      <div class="kpi"><div class="kpi-lbl">Revisão BOM</div><div class="kpi-val">BOM-S0815B-04</div></div>
+    </div>
+  </div>
+
+  <!-- ───────────────────────────────────────────────────── -->
+  <!-- FABRICAÇÃO -->
+  <!-- ───────────────────────────────────────────────────── -->
+  <div class="section-banner fab">🧪 ANÁLISE DA FABRICAÇÃO (GRANEL COSMÉTICO) <span class="badge-ok">APROVADO</span></div>
+  <div class="section-card">
+
+    <!-- Header de Identificação OF -->
+    <div class="sub-title">Identificação do Lote de Fabricação <span class="badge-sync">🔄 InBatch</span></div>
+    <table class="qtab">
+      <tr>
+        <th>Código</th><td>S0815B</td>
+        <th>Nome do Produto</th><td>TRANSP GRANADO GLICERINA</td>
+        <th>Sala</th><td>3 — Fab. Sabonetes</td>
+        <th>Tamanho</th><td>6.000 kg</td>
+      </tr>
+      <tr>
+        <th>Lote Granel</th><td>2551/2026</td>
+        <th>WO Fab.</th><td>WO 784426</td>
+        <th>Data Fab.</th><td>16/04/2026</td>
+        <th>Em Campanha?</th><td class="ok">SIM (2/5)</td>
+      </tr>
+      <tr>
+        <th>Balança Zerada?</th><td class="ok">SIM (tara 0,00 kg)</td>
+        <th>Utensílios Limpos?</th><td class="ok">SIM ✓</td>
+        <th>Último Prod. Reator Principal</th><td>S0815B (mesmo)</td>
+        <th>Último Prod. Reator Auxiliar</th><td>S0822B (Limão)</td>
+      </tr>
+    </table>
+
+    <!-- Status do Equipamento -->
+    <div class="sub-title">Etiqueta Status do Equipamento / Peça <span class="badge-sync">🔄 InBatch</span></div>
+    <table class="qtab">
+      <tr><th>Equipamento</th><th>Sala/Linha</th><th>Tipo Limpeza</th><th>Prod. Anterior</th><th>Lote Anterior</th><th>Data Limpeza</th><th>Assinatura</th></tr>
+      <tr><td>Reator Principal R-301</td><td>Sala 3</td><td class="ok">Parcial / Campanha</td><td>S0815B (mesmo)</td><td>2548/2026</td><td>16/04 06:40</td><td class="ok">M.Rocha (108)</td></tr>
+      <tr><td>Reator Auxiliar R-302</td><td>Sala 3</td><td class="ok">Limpeza Total</td><td>S0822B (Limão)</td><td>2398/2026</td><td>15/04 22:15</td><td class="ok">M.Rocha (108)</td></tr>
+      <tr><td>Bomba Recirc. B-12</td><td>Sala 3</td><td class="ok">Parcial / Campanha</td><td>S0815B (mesmo)</td><td>2548/2026</td><td>16/04 06:55</td><td class="ok">M.Rocha (108)</td></tr>
+      <tr><td>Filtro F-21</td><td>Sala 3</td><td class="alr">Aguardando Limpeza</td><td>S0822B (Limão)</td><td>2398/2026</td><td>—</td><td>—</td></tr>
+    </table>
+
+    <!-- InBatch — Sequência de fases -->
+    <div class="sub-title">Relatório do InBatch — Sequência de Fases <span class="badge-sync">🔄 InBatch</span></div>
+    <table class="qtab">
+      <tr>
+        <th>#</th><th>Fase</th><th>Evento / Instrução</th><th>Parâmetro</th><th>Esperado</th><th>Realizado</th><th>Início</th><th>Fim</th><th>Operador</th>
+      </tr>
+      <tr><td>1</td><td>Início Fabricação</td><td>Confirmar zeragem balança + utensílios</td><td>—</td><td>OK</td><td class="ok">OK</td><td>16/04 07:00</td><td>16/04 07:05</td><td>M.Rocha</td></tr>
+      <tr><td>2</td><td>Adição de Água</td><td>Carregar água purificada</td><td>kg</td><td>85,000</td><td class="ok">84,950</td><td>16/04 07:08</td><td>16/04 07:21</td><td>M.Rocha</td></tr>
+      <tr><td>3</td><td>Aquecimento</td><td>Aquecer até 65°C</td><td>°C</td><td>65,0</td><td class="ok">65,2</td><td>16/04 07:22</td><td>16/04 08:14</td><td>M.Rocha</td></tr>
+      <tr><td>4</td><td>Temp Check</td><td>Verificar temperatura estável</td><td>°C ± 1</td><td>65,0</td><td class="ok">65,2</td><td>16/04 08:14</td><td>16/04 08:18</td><td>M.Rocha</td></tr>
+      <tr><td>5</td><td>Adição do Material</td><td>SLES + Cocoamidopropil + Glicerina</td><td>kg</td><td>88,032</td><td class="ok">88,032</td><td>16/04 08:18</td><td>16/04 08:42</td><td>M.Rocha</td></tr>
+      <tr><td>6</td><td>Parâmetros</td><td>Verificar pH inicial</td><td>pH</td><td>9,5–10,5</td><td class="ok">9,8</td><td>16/04 08:45</td><td>16/04 08:48</td><td>M.Rocha</td></tr>
+      <tr><td>7</td><td>Homogeneização</td><td>Agitar 30 min @ 250 rpm</td><td>rpm</td><td>250</td><td class="ok">250</td><td>16/04 08:48</td><td>16/04 09:18</td><td>M.Rocha</td></tr>
+      <tr><td>8</td><td>Adição Fenoxietanol + EDTA</td><td>Carregar conservantes</td><td>kg</td><td>1,756</td><td class="ok">1,756</td><td>16/04 09:18</td><td>16/04 09:24</td><td>M.Rocha</td></tr>
+      <tr><td>9</td><td>Adição Essência</td><td>Carregar essência</td><td>kg</td><td>4,000</td><td class="ok">4,012</td><td>16/04 09:24</td><td>16/04 09:30</td><td>M.Rocha</td></tr>
+      <tr><td>10</td><td>Homogeneização Final</td><td>Agitar 15 min</td><td>min</td><td>15</td><td class="ok">15</td><td>16/04 09:30</td><td>16/04 09:45</td><td>M.Rocha</td></tr>
+      <tr><td>11</td><td>Fim Fabricação</td><td>Finalizar etapa fab.</td><td>—</td><td>OK</td><td class="ok">OK</td><td>16/04 09:45</td><td>16/04 09:46</td><td>M.Rocha</td></tr>
+      <tr><td>12</td><td>Recirculação</td><td>Bomba B-12 @ vazão 800 L/h</td><td>L/h</td><td>800</td><td class="ok">810</td><td>16/04 09:46</td><td>16/04 10:30</td><td>M.Rocha</td></tr>
+      <tr><td>13</td><td>Início CQ</td><td>Coleta amostra para LIMS</td><td>—</td><td>OK</td><td class="ok">OK</td><td>16/04 10:30</td><td>16/04 10:34</td><td>CQ-Pereira</td></tr>
+      <tr><td>14</td><td>Resfriamento</td><td>Resfriar até 30°C</td><td>°C</td><td>30,0</td><td class="ok">29,5</td><td>16/04 10:34</td><td>16/04 12:18</td><td>M.Rocha</td></tr>
+      <tr><td>15</td><td>Análise Realizada</td><td>LIMS análise 18.461</td><td>—</td><td>OK</td><td class="ok">OK</td><td>16/04 12:20</td><td>16/04 14:55</td><td>R.Café (LIMS)</td></tr>
+      <tr><td>16</td><td>Amostra</td><td>Aprovado pelo CQ</td><td>Status</td><td>AP</td><td class="ok">APROVADO</td><td>16/04 14:55</td><td>16/04 15:00</td><td>R.Café (LIMS)</td></tr>
+      <tr><td>17</td><td>Rendimento</td><td>Calcular rendimento real</td><td>%</td><td>97–103%</td><td class="ok">100,10%</td><td>16/04 15:02</td><td>16/04 15:05</td><td>Sistema</td></tr>
+      <tr><td>18</td><td>Fase Transfer</td><td>Transferir granel p/ envase</td><td>kg</td><td>6.006</td><td class="ok">6.006</td><td>16/04 15:10</td><td>16/04 16:20</td><td>M.Rocha</td></tr>
+      <tr><td>19</td><td>Finalizar Etapa</td><td>Encerrar lote granel</td><td>—</td><td>OK</td><td class="ok">OK</td><td>16/04 16:21</td><td>16/04 16:22</td><td>M.Rocha</td></tr>
+      <tr><td>20</td><td>Último Prod. Equip.</td><td>Marcar S0815B no histórico</td><td>—</td><td>OK</td><td class="ok">OK</td><td>16/04 16:22</td><td>16/04 16:22</td><td>Sistema</td></tr>
+    </table>
+
+    <!-- Etiqueta de Fabricação (preview impressa) -->
+    <div class="sub-title">Etiqueta de Fabricação (preview)</div>
+    <table style="border:none;background:transparent">
+      <tr><td style="border:none;vertical-align:top;width:330px">
+        <div class="etiqueta-preview">
+          <div class="etq-tit">GRANADO · ETIQUETA DE FABRICAÇÃO</div>
+          <div class="etq-line"><span>Código:</span><b>S0815B</b></div>
+          <div class="etq-line"><span>Produto:</span><b>TRANSP GLICERINA</b></div>
+          <div class="etq-line"><span>Lote Granel:</span><b>2551/2026</b></div>
+          <div class="etq-line"><span>Quantidade:</span><b>4.000 kg</b></div>
+          <div class="etq-line"><span>Data Pesagem:</span><b>16/04/2026</b></div>
+          <div class="etq-line"><span>Validade PA:</span><b>30/04/2029</b></div>
+          <div class="etq-line"><span>Início Fab.:</span><b>16/04 07:00</b></div>
+          <div class="etq-line"><span>Fim Fab.:</span><b>16/04 16:22</b></div>
+          <div class="etq-line"><span>Prazo Estocagem:</span><b>180 dias</b></div>
+          <div class="etq-line"><span>Nº Recipientes:</span><b>2 IBCs</b></div>
+          <div style="text-align:center;margin-top:6px;font-family:'Courier New',monospace;font-size:9px">||||||||  ||  ||||  ||||||||</div>
+          <div style="text-align:center;font-size:8.5px">QR · 2551/2026 · WO 784426</div>
+        </div>
+      </td><td style="border:none;padding-left:14px;vertical-align:top">
+        <table class="qtab">
+          <tr><th>Anexos</th><th>Status</th><th>Por</th><th>Data</th></tr>
+          <tr><td>📎 Foto Etiqueta Granel (física)</td><td><span class="badge-pdf">FOTO</span></td><td>R.Café</td><td>16/04 16:25</td></tr>
+          <tr><td>📎 Etiqueta Status Equipamento</td><td><span class="badge-pdf">FOTO</span></td><td>M.Rocha</td><td>16/04 06:45</td></tr>
+        </table>
+      </td></tr>
+    </table>
+
+    <div class="sub-title">Rendimento da Fabricação <span class="badge-sync">🔄 InBatch</span></div>
+    <table class="qtab">
+      <tr><th>Rendimento Teórico</th><th>Rendimento Real</th><th>Perda</th><th>Status</th><th>Responsável</th><th>Data</th></tr>
+      <tr><td>6.000 kg</td><td>6.006 kg</td><td class="ok">0,10% (+6 kg)</td><td><span class="badge-ok">APROVADO</span></td><td>Daltivo (108922)</td><td>16/04/2026</td></tr>
+    </table>
+  </div>
+
+  <!-- ───────────────────────────────────────────────────── -->
+  <!-- ENVASE / EMBALAGEM -->
+  <!-- ───────────────────────────────────────────────────── -->
+  <div class="section-banner emb">📦 ANÁLISE DA EMBALAGEM (ENVASE) <span class="badge-warn">PENDENTE</span></div>
+  <div class="section-card">
+
+    <div class="sub-title">Ordem de Embalagem — EAN + DUN <span class="badge-sync">🔄 Ordem MES</span></div>
+    <table class="qtab">
+      <tr>
+        <th>Tipo</th><th>WO</th><th>Código</th><th>Descrição</th><th>Lote</th>
+        <th>Solicitação</th><th>Início</th><th>Encerramento</th><th>Situação</th>
+      </tr>
+      <tr><td><b>EAN</b></td><td>WO 784426</td><td>S0815B_G</td><td>Sabonete Glic. Tradicional 90g</td><td>262417</td>
+        <td>14/04/2026</td><td>17/04/2026</td><td>—</td><td><span class="badge-warn">EM ANDAMENTO</span></td></tr>
+      <tr><td><b>DUN</b></td><td>WO 784426-D</td><td>S0815B_GD</td><td>Cx Distribuição 24 un</td><td>262417-D</td>
+        <td>14/04/2026</td><td>17/04/2026</td><td>—</td><td><span class="badge-warn">EM ANDAMENTO</span></td></tr>
+    </table>
+
+    <div class="sub-title">Quantidades Detalhadas EAN <span class="badge-sync">🔄 Ordem MES</span></div>
+    <table class="qtab">
+      <tr>
+        <th>Pedida</th><th>Produzida</th><th>Perda</th><th>Amostra</th><th>Utilizada</th>
+        <th>Rendimento</th><th>Entrada</th><th>Adicionada</th><th>Devolvida</th>
+      </tr>
+      <tr>
+        <td>52.056 un</td><td>48.531 un</td><td class="alr">3.525 un (6,77%)</td><td>20 un</td><td>48.511 un</td>
+        <td class="alr">93,23%</td><td>6.006 kg</td><td>0 kg</td><td>52 kg</td>
+      </tr>
+    </table>
+
+    <div class="sub-title">Quantidades Detalhadas DUN <span class="badge-sync">🔄 Ordem MES</span></div>
+    <table class="qtab">
+      <tr>
+        <th>Pedida</th><th>Produzida</th><th>Perda</th><th>Amostra</th><th>Utilizada</th>
+        <th>Rendimento</th><th>Entrada</th><th>Adicionada</th><th>Devolvida</th>
+      </tr>
+      <tr>
+        <td>2.169 cx</td><td>2.022 cx</td><td class="alr">147 cx (6,78%)</td><td>2 cx</td><td>2.020 cx</td>
+        <td class="alr">93,22%</td><td>48.531 un</td><td>0 un</td><td>0 un</td>
+      </tr>
+    </table>
+
+    <div class="sub-title">Documentação Eletrônica de Produção — Rendimento <span class="badge-sync">🔄 MES</span></div>
+    <table class="qtab">
+      <tr>
+        <th>Filial</th><th>Tipo Ordem</th><th>Lote</th><th>Produto</th><th>Quantidades</th><th>Rendimento</th>
+        <th>Prod. Anterior</th><th>Lote Ant.</th><th>Justificativa</th><th>Usuário</th>
+      </tr>
+      <tr>
+        <td>0015</td><td>EAN</td><td>262417</td><td>S0815B_G</td><td>52.056 / 48.531</td><td class="alr">93,23%</td>
+        <td>S0822B_G</td><td>261892</td><td>Quebra de copo no envase (lote anterior)</td><td>F.Costa (212)</td>
+      </tr>
+    </table>
+
+    <div class="sub-title">Resumo do Lote — Amostras Início/Meio/Fim <span class="badge-sync">🔄 MES</span></div>
+    <table class="qtab">
+      <tr>
+        <th>Lote Granel</th><th>Início (data/hora)</th><th>Término (data/hora)</th>
+        <th>Amostra Início</th><th>Amostra Meio</th><th>Amostra Fim</th>
+        <th>Processo</th><th>Usuário</th>
+      </tr>
+      <tr>
+        <td>2551/2026</td><td>17/04 07:15</td><td>17/04 16:42</td>
+        <td>17/04 07:30 (cx 12)</td><td>17/04 11:50 (cx 13)</td><td>17/04 16:25 (cx 14)</td>
+        <td>Envase pos1</td><td>F.Costa (212)</td>
+      </tr>
+    </table>
+
+    <div class="sub-title">Liberação de Linha <span class="badge-sync">🔄 MES</span></div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-time">17/04/2026 07:05</div>
+        <div class="tl-desc"><b>Liberação de Linha — Envase Pos1.</b> Conferida limpeza, peças, etiquetas e parametrização do enchedor. <b>Resultado:</b> <span class="badge-ok">LIBERADA</span> · <b>Por:</b> F.Costa (212)</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">17/04/2026 11:42</div>
+        <div class="tl-desc"><b>Parada de Linha — limpeza intermediária.</b> Justificativa: Troca de lote da etiqueta de tampa. <b>Resultado:</b> <span class="badge-warn">PARADA 8 min</span> · <b>Por:</b> F.Costa (212)</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-time">17/04/2026 11:50</div>
+        <div class="tl-desc"><b>Reliberação de Linha.</b> Conferida nova bobina de etiqueta. <b>Resultado:</b> <span class="badge-ok">LIBERADA</span> · <b>Por:</b> F.Costa (212)</div>
+      </div>
+    </div>
+
+    <div class="sub-title">Controle de Peso — Amostras de Envase <span class="badge-sync">🔄 MES</span></div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-lbl">Total Amostras</div><div class="kpi-val">6 lançamentos</div></div>
+      <div class="kpi"><div class="kpi-lbl">Tara Embalagem</div><div class="kpi-val">9,2 g</div></div>
+      <div class="kpi"><div class="kpi-lbl">Densidade</div><div class="kpi-val">1,02 g/cm³</div></div>
+      <div class="kpi"><div class="kpi-lbl">Peso Declarado</div><div class="kpi-val">90,0 g</div></div>
+      <div class="kpi"><div class="kpi-lbl">Média (6)</div><div class="kpi-val" style="color:var(--ok)">91,4 g</div></div>
+    </div>
+    <table class="qtab">
+      <tr><th>#</th><th>Data</th><th>Hora</th><th>Tara Emb.</th><th>Densidade</th><th>Peso Decl.</th><th>Peso Real</th><th>UM</th><th>Status</th><th>Usuário</th></tr>
+      <tr><td>1</td><td>17/04/26</td><td>07:30</td><td>9,2 g</td><td>1,02 g/cm³</td><td>90,0 g</td><td>91,5 g</td><td>g</td><td class="ok">CONFORME</td><td>F.Costa</td></tr>
+      <tr><td>2</td><td>17/04/26</td><td>09:00</td><td>9,2 g</td><td>1,02 g/cm³</td><td>90,0 g</td><td>91,3 g</td><td>g</td><td class="ok">CONFORME</td><td>F.Costa</td></tr>
+      <tr><td>3</td><td>17/04/26</td><td>10:30</td><td>9,2 g</td><td>1,02 g/cm³</td><td>90,0 g</td><td>91,6 g</td><td>g</td><td class="ok">CONFORME</td><td>F.Costa</td></tr>
+      <tr><td>4</td><td>17/04/26</td><td>12:30</td><td>9,2 g</td><td>1,02 g/cm³</td><td>90,0 g</td><td>91,4 g</td><td>g</td><td class="ok">CONFORME</td><td>F.Costa</td></tr>
+      <tr><td>5</td><td>17/04/26</td><td>14:00</td><td>9,2 g</td><td>1,02 g/cm³</td><td>90,0 g</td><td>91,2 g</td><td>g</td><td class="ok">CONFORME</td><td>F.Costa</td></tr>
+      <tr><td>6</td><td>17/04/26</td><td>15:30</td><td>9,2 g</td><td>1,02 g/cm³</td><td>90,0 g</td><td>91,4 g</td><td>g</td><td class="ok">CONFORME</td><td>F.Costa</td></tr>
+    </table>
+
+    <div class="sub-title">Controle de Processo — Caixa de Embarque + Refil <span class="badge-sync">🔄 MES Envase</span></div>
+    <div class="check-grid">
+      <div class="check-item"><span>✅</span><div class="nm">1. Etiqueta de Embarque</div><div class="by">F.Costa · 17/04 07:32</div></div>
+      <div class="check-item"><span>✅</span><div class="nm">2. Peletização</div><div class="by">F.Costa · 17/04 07:34</div></div>
+      <div class="check-item"><span>✅</span><div class="nm">3. Quantidade Produto Interno</div><div class="by">F.Costa · 17/04 07:35</div></div>
+      <div class="check-item"><span>✅</span><div class="nm">4. Codificação Legível / Indelével</div><div class="by">F.Costa · 17/04 07:37</div></div>
+      <div class="check-item"><span>✅</span><div class="nm">5. Filme — Código Conforme WO</div><div class="by">F.Costa · 17/04 07:39</div></div>
+      <div class="check-item"><span>✅</span><div class="nm">6. Granel — Aspecto</div><div class="by">F.Costa · 17/04 07:42</div></div>
+      <div class="check-item"><span>✅</span><div class="nm">7. Refil — Alinhamento Inferior</div><div class="by">F.Costa · 17/04 07:43</div></div>
+      <div class="check-item"><span>✅</span><div class="nm">8. Refil — Alinhamento Superior</div><div class="by">F.Costa · 17/04 07:44</div></div>
+      <div class="check-item"><span>✅</span><div class="nm">9. Refil — Ponto Tríplice Alinhado</div><div class="by">F.Costa · 17/04 07:45</div></div>
+      <div class="check-item"><span>✅</span><div class="nm">10. Refil — Selagem Bocal</div><div class="by">F.Costa · 17/04 07:46</div></div>
+      <div class="check-item fail"><span>⚠</span><div class="nm">11. Refil — Selagem Fundo / Triângulo</div><div class="by">F.Costa · 17/04 11:38 (RC-2026-1042)</div></div>
+      <div class="check-item"><span>✅</span><div class="nm">12. Refil — Selagem Fundo / Laterais</div><div class="by">F.Costa · 17/04 07:48</div></div>
+      <div class="check-item"><span>✅</span><div class="nm">13. Teste Resistência — Sem Vazamento</div><div class="by">F.Costa · 17/04 07:50</div></div>
+    </div>
+
+    <div class="sub-title">Anexos da Ordem de Embalagem <span class="badge-pdf">FÍSICO</span></div>
+    <table class="qtab">
+      <tr><th>Anexo</th><th>Status</th><th>Anexado por</th><th>Data</th></tr>
+      <tr><td>📎 Etiqueta de Fabricação</td><td><span class="badge-ok">ANEXADO</span></td><td>F.Costa</td><td>17/04 07:30</td></tr>
+      <tr><td>📎 Etiqueta Status do Equipamento</td><td><span class="badge-ok">ANEXADO</span></td><td>F.Costa</td><td>17/04 07:31</td></tr>
+      <tr><td>📎 Etiqueta de Caixa de Embarque</td><td><span class="badge-ok">ANEXADO</span></td><td>F.Costa</td><td>17/04 09:15</td></tr>
+      <tr><td>📎 Material de Embalagem (certificado de análise)</td><td><span class="badge-ok">ANEXADO</span></td><td>F.Costa</td><td>17/04 07:20</td></tr>
+    </table>
+  </div>
+
+  <!-- ───────────────────────────────────────────────────── -->
+  <!-- BOLETINS DE ANÁLISE -->
+  <!-- ───────────────────────────────────────────────────── -->
+  <div class="section-banner bol">🧪 BOLETINS DE ANÁLISE</div>
+  <div class="section-card">
+
+    <div class="sub-title">Boletim de Análise — Produto Granel <span class="badge-lims">🧪 LIMS Nº 18.461</span></div>
+    <table class="qtab">
+      <tr>
+        <th>Produto</th><td>S0815B</td>
+        <th>Código</th><td>S0815B</td>
+        <th>Lote</th><td>2551/2026</td>
+      </tr>
+      <tr>
+        <th>Fabricação</th><td>16/04/2026</td>
+        <th>Validade</th><td>30/04/2029</td>
+        <th>Nº Análise</th><td>18.461</td>
+      </tr>
+      <tr>
+        <th>Data Análise</th><td>16/04/2026</td>
+        <th>Amostra</th><td>3 frascos · 50 mL</td>
+        <th>Analista</th><td>R.Café (LIMS)</td>
+      </tr>
+      <tr>
+        <th>Parecer</th><td colspan="2"><span class="badge-ok">APROVADO</span> — Todos os parâmetros conforme</td>
+        <th>Data Parecer</th><td>16/04 14:55</td>
+      </tr>
+      <tr>
+        <th>Emitido por</th><td>R.Café (LIMS)</td>
+        <th>Data Emissão</th><td>16/04 14:58</td>
+        <th>Anexo</th><td><span class="badge-pdf">📎 Boletim_18461.pdf</span></td>
+      </tr>
+    </table>
+
+    <table class="qtab" style="margin-top:8px">
+      <caption>Análises × Especificações × Resultados</caption>
+      <tr><th>Análise</th><th>Especificação</th><th>Resultado</th><th>Status</th><th>Observação</th></tr>
+      <tr><td>pH</td><td>9,5 – 10,5</td><td>10,7</td><td class="ok">CONFORME</td><td>—</td></tr>
+      <tr><td>Umidade</td><td>≤ 25%</td><td>22%</td><td class="ok">CONFORME</td><td>—</td></tr>
+      <tr><td>Densidade</td><td>1,00 – 1,05 g/cm³</td><td>1,02 g/cm³</td><td class="ok">CONFORME</td><td>—</td></tr>
+      <tr><td>Aspecto</td><td>Transparente, isento de partículas</td><td>Transparente</td><td class="ok">CONFORME</td><td>—</td></tr>
+      <tr><td>Cor</td><td>Incolor – ligeiramente amarela</td><td>Incolor</td><td class="ok">CONFORME</td><td>—</td></tr>
+      <tr><td>Viscosidade (25°C)</td><td>3.500 – 5.500 cP</td><td>4.280 cP</td><td class="ok">CONFORME</td><td>—</td></tr>
+    </table>
+
+    <div class="sub-title">Memória de Análise — Dados Brutos <span class="badge-lims">🧪 LIMS</span></div>
+    <table class="qtab">
+      <tr><th>Código</th><th>Lote LIMS</th><th>Lote Granel</th><th>ID Amostra</th><th>Observação</th></tr>
+      <tr><td>S0815B</td><td>LIMS-2026-04162</td><td>2551/2026</td><td>AM-2026-04162-A</td><td>Coleta padrão de Início CQ</td></tr>
+      <tr><td>S0815B</td><td>LIMS-2026-04163</td><td>2551/2026</td><td>AM-2026-04162-B</td><td>Coleta duplicata para retenção</td></tr>
+    </table>
+
+    <div class="sub-title">Boletim de Análise — Produto Acabado <span class="badge-lims">🧪 LIMS Nº 18.502</span></div>
+    <table class="qtab">
+      <tr><th>Análise</th><th>Especificação</th><th>Resultado</th><th>Status</th></tr>
+      <tr><td>Peso Médio</td><td>90 g ± 3%</td><td>91,4 g</td><td class="ok">CONFORME</td></tr>
+      <tr><td>Aspecto Visual</td><td>Conforme padrão</td><td>Conforme</td><td class="ok">CONFORME</td></tr>
+      <tr><td>Hermeticidade</td><td>Sem vazamento</td><td>Sem vazamento</td><td class="ok">CONFORME</td></tr>
+    </table>
+
+    <div class="sub-title">Boletim Microbiológico <span class="badge-lims">🧪 LIMS Nº 18.503</span></div>
+    <table class="qtab">
+      <tr><th>Análise</th><th>Especificação</th><th>Resultado</th><th>Status</th></tr>
+      <tr><td>Contagem Total Aeróbios</td><td>≤ 100 UFC/g</td><td>&lt; 10 UFC/g</td><td class="ok">CONFORME</td></tr>
+      <tr><td>Bolor / Levedura</td><td>≤ 10 UFC/g</td><td>&lt; 10 UFC/g</td><td class="ok">CONFORME</td></tr>
+      <tr><td>Patógenos</td><td>Ausente</td><td>Ausente</td><td class="ok">CONFORME</td></tr>
+    </table>
+  </div>
+
+  <!-- ───────────────────────────────────────────────────── -->
+  <!-- AMOSTRAS DE RETENÇÃO (já existe) -->
+  <!-- ───────────────────────────────────────────────────── -->
+  <div class="card">
+    <div class="card-title">📦 Amostras de Retenção <span class="badge-ok">5 cadastradas</span> <span style="font-size:9.5px;font-weight:600;color:var(--text3);margin-left:6px">ANVISA RDC 658/2022 · 1 ano após validade</span></div>
+    <table class="qtab">
+      <tr><th>#</th><th>Tipo</th><th>Caixa</th><th>Pallet</th><th>Posição</th><th>Quantidade</th><th>Observação</th></tr>
+      <tr><td>1</td><td>🟢 Início</td><td>12</td><td>P-07</td><td>Estante A · Col 3</td><td>3 un</td><td>Coleta padrão início de envase</td></tr>
+      <tr><td>2</td><td>🟡 Meio</td><td>13</td><td>P-07</td><td>Estante A · Col 3</td><td>3 un</td><td>—</td></tr>
+      <tr><td>3</td><td>🔴 Fim</td><td>14</td><td>P-07</td><td>Estante A · Col 3</td><td>3 un</td><td>—</td></tr>
+      <tr><td>4</td><td>🔬 Microbiologia</td><td>15</td><td>P-08</td><td>Geladeira micro</td><td>2 un</td><td>Para análise de patógenos</td></tr>
+      <tr><td>5</td><td>⚗️ Físico-Químico</td><td>16</td><td>P-08</td><td>Estante B · Col 1</td><td>2 un</td><td>pH/umidade/densidade</td></tr>
+    </table>
+  </div>
+
+  <!-- ───────────────────────────────────────────────────── -->
+  <!-- REGISTROS DE CORREÇÃO -->
+  <!-- ───────────────────────────────────────────────────── -->
+  <div class="card" style="border-top:3px solid var(--per)">
+    <div class="card-title">📝 Registros de Correção <span class="badge-per">1 EM ABERTO</span></div>
+    <table class="qtab">
+      <tr><th>Nº</th><th>Classificação</th><th>Tipo</th><th>Severidade</th><th>Área</th><th>Título</th><th>Status</th><th>Aberto</th></tr>
+      <tr><td>RC-2026-1042</td><td>🏷️ Divergência de Rotulagem</td><td>⚙️ Processo</td><td><span class="badge-warn">Moderado</span></td><td>📦 Embalagem</td><td>Selagem fundo/triângulo divergente em amostra de meio do envase</td><td><span class="badge-per">ABERTO</span></td><td>17/04 11:38</td></tr>
+    </table>
+  </div>
+
+  <!-- ───────────────────────────────────────────────────── -->
+  <!-- CHECKLIST POP-GQV-0009 (já existe) -->
+  <!-- ───────────────────────────────────────────────────── -->
+  <div class="card" style="border-top:3px solid var(--ouro)">
+    <div class="card-title">📋 Check List de Reconciliação · POP-GQV-0009/05 · Anexo 2 <span class="badge-ok">12/12 marcados</span></div>
+    <table class="qtab">
+      <tr><th>#</th><th>Item documental</th><th>Status</th></tr>
+      <tr><td>1</td><td>WO com Matérias-Primas Pesadas</td><td class="ok">✓ Concluído</td></tr>
+      <tr><td>2</td><td>Etiquetas de Matéria-Prima / Relatório de Pesagem</td><td class="ok">✓ Concluído</td></tr>
+      <tr><td>3</td><td>Controle de Assinaturas / Assinatura Eletrônica</td><td class="ok">✓ Concluído</td></tr>
+      <tr><td>4</td><td>Ordem de Fabricação / Relatório do InBatch</td><td class="ok">✓ Concluído</td></tr>
+      <tr><td>5</td><td>WO Envase EAN / WO Montagem EAN</td><td class="ok">✓ Concluído</td></tr>
+      <tr><td>6</td><td>Relatório de Controle em Processo na Linha de Embalagem</td><td class="ok">✓ Concluído</td></tr>
+      <tr><td>7</td><td>Controle de Peso</td><td class="ok">✓ Concluído</td></tr>
+      <tr><td>8</td><td>Ordem de Embalagem</td><td class="ok">✓ Concluído</td></tr>
+      <tr><td>9</td><td>WO Embalagem DUN</td><td class="ok">✓ Concluído</td></tr>
+      <tr><td>10</td><td>Boletim de Análise Físico-Químico</td><td class="ok">✓ Concluído</td></tr>
+      <tr><td>11</td><td>Boletim de Análise Microbiológico</td><td class="ok">✓ Concluído</td></tr>
+      <tr><td>12</td><td>Relatório de Desvio <span style="font-size:10px;color:var(--text3)">— Registro vinculado: RC-2026-1042</span></td><td class="ok">✓ Concluído</td></tr>
+    </table>
+  </div>
+
+  <!-- Final -->
+  <div class="card" style="background:var(--ok-p);border:2px solid var(--ok-b);text-align:center;padding:16px">
+    <div style="font-size:14px;font-weight:800;color:var(--ok)">PRONTO PARA LIBERAÇÃO AO CED</div>
+    <div style="font-size:11px;color:var(--text2);margin-top:4px">Todas as áreas aprovadas · checklist completo · 1 registro de correção em aberto (RC-2026-1042) — necessita tratativa antes de liberar</div>
+  </div>
+
+</div>
+
+</body>
+</html>

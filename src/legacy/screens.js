@@ -4778,20 +4778,43 @@ export const SCREENS = {
       // ════════ Checklists da Sala (stepper) — buscados conforme a sala ════════
       var PES_CKS_DEFS = [
         { id: 'temp', titulo: 'Checklist Sala — Registros de Temp. e Umidade', icon: '🌡️', curto: 'Temp. & Umidade', campos: [
-          { label: 'Temperatura (°C)', ph: 'Ex.: 20,3' },
-          { label: 'UR (%)', ph: 'Ex.: 47' },
-          { label: 'Hora', ph: 'Ex.: 06:18' }
+          { label: 'Sala', tipo: 'sala' },
+          { label: 'N° Certificado', tipo: 'text', ph: 'Ex.: CERT-2026-0123' },
+          { label: 'Equipamento', tipo: 'text', ph: 'Ex.: Termo-higrômetro digital' },
+          { label: 'Última Calibração', tipo: 'date' },
+          { label: 'Próxima Calibração', tipo: 'date' },
+          { label: 'TAG', tipo: 'text', ph: 'Ex.: TH-SALA-A-01' },
+          { label: 'Mês/Ano', tipo: 'mesano' },
+          { label: 'Temperatura (°C)', tipo: 'text', ph: 'Ex.: 20,3' },
+          { label: 'UR (%)', tipo: 'text', ph: 'Ex.: 47' },
+          { label: 'Hora', tipo: 'hora' }
         ]},
         { id: 'pressao', titulo: 'Checklist Sala — Registros de Pressão', icon: '🎚️', curto: 'Pressão', campos: [
-          { label: 'Pressão Observada', ph: '0,98 a 19,61 Pa ou 0,1 a 2,0 mmWC' },
-          { label: 'Observações', ph: 'Observações (opcional)' }
+          { label: 'Sala', tipo: 'sala' },
+          { label: 'Equipamento', tipo: 'text', ph: 'Ex.: Manômetro diferencial' },
+          { label: 'Última Calibração', tipo: 'date' },
+          { label: 'Mês/Ano', tipo: 'mesano' },
+          { label: 'Pressão Observada (0,98 a 19,61 Pa ou 0,1 a 2,0 mmWC)', tipo: 'text', ph: 'Ex.: 1,5 mmWC' },
+          { label: 'Observações', tipo: 'text', ph: 'Observações (opcional)' }
         ]},
         { id: 'balanca', titulo: 'Checklist Balança', icon: '⚖️', curto: 'Balança', campos: [
-          { label: 'Peso Padrão 20 g', ph: 'Ex.: 20,001 g' },
-          { label: 'Peso Padrão 1 kg', ph: 'Ex.: 1,0001 kg' },
-          { label: 'Peso Padrão 2 kg', ph: 'Ex.: 2,0002 kg' },
-          { label: 'Peso Padrão 5 kg', ph: 'Ex.: 5,0003 kg' },
-          { label: 'Peso Padrão 10 kg', ph: 'Ex.: 10,0005 kg' }
+          { label: 'Área', tipo: 'fixo', valor: 'Pesagem > MD1 > SALA1' },
+          { label: 'Equipamento', tipo: 'text', ph: 'Ex.: Balança analítica' },
+          { label: 'TAG', tipo: 'fixo', valor: 'TAG_BAL1' },
+          { label: 'ID Traction', tipo: 'fixo', valor: '84842877ww5' },
+          { label: 'RG Balança', tipo: 'fixo', valor: 'RG8448777' },
+          { label: 'N° Série Balança', tipo: 'fixo', valor: 'S8448777' },
+          { label: 'Validade', tipo: 'date' },
+          { label: 'Carga Mínima', tipo: 'fixo', valor: '0 KG' },
+          { label: 'Carga Máxima', tipo: 'fixo', valor: '30 KG' },
+          { label: 'Valor de Divisão', tipo: 'fixo', valor: '0.002' },
+          { label: 'Valor de Divisão de Verificação', tipo: 'fixo', valor: '0.002' },
+          { label: 'Data', tipo: 'data' },
+          { label: 'Peso 1 (Peso Padrão 1 kg)', tipo: 'text', ph: 'Ex.: 1,0001 kg' },
+          { label: 'Peso 2 (Peso Padrão 2 kg)', tipo: 'text', ph: 'Ex.: 2,0002 kg' },
+          { label: 'Peso 3 (Peso Padrão 3 kg)', tipo: 'text', ph: 'Ex.: 3,0002 kg' },
+          { label: 'Peso 4 (Peso Padrão 4 kg)', tipo: 'text', ph: 'Ex.: 4,0003 kg' },
+          { label: 'Peso 5 (Peso Padrão 5 kg)', tipo: 'text', ph: 'Ex.: 5,0003 kg' }
         ]}
       ];
       var PES_CKS_PEND = [], PES_CKS_VALS = {};
@@ -4811,6 +4834,25 @@ export const SCREENS = {
         if (m) m.style.display = 'none';
       }
 
+      function pesCksMesAno() { var n = new Date(); return String(n.getMonth() + 1).padStart(2,'0') + '/' + n.getFullYear(); }
+      function pesCksHora() { var n = new Date(); return String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0'); }
+      function pesCksData() { var n = new Date(); return String(n.getDate()).padStart(2,'0') + '/' + String(n.getMonth() + 1).padStart(2,'0') + '/' + n.getFullYear(); }
+      // Renderiza o campo conforme o tipo: text (livre), date (calendário),
+      // sala/mesano/hora/data (sistema) ou fixo (valor cadastrado) — esses somente leitura.
+      function pesCksCampoHtml(c, idx) {
+        var roStyle = 'font-size:12px;padding:8px 10px;background:var(--surface2);color:var(--text2);cursor:not-allowed';
+        var ro = function(v) { return '<input class="inp" id="pes-cks-inp-' + idx + '" value="' + v + '" readonly style="' + roStyle + '">'; };
+        if (c.tipo === 'sala')   return ro(PES_SALA_SEL ? 'Sala ' + PES_SALA_SEL : '');
+        if (c.tipo === 'mesano') return ro(pesCksMesAno());
+        if (c.tipo === 'hora')   return ro(pesCksHora());
+        if (c.tipo === 'data')   return ro(pesCksData());
+        if (c.tipo === 'fixo')   return ro(c.valor || '');
+        if (c.tipo === 'date') {
+          return '<input class="inp" id="pes-cks-inp-' + idx + '" type="date" style="font-size:12px;padding:8px 10px;font-family:var(--font-m)">';
+        }
+        return '<input class="inp" id="pes-cks-inp-' + idx + '" placeholder="' + (c.ph || '') + '" autocomplete="off" style="font-size:12px;padding:8px 10px">';
+      }
+
       function pesCksRender() {
         var box = pesCksBox(); if (!box || !PES_CKS_PEND.length) return;
         var def = pesCksDef(PES_CKS_PEND[0]);
@@ -4827,7 +4869,7 @@ export const SCREENS = {
         var campos = def.campos.map(function(c, idx) {
           return '<div style="display:flex;flex-direction:column">' +
             '<label class="lbl">' + c.label + '</label>' +
-            '<input class="inp" id="pes-cks-inp-' + idx + '" placeholder="' + c.ph + '" autocomplete="off" style="font-size:12px;padding:8px 10px">' +
+            pesCksCampoHtml(c, idx) +
           '</div>';
         }).join('');
         box.innerHTML =
