@@ -1224,158 +1224,114 @@ export const SCREENS = {
         <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Checklist</div></div>
       </div>
 
-      <!-- KPIs no topo: estado global -->
-      <div class="g4 mb14" style="gap:10px">
-        <div class="card cv" style="display:flex;align-items:center;gap:10px;padding:10px 14px">
-          <div style="font-family:var(--font-m);font-size:22px;font-weight:700;color:var(--verde);line-height:1" id="cklt-kpi-ok">0</div>
-          <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">Executados<br/>no per&iacute;odo</div>
-        </div>
-        <div class="card cp" style="display:flex;align-items:center;gap:10px;padding:10px 14px">
-          <div style="font-family:var(--font-m);font-size:22px;font-weight:700;color:var(--per);line-height:1" id="cklt-kpi-pend">2</div>
-          <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">Pendentes<br/>(bloqueia OPs)</div>
-        </div>
-        <div class="card co" style="display:flex;align-items:center;gap:10px;padding:10px 14px">
-          <div style="font-family:var(--font-m);font-size:22px;font-weight:700;color:var(--inf);line-height:1">2</div>
-          <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">Total de<br/>checklists</div>
-        </div>
-        <div class="card" style="display:flex;align-items:center;gap:10px;padding:10px 14px">
-          <div style="font-family:var(--font-m);font-size:22px;font-weight:700;color:var(--ouro);line-height:1">06:18</div>
-          <div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);line-height:1.2">&Uacute;ltima<br/>execu&ccedil;&atilde;o</div>
-        </div>
-      </div>
-
-      <!-- ═══════════ GRID DE CHECKLISTS ═══════════ -->
-      <div class="card cv mb14">
-        <div class="card-title">Checklists — Estado Atual</div>
-        <div style="overflow-x:auto">
-        <table class="tbl" id="tbl-cklt-grid" style="font-size:11px;min-width:1000px">
-          <thead>
-            <tr>
-              <th>Checklist</th><th>Frequência</th><th>Itens</th><th>Bloqueante?</th>
-              <th>Status</th><th>Última Execução</th><th>Operador</th><th>Ação</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr id="cklt-row-bal" data-key="balancas">
-              <td>
-                <div style="font-size:13px;font-weight:700;color:var(--verde-esc)">⚖️ Aferição de Balanças</div>
-                <div style="font-size:10px;color:var(--text3);margin-top:2px">BAL-01 micro · BAL-03 zeragem + 10 kg</div>
-              </td>
-              <td><span class="bdg bdg-inf">1× por turno</span></td>
-              <td class="mono">3</td>
-              <td><span class="bdg bdg-alr">SIM</span></td>
-              <td id="cklt-st-bal"><span class="bdg bdg-per" style="font-weight:800">⏳ PENDENTE</span></td>
-              <td class="mono" id="cklt-ult-bal" style="color:var(--text3)">—</td>
-              <td id="cklt-op-bal" style="color:var(--text3)">—</td>
-              <td>
-                <button class="btn btn-sm btn-v" onclick="cklTurnoExecutar('balancas')">▶ Executar</button>
-              </td>
-            </tr>
-            <tr id="cklt-row-amb" data-key="ambientais">
-              <td>
-                <div style="font-size:13px;font-weight:700;color:var(--verde-esc)">🌡️ Condições Ambientais</div>
-                <div style="font-size:10px;color:var(--text3);margin-top:2px">Temperatura · Umidade · Pressão dif. · Exaustão · Impressora</div>
-              </td>
-              <td><span class="bdg bdg-inf">1× por turno</span></td>
-              <td class="mono">5</td>
-              <td><span class="bdg bdg-alr">SIM</span></td>
-              <td id="cklt-st-amb"><span class="bdg bdg-per" style="font-weight:800">⏳ PENDENTE</span></td>
-              <td class="mono" id="cklt-ult-amb" style="color:var(--text3)">—</td>
-              <td id="cklt-op-amb" style="color:var(--text3)">—</td>
-              <td>
-                <button class="btn btn-sm btn-v" onclick="cklTurnoExecutar('ambientais')">▶ Executar</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        </div>
-        <div style="font-size:10px;color:var(--text3);margin-top:10px;font-style:italic">
-          ℹ️ Bloqueante = enquanto o checklist for "PENDENTE", o sistema impede o início de qualquer OP da Pesagem nesta sala.
-        </div>
-      </div>
-
       <!-- ═══════════ HISTÓRICO RECENTE ═══════════ -->
       <div class="card cv">
         <div class="card-title">Histórico Recente</div>
 
-        <!-- Filtros (mesmas dimensões das colunas da tabela) -->
-        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:12px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px">
-          <div style="display:flex;flex-direction:column;flex:1 1 130px;min-width:120px">
-            <label class="lbl">Data (de)</label>
-            <input class="inp" id="cklh-flt-data-ini" type="date" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px;font-family:var(--font-m)">
+        <!-- Filtros: Sala › Ordem › Checklist › Operador › Status › Data Início/Fim (2 linhas) -->
+        <div style="margin-bottom:10px;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px">
+          <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:12px">🔍 Filtros</div>
+          <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 14px;align-items:end">
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Sala</label>
+              <select class="sel" id="cklh-flt-sala" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
+                <option value="">Todas</option>
+                <option value="Sala A">Sala A</option>
+                <option value="Sala B">Sala B</option>
+                <option value="Sala C">Sala C</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Ordem</label>
+              <input class="inp" id="cklh-flt-order" placeholder="Nº da ordem" oninput="cklhFiltrar()" style="font-size:11px;padding:6px 8px;font-family:var(--font-m)">
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Checklist</label>
+              <select class="sel" id="cklh-flt-checklist" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
+                <option value="">Todos</option>
+                <option value="balancas">⚖️ Aferição de Balanças</option>
+                <option value="ambientais">🌡️ Condições Ambientais</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Operador</label>
+              <input class="inp" id="cklh-flt-operador" placeholder="Nome ou matrícula" oninput="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Status</label>
+              <select class="sel" id="cklh-flt-status" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
+                <option value="">Todos</option>
+                <option value="ok">✓ Concluído</option>
+                <option value="alerta">⚠ Concluído c/ alerta</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Data (início)</label>
+              <input class="inp" id="cklh-flt-data-ini" type="date" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px;font-family:var(--font-m)">
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">Data (fim)</label>
+              <input class="inp" id="cklh-flt-data-fim" type="date" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px;font-family:var(--font-m)">
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;align-items:flex-end">
+              <button class="btn btn-sm btn-v" onclick="cklhFiltrar()" style="font-size:11px;flex:1">🔍 Buscar</button>
+              <button class="btn btn-sm btn-ghost" onclick="cklhLimparFiltros()" style="font-size:11px;flex:1" title="Limpar todos os filtros">✕ Limpar</button>
+            </div>
           </div>
-          <div style="display:flex;flex-direction:column;flex:1 1 130px;min-width:120px">
-            <label class="lbl">Data (até)</label>
-            <input class="inp" id="cklh-flt-data-fim" type="date" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px;font-family:var(--font-m)">
-          </div>
-          <div style="display:flex;flex-direction:column;flex:1.5 1 170px;min-width:150px">
-            <label class="lbl">Checklist</label>
-            <select class="sel" id="cklh-flt-checklist" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
-              <option value="">Todos</option>
-              <option value="balancas">⚖️ Aferição de Balanças</option>
-              <option value="ambientais">🌡️ Condições Ambientais</option>
-            </select>
-          </div>
-          <div style="display:flex;flex-direction:column;flex:1.5 1 170px;min-width:150px">
-            <label class="lbl">Operador</label>
-            <input class="inp" id="cklh-flt-operador" placeholder="Nome ou matrícula" oninput="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
-          </div>
-          <div style="display:flex;flex-direction:column;flex:1.2 1 150px;min-width:130px">
-            <label class="lbl">Status</label>
-            <select class="sel" id="cklh-flt-status" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
-              <option value="">Todos</option>
-              <option value="ok">✓ Concluído</option>
-              <option value="alerta">⚠ Concluído c/ alerta</option>
-            </select>
-          </div>
-          <button class="btn btn-sm btn-ghost" onclick="cklhLimparFiltros()" style="font-size:11px;align-self:flex-end" title="Limpar todos os filtros">✕ Limpar</button>
         </div>
         <div id="cklh-resultado" style="font-size:10px;color:var(--text3);margin-bottom:8px;font-family:var(--font-m)">5 de 5 registros</div>
 
         <table class="tbl" id="tbl-cklh" style="font-size:11px">
-          <thead><tr><th>Data</th><th>Checklist</th><th>Operador</th><th>Status</th><th>Observação</th></tr></thead>
+          <thead><tr><th>Data</th><th>Sala</th><th>Ordem</th><th>Checklist</th><th>Operador</th><th>Status</th><th>Observação</th></tr></thead>
           <tbody>
-            <tr data-data="2026-05-12" data-checklist="balancas"  data-operador="j. santos 155"   data-status="ok"><td class="mono" style="font-size:11px">12/05/2026</td><td>⚖️ Aferição de Balanças</td><td>J. Santos (155)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Todas as 3 balanças aprovadas. Concluído às 06:18.</td></tr>
-            <tr data-data="2026-05-12" data-checklist="ambientais" data-operador="j. santos 155"   data-status="ok"><td class="mono" style="font-size:11px">12/05/2026</td><td>🌡️ Condições Ambientais</td><td>J. Santos (155)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Temp 20,3°C · UR 47% · Exaustão OK · Impressora OK.</td></tr>
-            <tr data-data="2026-05-12" data-checklist="balancas"  data-operador="c. caily 108"    data-status="ok"><td class="mono" style="font-size:11px">12/05/2026</td><td>⚖️ Aferição de Balanças</td><td>C. Caily (108)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">BAL-01 nivelada — segunda leitura estável.</td></tr>
-            <tr data-data="2026-05-12" data-checklist="ambientais" data-operador="c. caily 108"    data-status="ok"><td class="mono" style="font-size:11px">12/05/2026</td><td>🌡️ Condições Ambientais</td><td>C. Caily (108)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Sem ocorrências.</td></tr>
-            <tr data-data="2026-05-11" data-checklist="balancas"  data-operador="a. pereira 203"  data-status="alerta" style="opacity:.85"><td class="mono" style="font-size:11px">11/05/2026</td><td>⚖️ Aferição de Balanças</td><td>A. Pereira (203)</td><td><span class="bdg bdg-alr">⚠ Concluído c/ alerta</span></td><td style="font-size:10px;color:var(--alr)">BAL-03 fora da faixa — recalibrada pela Manutenção. Liberada às 06:42.</td></tr>
+            <tr data-data="2026-05-12" data-sala="Sala A" data-order="OP-2026-0416" data-checklist="balancas"  data-operador="j. santos 155"   data-status="ok"><td class="mono" style="font-size:11px">12/05/2026</td><td>Sala A</td><td class="mono" style="font-size:10px">OP-2026-0416</td><td>⚖️ Aferição de Balanças</td><td>J. Santos (155)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Todas as 3 balanças aprovadas. Concluído às 06:18.</td></tr>
+            <tr data-data="2026-05-12" data-sala="Sala A" data-order="OP-2026-0416" data-checklist="ambientais" data-operador="j. santos 155"   data-status="ok"><td class="mono" style="font-size:11px">12/05/2026</td><td>Sala A</td><td class="mono" style="font-size:10px">OP-2026-0416</td><td>🌡️ Condições Ambientais</td><td>J. Santos (155)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Temp 20,3°C · UR 47% · Exaustão OK · Impressora OK.</td></tr>
+            <tr data-data="2026-05-12" data-sala="Sala B" data-order="OP-2026-0418" data-checklist="balancas"  data-operador="c. caily 108"    data-status="ok"><td class="mono" style="font-size:11px">12/05/2026</td><td>Sala B</td><td class="mono" style="font-size:10px">OP-2026-0418</td><td>⚖️ Aferição de Balanças</td><td>C. Caily (108)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">BAL-01 nivelada — segunda leitura estável.</td></tr>
+            <tr data-data="2026-05-12" data-sala="Sala B" data-order="OP-2026-0418" data-checklist="ambientais" data-operador="c. caily 108"    data-status="ok"><td class="mono" style="font-size:11px">12/05/2026</td><td>Sala B</td><td class="mono" style="font-size:10px">OP-2026-0418</td><td>🌡️ Condições Ambientais</td><td>C. Caily (108)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Sem ocorrências.</td></tr>
+            <tr data-data="2026-05-11" data-sala="Sala C" data-order="OP-2026-0405" data-checklist="balancas"  data-operador="a. pereira 203"  data-status="alerta" style="opacity:.85"><td class="mono" style="font-size:11px">11/05/2026</td><td>Sala C</td><td class="mono" style="font-size:10px">OP-2026-0405</td><td>⚖️ Aferição de Balanças</td><td>A. Pereira (203)</td><td><span class="bdg bdg-alr">⚠ Concluído c/ alerta</span></td><td style="font-size:10px;color:var(--alr)">BAL-03 fora da faixa — recalibrada pela Manutenção. Liberada às 06:42.</td></tr>
           </tbody>
         </table>
 
         <script>
         // Filtra a tabela do Histórico Recente usando os atributos data-* das linhas.
         function cklhFiltrar() {
-          var fDataI = (document.getElementById('cklh-flt-data-ini').value || '').trim();
-          var fDataF = (document.getElementById('cklh-flt-data-fim').value || '').trim();
+          var fSala  = (document.getElementById('cklh-flt-sala').value || '').trim();
+          var fOrder = (document.getElementById('cklh-flt-order').value || '').trim().toLowerCase();
           var fChk   = (document.getElementById('cklh-flt-checklist').value || '').trim();
           var fOp    = (document.getElementById('cklh-flt-operador').value || '').trim().toLowerCase();
           var fSt    = (document.getElementById('cklh-flt-status').value || '').trim();
+          var fDataI = (document.getElementById('cklh-flt-data-ini').value || '').trim();
+          var fDataF = (document.getElementById('cklh-flt-data-fim').value || '').trim();
           var rows   = document.querySelectorAll('#tbl-cklh tbody tr');
           var vis = 0;
           rows.forEach(function(r){
-            var d = r.getAttribute('data-data') || '';
-            var c = r.getAttribute('data-checklist') || '';
-            var o = (r.getAttribute('data-operador') || '').toLowerCase();
-            var s = r.getAttribute('data-status') || '';
+            var sa = r.getAttribute('data-sala') || '';
+            var or = (r.getAttribute('data-order') || '').toLowerCase();
+            var c  = r.getAttribute('data-checklist') || '';
+            var o  = (r.getAttribute('data-operador') || '').toLowerCase();
+            var s  = r.getAttribute('data-status') || '';
+            var d  = r.getAttribute('data-data') || '';
             var ok = true;
+            if (fSala  && sa !== fSala) ok = false;
+            if (fOrder && or.indexOf(fOrder) === -1) ok = false;
+            if (fChk   && c !== fChk) ok = false;
+            if (fOp    && o.indexOf(fOp) === -1) ok = false;
+            if (fSt    && s !== fSt) ok = false;
             if (fDataI && d < fDataI) ok = false;
             if (fDataF && d > fDataF) ok = false;
-            if (fChk && c !== fChk) ok = false;
-            if (fOp  && o.indexOf(fOp) === -1) ok = false;
-            if (fSt  && s !== fSt) ok = false;
             r.style.display = ok ? '' : 'none';
             if (ok) vis++;
           });
-          var temFiltro = fDataI || fDataF || fChk || fOp || fSt;
+          var temFiltro = fSala || fOrder || fChk || fOp || fSt || fDataI || fDataF;
           var lbl = vis + ' de ' + rows.length + ' registro(s)';
           if (temFiltro) lbl += ' — filtros aplicados';
           document.getElementById('cklh-resultado').textContent = lbl;
         }
         function cklhLimparFiltros() {
-          ['cklh-flt-data-ini','cklh-flt-data-fim','cklh-flt-operador'].forEach(function(id){
+          ['cklh-flt-order','cklh-flt-operador','cklh-flt-data-ini','cklh-flt-data-fim'].forEach(function(id){
             var el = document.getElementById(id); if (el) el.value = '';
           });
+          document.getElementById('cklh-flt-sala').value = '';
           document.getElementById('cklh-flt-checklist').value = '';
           document.getElementById('cklh-flt-status').value = '';
           cklhFiltrar();
@@ -3868,17 +3824,10 @@ export const SCREENS = {
         <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416 · Sala A · BAL-01<br>Loção Hidratante Rosa 200ml<br><span style="color:var(--verde)">J. Santos (155)</span></div>
       </div>
 
-      <div class="abox info mb14"><span class="ai">⏸</span><div>Registre aqui todas as <strong>paradas/eventos não-produtivos</strong> ocorridos durante a pesagem da OP. Estes apontamentos são consumidos pelo <strong>OEE Pesagem</strong> para cálculo do indicador de Disponibilidade.</div></div>
+      <div class="abox info mb14"><span class="ai">⏸</span><div>Registre aqui todas as <strong>paradas/eventos não-produtivos</strong> ocorridos durante a pesagem da OP. Estes apontamentos são consumidos pelo <strong>OEE Pesagem</strong>.</div></div>
 
-      <!-- Controle da Sala (Parar / Iniciar) -->
-      <div class="card cv mb14" style="border:2px solid var(--verde)">
-        <div class="card-title">Controle da Sala</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-          <button id="btn-par-parar" class="btn btn-p" onclick="pesAbrirParar()" style="font-size:22px;font-weight:900;letter-spacing:.06em;padding:26px 16px;border-radius:12px;border-width:2px;display:flex;align-items:center;justify-content:center;gap:10px">⏸ PARAR</button>
-          <button id="btn-par-iniciar" class="btn btn-v" onclick="pesIniciarSala()" style="font-size:22px;font-weight:900;letter-spacing:.06em;padding:26px 16px;border-radius:12px;border-width:2px;display:flex;align-items:center;justify-content:center;gap:10px">▶ INICIAR</button>
-        </div>
-        <div style="font-size:10px;color:var(--text3);margin-top:12px;text-align:center">Cada parada gera registro de auditoria + sincroniza com OEE em tempo real.</div>
-      </div>
+      <!-- Controle de Paradas — árvore (Sala → Balança) + painel -->
+      <div class="card mb14"><div id="pp-root"></div></div>
 
       <!-- Popup: Parar Sala -->
       <div id="modal-parar-sala" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:965;align-items:flex-start;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto">
@@ -3892,19 +3841,8 @@ export const SCREENS = {
           </div>
           <div style="display:flex;flex-direction:column;gap:12px">
             <div style="display:flex;flex-direction:column">
-              <label class="lbl">O que será parado? *</label>
-              <div style="position:relative">
-                <button type="button" id="par-alvo-trigger" onclick="pesToggleAlvoMenu(event)" style="width:100%;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12px;font-family:inherit;color:var(--text);cursor:pointer;text-align:left">
-                  <span id="par-alvo-label" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🏭 SALA (ID: 878787122)</span>
-                  <span style="color:var(--text3);font-size:10px">▾</span>
-                </button>
-                <div id="par-alvo-menu" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:20;background:var(--surface);border:1px solid var(--border);border-radius:7px;box-shadow:var(--sh2);padding:6px;max-height:210px;overflow-y:auto">
-                  <label style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:5px;cursor:pointer;font-size:12px" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"><input type="checkbox" class="par-alvo-cb" value="878787122" data-nome="SALA (ID: 878787122)" checked onchange="pesAlvoChanged()"> 🏭 SALA (ID: 878787122)</label>
-                  <label style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:5px;cursor:pointer;font-size:12px" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"><input type="checkbox" class="par-alvo-cb" value="871584874" data-nome="BALANÇA 01 (ID: 871584874)" onchange="pesAlvoChanged()"> ⚖ BALANÇA 01 (ID: 871584874)</label>
-                  <label style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:5px;cursor:pointer;font-size:12px" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"><input type="checkbox" class="par-alvo-cb" value="871884874" data-nome="BALANÇA 02 (ID: 871884874)" onchange="pesAlvoChanged()"> ⚖ BALANÇA 02 (ID: 871884874)</label>
-                  <label style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:5px;cursor:pointer;font-size:12px" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"><input type="checkbox" class="par-alvo-cb" value="87178874" data-nome="BALANÇA 03 (ID: 87178874)" onchange="pesAlvoChanged()"> ⚖ BALANÇA 03 (ID: 87178874)</label>
-                </div>
-              </div>
+              <label class="lbl">Item a parar</label>
+              <div id="par-alvo-nome" style="font-size:13px;font-weight:700;color:var(--verde-esc);padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px">—</div>
             </div>
             <div style="display:flex;flex-direction:column">
               <label class="lbl">Categoria *</label>
@@ -4090,114 +4028,148 @@ export const SCREENS = {
                String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
       }
 
-      // Atualiza o estado (habilitado/desabilitado) dos botões conforme window.PES_SALA_PARADA
-      function pesRenderStatusParada() {
-        var parado = !!window.PES_SALA_PARADA;
-        var bParar = document.getElementById('btn-par-parar');
-        var bIniciar = document.getElementById('btn-par-iniciar');
-        if (!bParar && !bIniciar) return;
-        if (bParar) { bParar.disabled = parado; bParar.style.opacity = parado ? '.5' : '1'; bParar.style.cursor = parado ? 'not-allowed' : 'pointer'; }
-        if (bIniciar) { bIniciar.disabled = !parado; bIniciar.style.opacity = parado ? '1' : '.5'; bIniciar.style.cursor = parado ? 'pointer' : 'not-allowed'; }
+      // ════════ Paradas — árvore (Sala/Workcenter → Balança/Equipamento) + painel ════════
+      // Apenas a sala em contexto (a tela já está dentro da OP/sala selecionada).
+      var PP_DATA = {
+        'Sala A': ['Balança BAL-01', 'Balança BAL-02', 'Balança BAL-03']
+      };
+      window.PES_PP_PARADOS = window.PES_PP_PARADOS || {};
+      var PP_EXP = {}, PP_SEL = null, PP_PARA = null;
+
+      function ppParts(key) { return key ? key.split('|') : []; }
+      function ppNivel(key) { return ppParts(key).length; }      // 1 = Sala, 2 = Balança
+      function ppNome(key) { var p = ppParts(key); return p[p.length - 1]; }
+      function ppIcon(n) { return n === 1 ? '🏬' : '⚖'; }
+      function ppLabelNivel(n) { return n === 1 ? 'Workcenter (Sala)' : 'Equipamento (Balança)'; }
+      function ppTemFilhos(key) { return ppNivel(key) === 1; }
+      function ppFilhos(key) {
+        var p = ppParts(key);
+        if (p.length === 1) return (PP_DATA[p[0]] || []).map(function(x){ return key + '|' + x; });
+        return [];
       }
 
-      // Notifica o sub-navbar (React) sobre a mudança de status da sala
       function pesNotificarStatusParada(parada) {
         try { window.dispatchEvent(new CustomEvent('pes-sala-status', { detail: { parada: !!parada } })); } catch (e) {}
       }
-
-      // ── Dropdown multi-seleção (checkbox) de "O que será parado?" ──
-      function pesGetAlvosSel() {
-        return Array.prototype.filter.call(document.querySelectorAll('#par-alvo-menu .par-alvo-cb'), function(cb){ return cb.checked; })
-          .map(function(cb){ return { value: cb.value, nome: cb.getAttribute('data-nome') }; });
-      }
-      function pesAlvoChanged() {
-        var lbl = document.getElementById('par-alvo-label');
-        if (!lbl) return;
-        var sel = pesGetAlvosSel();
-        if (!sel.length) { lbl.textContent = 'Selecione...'; lbl.style.color = 'var(--text3)'; }
-        else { lbl.textContent = sel.map(function(s){ return s.nome; }).join(', '); lbl.style.color = ''; }
-      }
-      function pesToggleAlvoMenu(ev) {
-        if (ev) ev.stopPropagation();
-        var m = document.getElementById('par-alvo-menu');
-        if (!m) return;
-        m.style.display = (!m.style.display || m.style.display === 'none') ? 'block' : 'none';
-      }
-      // Fecha o menu ao clicar fora (registra só uma vez)
-      if (!window.__pesAlvoMenuBound) {
-        window.__pesAlvoMenuBound = true;
-        document.addEventListener('click', function(e){
-          var menu = document.getElementById('par-alvo-menu');
-          var trig = document.getElementById('par-alvo-trigger');
-          if (!menu || menu.style.display === 'none') return;
-          if (menu.contains(e.target) || (trig && trig.contains(e.target))) return;
-          menu.style.display = 'none';
-        });
+      // Sala parada (qualquer workcenter de nível 1) → indicador no submenu.
+      function ppNotificarSubmenu() {
+        var algumaSala = Object.keys(window.PES_PP_PARADOS).some(function(k){ return k.indexOf('|') === -1; });
+        window.PES_SALA_PARADA = algumaSala;
+        pesNotificarStatusParada(algumaSala);
       }
 
-      function pesAbrirParar() {
-        if (window.PES_SALA_PARADA) { alert('⚠ A sala já está parada. Use Iniciar para retomá-la.'); return; }
-        var m = document.getElementById('modal-parar-sala');
-        if (m) m.style.display = 'flex';
-      }
-      function pesFecharParar() {
-        var m = document.getElementById('modal-parar-sala');
-        if (m) m.style.display = 'none';
-      }
+      function ppSel(key) { PP_SEL = key; if (ppTemFilhos(key)) PP_EXP[key] = true; ppRender(); }
+      function ppToggle(key) { PP_EXP[key] = !PP_EXP[key]; ppRender(); }
 
+      // ── Parar: abre modal (categoria/tipo/justificativa/observação) para o item selecionado ──
+      function ppAbrirParar() {
+        if (!PP_SEL || window.PES_PP_PARADOS[PP_SEL]) return;
+        PP_PARA = PP_SEL;
+        var el = document.getElementById('par-alvo-nome');
+        if (el) el.textContent = ppLabelNivel(ppNivel(PP_PARA)) + ' · ' + ppNome(PP_PARA);
+        var m = document.getElementById('modal-parar-sala'); if (m) m.style.display = 'flex';
+      }
+      function pesFecharParar() { var m = document.getElementById('modal-parar-sala'); if (m) m.style.display = 'none'; }
       function pesConfirmarParar() {
+        if (!PP_PARA) return;
         var cat = document.getElementById('par-cat');
         var tipo = document.getElementById('par-tipo');
         var just = document.getElementById('par-just');
         var obs = document.getElementById('par-obs');
-        var alvosSel = pesGetAlvosSel();
-        if (!alvosSel.length) { alert('⚠ Selecione o que será parado'); return; }
         if (!cat.value) { alert('⚠ Selecione a categoria'); return; }
         if (!just.value) { alert('⚠ Selecione a justificativa'); return; }
-        var alvosTxt = alvosSel.map(function(o){ return o.nome; });
-        // Regra: a SALA (ID 878787122) é o que de fato "para" o sistema.
-        // Equipamentos (balanças) sozinhos só geram registro, sem afetar nada.
-        var salaIncluida = alvosSel.some(function(o){ return o.value === '878787122'; });
-        var parada = {
-          alvos: alvosTxt,
-          alvo: alvosTxt.join(', '),
+        var info = {
+          alvo: ppNome(PP_PARA),
           categoria: cat.options[cat.selectedIndex].text,
           tipo: tipo.value,
           justificativa: just.options[just.selectedIndex].text,
           observacao: obs ? obs.value.trim() : '',
           inicio: pesParAgora()
         };
-        pesParAddHistorico(parada);
-        if (salaIncluida) {
-          window.PES_SALA_PARADA = true;
-          window.PES_PARADA_ATUAL = parada;
-          pesNotificarStatusParada(true);
-        }
+        window.PES_PP_PARADOS[PP_PARA] = info;
+        pesParAddHistorico(PP_PARA, info);
         pesFecharParar();
-        pesRenderStatusParada();
-        // reset: deixa só a SALA marcada e fecha o menu
-        Array.prototype.forEach.call(document.querySelectorAll('#par-alvo-menu .par-alvo-cb'), function(cb){ cb.checked = (cb.value === '878787122'); });
-        var menu = document.getElementById('par-alvo-menu'); if (menu) menu.style.display = 'none';
-        pesAlvoChanged();
         cat.value = ''; just.value = ''; if (obs) obs.value = '';
+        ppNotificarSubmenu();
+        ppRender();
+      }
+      // ── Iniciar: retoma o item selecionado ──
+      function ppIniciar() {
+        if (!PP_SEL || !window.PES_PP_PARADOS[PP_SEL]) return;
+        delete window.PES_PP_PARADOS[PP_SEL];
+        pesParFecharHistorico(PP_SEL, pesParAgora());
+        ppNotificarSubmenu();
+        ppRender();
       }
 
-      function pesIniciarSala() {
-        if (!window.PES_SALA_PARADA) { alert('ℹ A sala já está em operação.'); return; }
-        window.PES_SALA_PARADA = false;
-        window.PES_PARADA_ATUAL = null;
-        pesParFecharHistorico(pesParAgora());
-        pesNotificarStatusParada(false);
-        pesRenderStatusParada();
+      function ppTreeNode(key, depth) {
+        var nivel = ppNivel(key);
+        var nome = ppNome(key);
+        var tem = ppTemFilhos(key);
+        var exp = !!PP_EXP[key];
+        var sel = (PP_SEL === key);
+        var parado = !!window.PES_PP_PARADOS[key];
+        var chevron = tem
+          ? '<span onclick="event.stopPropagation();ppToggle(\\'' + key + '\\')" style="cursor:pointer;width:16px;flex-shrink:0;text-align:center;color:var(--text3);font-size:10px">' + (exp ? '▾' : '▸') + '</span>'
+          : '<span style="width:16px;flex-shrink:0"></span>';
+        var dot = parado
+          ? '<span title="Parado" style="width:9px;height:9px;border-radius:50%;background:var(--per);flex-shrink:0;animation:pesSubmenuPulse 1.2s ease-in-out infinite"></span>'
+          : '<span title="Operando" style="width:9px;height:9px;border-radius:50%;background:var(--ok);flex-shrink:0"></span>';
+        var nomeCor = parado ? 'var(--per)' : (sel ? 'var(--verde-esc)' : 'var(--text)');
+        var row = '<div onclick="ppSel(\\'' + key + '\\')" style="cursor:pointer;display:flex;align-items:center;gap:6px;padding:6px 8px;padding-left:' + (8 + depth * 16) + 'px;border-radius:6px;' + (sel ? 'background:var(--verde-dim);box-shadow:inset 3px 0 0 var(--verde);' : '') + '">' +
+          chevron +
+          '<span style="font-size:15px;flex-shrink:0">' + ppIcon(nivel) + '</span>' +
+          '<span style="flex:1;min-width:0;font-size:12px;font-weight:' + (sel ? '700' : '500') + ';color:' + nomeCor + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + nome + '</span>' +
+          dot +
+        '</div>';
+        var filhos = '';
+        if (tem && exp) filhos = ppFilhos(key).map(function(k){ return ppTreeNode(k, depth + 1); }).join('');
+        return row + filhos;
       }
 
-      // Prepend de uma parada "em aberto" no histórico
-      function pesParAddHistorico(info) {
+      function ppPainel() {
+        var key = PP_SEL;
+        if (!key) {
+          return '<div style="border:1px dashed var(--border);border-radius:10px;padding:48px 24px;text-align:center;color:var(--text3);background:var(--surface)">' +
+            '<div style="font-size:42px;margin-bottom:10px">👈</div>' +
+            '<div style="font-size:13px">Selecione uma sala ou balança na árvore para ver os detalhes e apontar paradas.</div>' +
+          '</div>';
+        }
+        var nivel = ppNivel(key);
+        var parado = !!window.PES_PP_PARADOS[key];
+        var info = window.PES_PP_PARADOS[key] || {};
+        return '<div style="border:1px solid ' + (parado ? 'var(--per)' : 'var(--border)') + ';border-top:4px solid ' + (parado ? 'var(--per)' : 'var(--verde)') + ';border-radius:10px;background:var(--surface);box-shadow:var(--sh);padding:20px 22px' + (parado ? ';animation:pesSubmenuPulse 1.2s ease-in-out infinite' : '') + '">' +
+          '<div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro)">' + ppLabelNivel(nivel) + '</div>' +
+          '<div style="display:flex;align-items:center;gap:10px;margin:4px 0 2px"><span style="font-size:28px">' + ppIcon(nivel) + '</span><span style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--verde-esc)">' + ppNome(key) + '</span></div>' +
+          '<div style="font-size:11px;color:var(--text3);margin-bottom:16px">' + ppParts(key).join(' › ') + '</div>' +
+          (parado ? '<div class="abox err" style="margin-bottom:16px"><span class="ai">⏸</span><div>' + info.categoria + ' · ' + info.justificativa + ' · desde ' + info.inicio + (info.observacao ? ' · ' + info.observacao : '') + '</div></div>' : '') +
+          '<div style="display:flex;gap:12px">' +
+            '<button onclick="ppAbrirParar()" class="btn btn-md btn-p" ' + (parado ? 'disabled' : '') + ' style="flex:1;font-size:15px;font-weight:800;padding:14px 18px;' + (parado ? 'opacity:.45;cursor:not-allowed' : '') + '">⏸ Parar</button>' +
+            '<button onclick="ppIniciar()" class="btn btn-md btn-v" ' + (parado ? '' : 'disabled') + ' style="flex:1;font-size:15px;font-weight:800;padding:14px 18px;' + (parado ? '' : 'opacity:.45;cursor:not-allowed') + '">▶ Iniciar</button>' +
+          '</div>' +
+        '</div>';
+      }
+
+      function ppRender() {
+        var root = document.getElementById('pp-root'); if (!root) return;
+        var tree = Object.keys(PP_DATA).map(function(s){ return ppTreeNode(s, 0); }).join('');
+        root.innerHTML = '<div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">' +
+          '<div style="flex:0 0 320px;min-width:260px;max-width:100%;border:1px solid var(--border);border-radius:10px;background:var(--surface);box-shadow:var(--sh);overflow:hidden">' +
+            '<div style="background:var(--surface2);padding:10px 14px;border-bottom:1px solid var(--border);font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Salas &amp; Balanças</div>' +
+            '<div style="padding:8px;max-height:560px;overflow:auto">' + tree + '</div>' +
+          '</div>' +
+          '<div style="flex:1;min-width:280px">' + ppPainel() + '</div>' +
+        '</div>';
+      }
+
+      // ── Histórico de paradas (linha por item, fechável ao iniciar) ──
+      function pesParAddHistorico(key, info) {
         var tb = document.querySelector('#par-tabela tbody');
         if (!tb) return;
         var afeta = info.tipo === 'nao-planejada';
         var tr = document.createElement('tr');
         tr.setAttribute('data-parada-aberta', '1');
+        tr.setAttribute('data-item-id', key);
         tr.style.background = 'var(--alr-p)';
         tr.innerHTML =
           '<td class="mono" style="color:var(--alr);font-weight:800">novo</td>' +
@@ -4207,17 +4179,15 @@ export const SCREENS = {
           '<td class="mono" style="font-size:10px;color:var(--alr);font-weight:700">— em andamento</td>' +
           '<td class="mono" style="color:var(--alr);font-weight:700">0+ min</td>' +
           '<td class="mono" style="font-size:10px"><strong>—</strong></td>' +
-          '<td style="font-size:11px">' + (info.alvos || [info.alvo || '']).map(function(a){ return '<span class="bdg bdg-ney" style="font-size:8px;margin-right:4px">' + a + '</span>'; }).join('') + info.justificativa + '</td>' +
+          '<td style="font-size:11px"><span class="bdg bdg-ney" style="font-size:8px;margin-right:4px">' + info.alvo + '</span>' + info.justificativa + '</td>' +
           '<td style="font-size:11px">J. Santos</td>' +
           '<td><span class="bdg ' + (afeta ? 'bdg-per' : 'bdg-ney') + '" style="font-size:9px">' + (afeta ? 'SIM' : 'NÃO') + '</span></td>' +
           '<td><span class="bdg bdg-alr">⏳ Em Aberto</span></td>' +
           '<td></td>';
         tb.insertBefore(tr, tb.firstChild);
       }
-
-      // Fecha a parada "em aberto" mais recente
-      function pesParFecharHistorico(fim) {
-        var tr = document.querySelector('#par-tabela tbody tr[data-parada-aberta="1"]');
+      function pesParFecharHistorico(key, fim) {
+        var tr = document.querySelector('#par-tabela tbody tr[data-parada-aberta="1"][data-item-id="' + key + '"]');
         if (!tr) return;
         tr.removeAttribute('data-parada-aberta');
         tr.style.background = '';
@@ -4226,7 +4196,12 @@ export const SCREENS = {
         if (tds[10]) { tds[10].innerHTML = '<span class="bdg bdg-ok">✓ Fechada</span>'; }
       }
 
-      setTimeout(pesRenderStatusParada, 50);
+      setTimeout(function(){
+        // Sala em contexto já vem expandida, mostrando os equipamentos.
+        Object.keys(PP_DATA).forEach(function(s){ PP_EXP[s] = true; });
+        ppRender();
+        ppNotificarSubmenu();
+      }, 30);
       </script>
     `,
   "manut-paradas": `      <div class="page-header">
@@ -4588,31 +4563,6 @@ export const SCREENS = {
         </div>
       </div>
 
-      <!-- ── Popup: Checklist de Turno pendente (aviso não-bloqueante ao iniciar OP) ── -->
-      <div id="modal-ckl-pendente" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:965;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);overflow-y:auto">
-        <div style="background:var(--surface);border-top:4px solid var(--alr-b);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:460px;width:94%;box-shadow:var(--sh2)">
-          <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px">
-            <div style="width:46px;height:46px;border-radius:10px;background:var(--alr-p);border:1.5px solid var(--alr-b);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">⚠️</div>
-            <div style="flex:1">
-              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--alr)">Pré-requisito de Turno</div>
-              <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-top:2px">Checklist de Turno pendente</div>
-            </div>
-            <button onclick="pesFecharAvisoChecklist()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
-          </div>
-
-          <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:12px">
-            Os itens abaixo ainda não foram executados neste turno. O preenchimento é <strong>recomendado</strong>, mas você pode iniciar a OP mesmo assim.
-          </div>
-
-          <ul id="ckl-pend-lista" style="list-style:none;margin:0 0 18px;padding:0;display:flex;flex-direction:column;gap:8px"></ul>
-
-          <div style="display:flex;gap:10px;flex-direction:column">
-            <button class="btn btn-md btn-v btn-full" onclick="pesIrPreencherChecklist()">✓ Preencher Checklist agora</button>
-            <button class="btn btn-md btn-ghost btn-full" onclick="pesSeguirSemChecklist()">Iniciar OP mesmo assim ›</button>
-          </div>
-        </div>
-      </div>
-
       <script>
       var PES_SALA_SEL = null;
       var PES_SALA_KEYS = ['A','B','C','SB'];
@@ -4681,12 +4631,14 @@ export const SCREENS = {
       function pesConfirmarSelSala() {
         if (!PES_SALA_SEL) { alert('⚠ Selecione uma Sala.'); return; }
         document.getElementById('modal-sala-pes').style.display = 'none';
-        var qs = PES_OP_SEL ? '?op=' + encodeURIComponent(PES_OP_SEL) : '';
-        if (PES_TIPO_SEL === 'continuar') {
-          nav('pes-cockpit' + qs, null, null);
-        } else {
-          pesAbrirChecklistSala();
+        // Sem Balança: sem balança/checklists de sala — vai direto ao cockpit.
+        if (PES_SALA_SEL === 'SB') {
+          var qsb = PES_OP_SEL ? '?op=' + encodeURIComponent(PES_OP_SEL) : '';
+          nav('pes-cockpit' + qsb, null, null);
+          return;
         }
+        // Demais salas: abre os checklists da sala (stepper) antes do cockpit.
+        pesAbrirChecklistsSala();
       }
 
       // Inicializa o estado do Checklist de Turno se ainda não existe (caso o
@@ -4722,14 +4674,7 @@ export const SCREENS = {
       function pesIrCockpit(event, tipo, opId) {
         if (event) event.stopPropagation();
         pesGarantirChecklistTurno();
-        // Aviso (não-bloqueante) do Checklist de Turno — popup customizado
-        if (typeof window.pesChecklistTurnoStatus === 'function') {
-          var st = window.pesChecklistTurnoStatus();
-          if (!st.ok) {
-            pesAbrirAvisoChecklist(st.pendentes, opId, tipo);
-            return; // aguarda decisão do operador no popup
-          }
-        }
+        // Vai direto para a escolha de sala (popup de pré-requisito removido).
         pesAbrirSelSala(opId, tipo);
       }
 
@@ -4828,6 +4773,102 @@ export const SCREENS = {
       }
       function pesFecharChecklistSala() {
         document.getElementById('modal-pes-cks-sala').style.display = 'none';
+      }
+
+      // ════════ Checklists da Sala (stepper) — buscados conforme a sala ════════
+      var PES_CKS_DEFS = [
+        { id: 'temp', titulo: 'Checklist Sala — Registros de Temp. e Umidade', icon: '🌡️', curto: 'Temp. & Umidade', campos: [
+          { label: 'Temperatura (°C)', ph: 'Ex.: 20,3' },
+          { label: 'UR (%)', ph: 'Ex.: 47' },
+          { label: 'Hora', ph: 'Ex.: 06:18' }
+        ]},
+        { id: 'pressao', titulo: 'Checklist Sala — Registros de Pressão', icon: '🎚️', curto: 'Pressão', campos: [
+          { label: 'Pressão Observada', ph: '0,98 a 19,61 Pa ou 0,1 a 2,0 mmWC' },
+          { label: 'Observações', ph: 'Observações (opcional)' }
+        ]},
+        { id: 'balanca', titulo: 'Checklist Balança', icon: '⚖️', curto: 'Balança', campos: [
+          { label: 'Peso Padrão 20 g', ph: 'Ex.: 20,001 g' },
+          { label: 'Peso Padrão 1 kg', ph: 'Ex.: 1,0001 kg' },
+          { label: 'Peso Padrão 2 kg', ph: 'Ex.: 2,0002 kg' },
+          { label: 'Peso Padrão 5 kg', ph: 'Ex.: 5,0003 kg' },
+          { label: 'Peso Padrão 10 kg', ph: 'Ex.: 10,0005 kg' }
+        ]}
+      ];
+      var PES_CKS_PEND = [], PES_CKS_VALS = {};
+
+      function pesCksBox() { return document.getElementById('pes-cks-box'); }
+      function pesCksDef(id) { return PES_CKS_DEFS.filter(function(d){ return d.id === id; })[0]; }
+
+      function pesAbrirChecklistsSala() {
+        PES_CKS_PEND = PES_CKS_DEFS.map(function(d){ return d.id; });
+        PES_CKS_VALS = {};
+        pesCksRender();
+        var m = document.getElementById('modal-pes-cks-stepper');
+        if (m) m.style.display = 'flex';
+      }
+      function pesCksFechar() {
+        var m = document.getElementById('modal-pes-cks-stepper');
+        if (m) m.style.display = 'none';
+      }
+
+      function pesCksRender() {
+        var box = pesCksBox(); if (!box || !PES_CKS_PEND.length) return;
+        var def = pesCksDef(PES_CKS_PEND[0]);
+        var salaLabel = PES_SALA_SEL ? 'Sala ' + PES_SALA_SEL : '';
+        var totalDefs = PES_CKS_DEFS.length;
+        var feitos = totalDefs - PES_CKS_PEND.length;
+        var chips = PES_CKS_PEND.map(function(id, i) {
+          var d = pesCksDef(id), ativo = (i === 0);
+          return '<div style="display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:20px;border:1px solid ' + (ativo ? 'var(--verde)' : 'var(--border)') + ';background:' + (ativo ? 'var(--verde-dim)' : 'var(--surface2)') + ';white-space:nowrap">' +
+            '<span style="width:18px;height:18px;border-radius:50%;background:' + (ativo ? 'var(--verde)' : 'var(--border2)') + ';color:#fff;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center">' + (i + 1) + '</span>' +
+            '<span style="font-size:11px;font-weight:700;color:' + (ativo ? 'var(--verde-esc)' : 'var(--text3)') + '">' + d.icon + ' ' + d.curto + '</span>' +
+          '</div>';
+        }).join('<span style="color:var(--text3);align-self:center">›</span>');
+        var campos = def.campos.map(function(c, idx) {
+          return '<div style="display:flex;flex-direction:column">' +
+            '<label class="lbl">' + c.label + '</label>' +
+            '<input class="inp" id="pes-cks-inp-' + idx + '" placeholder="' + c.ph + '" autocomplete="off" style="font-size:12px;padding:8px 10px">' +
+          '</div>';
+        }).join('');
+        box.innerHTML =
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">' +
+            '<div><div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--ouro)">Checklists da Sala' + (salaLabel ? ' · ' + salaLabel : '') + '</div>' +
+            '<div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc)">' + def.icon + ' ' + def.titulo + '</div></div>' +
+            '<button onclick="pesCksMaisTarde()" title="Preencher mais tarde" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>' +
+          '</div>' +
+          '<div style="font-size:10px;color:var(--text3);margin-bottom:14px">' + feitos + ' de ' + totalDefs + ' concluído(s) · ' + PES_CKS_PEND.length + ' pendente(s)</div>' +
+          '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:18px">' + chips + '</div>' +
+          '<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px;max-height:46vh;overflow-y:auto">' + campos + '</div>' +
+          '<div style="display:flex;gap:10px;justify-content:flex-end;align-items:center;flex-wrap:wrap">' +
+            '<button class="btn btn-md btn-ghost" onclick="pesCksMaisTarde()">Preencher todos mais tarde</button>' +
+            '<button class="btn btn-md btn-v" onclick="pesCksConcluir()">✔ Concluir checklist</button>' +
+          '</div>';
+      }
+
+      function pesCksConcluir() {
+        if (!PES_CKS_PEND.length) return;
+        var ativoId = PES_CKS_PEND[0];
+        var def = pesCksDef(ativoId);
+        var vals = {};
+        def.campos.forEach(function(c, idx) {
+          var el = document.getElementById('pes-cks-inp-' + idx);
+          vals[c.label] = el ? el.value.trim() : '';
+        });
+        PES_CKS_VALS[ativoId] = vals;
+        PES_CKS_PEND.shift(); // conclui → remove do stepper
+        if (!PES_CKS_PEND.length) { pesCksFinalizar(); } else { pesCksRender(); }
+      }
+
+      function pesCksMaisTarde() {
+        pesCksFechar();
+        var qs = PES_OP_SEL ? '?op=' + encodeURIComponent(PES_OP_SEL) : '';
+        nav('pes-cockpit' + qs, null, null);
+      }
+
+      function pesCksFinalizar() {
+        pesCksFechar();
+        var qs = PES_OP_SEL ? '?op=' + encodeURIComponent(PES_OP_SEL) : '';
+        nav('pes-cockpit' + qs, null, null);
       }
       </script>
         <!-- ── Barra de Filtros (linha única) ── -->
@@ -5157,6 +5198,11 @@ export const SCREENS = {
           poStatusMarcarTodos();
         }
         </script>
+
+      <!-- ── Popup: Checklists da Sala (stepper) ── -->
+      <div id="modal-pes-cks-stepper" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:966;align-items:flex-start;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto">
+        <div id="pes-cks-box" style="background:var(--surface);border-top:4px solid var(--ouro);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:640px;width:94%;box-shadow:var(--sh2);margin:auto"></div>
+      </div>
 
       <!-- ── Modal Checklist de Conferência da Sala (POP-PES-001) ── -->
       <style>
