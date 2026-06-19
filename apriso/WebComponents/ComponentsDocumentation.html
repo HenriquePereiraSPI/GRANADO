@@ -8613,6 +8613,25 @@ GranadoPreloader.hide();</pre>
           })();
         </script>
 
+        <h2 class="gd-h2">Carregando da API (Apriso)</h2>
+        <p class="gd-lead">
+          Alimente a árvore com a estrutura organizacional vinda da API
+          <code>GRD_API_GetOrganizationalTree</code> — o campo <code>Tree</code> já vem no formato
+          esperado pelo componente.
+        </p>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-tree</span> <span class="tk-attr">id</span>=<span class="tk-str">"arvore"</span><span class="tk-tag">&gt;&lt;/granado-tree&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-attr">async function</span> fillTree() {
+    <span class="tk-attr">var</span> response = <span class="tk-attr">await</span> callDFCAsync(_context, <span class="tk-str">'GRD_API_GetOrganizationalTree'</span>, <span class="tk-str">""</span>);
+    <span class="tk-attr">const</span> tree = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'arvore'</span>);
+    tree.nodes = response.responseResultData.Tree;
+    tree.<span class="tk-attr">addEventListener</span>(<span class="tk-str">'node-click'</span>,    (e) =&gt; console.log(e.detail));
+    tree.<span class="tk-attr">addEventListener</span>(<span class="tk-str">'node-dblclick'</span>, (e) =&gt; console.log(e.detail.path));
+  }
+  fillTree();
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
         <h2 class="gd-h2">API</h2>
 
         <h3 class="gd-h3">Atributos</h3>

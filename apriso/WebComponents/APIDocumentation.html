@@ -346,6 +346,16 @@
           <a class="gd-link" href="#GRD_API_MoveMPCage">GRD_API_MoveMPCage</a>
         </div>
       </div>
+
+      <div class="gd-cat">
+        <button class="gd-cat-toggle" aria-expanded="false" onclick="gdToggleCat(this)">
+          <span class="gd-cat-chevron">▸</span> Outros
+        </button>
+        <div class="gd-cat-items">
+          <div class="gd-subgroup">API</div>
+          <a class="gd-link" href="#GRD_API_GetOrganizationalTree">GRD_API_GetOrganizationalTree</a>
+        </div>
+      </div>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -1298,6 +1308,103 @@
             <code>Success</code> e <code>Message</code>.</li>
           <li><strong>Destino:</strong> <code>DestinationContainer</code> deve referenciar uma
             gaiola existente (ver <code>GRD_API_CreateCage</code>).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetOrganizationalTree
+           ============================================================ -->
+      <section id="GRD_API_GetOrganizationalTree">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetOrganizationalTree</code></h1>
+        <p class="gd-lead">
+          Retorna a <strong>arquitetura organizacional dos equipamentos da fábrica</strong> —
+          Production Lines → Workcenters → Scales — como uma árvore aninhada. O campo
+          <code>Tree</code> já vem no <strong>formato do web component <code>&lt;granado-tree&gt;</code></strong>
+          (cada nó com <code>id</code>, <code>label</code>, <code>icon</code>, <code>children</code>,
+          <code>data</code>, e <code>dot</code>/<code>dotPulse</code> conforme o status).
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetOrganizationalTree</span>
+        </div>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead"><strong>Nenhum.</strong> A API não recebe parâmetros — retorna a estrutura completa.</p>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON) — <code>Tree</code> truncada a 1 linha/sala/balança para leitura; as demais seguem o mesmo formato:</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Estrutura organizacional recuperada com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Tree"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"id"</span><span class="tk-punc">:</span> <span class="tk-str">"100000120"</span><span class="tk-punc">,</span> <span class="tk-key">"label"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1"</span><span class="tk-punc">,</span> <span class="tk-key">"icon"</span><span class="tk-punc">:</span> <span class="tk-str">"linha"</span><span class="tk-punc">,</span> <span class="tk-key">"dot"</span><span class="tk-punc">:</span> <span class="tk-str">"#8C1A1A"</span><span class="tk-punc">,</span> <span class="tk-key">"dotPulse"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+      <span class="tk-key">"data"</span><span class="tk-punc">:</span> { <span class="tk-key">"ResourceID"</span><span class="tk-punc">:</span> <span class="tk-num">100000120</span><span class="tk-punc">,</span> <span class="tk-key">"EquipmentTypeName"</span><span class="tk-punc">:</span> <span class="tk-str">"Production Line"</span><span class="tk-punc">,</span> <span class="tk-key">"EquipmentTypeID"</span><span class="tk-punc">:</span> <span class="tk-num">100</span><span class="tk-punc">,</span> <span class="tk-key">"Equipment"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1"</span><span class="tk-punc">,</span> <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000037"</span><span class="tk-punc">,</span> <span class="tk-key">"ResourceSpeed"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"STOPPED"</span><span class="tk-punc">,</span> <span class="tk-key">"Parent"</span><span class="tk-punc">:</span> <span class="tk-str">""</span> }<span class="tk-punc">,</span>
+      <span class="tk-key">"children"</span><span class="tk-punc">:</span> [
+        {
+          <span class="tk-key">"id"</span><span class="tk-punc">:</span> <span class="tk-str">"100000115"</span><span class="tk-punc">,</span> <span class="tk-key">"label"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA1"</span><span class="tk-punc">,</span> <span class="tk-key">"icon"</span><span class="tk-punc">:</span> <span class="tk-str">"sala"</span><span class="tk-punc">,</span> <span class="tk-key">"dot"</span><span class="tk-punc">:</span> <span class="tk-str">"#8C1A1A"</span><span class="tk-punc">,</span> <span class="tk-key">"dotPulse"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+          <span class="tk-key">"data"</span><span class="tk-punc">:</span> { <span class="tk-key">"ResourceID"</span><span class="tk-punc">:</span> <span class="tk-num">100000115</span><span class="tk-punc">,</span> <span class="tk-key">"EquipmentTypeName"</span><span class="tk-punc">:</span> <span class="tk-str">"Workcenter"</span><span class="tk-punc">,</span> <span class="tk-key">"EquipmentTypeID"</span><span class="tk-punc">:</span> <span class="tk-num">101</span><span class="tk-punc">,</span> <span class="tk-key">"Equipment"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA1"</span><span class="tk-punc">,</span> <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000032"</span><span class="tk-punc">,</span> <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"STOPPED"</span><span class="tk-punc">,</span> <span class="tk-key">"Parent"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1"</span> }<span class="tk-punc">,</span>
+          <span class="tk-key">"children"</span><span class="tk-punc">:</span> [
+            {
+              <span class="tk-key">"id"</span><span class="tk-punc">:</span> <span class="tk-str">"100000083"</span><span class="tk-punc">,</span> <span class="tk-key">"label"</span><span class="tk-punc">:</span> <span class="tk-str">"S1_TOLEDO 3400/9"</span><span class="tk-punc">,</span> <span class="tk-key">"icon"</span><span class="tk-punc">:</span> <span class="tk-str">"balanca"</span><span class="tk-punc">,</span> <span class="tk-key">"dot"</span><span class="tk-punc">:</span> <span class="tk-str">"#8C1A1A"</span><span class="tk-punc">,</span> <span class="tk-key">"dotPulse"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+              <span class="tk-key">"data"</span><span class="tk-punc">:</span> { <span class="tk-key">"ResourceID"</span><span class="tk-punc">:</span> <span class="tk-num">100000083</span><span class="tk-punc">,</span> <span class="tk-key">"EquipmentTypeName"</span><span class="tk-punc">:</span> <span class="tk-str">"Scale"</span><span class="tk-punc">,</span> <span class="tk-key">"EquipmentTypeID"</span><span class="tk-punc">:</span> <span class="tk-num">12</span><span class="tk-punc">,</span> <span class="tk-key">"Equipment"</span><span class="tk-punc">:</span> <span class="tk-str">"S1_TOLEDO 3400/9"</span><span class="tk-punc">,</span> <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span><span class="tk-punc">,</span> <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"STOPPED"</span><span class="tk-punc">,</span> <span class="tk-key">"Parent"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA1"</span> }
+            }
+            <span class="tk-comment">// … demais balanças, salas e a linha MD2 seguem o mesmo formato</span>
+          ]
+        }
+      ]
+    }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:140px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se a estrutura foi recuperada com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">Tree</td><td class="col-type">array&lt;nó&gt;</td><td class="col-desc">Árvore organizacional no formato do <code>&lt;granado-tree&gt;</code> (raízes = Production Lines). Campos do nó abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada nó da Tree</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:120px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">id</td><td class="col-type">string</td><td class="col-desc">Identificador do nó (ResourceID do equipamento).</td></tr>
+            <tr><td class="col-name">label</td><td class="col-type">string</td><td class="col-desc">Nome exibido (Equipment).</td></tr>
+            <tr><td class="col-name">icon</td><td class="col-type">string</td><td class="col-desc">Nome do ícone do <code>granado-tree</code>: <code>linha</code> (Production Line), <code>sala</code> (Workcenter), <code>balanca</code> (Scale).</td></tr>
+            <tr><td class="col-name">dot</td><td class="col-type">string (cor)</td><td class="col-desc">Cor da bolinha de status (ex.: <code>#8C1A1A</code> quando parado).</td></tr>
+            <tr><td class="col-name">dotPulse</td><td class="col-type">boolean</td><td class="col-desc">Anima a bolinha quando o equipamento está parado (<code>Status: "STOPPED"</code>).</td></tr>
+            <tr><td class="col-name">children</td><td class="col-type">array&lt;nó&gt;</td><td class="col-desc">Nós filhos (workcenters de uma linha; scales de um workcenter).</td></tr>
+            <tr><td class="col-name">data</td><td class="col-type">object</td><td class="col-desc">Dados crus do equipamento (devolvidos nos eventos do tree). Campos abaixo.</td></tr>
+            <tr><td class="col-name gd-nest">data.ResourceID</td><td class="col-type">number</td><td class="col-desc">ID do recurso.</td></tr>
+            <tr><td class="col-name gd-nest">data.EquipmentTypeName</td><td class="col-type">string</td><td class="col-desc">Tipo: Production Line / Workcenter / Scale.</td></tr>
+            <tr><td class="col-name gd-nest">data.EquipmentTypeID</td><td class="col-type">number</td><td class="col-desc">ID do tipo (100 / 101 / 12).</td></tr>
+            <tr><td class="col-name gd-nest">data.Equipment</td><td class="col-type">string</td><td class="col-desc">Código/nome do equipamento.</td></tr>
+            <tr><td class="col-name gd-nest">data.ResourceName</td><td class="col-type">string</td><td class="col-desc">Nome do recurso (usado nas APIs de apontamento).</td></tr>
+            <tr><td class="col-name gd-nest">data.ResourceSpeed</td><td class="col-type">string</td><td class="col-desc">Velocidade do recurso.</td></tr>
+            <tr><td class="col-name gd-nest">data.Status</td><td class="col-type">string</td><td class="col-desc">Status atual (ex.: <code>STOPPED</code>).</td></tr>
+            <tr><td class="col-name gd-nest">data.Parent</td><td class="col-type">string</td><td class="col-desc">Equipment do pai (vazio nas raízes / Production Lines).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Pronto para o tree:</strong> passe <code>Tree</code> direto ao componente —
+            <code>tree.nodes = resposta.Tree</code> (ou <code>setAttribute('nodes', JSON.stringify(resposta.Tree))</code>).</li>
+          <li><strong>Status → visual:</strong> equipamentos com <code>Status: "STOPPED"</code> vêm com
+            <code>dot</code> vermelho e <code>dotPulse: true</code> (bolinha pulsando).</li>
+          <li><strong>Hierarquia:</strong> raízes são Production Lines (<code>Parent: ""</code>); cada
+            uma contém Workcenters, que contêm Scales.</li>
         </ul>
       </section>
 
