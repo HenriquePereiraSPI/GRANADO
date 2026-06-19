@@ -1877,8 +1877,39 @@ export const SCREENS = {
 
         // Valida a Variância Máxima cadastrada antes de confirmar a pesagem.
         // Se desvio > variância máx., BLOQUEIA. Caso contrário, avança direto.
+        // ── Peso Manual (Step 5): permite digitar o peso quando a balança/
+        //    integração não estiver disponível. ──
+        function pesRenderManual() {
+          var on = !!window.PES_PESO_MANUAL;
+          var sw = document.getElementById('pes-pm-switch');
+          var knob = document.getElementById('pes-pm-knob');
+          if (sw) sw.style.background = on ? 'var(--verde)' : 'var(--border2)';
+          if (knob) knob.style.left = on ? '20px' : '2px';
+          var wrap = document.getElementById('pes-peso-manual-wrap');
+          if (wrap) wrap.style.display = on ? 'block' : 'none';
+          // Substitui a leitura ao vivo (card "Peso atual" + barra) pelo input manual.
+          var live = document.getElementById('pes-bal-live');
+          if (live) live.style.display = on ? 'none' : 'block';
+          if (on && PES_BAL_INTERVAL) { clearInterval(PES_BAL_INTERVAL); PES_BAL_INTERVAL = null; }
+        }
+        function pesToggleManual() {
+          window.PES_PESO_MANUAL = !window.PES_PESO_MANUAL;
+          pesRenderManual();
+          if (window.PES_PESO_MANUAL) {
+            var i = document.getElementById('pes-peso-manual-inp');
+            if (i) setTimeout(function(){ i.focus(); }, 30);
+          }
+        }
+
         function pesValidarLimiteEAvancar() {
           var alvo = pesObterAlvoKg();              // kg
+          // Em modo manual, o peso vem do input digitado pelo operador.
+          if (window.PES_PESO_MANUAL) {
+            var inpM = document.getElementById('pes-peso-manual-inp');
+            var vM = inpM ? parseFloat((inpM.value || '').trim().replace(',', '.')) : NaN;
+            if (isNaN(vM) || vM <= 0) { alert('⚠ Informe o peso pesado (kg) no campo de peso manual.'); return; }
+            _pesBalVal = vM;
+          }
           var pesado = (typeof _pesBalVal === 'number') ? _pesBalVal : 0;
           // Variância máx: lê a tolerância da MP selecionada (default ±0,5%).
           var tolEl = document.getElementById('pes-mp-sel-tol');
@@ -1923,7 +1954,13 @@ export const SCREENS = {
           <!-- ── PAINEL 1: Selecionar MP ── -->
           <div id="pes-panel-1">
             <div class="card cv mb14" style="border:2px solid var(--verde)">
-              <div class="card-title">① Selecionar Matéria-Prima para Pesagem</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px">
+                <div class="card-title" style="margin-bottom:0">① Selecionar Matéria-Prima para Pesagem</div>
+                <label onclick="pesToggleGV()" title="Grande Volume" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;white-space:nowrap;flex-shrink:0">
+                  <span style="font-size:11px;font-weight:700;color:var(--text2)">Grande Volume</span>
+                  <span id="pes-gv-switch" style="position:relative;display:inline-block;width:40px;height:22px;border-radius:11px;background:var(--border2);transition:background .15s"><span id="pes-gv-knob" style="position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:left .15s"></span></span>
+                </label>
+              </div>
               <div style="margin-bottom:12px">
                 <label class="lbl">Filtrar MP <span style="font-size:9px;font-weight:600;color:var(--text3);margin-left:8px">— Escaneie o número da etiqueta, exemplo: <code style="background:var(--bg2);padding:1px 6px;border-radius:3px;font-family:var(--font-m);color:var(--verde-esc)">ETQ-SB-7788</code> ou <code style="background:var(--bg2);padding:1px 6px;border-radius:3px;font-family:var(--font-m);color:var(--verde-esc)">ETQ-SB-3050</code></span></label>
                 <input class="inp" id="pes-mp-filtro" placeholder="Filtre a MP ou escaneie a etiqueta, ex.: ETQ-SB-7788" oninput="pesFiltrarMPs(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();pesScanEtiquetaSB(this.value);}" style="margin-bottom:6px">
@@ -1962,7 +1999,7 @@ export const SCREENS = {
                     <td class="mono" style="color:var(--alr);font-weight:700">+0,650 kg</td>
                     <td class="mono" style="color:var(--text3)">—</td>
                     <td class="mono" style="color:var(--text3)">0,150 kg</td>
-                    <td><select title="Local da MP" onclick="event.stopPropagation()" style="font-size:16px;padding:0;border:none;outline:none;background:transparent;-webkit-appearance:none;-moz-appearance:none;appearance:none;cursor:pointer;text-align:center;color:inherit"><option value="PESAGEM" title="Pesagem">⚖️</option><option value="ALMOX" title="Almoxarifado" selected>📦</option></select></td>
+                    <td><select title="Local da MP" onclick="event.stopPropagation()" style="font-size:16px;padding:0;border:none;outline:none;background:transparent;-webkit-appearance:none;-moz-appearance:none;appearance:none;cursor:pointer;text-align:center;color:inherit"><option value="PESAGEM" title="Pesagem">⚖️</option><option value="ALMOX" title="Almoxarifado">📦</option></select></td>
                     <td></td>
                     <td><button class="btn btn-sm btn-v" onclick="pesSetMP(this.closest('tr'));event.stopPropagation()">Pesar</button></td>
                   </tr>
@@ -2010,7 +2047,7 @@ export const SCREENS = {
                     <td class="mono" style="color:var(--ok);font-weight:700">+9.087,500 kg</td>
                     <td class="mono" style="color:var(--text3)">—</td>
                     <td class="mono" style="color:var(--verde);font-weight:700">412,500 kg</td>
-                    <td><select title="Local da MP" onclick="event.stopPropagation()" style="font-size:16px;padding:0;border:none;outline:none;background:transparent;-webkit-appearance:none;-moz-appearance:none;appearance:none;cursor:pointer;text-align:center;color:inherit"><option value="PESAGEM" title="Pesagem">⚖️</option><option value="ALMOX" title="Almoxarifado">📦</option></select></td>
+                    <td><select title="Local da MP" onclick="event.stopPropagation()" style="font-size:16px;padding:0;border:none;outline:none;background:transparent;-webkit-appearance:none;-moz-appearance:none;appearance:none;cursor:pointer;text-align:center;color:inherit"><option value="PESAGEM" title="Pesagem">⚖️</option><option value="ALMOX" title="Almoxarifado" selected>📦</option></select></td>
                     <td></td>
                     <td><button class="btn btn-sm btn-v" onclick="pesSetMP(this.closest('tr'));event.stopPropagation()">Pesar</button></td>
                   </tr>
@@ -2070,6 +2107,11 @@ export const SCREENS = {
                 <div id="modal-sb-box" style="background:var(--surface);border-top:4px solid var(--ouro);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:560px;width:94%;box-shadow:var(--sh2);margin:auto"></div>
               </div>
 
+              <!-- ── Popup 2: Reimprimir etiqueta da gaiola (preview ZPL + impressora) ── -->
+              <div id="modal-sb-reimp" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:969;align-items:flex-start;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto">
+                <div id="modal-sb-reimp-box" style="background:var(--surface);border-top:4px solid var(--ouro);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:520px;width:94%;box-shadow:var(--sh2);margin:auto"></div>
+              </div>
+
               <!-- ── Popup: Aviso Sala Parada (bloqueia início de pesagem) ── -->
               <div id="modal-sala-parada-aviso" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:968;align-items:flex-start;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto">
                 <div style="background:var(--surface);border-top:4px solid var(--per);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:480px;width:94%;box-shadow:var(--sh2);margin:auto">
@@ -2080,6 +2122,11 @@ export const SCREENS = {
                     <button class="btn btn-md btn-v" onclick="pesFecharAvisoSalaParada()">Entendi</button>
                   </div>
                 </div>
+              </div>
+
+              <!-- ── Popup: Grande Volume (peso automático + gaiola) ── -->
+              <div id="modal-gv" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:967;align-items:flex-start;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto">
+                <div id="modal-gv-box" style="background:var(--surface);border-top:4px solid var(--ouro);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:620px;width:94%;box-shadow:var(--sh2);margin:auto"></div>
               </div>
 
               <style>
@@ -2093,6 +2140,8 @@ export const SCREENS = {
                 // Sala parada: bloqueia o início da pesagem.
                 if (window.PES_SALA_PARADA) { pesAbrirAvisoSalaParada(); return; }
                 var d = tr.dataset;
+                // Grande Volume ativo: abre o fluxo de peso automático + gaiola.
+                if (window.PES_GV) { pesAbrirGV(d.mp, d.lote, ''); return; }
                 // Mantém os campos ocultos populados — pesObterAlvoKg() e o fluxo
                 // de Balança/Pesagem leem destes elementos.
                 document.getElementById('pes-mp-sel-nome').textContent = d.mp;
@@ -2163,7 +2212,15 @@ export const SCREENS = {
               function pesScanEtiquetaSB(raw) {
                 var v = (raw || '').trim();
                 if (/^ETQ-[A-Za-z0-9-]+$/i.test(v)) {
-                  sbAbrir(v.toUpperCase());
+                  var cod = v.toUpperCase();
+                  // Grande Volume ativo: peso automático + gaiola (em vez do fluxo Sem Balança).
+                  if (window.PES_GV) {
+                    if (window.PES_SALA_PARADA) { pesAbrirAvisoSalaParada(); return; }
+                    var eg = SB_ETIQUETAS[cod];
+                    pesAbrirGV(eg ? eg.mp : '', eg ? eg.lote : '', cod);
+                    return;
+                  }
+                  sbAbrir(cod);
                   return;
                 }
                 pesScanRapido(v);
@@ -2321,6 +2378,7 @@ export const SCREENS = {
                   var bd = sel ? 'var(--ouro)' : 'var(--ok-b)';
                   return '<div onclick="sbGaiolaSel(' + i + ')" style="cursor:pointer;position:relative;width:104px;height:84px;border-radius:10px;border:2px solid ' + bd + ';background:' + bg + ';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">' +
                     (sel ? '<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#fff;font-size:8px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap">✓ Selecionada</div>' : '') +
+                    '<button onclick="event.stopPropagation();sbReimprimirGaiola(' + i + ')" title="Reimprimir etiqueta da gaiola" style="position:absolute;top:4px;right:4px;width:20px;height:20px;padding:0;line-height:1;border:1px solid ' + cor + ';border-radius:5px;background:var(--surface);color:' + cor + ';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px">🖨️</button>' +
                     '<div style="font-size:22px">📦</div>' +
                     '<div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:' + cor + '">Gaiola ' + g.num + '</div>' +
                     '<div class="mono" style="font-size:12px;font-weight:900;color:' + cor + ';line-height:1">' + g.seq + '</div>' +
@@ -2397,6 +2455,175 @@ export const SCREENS = {
                       '<button class="btn btn-md btn-v" onclick="sbFechar()">✔ Concluir</button>' +
                     '</div>';
                 }, 1600);
+              }
+
+              // ── Reimpressão da etiqueta de uma gaiola (preview ZPL + impressora) ──
+              var SB_REIMP_GAIOLA = null;
+              function sbReimpFechar() { var m = document.getElementById('modal-sb-reimp'); if (m) m.style.display = 'none'; }
+              function sbReimprimirGaiola(i) {
+                SB_REIMP_GAIOLA = SB_GAIOLAS[i] || null;
+                sbReimpRender();
+                var m = document.getElementById('modal-sb-reimp'); if (m) m.style.display = 'flex';
+              }
+              function sbReimpRender() {
+                var box = document.getElementById('modal-sb-reimp-box'); if (!box) return;
+                var e = SB_ETIQUETA || {};
+                var g = SB_REIMP_GAIOLA || { num: 1, seq: 563944 };
+                var INK = '#111';
+                var fld = function(l, v, big) { return '<div><div style="font-size:8px;font-weight:700;letter-spacing:.04em;color:' + INK + '">' + l + '</div><div style="font-family:var(--font-m);font-size:' + (big ? '13px' : '11px') + ';font-weight:700;color:' + INK + '">' + (v || '—') + '</div></div>'; };
+                var hoje = new Date();
+                var dataImp = String(hoje.getDate()).padStart(2,'0') + '/' + String(hoje.getMonth()+1).padStart(2,'0') + '/' + hoje.getFullYear();
+                var horaImp = String(hoje.getHours()).padStart(2,'0') + ':' + String(hoje.getMinutes()).padStart(2,'0');
+                var ofNum = '771166', granel = 'S0835B - SAB. PH LIMAO SICILIANO', noEtq = '7951496', usuario = 'J. SANTOS', matricula = '000155';
+                var total = SB_GAIOLAS.length || 1;
+                var bcode = '#G' + g.seq + ':' + ofNum + ':' + noEtq;
+                var bars = '';
+                for (var i = 0; i < bcode.length; i++) { var c = bcode.charCodeAt(i), w = (c % 3) + 1, gp = ((c >> 2) % 2) + 1; bars += '<span style="display:inline-block;width:' + w + 'px;height:100%;background:' + INK + '"></span><span style="display:inline-block;width:' + gp + 'px;height:100%;background:#fff"></span>'; }
+                box.innerHTML =
+                  '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">' +
+                    '<div><div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--ouro)">🖨️ Reimprimir Etiqueta</div>' +
+                    '<div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc)">Gaiola ' + g.num + ' · Nº ' + g.seq + '</div></div>' +
+                    '<button onclick="sbReimpFechar()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>' +
+                  '</div>' +
+                  '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Pré-visualização da etiqueta</div>' +
+                  '<div style="margin-bottom:16px"><div style="background:#fff;border:1px solid #999;border-radius:4px;padding:8px;box-shadow:0 1px 4px rgba(0,0,0,.12)">' +
+                    '<div style="border:2px solid ' + INK + '">' +
+                      '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 10px"><div style="font-size:14px;font-weight:800;color:' + INK + '">PESAGEM DE MATERIAL - GAIOLA</div><div style="text-align:right"><div style="font-size:8px;font-weight:700;color:' + INK + '">DATA IMPRESSAO</div><div style="font-family:var(--font-m);font-size:11px;font-weight:700;color:' + INK + '">' + dataImp + '</div></div></div>' +
+                      '<div style="border-top:2px solid ' + INK + ';display:flex">' +
+                        '<div style="flex:1;border-right:2px solid ' + INK + ';padding:8px 10px"><div style="font-size:8px;font-weight:700;color:' + INK + '">ORDEM DE FABRICACAO</div><div style="font-family:var(--font-m);font-size:26px;font-weight:800;color:' + INK + ';line-height:1.1">' + ofNum + '</div></div>' +
+                        '<div style="flex:0 0 32%;padding:8px 10px;text-align:center"><div style="font-size:8px;font-weight:700;color:' + INK + '">GAIOLA</div><div style="font-family:var(--font-m);font-size:26px;font-weight:800;color:' + INK + ';line-height:1.1">' + g.num + '/' + total + '</div></div>' +
+                      '</div>' +
+                      '<div style="border-top:2px solid ' + INK + ';display:flex">' +
+                        '<div style="flex:1;border-right:2px solid ' + INK + ';padding:8px 10px">' + fld('GRANEL RESULTANTE', granel, true) + '</div>' +
+                        '<div style="flex:0 0 32%;padding:8px 10px">' + fld('No DA ETIQUETA', noEtq) + '</div>' +
+                      '</div>' +
+                      '<div style="border-top:2px solid ' + INK + ';display:flex">' +
+                        '<div style="flex:1;border-right:2px solid ' + INK + ';padding:8px 10px">' + fld('LOTE', e.lote) + '</div>' +
+                        '<div style="flex:1;border-right:2px solid ' + INK + ';padding:8px 10px">' + fld('USUARIO', usuario) + '</div>' +
+                        '<div style="flex:1;border-right:2px solid ' + INK + ';padding:8px 10px">' + fld('MATRICULA', matricula) + '</div>' +
+                        '<div style="flex:1;padding:8px 10px">' + fld('No DA GAIOLA', g.seq) + '</div>' +
+                      '</div>' +
+                      '<div style="border-top:2px solid ' + INK + ';padding:12px 10px;display:flex;flex-direction:column;align-items:center">' +
+                        '<div style="display:flex;align-items:flex-end;height:70px;overflow:hidden;max-width:100%">' + bars + '</div>' +
+                        '<div style="font-family:var(--font-m);font-size:10px;color:' + INK + ';margin-top:3px;word-break:break-all;text-align:center">' + bcode + '</div>' +
+                      '</div>' +
+                      '<div style="border-top:2px solid ' + INK + ';display:flex;justify-content:space-between;padding:6px 10px;font-size:9px;color:' + INK + '"><span>Impresso por: Claudinei</span><span>Impresso em: ' + dataImp + ' ' + horaImp + '</span></div>' +
+                    '</div>' +
+                  '</div></div>' +
+                  '<div style="margin-bottom:16px"><label class="lbl">Impressora</label>' +
+                    '<select class="sel" id="sb-reimp-impressora">' +
+                      '<option value="PRN-BOX3 · Zebra ZD420 (Box Pesagem)">🖨️ PRN-BOX3 · Zebra ZD420 (Box Pesagem)</option>' +
+                      '<option value="PRN-BOX1 · Zebra ZT411 (Sala A)">🖨️ PRN-BOX1 · Zebra ZT411 (Sala A)</option>' +
+                      '<option value="PRN-BOX2 · Zebra ZT230 (Sala B)">🖨️ PRN-BOX2 · Zebra ZT230 (Sala B)</option>' +
+                      '<option value="PRN-MF5 · Zebra ZT610 (Corredor MF5)">🖨️ PRN-MF5 · Zebra ZT610 (Corredor MF5)</option>' +
+                      '<option value="PRN-LAB · Zebra GK420t (Laboratório)">🖨️ PRN-LAB · Zebra GK420t (Laboratório)</option>' +
+                    '</select></div>' +
+                  '<div style="display:flex;gap:10px;justify-content:flex-end">' +
+                    '<button class="btn btn-md btn-ghost" onclick="sbReimpFechar()">Cancelar</button>' +
+                    '<button class="btn btn-md btn-v" onclick="sbReimpConfirmar()">🖨️ Reimprimir</button>' +
+                  '</div>';
+              }
+              function sbReimpConfirmar() {
+                var impEl = document.getElementById('sb-reimp-impressora');
+                var imp = impEl ? impEl.value : 'PRN-BOX3 · Zebra ZD420';
+                var g = SB_REIMP_GAIOLA || {};
+                sbReimpFechar();
+                alert('🖨️ Reimpressão solicitada!\\nGaiola ' + (g.num || '') + ' (Nº ' + (g.seq || '') + ')\\nMP: ' + ((SB_ETIQUETA && SB_ETIQUETA.mp) || '—') + '\\nImpressora: ' + imp + ' · Status: Enviado.');
+              }
+
+              // ════════ Grande Volume (toggle) — peso automático + gaiola ════════
+              function pesRenderGVSwitch() {
+                var sw = document.getElementById('pes-gv-switch');
+                var knob = document.getElementById('pes-gv-knob');
+                if (!sw || !knob) return;
+                var on = !!window.PES_GV;
+                sw.style.background = on ? 'var(--verde)' : 'var(--border2)';
+                knob.style.left = on ? '20px' : '2px';
+              }
+              function pesToggleGV() { window.PES_GV = !window.PES_GV; pesRenderGVSwitch(); }
+              setTimeout(pesRenderGVSwitch, 60);
+
+              var GV_MAT = '', GV_LOTE = '', GV_ETQ = '', GV_PESO = '1.000,000 kg';
+              var GV_GAIOLAS = [], GV_GAIOLA_SEL = 0, GV_PROX_SEQ = 563944;
+
+              function gvBox() { return document.getElementById('modal-gv-box'); }
+              function gvFechar() {
+                var m = document.getElementById('modal-gv'); if (m) m.style.display = 'none';
+                var f = document.getElementById('pes-mp-filtro'); if (f) f.value = '';
+              }
+              function pesAbrirGV(material, lote, etiqueta) {
+                if (window.PES_SALA_PARADA) { pesAbrirAvisoSalaParada(); return; }
+                GV_MAT = material || ''; GV_LOTE = lote || ''; GV_ETQ = etiqueta || '';
+                GV_GAIOLAS = [{ seq: 563944, num: 1 }, { seq: 563945, num: 2 }];
+                GV_GAIOLA_SEL = 0; GV_PROX_SEQ = 563946;
+                gvRender();
+                var m = document.getElementById('modal-gv'); if (m) m.style.display = 'flex';
+              }
+              function gvFld(label, val, mono) {
+                return '<div><div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">' + label + '</div>' +
+                  '<div ' + (mono ? 'class="mono" ' : '') + 'style="font-size:12px;font-weight:700;color:var(--text);word-break:break-word">' + (val || '—') + '</div></div>';
+              }
+              function gvGaiolaSel(i) { GV_GAIOLA_SEL = i; gvRender(); }
+              function gvGaiolaAdd() { GV_GAIOLAS.push({ seq: GV_PROX_SEQ++, num: GV_GAIOLAS.length + 1 }); GV_GAIOLA_SEL = GV_GAIOLAS.length - 1; gvRender(); }
+
+              function gvRender() {
+                var box = gvBox(); if (!box) return;
+                var cards = GV_GAIOLAS.map(function(g, i) {
+                  var sel = (i === GV_GAIOLA_SEL);
+                  var cor = sel ? '#9A7520' : 'var(--verde-esc)';
+                  var bg = sel ? 'var(--ouro-dim)' : 'var(--verde-dim)';
+                  var bd = sel ? 'var(--ouro)' : 'var(--ok-b)';
+                  return '<div onclick="gvGaiolaSel(' + i + ')" style="cursor:pointer;position:relative;width:104px;height:84px;border-radius:10px;border:2px solid ' + bd + ';background:' + bg + ';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">' +
+                    (sel ? '<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#fff;font-size:8px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap">✓ Selecionada</div>' : '') +
+                    '<div style="font-size:22px">📦</div>' +
+                    '<div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:' + cor + '">Gaiola ' + g.num + '</div>' +
+                    '<div class="mono" style="font-size:12px;font-weight:900;color:' + cor + ';line-height:1">' + g.seq + '</div>' +
+                  '</div>';
+                }).join('');
+                var add = '<button onclick="gvGaiolaAdd()" title="Criar nova gaiola" style="width:104px;height:84px;border:2.5px dashed var(--border2);border-radius:10px;background:var(--surface2);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text3)"><div style="font-size:24px;font-weight:300;line-height:1">+</div><div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Nova Gaiola</div></button>';
+                box.innerHTML =
+                  '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">' +
+                    '<div><div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--ouro)">📦 Pesagem · Grande Volume</div>' +
+                    '<div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc)">Peso automático &amp; gaiola</div></div>' +
+                    '<button onclick="gvFechar()" title="Fechar" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>' +
+                  '</div>' +
+                  '<div style="display:flex;gap:16px;align-items:stretch;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:12px 16px;margin-bottom:16px">' +
+                    '<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px">' +
+                      gvFld('Matéria-Prima', GV_MAT) +
+                      gvFld('Lote', GV_LOTE) +
+                      gvFld('Etiqueta', GV_ETQ, true) +
+                    '</div>' +
+                    '<div style="flex-shrink:0;border-left:1px solid var(--border);padding-left:16px;display:flex;flex-direction:column;justify-content:center;text-align:right">' +
+                      '<div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Peso automático</div>' +
+                      '<div class="mono" style="font-size:22px;font-weight:900;color:var(--verde)">' + GV_PESO + '</div>' +
+                    '</div>' +
+                  '</div>' +
+                  '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Gaiola para vincular o peso</div>' +
+                  '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px">' + cards + add + '</div>' +
+                  '<div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap">' +
+                    '<button class="btn btn-md btn-v" onclick="pesGVConfirmar(false)">✔ Concluir</button>' +
+                    '<button class="btn btn-md" style="background:var(--ouro);color:#fff;border:1px solid var(--ouro)" onclick="pesGVConfirmar(true)">🖨️ Concluir &amp; Imprimir nova etiqueta</button>' +
+                  '</div>';
+              }
+
+              function pesGVConfirmar(comImpressao) {
+                var box = gvBox(); if (!box) return;
+                box.innerHTML =
+                  '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:14px 0">' +
+                    '<div style="width:38px;height:38px;border:4px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px"></div>' +
+                    '<div style="font-size:14px;font-weight:700;color:var(--inf)">Registrando peso (grande volume)...</div>' +
+                    '<div style="font-size:11px;color:var(--text2);margin-top:4px">' + (comImpressao ? 'Vinculando à gaiola e enviando nova etiqueta para impressão.' : 'Vinculando o peso à gaiola.') + '</div>' +
+                  '</div>';
+                setTimeout(function(){
+                  var g = GV_GAIOLAS[GV_GAIOLA_SEL] || GV_GAIOLAS[GV_GAIOLAS.length - 1] || { num: 1, seq: 563944 };
+                  box.innerHTML =
+                    '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 0 8px">' +
+                      '<div style="font-size:44px;margin-bottom:6px">✅</div>' +
+                      '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">Peso registrado (grande volume)</div>' +
+                      '<div style="font-size:12px;color:var(--text2);max-width:400px;margin-bottom:18px">Peso automático <strong>' + GV_PESO + '</strong> de <strong>' + (GV_MAT || '—') + '</strong> vinculado à <strong>Gaiola ' + g.num + ' (Nº ' + g.seq + ')</strong>.' + (comImpressao ? ' Nova etiqueta impressa na PRN-BOX3.' : '') + '</div>' +
+                      '<button class="btn btn-md btn-v" onclick="gvFechar()">✔ Concluir</button>' +
+                    '</div>';
+                }, 1500);
               }
 
               /**
@@ -2633,8 +2860,15 @@ export const SCREENS = {
                 </div>
               </div>
               <!-- Display da balança -->
-              <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Leitura em Tempo Real — <span style="font-family:var(--font-m);color:var(--verde)" id="pes-bal-nome-live">BAL-01</span></div>
-              <div style="background:var(--verde-esc);border-radius:10px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px">
+                <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3)">Leitura em Tempo Real — <span style="font-family:var(--font-m);color:var(--verde)" id="pes-bal-nome-live">BAL-01</span></div>
+                <label onclick="pesToggleManual()" title="Peso Manual" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;white-space:nowrap;flex-shrink:0">
+                  <span style="font-size:11px;font-weight:700;color:var(--text2)">Peso Manual</span>
+                  <span id="pes-pm-switch" style="position:relative;display:inline-block;width:40px;height:22px;border-radius:11px;background:var(--border2);transition:background .15s"><span id="pes-pm-knob" style="position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:left .15s"></span></span>
+                </label>
+              </div>
+              <div id="pes-bal-live">
+              <div id="pes-bal-display" style="background:var(--verde-esc);border-radius:10px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
                 <div>
                   <div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(253,250,241,.4);margin-bottom:4px">Peso atual</div>
                   <div style="font-family:var(--font-m);font-size:62px;font-weight:700;color:#7AE09A;letter-spacing:-.02em;line-height:1" id="bal-val">0,000</div>
@@ -2651,10 +2885,23 @@ export const SCREENS = {
               <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:16px">
                 <span>0 kg</span><span style="font-weight:700;color:var(--verde)" id="pes-bal-pct-txt">0%</span><span>412,50 kg</span>
               </div>
+              </div><!-- /pes-bal-live -->
+
+              <!-- Entrada de peso manual (modo "Peso Manual") -->
+              <div id="pes-peso-manual-wrap" style="display:none;background:var(--ouro-dim);border:1.5px dashed var(--ouro);border-radius:8px;padding:12px 14px;margin-bottom:16px">
+                <div style="font-size:11px;color:var(--alr);font-weight:700;margin-bottom:8px">⚠ Modo peso manual — use apenas quando a balança/integração não estiver disponível.</div>
+                <label class="lbl">Peso pesado (kg) *</label>
+                <input class="inp" id="pes-peso-manual-inp" inputmode="decimal" placeholder="Ex.: 411,840" style="font-family:var(--font-m);font-size:15px;padding:8px 12px">
+              </div>
+
               <script>
               (function(){
                 var origBalaIniciar = pesBalaIniciar;
                 pesBalaIniciar = function() {
+                  // Cada nova pesagem começa em modo balança (manual desligado).
+                  window.PES_PESO_MANUAL = false;
+                  if (typeof pesRenderManual === 'function') pesRenderManual();
+                  var pmi = document.getElementById('pes-peso-manual-inp'); if (pmi) pmi.value = '';
                   _pesBalVal = 0;
                   document.getElementById('bal-val').textContent = '0,000';
                   document.getElementById('bal-status').textContent = '▼ 412,50 kg';
@@ -2882,20 +3129,79 @@ export const SCREENS = {
         if (!g) return;
         var box = document.getElementById('p5-modal-box');
         if (!box) return;
+        var INK = '#111';
+        var total = P5_GAIOLAS.length || 1;
+        var fld = function(l, v, big) { return '<div><div style="font-size:8px;font-weight:700;letter-spacing:.04em;color:' + INK + '">' + l + '</div><div style="font-family:var(--font-m);font-size:' + (big ? '13px' : '11px') + ';font-weight:700;color:' + INK + '">' + (v || '—') + '</div></div>'; };
+        var hoje = new Date();
+        var dataImp = String(hoje.getDate()).padStart(2,'0') + '/' + String(hoje.getMonth()+1).padStart(2,'0') + '/' + hoje.getFullYear();
+        var horaImp = String(hoje.getHours()).padStart(2,'0') + ':' + String(hoje.getMinutes()).padStart(2,'0');
+        var ofNum = '771166', granel = 'S0835B - SAB. PH LIMAO SICILIANO', noEtq = '7951496', usuario = 'J. SANTOS', matricula = '000155', lote = 'AGUA-2026-03';
+        var bcode = '#G' + g.seq + ':' + ofNum + ':' + noEtq;
+        var bars = '';
+        for (var b = 0; b < bcode.length; b++) { var c = bcode.charCodeAt(b), w = (c % 3) + 1, gp = ((c >> 2) % 2) + 1; bars += '<span style="display:inline-block;width:' + w + 'px;height:100%;background:' + INK + '"></span><span style="display:inline-block;width:' + gp + 'px;height:100%;background:#fff"></span>'; }
+        box.innerHTML =
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">' +
+            '<div><div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--ouro)">🖨️ Reimprimir Etiqueta</div>' +
+            '<div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc)">Gaiola ' + g.num + ' · Nº ' + g.seq + '</div></div>' +
+            '<button onclick="p5Render()" title="Voltar à seleção" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>' +
+          '</div>' +
+          '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Pré-visualização da etiqueta</div>' +
+          '<div style="margin-bottom:16px"><div style="background:#fff;border:1px solid #999;border-radius:4px;padding:8px;box-shadow:0 1px 4px rgba(0,0,0,.12)">' +
+            '<div style="border:2px solid ' + INK + '">' +
+              '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 10px"><div style="font-size:14px;font-weight:800;color:' + INK + '">PESAGEM DE MATERIAL - GAIOLA</div><div style="text-align:right"><div style="font-size:8px;font-weight:700;color:' + INK + '">DATA IMPRESSAO</div><div style="font-family:var(--font-m);font-size:11px;font-weight:700;color:' + INK + '">' + dataImp + '</div></div></div>' +
+              '<div style="border-top:2px solid ' + INK + ';display:flex">' +
+                '<div style="flex:1;border-right:2px solid ' + INK + ';padding:8px 10px"><div style="font-size:8px;font-weight:700;color:' + INK + '">ORDEM DE FABRICACAO</div><div style="font-family:var(--font-m);font-size:26px;font-weight:800;color:' + INK + ';line-height:1.1">' + ofNum + '</div></div>' +
+                '<div style="flex:0 0 32%;padding:8px 10px;text-align:center"><div style="font-size:8px;font-weight:700;color:' + INK + '">GAIOLA</div><div style="font-family:var(--font-m);font-size:26px;font-weight:800;color:' + INK + ';line-height:1.1">' + g.num + '/' + total + '</div></div>' +
+              '</div>' +
+              '<div style="border-top:2px solid ' + INK + ';display:flex">' +
+                '<div style="flex:1;border-right:2px solid ' + INK + ';padding:8px 10px">' + fld('GRANEL RESULTANTE', granel, true) + '</div>' +
+                '<div style="flex:0 0 32%;padding:8px 10px">' + fld('No DA ETIQUETA', noEtq) + '</div>' +
+              '</div>' +
+              '<div style="border-top:2px solid ' + INK + ';display:flex">' +
+                '<div style="flex:1;border-right:2px solid ' + INK + ';padding:8px 10px">' + fld('LOTE', lote) + '</div>' +
+                '<div style="flex:1;border-right:2px solid ' + INK + ';padding:8px 10px">' + fld('USUARIO', usuario) + '</div>' +
+                '<div style="flex:1;border-right:2px solid ' + INK + ';padding:8px 10px">' + fld('MATRICULA', matricula) + '</div>' +
+                '<div style="flex:1;padding:8px 10px">' + fld('No DA GAIOLA', g.seq) + '</div>' +
+              '</div>' +
+              '<div style="border-top:2px solid ' + INK + ';padding:12px 10px;display:flex;flex-direction:column;align-items:center">' +
+                '<div style="display:flex;align-items:flex-end;height:70px;overflow:hidden;max-width:100%">' + bars + '</div>' +
+                '<div style="font-family:var(--font-m);font-size:10px;color:' + INK + ';margin-top:3px;word-break:break-all;text-align:center">' + bcode + '</div>' +
+              '</div>' +
+              '<div style="border-top:2px solid ' + INK + ';display:flex;justify-content:space-between;padding:6px 10px;font-size:9px;color:' + INK + '"><span>Impresso por: Claudinei</span><span>Impresso em: ' + dataImp + ' ' + horaImp + '</span></div>' +
+            '</div>' +
+          '</div></div>' +
+          '<div style="margin-bottom:16px"><label class="lbl">Impressora</label>' +
+            '<select class="sel" id="p5-reimp-impressora">' +
+              '<option value="PRN-BOX3 · Zebra ZD420 (Box Pesagem)">🖨️ PRN-BOX3 · Zebra ZD420 (Box Pesagem)</option>' +
+              '<option value="PRN-BOX1 · Zebra ZT411 (Sala A)">🖨️ PRN-BOX1 · Zebra ZT411 (Sala A)</option>' +
+              '<option value="PRN-BOX2 · Zebra ZT230 (Sala B)">🖨️ PRN-BOX2 · Zebra ZT230 (Sala B)</option>' +
+              '<option value="PRN-MF5 · Zebra ZT610 (Corredor MF5)">🖨️ PRN-MF5 · Zebra ZT610 (Corredor MF5)</option>' +
+              '<option value="PRN-LAB · Zebra GK420t (Laboratório)">🖨️ PRN-LAB · Zebra GK420t (Laboratório)</option>' +
+            '</select></div>' +
+          '<div style="display:flex;gap:10px;justify-content:flex-end">' +
+            '<button class="btn btn-md btn-ghost" onclick="p5Render()">‹ Voltar à seleção</button>' +
+            '<button class="btn btn-md btn-v" onclick="p5ReimpConfirmar(' + g.num + ',' + g.seq + ')">🖨️ Reimprimir</button>' +
+          '</div>';
+      }
+
+      function p5ReimpConfirmar(num, seq) {
+        var box = document.getElementById('p5-modal-box'); if (!box) return;
+        var impEl = document.getElementById('p5-reimp-impressora');
+        var imp = impEl ? impEl.value : 'PRN-BOX3 · Zebra ZD420';
         box.innerHTML =
           '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:12px 0">' +
             '<div style="width:34px;height:34px;border:4px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px"></div>' +
-            '<div style="font-size:13px;font-weight:700;color:var(--inf)">Reenviando etiqueta da Gaiola ' + g.num + ' para PRN-BOX3...</div>' +
+            '<div style="font-size:13px;font-weight:700;color:var(--inf)">Enviando etiqueta da Gaiola ' + num + ' para ' + imp + '...</div>' +
           '</div>';
         setTimeout(function(){
           box.innerHTML =
             '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 8px">' +
               '<div style="font-size:40px;margin-bottom:6px">✅</div>' +
-              '<div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">Etiqueta da Gaiola ' + g.num + ' reimpressa</div>' +
-              '<div style="font-size:12px;color:var(--text2);max-width:360px;margin-bottom:18px">Gaiola <strong>Nº ' + g.seq + '</strong> enviada novamente à impressora PRN-BOX3.</div>' +
+              '<div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">Etiqueta da Gaiola ' + num + ' reimpressa</div>' +
+              '<div style="font-size:12px;color:var(--text2);max-width:360px;margin-bottom:18px">Gaiola <strong>Nº ' + seq + '</strong> enviada para <strong>' + imp + '</strong>.</div>' +
               '<button class="btn btn-md btn-v" onclick="p5Render()">‹ Voltar à seleção</button>' +
             '</div>';
-        }, 1600);
+        }, 1500);
       }
 
       function p5Concluir() {
@@ -3605,25 +3911,16 @@ export const SCREENS = {
 
           <!-- Aba: Reimprimir Etiqueta -->
           <div id="mps-aba-reimprimir" style="display:none">
-            <div class="abox ok" style="margin-bottom:16px"><span class="ai">🖨️</span><div><strong>Reimpressão da etiqueta de pesagem.</strong> Confirme os dados registrados na pesagem original antes de imprimir.</div></div>
-            <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px">
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-                <div><div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Material</div><div id="reimp-material" style="font-size:13px;font-weight:700;color:var(--text)">—</div></div>
-                <div><div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Lote</div><div id="reimp-lote" style="font-family:var(--font-m);font-size:13px;font-weight:700;color:var(--text)">—</div></div>
-                <div><div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Qtd. Pesada</div><div id="reimp-pesado" style="font-family:var(--font-m);font-size:13px;font-weight:700;color:var(--verde)">—</div></div>
-                <div><div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Nº Etiqueta</div><div id="reimp-etq" style="font-family:var(--font-m);font-size:13px;font-weight:700;color:var(--text)">—</div></div>
-                <div><div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Balança</div><div id="reimp-balanca" style="font-family:var(--font-m);font-size:13px;color:var(--text2)">—</div></div>
-                <div><div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Operador</div><div id="reimp-op" style="font-size:13px;color:var(--text2)">—</div></div>
-              </div>
-            </div>
+            <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Pré-visualização da etiqueta</div>
+            <div id="reimp-zpl" style="margin-bottom:16px"></div>
             <div style="margin-bottom:14px">
-              <label class="lbl">Motivo da Reimpressão</label>
-              <select class="sel" id="reimp-motivo">
-                <option value="">Selecione o motivo...</option>
-                <option value="danificada">Etiqueta danificada / ilegível</option>
-                <option value="perdida">Etiqueta perdida</option>
-                <option value="impressao">Falha de impressão</option>
-                <option value="outro">Outro</option>
+              <label class="lbl">Impressora</label>
+              <select class="sel" id="reimp-impressora">
+                <option value="PRN-BOX3 · Zebra ZD420 (Box Pesagem)">🖨️ PRN-BOX3 · Zebra ZD420 (Box Pesagem)</option>
+                <option value="PRN-BOX1 · Zebra ZT411 (Sala A)">🖨️ PRN-BOX1 · Zebra ZT411 (Sala A)</option>
+                <option value="PRN-BOX2 · Zebra ZT230 (Sala B)">🖨️ PRN-BOX2 · Zebra ZT230 (Sala B)</option>
+                <option value="PRN-MF5 · Zebra ZT610 (Corredor MF5)">🖨️ PRN-MF5 · Zebra ZT610 (Corredor MF5)</option>
+                <option value="PRN-LAB · Zebra GK420t (Laboratório)">🖨️ PRN-LAB · Zebra GK420t (Laboratório)</option>
               </select>
             </div>
             <div style="display:flex;gap:10px">
@@ -3682,16 +3979,45 @@ export const SCREENS = {
             tab.style.borderBottomColor = aba===t ? 'var(--verde)' : 'transparent';
           }
         });
-        // Preencher dados da aba reimprimir com a MP selecionada
-        if (aba === 'reimprimir') {
-          document.getElementById('reimp-material').textContent = _mpsSel.mat  || '—';
-          document.getElementById('reimp-lote').textContent     = _mpsSel.lote || '—';
-          document.getElementById('reimp-pesado').textContent   = (_mpsSel.pesado || '—') + ' kg';
-          document.getElementById('reimp-etq').textContent      = _mpsSel.etq  || '—';
-          document.getElementById('reimp-balanca').textContent  = _mpsSel.bal  || '—';
-          document.getElementById('reimp-op').textContent       = _mpsSel.op   || '—';
-          document.getElementById('reimp-motivo').value = '';
+        // Renderiza o preview da etiqueta (estilo granado-zpl) na aba reimprimir
+        if (aba === 'reimprimir') { mpsRenderReimpZpl(); }
+      }
+
+      // Pré-visualização da etiqueta de pesagem (mesma ideia do granado-zpl).
+      function mpsRenderReimpZpl() {
+        var alvo = document.getElementById('reimp-zpl'); if (!alvo) return;
+        var d = _mpsSel || {};
+        var INK = '#111';
+        var fld = function(l, v, big) {
+          return '<div><div style="font-size:8px;font-weight:700;letter-spacing:.04em;color:' + INK + '">' + l + '</div>' +
+            '<div style="font-family:var(--font-m);font-size:' + (big ? '13px' : '11px') + ';font-weight:700;color:' + INK + '">' + (v || '—') + '</div></div>';
+        };
+        var code = String(d.etq || '');
+        var bars = '';
+        for (var i = 0; i < code.length; i++) {
+          var c = code.charCodeAt(i), w = (c % 3) + 1, g = ((c >> 2) % 2) + 1;
+          bars += '<span style="display:inline-block;width:' + w + 'px;height:100%;background:' + INK + '"></span>' +
+                  '<span style="display:inline-block;width:' + g + 'px;height:100%;background:#fff"></span>';
         }
+        alvo.innerHTML =
+          '<div style="max-width:420px;background:#fff;border:1px solid #999;border-radius:4px;padding:8px;box-shadow:0 1px 4px rgba(0,0,0,.12)">' +
+            '<div style="border:2px solid ' + INK + '">' +
+              '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 10px">' +
+                '<div style="font-size:16px;font-weight:800;color:' + INK + '">PESAGEM DE MATERIAL</div>' +
+                '<div style="text-align:right"><div style="font-size:8px;font-weight:700;color:' + INK + '">No ETIQUETA</div><div style="font-family:var(--font-m);font-size:12px;font-weight:700;color:' + INK + '">' + (d.etq || '—') + '</div></div>' +
+              '</div>' +
+              '<div style="border-top:2px solid ' + INK + ';padding:8px 10px">' + fld('MATERIA PRIMA', d.mat, true) + '</div>' +
+              '<div style="border-top:2px solid ' + INK + ';display:flex">' +
+                '<div style="flex:1;border-right:2px solid ' + INK + ';padding:8px 10px">' + fld('LOTE', d.lote) + '</div>' +
+                '<div style="flex:1;border-right:2px solid ' + INK + ';padding:8px 10px">' + fld('BALANCA', d.bal) + '</div>' +
+                '<div style="flex:1.4;padding:8px 10px">' + fld('OPERADOR', d.op) + '</div>' +
+              '</div>' +
+              '<div style="border-top:2px solid ' + INK + ';display:flex;align-items:stretch">' +
+                '<div style="flex:1;padding:8px 10px;min-width:0"><div style="display:flex;align-items:flex-end;height:46px;overflow:hidden">' + bars + '</div><div style="font-family:var(--font-m);font-size:10px;color:' + INK + ';margin-top:2px">' + (d.etq || '') + '</div></div>' +
+                '<div style="flex:0 0 42%;background:' + INK + ';color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 8px"><div style="font-size:10px;font-weight:700;letter-spacing:.06em">PESO LIQUIDO</div><div style="font-size:26px;font-weight:800;line-height:1.1;margin-top:2px">' + (d.pesado || '—') + ' kg</div></div>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
       }
 
       // Mostra/esconde campos auxiliares conforme o Tipo de solicitação:
@@ -3738,10 +4064,10 @@ export const SCREENS = {
       }
 
       function mpsReimprimir() {
-        var motivo = document.getElementById('reimp-motivo').value;
-        if (!motivo) { alert('⚠ Selecione o motivo da reimpressão.'); return; }
+        var impEl = document.getElementById('reimp-impressora');
+        var impressora = impEl ? impEl.value : 'PRN-BOX3 · Zebra ZD420';
         document.getElementById('modal-mps-desvio').style.display = 'none';
-        alert('🖨️ Reimpressão solicitada!\\nEtiqueta: ' + (_mpsSel.etq||'—') + '\\nMP: ' + (_mpsSel.mat||'—') + '\\nMotivo: ' + motivo + '\\nImpressora: PRN-BOX3 · Status: Enviado.');
+        alert('🖨️ Reimpressão solicitada!\\nEtiqueta: ' + (_mpsSel.etq||'—') + '\\nMP: ' + (_mpsSel.mat||'—') + '\\nImpressora: ' + impressora + ' · Status: Enviado.');
       }
 
       // Reprocessa a integração da pesagem com o JDE.
