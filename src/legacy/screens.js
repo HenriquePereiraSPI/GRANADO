@@ -9995,17 +9995,77 @@ export const SCREENS = {
 
       <!-- Aba Planejamento: apenas ordens PLANEJADAS -->
       <div id="rov-tab-plan" style="display:none">
+        <!-- Filtros -->
+        <div class="tv-filtros">
+          <div class="tv-fg">
+            <label class="tv-lbl">Módulo</label>
+            <select class="tv-sel" id="plan-f-mod" onchange="relPlanAplicar()">
+              <option value="todos">Todos</option>
+              <option value="prod">Produção</option>
+              <option value="fab">Fabricação</option>
+              <option value="pes">Pesagem</option>
+            </select>
+          </div>
+          <div class="tv-fg">
+            <label class="tv-lbl">Cobertura</label>
+            <select class="tv-sel" id="plan-f-cob" onchange="relPlanAplicar()">
+              <option value="todas">Todas</option>
+              <option value="ate30">Até 30%</option>
+              <option value="30a40">30% a 40%</option>
+              <option value="acima40">Acima de 40%</option>
+            </select>
+          </div>
+          <div class="tv-fg">
+            <label class="tv-lbl">Período (Fabricação)</label>
+            <select class="tv-sel" id="plan-f-per" onchange="relPlanAplicar()">
+              <option value="todos">Todos</option>
+              <option value="hoje">Hoje</option>
+              <option value="semana">Esta Semana</option>
+              <option value="mes">Este Mês</option>
+            </select>
+          </div>
+          <div class="tv-fg" style="min-width:220px">
+            <label class="tv-lbl">Busca (Ordem / Item / Lote)</label>
+            <input class="tv-inp" id="plan-f-busca" placeholder="Ex: 748279 / ROSAS / 1241..." oninput="relPlanAplicar()">
+          </div>
+        </div>
+        <div class="tv-filtro-ativo" id="plan-filtro-ativo"></div>
+
+        <!-- KPIs planejamento -->
+        <div class="tv-kpis tv-kpis-4">
+          <div class="tv-kpi blue">
+            <div class="tv-kpi-lbl">Ordens Planejadas</div>
+            <div class="tv-kpi-val" id="plan-kpi-total">6<span class="tv-kpi-unit">op</span></div>
+            <div class="tv-kpi-sub" style="color:#5A9EE0">aguardando início</div>
+          </div>
+          <div class="tv-kpi green">
+            <div class="tv-kpi-lbl">Qtd a Pesar</div>
+            <div class="tv-kpi-val" id="plan-kpi-qtd">68.400<span class="tv-kpi-unit">kg</span></div>
+            <div class="tv-kpi-sub">somatório planejado</div>
+          </div>
+          <div class="tv-kpi red">
+            <div class="tv-kpi-lbl">Qtd Aparas</div>
+            <div class="tv-kpi-val" id="plan-kpi-apa">10.400<span class="tv-kpi-unit">kg</span></div>
+            <div class="tv-kpi-sub">previsto</div>
+          </div>
+          <div class="tv-kpi teal">
+            <div class="tv-kpi-lbl">Cobertura Média</div>
+            <div class="tv-kpi-val" id="plan-kpi-cob">33<span class="tv-kpi-unit">%</span></div>
+            <div class="tv-kpi-sub" style="color:#40C8A0">ordens planejadas</div>
+          </div>
+        </div>
+
         <div class="tv-section-sep">📅 Ordens Planejadas — aguardando início</div>
         <div class="tv-table-wrap"><div class="tv-table-card" style="overflow-x:auto">
           <table class="tv-tbl" style="min-width:1180px">
             <thead><tr><th>Ordem</th><th>DUN</th><th>Item</th><th>Cobertura</th><th>Cód. Granel</th><th>Qtd (Kg)</th><th>Qtd Aparas (Kg)</th><th>Lote</th><th>Data Pesagem</th><th>Data Fabricação</th><th>Status</th></tr></thead>
-            <tbody>
-              <tr><td class="mono">748279</td><td class="mono">17896512909784</td><td>SAB.O. ROSAS 90GR CX144</td><td class="mono">37%</td><td class="mono">S0802C</td><td class="mono">17.500</td><td class="mono">3.500</td><td class="mono">1241/2026</td><td class="mono">25/06/2026</td><td class="mono">26/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
-              <tr><td class="mono">748280</td><td class="mono">17896512909785</td><td>SAB.O. LIMAO 90GR CX144</td><td class="mono">42%</td><td class="mono">S0835B</td><td class="mono">18.200</td><td class="mono">2.900</td><td class="mono">1242/2026</td><td class="mono">25/06/2026</td><td class="mono">27/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
-              <tr><td class="mono">748281</td><td class="mono">17896512901234</td><td>SHAMPOO PHEBO 250ML CX24</td><td class="mono">28%</td><td class="mono">G0451A</td><td class="mono">9.800</td><td class="mono">1.200</td><td class="mono">1243/2026</td><td class="mono">26/06/2026</td><td class="mono">27/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
-              <tr><td class="mono">748282</td><td class="mono">17896512905678</td><td>LOCAO HIDR. ROSAS 200ML CX12</td><td class="mono">33%</td><td class="mono">L0210C</td><td class="mono">6.400</td><td class="mono">0.800</td><td class="mono">1244/2026</td><td class="mono">26/06/2026</td><td class="mono">28/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
-              <tr><td class="mono">748283</td><td class="mono">17896512903210</td><td>COLONIA BEBE 100ML CX48</td><td class="mono">25%</td><td class="mono">C0102B</td><td class="mono">4.500</td><td class="mono">0.500</td><td class="mono">1245/2026</td><td class="mono">27/06/2026</td><td class="mono">28/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
-              <tr><td class="mono">748284</td><td class="mono">17896512907788</td><td>TALCO ANTISSEPTICO 100G CX60</td><td class="mono">30%</td><td class="mono">T0330A</td><td class="mono">12.000</td><td class="mono">1.500</td><td class="mono">1246/2026</td><td class="mono">27/06/2026</td><td class="mono">29/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
+            <tbody id="plan-tbody">
+              <tr data-mod="pes"  data-cob="37" data-qtd="17500" data-apa="3500"><td class="mono">748279</td><td class="mono">17896512909784</td><td>SAB.O. ROSAS 90GR CX144</td><td class="mono">37%</td><td class="mono">S0802C</td><td class="mono">17.500</td><td class="mono">3.500</td><td class="mono">1241/2026</td><td class="mono">25/06/2026</td><td class="mono">26/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
+              <tr data-mod="fab"  data-cob="42" data-qtd="18200" data-apa="2900"><td class="mono">748280</td><td class="mono">17896512909785</td><td>SAB.O. LIMAO 90GR CX144</td><td class="mono">42%</td><td class="mono">S0835B</td><td class="mono">18.200</td><td class="mono">2.900</td><td class="mono">1242/2026</td><td class="mono">25/06/2026</td><td class="mono">27/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
+              <tr data-mod="prod" data-cob="28" data-qtd="9800"  data-apa="1200"><td class="mono">748281</td><td class="mono">17896512901234</td><td>SHAMPOO PHEBO 250ML CX24</td><td class="mono">28%</td><td class="mono">G0451A</td><td class="mono">9.800</td><td class="mono">1.200</td><td class="mono">1243/2026</td><td class="mono">26/06/2026</td><td class="mono">27/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
+              <tr data-mod="pes"  data-cob="33" data-qtd="6400"  data-apa="800"><td class="mono">748282</td><td class="mono">17896512905678</td><td>LOCAO HIDR. ROSAS 200ML CX12</td><td class="mono">33%</td><td class="mono">L0210C</td><td class="mono">6.400</td><td class="mono">0.800</td><td class="mono">1244/2026</td><td class="mono">26/06/2026</td><td class="mono">28/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
+              <tr data-mod="fab"  data-cob="25" data-qtd="4500"  data-apa="500"><td class="mono">748283</td><td class="mono">17896512903210</td><td>COLONIA BEBE 100ML CX48</td><td class="mono">25%</td><td class="mono">C0102B</td><td class="mono">4.500</td><td class="mono">0.500</td><td class="mono">1245/2026</td><td class="mono">27/06/2026</td><td class="mono">28/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
+              <tr data-mod="prod" data-cob="30" data-qtd="12000" data-apa="1500"><td class="mono">748284</td><td class="mono">17896512907788</td><td>TALCO ANTISSEPTICO 100G CX60</td><td class="mono">30%</td><td class="mono">T0330A</td><td class="mono">12.000</td><td class="mono">1.500</td><td class="mono">1246/2026</td><td class="mono">27/06/2026</td><td class="mono">29/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
             </tbody>
           </table>
         </div></div>
@@ -10025,6 +10085,33 @@ export const SCREENS = {
         }
         set('rov-tab-btn-exec', exec);
         set('rov-tab-btn-plan', !exec);
+        if (!exec) relPlanAplicar();
+      }
+      function relPlanAplicar() {
+        var mod = document.getElementById('plan-f-mod').value;
+        var cob = document.getElementById('plan-f-cob').value;
+        var per = document.getElementById('plan-f-per').value;
+        var busca = (document.getElementById('plan-f-busca').value || '').toLowerCase();
+        var rows = document.querySelectorAll('#plan-tbody tr');
+        var tot = 0, sQtd = 0, sApa = 0, sCob = 0;
+        rows.forEach(function(r){
+          var c = parseInt(r.dataset.cob, 10) || 0;
+          var okCob = cob === 'todas' || (cob === 'ate30' && c <= 30) || (cob === '30a40' && c > 30 && c <= 40) || (cob === 'acima40' && c > 40);
+          var show = (mod === 'todos' || r.dataset.mod === mod) && okCob && (!busca || r.textContent.toLowerCase().includes(busca));
+          r.style.display = show ? '' : 'none';
+          if (show) { tot++; sQtd += parseInt(r.dataset.qtd, 10) || 0; sApa += parseInt(r.dataset.apa, 10) || 0; sCob += c; }
+        });
+        function fmt(n){ return n.toLocaleString('pt-BR'); }
+        document.getElementById('plan-kpi-total').innerHTML = tot + '<span class="tv-kpi-unit">op</span>';
+        document.getElementById('plan-kpi-qtd').innerHTML = fmt(sQtd) + '<span class="tv-kpi-unit">kg</span>';
+        document.getElementById('plan-kpi-apa').innerHTML = fmt(sApa) + '<span class="tv-kpi-unit">kg</span>';
+        document.getElementById('plan-kpi-cob').innerHTML = (tot ? Math.round(sCob / tot) : 0) + '<span class="tv-kpi-unit">%</span>';
+        var ativos = [];
+        if (mod !== 'todos') ativos.push('Módulo: ' + mod);
+        if (cob !== 'todas') ativos.push('Cobertura: ' + cob);
+        if (per !== 'todos') ativos.push('Período: ' + per);
+        if (busca) ativos.push('Busca: "' + busca + '"');
+        document.getElementById('plan-filtro-ativo').textContent = ativos.length ? 'Filtros ativos: ' + ativos.join(' · ') : '';
       }
       function relOrdensAplicar() {
         var mod=document.getElementById('ord-f-mod').value;
@@ -10051,7 +10138,7 @@ export const SCREENS = {
         function tick(){ var n=new Date(); el.textContent=[n.getHours(),n.getMinutes(),n.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':'); }
         tick(); setInterval(tick,1000);
       })();
-      document.addEventListener('DOMContentLoaded',relOrdensAplicar);
+      document.addEventListener('DOMContentLoaded',function(){ relOrdensAplicar(); relPlanAplicar(); });
       </script>
     `,
   "sinotico": `      <div class="page-header">
