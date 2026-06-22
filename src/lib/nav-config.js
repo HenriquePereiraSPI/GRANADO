@@ -70,8 +70,7 @@ export const MODULES = [
     label: 'Manutencao',
     icon: '🔧',
     items: [
-      { id: 'manut-paradas', label: '⏸️ Paradas' },
-      { id: 'manut-matriz',  label: '🎓 Matriz Capacitacao' },
+      { id: 'manut-paradas', label: '📦 Gerenciamento Ativos' },
     ],
   },
   {

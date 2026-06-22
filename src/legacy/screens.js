@@ -4531,10 +4531,10 @@ export const SCREENS = {
       </script>
     `,
   "manut-paradas": `      <div class="page-header">
-        <div><div class="ph-eyebrow">Manutenção · MF5</div><div class="ph-title">Paradas — Estrutura Organizacional</div></div>
+        <div><div class="ph-eyebrow">Manutenção · MF5</div><div class="ph-title">Gerenciamento de Ativos</div></div>
       </div>
 
-      <div class="abox info mb14"><span class="ai">⏸</span><div>Navegue do nível mais alto (<strong>Facility</strong>) até o mais baixo (<strong>Equipamento</strong>). Em <strong>Workcenters</strong> e <strong>Equipamentos</strong> é possível <strong>ativar ou encerrar uma parada</strong>.</div></div>
+      <div class="abox info mb14"><span class="ai">⏸</span><div>Navegue do nível mais alto (<strong>Facility</strong>) até o mais baixo (<strong>Equipamento</strong>). Em <strong>Workcenters</strong> e <strong>Equipamentos</strong> é possível <strong>ativar ou encerrar uma parada</strong>. Em qualquer item, cadastre os <strong>certificados obrigatórios</strong> para operar o ativo.</div></div>
 
       <div class="card"><div id="manut-root"></div></div>
 
@@ -4615,6 +4615,12 @@ export const SCREENS = {
         }
       };
       window.MANUT_PARADAS = window.MANUT_PARADAS || {};
+      // Certificados obrigatórios por ativo (key da árvore -> lista de certificados)
+      window.MANUT_CERTS = window.MANUT_CERTS || {
+        'Pesagem|MD1|Pesagem Central MD1|Balança BAL-01': ['Treinamento POP 21323', 'Aferição de Balanças'],
+        'Pesagem|MD1|Pesagem Central MD1|Balança BAL-02': ['Treinamento POP 21788'],
+        'Fabricação|Production Line A|Mistura A|Reator REA-01': ['BPF — Boas Práticas de Fabricação', 'Operação de Reatores']
+      };
       var MANUT_EXP = {};      // nós expandidos (key -> true)
       var MANUT_SEL = null;    // nó selecionado (key)
       var MANUT_PARA = null;   // alvo do popup de parada (key)
@@ -4697,6 +4703,25 @@ export const SCREENS = {
       }
       function manutIniciar(key) { delete window.MANUT_PARADAS[key]; manutRender(); }
 
+      // Certificados obrigatórios para operar o ativo selecionado
+      function manutCerts(key) { return (window.MANUT_CERTS[key] || []); }
+      function manutAddCert() {
+        var key = MANUT_SEL; if (!key) return;
+        var v = prompt('Novo certificado obrigatório para operar este ativo:');
+        if (v === null) return;
+        v = v.trim();
+        if (!v) { alert('⚠ Informe o certificado.'); return; }
+        if (!window.MANUT_CERTS[key]) window.MANUT_CERTS[key] = [];
+        if (window.MANUT_CERTS[key].indexOf(v) !== -1) { alert('⚠ Esse certificado já está cadastrado neste ativo.'); return; }
+        window.MANUT_CERTS[key].push(v);
+        manutRender();
+      }
+      function manutRemoverCert(i) {
+        var key = MANUT_SEL; if (!key || !window.MANUT_CERTS[key]) return;
+        window.MANUT_CERTS[key].splice(i, 1);
+        manutRender();
+      }
+
       // Nó recursivo da árvore (esquerda)
       function manutTreeNode(key, depth) {
         var q = (MANUT_FILTRO || '').trim().toLowerCase();
@@ -4752,11 +4777,37 @@ export const SCREENS = {
               '<button onclick="manutIniciarSel()" class="btn btn-md btn-v" ' + (parado ? '' : 'disabled') + ' style="flex:1;font-size:15px;font-weight:800;padding:14px 18px;' + (parado ? '' : 'opacity:.45;cursor:not-allowed') + '">▶ Iniciar</button>' +
             '</div>'
           : '<div class="abox info" style="margin-bottom:0"><span class="ai">ℹ️</span><div>Paradas só podem ser ativadas em <strong>Workcenters</strong> e <strong>Equipamentos</strong>. Expanda a árvore até esses níveis.</div></div>';
+        // Bloco de certificações obrigatórias para operar o ativo (tabela + linha de adição)
+        var certs = manutCerts(key);
+        var td = 'padding:8px 10px;border:1px solid var(--border)';
+        var th = td + ';font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);background:var(--surface2)';
+        var linhas = certs.length
+          ? certs.map(function(c, i){ return '<tr>' +
+              '<td style="' + td + ';text-align:center;color:var(--text3);font-family:var(--font-m)">' + (i + 1) + '</td>' +
+              '<td style="' + td + '">🎓 ' + c + '</td>' +
+              '<td style="' + td + ';text-align:center"><button onclick="manutRemoverCert(' + i + ')" title="Remover" style="background:none;border:none;cursor:pointer;color:var(--per);font-size:14px;line-height:1;padding:2px 6px">✕</button></td>' +
+            '</tr>'; }).join('')
+          : '<tr><td colspan="3" style="' + td + ';text-align:center;color:var(--text3)">Nenhum certificado obrigatório cadastrado para este ativo.</td></tr>';
+        var certBlock = '<div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px">' +
+            '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)">🎓 Certificados obrigatórios para operar (' + certs.length + ')</div>' +
+            '<button class="btn btn-sm btn-v" onclick="manutAddCert()" title="Adicionar certificado" style="padding:6px 12px;font-weight:700;white-space:nowrap">＋ Adicionar</button>' +
+          '</div>' +
+          '<table style="width:100%;border-collapse:collapse;font-size:12px">' +
+            '<thead><tr>' +
+              '<th style="' + th + ';text-align:center;width:40px">#</th>' +
+              '<th style="' + th + ';text-align:left">Certificado</th>' +
+              '<th style="' + th + ';text-align:center;width:64px">Ação</th>' +
+            '</tr></thead>' +
+            '<tbody>' + linhas + '</tbody>' +
+          '</table>' +
+        '</div>';
         return '<div style="border:1px solid ' + (parado ? 'var(--per)' : 'var(--border)') + ';border-top:4px solid ' + (parado ? 'var(--per)' : 'var(--verde)') + ';border-radius:10px;background:var(--surface);box-shadow:var(--sh);padding:20px 22px' + (parado ? ';animation:pesSubmenuPulse 1.2s ease-in-out infinite' : '') + '">' +
           '<div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro)">Nível ' + nivel + ' · ' + manutLabelNivel(nivel) + '</div>' +
           '<div style="display:flex;align-items:center;gap:10px;margin:4px 0 2px"><span style="font-size:28px">' + manutIconNivel(nivel) + '</span><span style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--verde-esc)">' + manutNome(key) + '</span></div>' +
           '<div style="font-size:11px;color:var(--text3);margin-bottom:16px">' + parts.join(' › ') + '</div>' +
           acao +
+          certBlock +
         '</div>';
       }
 
@@ -4774,115 +4825,6 @@ export const SCREENS = {
       }
 
       setTimeout(manutRender, 30);
-      </script>
-    `,
-  "manut-matriz": `      <div class="page-header">
-        <div><div class="ph-eyebrow">Manutenção · MF5</div><div class="ph-title">Matriz de Capacitação</div></div>
-      </div>
-
-      <div class="abox info mb14"><span class="ai">🎓</span><div>Cadastre, por <strong>módulo</strong>, os <strong>certificados obrigatórios</strong> que o usuário precisa ter para atuar nele. Selecione um módulo na árvore à esquerda.</div></div>
-
-      <div class="card"><div id="mc-root"></div></div>
-
-      <script>
-      var MC_DATA = window.MC_MATRIZ || {
-        'Pesagem': ['POP 21323', 'POP 21788', 'POP 21899'],
-        'Fabricação': ['POP 30012', 'POP 30150', 'BPF — Boas Práticas de Fabricação'],
-        'Produção': ['POP 40021', 'NR-12 Segurança em Máquinas', 'Paletização']
-      };
-      window.MC_MATRIZ = MC_DATA;  // persiste o cadastro entre navegações
-      var MC_EXP = {}, MC_SEL = null;
-
-      function mcParts(key) { return key ? key.split('|') : []; }
-      function mcNivel(key) { return mcParts(key).length; }      // 1 = Módulo, 2 = Certificado
-      function mcModulo(key) { return mcParts(key)[0]; }
-      function mcNome(key) { var p = mcParts(key); return p[p.length - 1]; }
-      function mcAreaIcon(a) { return a === 'Pesagem' ? '⚖️' : a === 'Fabricação' ? '🧪' : a === 'Produção' ? '🏭' : '🏭'; }
-      function mcIcon(key) { return mcNivel(key) === 1 ? mcAreaIcon(mcNome(key)) : '🎓'; }
-      function mcTemFilhos(key) { return mcNivel(key) === 1; }
-      function mcCertsList(mod) { return MC_DATA[mod] || []; }
-      function mcFilhos(key) { var p = mcParts(key); if (p.length === 1) return mcCertsList(p[0]).map(function(x){ return key + '|' + x; }); return []; }
-
-      function mcSel(key) { MC_SEL = key; if (mcTemFilhos(key)) MC_EXP[key] = true; mcRender(); }
-      function mcToggle(key) { MC_EXP[key] = !MC_EXP[key]; mcRender(); }
-
-      function mcAddCert() {
-        var mod = MC_SEL ? mcModulo(MC_SEL) : null;
-        if (!mod) return;
-        var inp = document.getElementById('mc-novo-cert'); var v = inp ? inp.value.trim() : '';
-        if (!v) { alert('⚠ Informe o certificado.'); return; }
-        if (mcCertsList(mod).indexOf(v) !== -1) { alert('⚠ Esse certificado já está cadastrado neste módulo.'); return; }
-        MC_DATA[mod].push(v);
-        MC_EXP[mod] = true;
-        mcRender();
-      }
-      function mcRemoverCertIdx(i) {
-        var mod = MC_SEL ? mcModulo(MC_SEL) : null; if (!mod) return;
-        MC_DATA[mod].splice(i, 1);
-        mcRender();
-      }
-      function mcRemoverCertSel() {
-        if (!MC_SEL || mcNivel(MC_SEL) !== 2) return;
-        var mod = mcModulo(MC_SEL), nome = mcNome(MC_SEL);
-        var idx = mcCertsList(mod).indexOf(nome);
-        if (idx >= 0) MC_DATA[mod].splice(idx, 1);
-        MC_SEL = mod;
-        mcRender();
-      }
-
-      function mcTreeNode(key, depth) {
-        var nivel = mcNivel(key), nome = mcNome(key), tem = mcTemFilhos(key), exp = !!MC_EXP[key], sel = (MC_SEL === key);
-        var chevron = tem
-          ? '<span onclick="event.stopPropagation();mcToggle(\\'' + key + '\\')" style="cursor:pointer;width:16px;flex-shrink:0;text-align:center;color:var(--text3);font-size:10px">' + (exp ? '▾' : '▸') + '</span>'
-          : '<span style="width:16px;flex-shrink:0"></span>';
-        var qtd = (nivel === 1) ? '<span style="font-size:9px;color:var(--text3);flex-shrink:0">' + mcCertsList(key).length + ' cert.</span>' : '';
-        var row = '<div onclick="mcSel(\\'' + key + '\\')" style="cursor:pointer;display:flex;align-items:center;gap:6px;padding:5px 8px;padding-left:' + (8 + depth * 16) + 'px;border-radius:6px;' + (sel ? 'background:var(--verde-dim);box-shadow:inset 3px 0 0 var(--verde);' : '') + '">' +
-          chevron + '<span style="font-size:15px;flex-shrink:0">' + mcIcon(key) + '</span>' +
-          '<span style="flex:1;min-width:0;font-size:12px;font-weight:' + (sel ? '700' : '500') + ';color:' + (sel ? 'var(--verde-esc)' : 'var(--text)') + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + nome + '</span>' + qtd +
-        '</div>';
-        var filhos = ''; if (tem && exp) filhos = mcFilhos(key).map(function(k){ return mcTreeNode(k, depth + 1); }).join('');
-        return row + filhos;
-      }
-
-      function mcPainel() {
-        var key = MC_SEL;
-        if (!key) return '<div style="border:1px dashed var(--border);border-radius:10px;padding:48px 24px;text-align:center;color:var(--text3);background:var(--surface)"><div style="font-size:42px;margin-bottom:10px">👈</div><div style="font-size:13px">Selecione um módulo na árvore para gerenciar os certificados obrigatórios.</div></div>';
-        var nivel = mcNivel(key);
-        if (nivel === 1) {
-          var certs = mcCertsList(key);
-          var lista = certs.length ? certs.map(function(c, i){ return '<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:12px"><span style="font-size:14px">🎓</span><span style="flex:1">' + c + '</span><button onclick="mcRemoverCertIdx(' + i + ')" title="Remover" style="background:none;border:none;cursor:pointer;color:var(--per);font-size:13px;line-height:1;padding:2px 4px">✕</button></div>'; }).join('') : '<div style="font-size:12px;color:var(--text3)">Nenhum certificado obrigatório cadastrado neste módulo.</div>';
-          return '<div style="border:1px solid var(--border);border-top:4px solid var(--verde);border-radius:10px;background:var(--surface);box-shadow:var(--sh);padding:20px 22px">' +
-            '<div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro)">Módulo</div>' +
-            '<div style="display:flex;align-items:center;gap:10px;margin:4px 0 14px"><span style="font-size:28px">' + mcAreaIcon(key) + '</span><span style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--verde-esc)">' + key + '</span></div>' +
-            '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Certificados obrigatórios (' + certs.length + ')</div>' +
-            '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">' + lista + '</div>' +
-            '<label class="lbl">Adicionar certificado obrigatório</label>' +
-            '<div style="display:flex;gap:8px"><input class="inp" id="mc-novo-cert" placeholder="Ex.: POP 21999 / NR-33" style="flex:1;font-size:12px"><button class="btn btn-md btn-v" onclick="mcAddCert()">+ Adicionar</button></div>' +
-          '</div>';
-        }
-        return '<div style="border:1px solid var(--border);border-top:4px solid var(--verde);border-radius:10px;background:var(--surface);box-shadow:var(--sh);padding:20px 22px">' +
-          '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">' +
-            '<div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro)">Certificado · ' + mcModulo(key) + '</div>' +
-            '<div style="display:flex;align-items:center;gap:10px;margin:4px 0 2px"><span style="font-size:26px">🎓</span><span style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--verde-esc)">' + mcNome(key) + '</span></div></div>' +
-            '<button class="btn btn-sm btn-ghost" onclick="mcRemoverCertSel()" title="Remover certificado" style="color:var(--per);white-space:nowrap">🗑 Remover</button>' +
-          '</div>' +
-          '<div class="abox info" style="margin-top:14px;margin-bottom:0"><span class="ai">🎓</span><div>Certificado <strong>obrigatório</strong> para atuar em <strong>' + mcModulo(key) + '</strong>.</div></div>' +
-        '</div>';
-      }
-
-      function mcRender() {
-        var root = document.getElementById('mc-root'); if (!root) return;
-        var tree = Object.keys(MC_DATA).map(function(a){ return mcTreeNode(a, 0); }).join('');
-        root.innerHTML = '<div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">' +
-          '<div style="flex:0 0 320px;min-width:260px;max-width:100%;border:1px solid var(--border);border-radius:10px;background:var(--surface);box-shadow:var(--sh);overflow:hidden">' +
-            '<div style="background:var(--surface2);padding:10px 14px;border-bottom:1px solid var(--border);font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Certificados por Módulo</div>' +
-            '<div style="padding:8px;max-height:560px;overflow:auto">' + tree + '</div>' +
-          '</div>' +
-          '<div style="flex:1;min-width:280px">' + mcPainel() + '</div>' +
-        '</div>';
-      }
-
-      setTimeout(function(){ Object.keys(MC_DATA).forEach(function(a){ MC_EXP[a] = true; }); mcRender(); }, 30);
       </script>
     `,
   "pes-ordens": `      <div class="page-header">
