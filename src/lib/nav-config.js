@@ -71,6 +71,7 @@ export const MODULES = [
     icon: '🔧',
     items: [
       { id: 'manut-paradas', label: '⏸️ Paradas' },
+      { id: 'manut-matriz',  label: '🎓 Matriz Capacitacao' },
     ],
   },
   {

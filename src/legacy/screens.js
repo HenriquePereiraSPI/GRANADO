@@ -4776,6 +4776,115 @@ export const SCREENS = {
       setTimeout(manutRender, 30);
       </script>
     `,
+  "manut-matriz": `      <div class="page-header">
+        <div><div class="ph-eyebrow">Manutenção · MF5</div><div class="ph-title">Matriz de Capacitação</div></div>
+      </div>
+
+      <div class="abox info mb14"><span class="ai">🎓</span><div>Cadastre, por <strong>módulo</strong>, os <strong>certificados obrigatórios</strong> que o usuário precisa ter para atuar nele. Selecione um módulo na árvore à esquerda.</div></div>
+
+      <div class="card"><div id="mc-root"></div></div>
+
+      <script>
+      var MC_DATA = window.MC_MATRIZ || {
+        'Pesagem': ['POP 21323', 'POP 21788', 'POP 21899'],
+        'Fabricação': ['POP 30012', 'POP 30150', 'BPF — Boas Práticas de Fabricação'],
+        'Produção': ['POP 40021', 'NR-12 Segurança em Máquinas', 'Paletização']
+      };
+      window.MC_MATRIZ = MC_DATA;  // persiste o cadastro entre navegações
+      var MC_EXP = {}, MC_SEL = null;
+
+      function mcParts(key) { return key ? key.split('|') : []; }
+      function mcNivel(key) { return mcParts(key).length; }      // 1 = Módulo, 2 = Certificado
+      function mcModulo(key) { return mcParts(key)[0]; }
+      function mcNome(key) { var p = mcParts(key); return p[p.length - 1]; }
+      function mcAreaIcon(a) { return a === 'Pesagem' ? '⚖️' : a === 'Fabricação' ? '🧪' : a === 'Produção' ? '🏭' : '🏭'; }
+      function mcIcon(key) { return mcNivel(key) === 1 ? mcAreaIcon(mcNome(key)) : '🎓'; }
+      function mcTemFilhos(key) { return mcNivel(key) === 1; }
+      function mcCertsList(mod) { return MC_DATA[mod] || []; }
+      function mcFilhos(key) { var p = mcParts(key); if (p.length === 1) return mcCertsList(p[0]).map(function(x){ return key + '|' + x; }); return []; }
+
+      function mcSel(key) { MC_SEL = key; if (mcTemFilhos(key)) MC_EXP[key] = true; mcRender(); }
+      function mcToggle(key) { MC_EXP[key] = !MC_EXP[key]; mcRender(); }
+
+      function mcAddCert() {
+        var mod = MC_SEL ? mcModulo(MC_SEL) : null;
+        if (!mod) return;
+        var inp = document.getElementById('mc-novo-cert'); var v = inp ? inp.value.trim() : '';
+        if (!v) { alert('⚠ Informe o certificado.'); return; }
+        if (mcCertsList(mod).indexOf(v) !== -1) { alert('⚠ Esse certificado já está cadastrado neste módulo.'); return; }
+        MC_DATA[mod].push(v);
+        MC_EXP[mod] = true;
+        mcRender();
+      }
+      function mcRemoverCertIdx(i) {
+        var mod = MC_SEL ? mcModulo(MC_SEL) : null; if (!mod) return;
+        MC_DATA[mod].splice(i, 1);
+        mcRender();
+      }
+      function mcRemoverCertSel() {
+        if (!MC_SEL || mcNivel(MC_SEL) !== 2) return;
+        var mod = mcModulo(MC_SEL), nome = mcNome(MC_SEL);
+        var idx = mcCertsList(mod).indexOf(nome);
+        if (idx >= 0) MC_DATA[mod].splice(idx, 1);
+        MC_SEL = mod;
+        mcRender();
+      }
+
+      function mcTreeNode(key, depth) {
+        var nivel = mcNivel(key), nome = mcNome(key), tem = mcTemFilhos(key), exp = !!MC_EXP[key], sel = (MC_SEL === key);
+        var chevron = tem
+          ? '<span onclick="event.stopPropagation();mcToggle(\\'' + key + '\\')" style="cursor:pointer;width:16px;flex-shrink:0;text-align:center;color:var(--text3);font-size:10px">' + (exp ? '▾' : '▸') + '</span>'
+          : '<span style="width:16px;flex-shrink:0"></span>';
+        var qtd = (nivel === 1) ? '<span style="font-size:9px;color:var(--text3);flex-shrink:0">' + mcCertsList(key).length + ' cert.</span>' : '';
+        var row = '<div onclick="mcSel(\\'' + key + '\\')" style="cursor:pointer;display:flex;align-items:center;gap:6px;padding:5px 8px;padding-left:' + (8 + depth * 16) + 'px;border-radius:6px;' + (sel ? 'background:var(--verde-dim);box-shadow:inset 3px 0 0 var(--verde);' : '') + '">' +
+          chevron + '<span style="font-size:15px;flex-shrink:0">' + mcIcon(key) + '</span>' +
+          '<span style="flex:1;min-width:0;font-size:12px;font-weight:' + (sel ? '700' : '500') + ';color:' + (sel ? 'var(--verde-esc)' : 'var(--text)') + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + nome + '</span>' + qtd +
+        '</div>';
+        var filhos = ''; if (tem && exp) filhos = mcFilhos(key).map(function(k){ return mcTreeNode(k, depth + 1); }).join('');
+        return row + filhos;
+      }
+
+      function mcPainel() {
+        var key = MC_SEL;
+        if (!key) return '<div style="border:1px dashed var(--border);border-radius:10px;padding:48px 24px;text-align:center;color:var(--text3);background:var(--surface)"><div style="font-size:42px;margin-bottom:10px">👈</div><div style="font-size:13px">Selecione um módulo na árvore para gerenciar os certificados obrigatórios.</div></div>';
+        var nivel = mcNivel(key);
+        if (nivel === 1) {
+          var certs = mcCertsList(key);
+          var lista = certs.length ? certs.map(function(c, i){ return '<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:12px"><span style="font-size:14px">🎓</span><span style="flex:1">' + c + '</span><button onclick="mcRemoverCertIdx(' + i + ')" title="Remover" style="background:none;border:none;cursor:pointer;color:var(--per);font-size:13px;line-height:1;padding:2px 4px">✕</button></div>'; }).join('') : '<div style="font-size:12px;color:var(--text3)">Nenhum certificado obrigatório cadastrado neste módulo.</div>';
+          return '<div style="border:1px solid var(--border);border-top:4px solid var(--verde);border-radius:10px;background:var(--surface);box-shadow:var(--sh);padding:20px 22px">' +
+            '<div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro)">Módulo</div>' +
+            '<div style="display:flex;align-items:center;gap:10px;margin:4px 0 14px"><span style="font-size:28px">' + mcAreaIcon(key) + '</span><span style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--verde-esc)">' + key + '</span></div>' +
+            '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Certificados obrigatórios (' + certs.length + ')</div>' +
+            '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">' + lista + '</div>' +
+            '<label class="lbl">Adicionar certificado obrigatório</label>' +
+            '<div style="display:flex;gap:8px"><input class="inp" id="mc-novo-cert" placeholder="Ex.: POP 21999 / NR-33" style="flex:1;font-size:12px"><button class="btn btn-md btn-v" onclick="mcAddCert()">+ Adicionar</button></div>' +
+          '</div>';
+        }
+        return '<div style="border:1px solid var(--border);border-top:4px solid var(--verde);border-radius:10px;background:var(--surface);box-shadow:var(--sh);padding:20px 22px">' +
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">' +
+            '<div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro)">Certificado · ' + mcModulo(key) + '</div>' +
+            '<div style="display:flex;align-items:center;gap:10px;margin:4px 0 2px"><span style="font-size:26px">🎓</span><span style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--verde-esc)">' + mcNome(key) + '</span></div></div>' +
+            '<button class="btn btn-sm btn-ghost" onclick="mcRemoverCertSel()" title="Remover certificado" style="color:var(--per);white-space:nowrap">🗑 Remover</button>' +
+          '</div>' +
+          '<div class="abox info" style="margin-top:14px;margin-bottom:0"><span class="ai">🎓</span><div>Certificado <strong>obrigatório</strong> para atuar em <strong>' + mcModulo(key) + '</strong>.</div></div>' +
+        '</div>';
+      }
+
+      function mcRender() {
+        var root = document.getElementById('mc-root'); if (!root) return;
+        var tree = Object.keys(MC_DATA).map(function(a){ return mcTreeNode(a, 0); }).join('');
+        root.innerHTML = '<div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">' +
+          '<div style="flex:0 0 320px;min-width:260px;max-width:100%;border:1px solid var(--border);border-radius:10px;background:var(--surface);box-shadow:var(--sh);overflow:hidden">' +
+            '<div style="background:var(--surface2);padding:10px 14px;border-bottom:1px solid var(--border);font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Certificados por Módulo</div>' +
+            '<div style="padding:8px;max-height:560px;overflow:auto">' + tree + '</div>' +
+          '</div>' +
+          '<div style="flex:1;min-width:280px">' + mcPainel() + '</div>' +
+        '</div>';
+      }
+
+      setTimeout(function(){ Object.keys(MC_DATA).forEach(function(a){ MC_EXP[a] = true; }); mcRender(); }, 30);
+      </script>
+    `,
   "pes-ordens": `      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Seleção de Ordem de Pesagem</div></div>
       </div>
@@ -9713,6 +9822,13 @@ export const SCREENS = {
         </div>
       </div>
 
+      <!-- Abas: Execução / Planejamento -->
+      <div style="display:flex;gap:0;margin:14px 0;border-bottom:2px solid var(--border)">
+        <button id="rov-tab-btn-exec" type="button" onclick="rovTab('exec')" style="background:var(--surface);border:none;border-bottom:3px solid var(--verde);margin-bottom:-2px;padding:10px 18px;font-size:13px;font-weight:800;color:var(--verde);cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px">▶ Execução</button>
+        <button id="rov-tab-btn-plan" type="button" onclick="rovTab('plan')" style="background:transparent;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:10px 18px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px">📅 Planejamento</button>
+      </div>
+
+      <div id="rov-tab-exec">
       <!-- Filtros -->
       <div class="tv-filtros">
         <div class="tv-fg">
@@ -9875,8 +9991,41 @@ export const SCREENS = {
           </table>
         </div>
       </div>
+      </div><!-- /rov-tab-exec -->
+
+      <!-- Aba Planejamento: apenas ordens PLANEJADAS -->
+      <div id="rov-tab-plan" style="display:none">
+        <div class="tv-section-sep">📅 Ordens Planejadas — aguardando início</div>
+        <div class="tv-table-wrap"><div class="tv-table-card" style="overflow-x:auto">
+          <table class="tv-tbl" style="min-width:1180px">
+            <thead><tr><th>Ordem</th><th>DUN</th><th>Item</th><th>Cobertura</th><th>Cód. Granel</th><th>Qtd (Kg)</th><th>Qtd Aparas (Kg)</th><th>Lote</th><th>Data Pesagem</th><th>Data Fabricação</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">748279</td><td class="mono">17896512909784</td><td>SAB.O. ROSAS 90GR CX144</td><td class="mono">37%</td><td class="mono">S0802C</td><td class="mono">17.500</td><td class="mono">3.500</td><td class="mono">1241/2026</td><td class="mono">25/06/2026</td><td class="mono">26/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
+              <tr><td class="mono">748280</td><td class="mono">17896512909785</td><td>SAB.O. LIMAO 90GR CX144</td><td class="mono">42%</td><td class="mono">S0835B</td><td class="mono">18.200</td><td class="mono">2.900</td><td class="mono">1242/2026</td><td class="mono">25/06/2026</td><td class="mono">27/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
+              <tr><td class="mono">748281</td><td class="mono">17896512901234</td><td>SHAMPOO PHEBO 250ML CX24</td><td class="mono">28%</td><td class="mono">G0451A</td><td class="mono">9.800</td><td class="mono">1.200</td><td class="mono">1243/2026</td><td class="mono">26/06/2026</td><td class="mono">27/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
+              <tr><td class="mono">748282</td><td class="mono">17896512905678</td><td>LOCAO HIDR. ROSAS 200ML CX12</td><td class="mono">33%</td><td class="mono">L0210C</td><td class="mono">6.400</td><td class="mono">0.800</td><td class="mono">1244/2026</td><td class="mono">26/06/2026</td><td class="mono">28/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
+              <tr><td class="mono">748283</td><td class="mono">17896512903210</td><td>COLONIA BEBE 100ML CX48</td><td class="mono">25%</td><td class="mono">C0102B</td><td class="mono">4.500</td><td class="mono">0.500</td><td class="mono">1245/2026</td><td class="mono">27/06/2026</td><td class="mono">28/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
+              <tr><td class="mono">748284</td><td class="mono">17896512907788</td><td>TALCO ANTISSEPTICO 100G CX60</td><td class="mono">30%</td><td class="mono">T0330A</td><td class="mono">12.000</td><td class="mono">1.500</td><td class="mono">1246/2026</td><td class="mono">27/06/2026</td><td class="mono">29/06/2026</td><td><span class="tv-bdg ney">📅 Planejada</span></td></tr>
+            </tbody>
+          </table>
+        </div></div>
+      </div>
 
       <script>
+      function rovTab(t) {
+        var exec = (t === 'exec');
+        var de = document.getElementById('rov-tab-exec'); if (de) de.style.display = exec ? '' : 'none';
+        var dp = document.getElementById('rov-tab-plan'); if (dp) dp.style.display = exec ? 'none' : '';
+        function set(id, on) {
+          var b = document.getElementById(id); if (!b) return;
+          b.style.background = on ? 'var(--surface)' : 'transparent';
+          b.style.borderBottom = on ? '3px solid var(--verde)' : '3px solid transparent';
+          b.style.color = on ? 'var(--verde)' : 'var(--text2)';
+          b.style.fontWeight = on ? '800' : '600';
+        }
+        set('rov-tab-btn-exec', exec);
+        set('rov-tab-btn-plan', !exec);
+      }
       function relOrdensAplicar() {
         var mod=document.getElementById('ord-f-mod').value;
         var st=document.getElementById('ord-f-status').value;

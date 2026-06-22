@@ -6,7 +6,9 @@
       "PowerShell(python \"D:\\\\GRANADO\\\\PrototypeHenrique\\\\GRANADO\\\\assets\\\\Apriso_DB_Docs\\\\_fetch_tables.py\" \"Common Alerting\" Table_ALERT_Operational.xml Table_ALERT_CLASS_Operational.xml Table_ALERT_DETAIL_Operational.xml Table_ALERT_GROUP_Operational.xml Table_ALERT_RECIPIENT_Operational.xml Table_ALERT_RESPONSE_Operational.xml Table_ALERT_STATUS_Operational.xml Table_ALERT_TYPE_Operational.xml)",
       "PowerShell(python \"D:\\\\GRANADO\\\\PrototypeHenrique\\\\GRANADO\\\\assets\\\\Apriso_DB_Docs\\\\_fetch_all.py\")",
       "Bash(node --check src/legacy/screens.js)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(grep -n '\"manut-paradas\": `\\\\|setTimeout\\(manutRender' src/legacy/screens.js)",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('src/legacy/manifest.json','utf8'\\)\\);console.log\\('manifest OK'\\)\")"
     ]
   }
 }
