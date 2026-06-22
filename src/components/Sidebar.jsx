@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { TOP_LINKS, MODULES, PARENT_MODULE, ALIASES } from '../lib/nav-config.js';
+import logoGranado from '../assets/logos/Grupo Granado - Reduzida - Dourada.png';
 
 // Versão do software: injetada em build-time pelo Vite (ver vite.config.js).
 // Em runtime fora do bundle (ex.: testes) cai no fallback.
@@ -52,20 +53,12 @@ export default function Sidebar({ collapsed = false }) {
     <aside className={`sidebar${collapsed ? ' collapsed' : ''}`}>
       <div className="sb-brand">
         <div className="sb-brand-top">
-          <div className="sb-mark">G</div>
-          {!collapsed && (
-            <div>
-              <div className="sb-name">Casa Granado</div>
-              <div className="sb-sub">Pharmácias · Desde 1870</div>
-            </div>
+          {collapsed ? (
+            <div className="sb-mark">G</div>
+          ) : (
+            <img src={logoGranado} alt="Grupo Granado" className="sb-logo" />
           )}
         </div>
-        {!collapsed && (
-          <div className="sb-session">
-            <span>● Online</span> · MES Apriso<br />
-            Turno A · MF5 · <span>J. Santos</span>
-          </div>
-        )}
       </div>
 
       <nav className="sb-nav">
