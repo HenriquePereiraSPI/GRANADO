@@ -658,13 +658,16 @@ export const SCREENS = {
         </div>
       </div>
 
-      <!-- Aviso fonte JDE -->
+      <!-- Aviso fonte dos 3 saldos (Modelo Carinha — BBP 5.10 PCP/Almox 22/06/2026) -->
       <div class="abox inf mb14">
-        <span class="ai" style="font-size:18px">🗄️</span>
+        <span class="ai" style="font-size:18px">🧮</span>
         <div>
-          <strong>Dados integrados do JDE (J.D. Edwards).</strong> As informações de saldo exibidas nesta tela são requisitadas em tempo real da base de dados do ERP JDE via integração MES-ERP. 
-          A atualização ocorre a cada sincronização de ciclo ou mediante solicitação manual pelo botão <strong>"Atualizar"</strong>. 
-          Em caso de divergência com o físico, acione o time de Suporte de TI ou verifique o log de integração.
+          <strong>Modelo Carinha — 3 visões de saldo por equipamento.</strong>
+          Conforme reunião de validação BBP 5.10 com PCP/Almoxarifado (22/06/2026), cada equipamento expõe 3 saldos integrados:
+          <strong>🔄 Físico</strong> do sensor de nível (Kepware / OPC · integração HDCSA prevista) ·
+          <strong>🗄️ Sistema (JDE F4101)</strong> baixado apenas no fechamento da ordem ·
+          <strong>🧮 Disponível</strong> = JDE − Σ(ordens em execução).
+          Divergências sinalizam dosagens em curso ainda não baixadas no ERP.
         </div>
       </div>
 
@@ -735,222 +738,406 @@ export const SCREENS = {
           <div class="card-title" style="margin-bottom:0">Painel de Saldo de Equipamentos — <span style="font-family:var(--font-b);color:var(--verde)" id="fab-saldo-label-tipo">Todos</span></div>
           <button class="btn btn-sm btn-ghost" onclick="alert('📥 Exportar relatório de saldo em CSV/Excel (funcionalidade a habilitar via integração JDE).')">⬇ Exportar</button>
         </div>
+        <style>
+          /* ── Onda 1 BBP 5.10 — colunas de saldo (Modelo Carinha) ── */
+          .saldo-cell{display:flex;flex-direction:column;gap:1px;min-width:84px}
+          .saldo-cell .saldo-val{font-family:var(--font-m);font-size:12px;font-weight:800;line-height:1.1}
+          .saldo-cell .saldo-bar{height:4px;background:var(--bg2);border-radius:2px;overflow:hidden;border:1px solid var(--border)}
+          .saldo-cell .saldo-bar > div{height:100%;border-radius:2px}
+          .saldo-cell .saldo-sub{font-size:9px;color:var(--text3);font-weight:600;letter-spacing:.02em}
+          .saldo-cell.fis .saldo-val{color:var(--inf)}
+          .saldo-cell.jde .saldo-val{color:var(--ouro)}
+          .saldo-cell.disp .saldo-val{color:var(--verde)}
+          .saldo-cell.disp.alerta .saldo-val{color:var(--per)}
+          .diff-pill{display:inline-block;padding:2px 7px;border-radius:9px;font-family:var(--font-m);font-size:10px;font-weight:800}
+          .diff-pill.ok{background:var(--ok-p);color:var(--ok);border:1px solid var(--ok-b)}
+          .diff-pill.warn{background:var(--alr-p);color:var(--alr);border:1px solid var(--alr-b)}
+          .diff-pill.crit{background:var(--per-p);color:var(--per);border:1px solid var(--per-b)}
+          .ops-btn{background:none;border:1px solid var(--border);border-radius:5px;padding:3px 7px;cursor:pointer;font-family:inherit;font-size:11px;font-weight:700;color:var(--text);display:inline-flex;align-items:center;gap:5px}
+          .ops-btn:hover{background:var(--surface2);border-color:var(--verde)}
+          .ops-btn .ops-count{color:var(--verde)}
+          /* ── Sub-tabela de ordens consumindo o equipamento ── */
+          .fab-saldo-detail > td{padding:0!important;background:var(--surface2)!important;border-top:2px solid var(--verde)!important}
+          .ops-sub-wrap{padding:12px 16px}
+          .ops-sub-title{display:flex;align-items:center;gap:8px;font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin-bottom:8px}
+          .ops-sub-title .pin{background:var(--verde);color:#fff;padding:2px 7px;border-radius:9px;font-size:9px;letter-spacing:.08em}
+          .ops-sub-tbl{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:6px;overflow:hidden;font-size:11px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+          .ops-sub-tbl th{background:var(--bg2);padding:7px 10px;text-align:left;font-size:9.5px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);border-bottom:1px solid var(--border)}
+          .ops-sub-tbl td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+          .ops-sub-tbl tr:last-child td{border-bottom:none}
+          .ops-sub-num{font-family:var(--font-m);font-weight:800;color:var(--verde);font-size:11.5px}
+          .ops-sub-prod{font-size:11px;color:var(--text)}
+          .ops-sub-prod .lote{display:block;font-family:var(--font-m);font-size:10px;color:var(--text3);margin-top:1px}
+          .ops-qty{font-family:var(--font-m);font-weight:800;font-size:11.5px}
+          .ops-qty.planejada{color:var(--text2)}
+          .ops-qty.utilizada{color:var(--inf)}
+          .ops-qty.restante{color:var(--verde)}
+          .ops-progress{display:flex;align-items:center;gap:8px;min-width:160px}
+          .ops-progress-bar{flex:1;background:var(--bg2);height:9px;border-radius:5px;overflow:hidden;border:1px solid var(--border);position:relative}
+          .ops-progress-fill{height:100%;background:linear-gradient(90deg,var(--inf),var(--verde));border-radius:4px;transition:width .3s ease}
+          .ops-progress-pct{font-family:var(--font-m);font-size:10px;font-weight:800;color:var(--inf);min-width:34px;text-align:right}
+        </style>
         <div style="overflow-x:auto">
-          <table class="tbl" id="fab-saldo-tabela">
+          <table class="tbl" id="fab-saldo-tabela" style="font-size:11px">
             <thead>
-              <tr>
-                <th>Código</th><th>Tipo</th><th>Descrição</th><th>Capacidade</th>
-                <th>Saldo Atual</th><th>% Ocupação</th><th>Produto / Lote</th>
-                <th>OP Vinculada</th><th>Última Atualiz.</th><th>Status</th>
+              <tr style="background:var(--bg2)">
+                <th rowspan="2" style="vertical-align:middle">Código</th>
+                <th rowspan="2" style="vertical-align:middle">Tipo</th>
+                <th rowspan="2" style="vertical-align:middle">Descrição</th>
+                <th rowspan="2" style="vertical-align:middle;text-align:center">Capac.</th>
+                <th colspan="4" style="text-align:center;background:var(--surface2);font-size:10px;letter-spacing:.1em">SALDO</th>
+                <th rowspan="2" style="vertical-align:middle">Produto / Lote</th>
+                <th rowspan="2" style="vertical-align:middle;text-align:center">Ordens Ativas</th>
+                <th rowspan="2" style="vertical-align:middle">Status</th>
+              </tr>
+              <tr style="background:var(--bg2)">
+                <th title="Sensor de nível (Kepware OPC · HDCSA previsto)" style="font-size:10px;color:var(--inf)">🔄 Físico</th>
+                <th title="JDE F4101 — baixado só no fechamento da ordem" style="font-size:10px;color:var(--ouro)">🗄️ JDE</th>
+                <th title="Disp. = JDE − Σ consumo das ordens em execução" style="font-size:10px;color:var(--verde)">🧮 Disp.</th>
+                <th title="Divergência Físico × JDE — alta = baixa pendente no ERP (consumo em curso)" style="font-size:10px">Δ</th>
               </tr>
             </thead>
             <tbody id="fab-saldo-tbody">
-              <!-- Tanques -->
-              <tr data-tipo="tanque" data-status="em_uso">
+              <!-- ═══════════════════════════════════════════════════════════════
+                   TANQUES  (Tancagem externa — dosagem via bomba/células de carga)
+                   ═══════════════════════════════════════════════════════════════ -->
+              <!-- TNQ-001 — Em dosagem ativa, divergência alta físico×JDE -->
+              <tr data-tipo="tanque" data-status="em_uso" data-eqp="TNQ-001">
                 <td class="mono" style="font-weight:700;color:var(--verde)">TNQ-001</td>
                 <td><span class="bdg bdg-inf" style="font-size:9px">🛢️ Tanque</span></td>
-                <td style="font-size:12px">Tanque Principal A — Fase Aquosa</td>
-                <td class="mono">2.000 L</td>
-                <td class="mono" style="font-weight:700;color:var(--ouro)">1.420 L</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:7px">
-                    <div style="flex:1;background:var(--bg2);border-radius:4px;height:8px;overflow:hidden;border:1px solid var(--border)"><div style="width:71%;height:100%;background:var(--ouro-claro);border-radius:4px"></div></div>
-                    <span style="font-size:10px;font-family:var(--font-m);font-weight:700;color:var(--ouro)">71%</span>
-                  </div>
-                </td>
+                <td style="font-size:11.5px">Tanque Principal A — Fase Aquosa</td>
+                <td class="mono center" style="text-align:center">2.000 L</td>
+                <td><div class="saldo-cell fis"><span class="saldo-val">1.420 L</span><div class="saldo-bar"><div style="width:71%;background:var(--inf)"></div></div><span class="saldo-sub">71% · há 12s</span></div></td>
+                <td><div class="saldo-cell jde"><span class="saldo-val">1.875 L</span><div class="saldo-bar"><div style="width:94%;background:var(--ouro)"></div></div><span class="saldo-sub">94% · 28/03 16:42</span></div></td>
+                <td><div class="saldo-cell disp"><span class="saldo-val">1.220 L</span><div class="saldo-bar"><div style="width:61%;background:var(--verde)"></div></div><span class="saldo-sub">61% · −655 L em uso</span></div></td>
+                <td style="text-align:center"><span class="diff-pill crit" title="Físico 1.420 vs JDE 1.875 — consumo em curso ainda não baixado no ERP">−455 L</span></td>
                 <td style="font-size:11px">Loção Hidratante Rosa<br><span class="mono" style="font-size:10px;color:var(--text3)">Lote G2026-091</span></td>
-                <td class="mono" style="color:var(--verde);font-size:11px">OP-2026-0416</td>
-                <td class="mono" style="font-size:10px">01/04 08:45</td>
+                <td style="text-align:center"><button class="ops-btn" onclick="fabSaldoExpand(this,'TNQ-001')"><span class="ops-count">2 OPs</span><span>▼</span></button></td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
               </tr>
-              <tr data-tipo="tanque" data-status="disponivel">
+              <tr class="fab-saldo-detail" data-parent="TNQ-001" style="display:none">
+                <td colspan="11">
+                  <div class="ops-sub-wrap">
+                    <div class="ops-sub-title"><span class="pin">TNQ-001</span><span>Ordens consumindo deste tanque</span></div>
+                    <table class="ops-sub-tbl">
+                      <thead>
+                        <tr>
+                          <th>Ordem de Produção</th>
+                          <th>Produto / Lote</th>
+                          <th style="text-align:right">Qtd. Planejada</th>
+                          <th style="text-align:right">Qtd. Já Utilizada</th>
+                          <th>Progresso</th>
+                          <th style="text-align:right">Restante</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><span class="ops-sub-num">OP-2026-0416</span></td>
+                          <td><div class="ops-sub-prod">Loção Hidratante Rosa<span class="lote">Lote G2026-091</span></div></td>
+                          <td style="text-align:right"><span class="ops-qty planejada">180 L</span></td>
+                          <td style="text-align:right"><span class="ops-qty utilizada">95 L</span></td>
+                          <td><div class="ops-progress"><div class="ops-progress-bar"><div class="ops-progress-fill" style="width:53%"></div></div><span class="ops-progress-pct">53%</span></div></td>
+                          <td style="text-align:right"><span class="ops-qty restante">85 L</span></td>
+                        </tr>
+                        <tr>
+                          <td><span class="ops-sub-num">OP-2026-0420</span></td>
+                          <td><div class="ops-sub-prod">Loção Lavanda<span class="lote">Lote G2026-094</span></div></td>
+                          <td style="text-align:right"><span class="ops-qty planejada">475 L</span></td>
+                          <td style="text-align:right"><span class="ops-qty utilizada">0 L</span></td>
+                          <td><div class="ops-progress"><div class="ops-progress-bar"><div class="ops-progress-fill" style="width:0%"></div></div><span class="ops-progress-pct">0%</span></div></td>
+                          <td style="text-align:right"><span class="ops-qty restante">475 L</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- TNQ-002 — Disponível, valores zerados, sem divergência -->
+              <tr data-tipo="tanque" data-status="disponivel" data-eqp="TNQ-002">
                 <td class="mono" style="font-weight:700;color:var(--verde)">TNQ-002</td>
                 <td><span class="bdg bdg-inf" style="font-size:9px">🛢️ Tanque</span></td>
-                <td style="font-size:12px">Tanque Principal B — Fase Oleosa</td>
-                <td class="mono">2.000 L</td>
-                <td class="mono" style="font-weight:700;color:var(--ok)">0 L</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:7px">
-                    <div style="flex:1;background:var(--bg2);border-radius:4px;height:8px;overflow:hidden;border:1px solid var(--border)"><div style="width:0%;height:100%;background:var(--ok);border-radius:4px"></div></div>
-                    <span style="font-size:10px;font-family:var(--font-m);font-weight:700;color:var(--ok)">0%</span>
-                  </div>
-                </td>
+                <td style="font-size:11.5px">Tanque Principal B — Fase Oleosa</td>
+                <td class="mono center" style="text-align:center">2.000 L</td>
+                <td><div class="saldo-cell fis"><span class="saldo-val">0 L</span><div class="saldo-bar"><div style="width:0%;background:var(--inf)"></div></div><span class="saldo-sub">0% · há 1m</span></div></td>
+                <td><div class="saldo-cell jde"><span class="saldo-val">0 L</span><div class="saldo-bar"><div style="width:0%;background:var(--ouro)"></div></div><span class="saldo-sub">0% · 31/03 18:20</span></div></td>
+                <td><div class="saldo-cell disp"><span class="saldo-val">0 L</span><div class="saldo-bar"><div style="width:0%;background:var(--verde)"></div></div><span class="saldo-sub">disponível</span></div></td>
+                <td style="text-align:center"><span class="diff-pill ok">0 L</span></td>
                 <td style="font-size:11px;color:var(--text3)">—</td>
-                <td class="mono" style="color:var(--text3)">—</td>
-                <td class="mono" style="font-size:10px">01/04 07:12</td>
+                <td style="text-align:center;color:var(--text3);font-size:10px">sem ordens</td>
                 <td><span class="bdg bdg-ok">Disponível</span></td>
               </tr>
-              <tr data-tipo="tanque" data-status="em_uso">
+
+              <!-- TNQ-003 — Em uso, sem fase de dosagem (homogeneização), divergência média -->
+              <tr data-tipo="tanque" data-status="em_uso" data-eqp="TNQ-003">
                 <td class="mono" style="font-weight:700;color:var(--verde)">TNQ-003</td>
                 <td><span class="bdg bdg-inf" style="font-size:9px">🛢️ Tanque</span></td>
-                <td style="font-size:12px">Tanque Intermediário — Neutralização</td>
-                <td class="mono">800 L</td>
-                <td class="mono" style="font-weight:700;color:var(--inf)">630 L</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:7px">
-                    <div style="flex:1;background:var(--bg2);border-radius:4px;height:8px;overflow:hidden;border:1px solid var(--border)"><div style="width:79%;height:100%;background:var(--inf);border-radius:4px"></div></div>
-                    <span style="font-size:10px;font-family:var(--font-m);font-weight:700;color:var(--inf)">79%</span>
-                  </div>
-                </td>
+                <td style="font-size:11.5px">Tanque Intermediário — Neutralização</td>
+                <td class="mono center" style="text-align:center">800 L</td>
+                <td><div class="saldo-cell fis"><span class="saldo-val">630 L</span><div class="saldo-bar"><div style="width:79%;background:var(--inf)"></div></div><span class="saldo-sub">79% · há 8s</span></div></td>
+                <td><div class="saldo-cell jde"><span class="saldo-val">720 L</span><div class="saldo-bar"><div style="width:90%;background:var(--ouro)"></div></div><span class="saldo-sub">90% · 29/03 10:30</span></div></td>
+                <td><div class="saldo-cell disp"><span class="saldo-val">630 L</span><div class="saldo-bar"><div style="width:79%;background:var(--verde)"></div></div><span class="saldo-sub">79% · −90 L em uso</span></div></td>
+                <td style="text-align:center"><span class="diff-pill warn" title="Divergência média — baixa pendente">−90 L</span></td>
                 <td style="font-size:11px">Pré-mistura Shampoo<br><span class="mono" style="font-size:10px;color:var(--text3)">Lote G2026-092</span></td>
-                <td class="mono" style="color:var(--verde);font-size:11px">OP-2026-0417</td>
-                <td class="mono" style="font-size:10px">01/04 09:10</td>
+                <td style="text-align:center"><button class="ops-btn" onclick="fabSaldoExpand(this,'TNQ-003')"><span class="ops-count">1 OP</span><span>▼</span></button></td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
               </tr>
-              <tr data-tipo="tanque" data-status="manutencao">
+              <tr class="fab-saldo-detail" data-parent="TNQ-003" style="display:none">
+                <td colspan="11">
+                  <div class="ops-sub-wrap">
+                    <div class="ops-sub-title"><span class="pin">TNQ-003</span><span>Ordens consumindo deste tanque</span></div>
+                    <table class="ops-sub-tbl">
+                      <thead>
+                        <tr>
+                          <th>Ordem de Produção</th>
+                          <th>Produto / Lote</th>
+                          <th style="text-align:right">Qtd. Planejada</th>
+                          <th style="text-align:right">Qtd. Já Utilizada</th>
+                          <th>Progresso</th>
+                          <th style="text-align:right">Restante</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><span class="ops-sub-num">OP-2026-0417</span></td>
+                          <td><div class="ops-sub-prod">Pré-mistura Shampoo<span class="lote">Lote G2026-092</span></div></td>
+                          <td style="text-align:right"><span class="ops-qty planejada">90 L</span></td>
+                          <td style="text-align:right"><span class="ops-qty utilizada">35 L</span></td>
+                          <td><div class="ops-progress"><div class="ops-progress-bar"><div class="ops-progress-fill" style="width:39%"></div></div><span class="ops-progress-pct">39%</span></div></td>
+                          <td style="text-align:right"><span class="ops-qty restante">55 L</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- TNQ-004 — Manutenção -->
+              <tr data-tipo="tanque" data-status="manutencao" data-eqp="TNQ-004">
                 <td class="mono" style="font-weight:700;color:var(--per)">TNQ-004</td>
                 <td><span class="bdg bdg-inf" style="font-size:9px">🛢️ Tanque</span></td>
-                <td style="font-size:12px">Tanque Granel Final — Reserva</td>
-                <td class="mono">3.000 L</td>
-                <td class="mono" style="color:var(--text3)">—</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:7px">
-                    <div style="flex:1;background:var(--bg2);border-radius:4px;height:8px;overflow:hidden;border:1px solid var(--border)"><div style="width:0%;height:100%;background:var(--per);border-radius:4px"></div></div>
-                    <span style="font-size:10px;font-family:var(--font-m);font-weight:700;color:var(--per)">—</span>
-                  </div>
-                </td>
+                <td style="font-size:11.5px">Tanque Granel Final — Reserva</td>
+                <td class="mono center" style="text-align:center">3.000 L</td>
+                <td><div class="saldo-cell fis"><span class="saldo-val" style="color:var(--text3)">—</span><div class="saldo-bar"><div style="width:0%;background:var(--per)"></div></div><span class="saldo-sub">sensor off</span></div></td>
+                <td><div class="saldo-cell jde"><span class="saldo-val" style="color:var(--text3)">—</span><div class="saldo-bar"><div style="width:0%;background:var(--per)"></div></div><span class="saldo-sub">manutenção</span></div></td>
+                <td><div class="saldo-cell disp"><span class="saldo-val" style="color:var(--text3)">—</span><div class="saldo-bar"><div style="width:0%;background:var(--per)"></div></div><span class="saldo-sub">n/d</span></div></td>
+                <td style="text-align:center"><span class="diff-pill ok" style="background:var(--bg2);color:var(--text3);border-color:var(--border)">—</span></td>
                 <td style="font-size:11px;color:var(--per)">⚠ Em manutenção</td>
-                <td class="mono" style="color:var(--text3)">—</td>
-                <td class="mono" style="font-size:10px">30/03 16:00</td>
+                <td style="text-align:center;color:var(--text3);font-size:10px">—</td>
                 <td><span class="bdg bdg-per">Manutenção</span></td>
               </tr>
-              <!-- Bins -->
-              <tr data-tipo="bin" data-status="em_uso">
+
+              <!-- ═══════════════════════════════════════════════════════════════
+                   BINS / IBC  (Matérias-primas fracionadas)
+                   ═══════════════════════════════════════════════════════════════ -->
+              <!-- BIN-001 — Em uso, fracionada, divergência baixa -->
+              <tr data-tipo="bin" data-status="em_uso" data-eqp="BIN-001">
                 <td class="mono" style="font-weight:700;color:var(--verde)">BIN-001</td>
                 <td><span class="bdg bdg-ok" style="font-size:9px">📦 Bin IBC</span></td>
-                <td style="font-size:12px">Bin IBC 1000L — Matéria Base</td>
-                <td class="mono">1.000 L</td>
-                <td class="mono" style="font-weight:700;color:var(--alr)">750 L</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:7px">
-                    <div style="flex:1;background:var(--bg2);border-radius:4px;height:8px;overflow:hidden;border:1px solid var(--border)"><div style="width:75%;height:100%;background:var(--alr);border-radius:4px"></div></div>
-                    <span style="font-size:10px;font-family:var(--font-m);font-weight:700;color:var(--alr)">75%</span>
-                  </div>
-                </td>
+                <td style="font-size:11.5px">Bin IBC 1000L — Matéria Base (Glicerina)</td>
+                <td class="mono center" style="text-align:center">1.000 L</td>
+                <td><div class="saldo-cell fis"><span class="saldo-val">750 L</span><div class="saldo-bar"><div style="width:75%;background:var(--inf)"></div></div><span class="saldo-sub">75% · há 4m</span></div></td>
+                <td><div class="saldo-cell jde"><span class="saldo-val">750 L</span><div class="saldo-bar"><div style="width:75%;background:var(--ouro)"></div></div><span class="saldo-sub">75% · 01/04 06:30</span></div></td>
+                <td><div class="saldo-cell disp"><span class="saldo-val">700 L</span><div class="saldo-bar"><div style="width:70%;background:var(--verde)"></div></div><span class="saldo-sub">70% · −50 L em uso</span></div></td>
+                <td style="text-align:center"><span class="diff-pill ok">0 L</span></td>
                 <td style="font-size:11px">Glicerina Refinada<br><span class="mono" style="font-size:10px;color:var(--text3)">GLI-2026-08</span></td>
-                <td class="mono" style="color:var(--verde);font-size:11px">OP-2026-0416</td>
-                <td class="mono" style="font-size:10px">01/04 06:30</td>
+                <td style="text-align:center"><button class="ops-btn" onclick="fabSaldoExpand(this,'BIN-001')"><span class="ops-count">1 OP</span><span>▼</span></button></td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
               </tr>
-              <tr data-tipo="bin" data-status="disponivel">
+              <tr class="fab-saldo-detail" data-parent="BIN-001" style="display:none">
+                <td colspan="11">
+                  <div class="ops-sub-wrap">
+                    <div class="ops-sub-title"><span class="pin">BIN-001</span><span>Ordens consumindo desta matéria-prima</span></div>
+                    <table class="ops-sub-tbl">
+                      <thead>
+                        <tr>
+                          <th>Ordem de Produção</th>
+                          <th>Produto / Lote</th>
+                          <th style="text-align:right">Qtd. Planejada</th>
+                          <th style="text-align:right">Qtd. Já Utilizada</th>
+                          <th>Progresso</th>
+                          <th style="text-align:right">Restante</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><span class="ops-sub-num">OP-2026-0416</span></td>
+                          <td><div class="ops-sub-prod">Loção Hidratante Rosa<span class="lote">Lote G2026-091 · MP Glicerina</span></div></td>
+                          <td style="text-align:right"><span class="ops-qty planejada">50 L</span></td>
+                          <td style="text-align:right"><span class="ops-qty utilizada">28 L</span></td>
+                          <td><div class="ops-progress"><div class="ops-progress-bar"><div class="ops-progress-fill" style="width:56%"></div></div><span class="ops-progress-pct">56%</span></div></td>
+                          <td style="text-align:right"><span class="ops-qty restante">22 L</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- BIN-002 — Disponível -->
+              <tr data-tipo="bin" data-status="disponivel" data-eqp="BIN-002">
                 <td class="mono" style="font-weight:700;color:var(--verde)">BIN-002</td>
                 <td><span class="bdg bdg-ok" style="font-size:9px">📦 Bin IBC</span></td>
-                <td style="font-size:12px">Bin IBC 1000L — Produto Acabado</td>
-                <td class="mono">1.000 L</td>
-                <td class="mono" style="color:var(--ok);font-weight:700">0 L</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:7px">
-                    <div style="flex:1;background:var(--bg2);border-radius:4px;height:8px;overflow:hidden;border:1px solid var(--border)"><div style="width:0%;height:100%;background:var(--ok);border-radius:4px"></div></div>
-                    <span style="font-size:10px;font-family:var(--font-m);font-weight:700;color:var(--ok)">0%</span>
-                  </div>
-                </td>
+                <td style="font-size:11.5px">Bin IBC 1000L — Produto Acabado</td>
+                <td class="mono center" style="text-align:center">1.000 L</td>
+                <td><div class="saldo-cell fis"><span class="saldo-val">0 L</span><div class="saldo-bar"><div style="width:0%;background:var(--inf)"></div></div><span class="saldo-sub">0% · há 6m</span></div></td>
+                <td><div class="saldo-cell jde"><span class="saldo-val">0 L</span><div class="saldo-bar"><div style="width:0%;background:var(--ouro)"></div></div><span class="saldo-sub">0% · 31/03 18:00</span></div></td>
+                <td><div class="saldo-cell disp"><span class="saldo-val">0 L</span><div class="saldo-bar"><div style="width:0%;background:var(--verde)"></div></div><span class="saldo-sub">disponível</span></div></td>
+                <td style="text-align:center"><span class="diff-pill ok">0 L</span></td>
                 <td style="font-size:11px;color:var(--text3)">—</td>
-                <td class="mono" style="color:var(--text3)">—</td>
-                <td class="mono" style="font-size:10px">31/03 18:00</td>
+                <td style="text-align:center;color:var(--text3);font-size:10px">sem ordens</td>
                 <td><span class="bdg bdg-ok">Disponível</span></td>
               </tr>
-              <tr data-tipo="bin" data-status="limpeza">
+
+              <!-- BIN-003 — Limpeza CIP -->
+              <tr data-tipo="bin" data-status="limpeza" data-eqp="BIN-003">
                 <td class="mono" style="font-weight:700;color:var(--alr)">BIN-003</td>
                 <td><span class="bdg bdg-ok" style="font-size:9px">📦 Bin IBC</span></td>
-                <td style="font-size:12px">Bin IBC 500L — Intermediários</td>
-                <td class="mono">500 L</td>
-                <td class="mono" style="color:var(--text3)">—</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:7px">
-                    <div style="flex:1;background:var(--bg2);border-radius:4px;height:8px;overflow:hidden;border:1px solid var(--border)"><div style="width:0%;height:100%;background:var(--border2);border-radius:4px"></div></div>
-                    <span style="font-size:10px;font-family:var(--font-m);font-weight:700;color:var(--text3)">—</span>
-                  </div>
-                </td>
+                <td style="font-size:11.5px">Bin IBC 500L — Intermediários</td>
+                <td class="mono center" style="text-align:center">500 L</td>
+                <td><div class="saldo-cell fis"><span class="saldo-val" style="color:var(--text3)">—</span><div class="saldo-bar"><div style="width:0%;background:var(--bg2)"></div></div><span class="saldo-sub">CIP em curso</span></div></td>
+                <td><div class="saldo-cell jde"><span class="saldo-val" style="color:var(--text3)">—</span><div class="saldo-bar"><div style="width:0%;background:var(--bg2)"></div></div><span class="saldo-sub">bloqueado</span></div></td>
+                <td><div class="saldo-cell disp"><span class="saldo-val" style="color:var(--text3)">—</span><div class="saldo-bar"><div style="width:0%;background:var(--bg2)"></div></div><span class="saldo-sub">n/d</span></div></td>
+                <td style="text-align:center"><span class="diff-pill ok" style="background:var(--bg2);color:var(--text3);border-color:var(--border)">—</span></td>
                 <td style="font-size:11px;color:var(--text3)">Aguardando limpeza CIP</td>
-                <td class="mono" style="color:var(--text3)">—</td>
-                <td class="mono" style="font-size:10px">01/04 05:00</td>
+                <td style="text-align:center;color:var(--text3);font-size:10px">bloqueado</td>
                 <td><span class="bdg bdg-ney">Ag. Limpeza</span></td>
               </tr>
-              <!-- Muller / Amassadeiras -->
-              <tr data-tipo="muller" data-status="em_uso">
+
+              <!-- ═══════════════════════════════════════════════════════════════
+                   MULLER / AMASSADEIRAS  (Massa fracionada - kg)
+                   ═══════════════════════════════════════════════════════════════ -->
+              <tr data-tipo="muller" data-status="em_uso" data-eqp="MUL-001">
                 <td class="mono" style="font-weight:700;color:var(--verde)">MUL-001</td>
                 <td><span class="bdg bdg-alr" style="font-size:9px">⚙️ Muller</span></td>
-                <td style="font-size:12px">Amassadeira A — Sabonete Barra</td>
-                <td class="mono">500 kg</td>
-                <td class="mono" style="font-weight:700;color:var(--alr)">320 kg</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:7px">
-                    <div style="flex:1;background:var(--bg2);border-radius:4px;height:8px;overflow:hidden;border:1px solid var(--border)"><div style="width:64%;height:100%;background:var(--alr);border-radius:4px"></div></div>
-                    <span style="font-size:10px;font-family:var(--font-m);font-weight:700;color:var(--alr)">64%</span>
-                  </div>
-                </td>
+                <td style="font-size:11.5px">Amassadeira A — Sabonete Barra</td>
+                <td class="mono center" style="text-align:center">500 kg</td>
+                <td><div class="saldo-cell fis"><span class="saldo-val">320 kg</span><div class="saldo-bar"><div style="width:64%;background:var(--inf)"></div></div><span class="saldo-sub">64% · há 30s</span></div></td>
+                <td><div class="saldo-cell jde"><span class="saldo-val">320 kg</span><div class="saldo-bar"><div style="width:64%;background:var(--ouro)"></div></div><span class="saldo-sub">64% · 01/04 08:00</span></div></td>
+                <td><div class="saldo-cell disp"><span class="saldo-val">0 kg</span><div class="saldo-bar"><div style="width:0%;background:var(--per)"></div></div><span class="saldo-sub">100% reservado</span></div></td>
+                <td style="text-align:center"><span class="diff-pill ok">0 kg</span></td>
                 <td style="font-size:11px">Massa Sabonete Base<br><span class="mono" style="font-size:10px;color:var(--text3)">Lote G2026-095</span></td>
-                <td class="mono" style="color:var(--verde);font-size:11px">OP-2026-0419</td>
-                <td class="mono" style="font-size:10px">01/04 08:00</td>
+                <td style="text-align:center"><button class="ops-btn" onclick="fabSaldoExpand(this,'MUL-001')"><span class="ops-count">1 OP</span><span>▼</span></button></td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
               </tr>
-              <tr data-tipo="muller" data-status="disponivel">
+              <tr class="fab-saldo-detail" data-parent="MUL-001" style="display:none">
+                <td colspan="11">
+                  <div class="ops-sub-wrap">
+                    <div class="ops-sub-title"><span class="pin">MUL-001</span><span>Ordens consumindo desta amassadeira</span></div>
+                    <table class="ops-sub-tbl">
+                      <thead>
+                        <tr>
+                          <th>Ordem de Produção</th>
+                          <th>Produto / Lote</th>
+                          <th style="text-align:right">Qtd. Planejada</th>
+                          <th style="text-align:right">Qtd. Já Utilizada</th>
+                          <th>Progresso</th>
+                          <th style="text-align:right">Restante</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><span class="ops-sub-num">OP-2026-0419</span></td>
+                          <td><div class="ops-sub-prod">Sabonete Barra<span class="lote">Lote G2026-095</span></div></td>
+                          <td style="text-align:right"><span class="ops-qty planejada">320 kg</span></td>
+                          <td style="text-align:right"><span class="ops-qty utilizada">120 kg</span></td>
+                          <td><div class="ops-progress"><div class="ops-progress-bar"><div class="ops-progress-fill" style="width:38%"></div></div><span class="ops-progress-pct">38%</span></div></td>
+                          <td style="text-align:right"><span class="ops-qty restante">200 kg</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- MUL-002 — Disponível -->
+              <tr data-tipo="muller" data-status="disponivel" data-eqp="MUL-002">
                 <td class="mono" style="font-weight:700;color:var(--verde)">MUL-002</td>
                 <td><span class="bdg bdg-alr" style="font-size:9px">⚙️ Muller</span></td>
-                <td style="font-size:12px">Amassadeira B — Sabonete Barra</td>
-                <td class="mono">500 kg</td>
-                <td class="mono" style="color:var(--ok);font-weight:700">0 kg</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:7px">
-                    <div style="flex:1;background:var(--bg2);border-radius:4px;height:8px;overflow:hidden;border:1px solid var(--border)"><div style="width:0%;height:100%;background:var(--ok);border-radius:4px"></div></div>
-                    <span style="font-size:10px;font-family:var(--font-m);font-weight:700;color:var(--ok)">0%</span>
-                  </div>
-                </td>
+                <td style="font-size:11.5px">Amassadeira B — Sabonete Barra</td>
+                <td class="mono center" style="text-align:center">500 kg</td>
+                <td><div class="saldo-cell fis"><span class="saldo-val">0 kg</span><div class="saldo-bar"><div style="width:0%;background:var(--inf)"></div></div><span class="saldo-sub">0% · há 12m</span></div></td>
+                <td><div class="saldo-cell jde"><span class="saldo-val">0 kg</span><div class="saldo-bar"><div style="width:0%;background:var(--ouro)"></div></div><span class="saldo-sub">0% · 31/03 22:00</span></div></td>
+                <td><div class="saldo-cell disp"><span class="saldo-val">0 kg</span><div class="saldo-bar"><div style="width:0%;background:var(--verde)"></div></div><span class="saldo-sub">disponível</span></div></td>
+                <td style="text-align:center"><span class="diff-pill ok">0 kg</span></td>
                 <td style="font-size:11px;color:var(--text3)">—</td>
-                <td class="mono" style="color:var(--text3)">—</td>
-                <td class="mono" style="font-size:10px">31/03 22:00</td>
+                <td style="text-align:center;color:var(--text3);font-size:10px">sem ordens</td>
                 <td><span class="bdg bdg-ok">Disponível</span></td>
               </tr>
-              <!-- Buffers -->
-              <tr data-tipo="buffer" data-status="em_uso">
+
+              <!-- ═══════════════════════════════════════════════════════════════
+                   BUFFERS / PULMÕES  (Linhas de envase)
+                   ═══════════════════════════════════════════════════════════════ -->
+              <tr data-tipo="buffer" data-status="em_uso" data-eqp="BUF-001">
                 <td class="mono" style="font-weight:700;color:var(--verde)">BUF-001</td>
                 <td><span class="bdg bdg-ney" style="font-size:9px">🗃️ Buffer</span></td>
-                <td style="font-size:12px">Buffer / Pulmão — Linha de Envase A</td>
-                <td class="mono">300 L</td>
-                <td class="mono" style="font-weight:700;color:var(--verde)">185 L</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:7px">
-                    <div style="flex:1;background:var(--bg2);border-radius:4px;height:8px;overflow:hidden;border:1px solid var(--border)"><div style="width:62%;height:100%;background:var(--verde);border-radius:4px"></div></div>
-                    <span style="font-size:10px;font-family:var(--font-m);font-weight:700;color:var(--verde)">62%</span>
-                  </div>
-                </td>
+                <td style="font-size:11.5px">Buffer / Pulmão — Linha de Envase A</td>
+                <td class="mono center" style="text-align:center">300 L</td>
+                <td><div class="saldo-cell fis"><span class="saldo-val">185 L</span><div class="saldo-bar"><div style="width:62%;background:var(--inf)"></div></div><span class="saldo-sub">62% · há 5s</span></div></td>
+                <td><div class="saldo-cell jde"><span class="saldo-val">300 L</span><div class="saldo-bar"><div style="width:100%;background:var(--ouro)"></div></div><span class="saldo-sub">100% · 28/03 17:00</span></div></td>
+                <td><div class="saldo-cell disp"><span class="saldo-val">185 L</span><div class="saldo-bar"><div style="width:62%;background:var(--verde)"></div></div><span class="saldo-sub">62% · −115 L envasados</span></div></td>
+                <td style="text-align:center"><span class="diff-pill warn" title="JDE não reflete envase em curso">−115 L</span></td>
                 <td style="font-size:11px">Loção Rosa 200ml<br><span class="mono" style="font-size:10px;color:var(--text3)">Lote G2026-091</span></td>
-                <td class="mono" style="color:var(--verde);font-size:11px">OP-2026-0416</td>
-                <td class="mono" style="font-size:10px">01/04 09:18</td>
+                <td style="text-align:center"><button class="ops-btn" onclick="fabSaldoExpand(this,'BUF-001')"><span class="ops-count">1 OP</span><span>▼</span></button></td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
               </tr>
-              <tr data-tipo="buffer" data-status="disponivel">
+              <tr class="fab-saldo-detail" data-parent="BUF-001" style="display:none">
+                <td colspan="11">
+                  <div class="ops-sub-wrap">
+                    <div class="ops-sub-title"><span class="pin">BUF-001</span><span>Ordens consumindo deste buffer</span></div>
+                    <table class="ops-sub-tbl">
+                      <thead>
+                        <tr>
+                          <th>Ordem de Produção</th>
+                          <th>Produto / Lote</th>
+                          <th style="text-align:right">Qtd. Planejada</th>
+                          <th style="text-align:right">Qtd. Já Utilizada</th>
+                          <th>Progresso</th>
+                          <th style="text-align:right">Restante</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><span class="ops-sub-num">OP-2026-0416</span></td>
+                          <td><div class="ops-sub-prod">Loção Rosa 200ml<span class="lote">Lote G2026-091 · Envase Linha A</span></div></td>
+                          <td style="text-align:right"><span class="ops-qty planejada">300 L</span></td>
+                          <td style="text-align:right"><span class="ops-qty utilizada">115 L</span></td>
+                          <td><div class="ops-progress"><div class="ops-progress-bar"><div class="ops-progress-fill" style="width:38%"></div></div><span class="ops-progress-pct">38%</span></div></td>
+                          <td style="text-align:right"><span class="ops-qty restante">185 L</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- BUF-002 — Disponível -->
+              <tr data-tipo="buffer" data-status="disponivel" data-eqp="BUF-002">
                 <td class="mono" style="font-weight:700;color:var(--verde)">BUF-002</td>
                 <td><span class="bdg bdg-ney" style="font-size:9px">🗃️ Buffer</span></td>
-                <td style="font-size:12px">Buffer / Pulmão — Linha de Envase B</td>
-                <td class="mono">300 L</td>
-                <td class="mono" style="color:var(--ok);font-weight:700">0 L</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:7px">
-                    <div style="flex:1;background:var(--bg2);border-radius:4px;height:8px;overflow:hidden;border:1px solid var(--border)"><div style="width:0%;height:100%;background:var(--ok);border-radius:4px"></div></div>
-                    <span style="font-size:10px;font-family:var(--font-m);font-weight:700;color:var(--ok)">0%</span>
-                  </div>
-                </td>
+                <td style="font-size:11.5px">Buffer / Pulmão — Linha de Envase B</td>
+                <td class="mono center" style="text-align:center">300 L</td>
+                <td><div class="saldo-cell fis"><span class="saldo-val">0 L</span><div class="saldo-bar"><div style="width:0%;background:var(--inf)"></div></div><span class="saldo-sub">0% · há 10m</span></div></td>
+                <td><div class="saldo-cell jde"><span class="saldo-val">0 L</span><div class="saldo-bar"><div style="width:0%;background:var(--ouro)"></div></div><span class="saldo-sub">0% · 31/03 20:00</span></div></td>
+                <td><div class="saldo-cell disp"><span class="saldo-val">0 L</span><div class="saldo-bar"><div style="width:0%;background:var(--verde)"></div></div><span class="saldo-sub">disponível</span></div></td>
+                <td style="text-align:center"><span class="diff-pill ok">0 L</span></td>
                 <td style="font-size:11px;color:var(--text3)">—</td>
-                <td class="mono" style="color:var(--text3)">—</td>
-                <td class="mono" style="font-size:10px">31/03 20:00</td>
+                <td style="text-align:center;color:var(--text3);font-size:10px">sem ordens</td>
                 <td><span class="bdg bdg-ok">Disponível</span></td>
               </tr>
-              <tr data-tipo="buffer" data-status="disponivel">
+
+              <!-- BUF-003 — Disponível -->
+              <tr data-tipo="buffer" data-status="disponivel" data-eqp="BUF-003">
                 <td class="mono" style="font-weight:700;color:var(--verde)">BUF-003</td>
                 <td><span class="bdg bdg-ney" style="font-size:9px">🗃️ Buffer</span></td>
-                <td style="font-size:12px">Buffer Reserva — Multiuso</td>
-                <td class="mono">500 L</td>
-                <td class="mono" style="color:var(--ok);font-weight:700">0 L</td>
-                <td>
-                  <div style="display:flex;align-items:center;gap:7px">
-                    <div style="flex:1;background:var(--bg2);border-radius:4px;height:8px;overflow:hidden;border:1px solid var(--border)"><div style="width:0%;height:100%;background:var(--ok);border-radius:4px"></div></div>
-                    <span style="font-size:10px;font-family:var(--font-m);font-weight:700;color:var(--ok)">0%</span>
-                  </div>
-                </td>
+                <td style="font-size:11.5px">Buffer Reserva — Multiuso</td>
+                <td class="mono center" style="text-align:center">500 L</td>
+                <td><div class="saldo-cell fis"><span class="saldo-val">0 L</span><div class="saldo-bar"><div style="width:0%;background:var(--inf)"></div></div><span class="saldo-sub">0% · há 8m</span></div></td>
+                <td><div class="saldo-cell jde"><span class="saldo-val">0 L</span><div class="saldo-bar"><div style="width:0%;background:var(--ouro)"></div></div><span class="saldo-sub">0% · 31/03 20:00</span></div></td>
+                <td><div class="saldo-cell disp"><span class="saldo-val">0 L</span><div class="saldo-bar"><div style="width:0%;background:var(--verde)"></div></div><span class="saldo-sub">disponível</span></div></td>
+                <td style="text-align:center"><span class="diff-pill ok">0 L</span></td>
                 <td style="font-size:11px;color:var(--text3)">—</td>
-                <td class="mono" style="color:var(--text3)">—</td>
-                <td class="mono" style="font-size:10px">31/03 20:00</td>
+                <td style="text-align:center;color:var(--text3);font-size:10px">sem ordens</td>
                 <td><span class="bdg bdg-ok">Disponível</span></td>
               </tr>
             </tbody>
@@ -963,7 +1150,9 @@ export const SCREENS = {
         var tipo   = document.getElementById('fab-saldo-tipo').value;
         var status = document.getElementById('fab-saldo-status').value;
         var busca  = (document.getElementById('fab-saldo-busca').value || '').toLowerCase();
-        var rows   = document.querySelectorAll('#fab-saldo-tbody tr');
+        // Filtra só as linhas principais (data-eqp). Linhas-detalhe (fab-saldo-detail)
+        // seguem o estado de visibilidade da linha-pai e o expand/collapse manual.
+        var rows = document.querySelectorAll('#fab-saldo-tbody tr[data-eqp]');
         var tot=0, disp=0, uso=0, man=0;
         rows.forEach(function(r){
           var tipoOk   = tipo==='todos' || r.dataset.tipo === tipo;
@@ -971,6 +1160,19 @@ export const SCREENS = {
           var buscaOk  = !busca || r.textContent.toLowerCase().includes(busca);
           var show = tipoOk && statusOk && buscaOk;
           r.style.display = show ? '' : 'none';
+          // Se a linha-pai for ocultada, força colapso da detail correspondente.
+          var detail = document.querySelector('#fab-saldo-tbody tr.fab-saldo-detail[data-parent="'+r.dataset.eqp+'"]');
+          if (detail) {
+            if (!show) {
+              detail.style.display = 'none';
+              var btn = r.querySelector('.ops-btn');
+              if (btn && btn.classList.contains('open')) {
+                btn.classList.remove('open');
+                var caret = btn.querySelector('span:last-child');
+                if (caret) caret.textContent = '▼';
+              }
+            }
+          }
           if (show) {
             tot++;
             if (r.dataset.status==='disponivel') disp++;
@@ -985,6 +1187,17 @@ export const SCREENS = {
         // Label tipo
         var labels = {todos:'Todos',tanque:'Tanques',bin:'Bins / IBC',muller:'Muller / Amassadeiras',buffer:'Buffers / Pulmões'};
         document.getElementById('fab-saldo-label-tipo').textContent = labels[tipo]||tipo;
+      }
+
+      // BBP 5.10 Onda 1 — expande/colapsa a linha-detalhe (3 saldos + ordens) por equipamento.
+      function fabSaldoExpand(btn, eqp) {
+        var detail = document.querySelector('#fab-saldo-tbody tr.fab-saldo-detail[data-parent="'+eqp+'"]');
+        if (!detail) return;
+        var open = detail.style.display !== 'none';
+        detail.style.display = open ? 'none' : '';
+        btn.classList.toggle('open', !open);
+        var caret = btn.querySelector('span:last-child');
+        if (caret) caret.textContent = open ? '▼' : '▲';
       }
 
       function fabSaldoAtualizar() {
