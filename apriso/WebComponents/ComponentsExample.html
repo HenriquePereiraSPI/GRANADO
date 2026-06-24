@@ -39,6 +39,7 @@
   <script src="./granado-information.js"></script>
   <script src="./granado-tree.js"></script>
   <script src="./granado-zpl.js"></script>
+  <script src="./granado-zpl-popup.js"></script>
 </head>
 
 <body style="margin:0;padding:24px;background:#F4EED9;font-family:'Lato','DejaVu Sans',Arial,sans-serif;color:#103E20">
@@ -1363,6 +1364,59 @@
           pesadoPor: 'J. SANTOS', matricula: '000155', balanca: '03', tara: '0,000 KG', pesoBruto: '411,840 KG', noEtiqueta: '8112045',
           barcode: '#P26241708112045', pesoLiquido: '411,840 KG',
           impressoPor: 'J. Santos', impressoEm: '31/03/2026 09:11'
+        };
+      })();
+    </script>
+  </section>
+
+  <!-- ========== Linha 28 — granado-zpl-popup ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-zpl-popup&gt;
+    </h2>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+      <div>
+        <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E;margin-bottom:6px">popup sobre a tela · evento "reimprimir"</div>
+        <button type="button" onclick="document.getElementById('zpl-popup-demo').open()"
+          style="font:600 13px/1.4 'Poppins',system-ui,Arial,sans-serif;font-weight:700;padding:10px 18px;border:1px solid #C8A84B;border-radius:7px;background:#C8A84B;color:#0F3319;cursor:pointer">
+          🖨️ Reimprimir etiqueta
+        </button>
+        <div id="zpl-popup-status" style="font-size:11px;color:#8A9E8E;margin-top:8px"></div>
+      </div>
+    </div>
+
+    <!-- O popup começa oculto (open="false"); o botão acima chama .open().
+         O clique em "Reimprimir" dispara o handler inline onPrintClick. -->
+    <granado-zpl-popup id="zpl-popup-demo" type="pesagem" open="false"
+      onPrintClick="onPrintClick(detail)"></granado-zpl-popup>
+
+    <script>
+      // Handler do botão "Reimprimir" do popup
+      function onPrintClick(detail) {
+        var st = document.getElementById('zpl-popup-status');
+        var imp = detail.impressora;
+        if (st) st.textContent = imp ? ('✅ Reimpressão solicitada em: ' + imp.id + ' — ' + imp.descricao + ' · ' + detail.copias + ' cópia(s)') : '⚠ Nenhuma impressora selecionada';
+        document.getElementById('zpl-popup-demo').close();
+      }
+      (function () {
+        var pop = document.getElementById('zpl-popup-demo');
+        if (!pop) return;
+        pop.data = {
+          etiqueta: 'Etiqueta Nº 7953072',
+          titulo: 'PESAGEM DE MATERIAL', dataImpressao: '24/03/2026',
+          ordemFabricacao: '771166', loteGranel: '1621/2026', dataPesagem: '24/03/2026 07:42', aprovado: true,
+          granelResultante: 'S0835B - SAB. PH LIMAO SICILIANO', materiaPrima: 'M9808 - MANTEIGA DE MURUMURU STD (SAB)',
+          loteMP: '0273826', validade: '30/07/2028', tipoPesagem: 'SIMPLES', qtdOrdem: '37,440 KG',
+          pesadoPor: 'VALMIR MENDES', matricula: '102266', balanca: '16', tara: '0,021 KG', pesoBruto: '3,141 KG', noEtiqueta: '7953072',
+          barcode: '#P12814471417953072', pesoLiquido: '3,120 KG',
+          impressoPor: 'Claudinei', impressoEm: '31/03/2026 08:05',
+          impressoras: [
+            { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' },
+            { id: 'PRN-BOX1', descricao: 'Zebra ZT411 (Sala A)' },
+            { id: 'PRN-LAB', descricao: 'Zebra GK420t (Laboratório)' }
+          ],
+          impressora: { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' }
         };
       })();
     </script>

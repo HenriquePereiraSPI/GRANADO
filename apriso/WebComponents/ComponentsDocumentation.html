@@ -39,6 +39,7 @@
   <script src="./granado-information.js"></script>
   <script src="./granado-tree.js"></script>
   <script src="./granado-zpl.js"></script>
+  <script src="./granado-zpl-popup.js"></script>
 
   <style>
     html,
@@ -273,6 +274,7 @@
       <a class="gd-link" href="#granado-information">granado-information</a>
       <a class="gd-link" href="#granado-tree">granado-tree</a>
       <a class="gd-link" href="#granado-zpl">granado-zpl</a>
+      <a class="gd-link" href="#granado-zpl-popup">granado-zpl-popup</a>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -8871,6 +8873,164 @@ GranadoPreloader.hide();</pre>
             novo <code>type</code> com o respectivo layout.</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; tinta
             preta sobre fundo branco, em fonte monoespaçada (térmica).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-zpl-popup
+           ============================================================ -->
+      <section id="granado-zpl-popup" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-zpl-popup&gt;</code></h1>
+        <p class="gd-lead">
+          <strong>Popup</strong> (overlay modal) que fica <strong>na frente de qualquer tela</strong> e
+          reproduz o layout do popup <em>"Reimprimir Etiqueta"</em> da Pesagem: cabeçalho,
+          pré-visualização da etiqueta (mesmo desenho do <a class="gd-link" href="#granado-zpl">granado-zpl</a>),
+          seletor de impressora e os botões <strong>Cancelar</strong> / <strong>Reimprimir</strong>.
+          O tipo de etiqueta é definido por <code>type</code> e os campos por <code>data</code>.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-zpl-popup.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso</h2>
+        <p class="gd-lead">
+          O popup inicia oculto com <code>open="false"</code>; abra-o com <code>el.open()</code>.
+          Cancelar, o <strong>✕</strong> e o clique fora apenas fecham (sem evento). O botão
+          <strong>Reimprimir</strong> dispara o evento <code>reimprimir</code> e o handler inline
+          <code>onPrintClick</code>.
+        </p>
+        <div class="gd-demo">
+          <button type="button" onclick="document.getElementById('doc-zpl-popup').open()"
+            style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:10px 18px;border:1px solid #C8A84B;border-radius:7px;background:#C8A84B;color:#0F3319;cursor:pointer">🖨️ Reimprimir etiqueta</button>
+          <span id="doc-zpl-popup-status" style="font-size:12px;color:#8A9E8E;margin-left:10px"></span>
+
+          <granado-zpl-popup id="doc-zpl-popup" type="pesagem" open="false"
+            onPrintClick="var s=document.getElementById('doc-zpl-popup-status');if(s)s.textContent=detail.impressora?('✅ Enviado para '+detail.impressora.id+' - '+detail.impressora.descricao+' ('+detail.copias+'x)'):'⚠ Nenhuma impressora';document.getElementById('doc-zpl-popup').close()"
+            data='{
+              "etiqueta":"Etiqueta Nº 7953072",
+              "titulo":"PESAGEM DE MATERIAL","dataImpressao":"24/03/2026",
+              "ordemFabricacao":"771166","loteGranel":"1621/2026","dataPesagem":"24/03/2026 07:42","aprovado":true,
+              "granelResultante":"S0835B - SAB. PH LIMAO SICILIANO","materiaPrima":"M9808 - MANTEIGA DE MURUMURU STD (SAB)",
+              "loteMP":"0273826","validade":"30/07/2028","tipoPesagem":"SIMPLES","qtdOrdem":"37,440 KG",
+              "pesadoPor":"VALMIR MENDES","matricula":"102266","balanca":"16","tara":"0,021 KG","pesoBruto":"3,141 KG","noEtiqueta":"7953072",
+              "barcode":"#P12814471417953072","pesoLiquido":"3,120 KG",
+              "impressoPor":"Claudinei","impressoEm":"31/03/2026 08:05",
+              "impressoras":[{"id":"PRN-BOX3","descricao":"Zebra ZD420 (Box Pesagem)"},{"id":"PRN-LAB","descricao":"Zebra GK420t (Laboratório)"}],
+              "impressora":{"id":"PRN-BOX3","descricao":"Zebra ZD420 (Box Pesagem)"},
+              "copias":1
+            }'></granado-zpl-popup>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-zpl-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"pop"</span> <span class="tk-attr">type</span>=<span class="tk-str">"pesagem"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span>
+  <span class="tk-attr">onPrintClick</span>=<span class="tk-str">"imprimir(detail.impressora)"</span><span class="tk-tag">&gt;&lt;/granado-zpl-popup&gt;</span>
+
+<span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-str">"document.getElementById('pop').open()"</span><span class="tk-tag">&gt;</span>Reimprimir<span class="tk-tag">&lt;/button&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-keyword">var</span> pop = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'pop'</span>);
+  pop.data = {
+    etiqueta: <span class="tk-str">'Etiqueta Nº 7953072'</span>,
+    titulo: <span class="tk-str">'PESAGEM DE MATERIAL'</span>, ordemFabricacao: <span class="tk-str">'771166'</span>, <span class="tk-comment">/* ...demais campos da pesagem... */</span>
+    impressoras: [
+      { id: <span class="tk-str">'PRN-BOX3'</span>, descricao: <span class="tk-str">'Zebra ZD420 (Box Pesagem)'</span> },
+      { id: <span class="tk-str">'PRN-LAB'</span>, descricao: <span class="tk-str">'Zebra GK420t (Laboratório)'</span> }
+    ],
+    impressora: { id: <span class="tk-str">'PRN-BOX3'</span>, descricao: <span class="tk-str">'Zebra ZD420 (Box Pesagem)'</span> }
+  };
+  <span class="tk-comment">// alternativa ao onPrintClick: ouvir o evento</span>
+  pop.<span class="tk-attr">addEventListener</span>(<span class="tk-str">'reimprimir'</span>, <span class="tk-keyword">function</span> (e) {
+    imprimir(e.detail.impressora);
+    pop.<span class="tk-attr">close</span>();
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:130px">Nome</th><th style="width:150px">Tipo</th><th style="width:120px">Default</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">type</td>
+              <td class="col-type">string</td>
+              <td class="col-default">"pesagem"</td>
+              <td class="col-desc">Tipo da etiqueta. Define o layout do preview e os campos esperados em <code>data</code>. Atual: <code>pesagem</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">data</td>
+              <td class="col-type">JSON (objeto)</td>
+              <td class="col-default">{}</td>
+              <td class="col-desc">Campos da etiqueta + campos do popup (<code>etiqueta</code>, <code>impressoras</code>, <code>impressora</code>). Em JS prefira a propriedade <code>.data</code>; para JSON grande use <code>setAttribute('data', JSON.stringify(obj))</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">open</td>
+              <td class="col-type">string</td>
+              <td class="col-default">—</td>
+              <td class="col-desc"><code>open="false"</code> inicia o popup oculto. Use os métodos <code>open()</code>/<code>close()</code> para alternar.</td>
+            </tr>
+            <tr>
+              <td class="col-name">onPrintClick</td>
+              <td class="col-type">string (JS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Handler inline executado ao clicar em <strong>Reimprimir</strong>. Recebe <code>event</code> e <code>detail</code> ({ impressora: { id, descricao }, copias, type, data }). Padrão Apriso (estilo <code>onclickevent</code>).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de <code>data</code> — específicos do popup</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">etiqueta</td><td class="col-type">string</td><td class="col-desc">Subtítulo do cabeçalho (ex.: "Etiqueta Nº 7953072"). Padrão: derivado de <code>noEtiqueta</code>.</td></tr>
+            <tr><td class="col-name">impressoras</td><td class="col-type">objeto / array</td><td class="col-desc">Impressoras do seletor em <strong>chave/valor</strong> (chave = <code>id</code>, valor = descrição). Aceita objeto <code>{ id: descricao }</code> ou array de <code>{ id, descricao }</code>. No <code>&lt;option&gt;</code>, <code>value</code> = id e o texto = descrição. Se ausente, o dropdown fica <strong>vazio</strong> (sem lista padrão).</td></tr>
+            <tr><td class="col-name">impressora</td><td class="col-type">objeto / string</td><td class="col-desc">Impressora pré-selecionada, no mesmo formato chave/valor <code>{ id, descricao }</code> (string com o id também é aceita).</td></tr>
+            <tr><td class="col-name">copias</td><td class="col-type">number</td><td class="col-desc">Nº de cópias pré-selecionado no dropdown (1 a 4). Padrão: <strong>1</strong>.</td></tr>
+          </tbody>
+        </table>
+        <p class="gd-lead" style="margin-top:8px">
+          Os demais campos do preview (<code>titulo</code>, <code>ordemFabricacao</code>, <code>loteGranel</code>,
+          <code>barcode</code>, <code>pesoLiquido</code>, etc.) são os mesmos do
+          <a class="gd-link" href="#granado-zpl">granado-zpl</a> para <code>type="pesagem"</code>.
+        </p>
+
+        <h3 class="gd-h3">Propriedades e métodos JS</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:130px">Nome</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">.type</td><td class="col-desc">Lê/seta o tipo da etiqueta.</td></tr>
+            <tr><td class="col-name">.data</td><td class="col-desc">Lê/seta o objeto de dados.</td></tr>
+            <tr><td class="col-name">.open()</td><td class="col-desc">Exibe o popup.</td></tr>
+            <tr><td class="col-name">.close()</td><td class="col-desc">Oculta o popup.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Eventos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:130px">Evento</th><th style="width:200px">detail</th><th>Quando</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">reimprimir</td><td class="col-type">{ impressora: { id, descricao }, copias, type, data }</td><td class="col-desc">Clique no botão <strong>Reimprimir</strong> (bubbles). Cancelar/✕/clique fora <strong>não</strong> emitem evento — apenas fecham.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Sempre na frente:</strong> overlay <code>position:fixed</code> cobrindo a tela
+            (<code>z-index</code> alto), com fundo verde translúcido + blur.</li>
+          <li><strong>Autocontido:</strong> não depende do <code>granado-zpl</code> — o preview é
+            renderizado internamente.</li>
+          <li><strong>Dois caminhos para o clique:</strong> ouça o evento <code>reimprimir</code>
+            (<code>addEventListener</code>) ou use o atributo <code>onPrintClick</code> — ambos
+            recebem a impressora escolhida.</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores
+            Granado hardcoded como default.</li>
         </ul>
       </section>
 
