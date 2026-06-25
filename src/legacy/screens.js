@@ -765,6 +765,7 @@ export const SCREENS = {
                 <th style="text-align:center">Capac.</th>
                 <th title="Sensor de nível (Kepware OPC · HDCSA previsto)" style="text-align:right;color:var(--inf)">🔄 Físico</th>
                 <th title="JDE F4101 — baixado só no fechamento da ordem" style="text-align:right;color:var(--ouro)">🗄️ JDE</th>
+                <th title="Diferença entre o saldo Físico e o JDE (Físico − JDE) — consumo das ordens em execução ainda não baixado no JDE" style="text-align:right;color:var(--ouro)">⏳ Baixa Pendente JDE</th>
                 <th title="Disp. = Físico − Σ(restante a consumir das ordens ativas) — visão operacional do PCP" style="text-align:right;color:var(--verde)">🧮 Disp.</th>
                 <th style="text-align:center">Ordens Ativas</th>
                 <th>Status</th>
@@ -782,6 +783,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">159.000 kg</td>
                 <td><div class="saldo-cell fis">88.300 kg</div></td>
                 <td><div class="saldo-cell jde">92.000 kg</div></td>
+                <td><div class="saldo-cell jde">-3.700 kg</div></td>
                 <td><div class="saldo-cell disp">76.300 kg</div></td>
                 <td style="text-align:center;color:var(--verde);font-weight:700;font-size:11px">2</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -808,6 +810,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">159.000 kg</td>
                 <td><div class="saldo-cell fis">134.200 kg</div></td>
                 <td><div class="saldo-cell jde">134.200 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">134.200 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
                 <td><span class="bdg bdg-ok">Disponível</span></td>
@@ -820,6 +823,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">95.000 kg</td>
                 <td><div class="saldo-cell fis">66.800 kg</div></td>
                 <td><div class="saldo-cell jde">72.000 kg</div></td>
+                <td><div class="saldo-cell jde">-5.200 kg</div></td>
                 <td><div class="saldo-cell disp">62.300 kg</div></td>
                 <td style="text-align:center;color:var(--verde);font-weight:700;font-size:11px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -845,6 +849,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">88.000 kg</td>
                 <td><div class="saldo-cell fis">45.300 kg</div></td>
                 <td><div class="saldo-cell jde">45.300 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">45.300 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
                 <td><span class="bdg bdg-ok">Disponível</span></td>
@@ -856,6 +861,7 @@ export const SCREENS = {
                 <td style="font-size:11.5px">Tanque 23 — Óleo de Palma Refinado 01</td>
                 <td class="mono" style="text-align:center">88.000 kg</td>
                 <td><div class="saldo-cell fis">0 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">0 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
@@ -869,6 +875,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">88.000 kg</td>
                 <td><div class="saldo-cell fis">88.000 kg</div></td>
                 <td><div class="saldo-cell jde">88.000 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">88.000 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
                 <td><span class="bdg bdg-ok">Disponível</span></td>
@@ -881,6 +888,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">88.000 kg</td>
                 <td><div class="saldo-cell fis">67.400 kg</div></td>
                 <td><div class="saldo-cell jde">67.400 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">67.400 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
                 <td><span class="bdg bdg-ok">Disponível</span></td>
@@ -893,6 +901,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">88.000 kg</td>
                 <td><div class="saldo-cell fis dim">—</div></td>
                 <td><div class="saldo-cell jde dim">—</div></td>
+                <td><div class="saldo-cell dim">—</div></td>
                 <td><div class="saldo-cell disp dim">—</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">—</td>
                 <td><span class="bdg bdg-per">Manutenção</span></td>
@@ -905,6 +914,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">25.000 kg</td>
                 <td><div class="saldo-cell fis">12.800 kg</div></td>
                 <td><div class="saldo-cell jde">14.200 kg</div></td>
+                <td><div class="saldo-cell jde">-1.400 kg</div></td>
                 <td><div class="saldo-cell disp">9.500 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -917,6 +927,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">88.000 kg</td>
                 <td><div class="saldo-cell fis">12.500 kg</div></td>
                 <td><div class="saldo-cell jde">12.500 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">12.500 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
                 <td><span class="bdg bdg-ok">Disponível</span></td>
@@ -932,6 +943,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">5.000 kg</td>
                 <td><div class="saldo-cell fis">3.200 kg</div></td>
                 <td><div class="saldo-cell jde">3.200 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">3.200 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -944,6 +956,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">5.000 kg</td>
                 <td><div class="saldo-cell fis">1.800 kg</div></td>
                 <td><div class="saldo-cell jde">1.800 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">1.800 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -956,6 +969,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">8.000 kg</td>
                 <td><div class="saldo-cell fis">5.400 kg</div></td>
                 <td><div class="saldo-cell jde">5.400 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">5.400 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -967,6 +981,7 @@ export const SCREENS = {
                 <td style="font-size:11.5px">Tanque de Preparação de Glicol</td>
                 <td class="mono" style="text-align:center">8.000 kg</td>
                 <td><div class="saldo-cell fis">0 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">0 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
@@ -980,6 +995,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">30.000 kg</td>
                 <td><div class="saldo-cell fis">22.500 kg</div></td>
                 <td><div class="saldo-cell jde">24.000 kg</div></td>
+                <td><div class="saldo-cell jde">-1.500 kg</div></td>
                 <td><div class="saldo-cell disp">18.200 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -992,6 +1008,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">30.000 kg</td>
                 <td><div class="saldo-cell fis">30.000 kg</div></td>
                 <td><div class="saldo-cell jde">30.000 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">30.000 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
                 <td><span class="bdg bdg-ok">Disponível</span></td>
@@ -1004,6 +1021,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">28.500 kg</td>
                 <td><div class="saldo-cell fis dim">—</div></td>
                 <td><div class="saldo-cell jde dim">—</div></td>
+                <td><div class="saldo-cell dim">—</div></td>
                 <td><div class="saldo-cell disp dim">—</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">bloqueado</td>
                 <td><span class="bdg bdg-ney">Ag. Limpeza</span></td>
@@ -1016,6 +1034,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">28.500 kg</td>
                 <td><div class="saldo-cell fis">18.600 kg</div></td>
                 <td><div class="saldo-cell jde">18.600 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">18.600 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -1028,6 +1047,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">12.000 kg</td>
                 <td><div class="saldo-cell fis">4.200 kg</div></td>
                 <td><div class="saldo-cell jde">4.500 kg</div></td>
+                <td><div class="saldo-cell jde">-300 kg</div></td>
                 <td><div class="saldo-cell disp">3.900 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -1040,6 +1060,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">5.000 kg</td>
                 <td><div class="saldo-cell fis">3.800 kg</div></td>
                 <td><div class="saldo-cell jde">3.800 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">3.800 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -1051,6 +1072,7 @@ export const SCREENS = {
                 <td style="font-size:11.5px">Tanque do Sistema de Agitação 52</td>
                 <td class="mono" style="text-align:center">5.000 kg</td>
                 <td><div class="saldo-cell fis">0 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">0 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
@@ -1064,6 +1086,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">5.000 kg</td>
                 <td><div class="saldo-cell fis">0 kg</div></td>
                 <td><div class="saldo-cell jde">0 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">0 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
                 <td><span class="bdg bdg-ok">Disponível</span></td>
@@ -1076,6 +1099,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">26.600 kg</td>
                 <td><div class="saldo-cell fis">12.100 kg</div></td>
                 <td><div class="saldo-cell jde">18.500 kg</div></td>
+                <td><div class="saldo-cell jde">-6.400 kg</div></td>
                 <td><div class="saldo-cell disp">1.200 kg</div></td>
                 <td style="text-align:center;color:var(--verde);font-weight:700;font-size:11px">2</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -1102,6 +1126,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">28.500 kg</td>
                 <td><div class="saldo-cell fis">22.100 kg</div></td>
                 <td><div class="saldo-cell jde">22.100 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">22.100 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -1113,6 +1138,7 @@ export const SCREENS = {
                 <td style="font-size:11.5px">Tanque Homogeneizador 2 (28 m³)</td>
                 <td class="mono" style="text-align:center">26.600 kg</td>
                 <td><div class="saldo-cell fis">0 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">0 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
@@ -1126,6 +1152,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">26.600 kg</td>
                 <td><div class="saldo-cell fis">26.600 kg</div></td>
                 <td><div class="saldo-cell jde">26.600 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">26.600 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
                 <td><span class="bdg bdg-ok">Disponível</span></td>
@@ -1138,6 +1165,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">26.600 kg</td>
                 <td><div class="saldo-cell fis dim">—</div></td>
                 <td><div class="saldo-cell jde dim">—</div></td>
+                <td><div class="saldo-cell dim">—</div></td>
                 <td><div class="saldo-cell disp dim">—</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">bloqueado</td>
                 <td><span class="bdg bdg-ney">Ag. Limpeza</span></td>
@@ -1150,6 +1178,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">26.600 kg</td>
                 <td><div class="saldo-cell fis">12.400 kg</div></td>
                 <td><div class="saldo-cell jde">12.400 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">12.400 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -1161,6 +1190,7 @@ export const SCREENS = {
                 <td style="font-size:11.5px">Tanque Homogeneizador 6</td>
                 <td class="mono" style="text-align:center">26.600 kg</td>
                 <td><div class="saldo-cell fis">0 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">0 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
@@ -1174,6 +1204,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">26.600 kg</td>
                 <td><div class="saldo-cell fis dim">—</div></td>
                 <td><div class="saldo-cell jde dim">—</div></td>
+                <td><div class="saldo-cell dim">—</div></td>
                 <td><div class="saldo-cell disp dim">—</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">—</td>
                 <td><span class="bdg bdg-per">Manutenção</span></td>
@@ -1186,6 +1217,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">26.600 kg</td>
                 <td><div class="saldo-cell fis">8.400 kg</div></td>
                 <td><div class="saldo-cell jde">8.400 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">8.400 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -1197,6 +1229,7 @@ export const SCREENS = {
                 <td style="font-size:11.5px">Tanque Homogeneizador 8 (variante)</td>
                 <td class="mono" style="text-align:center">26.600 kg</td>
                 <td><div class="saldo-cell fis">0 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">0 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
@@ -1210,6 +1243,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">1.330 kg</td>
                 <td><div class="saldo-cell fis">850 kg</div></td>
                 <td><div class="saldo-cell jde">850 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">850 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -1222,6 +1256,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">10.450 kg</td>
                 <td><div class="saldo-cell fis">7.800 kg</div></td>
                 <td><div class="saldo-cell jde">7.800 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">7.800 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -1234,6 +1269,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">1.500 kg</td>
                 <td><div class="saldo-cell fis">920 kg</div></td>
                 <td><div class="saldo-cell jde">920 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">920 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -1245,6 +1281,7 @@ export const SCREENS = {
                 <td style="font-size:11.5px">Tanque Misturador 1064</td>
                 <td class="mono" style="text-align:center">1.500 kg</td>
                 <td><div class="saldo-cell fis">0 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">0 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
@@ -1258,6 +1295,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">8.000 kg</td>
                 <td><div class="saldo-cell fis">6.200 kg</div></td>
                 <td><div class="saldo-cell jde">6.200 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">6.200 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -1270,6 +1308,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">18.000 kg</td>
                 <td><div class="saldo-cell fis">13.400 kg</div></td>
                 <td><div class="saldo-cell jde">15.500 kg</div></td>
+                <td><div class="saldo-cell jde">-2.100 kg</div></td>
                 <td><div class="saldo-cell disp">9.200 kg</div></td>
                 <td style="text-align:center;color:var(--verde);font-weight:700;font-size:11px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -1295,6 +1334,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">18.000 kg</td>
                 <td><div class="saldo-cell fis dim">—</div></td>
                 <td><div class="saldo-cell jde dim">—</div></td>
+                <td><div class="saldo-cell dim">—</div></td>
                 <td><div class="saldo-cell disp dim">—</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">bloqueado</td>
                 <td><span class="bdg bdg-ney">Ag. Limpeza</span></td>
@@ -1307,6 +1347,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">500 kg</td>
                 <td><div class="saldo-cell fis">320 kg</div></td>
                 <td><div class="saldo-cell jde">320 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">320 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -1319,6 +1360,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">500 kg</td>
                 <td><div class="saldo-cell fis">180 kg</div></td>
                 <td><div class="saldo-cell jde">180 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">180 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -1331,6 +1373,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">500 kg</td>
                 <td><div class="saldo-cell fis">250 kg</div></td>
                 <td><div class="saldo-cell jde">250 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">250 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -1342,6 +1385,7 @@ export const SCREENS = {
                 <td style="font-size:11.5px">Tanque Misturador de Branqueador Óptico</td>
                 <td class="mono" style="text-align:center">2.000 kg</td>
                 <td><div class="saldo-cell fis">0 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">0 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
@@ -1355,6 +1399,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">500 kg</td>
                 <td><div class="saldo-cell fis">0 kg</div></td>
                 <td><div class="saldo-cell jde">0 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">0 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">0</td>
                 <td><span class="bdg bdg-ok">Disponível</span></td>
@@ -1367,6 +1412,7 @@ export const SCREENS = {
                 <td class="mono" style="text-align:center">3.000 kg</td>
                 <td><div class="saldo-cell fis">1.450 kg</div></td>
                 <td><div class="saldo-cell jde">1.450 kg</div></td>
+                <td><div class="saldo-cell jde">0 kg</div></td>
                 <td><div class="saldo-cell disp">1.450 kg</div></td>
                 <td style="text-align:center;color:var(--text3);font-size:10px">1</td>
                 <td><span class="bdg bdg-alr">Em Uso</span></td>
@@ -1447,13 +1493,12 @@ export const SCREENS = {
         }, 3000);
       }
 
-      // Cria a coluna "Detalhes" em cada equipamento — botão abre o popup só onde há ordens consumindo.
+      // Cria a coluna "Detalhes" em cada equipamento (a "Baixa Pendente JDE" já vem no HTML).
       function fabSaldoInitDetalhes() {
-        // Nova coluna -> amplia o colspan dos cabeçalhos de grupo e das linhas de detalhe (ocultas).
-        document.querySelectorAll('#fab-saldo-tbody tr.fab-saldo-grupo > td, #fab-saldo-tbody tr.fab-saldo-detail > td').forEach(function(td){ td.colSpan = 10; });
-        var rows = document.querySelectorAll('#fab-saldo-tbody tr[data-eqp]');
-        rows.forEach(function(r){
-          if (r.querySelector('.fab-saldo-det-cell')) return; // evita duplicar ao re-renderizar
+        // Colunas extras (Baixa Pendente JDE no HTML + Detalhes) -> colspan 11 nos cabeçalhos/linhas de detalhe.
+        document.querySelectorAll('#fab-saldo-tbody tr.fab-saldo-grupo > td, #fab-saldo-tbody tr.fab-saldo-detail > td').forEach(function(td){ td.colSpan = 11; });
+        document.querySelectorAll('#fab-saldo-tbody tr[data-eqp]').forEach(function(r){
+          if (r.querySelector('.fab-saldo-det-cell')) return;  // evita duplicar
           var eqp = r.dataset.eqp;
           var has = document.querySelector('#fab-saldo-tbody tr.fab-saldo-detail[data-parent="' + eqp + '"]');
           var td = document.createElement('td');
@@ -2962,7 +3007,7 @@ export const SCREENS = {
                   var cor = sel ? '#9A7520' : 'var(--verde-esc)';
                   var bg = sel ? 'var(--ouro-dim)' : 'var(--verde-dim)';
                   var bd = sel ? 'var(--ouro)' : 'var(--ok-b)';
-                  return '<div onclick="sbGaiolaSel(' + i + ')" style="cursor:pointer;position:relative;width:104px;height:84px;border-radius:10px;border:2px solid ' + bd + ';background:' + bg + ';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">' +
+                  return '<div onclick="sbGaiolaSel(' + i + ')"' + (sel ? ' id="sb-gaiola-sel"' : '') + ' style="cursor:pointer;position:relative;width:104px;height:84px;border-radius:10px;border:2px solid ' + bd + ';background:' + bg + ';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:transform .15s ease;' + (sel ? 'transform:scale(1.1);z-index:1;' : '') + '">' +
                     (sel ? '<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#fff;font-size:8px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap">✓ Selecionada</div>' : '') +
                     '<button onclick="event.stopPropagation();sbReimprimirGaiola(' + i + ')" title="Reimprimir etiqueta da gaiola" style="position:absolute;top:4px;right:4px;width:20px;height:20px;padding:0;line-height:1;border:1px solid ' + cor + ';border-radius:5px;background:var(--surface);color:' + cor + ';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px">🖨️</button>' +
                     sbCageSvg(sel ? '#9A7520' : '#0F3319', 30) +
@@ -3021,6 +3066,15 @@ export const SCREENS = {
                       '<div style="display:flex;gap:10px;flex-wrap:wrap">' + cards + add + '</div>' +
                     '</div>' +
                   '</div>';
+                // Destaque animado (anel dourado pulsante + leve "respiração") na gaiola selecionada.
+                var selCard = document.getElementById('sb-gaiola-sel');
+                if (selCard && selCard.animate) {
+                  selCard.animate([
+                    { boxShadow: '0 0 0 0 rgba(200,168,75,.60)' },
+                    { boxShadow: '0 0 0 12px rgba(200,168,75,0)' },
+                    { boxShadow: '0 0 0 0 rgba(200,168,75,0)' }
+                  ], { duration: 1400, iterations: Infinity, easing: 'ease-in-out' });
+                }
                 setTimeout(function(){ var i = document.getElementById('sb-scan-mais'); if (i) i.focus(); }, 40);
               }
 
