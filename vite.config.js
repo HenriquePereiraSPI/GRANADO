@@ -8,10 +8,10 @@ import path from 'node:path';
 // Falha silenciosamente em ambientes sem git (CI sem .git, etc).
 function gitInfo() {
   try {
-    const hash   = execSync('git rev-parse --short HEAD',          { stdio: ['ignore','pipe','ignore'] }).toString().trim();
-    const branch = execSync('git rev-parse --abbrev-ref HEAD',     { stdio: ['ignore','pipe','ignore'] }).toString().trim();
-    const date   = execSync('git log -1 --format=%cd --date=short',{ stdio: ['ignore','pipe','ignore'] }).toString().trim();
-    const dirty  = execSync('git status --porcelain',              { stdio: ['ignore','pipe','ignore'] }).toString().trim().length > 0;
+    const hash = execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+    const branch = execSync('git rev-parse --abbrev-ref HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+    const date = execSync('git log -1 --format=%cd --date=short', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+    const dirty = execSync('git status --porcelain', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim().length > 0;
     return { hash, branch, date, dirty };
   } catch {
     return { hash: 'dev', branch: 'local', date: '', dirty: false };
@@ -36,9 +36,9 @@ function gitRefreshPlugin() {
     apply: 'serve', // só durante `vite dev`, não no build
     configureServer(server) {
       const root = server.config.root;
-      const gitDir   = path.join(root, '.git');
+      const gitDir = path.join(root, '.git');
       const headFile = path.join(gitDir, 'HEAD');
-      const refsDir  = path.join(gitDir, 'refs', 'heads');
+      const refsDir = path.join(gitDir, 'refs', 'heads');
 
       // Confirma que o repo existe
       try { statSync(headFile); } catch { return; }
@@ -80,6 +80,7 @@ export default defineConfig(() => {
     server: {
       port: 5173,
       open: true,
+      host: true
     },
     define: {
       __APP_VERSION__: JSON.stringify(g),

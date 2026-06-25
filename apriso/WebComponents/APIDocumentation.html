@@ -349,6 +349,16 @@
 
       <div class="gd-cat">
         <button class="gd-cat-toggle" aria-expanded="false" onclick="gdToggleCat(this)">
+          <span class="gd-cat-chevron">▸</span> Manutenção
+        </button>
+        <div class="gd-cat-items">
+          <div class="gd-subgroup">API</div>
+          <a class="gd-link" href="#GRD_API_CreateDowntimeEvent">GRD_API_CreateDowntimeEvent</a>
+        </div>
+      </div>
+
+      <div class="gd-cat">
+        <button class="gd-cat-toggle" aria-expanded="false" onclick="gdToggleCat(this)">
           <span class="gd-cat-chevron">▸</span> Outros
         </button>
         <div class="gd-cat-items">
@@ -1308,6 +1318,124 @@
             <code>Success</code> e <code>Message</code>.</li>
           <li><strong>Destino:</strong> <code>DestinationContainer</code> deve referenciar uma
             gaiola existente (ver <code>GRD_API_CreateCage</code>).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_CreateDowntimeEvent
+           ============================================================ -->
+      <section id="GRD_API_CreateDowntimeEvent">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_CreateDowntimeEvent</code></h1>
+        <p class="gd-lead">
+          Faz o <strong>apontamento de start/stop de um equipamento (recurso)</strong> — registra
+          o novo estado do recurso (em operação ou parado), com o motivo e uma observação opcional.
+          Retorna o <strong>ID do evento</strong> gerado em <code>Data</code>.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_CreateDowntimeEvent</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>Data</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"10000"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"1|0"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Outros"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"DowntimeComment"</span><span class="tk-punc">:</span> <span class="tk-str">"Observação sobre o motivo da parada"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">ResourceName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Nome do recurso (equipamento) que terá o estado apontado.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Status</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Novo estado do recurso: <code>"1"</code> = em operação (<em>start</em>) · <code>"0"</code> = parado (<em>stop</em>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">ReasonCode</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Código/motivo da parada (ex.: <code>"Outros"</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">DowntimeComment</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Não</td>
+              <td class="col-desc">Observação livre sobre o motivo da parada.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Novo estado do recurso registrado com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Data"</span><span class="tk-punc">:</span> <span class="tk-num">87785224</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">Success</td>
+              <td class="col-type">boolean</td>
+              <td class="col-desc">Indica se o apontamento foi registrado com sucesso.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Message</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">Mensagem de retorno — confirmação em caso de sucesso ou detalhe do erro.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Data</td>
+              <td class="col-type">number</td>
+              <td class="col-desc">ID do evento de parada/operação gerado pelo apontamento.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Start/Stop:</strong> use <code>Status: "1"</code> para retomar a operação e
+            <code>Status: "0"</code> para registrar a parada do recurso.</li>
+          <li><strong>ResourceName:</strong> é o mesmo <code>ResourceName</code> devolvido por
+            <a class="gd-link" href="#GRD_API_GetOrganizationalTree">GRD_API_GetOrganizationalTree</a>
+            (em <code>data.ResourceName</code>).</li>
+          <li><strong>Retorno:</strong> esta API devolve o ID do evento em <code>Data</code>; verifique
+            <code>Success</code> antes de utilizá-lo.</li>
         </ul>
       </section>
 
