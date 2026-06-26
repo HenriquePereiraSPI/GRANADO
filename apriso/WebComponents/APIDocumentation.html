@@ -354,6 +354,10 @@
         <div class="gd-cat-items">
           <div class="gd-subgroup">API</div>
           <a class="gd-link" href="#GRD_API_CreateDowntimeEvent">GRD_API_CreateDowntimeEvent</a>
+          <a class="gd-link" href="#GRD_API_CreateDowntimeOrderEvent">GRD_API_CreateDowntimeOrderEvent</a>
+          <a class="gd-link" href="#GRD_API_CreateEquipmentCertificate">GRD_API_CreateEquipmentCertificate</a>
+          <a class="gd-link" href="#GRD_API_DeleteEquipmentCertificate">GRD_API_DeleteEquipmentCertificate</a>
+          <a class="gd-link" href="#GRD_API_GetEquipmentCertificate">GRD_API_GetEquipmentCertificate</a>
         </div>
       </div>
 
@@ -364,6 +368,7 @@
         <div class="gd-cat-items">
           <div class="gd-subgroup">API</div>
           <a class="gd-link" href="#GRD_API_GetOrganizationalTree">GRD_API_GetOrganizationalTree</a>
+          <a class="gd-link" href="#GRD_API_GetAllPrinters">GRD_API_GetAllPrinters</a>
         </div>
       </div>
     </nav>
@@ -1440,6 +1445,422 @@
       </section>
 
       <!-- ============================================================
+           GRD_API_CreateDowntimeOrderEvent
+           ============================================================ -->
+      <section id="GRD_API_CreateDowntimeOrderEvent">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_CreateDowntimeOrderEvent</code></h1>
+        <p class="gd-lead">
+          <strong>Vincula a ordem a um recurso</strong>, registrando a disponibilidade do
+          equipamento para aquela ordem (start/stop). Retorna o <strong>ID do evento</strong>
+          gerado em <code>Data</code>.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_CreateDowntimeOrderEvent</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>Data</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000020"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000014"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WipOrderType"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD2_SALA3"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"1|0"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">ResourceName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Nome do recurso (equipamento) ao qual a ordem será vinculada.</td>
+            </tr>
+            <tr>
+              <td class="col-name">WipOrderNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Número da ordem (WIP) a vincular ao recurso.</td>
+            </tr>
+            <tr>
+              <td class="col-name">WipOrderType</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Tipo da ordem (WIP).</td>
+            </tr>
+            <tr>
+              <td class="col-name">Workcenter</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Workcenter (sala) do recurso.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Status</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Disponibilidade do recurso para a ordem: <code>"1"</code> = em operação (<em>start</em>) · <code>"0"</code> = parado (<em>stop</em>).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Ordem registrada com sucesso ao recurso"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Data"</span><span class="tk-punc">:</span> <span class="tk-str">"515156984787"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">Success</td>
+              <td class="col-type">boolean</td>
+              <td class="col-desc">Indica se a ordem foi vinculada ao recurso com sucesso.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Message</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">Mensagem de retorno — confirmação em caso de sucesso ou detalhe do erro.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Data</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">ID do evento gerado pelo vínculo da ordem ao recurso.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Vínculo ordem ↔ recurso:</strong> registra a disponibilidade do recurso para a
+            ordem informada — use <code>Status: "1"</code> para start e <code>"0"</code> para stop.</li>
+          <li><strong>ResourceName:</strong> é o mesmo <code>ResourceName</code> devolvido por
+            <a class="gd-link" href="#GRD_API_GetOrganizationalTree">GRD_API_GetOrganizationalTree</a>
+            (em <code>data.ResourceName</code>).</li>
+          <li><strong>Diferença para <code>GRD_API_CreateDowntimeEvent</code>:</strong> esta API
+            associa também a <strong>ordem</strong> (<code>WipOrderNo</code>/<code>WipOrderType</code>)
+            ao recurso, e não apenas o estado do equipamento.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_CreateEquipmentCertificate
+           ============================================================ -->
+      <section id="GRD_API_CreateEquipmentCertificate">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_CreateEquipmentCertificate</code></h1>
+        <p class="gd-lead">
+          <strong>Anexa um certificado a um equipamento</strong> — vincula o certificado informado
+          ao recurso (equipamento), registrando o requisito de capacitação para operá-lo.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_CreateEquipmentCertificate</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>).
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"EquipmentResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000020"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"CertificateName"</span><span class="tk-punc">:</span> <span class="tk-str">"Certificate_Teste"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:210px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">EquipmentResourceName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ResourceName do equipamento ao qual o certificado será anexado.</td>
+            </tr>
+            <tr>
+              <td class="col-name">CertificateName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Nome do certificado a anexar ao equipamento.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Certificado anexado com sucesso."</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">Success</td>
+              <td class="col-type">boolean</td>
+              <td class="col-desc">Indica se o certificado foi anexado com sucesso.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Message</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">Mensagem de retorno — confirmação em caso de sucesso ou detalhe do erro.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>EquipmentResourceName:</strong> é o mesmo <code>ResourceName</code> devolvido por
+            <a class="gd-link" href="#GRD_API_GetOrganizationalTree">GRD_API_GetOrganizationalTree</a>
+            (em <code>data.ResourceName</code>).</li>
+          <li><strong>Sem retorno de ID:</strong> esta API devolve apenas <code>Success</code> /
+            <code>Message</code> — verifique <code>Success</code> para confirmar o anexo.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_DeleteEquipmentCertificate
+           ============================================================ -->
+      <section id="GRD_API_DeleteEquipmentCertificate">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_DeleteEquipmentCertificate</code></h1>
+        <p class="gd-lead">
+          <strong>Remove um certificado de um equipamento</strong> — desvincula o certificado
+          informado do recurso (equipamento), retirando o requisito de capacitação.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_DeleteEquipmentCertificate</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>).
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"EquipmentResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000020"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"CertificateName"</span><span class="tk-punc">:</span> <span class="tk-str">"Certificate_Teste"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:210px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">EquipmentResourceName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ResourceName do equipamento do qual o certificado será removido.</td>
+            </tr>
+            <tr>
+              <td class="col-name">CertificateName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Nome do certificado a remover do equipamento.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Certificado deletado com sucesso."</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">Success</td>
+              <td class="col-type">boolean</td>
+              <td class="col-desc">Indica se o certificado foi removido com sucesso.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Message</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">Mensagem de retorno — confirmação em caso de sucesso ou detalhe do erro.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Par de <code>GRD_API_CreateEquipmentCertificate</code>:</strong> mesma chave
+            (<code>EquipmentResourceName</code> + <code>CertificateName</code>) usada para anexar — aqui
+            ela remove o vínculo.</li>
+          <li><strong>Sem retorno de ID:</strong> devolve apenas <code>Success</code> /
+            <code>Message</code> — verifique <code>Success</code> para confirmar a remoção.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetEquipmentCertificate
+           ============================================================ -->
+      <section id="GRD_API_GetEquipmentCertificate">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetEquipmentCertificate</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera os certificados de um equipamento</strong> — lista os certificados
+          vinculados ao recurso (equipamento) informado.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetEquipmentCertificate</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>EquipmentCertificates</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"EquipmentResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000020"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:210px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">EquipmentResourceName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ResourceName do equipamento cujos certificados serão recuperados.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON) — <code>EquipmentCertificates</code> é a lista de certificados:</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Certificados recuperados com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"EquipmentCertificates"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"ID"</span><span class="tk-punc">:</span> <span class="tk-str">"4"</span><span class="tk-punc">,</span> <span class="tk-key">"ResourceID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000103"</span><span class="tk-punc">,</span> <span class="tk-key">"CertificateName"</span><span class="tk-punc">:</span> <span class="tk-str">"Certificate_Teste2"</span><span class="tk-punc">,</span> <span class="tk-key">"Active"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"6/25/2026 10:12:00 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Winke"</span>
+    }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:160px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se os certificados foram recuperados com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">EquipmentCertificates</td><td class="col-type">array&lt;certificado&gt;</td><td class="col-desc">Lista dos certificados do equipamento. Campos de cada item abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada certificado</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:120px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">ID</td><td class="col-type">string</td><td class="col-desc">Identificador do vínculo certificado ↔ equipamento.</td></tr>
+            <tr><td class="col-name">ResourceID</td><td class="col-type">string</td><td class="col-desc">ResourceID do equipamento ao qual o certificado está vinculado.</td></tr>
+            <tr><td class="col-name">CertificateName</td><td class="col-type">string</td><td class="col-desc">Nome do certificado.</td></tr>
+            <tr><td class="col-name">Active</td><td class="col-type">string (bool)</td><td class="col-desc">Indica se o vínculo está ativo (<code>"True"</code> / <code>"False"</code>).</td></tr>
+            <tr><td class="col-name">CreatedOn</td><td class="col-type">string (data)</td><td class="col-desc">Data/hora de criação do vínculo.</td></tr>
+            <tr><td class="col-name">CreatedBy</td><td class="col-type">string</td><td class="col-desc">Usuário que criou o vínculo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>EquipmentResourceName:</strong> é o mesmo <code>ResourceName</code> devolvido por
+            <a class="gd-link" href="#GRD_API_GetOrganizationalTree">GRD_API_GetOrganizationalTree</a>
+            (em <code>data.ResourceName</code>).</li>
+          <li><strong>Complementa:</strong> use junto de
+            <a class="gd-link" href="#GRD_API_CreateEquipmentCertificate">GRD_API_CreateEquipmentCertificate</a> e
+            <a class="gd-link" href="#GRD_API_DeleteEquipmentCertificate">GRD_API_DeleteEquipmentCertificate</a>
+            para gerenciar os certificados do equipamento.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
            GRD_API_GetOrganizationalTree
            ============================================================ -->
       <section id="GRD_API_GetOrganizationalTree">
@@ -1533,6 +1954,89 @@
             <code>dot</code> vermelho e <code>dotPulse: true</code> (bolinha pulsando).</li>
           <li><strong>Hierarquia:</strong> raízes são Production Lines (<code>Parent: ""</code>); cada
             uma contém Workcenters, que contêm Scales.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetAllPrinters
+           ============================================================ -->
+      <section id="GRD_API_GetAllPrinters">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetAllPrinters</code></h1>
+        <p class="gd-lead">
+          Recupera <strong>todas as impressoras ativas</strong> e traz junto a informação do
+          <strong>equipamento vinculado</strong> (a sala default de cada impressora).
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetAllPrinters</span>
+        </div>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead"><strong>Nenhum.</strong> A API não recebe parâmetros — retorna todas as impressoras ativas.</p>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON) — <code>Printers</code> é a lista de impressoras:</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Impressoras recuperadas com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Printers"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"ID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000000"</span><span class="tk-punc">,</span> <span class="tk-key">"PrinterName"</span><span class="tk-punc">:</span> <span class="tk-str">"PRINTER_MD1_SALA1"</span><span class="tk-punc">,</span> <span class="tk-key">"SpoolAddress"</span><span class="tk-punc">:</span> <span class="tk-str">"\\\\10.10.11.192\\impressora"</span><span class="tk-punc">,</span> <span class="tk-key">"SpoolType"</span><span class="tk-punc">:</span> <span class="tk-str">"2"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"DefaultEquipmentResourceID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000096"</span><span class="tk-punc">,</span> <span class="tk-key">"DefaultEquipmentResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000014"</span><span class="tk-punc">,</span> <span class="tk-key">"Equipment"</span><span class="tk-punc">:</span> <span class="tk-str">"MD2_SALA1"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"ID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000004"</span><span class="tk-punc">,</span> <span class="tk-key">"PrinterName"</span><span class="tk-punc">:</span> <span class="tk-str">"PRINTER_TESTE2"</span><span class="tk-punc">,</span> <span class="tk-key">"SpoolAddress"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"SpoolType"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"DefaultEquipmentResourceID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000111"</span><span class="tk-punc">,</span> <span class="tk-key">"DefaultEquipmentResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000028"</span><span class="tk-punc">,</span> <span class="tk-key">"Equipment"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA2"</span>
+    }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:140px">Campo</th><th style="width:140px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as impressoras foram recuperadas com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">Printers</td><td class="col-type">array&lt;impressora&gt;</td><td class="col-desc">Lista das impressoras ativas. Campos de cada item abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada impressora</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:230px">Campo</th><th style="width:120px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">ID</td><td class="col-type">string</td><td class="col-desc">Identificador da impressora.</td></tr>
+            <tr><td class="col-name">PrinterName</td><td class="col-type">string</td><td class="col-desc">Nome da impressora.</td></tr>
+            <tr><td class="col-name">SpoolAddress</td><td class="col-type">string</td><td class="col-desc">Caminho de spool/fila de impressão (ex.: <code>\\10.10.11.192\impressora</code>). Pode vir vazio.</td></tr>
+            <tr><td class="col-name">SpoolType</td><td class="col-type">string</td><td class="col-desc">Tipo de spool da impressora.</td></tr>
+            <tr><td class="col-name">DefaultEquipmentResourceID</td><td class="col-type">string</td><td class="col-desc">ResourceID do equipamento (sala) vinculado por padrão.</td></tr>
+            <tr><td class="col-name">DefaultEquipmentResourceName</td><td class="col-type">string</td><td class="col-desc">ResourceName do equipamento (sala) vinculado por padrão.</td></tr>
+            <tr><td class="col-name">Equipment</td><td class="col-type">string</td><td class="col-desc">Código/nome do equipamento (sala) vinculado à impressora.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Cadastro das impressoras</h3>
+        <p class="gd-lead">
+          As impressoras devem ser cadastradas no <strong>desktop client</strong> em
+          <code>PRINTER</code> e <code>PRINTER_RESOURCE</code> (definição da <strong>sala padrão</strong>).
+        </p>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Cadastro:</strong> impressoras registradas no <strong>desktop client</strong> em
+            <code>PRINTER</code> (impressora) e <code>PRINTER_RESOURCE</code> (vínculo da sala padrão).</li>
+          <li><strong>Sala default:</strong> cada impressora já vem com o equipamento (sala) vinculado
+            em <code>Equipment</code> / <code>DefaultEquipmentResourceName</code>.</li>
+          <li><strong>SpoolAddress vazio:</strong> impressoras sem endereço de spool retornam o campo
+            como string vazia (<code>""</code>).</li>
         </ul>
       </section>
 
