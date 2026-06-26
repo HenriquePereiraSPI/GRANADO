@@ -344,6 +344,7 @@
           <a class="gd-link" href="#GRD_API_AppointWeight">GRD_API_AppointWeight</a>
           <a class="gd-link" href="#GRD_API_CancelWeight">GRD_API_CancelWeight</a>
           <a class="gd-link" href="#GRD_API_MoveMPCage">GRD_API_MoveMPCage</a>
+          <a class="gd-link" href="#GRD_API_CloseWeightOrder">GRD_API_CloseWeightOrder</a>
         </div>
       </div>
 
@@ -874,9 +875,9 @@
       <section id="GRD_API_CreateCage">
         <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_CreateCage</code></h1>
         <p class="gd-lead">
-          Cria uma <strong>gaiola vinculada a uma ordem</strong>. Recebe o número da ordem e
-          devolve o número da gaiola gerada (<code>CageNo</code>), pronto para receber as
-          pesagens das matérias-primas daquela ordem.
+          Cria uma ou mais <strong>gaiolas vinculadas a uma ordem</strong>. Recebe o número da ordem
+          e a <strong>quantidade de gaiolas</strong>, e devolve a lista de gaiolas geradas
+          (<code>Gaiolas</code>), prontas para receber as pesagens das matérias-primas daquela ordem.
         </p>
 
         <h2 class="gd-h2">Chamada</h2>
@@ -886,14 +887,15 @@
         </div>
         <p class="gd-lead">
           Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
-          (<code>Success</code> / <code>Message</code>) acrescido de <code>CageNo</code>.
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>Gaiolas</code>.
         </p>
 
         <!-- ===== Inputs ===== -->
         <h2 class="gd-h2">Inputs</h2>
         <p class="gd-lead">Corpo da requisição (JSON):</p>
         <pre class="gd-code">{
-  <span class="tk-key">"OrderNumber"</span><span class="tk-punc">:</span> <span class="tk-str">"847489877"</span>
+  <span class="tk-key">"OrderNumber"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000010"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"CountCages"</span><span class="tk-punc">:</span> <span class="tk-str">"5"</span>
 }</pre>
 
         <h3 class="gd-h3">Campos de entrada</h3>
@@ -911,7 +913,13 @@
               <td class="col-name">OrderNumber</td>
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
-              <td class="col-desc">Número da ordem à qual a nova gaiola será vinculada.</td>
+              <td class="col-desc">Número da ordem à qual as gaiolas serão vinculadas.</td>
+            </tr>
+            <tr>
+              <td class="col-name">CountCages</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Quantidade de gaiolas a criar para a ordem.</td>
             </tr>
           </tbody>
         </table>
@@ -921,8 +929,8 @@
         <p class="gd-lead">Envelope de resposta (JSON):</p>
         <pre class="gd-code">{
   <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
-  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Gaiola criada com sucesso."</span><span class="tk-punc">,</span>
-  <span class="tk-key">"CageNo"</span><span class="tk-punc">:</span> <span class="tk-str">"100000015"</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Gaiolas criadas com sucesso"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Gaiolas"</span><span class="tk-punc">:</span> [<span class="tk-str">"G000136"</span><span class="tk-punc">,</span> <span class="tk-str">"G000137"</span><span class="tk-punc">,</span> <span class="tk-str">"G000138"</span>]
 }</pre>
 
         <h3 class="gd-h3">Campos de saída</h3>
@@ -938,7 +946,7 @@
             <tr>
               <td class="col-name">Success</td>
               <td class="col-type">boolean</td>
-              <td class="col-desc">Indica se a gaiola foi criada com sucesso.</td>
+              <td class="col-desc">Indica se as gaiolas foram criadas com sucesso.</td>
             </tr>
             <tr>
               <td class="col-name">Message</td>
@@ -946,19 +954,21 @@
               <td class="col-desc">Mensagem de retorno — confirmação em caso de sucesso ou detalhe do erro.</td>
             </tr>
             <tr>
-              <td class="col-name">CageNo</td>
-              <td class="col-type">string</td>
-              <td class="col-desc">Número da gaiola criada e vinculada à ordem.</td>
+              <td class="col-name">Gaiolas</td>
+              <td class="col-type">array&lt;string&gt;</td>
+              <td class="col-desc">Lista dos números das gaiolas criadas e vinculadas à ordem.</td>
             </tr>
           </tbody>
         </table>
 
         <h3 class="gd-h3">Notas</h3>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
-          <li><strong>Retorno:</strong> esta API retorna <code>CageNo</code> (e não
-            <code>Data</code>) com o número da gaiola gerada. Verifique <code>Success</code>
-            antes de usá-lo.</li>
-          <li><strong>Vínculo:</strong> a gaiola já nasce associada à <code>OrderNumber</code>
+          <li><strong>Retorno:</strong> esta API retorna a lista <code>Gaiolas</code> (e não
+            <code>Data</code>) com os números das gaiolas geradas. Verifique <code>Success</code>
+            antes de usá-la.</li>
+          <li><strong>Quantidade:</strong> <code>CountCages</code> define quantas gaiolas serão
+            criadas — a lista <code>Gaiolas</code> terá esse tamanho.</li>
+          <li><strong>Vínculo:</strong> as gaiolas já nascem associadas à <code>OrderNumber</code>
             informada.</li>
         </ul>
       </section>
@@ -1323,6 +1333,95 @@
             <code>Success</code> e <code>Message</code>.</li>
           <li><strong>Destino:</strong> <code>DestinationContainer</code> deve referenciar uma
             gaiola existente (ver <code>GRD_API_CreateCage</code>).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_CloseWeightOrder
+           ============================================================ -->
+      <section id="GRD_API_CloseWeightOrder">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_CloseWeightOrder</code></h1>
+        <p class="gd-lead">
+          <strong>Finaliza uma ordem de pesagem</strong> — muda o status da ordem para
+          <strong>100</strong> e <strong>fecha todos os states</strong> abertos vinculados aos
+          recursos (resources) da ordem.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_CloseWeightOrder</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>).
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"100000050"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">WipOrderNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Número da ordem (WIP) a ser finalizada.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Ordem finalizada com sucesso."</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">Success</td>
+              <td class="col-type">boolean</td>
+              <td class="col-desc">Indica se a ordem foi finalizada com sucesso.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Message</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">Mensagem de retorno — confirmação em caso de sucesso ou detalhe do erro.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Status 100:</strong> a ordem passa para o status <code>100</code> (finalizada).</li>
+          <li><strong>Fecha states abertos:</strong> todos os states em aberto vinculados aos recursos
+            da ordem são encerrados automaticamente.</li>
+          <li><strong>Sem <code>Data</code>:</strong> esta API retorna apenas <code>Success</code> e
+            <code>Message</code> — verifique <code>Success</code> antes de prosseguir.</li>
         </ul>
       </section>
 
