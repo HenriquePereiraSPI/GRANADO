@@ -151,39 +151,249 @@ export const SCREENS = {
         <div><div class="ph-eyebrow">Fabricação · Reator R-01 · MF5</div><div class="ph-title">Acompanhamento das Fases InBatch</div></div>
         <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416 · Receita R-2024-089<br><span style="color:var(--alr)">Fase 2/4 em andamento</span></div>
       </div>
+      <div class="abox inf mb14">
+        <span class="ai" style="font-size:18px">👁️</span>
+        <div><strong>Modo leitura.</strong> Esta tela apenas reflete o status atual do InBatch — não há interação com o equipamento. As fases avançam automaticamente conforme o processo evolui no controlador.</div>
+      </div>
       <div class="g4 mb14">
         <div class="card" style="text-align:center"><div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--verde)">78°C</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Temperatura Atual</div></div>
         <div class="card" style="text-align:center"><div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--inf)">42rpm</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Agitação</div></div>
         <div class="card" style="text-align:center"><div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--ouro)">6,8</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">pH Atual</div></div>
         <div class="card ca" style="text-align:center"><div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--alr)">38min</div><div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Tempo na Fase</div></div>
       </div>
-      <div class="g73">
-        <div class="card cv">
-          <div class="card-title">Fases da Receita — R-2024-089</div>
-          <div class="fase-item" style="opacity:.8"><div class="fase-num done">1</div><div class="fase-info"><div class="fase-nome">Fase Aquosa — Dissolução</div><div class="fase-desc">Aqua + Glicerina + Carbopol · T: 75°C · 30 min · Homogeneização</div></div><div><span class="bdg bdg-ok">✓ Concluída · 28min</span></div></div>
-          <div class="fase-item" style="border:1.5px solid var(--ouro-claro);background:var(--ouro-dim)"><div class="fase-num ativo">2</div><div class="fase-info"><div class="fase-nome">Neutralização e Ajuste de pH</div><div class="fase-desc">TEA + ajuste pH 6,5–7,0 · T: 75–80°C · Aguardando estabilização · pH alvo: 6,80</div><div class="fase-bar"><div class="fase-fill" style="width:60%"></div></div></div><div><span class="bdg bdg-alr">Em andamento · 38/60min</span></div></div>
-          <div class="fase-item" style="opacity:.5"><div class="fase-num">3</div><div class="fase-info"><div class="fase-nome">Adição de Ativos e Conservantes</div><div class="fase-desc">Extrato Rosa Mosqueta + Pantenol + Fenoxietanol + Vitamina E · T: 40°C · 15 min</div></div><div><span class="bdg bdg-ney">Aguardando</span></div></div>
-          <div class="fase-item" style="opacity:.5"><div class="fase-num">4</div><div class="fase-info"><div class="fase-nome">Finalização e Adição de Fragância</div><div class="fase-desc">Resfriamento até 35°C · Adição de fragância e corante · Homogeneização final · Coleta de amostra</div></div><div><span class="bdg bdg-ney">Aguardando</span></div></div>
+      <div class="card cv">
+        <div class="card-title" style="margin-bottom:8px">Relatório do InBatch — Sequência de Fases</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;padding:10px 12px;background:var(--surface);border:1.5px solid var(--ouro-claro);border-radius:6px;border-left:4px solid var(--ouro)">
+          <span style="font-size:11px;font-weight:800;color:var(--verde-esc)">⚙️ Instructions InBatch:</span>
+          <span style="font-size:11px;color:var(--text2)"><strong>17</strong> etapas planejadas</span>
+          <span style="font-size:11px;color:var(--ok)">· <strong>6</strong> concluídas</span>
+          <span style="font-size:11px;color:var(--alr)">· <strong>1</strong> em andamento</span>
+          <span style="font-size:11px;color:var(--text3)">· <strong>10</strong> aguardando</span>
+          <span style="font-size:11px;color:var(--inf)">· <strong>3</strong> manuais (CQ / operador)</span>
         </div>
-        <div>
-          <div class="resumo" style="margin-bottom:14px">
-            <div class="resumo-hd">Parâmetros Alvo — Fase 2</div>
-            <div class="sum-row"><span class="sk">Temperatura</span><span class="sv">75–80°C <span style="color:var(--ok)">✓</span></span></div>
-            <div class="sum-row"><span class="sk">pH alvo</span><span class="sv">6,80 <span style="color:var(--ok)">✓</span></span></div>
-            <div class="sum-row"><span class="sk">Agitação</span><span class="sv">40–50 rpm <span style="color:var(--ok)">✓</span></span></div>
-            <div class="sum-row"><span class="sk">Duração prev.</span><span class="sv">60 min</span></div>
-            <div class="sum-row"><span class="sk">Decorrido</span><span class="sv" style="color:var(--alr)">38 min</span></div>
-            <div style="margin-top:14px">
-              <button class="btn btn-md btn-v btn-full" onclick="alert('Fase 2 concluída!\\nIniciando Fase 3...')">✔ Confirmar Fase 2</button>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">Registro de Parâmetros</div>
-            <div class="form-row"><div class="fg"><label class="lbl">pH medido</label><input class="inp" type="number" value="6.8" step="0.1"></div></div>
-            <div class="form-row"><div class="fg"><label class="lbl">Temperatura (°C)</label><input class="inp" type="number" value="78"></div></div>
-            <div class="form-row"><div class="fg"><label class="lbl">Observações</label><textarea class="txta" style="min-height:60px" placeholder="Observações do operador..."></textarea></div></div>
-            <button class="btn btn-sm btn-ghost" style="margin-top:8px;width:100%">Registrar Parâmetro</button>
-          </div>
+        <div style="overflow-x:auto">
+          <table class="tbl" style="font-size:11px;min-width:960px">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Fase</th>
+                <th>Evento / Parâmetro</th>
+                <th>UM</th>
+                <th style="text-align:right">Previsto</th>
+                <th style="text-align:right">Realizado</th>
+                <th>Início → Fim</th>
+                <th style="text-align:right">Dur.</th>
+                <th>Operador</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-left:3px solid var(--inf)">
+                <td class="mono" style="color:var(--text3)">01</td>
+                <td style="font-weight:600"><span title="Verificação Inicial" style="margin-right:4px">🔍</span>Início Fabricação <span title="Input manual" style="margin-left:4px">👤</span></td>
+                <td style="font-size:11px">Confirmar zeragem balança + utensílios</td>
+                <td class="mono" style="font-size:10px">—</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">OK</td>
+                <td class="mono" style="text-align:right;font-weight:700;color:var(--verde)">OK</td>
+                <td class="mono" style="font-size:10px;color:var(--text2);white-space:nowrap">29/06 14:30 → 29/06 14:32</td>
+                <td class="mono" style="text-align:right;font-size:10px">2 min</td>
+                <td style="font-size:10px">M.Rocha</td>
+                <td><span class="bdg bdg-ok" style="font-size:9px">✓ OK</span></td>
+              </tr>
+              <tr style="border-left:3px solid var(--ouro)">
+                <td class="mono" style="color:var(--text3)">02</td>
+                <td style="font-weight:600"><span title="Adição de Material" style="margin-right:4px">⬇️</span>Adição de Água Purificada</td>
+                <td style="font-size:11px">Carregar água purificada</td>
+                <td class="mono" style="font-size:10px">kg</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">350,000</td>
+                <td class="mono" style="text-align:right;font-weight:700;color:var(--verde)">349,820</td>
+                <td class="mono" style="font-size:10px;color:var(--text2);white-space:nowrap">29/06 14:32 → 29/06 14:42</td>
+                <td class="mono" style="text-align:right;font-size:10px">10 min</td>
+                <td style="font-size:10px">M.Rocha</td>
+                <td><span class="bdg bdg-ok" style="font-size:9px">✓ OK</span></td>
+              </tr>
+              <tr style="border-left:3px solid var(--text2)">
+                <td class="mono" style="color:var(--text3)">03</td>
+                <td style="font-weight:600"><span title="Fase InBatch" style="margin-right:4px">⚙️</span>Aquecimento</td>
+                <td style="font-size:11px">Aquecer até 75°C</td>
+                <td class="mono" style="font-size:10px">°C</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">75,0</td>
+                <td class="mono" style="text-align:right;font-weight:700;color:var(--verde)">75,2</td>
+                <td class="mono" style="font-size:10px;color:var(--text2);white-space:nowrap">29/06 14:42 → 29/06 15:02</td>
+                <td class="mono" style="text-align:right;font-size:10px">20 min</td>
+                <td style="font-size:10px">M.Rocha</td>
+                <td><span class="bdg bdg-ok" style="font-size:9px">✓ OK</span></td>
+              </tr>
+              <tr style="border-left:3px solid var(--ouro)">
+                <td class="mono" style="color:var(--text3)">04</td>
+                <td style="font-weight:600"><span title="Adição de Material" style="margin-right:4px">⬇️</span>Adição Glicerina</td>
+                <td style="font-size:11px">Carregar glicerina refinada</td>
+                <td class="mono" style="font-size:10px">kg</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">28,000</td>
+                <td class="mono" style="text-align:right;font-weight:700;color:var(--verde)">28,012</td>
+                <td class="mono" style="font-size:10px;color:var(--text2);white-space:nowrap">29/06 15:02 → 29/06 15:08</td>
+                <td class="mono" style="text-align:right;font-size:10px">6 min</td>
+                <td style="font-size:10px">M.Rocha</td>
+                <td><span class="bdg bdg-ok" style="font-size:9px">✓ OK</span></td>
+              </tr>
+              <tr style="border-left:3px solid var(--ouro)">
+                <td class="mono" style="color:var(--text3)">05</td>
+                <td style="font-weight:600"><span title="Adição de Material" style="margin-right:4px">⬇️</span>Adição Carbopol 940</td>
+                <td style="font-size:11px">Espalhar Carbopol sobre superfície</td>
+                <td class="mono" style="font-size:10px">kg</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">4,200</td>
+                <td class="mono" style="text-align:right;font-weight:700;color:var(--verde)">4,200</td>
+                <td class="mono" style="font-size:10px;color:var(--text2);white-space:nowrap">29/06 15:08 → 29/06 15:12</td>
+                <td class="mono" style="text-align:right;font-size:10px">4 min</td>
+                <td style="font-size:10px">M.Rocha</td>
+                <td><span class="bdg bdg-ok" style="font-size:9px">✓ OK</span></td>
+              </tr>
+              <tr style="border-left:3px solid var(--verde)">
+                <td class="mono" style="color:var(--text3)">06</td>
+                <td style="font-weight:600"><span title="Homogeneização" style="margin-right:4px">🌀</span>Homogeneização</td>
+                <td style="font-size:11px">Agitar 30 min @ 250 rpm</td>
+                <td class="mono" style="font-size:10px">rpm</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">250</td>
+                <td class="mono" style="text-align:right;font-weight:700;color:var(--verde)">250</td>
+                <td class="mono" style="font-size:10px;color:var(--text2);white-space:nowrap">29/06 15:12 → 29/06 15:42</td>
+                <td class="mono" style="text-align:right;font-size:10px">30 min</td>
+                <td style="font-size:10px">M.Rocha</td>
+                <td><span class="bdg bdg-ok" style="font-size:9px">✓ OK</span></td>
+              </tr>
+              <tr style="border-left:3px solid var(--ouro)">
+                <td class="mono" style="color:var(--text3)">07</td>
+                <td style="font-weight:600"><span title="Adição de Material" style="margin-right:4px">⬇️</span>Adição TEA</td>
+                <td style="font-size:11px">Carregar Trietanolamina</td>
+                <td class="mono" style="font-size:10px">kg</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">2,500</td>
+                <td class="mono" style="text-align:right;font-weight:700;color:var(--verde)">2,498</td>
+                <td class="mono" style="font-size:10px;color:var(--text2);white-space:nowrap">29/06 15:42 → 29/06 15:46</td>
+                <td class="mono" style="text-align:right;font-size:10px">4 min</td>
+                <td style="font-size:10px">M.Rocha</td>
+                <td><span class="bdg bdg-ok" style="font-size:9px">✓ OK</span></td>
+              </tr>
+              <tr style="border-left:3px solid var(--alr);background:var(--ouro-dim)">
+                <td class="mono" style="color:var(--alr);font-weight:700">08</td>
+                <td style="font-weight:700"><span title="Fase InBatch" style="margin-right:4px">⚙️</span>Ajuste de pH e Estabilização</td>
+                <td style="font-size:11px">Estabilizar pH em 6,80 ± 0,10</td>
+                <td class="mono" style="font-size:10px">pH</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">6,80</td>
+                <td class="mono" style="text-align:right;font-weight:700;color:var(--alr)">6,80 (parcial)</td>
+                <td class="mono" style="font-size:10px;color:var(--text2);white-space:nowrap">29/06 15:46 → <span style="color:var(--alr)">em andamento</span></td>
+                <td class="mono" style="text-align:right;font-size:10px;color:var(--alr);font-weight:700">38 / 60 min</td>
+                <td style="font-size:10px">M.Rocha</td>
+                <td><span class="bdg bdg-alr" style="font-size:9px">⏵ Em andamento</span></td>
+              </tr>
+              <tr style="border-left:3px solid var(--text2);opacity:.55">
+                <td class="mono" style="color:var(--text3)">09</td>
+                <td style="font-weight:600"><span title="Adição de Material" style="margin-right:4px">⬇️</span>Adição Extrato Rosa Mosqueta</td>
+                <td style="font-size:11px">Carregar extrato @ 40°C</td>
+                <td class="mono" style="font-size:10px">kg</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">1,800</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">—</td>
+                <td class="mono" style="font-size:10px;color:var(--text3);white-space:nowrap">—</td>
+                <td class="mono" style="text-align:right;font-size:10px;color:var(--text3)">—</td>
+                <td style="font-size:10px;color:var(--text3)">—</td>
+                <td><span class="bdg bdg-ney" style="font-size:9px">Aguardando</span></td>
+              </tr>
+              <tr style="border-left:3px solid var(--text2);opacity:.55">
+                <td class="mono" style="color:var(--text3)">10</td>
+                <td style="font-weight:600"><span title="Adição de Material" style="margin-right:4px">⬇️</span>Adição Pantenol</td>
+                <td style="font-size:11px">Carregar D-Pantenol</td>
+                <td class="mono" style="font-size:10px">kg</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">0,800</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">—</td>
+                <td class="mono" style="font-size:10px;color:var(--text3);white-space:nowrap">—</td>
+                <td class="mono" style="text-align:right;font-size:10px;color:var(--text3)">—</td>
+                <td style="font-size:10px;color:var(--text3)">—</td>
+                <td><span class="bdg bdg-ney" style="font-size:9px">Aguardando</span></td>
+              </tr>
+              <tr style="border-left:3px solid var(--text2);opacity:.55">
+                <td class="mono" style="color:var(--text3)">11</td>
+                <td style="font-weight:600"><span title="Adição de Material" style="margin-right:4px">⬇️</span>Adição Fenoxietanol</td>
+                <td style="font-size:11px">Conservante — Carregar fenoxietanol</td>
+                <td class="mono" style="font-size:10px">kg</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">0,650</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">—</td>
+                <td class="mono" style="font-size:10px;color:var(--text3);white-space:nowrap">—</td>
+                <td class="mono" style="text-align:right;font-size:10px;color:var(--text3)">—</td>
+                <td style="font-size:10px;color:var(--text3)">—</td>
+                <td><span class="bdg bdg-ney" style="font-size:9px">Aguardando</span></td>
+              </tr>
+              <tr style="border-left:3px solid var(--text2);opacity:.55">
+                <td class="mono" style="color:var(--text3)">12</td>
+                <td style="font-weight:600"><span title="Adição de Material" style="margin-right:4px">⬇️</span>Adição Vitamina E</td>
+                <td style="font-size:11px">Carregar tocoferol acetato</td>
+                <td class="mono" style="font-size:10px">kg</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">0,350</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">—</td>
+                <td class="mono" style="font-size:10px;color:var(--text3);white-space:nowrap">—</td>
+                <td class="mono" style="text-align:right;font-size:10px;color:var(--text3)">—</td>
+                <td style="font-size:10px;color:var(--text3)">—</td>
+                <td><span class="bdg bdg-ney" style="font-size:9px">Aguardando</span></td>
+              </tr>
+              <tr style="border-left:3px solid var(--text2);opacity:.55">
+                <td class="mono" style="color:var(--text3)">13</td>
+                <td style="font-weight:600"><span title="Fase InBatch" style="margin-right:4px">⚙️</span>Resfriamento</td>
+                <td style="font-size:11px">Resfriar até 35°C</td>
+                <td class="mono" style="font-size:10px">°C</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">35,0</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">—</td>
+                <td class="mono" style="font-size:10px;color:var(--text3);white-space:nowrap">—</td>
+                <td class="mono" style="text-align:right;font-size:10px;color:var(--text3)">—</td>
+                <td style="font-size:10px;color:var(--text3)">—</td>
+                <td><span class="bdg bdg-ney" style="font-size:9px">Aguardando</span></td>
+              </tr>
+              <tr style="border-left:3px solid var(--text2);opacity:.55">
+                <td class="mono" style="color:var(--text3)">14</td>
+                <td style="font-weight:600"><span title="Adição de Material" style="margin-right:4px">⬇️</span>Adição Fragância</td>
+                <td style="font-size:11px">Carregar essência Rosa</td>
+                <td class="mono" style="font-size:10px">kg</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">2,200</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">—</td>
+                <td class="mono" style="font-size:10px;color:var(--text3);white-space:nowrap">—</td>
+                <td class="mono" style="text-align:right;font-size:10px;color:var(--text3)">—</td>
+                <td style="font-size:10px;color:var(--text3)">—</td>
+                <td><span class="bdg bdg-ney" style="font-size:9px">Aguardando</span></td>
+              </tr>
+              <tr style="border-left:3px solid var(--text2);opacity:.55">
+                <td class="mono" style="color:var(--text3)">15</td>
+                <td style="font-weight:600"><span title="Adição de Material" style="margin-right:4px">⬇️</span>Adição Corante</td>
+                <td style="font-size:11px">Carregar corante natural rosa</td>
+                <td class="mono" style="font-size:10px">g</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">120</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">—</td>
+                <td class="mono" style="font-size:10px;color:var(--text3);white-space:nowrap">—</td>
+                <td class="mono" style="text-align:right;font-size:10px;color:var(--text3)">—</td>
+                <td style="font-size:10px;color:var(--text3)">—</td>
+                <td><span class="bdg bdg-ney" style="font-size:9px">Aguardando</span></td>
+              </tr>
+              <tr style="border-left:3px solid var(--verde);opacity:.55">
+                <td class="mono" style="color:var(--text3)">16</td>
+                <td style="font-weight:600"><span title="Homogeneização" style="margin-right:4px">🌀</span>Homogeneização Final</td>
+                <td style="font-size:11px">Agitar 15 min @ 200 rpm</td>
+                <td class="mono" style="font-size:10px">min</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">15</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">—</td>
+                <td class="mono" style="font-size:10px;color:var(--text3);white-space:nowrap">—</td>
+                <td class="mono" style="text-align:right;font-size:10px;color:var(--text3)">—</td>
+                <td style="font-size:10px;color:var(--text3)">—</td>
+                <td><span class="bdg bdg-ney" style="font-size:9px">Aguardando</span></td>
+              </tr>
+              <tr style="border-left:3px solid var(--per);opacity:.55">
+                <td class="mono" style="color:var(--text3)">17</td>
+                <td style="font-weight:600"><span title="CQ · Amostra/Aprovação" style="margin-right:4px">🔬</span>Coleta Amostra CQ <span title="Input manual (CQ)" style="margin-left:4px">👤</span></td>
+                <td style="font-size:11px">Coletar amostra para LIMS</td>
+                <td class="mono" style="font-size:10px">—</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">OK</td>
+                <td class="mono" style="text-align:right;color:var(--text3)">—</td>
+                <td class="mono" style="font-size:10px;color:var(--text3);white-space:nowrap">—</td>
+                <td class="mono" style="text-align:right;font-size:10px;color:var(--text3)">—</td>
+                <td style="font-size:10px;color:var(--text3)">CQ</td>
+                <td><span class="bdg bdg-ney" style="font-size:9px">Aguardando</span></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     `,
@@ -1524,100 +1734,6 @@ export const SCREENS = {
 
       setTimeout(fabSaldoInitDetalhes, 30);
       </script>
-    `,
-  "fab-tanque": `      <div class="page-header">
-        <div><div class="ph-eyebrow">Fabricação · MF5</div><div class="ph-title">Seleção de Tanque Destino</div></div>
-        <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416 · Lote G2026-091<br>Pós Fase 4 · Aprovado LIMS<br><span style="color:var(--verde)">Selecionar tanque para granel</span></div>
-      </div>
-
-      <div class="abox ok mb14"><span class="ai">✅</span><div>Granel da OP-2026-0416 <strong>aprovado pelo LIMS</strong>. Selecione o tanque destino disponível e verifique o status de limpeza antes de transferir.</div></div>
-
-      <div class="g64">
-        <div>
-          <!-- Grid visual de tanques -->
-          <div class="card cv mb14">
-            <div class="card-title">Mapa de Tanques — MF5</div>
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px" id="tanque-grid">
-              <!-- Tanques -->
-              <div class="tanq-item" style="background:var(--ok-p);border:2px solid var(--ok);border-radius:8px;padding:12px;text-align:center;cursor:pointer" onclick="selecionarTanque(this,'TQ-01')">
-                <div style="font-size:22px;margin-bottom:4px">🟢</div>
-                <div style="font-family:var(--font-m);font-size:12px;font-weight:600;color:var(--verde)">TQ-01</div>
-                <div style="font-size:10px;color:var(--text3);margin-top:2px">Disponível<br>5.000L · Limpo ✓</div>
-              </div>
-              <div class="tanq-item" style="background:var(--ok-p);border:1px solid var(--ok-b);border-radius:8px;padding:12px;text-align:center;cursor:pointer" onclick="selecionarTanque(this,'TQ-02')">
-                <div style="font-size:22px;margin-bottom:4px">🟢</div>
-                <div style="font-family:var(--font-m);font-size:12px;font-weight:600;color:var(--verde)">TQ-02</div>
-                <div style="font-size:10px;color:var(--text3);margin-top:2px">Disponível<br>3.000L · Limpo ✓</div>
-              </div>
-              <div style="background:var(--per-p);border:1px solid var(--per-b);border-radius:8px;padding:12px;text-align:center;opacity:.7">
-                <div style="font-size:22px;margin-bottom:4px">🔴</div>
-                <div style="font-family:var(--font-m);font-size:12px;font-weight:600;color:var(--per)">TQ-03</div>
-                <div style="font-size:10px;color:var(--per);margin-top:2px">Ocupado<br>Sabonete L2</div>
-              </div>
-              <div style="background:var(--alr-p);border:1px solid var(--alr-b);border-radius:8px;padding:12px;text-align:center;opacity:.7">
-                <div style="font-size:22px;margin-bottom:4px">🟡</div>
-                <div style="font-family:var(--font-m);font-size:12px;font-weight:600;color:var(--alr)">TQ-04</div>
-                <div style="font-size:10px;color:var(--alr);margin-top:2px">Em limpeza<br>Prev: 45min</div>
-              </div>
-              <div class="tanq-item" style="background:var(--ok-p);border:1px solid var(--ok-b);border-radius:8px;padding:12px;text-align:center;cursor:pointer" onclick="selecionarTanque(this,'TQ-05')">
-                <div style="font-size:22px;margin-bottom:4px">🟢</div>
-                <div style="font-family:var(--font-m);font-size:12px;font-weight:600;color:var(--verde)">TQ-05</div>
-                <div style="font-size:10px;color:var(--text3);margin-top:2px">Disponível<br>10.000L · Limpo ✓</div>
-              </div>
-              <div style="background:var(--per-p);border:1px solid var(--per-b);border-radius:8px;padding:12px;text-align:center;opacity:.7">
-                <div style="font-size:22px;margin-bottom:4px">🔴</div>
-                <div style="font-family:var(--font-m);font-size:12px;font-weight:600;color:var(--per)">TQ-06</div>
-                <div style="font-size:10px;color:var(--per);margin-top:2px">Ocupado<br>Shampoo L1</div>
-              </div>
-              <div style="background:var(--per-p);border:1px solid var(--per-b);border-radius:8px;padding:12px;text-align:center;opacity:.7">
-                <div style="font-size:22px;margin-bottom:4px">🔴</div>
-                <div style="font-family:var(--font-m);font-size:12px;font-weight:600;color:var(--per)">TQ-07</div>
-                <div style="font-size:10px;color:var(--per);margin-top:2px">Aguard. limpeza<br>Registro aberto</div>
-              </div>
-              <div class="tanq-item" style="background:var(--ok-p);border:1px solid var(--ok-b);border-radius:8px;padding:12px;text-align:center;cursor:pointer" onclick="selecionarTanque(this,'TQ-08')">
-                <div style="font-size:22px;margin-bottom:4px">🟢</div>
-                <div style="font-family:var(--font-m);font-size:12px;font-weight:600;color:var(--verde)">TQ-08</div>
-                <div style="font-size:10px;color:var(--text3);margin-top:2px">Disponível<br>5.000L · Limpo ✓</div>
-              </div>
-            </div>
-            <div style="display:flex;gap:14px;padding-top:10px;border-top:1px solid var(--border)">
-              <span style="font-size:10px;color:var(--text3)"><span style="color:var(--ok)">●</span> Disponível (4)</span>
-              <span style="font-size:10px;color:var(--text3)"><span style="color:var(--per)">●</span> Ocupado (3)</span>
-              <span style="font-size:10px;color:var(--text3)"><span style="color:var(--alr)">●</span> Em limpeza (1)</span>
-            </div>
-          </div>
-
-          <!-- Verificação de limpeza do tanque selecionado -->
-          <div class="card ca" id="tanq-limpeza-card">
-            <div class="card-title">Verificação de Limpeza — <span id="tanq-sel-nome">Nenhum selecionado</span></div>
-            <div id="tanq-sel-msg" style="color:var(--text3);font-size:13px;font-style:italic">Selecione um tanque disponível no mapa acima para verificar as condições de limpeza.</div>
-            <div id="tanq-limpeza-detalhes">
-              <div class="ck-item done" style="margin-bottom:7px"><div class="ck-box" style="background:var(--verde);border-color:var(--verde);color:#fff">✓</div><div style="flex:1"><div class="ck-nome">Registro de limpeza CIP válido</div><div class="ck-desc">Última limpeza: 18/03/2026 18:30 · Responsável: M. Lima · Válido por 72h</div></div><span class="bdg bdg-ok">Válido</span></div>
-              <div class="ck-item done" style="margin-bottom:7px"><div class="ck-box" style="background:var(--verde);border-color:var(--verde);color:#fff">✓</div><div style="flex:1"><div class="ck-nome">Tanque seco e sem odor residual</div><div class="ck-desc">Verificado visualmente pelo operador. Nenhum resíduo do produto anterior.</div></div><span class="bdg bdg-ok">OK</span></div>
-              <div class="ck-item done"><div class="ck-box" style="background:var(--verde);border-color:var(--verde);color:#fff">✓</div><div style="flex:1"><div class="ck-nome">Capacidade compatível com o granel</div><div class="ck-desc">Volume do granel: 598,2 kg (~598L) · Capacidade do tanque: 5.000L ✓</div></div><span class="bdg bdg-ok">Compatível</span></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Resumo -->
-        <div>
-          <div class="resumo">
-            <div class="resumo-hd">Transferência de Granel</div>
-            <div class="sum-row"><span class="sk">Ordem</span><span class="sv" style="color:var(--verde)">OP-2026-0416</span></div>
-            <div class="sum-row"><span class="sk">Granel</span><span class="sv">G2026-091</span></div>
-            <div class="sum-row"><span class="sk">Volume</span><span class="sv">598,2 kg</span></div>
-            <div class="sum-row"><span class="sk">Status LIMS</span><span class="sv" style="color:var(--ok)">✓ Aprovado</span></div>
-            <div class="sum-row"><span class="sk">Tanque selecionado</span><span class="sv" style="color:var(--ouro)" id="tanq-sel-res">—</span></div>
-            <div class="sum-row"><span class="sk">Limpeza</span><span class="sv" id="tanq-limp-res" style="color:var(--text3)">—</span></div>
-
-            <div style="margin-top:14px;display:flex;flex-direction:column;gap:9px">
-              <button class="btn btn-lg btn-v btn-full" id="tanq-btn-confirmar" disabled onclick="alert('✅ Transferência confirmada!\\n\\nGranel G2026-091 → TQ-01\\nTableau de tanques atualizado.\\nFabricação notificada.')">✔ Confirmar Transferência</button>
-              <button class="btn btn-md btn-ghost btn-full" onclick="nav('fab-fechar',null,null)">Ir para Fechamento</button>
-            </div>
-            <div style="margin-top:10px;font-size:10px;color:var(--text3);text-align:center;line-height:1.6">A tabela de localização e utilização de tanques é atualizada automaticamente no MES.</div>
-          </div>
-        </div>
-      </div>
     `,
   "oee": `      <div class="page-header">
         <div><div class="ph-eyebrow">Dashboard Operacional</div><div class="ph-title">Eficiência Global — OEE</div></div>

@@ -48,7 +48,6 @@ const breadcrumbs = {
   'fab-checkin':     'Fabricação › Check-in de MPs',
   'fab-inbatch':     'Fabricação › Fases InBatch',
   'fab-amostras':    'Fabricação › Controle de Amostras',
-  'fab-tanque':      'Fabricação › Seleção de Tanque',
   'fab-fechar':      'Fabricação › Fechamento da Ordem',
   'fab-rastr':       'Fabricação › Rastreabilidade',
   'fab-saldo':       'Fabricação › Saldo de Equipamentos (JDE)',
@@ -1137,7 +1136,7 @@ window.nav = function(id, subEl, modId){
       'pes-pendencias':'mod-pes','pes-checklist':'mod-pes','pes-gaiola':'mod-pes',
       'pes-devol-mp':'mod-pes','pes-checkout':'mod-pes','pes-rastr':'mod-pes',
       'fab-ordens':'mod-fab','fab-iniciar':'mod-fab','fab-checkin':'mod-fab',
-      'fab-inbatch':'mod-fab','fab-amostras':'mod-fab','fab-tanque':'mod-fab',
+      'fab-inbatch':'mod-fab','fab-amostras':'mod-fab',
       'fab-fechar':'mod-fab','fab-rastr':'mod-fab','fab-saldo':'mod-fab',
     };
     if (modMap[id]) {

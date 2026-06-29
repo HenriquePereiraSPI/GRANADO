@@ -39,7 +39,7 @@ const PROD_ORDEM_SUBSCREENS = new Set([
  *  entra no contexto com ?op= e estas telas ganham a sub-navbar.
  *  Acesso direto (sem ?op) renderiza a tela sem a sub-navbar. */
 const FAB_ORDEM_SUBSCREENS = new Set([
-  'fab-inbatch', 'fab-checkin', 'fab-tanque', 'fab-amostras', 'fab-fechar',
+  'fab-inbatch', 'fab-checkin', 'fab-amostras', 'fab-fechar',
 ]);
 import { ModalProvider, useModal } from './components/ModalProvider.jsx';
 import { injectLegacyScripts, installNavBridges, resolveScreenId } from './lib/legacy-bridge.js';

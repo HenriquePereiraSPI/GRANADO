@@ -19,7 +19,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 const SUB_TABS = [
   { id: 'fab-inbatch',  label: 'Cockpit',   icon: '🎯' },
   { id: 'fab-checkin',  label: "MP's",      icon: '📦' },
-  { id: 'fab-tanque',   label: 'Tanque',    icon: '🛢️' },
   { id: 'fab-amostras', label: 'Qualidade', icon: '🔬' },
   { id: 'fab-fechar',   label: 'Checkout',  icon: '✓' },
 ];
