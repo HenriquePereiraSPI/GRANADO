@@ -372,6 +372,16 @@
           <a class="gd-link" href="#GRD_API_GetAllPrinters">GRD_API_GetAllPrinters</a>
         </div>
       </div>
+
+      <div class="gd-cat">
+        <button class="gd-cat-toggle" aria-expanded="false" onclick="gdToggleCat(this)">
+          <span class="gd-cat-chevron">▸</span> OEE
+        </button>
+        <div class="gd-cat-items">
+          <div class="gd-subgroup">API</div>
+          <a class="gd-link" href="#GRD_API_OEE_GetResourceAvailability">GRD_API_OEE_GetResourceAvailability</a>
+        </div>
+      </div>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -1012,7 +1022,9 @@
   <span class="tk-key">"UOMCode"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span>
   <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA1"</span><span class="tk-punc">,</span>
   <span class="tk-key">"CageNo"</span><span class="tk-punc">:</span> <span class="tk-str">"G000010"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000001"</span>
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000001"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"IsManualWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WeightDurationInSeconds"</span><span class="tk-punc">:</span> <span class="tk-str">"42"</span>
 }</pre>
 
         <h3 class="gd-h3">Campos de entrada</h3>
@@ -1079,6 +1091,18 @@
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
               <td class="col-desc">Número da ordem (WIP Order) à qual o apontamento se vincula.</td>
+            </tr>
+            <tr>
+              <td class="col-name">IsManualWeight</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Indica se o peso foi informado manualmente: <code>"1"</code> = peso manual (digitado) · <code>"0"</code> = peso lido da balança.</td>
+            </tr>
+            <tr>
+              <td class="col-name">WeightDurationInSeconds</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Duração da pesagem, em segundos (tempo gasto para realizar o apontamento).</td>
             </tr>
           </tbody>
         </table>
@@ -2142,6 +2166,152 @@
             em <code>Equipment</code> / <code>DefaultEquipmentResourceName</code>.</li>
           <li><strong>SpoolAddress vazio:</strong> impressoras sem endereço de spool retornam o campo
             como string vazia (<code>""</code>).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_OEE_GetResourceAvailability
+           ============================================================ -->
+      <section id="GRD_API_OEE_GetResourceAvailability">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_OEE_GetResourceAvailability</code></h1>
+        <p class="gd-lead">
+          Recupera as informações de <strong>disponibilidade e paradas</strong> de um recurso
+          (equipamento) num período. Retorna um <strong>resumo agregado</strong>
+          (<code>ResourceGrouped</code>) e a <strong>linha do tempo dos estados</strong>
+          (<code>ResourceStates</code>) — cada intervalo de operação ou parada.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_OEE_GetResourceAvailability</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>ResourceGrouped</code> e
+          <code>ResourceStates</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000020"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-06-25 05:00:00"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-06-30 05:00:00"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:160px">Campo</th>
+              <th style="width:140px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">ResourceName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Nome do recurso (equipamento) a consultar.</td>
+            </tr>
+            <tr>
+              <td class="col-name">StartDate</td>
+              <td class="col-type">string (data/hora)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Início do período (formato <code>yyyy-MM-dd HH:mm:ss</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">FinishDate</td>
+              <td class="col-type">string (data/hora)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Fim do período (formato <code>yyyy-MM-dd HH:mm:ss</code>).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON) — <code>ResourceStates</code> truncado a 2 itens para leitura; os demais seguem o mesmo formato:</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Informações de disponibilidade e paradas recuperadas com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ResourceGrouped"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000020"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoIni"</span><span class="tk-punc">:</span> <span class="tk-str">"6/25/2026 11:58:17 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoFim"</span><span class="tk-punc">:</span> <span class="tk-str">"6/29/2026 8:53:07 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoTotalSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"377690"</span><span class="tk-punc">,</span> <span class="tk-key">"DowntimeSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"35545"</span><span class="tk-punc">,</span> <span class="tk-key">"RunTimeSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"342145"</span><span class="tk-punc">,</span> <span class="tk-key">"DisponibilidadePct"</span><span class="tk-punc">:</span> <span class="tk-str">"90.59"</span>
+    }
+  ]<span class="tk-punc">,</span>
+  <span class="tk-key">"ResourceStates"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000020"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoIni"</span><span class="tk-punc">:</span> <span class="tk-str">"6/25/2026 11:58:17 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoFim"</span><span class="tk-punc">:</span> <span class="tk-str">"6/25/2026 12:01:06 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"DurSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"169"</span><span class="tk-punc">,</span> <span class="tk-key">"Parado"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonCodeComment"</span><span class="tk-punc">:</span> <span class="tk-str">"rdf"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000020"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoIni"</span><span class="tk-punc">:</span> <span class="tk-str">"6/25/2026 12:01:06 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoFim"</span><span class="tk-punc">:</span> <span class="tk-str">"6/25/2026 9:40:49 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"DurSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"34783"</span><span class="tk-punc">,</span> <span class="tk-key">"Parado"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Outros"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonCodeComment"</span><span class="tk-punc">:</span> <span class="tk-str">"rdf"</span>
+    }
+    <span class="tk-comment">// … demais intervalos de estado seguem o mesmo formato</span>
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se a consulta foi feita com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">ResourceGrouped</td><td class="col-type">array&lt;resumo&gt;</td><td class="col-desc">Resumo agregado do período (totais e disponibilidade). Campos abaixo.</td></tr>
+            <tr><td class="col-name">ResourceStates</td><td class="col-type">array&lt;estado&gt;</td><td class="col-desc">Linha do tempo dos estados do recurso (cada intervalo de operação/parada). Campos abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de <code>ResourceGrouped</code> (resumo)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:180px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">ResourceName</td><td class="col-type">string</td><td class="col-desc">Nome do recurso.</td></tr>
+            <tr><td class="col-name">PeriodoIni</td><td class="col-type">string (data)</td><td class="col-desc">Início efetivo do período analisado.</td></tr>
+            <tr><td class="col-name">PeriodoFim</td><td class="col-type">string (data)</td><td class="col-desc">Fim efetivo do período analisado.</td></tr>
+            <tr><td class="col-name">TempoTotalSeg</td><td class="col-type">string (número)</td><td class="col-desc">Tempo total do período, em segundos.</td></tr>
+            <tr><td class="col-name">DowntimeSeg</td><td class="col-type">string (número)</td><td class="col-desc">Tempo parado (downtime), em segundos.</td></tr>
+            <tr><td class="col-name">RunTimeSeg</td><td class="col-type">string (número)</td><td class="col-desc">Tempo em operação (run time), em segundos.</td></tr>
+            <tr><td class="col-name">DisponibilidadePct</td><td class="col-type">string (número)</td><td class="col-desc">Disponibilidade no período, em % (RunTime / TempoTotal).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de <code>ResourceStates</code> (cada estado)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:180px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">ResourceName</td><td class="col-type">string</td><td class="col-desc">Nome do recurso.</td></tr>
+            <tr><td class="col-name">PeriodoIni</td><td class="col-type">string (data)</td><td class="col-desc">Início do intervalo de estado.</td></tr>
+            <tr><td class="col-name">PeriodoFim</td><td class="col-type">string (data)</td><td class="col-desc">Fim do intervalo de estado.</td></tr>
+            <tr><td class="col-name">DurSeg</td><td class="col-type">string (número)</td><td class="col-desc">Duração do intervalo, em segundos.</td></tr>
+            <tr><td class="col-name">Parado</td><td class="col-type">string (bool)</td><td class="col-desc"><code>"1"</code> = recurso parado (downtime) · <code>"0"</code> = em operação.</td></tr>
+            <tr><td class="col-name">ReasonCode</td><td class="col-type">string</td><td class="col-desc">Motivo da parada (ex.: <code>"Outros"</code>). Vazio quando em operação.</td></tr>
+            <tr><td class="col-name">ReasonCodeComment</td><td class="col-type">string</td><td class="col-desc">Observação/justificativa do estado. Pode vir vazio.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Disponibilidade:</strong> <code>DisponibilidadePct</code> = <code>RunTimeSeg</code> ÷
+            <code>TempoTotalSeg</code> × 100 (no exemplo, 342145 ÷ 377690 ≈ 90,59%).</li>
+          <li><strong>Datas:</strong> os inputs usam <code>yyyy-MM-dd HH:mm:ss</code>; os outputs vêm no
+            formato de data/hora do servidor (ex.: <code>6/25/2026 11:58:17 AM</code>).</li>
+          <li><strong>ResourceName:</strong> é o mesmo <code>ResourceName</code> devolvido por
+            <a class="gd-link" href="#GRD_API_GetOrganizationalTree">GRD_API_GetOrganizationalTree</a>
+            (em <code>data.ResourceName</code>).</li>
         </ul>
       </section>
 
