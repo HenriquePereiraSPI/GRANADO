@@ -40,6 +40,8 @@
   <script src="./granado-tree.js"></script>
   <script src="./granado-zpl.js"></script>
   <script src="./granado-zpl-popup.js"></script>
+  <script src="./granado-message-popup.js"></script>
+  <script src="./granado-option-popup.js"></script>
 </head>
 
 <body style="margin:0;padding:24px;background:#F4EED9;font-family:'Lato','DejaVu Sans',Arial,sans-serif;color:#103E20">
@@ -57,13 +59,13 @@
       </granado-simple-card>
 
       <granado-simple-card style="flex:1" title="Linha 03 parada" subtitle="Aguardando troca de formato"
-        color="#C0392B">
+        color="#8C1A1A">
       </granado-simple-card>
 
       <granado-simple-card style="flex:1" title="Lote aprovado" subtitle="Liberado para envase" color="#9A7B1C">
       </granado-simple-card>
 
-      <granado-simple-card style="flex:1" title="Clique aqui" subtitle="Card interativo com hover" color="#2C5A8C"
+      <granado-simple-card style="flex:1" title="Clique aqui" subtitle="Card interativo com hover" color="#1A4A8C"
         onclickevent="alert('Card simples clicado')">
       </granado-simple-card>
     </div>
@@ -83,7 +85,7 @@
       </granado-simple-card>
 
       <granado-simple-card style="flex:1" title="Cor custom" subtitle="text/icon/border sobrescritos"
-        color="#C0392B" text-color="#103E20" icon-color="#9A7B1C" border-color="#E5DDC8" icon="🎨">
+        color="#8C1A1A" text-color="#103E20" icon-color="#9A7B1C" border-color="#E5DDC8" icon="🎨">
       </granado-simple-card>
 
       <granado-simple-card style="flex:1" title="Sem borda fina" subtitle="border-color=&quot;transparent&quot;"
@@ -106,8 +108,8 @@
       </granado-simple-card>
 
       <granado-simple-card style="flex:1" title="Tudo custom" subtitle="size + cor de ambos"
-        color="#C0392B" text-color="#C0392B" title-size="20px"
-        subtitle-color="#C0392B" subtitle-size="15px" icon="🎨">
+        color="#8C1A1A" text-color="#8C1A1A" title-size="20px"
+        subtitle-color="#8C1A1A" subtitle-size="15px" icon="🎨">
       </granado-simple-card>
     </div>
   </section>
@@ -126,11 +128,11 @@
         status="1 em uso">
       </granado-complete-card>
 
-      <granado-complete-card style="flex:1" icon="C" title="Sala C" subtitle="2 Balancas" color="#C0392B"
+      <granado-complete-card style="flex:1" icon="C" title="Sala C" subtitle="2 Balancas" color="#8C1A1A"
         status="Manutencao">
       </granado-complete-card>
 
-      <granado-complete-card style="flex:1" icon="D" title="Sala D" subtitle="6 Balancas" color="#2C5A8C"
+      <granado-complete-card style="flex:1" icon="D" title="Sala D" subtitle="6 Balancas" color="#1A4A8C"
         status="Reservada" onclickevent="alert('Sala D selecionada')">
       </granado-complete-card>
     </div>
@@ -150,7 +152,7 @@
       </granado-complete-card>
 
       <granado-complete-card style="flex:1" icon="⚠️" title="Badge diferente" subtitle="status-color próprio"
-        color="#6B7280" status-color="#C0392B" status="Atenção">
+        color="#6B7280" status-color="#8C1A1A" status="Atenção">
       </granado-complete-card>
     </div>
   </section>
@@ -219,11 +221,11 @@
         onchangeevent="console.log('Cal 2 (dd/MM/yyyy):', value)">
       </granado-calendar>
 
-      <granado-calendar label="Data e hora" mode="datetime" value="2026-05-06 14:30:00" color="#2C5A8C"
+      <granado-calendar label="Data e hora" mode="datetime" value="2026-05-06 14:30:00" color="#1A4A8C"
         onchangeevent="console.log('Cal 3 (datetime):', value)">
       </granado-calendar>
 
-      <granado-calendar label="Date & time" mode="datetime" lang="en" format="MM/dd/yyyy HH:mm" color="#C0392B"
+      <granado-calendar label="Date & time" mode="datetime" lang="en" format="MM/dd/yyyy HH:mm" color="#8C1A1A"
         onchangeevent="console.log('Cal 4 (EN datetime):', value)">
       </granado-calendar>
     </div>
@@ -277,7 +279,7 @@
         ]' onchangeevent="console.log('Material:', value, option)">
       </granado-dropdown>
 
-      <granado-dropdown label="Status" multi="true" color="#2C5A8C" placeholder="Filtrar status..." value="OK,DEV" options='[
+      <granado-dropdown label="Status" multi="true" color="#1A4A8C" placeholder="Filtrar status..." value="OK,DEV" options='[
           {"value":"OK","label":"Aprovado"},
           {"value":"DEV","label":"Desvio"},
           {"value":"PEN","label":"Pendente"},
@@ -362,7 +364,7 @@
         ]' value="OK" onchangeevent="console.log('Status:', value, option)">
       </granado-radio>
 
-      <granado-radio color="#2C5A8C" options='[
+      <granado-radio color="#1A4A8C" options='[
           {"value":"manha","label":"Turno Manha"},
           {"value":"tarde","label":"Turno Tarde"},
           {"value":"noite","label":"Turno Noite"}
@@ -386,11 +388,11 @@
       </granado-slider>
 
       <granado-slider style="flex:1;min-width:220px" label="Temperatura" min="0" max="200" step="5" value="60" unit="C"
-        color="#C0392B" onchangeevent="console.log('Temp final:', value)">
+        color="#8C1A1A" onchangeevent="console.log('Temp final:', value)">
       </granado-slider>
 
       <granado-slider style="flex:1;min-width:220px" label="Concentracao" min="0" max="1" step="0.05" value="0.3"
-        color="#2C5A8C" oninputevent="console.log('Conc:', value)">
+        color="#1A4A8C" oninputevent="console.log('Conc:', value)">
       </granado-slider>
 
       <granado-slider style="flex:1;min-width:220px" label="Desabilitado" min="0" max="100" value="75" disabled="true">
@@ -408,7 +410,7 @@
       <granado-toggle label="Notificacoes" onchangeevent="console.log('Notificacoes:', checked)">
       </granado-toggle>
 
-      <granado-toggle label="Modo escuro" checked="true" color="#2C5A8C"
+      <granado-toggle label="Modo escuro" checked="true" color="#1A4A8C"
         onchangeevent="console.log('Modo escuro:', checked)">
       </granado-toggle>
 
@@ -437,10 +439,10 @@
       <granado-button label="Voltar" variant="ghost" icon="arrow-left" onclickevent="console.log('Voltar')">
       </granado-button>
 
-      <granado-button label="Excluir" icon="trash" color="#C0392B" onclickevent="console.log('Excluir')">
+      <granado-button label="Excluir" icon="trash" color="#8C1A1A" onclickevent="console.log('Excluir')">
       </granado-button>
 
-      <granado-button label="Avancar" icon="arrow-right" iconposition="right" color="#2C5A8C"
+      <granado-button label="Avancar" icon="arrow-right" iconposition="right" color="#1A4A8C"
         onclickevent="console.log('Avancar')">
       </granado-button>
 
@@ -513,7 +515,7 @@
       </granado-scroll-panel>
 
       <granado-scroll-panel style="flex:1;min-width:260px" title="Materiais cadastrados" maxheight="220px"
-        color="#2C5A8C">
+        color="#1A4A8C">
         <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#103E20">
           <div>Glicerina USP</div>
           <div>Fenoxietanol</div>
@@ -609,7 +611,7 @@
         onclickevent="GranadoToast.success('Pesagem confirmada com sucesso')">
       </granado-button>
 
-      <granado-button label="Error" icon="x" color="#C0392B"
+      <granado-button label="Error" icon="x" color="#8C1A1A"
         onclickevent="GranadoToast.error('Falha de comunicacao com a balanca', { heading: 'Erro' })">
       </granado-button>
 
@@ -617,7 +619,7 @@
         onclickevent="GranadoToast.warning('Lote MP-01002 em desvio', { heading: 'Atencao' })">
       </granado-button>
 
-      <granado-button label="Info" variant="secondary" color="#2C5A8C"
+      <granado-button label="Info" variant="secondary" color="#1A4A8C"
         onclickevent="GranadoToast.info('Aguardando aprovacao do supervisor')">
       </granado-button>
 
@@ -643,14 +645,14 @@
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <granado-badge label="OK" color="#1C7A38"></granado-badge>
       <granado-badge label="Desvio" color="#9A5A00"></granado-badge>
-      <granado-badge label="Pendente" color="#2C5A8C"></granado-badge>
-      <granado-badge label="Erro" color="#C0392B"></granado-badge>
+      <granado-badge label="Pendente" color="#1A4A8C"></granado-badge>
+      <granado-badge label="Erro" color="#8C1A1A"></granado-badge>
 
       <span style="width:1px;height:18px;background:#E5DDC8;margin:0 6px"></span>
 
       <granado-badge label="OK" color="#1C7A38" variant="soft"></granado-badge>
       <granado-badge label="Desvio" color="#9A5A00" variant="soft"></granado-badge>
-      <granado-badge label="Pendente" color="#2C5A8C" variant="soft"></granado-badge>
+      <granado-badge label="Pendente" color="#1A4A8C" variant="soft"></granado-badge>
 
       <span style="width:1px;height:18px;background:#E5DDC8;margin:0 6px"></span>
 
@@ -679,7 +681,7 @@
 
       <granado-chip label="Aprovado" variant="solid" color="#1C7A38"></granado-chip>
       <granado-chip label="Desvio" variant="solid" color="#9A5A00"></granado-chip>
-      <granado-chip label="Tag" variant="outline" color="#2C5A8C"></granado-chip>
+      <granado-chip label="Tag" variant="outline" color="#1A4A8C"></granado-chip>
 
       <span style="width:1px;height:24px;background:#E5DDC8;margin:0 6px"></span>
 
@@ -693,7 +695,7 @@
         onclickevent="this.selected = !this.selected"></granado-chip>
       <granado-chip label="Filtrar Desvio" clickable="true" color="#9A5A00"
         onclickevent="this.selected = !this.selected"></granado-chip>
-      <granado-chip label="Filtrar Pendente" clickable="true" color="#2C5A8C"
+      <granado-chip label="Filtrar Pendente" clickable="true" color="#1A4A8C"
         onclickevent="this.selected = !this.selected"></granado-chip>
 
       <span style="width:1px;height:24px;background:#E5DDC8;margin:0 6px"></span>
@@ -712,8 +714,8 @@
     <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:18px">
       <granado-icon name="check"></granado-icon>
       <granado-icon name="alert-triangle" color="#9A5A00"></granado-icon>
-      <granado-icon name="x-circle" color="#C0392B"></granado-icon>
-      <granado-icon name="info" color="#2C5A8C"></granado-icon>
+      <granado-icon name="x-circle" color="#8C1A1A"></granado-icon>
+      <granado-icon name="info" color="#1A4A8C"></granado-icon>
       <granado-icon name="package" size="28"></granado-icon>
       <granado-icon name="truck" size="32" color="#9A7B1C"></granado-icon>
     </div>
@@ -722,11 +724,11 @@
     <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px">
       <granado-icon name="check" color="#1C7A38" background="true"></granado-icon>
       <granado-icon name="clock" color="#9A5A00" background="true"></granado-icon>
-      <granado-icon name="x" color="#C0392B" background="true"></granado-icon>
-      <granado-icon name="info" color="#2C5A8C" background="true"></granado-icon>
+      <granado-icon name="x" color="#8C1A1A" background="true"></granado-icon>
+      <granado-icon name="info" color="#1A4A8C" background="true"></granado-icon>
       <granado-icon name="user" color="#1C5C31" background="true" bgshape="square"></granado-icon>
       <granado-icon name="package" color="#9A7B1C" background="true" bgshape="square" size="24"></granado-icon>
-      <granado-icon name="bell" color="#2C5A8C" background="true" size="28"></granado-icon>
+      <granado-icon name="bell" color="#1A4A8C" background="true" size="28"></granado-icon>
     </div>
 
     <p style="font-size:11px;color:#5A6B5E;margin:0 0 8px">Galeria completa (<span id="iconCount">87</span> icones):</p>
@@ -833,7 +835,7 @@
       <granado-progress-bar label="Eficiencia" value="92" labelposition="left" valueposition="right"
         color="#1C7A38"></granado-progress-bar>
 
-      <granado-progress-bar value="65" isshowlabel="false" valueposition="right" color="#2C5A8C"
+      <granado-progress-bar value="65" isshowlabel="false" valueposition="right" color="#1A4A8C"
         pulse="true"></granado-progress-bar>
 
       <granado-progress-bar value="38" isshowlabel="false" valueposition="down" color="#9A7B1C"></granado-progress-bar>
@@ -865,8 +867,8 @@
           style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E;margin-bottom:10px">
           Onboarding · paleta active/desactive + currentstepcolor (shape "rounded")
         </div>
-        <granado-stepper id="stp-onb" activeiconcolor="#2C5A8C" desactiveiconcolor="#8FA9C2" activetextcolor="#1B3A5C"
-          desactivetextcolor="#1B3A5C" activeconnectorcolor="#2C5A8C" desactiveconnectorcolor="#D8E0EA"
+        <granado-stepper id="stp-onb" activeiconcolor="#1A4A8C" desactiveiconcolor="#8FA9C2" activetextcolor="#1B3A5C"
+          desactivetextcolor="#1B3A5C" activeconnectorcolor="#1A4A8C" desactiveconnectorcolor="#D8E0EA"
           currentstepcolor="#9A7520"></granado-stepper>
       </div>
 
@@ -975,7 +977,7 @@
         if (col.key === 'status') {
           var bg = row.status === 'OK' ? '#1C7A38'
                  : row.status === 'Desvio' ? '#9A5A00'
-                 : row.status === 'Aprovado' ? '#2C5A8C'
+                 : row.status === 'Aprovado' ? '#1A4A8C'
                  : '#6B6B6B';
           return '<span style="display:inline-block;font-size:9px;font-weight:900;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:' + bg + ';color:#fff">' + cell + '</span>';
         }
@@ -1023,8 +1025,8 @@
         <granado-submenu-pesagem id="sm-lab"
           contextlabel="Lote Ativo"
           contextvalue="L24-1042"
-          contextcolor="#2C5A8C"
-          activecolor="#2C5A8C"
+          contextcolor="#1A4A8C"
+          activecolor="#1A4A8C"
           backgroundcolor="#EAF1F8"
           bordercolor="#C6D6E5"
           value="lab-fq"
@@ -1122,8 +1124,8 @@
         onclickevent="GranadoPreloader.show({ icon:'brand', text:'Aguarde...' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
       </granado-button>
 
-      <granado-button label="spinner" variant="secondary" color="#2C5A8C"
-        onclickevent="GranadoPreloader.show({ icon:'spinner', text:'Carregando...', color:'#2C5A8C' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+      <granado-button label="spinner" variant="secondary" color="#1A4A8C"
+        onclickevent="GranadoPreloader.show({ icon:'spinner', text:'Carregando...', color:'#1A4A8C' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
       </granado-button>
 
       <granado-button label="dots" variant="secondary" color="#1C5C31"
@@ -1134,8 +1136,8 @@
         onclickevent="GranadoPreloader.show({ icon:'bars', text:'Sincronizando...', color:'#9A5A00' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
       </granado-button>
 
-      <granado-button label="pulse" variant="secondary" color="#C0392B"
-        onclickevent="GranadoPreloader.show({ icon:'pulse', text:'Conectando...', color:'#C0392B' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+      <granado-button label="pulse" variant="secondary" color="#8C1A1A"
+        onclickevent="GranadoPreloader.show({ icon:'pulse', text:'Conectando...', color:'#8C1A1A' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
       </granado-button>
 
       <granado-button label="ring" variant="secondary"
@@ -1151,7 +1153,7 @@
       </granado-button>
 
       <granado-button label="Texto dinamico" variant="ghost"
-        onclickevent="GranadoPreloader.show({ icon:'spinner', text:'Conectando...', color:'#2C5A8C' }); setTimeout(function(){ GranadoPreloader.setText('Validando dados...'); }, 900); setTimeout(function(){ GranadoPreloader.setText('Concluindo...'); }, 1800); setTimeout(function(){ GranadoPreloader.hide(); }, 2800)">
+        onclickevent="GranadoPreloader.show({ icon:'spinner', text:'Conectando...', color:'#1A4A8C' }); setTimeout(function(){ GranadoPreloader.setText('Validando dados...'); }, 900); setTimeout(function(){ GranadoPreloader.setText('Concluindo...'); }, 1800); setTimeout(function(){ GranadoPreloader.hide(); }, 2800)">
       </granado-button>
 
       <granado-button label="Troca de icone" variant="ghost"
@@ -1351,6 +1353,19 @@
         <granado-zpl id="zpl-demo" type="pesagem"></granado-zpl>
       </div>
 
+      <!-- Exemplo — type="pesagem-gaiola" com data inline (JSON) -->
+      <div>
+        <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E;margin-bottom:6px">type="pesagem-gaiola" · data inline (JSON)</div>
+        <granado-zpl type="pesagem-gaiola" data='{
+          "titulo":"PESAGEM DE MATERIAL - GAIOLA","dataImpressao":"24/03/2026",
+          "ordemFabricacao":"771166","gaiola":"3/3",
+          "granelResultante":"S0835B - SAB. PH LIMAO SICILIANO","noEtiqueta":"7951496",
+          "lote":"1621/2026","usuario":"VALMIR","matricula":"102266","noGaiola":"563943",
+          "barcode":"#G1563943:771166:7951496",
+          "impressoPor":"Claudinei","impressoEm":"31/03/2026 08:05"
+        }'></granado-zpl>
+      </div>
+
     </div>
     <script>
       (function () {
@@ -1377,12 +1392,20 @@
     </h2>
     <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
       <div>
-        <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E;margin-bottom:6px">popup sobre a tela · evento "reimprimir"</div>
+        <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E;margin-bottom:6px">type="pesagem" · evento "reimprimir"</div>
         <button type="button" onclick="document.getElementById('zpl-popup-demo').open()"
           style="font:600 13px/1.4 'Poppins',system-ui,Arial,sans-serif;font-weight:700;padding:10px 18px;border:1px solid #C8A84B;border-radius:7px;background:#C8A84B;color:#0F3319;cursor:pointer">
           🖨️ Reimprimir etiqueta
         </button>
         <div id="zpl-popup-status" style="font-size:11px;color:#8A9E8E;margin-top:8px"></div>
+      </div>
+      <div>
+        <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E;margin-bottom:6px">type="pesagem-gaiola"</div>
+        <button type="button" onclick="document.getElementById('zpl-popup-gaiola').open()"
+          style="font:600 13px/1.4 'Poppins',system-ui,Arial,sans-serif;font-weight:700;padding:10px 18px;border:1px solid #C8A84B;border-radius:7px;background:#C8A84B;color:#0F3319;cursor:pointer">
+          🖨️ Reimprimir etiqueta de gaiola
+        </button>
+        <div id="zpl-popup-gaiola-status" style="font-size:11px;color:#8A9E8E;margin-top:8px"></div>
       </div>
     </div>
 
@@ -1391,6 +1414,9 @@
     <granado-zpl-popup id="zpl-popup-demo" type="pesagem" open="false"
       onPrintClick="onPrintClick(detail)"></granado-zpl-popup>
 
+    <granado-zpl-popup id="zpl-popup-gaiola" type="pesagem-gaiola" open="false"
+      onPrintClick="onPrintClickGaiola(detail)"></granado-zpl-popup>
+
     <script>
       // Handler do botão "Reimprimir" do popup
       function onPrintClick(detail) {
@@ -1398,6 +1424,12 @@
         var imp = detail.impressora;
         if (st) st.textContent = imp ? ('✅ Reimpressão solicitada em: ' + imp.id + ' — ' + imp.descricao + ' · ' + detail.copias + ' cópia(s)') : '⚠ Nenhuma impressora selecionada';
         document.getElementById('zpl-popup-demo').close();
+      }
+      function onPrintClickGaiola(detail) {
+        var st = document.getElementById('zpl-popup-gaiola-status');
+        var imp = detail.impressora;
+        if (st) st.textContent = imp ? ('✅ Reimpressão solicitada em: ' + imp.id + ' — ' + imp.descricao + ' · ' + detail.copias + ' cópia(s)') : '⚠ Nenhuma impressora selecionada';
+        document.getElementById('zpl-popup-gaiola').close();
       }
       (function () {
         var pop = document.getElementById('zpl-popup-demo');
@@ -1418,7 +1450,114 @@
           ],
           impressora: { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' }
         };
+
+        var popG = document.getElementById('zpl-popup-gaiola');
+        if (popG) popG.data = {
+          etiqueta: 'Gaiola Nº 563943',
+          titulo: 'PESAGEM DE MATERIAL - GAIOLA', dataImpressao: '24/03/2026',
+          ordemFabricacao: '771166', gaiola: '3/3',
+          granelResultante: 'S0835B - SAB. PH LIMAO SICILIANO', noEtiqueta: '7951496',
+          lote: '1621/2026', usuario: 'VALMIR', matricula: '102266', noGaiola: '563943',
+          barcode: '#G1563943:771166:7951496',
+          impressoPor: 'Claudinei', impressoEm: '31/03/2026 08:05',
+          impressoras: [
+            { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' },
+            { id: 'PRN-LAB', descricao: 'Zebra GK420t (Laboratório)' }
+          ],
+          impressora: { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' }
+        };
       })();
+    </script>
+  </section>
+
+  <!-- ========== Linha 29 — granado-message-popup ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-message-popup&gt;
+    </h2>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start">
+      <button type="button"
+        onclick="GranadoMessagePopup.success('A ordem de pesagem OP-2026-0416 foi finalizada com sucesso. Todas as 3 gaiolas foram conciliadas, as etiquetas impressas e o saldo das matérias-primas atualizado no JDE. Você já pode liberar a sala para a próxima ordem.', { title: 'Ordem finalizada com sucesso' })"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1C7A38;border-radius:7px;background:#1C7A38;color:#fff;cursor:pointer">✓ Success</button>
+      <button type="button"
+        onclick="GranadoMessagePopup.error('Não foi possível gravar a pesagem da etiqueta ETQ-SB-7788 (Aqua - Água Purificada). A comunicação com o JDE retornou erro de timeout após 3 tentativas. Verifique a conexão de rede com o servidor Apriso e tente novamente; se o problema persistir, acione o suporte de TI informando o código OP-2026-0418.', { title: 'Falha ao gravar a pesagem', buttonText: 'Entendi' })"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #8C1A1A;border-radius:7px;background:#8C1A1A;color:#fff;cursor:pointer">✕ Error</button>
+      <button type="button"
+        onclick="GranadoMessagePopup.warning('A quantidade acumulada (1.310,500 kg) está acima da quantidade-alvo da ordem (1.250,000 kg). Confira as etiquetas lidas antes de confirmar — o excedente precisará retornar ao estoque, e a divergência ficará registrada na trilha de auditoria da ordem.', { title: 'Quantidade acima do alvo' })"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A5A00;border-radius:7px;background:#9A5A00;color:#fff;cursor:pointer">⚠ Warning</button>
+      <button type="button"
+        onclick="GranadoMessagePopup.info('A sincronização do saldo físico com o JDE (F4101) ocorre apenas no fechamento da ordem. Até lá, a coluna Disponível reflete o consumo das ordens ativas em tempo real, enquanto o saldo do JDE permanece inalterado. Eventuais divergências indicam dosagens em curso ainda não baixadas no ERP.', { title: 'Sobre a sincronização com o JDE' })"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1A4A8C;border-radius:7px;background:#1A4A8C;color:#fff;cursor:pointer">ℹ Info</button>
+      <button type="button"
+        onclick="document.getElementById('msg-popup-demo').open()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #C8A84B;border-radius:7px;background:#C8A84B;color:#0F3319;cursor:pointer">Declarativo (open)</button>
+    </div>
+
+    <!-- Exemplo declarativo: começa oculto e abre via .open() -->
+    <granado-message-popup id="msg-popup-demo" type="information" title="Sala parada — pesagem bloqueada"
+      message="A sala A está parada no momento (parada registrada às 08:42 por J. Santos: Aguardando manutenção corretiva da balança BAL-02). Enquanto a sala estiver parada não é possível iniciar uma nova pesagem. Reative a sala em Pesagem › Paradas para liberar a operação."
+      button-text="Entendi" open="false">
+    </granado-message-popup>
+  </section>
+
+  <!-- ========== Linha 30 — granado-option-popup ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-option-popup&gt;
+    </h2>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start">
+      <button type="button" onclick="optDemo1()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1A4A8C;border-radius:7px;background:#1A4A8C;color:#fff;cursor:pointer">1 botão</button>
+      <button type="button" onclick="optDemo2()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A5A00;border-radius:7px;background:#9A5A00;color:#fff;cursor:pointer">2 botões</button>
+      <button type="button" onclick="optDemo3()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #8C1A1A;border-radius:7px;background:#8C1A1A;color:#fff;cursor:pointer">3 botões</button>
+      <span id="opt-status" style="font-size:12px;color:#8A9E8E;align-self:center"></span>
+    </div>
+
+    <script>
+      function optStatus(detail) {
+        var s = document.getElementById('opt-status');
+        if (s) s.textContent = '➡ Clicou: ' + detail.text + ' (value="' + detail.value + '", índice ' + detail.index + ')';
+      }
+      // 1 botão (apenas confirma)
+      function optDemo1() {
+        GranadoOptionPopup.show({
+          type: 'info',
+          title: 'Pesagem registrada',
+          message: 'A pesagem da etiqueta ETQ-SB-7788 foi registrada e vinculada à Gaiola 1. Confira o acumulado da ordem antes de prosseguir com as próximas leituras.',
+          buttons: [
+            { text: 'OK', value: 'ok', onClick: optStatus }
+          ]
+        });
+      }
+      // 2 botões (cancelar / confirmar)
+      function optDemo2() {
+        GranadoOptionPopup.show({
+          type: 'warning',
+          title: 'Reativar sala?',
+          message: 'A sala A está parada desde 08:42 (manutenção corretiva da balança BAL-02). Ao reativar, a sala volta a permitir o início de pesagens e a parada será encerrada na trilha de auditoria. Deseja continuar?',
+          buttons: [
+            { text: 'Cancelar', value: 'cancel', variant: 'ghost', onClick: optStatus },
+            { text: 'Reativar sala', value: 'reativar', variant: 'primary', onClick: optStatus }
+          ]
+        });
+      }
+      // 3 botões (salvar / descartar / cancelar)
+      function optDemo3() {
+        GranadoOptionPopup.show({
+          type: 'error',
+          title: 'Alterações não salvas',
+          message: 'Existem 2 etiquetas lidas que ainda não foram confirmadas nesta ordem de pesagem sem balança. Se você sair agora, essas leituras serão perdidas. O que deseja fazer?',
+          buttons: [
+            { text: 'Cancelar', value: 'cancel', variant: 'ghost', onClick: optStatus },
+            { text: 'Sair sem salvar', value: 'descartar', variant: 'primary', color: '#6B3FA0', onClick: optStatus },
+            { text: 'Salvar e sair', value: 'salvar', variant: 'primary', onClick: optStatus }
+          ]
+        });
+      }
     </script>
   </section>
 </body>

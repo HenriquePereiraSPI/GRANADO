@@ -40,6 +40,8 @@
   <script src="./granado-tree.js"></script>
   <script src="./granado-zpl.js"></script>
   <script src="./granado-zpl-popup.js"></script>
+  <script src="./granado-message-popup.js"></script>
+  <script src="./granado-option-popup.js"></script>
 
   <style>
     html,
@@ -275,6 +277,8 @@
       <a class="gd-link" href="#granado-tree">granado-tree</a>
       <a class="gd-link" href="#granado-zpl">granado-zpl</a>
       <a class="gd-link" href="#granado-zpl-popup">granado-zpl-popup</a>
+      <a class="gd-link" href="#granado-message-popup">granado-message-popup</a>
+      <a class="gd-link" href="#granado-option-popup">granado-option-popup</a>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -326,7 +330,7 @@
           <granado-simple-card style="flex:1;min-width:220px"
             title="Linha 03 parada"
             subtitle="Aguardando troca de formato"
-            color="#C0392B">
+            color="#8C1A1A">
           </granado-simple-card>
 
           <granado-simple-card style="flex:1;min-width:220px"
@@ -338,13 +342,13 @@
           <granado-simple-card style="flex:1;min-width:220px"
             title="Aviso geral"
             subtitle="Manutenção programada às 22h"
-            color="#2C5A8C">
+            color="#1A4A8C">
           </granado-simple-card>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-simple-card</span>
     <span class="tk-attr">title</span>=<span class="tk-str">"Linha 03 parada"</span>
     <span class="tk-attr">subtitle</span>=<span class="tk-str">"Aguardando troca de formato"</span>
-    <span class="tk-attr">color</span>=<span class="tk-str">"#C0392B"</span><span class="tk-tag">&gt;</span>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#8C1A1A"</span><span class="tk-tag">&gt;</span>
 <span class="tk-tag">&lt;/granado-simple-card&gt;</span>
 
 <span class="tk-tag">&lt;granado-simple-card</span>
@@ -356,7 +360,7 @@
 <span class="tk-tag">&lt;granado-simple-card</span>
     <span class="tk-attr">title</span>=<span class="tk-str">"Aviso geral"</span>
     <span class="tk-attr">subtitle</span>=<span class="tk-str">"Manutenção programada às 22h"</span>
-    <span class="tk-attr">color</span>=<span class="tk-str">"#2C5A8C"</span><span class="tk-tag">&gt;</span>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span><span class="tk-tag">&gt;</span>
 <span class="tk-tag">&lt;/granado-simple-card&gt;</span></pre>
 
         <!-- ===== Interativo ===== -->
@@ -370,14 +374,14 @@
           <granado-simple-card
             title="Clique aqui"
             subtitle="Card interativo com hover · clique para abrir o alerta"
-            color="#2C5A8C"
+            color="#1A4A8C"
             onclickevent="alert('Card simples clicado')">
           </granado-simple-card>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-simple-card</span>
     <span class="tk-attr">title</span>=<span class="tk-str">"Clique aqui"</span>
     <span class="tk-attr">subtitle</span>=<span class="tk-str">"Card interativo com hover"</span>
-    <span class="tk-attr">color</span>=<span class="tk-str">"#2C5A8C"</span>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span>
     <span class="tk-attr">onclickevent</span>=<span class="tk-str">"alert('Card simples clicado')"</span><span class="tk-tag">&gt;</span>
 <span class="tk-tag">&lt;/granado-simple-card&gt;</span></pre>
 
@@ -400,7 +404,7 @@
 
           <granado-simple-card style="flex:1;min-width:220px"
             title="Cor custom" subtitle="text/icon/border sobrescritos"
-            color="#C0392B" text-color="#103E20" icon-color="#9A7B1C" border-color="#E5DDC8" icon="🎨">
+            color="#8C1A1A" text-color="#103E20" icon-color="#9A7B1C" border-color="#E5DDC8" icon="🎨">
           </granado-simple-card>
 
           <granado-simple-card style="flex:1;min-width:220px"
@@ -420,7 +424,7 @@
 <span class="tk-comment">&lt;!-- Sobrescrevendo cada cor + sem borda fina --&gt;</span>
 <span class="tk-tag">&lt;granado-simple-card</span>
     <span class="tk-attr">title</span>=<span class="tk-str">"Cor custom"</span>
-    <span class="tk-attr">color</span>=<span class="tk-str">"#C0392B"</span>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#8C1A1A"</span>
     <span class="tk-attr">text-color</span>=<span class="tk-str">"#103E20"</span>
     <span class="tk-attr">icon-color</span>=<span class="tk-str">"#9A7B1C"</span>
     <span class="tk-attr">border-color</span>=<span class="tk-str">"transparent"</span>
@@ -450,17 +454,17 @@
 
           <granado-simple-card style="flex:1;min-width:220px"
             title="Tudo custom" subtitle="size e cor de ambos"
-            color="#C0392B" text-color="#C0392B" title-size="20px"
-            subtitle-color="#C0392B" subtitle-size="15px" icon="🎨">
+            color="#8C1A1A" text-color="#8C1A1A" title-size="20px"
+            subtitle-color="#8C1A1A" subtitle-size="15px" icon="🎨">
           </granado-simple-card>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-simple-card</span>
     <span class="tk-attr">title</span>=<span class="tk-str">"Tudo custom"</span>
     <span class="tk-attr">subtitle</span>=<span class="tk-str">"size e cor de ambos"</span>
-    <span class="tk-attr">color</span>=<span class="tk-str">"#C0392B"</span>
-    <span class="tk-attr">text-color</span>=<span class="tk-str">"#C0392B"</span>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#8C1A1A"</span>
+    <span class="tk-attr">text-color</span>=<span class="tk-str">"#8C1A1A"</span>
     <span class="tk-attr">title-size</span>=<span class="tk-str">"20px"</span>
-    <span class="tk-attr">subtitle-color</span>=<span class="tk-str">"#C0392B"</span>
+    <span class="tk-attr">subtitle-color</span>=<span class="tk-str">"#8C1A1A"</span>
     <span class="tk-attr">subtitle-size</span>=<span class="tk-str">"15px"</span><span class="tk-tag">&gt;</span>
 <span class="tk-tag">&lt;/granado-simple-card&gt;</span></pre>
 
@@ -648,11 +652,11 @@
           </granado-complete-card>
 
           <granado-complete-card style="flex:1;min-width:160px"
-            icon="C" title="Sala C" subtitle="2 Balanças" color="#C0392B" status="Manutenção">
+            icon="C" title="Sala C" subtitle="2 Balanças" color="#8C1A1A" status="Manutenção">
           </granado-complete-card>
 
           <granado-complete-card style="flex:1;min-width:160px"
-            icon="D" title="Sala D" subtitle="6 Balanças" color="#2C5A8C" status="Reservada">
+            icon="D" title="Sala D" subtitle="6 Balanças" color="#1A4A8C" status="Reservada">
           </granado-complete-card>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-complete-card</span> <span class="tk-attr">icon</span>=<span class="tk-str">"A"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Sala A"</span> <span class="tk-attr">subtitle</span>=<span class="tk-str">"4 Balanças"</span>
@@ -662,10 +666,10 @@
     <span class="tk-attr">color</span>=<span class="tk-str">"#9A7B1C"</span> <span class="tk-attr">status</span>=<span class="tk-str">"1 em uso"</span><span class="tk-tag">&gt;&lt;/granado-complete-card&gt;</span>
 
 <span class="tk-tag">&lt;granado-complete-card</span> <span class="tk-attr">icon</span>=<span class="tk-str">"C"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Sala C"</span> <span class="tk-attr">subtitle</span>=<span class="tk-str">"2 Balanças"</span>
-    <span class="tk-attr">color</span>=<span class="tk-str">"#C0392B"</span> <span class="tk-attr">status</span>=<span class="tk-str">"Manutenção"</span><span class="tk-tag">&gt;&lt;/granado-complete-card&gt;</span>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#8C1A1A"</span> <span class="tk-attr">status</span>=<span class="tk-str">"Manutenção"</span><span class="tk-tag">&gt;&lt;/granado-complete-card&gt;</span>
 
 <span class="tk-tag">&lt;granado-complete-card</span> <span class="tk-attr">icon</span>=<span class="tk-str">"D"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Sala D"</span> <span class="tk-attr">subtitle</span>=<span class="tk-str">"6 Balanças"</span>
-    <span class="tk-attr">color</span>=<span class="tk-str">"#2C5A8C"</span> <span class="tk-attr">status</span>=<span class="tk-str">"Reservada"</span><span class="tk-tag">&gt;&lt;/granado-complete-card&gt;</span></pre>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span> <span class="tk-attr">status</span>=<span class="tk-str">"Reservada"</span><span class="tk-tag">&gt;&lt;/granado-complete-card&gt;</span></pre>
 
         <!-- ===== Atributos opcionais ===== -->
         <h2 class="gd-h2">Atributos opcionais</h2>
@@ -685,7 +689,7 @@
           </granado-complete-card>
 
           <granado-complete-card style="flex:1;min-width:170px"
-            icon="OP" title="OP-2025-0042" status="Em andamento" color="#2C5A8C">
+            icon="OP" title="OP-2025-0042" status="Em andamento" color="#1A4A8C">
           </granado-complete-card>
         </div>
         <pre class="gd-code"><span class="tk-comment">&lt;!-- Apenas icon + title + subtitle (sem status) --&gt;</span>
@@ -714,7 +718,7 @@
             icon="D"
             title="Sala D"
             subtitle="6 Balanças"
-            color="#2C5A8C"
+            color="#1A4A8C"
             status="Reservada"
             onclickevent="alert('Sala D selecionada')">
           </granado-complete-card>
@@ -723,7 +727,7 @@
     <span class="tk-attr">icon</span>=<span class="tk-str">"D"</span>
     <span class="tk-attr">title</span>=<span class="tk-str">"Sala D"</span>
     <span class="tk-attr">subtitle</span>=<span class="tk-str">"6 Balanças"</span>
-    <span class="tk-attr">color</span>=<span class="tk-str">"#2C5A8C"</span>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span>
     <span class="tk-attr">status</span>=<span class="tk-str">"Reservada"</span>
     <span class="tk-attr">onclickevent</span>=<span class="tk-str">"alert('Sala D selecionada')"</span><span class="tk-tag">&gt;</span>
 <span class="tk-tag">&lt;/granado-complete-card&gt;</span></pre>
@@ -755,7 +759,7 @@
 
           <granado-complete-card style="flex:1;min-width:160px"
             icon="⚠️" title="Badge próprio" subtitle="status-color diferente"
-            color="#6B7280" status-color="#C0392B" status="Atenção">
+            color="#6B7280" status-color="#8C1A1A" status="Atenção">
           </granado-complete-card>
         </div>
         <pre class="gd-code"><span class="tk-comment">&lt;!-- Tudo derivado de color --&gt;</span>
@@ -924,7 +928,7 @@
               <div style="flex:1">
                 <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E">
                   Desvios</div>
-                <div style="font-size:26px;font-weight:700;color:#C0392B;line-height:1.2">3</div>
+                <div style="font-size:26px;font-weight:700;color:#8C1A1A;line-height:1.2">3</div>
               </div>
               <div style="flex:1">
                 <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E">
@@ -972,7 +976,7 @@
           (e.g. uma <code>granado-table</code>) ou quando se quer um card mais arejado.
         </p>
         <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap">
-          <granado-empty-card style="flex:1;min-width:240px" title="Alerta" color="#C0392B">
+          <granado-empty-card style="flex:1;min-width:240px" title="Alerta" color="#8C1A1A">
             <div style="font-size:13px;color:#103E20;line-height:1.5">
               Linha 03 parada há mais de 30 minutos. Operador: Maria Silva.
             </div>
@@ -984,7 +988,7 @@
             </div>
           </granado-empty-card>
         </div>
-        <pre class="gd-code"><span class="tk-tag">&lt;granado-empty-card</span> <span class="tk-attr">title</span>=<span class="tk-str">"Alerta"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#C0392B"</span><span class="tk-tag">&gt;</span>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-empty-card</span> <span class="tk-attr">title</span>=<span class="tk-str">"Alerta"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#8C1A1A"</span><span class="tk-tag">&gt;</span>
     <span class="tk-tag">&lt;div&gt;</span>Linha 03 parada há mais de 30 minutos.<span class="tk-tag">&lt;/div&gt;</span>
 <span class="tk-tag">&lt;/granado-empty-card&gt;</span>
 
@@ -1002,15 +1006,15 @@
           dentro.
         </p>
         <div class="gd-demo">
-          <granado-empty-card title="Materiais pendentes" color="#2C5A8C">
+          <granado-empty-card title="Materiais pendentes" color="#1A4A8C">
             <ul style="margin:0;padding-left:18px;font-size:13px;color:#103E20;line-height:1.7">
               <li>Glicerina USP — 44.983,21 kg</li>
-              <li>Fenoxietanol — 3.028,50 kg <span style="color:#C0392B;font-weight:700">· desvio</span></li>
+              <li>Fenoxietanol — 3.028,50 kg <span style="color:#8C1A1A;font-weight:700">· desvio</span></li>
               <li>Ácido Cítrico — 12.450,00 kg</li>
             </ul>
           </granado-empty-card>
         </div>
-        <pre class="gd-code"><span class="tk-tag">&lt;granado-empty-card</span> <span class="tk-attr">title</span>=<span class="tk-str">"Materiais pendentes"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#2C5A8C"</span><span class="tk-tag">&gt;</span>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-empty-card</span> <span class="tk-attr">title</span>=<span class="tk-str">"Materiais pendentes"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span><span class="tk-tag">&gt;</span>
     <span class="tk-tag">&lt;ul&gt;</span>
         <span class="tk-tag">&lt;li&gt;</span>Glicerina USP — 44.983,21 kg<span class="tk-tag">&lt;/li&gt;</span>
         <span class="tk-tag">&lt;li&gt;</span>Fenoxietanol — 3.028,50 kg<span class="tk-tag">&lt;/li&gt;</span>
@@ -1219,7 +1223,7 @@
   if (col.key === 'status') {
     var bg = row.status === 'OK'      ? '#1C7A38'
            : row.status === 'Desvio'  ? '#9A5A00'
-           : row.status === 'Aprov.'  ? '#2C5A8C'
+           : row.status === 'Aprov.'  ? '#1A4A8C'
            : '#6B6B6B';
     return '&lt;span style="display:inline-block;font-size:9px;font-weight:900;'
          + 'text-transform:uppercase;padding:3px 8px;border-radius:4px;'
@@ -1321,13 +1325,13 @@ tbl.setAttribute('ondoubleclickevent',
         </p>
         <div class="gd-demo">
           <granado-table id="dt-visual"
-            color="#2C5A8C"
+            color="#1A4A8C"
             tabletitle="Linha 03 · turno B"
             rowaltcolor="#E8F1FB"
             rowheight="10px"></granado-table>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-table</span>
-    <span class="tk-attr">color</span>=<span class="tk-str">"#2C5A8C"</span>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span>
     <span class="tk-attr">tabletitle</span>=<span class="tk-str">"Linha 03 · turno B"</span>
     <span class="tk-attr">rowaltcolor</span>=<span class="tk-str">"#E8F1FB"</span>
     <span class="tk-attr">rowheight</span>=<span class="tk-str">"10px"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
@@ -1545,7 +1549,7 @@ tbl.setAttribute('ondoubleclickevent',
             if (col.key === 'status') {
               var bg = row.status === 'OK'      ? '#1C7A38'
                      : row.status === 'Desvio'  ? '#9A5A00'
-                     : row.status === 'Aprov.'  ? '#2C5A8C'
+                     : row.status === 'Aprov.'  ? '#1A4A8C'
                      : '#6B6B6B';
               return '<span style="display:inline-block;font-size:9px;font-weight:900;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:' + bg + ';color:#fff">' + cell + '</span>';
             }
@@ -1624,7 +1628,7 @@ tbl.setAttribute('ondoubleclickevent',
             onchangeevent="console.log('início:', value);">
           </granado-calendar>
 
-          <granado-calendar label="Data e hora" mode="datetime" color="#2C5A8C"
+          <granado-calendar label="Data e hora" mode="datetime" color="#1A4A8C"
             onchangeevent="console.log('datetime:', value);">
           </granado-calendar>
         </div>
@@ -1645,7 +1649,7 @@ tbl.setAttribute('ondoubleclickevent',
             onchangeevent="console.log('dd/MM/yyyy:', value);">
           </granado-calendar>
 
-          <granado-calendar mode="date" format="yyyy-MM-dd" color="#2C5A8C"
+          <granado-calendar mode="date" format="yyyy-MM-dd" color="#1A4A8C"
             onchangeevent="console.log('yyyy-MM-dd:', value);">
           </granado-calendar>
         </div>
@@ -1663,7 +1667,7 @@ tbl.setAttribute('ondoubleclickevent',
         <div class="gd-demo">
           <granado-calendar mode="datetime"
             value="2026-05-06 14:30:00"
-            color="#2C5A8C"
+            color="#1A4A8C"
             onchangeevent="console.log('datetime:', value);">
           </granado-calendar>
         </div>
@@ -1692,7 +1696,7 @@ tbl.setAttribute('ondoubleclickevent',
           </granado-calendar>
 
           <granado-calendar lang="en" mode="datetime" format="MM/dd/yyyy HH:mm"
-            color="#C0392B"
+            color="#8C1A1A"
             onchangeevent="console.log('en:', value);">
           </granado-calendar>
         </div>
@@ -1716,17 +1720,17 @@ tbl.setAttribute('ondoubleclickevent',
             onchangeevent="console.log('ouro:', value);">
           </granado-calendar>
 
-          <granado-calendar mode="date" color="#2C5A8C"
+          <granado-calendar mode="date" color="#1A4A8C"
             onchangeevent="console.log('azul:', value);">
           </granado-calendar>
 
-          <granado-calendar mode="date" color="#C0392B"
+          <granado-calendar mode="date" color="#8C1A1A"
             onchangeevent="console.log('vermelho:', value);">
           </granado-calendar>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-calendar</span> <span class="tk-attr">color</span>=<span class="tk-str">"#9A7520"</span><span class="tk-tag">&gt;&lt;/granado-calendar&gt;</span>
-<span class="tk-tag">&lt;granado-calendar</span> <span class="tk-attr">color</span>=<span class="tk-str">"#2C5A8C"</span><span class="tk-tag">&gt;&lt;/granado-calendar&gt;</span>
-<span class="tk-tag">&lt;granado-calendar</span> <span class="tk-attr">color</span>=<span class="tk-str">"#C0392B"</span><span class="tk-tag">&gt;&lt;/granado-calendar&gt;</span></pre>
+<span class="tk-tag">&lt;granado-calendar</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span><span class="tk-tag">&gt;&lt;/granado-calendar&gt;</span>
+<span class="tk-tag">&lt;granado-calendar</span> <span class="tk-attr">color</span>=<span class="tk-str">"#8C1A1A"</span><span class="tk-tag">&gt;&lt;/granado-calendar&gt;</span></pre>
 
         <!-- ===== Valor inicial ===== -->
         <h2 class="gd-h2">Valor inicial</h2>
@@ -1949,12 +1953,12 @@ tbl.setAttribute('ondoubleclickevent',
         <div class="gd-demo" style="display:flex;gap:24px;flex-wrap:wrap;align-items:center">
           <granado-checkbox label="Verde (default)" checked="true"></granado-checkbox>
           <granado-checkbox label="Ouro"      checked="true" color="#9A7520"></granado-checkbox>
-          <granado-checkbox label="Azul"      checked="true" color="#2C5A8C"></granado-checkbox>
-          <granado-checkbox label="Vermelho"  checked="true" color="#C0392B"></granado-checkbox>
+          <granado-checkbox label="Azul"      checked="true" color="#1A4A8C"></granado-checkbox>
+          <granado-checkbox label="Vermelho"  checked="true" color="#8C1A1A"></granado-checkbox>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-checkbox</span> <span class="tk-attr">label</span>=<span class="tk-str">"Ouro"</span>     <span class="tk-attr">color</span>=<span class="tk-str">"#9A7520"</span> <span class="tk-attr">checked</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-checkbox&gt;</span>
-<span class="tk-tag">&lt;granado-checkbox</span> <span class="tk-attr">label</span>=<span class="tk-str">"Azul"</span>     <span class="tk-attr">color</span>=<span class="tk-str">"#2C5A8C"</span> <span class="tk-attr">checked</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-checkbox&gt;</span>
-<span class="tk-tag">&lt;granado-checkbox</span> <span class="tk-attr">label</span>=<span class="tk-str">"Vermelho"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#C0392B"</span> <span class="tk-attr">checked</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-checkbox&gt;</span></pre>
+<span class="tk-tag">&lt;granado-checkbox</span> <span class="tk-attr">label</span>=<span class="tk-str">"Azul"</span>     <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span> <span class="tk-attr">checked</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-checkbox&gt;</span>
+<span class="tk-tag">&lt;granado-checkbox</span> <span class="tk-attr">label</span>=<span class="tk-str">"Vermelho"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#8C1A1A"</span> <span class="tk-attr">checked</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-checkbox&gt;</span></pre>
 
         <!-- ===== Desabilitado ===== -->
         <h2 class="gd-h2">Desabilitado</h2>
@@ -2195,7 +2199,7 @@ document.querySelectorAll(<span class="tk-str">'.filtros granado-checkbox'</span
             onchangeevent="console.log('operador:', value);">
           </granado-dropdown>
 
-          <granado-dropdown label="Status" multi="true" color="#2C5A8C" placeholder="Filtrar…"
+          <granado-dropdown label="Status" multi="true" color="#1A4A8C" placeholder="Filtrar…"
             options='[
               {"value":"OK","label":"Aprovado"},
               {"value":"DEV","label":"Desvio"},
@@ -2280,7 +2284,7 @@ document.querySelectorAll(<span class="tk-str">'.filtros granado-checkbox'</span
           <strong>array</strong> de strings; o setter aceita array <em>ou</em> string.
         </p>
         <div class="gd-demo">
-          <granado-dropdown multi="true" color="#2C5A8C" placeholder="Filtrar status…"
+          <granado-dropdown multi="true" color="#1A4A8C" placeholder="Filtrar status…"
             value="OK,DEV"
             options='[
               {"value":"OK","label":"Aprovado"},
@@ -2311,13 +2315,13 @@ document.querySelectorAll(<span class="tk-str">'.filtros granado-checkbox'</span
             options='["A","B","C"]'></granado-dropdown>
           <granado-dropdown placeholder="Ouro" color="#9A7520"
             options='["A","B","C"]'></granado-dropdown>
-          <granado-dropdown placeholder="Azul" color="#2C5A8C"
+          <granado-dropdown placeholder="Azul" color="#1A4A8C"
             options='["A","B","C"]'></granado-dropdown>
-          <granado-dropdown placeholder="Vermelho" color="#C0392B"
+          <granado-dropdown placeholder="Vermelho" color="#8C1A1A"
             options='["A","B","C"]'></granado-dropdown>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-dropdown</span> <span class="tk-attr">color</span>=<span class="tk-str">"#9A7520"</span> <span class="tk-attr">options</span>=<span class="tk-str">'["A","B","C"]'</span><span class="tk-tag">&gt;&lt;/granado-dropdown&gt;</span>
-<span class="tk-tag">&lt;granado-dropdown</span> <span class="tk-attr">color</span>=<span class="tk-str">"#2C5A8C"</span> <span class="tk-attr">options</span>=<span class="tk-str">'["A","B","C"]'</span><span class="tk-tag">&gt;&lt;/granado-dropdown&gt;</span></pre>
+<span class="tk-tag">&lt;granado-dropdown</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span> <span class="tk-attr">options</span>=<span class="tk-str">'["A","B","C"]'</span><span class="tk-tag">&gt;&lt;/granado-dropdown&gt;</span></pre>
 
         <!-- ===== Desabilitado ===== -->
         <h2 class="gd-h2">Desabilitado</h2>
@@ -2699,10 +2703,10 @@ dd.value = <span class="tk-str">'OK,DEV,PEN'</span>;</pre>
             label="Ouro" color="#9A7520" placeholder="Foque…">
           </granado-input>
           <granado-input style="flex:1;min-width:180px"
-            label="Azul" color="#2C5A8C" placeholder="Foque…">
+            label="Azul" color="#1A4A8C" placeholder="Foque…">
           </granado-input>
           <granado-input style="flex:1;min-width:180px"
-            label="Vermelho" color="#C0392B" placeholder="Foque…">
+            label="Vermelho" color="#8C1A1A" placeholder="Foque…">
           </granado-input>
         </div>
 
@@ -3051,7 +3055,7 @@ inp.blur();</pre>
           </granado-text>
 
           <granado-text style="flex:1;min-width:200px"
-            label="Status" value="Em desvio" color="#C0392B">
+            label="Status" value="Em desvio" color="#8C1A1A">
           </granado-text>
 
           <granado-text style="flex:1;min-width:200px"
@@ -3059,7 +3063,7 @@ inp.blur();</pre>
           </granado-text>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-text</span> <span class="tk-attr">value</span>=<span class="tk-str">"Aprovado"</span>  <span class="tk-attr">color</span>=<span class="tk-str">"#1C5C31"</span><span class="tk-tag">&gt;&lt;/granado-text&gt;</span>
-<span class="tk-tag">&lt;granado-text</span> <span class="tk-attr">value</span>=<span class="tk-str">"Em desvio"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#C0392B"</span><span class="tk-tag">&gt;&lt;/granado-text&gt;</span></pre>
+<span class="tk-tag">&lt;granado-text</span> <span class="tk-attr">value</span>=<span class="tk-str">"Em desvio"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#8C1A1A"</span><span class="tk-tag">&gt;&lt;/granado-text&gt;</span></pre>
 
         <!-- ===== Textarea ===== -->
         <h2 class="gd-h2">Multi-linha (textarea)</h2>
@@ -3247,7 +3251,7 @@ tx.setAttribute(<span class="tk-str">'value'</span>, <span class="tk-str">'Maria
           recebe ambos: <code>value</code> e <code>option</code> (objeto inteiro).
         </p>
         <div class="gd-demo">
-          <granado-radio color="#2C5A8C"
+          <granado-radio color="#1A4A8C"
             options='[
               {"value":"manha","label":"Turno Manhã"},
               {"value":"tarde","label":"Turno Tarde"},
@@ -3306,10 +3310,10 @@ tx.setAttribute(<span class="tk-str">'value'</span>, <span class="tk-str">'Maria
             color="#9A7520">
           </granado-radio>
           <granado-radio orientation="horizontal" options='["A","B","C"]' value="A"
-            color="#2C5A8C">
+            color="#1A4A8C">
           </granado-radio>
           <granado-radio orientation="horizontal" options='["A","B","C"]' value="A"
-            color="#C0392B">
+            color="#8C1A1A">
           </granado-radio>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-radio</span> <span class="tk-attr">color</span>=<span class="tk-str">"#9A7520"</span> <span class="tk-attr">options</span>=<span class="tk-str">'["A","B","C"]'</span> <span class="tk-attr">value</span>=<span class="tk-str">"A"</span><span class="tk-tag">&gt;&lt;/granado-radio&gt;</span></pre>
@@ -3537,13 +3541,13 @@ r.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tru
         <div class="gd-demo" style="display:flex;flex-direction:column;gap:18px">
           <granado-slider style="max-width:380px"
             label="Temperatura" min="0" max="200" step="5" value="60" unit="C"
-            color="#C0392B"
+            color="#8C1A1A"
             onchangeevent="console.log('temp final:', value);">
           </granado-slider>
 
           <granado-slider style="max-width:380px"
             label="Concentração" min="0" max="1" step="0.05" value="0.3"
-            color="#2C5A8C"
+            color="#1A4A8C"
             oninputevent="console.log('conc:', value);">
           </granado-slider>
         </div>
@@ -3608,9 +3612,9 @@ r.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tru
           </granado-slider>
           <granado-slider style="max-width:380px" label="Ouro"     value="55" color="#9A7520">
           </granado-slider>
-          <granado-slider style="max-width:380px" label="Azul"     value="75" color="#2C5A8C">
+          <granado-slider style="max-width:380px" label="Azul"     value="75" color="#1A4A8C">
           </granado-slider>
-          <granado-slider style="max-width:380px" label="Vermelho" value="90" color="#C0392B">
+          <granado-slider style="max-width:380px" label="Vermelho" value="90" color="#8C1A1A">
           </granado-slider>
         </div>
 
@@ -3893,11 +3897,11 @@ sl.setAttribute(<span class="tk-str">'max'</span>, <span class="tk-str">'500'</s
         <div class="gd-demo" style="display:flex;gap:24px;flex-wrap:wrap;align-items:center">
           <granado-toggle label="Verde (default)" checked="true"></granado-toggle>
           <granado-toggle label="Ouro"     checked="true" color="#9A7520"></granado-toggle>
-          <granado-toggle label="Azul"     checked="true" color="#2C5A8C"></granado-toggle>
-          <granado-toggle label="Vermelho" checked="true" color="#C0392B"></granado-toggle>
+          <granado-toggle label="Azul"     checked="true" color="#1A4A8C"></granado-toggle>
+          <granado-toggle label="Vermelho" checked="true" color="#8C1A1A"></granado-toggle>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-toggle</span> <span class="tk-attr">label</span>=<span class="tk-str">"Ouro"</span>     <span class="tk-attr">color</span>=<span class="tk-str">"#9A7520"</span> <span class="tk-attr">checked</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-toggle&gt;</span>
-<span class="tk-tag">&lt;granado-toggle</span> <span class="tk-attr">label</span>=<span class="tk-str">"Azul"</span>     <span class="tk-attr">color</span>=<span class="tk-str">"#2C5A8C"</span> <span class="tk-attr">checked</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-toggle&gt;</span></pre>
+<span class="tk-tag">&lt;granado-toggle</span> <span class="tk-attr">label</span>=<span class="tk-str">"Azul"</span>     <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span> <span class="tk-attr">checked</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-toggle&gt;</span></pre>
 
         <!-- ===== Posição do label ===== -->
         <h2 class="gd-h2">Posição do label</h2>
@@ -4093,7 +4097,7 @@ tg.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tr
           Botão no padrão visual Granado, com três variantes (preenchido, contornado,
           fantasma), três tamanhos (sm/md/lg), ícone opcional à esquerda ou à direita
           e efeito de <em>ripple</em> no clique. A cor base controla todas as variantes
-          de uma só vez — use vermelho (<code>#C0392B</code>) para ações destrutivas.
+          de uma só vez — use vermelho (<code>#8C1A1A</code>) para ações destrutivas.
         </p>
 
         <h2 class="gd-h2">Import</h2>
@@ -4166,9 +4170,9 @@ tg.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tr
         </p>
         <div class="gd-demo" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <granado-button label="Salvar"   icon="save"></granado-button>
-          <granado-button label="Excluir"  icon="trash" color="#C0392B"></granado-button>
+          <granado-button label="Excluir"  icon="trash" color="#8C1A1A"></granado-button>
           <granado-button label="Voltar"   icon="arrow-left" variant="ghost"></granado-button>
-          <granado-button label="Avançar"  icon="arrow-right" iconposition="right" color="#2C5A8C">
+          <granado-button label="Avançar"  icon="arrow-right" iconposition="right" color="#1A4A8C">
           </granado-button>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">label</span>=<span class="tk-str">"Salvar"</span>  <span class="tk-attr">icon</span>=<span class="tk-str">"save"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span>
@@ -4188,7 +4192,7 @@ tg.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tr
           <granado-button icon="settings" variant="ghost"></granado-button>
           <granado-button icon="refresh"  variant="secondary"></granado-button>
           <granado-button icon="filter"   variant="secondary"></granado-button>
-          <granado-button icon="x"        variant="ghost" color="#C0392B"></granado-button>
+          <granado-button icon="x"        variant="ghost" color="#8C1A1A"></granado-button>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">icon</span>=<span class="tk-str">"settings"</span> <span class="tk-attr">variant</span>=<span class="tk-str">"ghost"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span>
 <span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">icon</span>=<span class="tk-str">"refresh"</span>  <span class="tk-attr">variant</span>=<span class="tk-str">"secondary"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span></pre>
@@ -4197,17 +4201,17 @@ tg.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tr
         <h2 class="gd-h2">Cor base</h2>
         <p class="gd-lead">
           <code>color</code> controla todas as variantes — fundo (primary), borda+texto
-          (secondary, ghost). Use <code>#C0392B</code> para ações destrutivas
-          (excluir, cancelar permanentemente), <code>#2C5A8C</code> para informativas e
+          (secondary, ghost). Use <code>#8C1A1A</code> para ações destrutivas
+          (excluir, cancelar permanentemente), <code>#1A4A8C</code> para informativas e
           <code>#9A7520</code> para avisos.
         </p>
         <div class="gd-demo" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <granado-button label="Verde (default)" icon="check"></granado-button>
           <granado-button label="Ouro"     icon="alert-triangle" color="#9A7520"></granado-button>
-          <granado-button label="Azul"     icon="info"  color="#2C5A8C"></granado-button>
-          <granado-button label="Excluir"  icon="trash" color="#C0392B"></granado-button>
+          <granado-button label="Azul"     icon="info"  color="#1A4A8C"></granado-button>
+          <granado-button label="Excluir"  icon="trash" color="#8C1A1A"></granado-button>
         </div>
-        <pre class="gd-code"><span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">label</span>=<span class="tk-str">"Excluir"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"trash"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#C0392B"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span></pre>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">label</span>=<span class="tk-str">"Excluir"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"trash"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#8C1A1A"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span></pre>
 
         <!-- ===== Desabilitado ===== -->
         <h2 class="gd-h2">Desabilitado</h2>
@@ -4295,7 +4299,7 @@ tg.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tr
               <td class="col-desc">
                 Cor base. Em <code>primary</code> pinta o fundo; em
                 <code>secondary</code>/<code>ghost</code> pinta a borda e o texto. Use
-                <code>#C0392B</code> para ações destrutivas.
+                <code>#8C1A1A</code> para ações destrutivas.
               </td>
             </tr>
             <tr>
@@ -4452,20 +4456,20 @@ tg.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tr
           espaçamento interno (default <code>"18px"</code>).
         </p>
         <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start">
-          <granado-panel style="flex:1;min-width:240px" title="Alerta" color="#C0392B">
+          <granado-panel style="flex:1;min-width:240px" title="Alerta" color="#8C1A1A">
             <p style="margin:0;font-size:13px;color:#103E20;line-height:1.5">
               Linha 03 parada há mais de 30 minutos.
             </p>
           </granado-panel>
 
-          <granado-panel style="flex:1;min-width:240px" title="Informação" color="#2C5A8C" padding="24px">
+          <granado-panel style="flex:1;min-width:240px" title="Informação" color="#1A4A8C" padding="24px">
             <p style="margin:0;font-size:13px;color:#103E20;line-height:1.5">
               Padding 24px para conteúdo mais arejado.
             </p>
           </granado-panel>
         </div>
-        <pre class="gd-code"><span class="tk-tag">&lt;granado-panel</span> <span class="tk-attr">title</span>=<span class="tk-str">"Alerta"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#C0392B"</span><span class="tk-tag">&gt;</span> ... <span class="tk-tag">&lt;/granado-panel&gt;</span>
-<span class="tk-tag">&lt;granado-panel</span> <span class="tk-attr">title</span>=<span class="tk-str">"Info"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#2C5A8C"</span> <span class="tk-attr">padding</span>=<span class="tk-str">"24px"</span><span class="tk-tag">&gt;</span> ... <span class="tk-tag">&lt;/granado-panel&gt;</span></pre>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-panel</span> <span class="tk-attr">title</span>=<span class="tk-str">"Alerta"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#8C1A1A"</span><span class="tk-tag">&gt;</span> ... <span class="tk-tag">&lt;/granado-panel&gt;</span>
+<span class="tk-tag">&lt;granado-panel</span> <span class="tk-attr">title</span>=<span class="tk-str">"Info"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span> <span class="tk-attr">padding</span>=<span class="tk-str">"24px"</span><span class="tk-tag">&gt;</span> ... <span class="tk-tag">&lt;/granado-panel&gt;</span></pre>
 
         <!-- ===== Sem header ===== -->
         <h2 class="gd-h2">Sem header</h2>
@@ -4669,7 +4673,7 @@ tg.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tr
             </div>
           </granado-scroll-panel>
 
-          <granado-scroll-panel style="flex:1;min-width:240px" title="240px" maxheight="240px" color="#2C5A8C">
+          <granado-scroll-panel style="flex:1;min-width:240px" title="240px" maxheight="240px" color="#1A4A8C">
             <div style="font-size:13px;color:#103E20;line-height:1.7">
               Item 1<br>Item 2<br>Item 3<br>Item 4<br>Item 5<br>Item 6<br>Item 7<br>
               Item 8<br>Item 9<br>Item 10<br>Item 11<br>Item 12<br>Item 13
@@ -5174,7 +5178,7 @@ tabs.value = <span class="tk-str">'hist'</span>;</pre>
             onclickevent="GranadoToast.success('Pesagem confirmada com sucesso')">
           </granado-button>
 
-          <granado-button label="Error" icon="x" color="#C0392B"
+          <granado-button label="Error" icon="x" color="#8C1A1A"
             onclickevent="GranadoToast.error('Falha de comunicação com a balança', { heading: 'Erro' })">
           </granado-button>
 
@@ -5182,7 +5186,7 @@ tabs.value = <span class="tk-str">'hist'</span>;</pre>
             onclickevent="GranadoToast.warning('Lote MP-01002 em desvio', { heading: 'Atenção' })">
           </granado-button>
 
-          <granado-button label="Info" variant="secondary" color="#2C5A8C"
+          <granado-button label="Info" variant="secondary" color="#1A4A8C"
             onclickevent="GranadoToast.info('Aguardando aprovação do supervisor')">
           </granado-button>
         </div>
@@ -5290,7 +5294,7 @@ t.dismiss();</pre>
             onclickevent="['Pesagem 1','Pesagem 2','Pesagem 3','Pesagem 4','Pesagem 5'].forEach((m,i) =&gt; setTimeout(() =&gt; GranadoToast.success(m), i * 150));">
           </granado-button>
 
-          <granado-button label="Fechar todos" variant="ghost" icon="x" color="#C0392B"
+          <granado-button label="Fechar todos" variant="ghost" icon="x" color="#8C1A1A"
             onclickevent="GranadoToast.dismissAll()">
           </granado-button>
         </div>
@@ -5471,13 +5475,13 @@ t.dismiss();</pre>
         <div class="gd-demo" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <granado-badge label="OK"       color="#1C7A38"></granado-badge>
           <granado-badge label="Desvio"   color="#9A5A00"></granado-badge>
-          <granado-badge label="Pendente" color="#2C5A8C"></granado-badge>
-          <granado-badge label="Erro"     color="#C0392B"></granado-badge>
+          <granado-badge label="Pendente" color="#1A4A8C"></granado-badge>
+          <granado-badge label="Erro"     color="#8C1A1A"></granado-badge>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-badge</span> <span class="tk-attr">label</span>=<span class="tk-str">"OK"</span>       <span class="tk-attr">color</span>=<span class="tk-str">"#1C7A38"</span><span class="tk-tag">&gt;&lt;/granado-badge&gt;</span>
 <span class="tk-tag">&lt;granado-badge</span> <span class="tk-attr">label</span>=<span class="tk-str">"Desvio"</span>   <span class="tk-attr">color</span>=<span class="tk-str">"#9A5A00"</span><span class="tk-tag">&gt;&lt;/granado-badge&gt;</span>
-<span class="tk-tag">&lt;granado-badge</span> <span class="tk-attr">label</span>=<span class="tk-str">"Pendente"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#2C5A8C"</span><span class="tk-tag">&gt;&lt;/granado-badge&gt;</span>
-<span class="tk-tag">&lt;granado-badge</span> <span class="tk-attr">label</span>=<span class="tk-str">"Erro"</span>     <span class="tk-attr">color</span>=<span class="tk-str">"#C0392B"</span><span class="tk-tag">&gt;&lt;/granado-badge&gt;</span></pre>
+<span class="tk-tag">&lt;granado-badge</span> <span class="tk-attr">label</span>=<span class="tk-str">"Pendente"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span><span class="tk-tag">&gt;&lt;/granado-badge&gt;</span>
+<span class="tk-tag">&lt;granado-badge</span> <span class="tk-attr">label</span>=<span class="tk-str">"Erro"</span>     <span class="tk-attr">color</span>=<span class="tk-str">"#8C1A1A"</span><span class="tk-tag">&gt;&lt;/granado-badge&gt;</span></pre>
 
         <!-- ===== Variantes ===== -->
         <h2 class="gd-h2">Variantes</h2>
@@ -5494,22 +5498,22 @@ t.dismiss();</pre>
             <strong style="font-size:11px;color:#6B7280;width:70px">solid</strong>
             <granado-badge label="OK"       color="#1C7A38" variant="solid"></granado-badge>
             <granado-badge label="Desvio"   color="#9A5A00" variant="solid"></granado-badge>
-            <granado-badge label="Pendente" color="#2C5A8C" variant="solid"></granado-badge>
-            <granado-badge label="Erro"     color="#C0392B" variant="solid"></granado-badge>
+            <granado-badge label="Pendente" color="#1A4A8C" variant="solid"></granado-badge>
+            <granado-badge label="Erro"     color="#8C1A1A" variant="solid"></granado-badge>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
             <strong style="font-size:11px;color:#6B7280;width:70px">soft</strong>
             <granado-badge label="OK"       color="#1C7A38" variant="soft"></granado-badge>
             <granado-badge label="Desvio"   color="#9A5A00" variant="soft"></granado-badge>
-            <granado-badge label="Pendente" color="#2C5A8C" variant="soft"></granado-badge>
-            <granado-badge label="Erro"     color="#C0392B" variant="soft"></granado-badge>
+            <granado-badge label="Pendente" color="#1A4A8C" variant="soft"></granado-badge>
+            <granado-badge label="Erro"     color="#8C1A1A" variant="soft"></granado-badge>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
             <strong style="font-size:11px;color:#6B7280;width:70px">outline</strong>
             <granado-badge label="OK"       color="#1C7A38" variant="outline"></granado-badge>
             <granado-badge label="Desvio"   color="#9A5A00" variant="outline"></granado-badge>
-            <granado-badge label="Pendente" color="#2C5A8C" variant="outline"></granado-badge>
-            <granado-badge label="Erro"     color="#C0392B" variant="outline"></granado-badge>
+            <granado-badge label="Pendente" color="#1A4A8C" variant="outline"></granado-badge>
+            <granado-badge label="Erro"     color="#8C1A1A" variant="outline"></granado-badge>
           </div>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-badge</span> <span class="tk-attr">label</span>=<span class="tk-str">"OK"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1C7A38"</span> <span class="tk-attr">variant</span>=<span class="tk-str">"solid"</span><span class="tk-tag">&gt;&lt;/granado-badge&gt;</span>
@@ -5526,8 +5530,8 @@ t.dismiss();</pre>
         <div class="gd-demo" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <granado-badge label="OK"       color="#1C7A38" variant="outline" dot="true"></granado-badge>
           <granado-badge label="Desvio"   color="#9A5A00" variant="outline" dot="true"></granado-badge>
-          <granado-badge label="Pendente" color="#2C5A8C" variant="soft"    dot="true"></granado-badge>
-          <granado-badge label="Erro"     color="#C0392B" variant="soft"    dot="true"></granado-badge>
+          <granado-badge label="Pendente" color="#1A4A8C" variant="soft"    dot="true"></granado-badge>
+          <granado-badge label="Erro"     color="#8C1A1A" variant="soft"    dot="true"></granado-badge>
           <granado-badge label="Online"   color="#1C7A38"                   dot="true"></granado-badge>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-badge</span> <span class="tk-attr">label</span>=<span class="tk-str">"OK"</span> <span class="tk-attr">variant</span>=<span class="tk-str">"outline"</span> <span class="tk-attr">dot</span>=<span class="tk-str">"true"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1C7A38"</span><span class="tk-tag">&gt;&lt;/granado-badge&gt;</span></pre>
@@ -5584,8 +5588,8 @@ t.dismiss();</pre>
               <td class="col-default">"#1C5C31"</td>
               <td class="col-desc">
                 Cor base. Sugestões por status: <code>#1C7A38</code> (OK),
-                <code>#9A5A00</code> (warning), <code>#C0392B</code> (error),
-                <code>#2C5A8C</code> (info). Em <code>soft</code>, o fundo é uma
+                <code>#9A5A00</code> (warning), <code>#8C1A1A</code> (error),
+                <code>#1A4A8C</code> (info). Em <code>soft</code>, o fundo é uma
                 versão clareada (~85%) automaticamente.
               </td>
             </tr>
@@ -5688,19 +5692,19 @@ t.dismiss();</pre>
             <strong style="font-size:11px;color:#6B7280;width:70px">soft</strong>
             <granado-chip label="Aprovado" color="#1C7A38" variant="soft"></granado-chip>
             <granado-chip label="Desvio"   color="#9A5A00" variant="soft"></granado-chip>
-            <granado-chip label="Pendente" color="#2C5A8C" variant="soft"></granado-chip>
+            <granado-chip label="Pendente" color="#1A4A8C" variant="soft"></granado-chip>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
             <strong style="font-size:11px;color:#6B7280;width:70px">solid</strong>
             <granado-chip label="Aprovado" color="#1C7A38" variant="solid"></granado-chip>
             <granado-chip label="Desvio"   color="#9A5A00" variant="solid"></granado-chip>
-            <granado-chip label="Pendente" color="#2C5A8C" variant="solid"></granado-chip>
+            <granado-chip label="Pendente" color="#1A4A8C" variant="solid"></granado-chip>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
             <strong style="font-size:11px;color:#6B7280;width:70px">outline</strong>
             <granado-chip label="Aprovado" color="#1C7A38" variant="outline"></granado-chip>
             <granado-chip label="Desvio"   color="#9A5A00" variant="outline"></granado-chip>
-            <granado-chip label="Pendente" color="#2C5A8C" variant="outline"></granado-chip>
+            <granado-chip label="Pendente" color="#1A4A8C" variant="outline"></granado-chip>
           </div>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-chip</span> <span class="tk-attr">label</span>=<span class="tk-str">"Aprovado"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1C7A38"</span> <span class="tk-attr">variant</span>=<span class="tk-str">"solid"</span><span class="tk-tag">&gt;&lt;/granado-chip&gt;</span></pre>
@@ -5745,7 +5749,7 @@ t.dismiss();</pre>
           <granado-chip label="Desvio" clickable="true" color="#9A5A00"
             onclickevent="this.selected = !this.selected;">
           </granado-chip>
-          <granado-chip label="Pendente" clickable="true" color="#2C5A8C"
+          <granado-chip label="Pendente" clickable="true" color="#1A4A8C"
             onclickevent="this.selected = !this.selected;">
           </granado-chip>
           <granado-chip label="Em revisão" clickable="true" color="#6B6B6B"
@@ -5952,8 +5956,8 @@ t.dismiss();</pre>
         <div class="gd-demo" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
           <granado-icon name="check"></granado-icon>
           <granado-icon name="alert-triangle" color="#9A5A00"></granado-icon>
-          <granado-icon name="x-circle" color="#C0392B"></granado-icon>
-          <granado-icon name="info" color="#2C5A8C"></granado-icon>
+          <granado-icon name="x-circle" color="#8C1A1A"></granado-icon>
+          <granado-icon name="info" color="#1A4A8C"></granado-icon>
           <granado-icon name="package" size="28"></granado-icon>
           <granado-icon name="truck" size="32" color="#9A7520"></granado-icon>
         </div>
@@ -5990,11 +5994,11 @@ t.dismiss();</pre>
         <div class="gd-demo" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
           <granado-icon name="check"   color="#1C7A38" background="true"></granado-icon>
           <granado-icon name="clock"   color="#9A5A00" background="true"></granado-icon>
-          <granado-icon name="x"       color="#C0392B" background="true"></granado-icon>
-          <granado-icon name="info"    color="#2C5A8C" background="true"></granado-icon>
+          <granado-icon name="x"       color="#8C1A1A" background="true"></granado-icon>
+          <granado-icon name="info"    color="#1A4A8C" background="true"></granado-icon>
           <granado-icon name="user"    color="#1C5C31" background="true" bgshape="square"></granado-icon>
           <granado-icon name="package" color="#9A7520" background="true" bgshape="square" size="24"></granado-icon>
-          <granado-icon name="bell"    color="#2C5A8C" background="true" size="28"></granado-icon>
+          <granado-icon name="bell"    color="#1A4A8C" background="true" size="28"></granado-icon>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-icon</span> <span class="tk-attr">name</span>=<span class="tk-str">"check"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1C7A38"</span> <span class="tk-attr">background</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-icon&gt;</span>
 
@@ -6002,7 +6006,7 @@ t.dismiss();</pre>
 <span class="tk-tag">&lt;granado-icon</span> <span class="tk-attr">name</span>=<span class="tk-str">"user"</span> <span class="tk-attr">background</span>=<span class="tk-str">"true"</span> <span class="tk-attr">bgshape</span>=<span class="tk-str">"square"</span><span class="tk-tag">&gt;&lt;/granado-icon&gt;</span>
 
 <span class="tk-comment">&lt;!-- Cor do fundo customizada --&gt;</span>
-<span class="tk-tag">&lt;granado-icon</span> <span class="tk-attr">name</span>=<span class="tk-str">"bell"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#FFFFFF"</span> <span class="tk-attr">background</span>=<span class="tk-str">"true"</span> <span class="tk-attr">bgcolor</span>=<span class="tk-str">"#2C5A8C"</span><span class="tk-tag">&gt;&lt;/granado-icon&gt;</span></pre>
+<span class="tk-tag">&lt;granado-icon</span> <span class="tk-attr">name</span>=<span class="tk-str">"bell"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#FFFFFF"</span> <span class="tk-attr">background</span>=<span class="tk-str">"true"</span> <span class="tk-attr">bgcolor</span>=<span class="tk-str">"#1A4A8C"</span><span class="tk-tag">&gt;&lt;/granado-icon&gt;</span></pre>
 
         <!-- ===== Galeria por categoria ===== -->
         <h2 class="gd-h2">Galeria por categoria</h2>
@@ -6046,7 +6050,7 @@ t.dismiss();</pre>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="info"></granado-icon>info</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="alert-triangle" color="#9A5A00"></granado-icon>alert-triangle</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="check-circle" color="#1C7A38"></granado-icon>check-circle</span>
-              <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="x-circle" color="#C0392B"></granado-icon>x-circle</span>
+              <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="x-circle" color="#8C1A1A"></granado-icon>x-circle</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="bell"></granado-icon>bell</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="shield"></granado-icon>shield</span>
             </div>
@@ -6075,7 +6079,7 @@ t.dismiss();</pre>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="activity"></granado-icon>activity</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="bar-chart"></granado-icon>bar-chart</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="trending-up" color="#1C7A38"></granado-icon>trending-up</span>
-              <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="thermometer" color="#C0392B"></granado-icon>thermometer</span>
+              <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="thermometer" color="#8C1A1A"></granado-icon>thermometer</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="zap" color="#9A7520"></granado-icon>zap</span>
             </div>
           </div>
@@ -6085,12 +6089,12 @@ t.dismiss();</pre>
             <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:'DM Mono','DejaVu Mono',Consolas,monospace;font-size:10px;color:#5A6B5E">
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="play"></granado-icon>play</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="pause"></granado-icon>pause</span>
-              <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="stop" color="#C0392B"></granado-icon>stop</span>
+              <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="stop" color="#8C1A1A"></granado-icon>stop</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="sun"></granado-icon>sun</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="moon"></granado-icon>moon</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="globe"></granado-icon>globe</span>
               <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="log-out"></granado-icon>log-out</span>
-              <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="power" color="#C0392B"></granado-icon>power</span>
+              <span style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px"><granado-icon name="power" color="#8C1A1A"></granado-icon>power</span>
             </div>
           </div>
         </div>
@@ -6296,7 +6300,7 @@ const html = all.map(name =&gt;
         </p>
         <div class="gd-demo" style="display:flex;flex-direction:column;gap:18px;max-width:560px">
           <granado-progress-bar value="65" isshowlabel="false"
-            valueposition="right" color="#2C5A8C"></granado-progress-bar>
+            valueposition="right" color="#1A4A8C"></granado-progress-bar>
 
           <granado-progress-bar label="Sem valor à vista" value="40"
             isshowvalue="false"></granado-progress-bar>
@@ -6327,7 +6331,7 @@ const html = all.map(name =&gt;
             valueformat="value" unit="kg" color="#1C7A38"></granado-progress-bar>
 
           <granado-progress-bar label="Concluídas" value="12" max="20"
-            valueformat="fraction" unit="ordens" color="#2C5A8C"></granado-progress-bar>
+            valueformat="fraction" unit="ordens" color="#1A4A8C"></granado-progress-bar>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-progress-bar</span> <span class="tk-attr">value</span>=<span class="tk-str">"72"</span> <span class="tk-attr">valueformat</span>=<span class="tk-str">"percent"</span><span class="tk-tag">&gt;&lt;/granado-progress-bar&gt;</span>
 
@@ -6349,8 +6353,8 @@ const html = all.map(name =&gt;
           <granado-progress-bar label="Verde (default)" value="55"></granado-progress-bar>
           <granado-progress-bar label="OK"     value="92" color="#1C7A38"></granado-progress-bar>
           <granado-progress-bar label="Aviso"  value="68" color="#9A7520"></granado-progress-bar>
-          <granado-progress-bar label="Info"   value="44" color="#2C5A8C"></granado-progress-bar>
-          <granado-progress-bar label="Alerta" value="22" color="#C0392B"></granado-progress-bar>
+          <granado-progress-bar label="Info"   value="44" color="#1A4A8C"></granado-progress-bar>
+          <granado-progress-bar label="Alerta" value="22" color="#8C1A1A"></granado-progress-bar>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-progress-bar</span> <span class="tk-attr">value</span>=<span class="tk-str">"92"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1C7A38"</span><span class="tk-tag">&gt;&lt;/granado-progress-bar&gt;</span></pre>
 
@@ -6378,7 +6382,7 @@ const html = all.map(name =&gt;
         </p>
         <div class="gd-demo" style="display:flex;flex-direction:column;gap:18px;max-width:560px">
           <granado-progress-bar label="Sincronizando" value="65" pulse="true"
-            color="#2C5A8C"></granado-progress-bar>
+            color="#1A4A8C"></granado-progress-bar>
 
           <granado-progress-bar label="Lendo balança" value="38"
             isshowvalue="false" pulse="true" color="#9A7520" height="8px"></granado-progress-bar>
@@ -6664,19 +6668,19 @@ stp.steps = [
         </p>
         <div class="gd-demo">
           <granado-stepper id="dt-stp-palette"
-            activeiconcolor="#2C5A8C"
+            activeiconcolor="#1A4A8C"
             desactiveiconcolor="#8FA9C2"
             activetextcolor="#1B3A5C"
-            activeconnectorcolor="#2C5A8C"
+            activeconnectorcolor="#1A4A8C"
             desactiveconnectorcolor="#D8E0EA"
             currentstepcolor="#9A7520">
           </granado-stepper>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-stepper</span>
-    <span class="tk-attr">activeiconcolor</span>=<span class="tk-str">"#2C5A8C"</span>
+    <span class="tk-attr">activeiconcolor</span>=<span class="tk-str">"#1A4A8C"</span>
     <span class="tk-attr">desactiveiconcolor</span>=<span class="tk-str">"#8FA9C2"</span>
     <span class="tk-attr">activetextcolor</span>=<span class="tk-str">"#1B3A5C"</span>
-    <span class="tk-attr">activeconnectorcolor</span>=<span class="tk-str">"#2C5A8C"</span>
+    <span class="tk-attr">activeconnectorcolor</span>=<span class="tk-str">"#1A4A8C"</span>
     <span class="tk-attr">desactiveconnectorcolor</span>=<span class="tk-str">"#D8E0EA"</span>
     <span class="tk-attr">currentstepcolor</span>=<span class="tk-str">"#9A7520"</span><span class="tk-tag">&gt;&lt;/granado-stepper&gt;</span></pre>
 
@@ -6718,7 +6722,7 @@ stp.steps = [
     { key: <span class="tk-str">'a'</span>, title: <span class="tk-str">'✓'</span>, subtitle: <span class="tk-str">'OK'</span>,    isFilled: <span class="tk-str">true</span>,
       onClickEvent: <span class="tk-str">"console.log('a')"</span> },
     { key: <span class="tk-str">'b'</span>, title: <span class="tk-str">'!'</span>, subtitle: <span class="tk-str">'Falha'</span>, isFilled: <span class="tk-str">true</span>,
-      <span class="tk-attr">iconColor</span>: <span class="tk-str">'#C0392B'</span>, onClickEvent: <span class="tk-str">"alert('revisar erro')"</span> },
+      <span class="tk-attr">iconColor</span>: <span class="tk-str">'#8C1A1A'</span>, onClickEvent: <span class="tk-str">"alert('revisar erro')"</span> },
     { key: <span class="tk-str">'c'</span>, title: <span class="tk-str">'3'</span>, subtitle: <span class="tk-str">'Atual'</span>, isFilled: <span class="tk-str">true</span>, isCurrent: <span class="tk-str">true</span>,
       onClickEvent: <span class="tk-str">"alert('atual')"</span> },
     { key: <span class="tk-str">'d'</span>, title: <span class="tk-str">'4'</span>, subtitle: <span class="tk-str">'Pendente'</span>, isFilled: <span class="tk-str">false</span> }
@@ -7067,7 +7071,7 @@ stp.addEventListener(<span class="tk-str">'stepclick'</span>, e =&gt; {
           const ov = document.getElementById('dt-stp-override');
           if (ov) ov.steps = [
             { key: 'a', title: '✓', subtitle: 'OK',       isFilled: true,  onClickEvent: "console.log('a')" },
-            { key: 'b', title: '!', subtitle: 'Falha',    isFilled: true,  iconColor: '#C0392B', onClickEvent: "alert('revisar erro')" },
+            { key: 'b', title: '!', subtitle: 'Falha',    isFilled: true,  iconColor: '#8C1A1A', onClickEvent: "alert('revisar erro')" },
             { key: 'c', title: '3', subtitle: 'Atual',    isFilled: true,  isCurrent: true, onClickEvent: "alert('atual')" },
             { key: 'd', title: '4', subtitle: 'Pendente', isFilled: false }
           ];
@@ -7148,8 +7152,8 @@ stp.addEventListener(<span class="tk-str">'stepclick'</span>, e =&gt; {
           <granado-submenu-pesagem id="dt-sm-dyn"
             contextlabel="Lote Ativo"
             contextvalue="L24-1042"
-            contextcolor="#2C5A8C"
-            activecolor="#2C5A8C"
+            contextcolor="#1A4A8C"
+            activecolor="#1A4A8C"
             backgroundcolor="#EAF1F8"
             bordercolor="#C6D6E5"
             value="lab-fq"
@@ -7234,13 +7238,13 @@ stp.addEventListener(<span class="tk-str">'stepclick'</span>, e =&gt; {
           para módulos de laboratório.
         </p>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-submenu-pesagem</span>
-    <span class="tk-attr">activecolor</span>=<span class="tk-str">"#2C5A8C"</span>
+    <span class="tk-attr">activecolor</span>=<span class="tk-str">"#1A4A8C"</span>
     <span class="tk-attr">activetextcolor</span>=<span class="tk-str">"#FFFFFF"</span>
     <span class="tk-attr">inactivecolor</span>=<span class="tk-str">"#1B3A5C"</span>
     <span class="tk-attr">inactivebg</span>=<span class="tk-str">"#FFFFFF"</span>
     <span class="tk-attr">backgroundcolor</span>=<span class="tk-str">"#EAF1F8"</span>
     <span class="tk-attr">bordercolor</span>=<span class="tk-str">"#C6D6E5"</span>
-    <span class="tk-attr">contextcolor</span>=<span class="tk-str">"#2C5A8C"</span>
+    <span class="tk-attr">contextcolor</span>=<span class="tk-str">"#1A4A8C"</span>
     <span class="tk-attr">backcolor</span>=<span class="tk-str">"#9A7520"</span><span class="tk-tag">&gt;</span>
     ...
 <span class="tk-tag">&lt;/granado-submenu-pesagem&gt;</span></pre>
@@ -7662,7 +7666,7 @@ GranadoPreloader.hide();</pre>
           loadings de múltiplas etapas (conectando → validando → concluindo).
         </p>
         <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-          <granado-button label="Loading em 3 etapas" variant="secondary" color="#2C5A8C"
+          <granado-button label="Loading em 3 etapas" variant="secondary" color="#1A4A8C"
             onclickevent="GranadoPreloader.show('Conectando...'); setTimeout(function(){ GranadoPreloader.setText('Validando dados...'); }, 900); setTimeout(function(){ GranadoPreloader.setText('Concluindo...'); }, 1800); setTimeout(function(){ GranadoPreloader.hide(); }, 2800)">
           </granado-button>
         </div>
@@ -7745,8 +7749,8 @@ setTimeout(<span class="tk-key">() =&gt;</span> GranadoPreloader.hide(),        
           <granado-button label="brand" variant="secondary"
             onclickevent="GranadoPreloader.show({ icon:'brand', text:'Aguarde...' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
           </granado-button>
-          <granado-button label="spinner" variant="secondary" color="#2C5A8C"
-            onclickevent="GranadoPreloader.show({ icon:'spinner', text:'Carregando...', color:'#2C5A8C' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+          <granado-button label="spinner" variant="secondary" color="#1A4A8C"
+            onclickevent="GranadoPreloader.show({ icon:'spinner', text:'Carregando...', color:'#1A4A8C' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
           </granado-button>
           <granado-button label="dots" variant="secondary" color="#1C5C31"
             onclickevent="GranadoPreloader.show({ icon:'dots', text:'Processando...', color:'#1C5C31' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
@@ -7754,8 +7758,8 @@ setTimeout(<span class="tk-key">() =&gt;</span> GranadoPreloader.hide(),        
           <granado-button label="bars" variant="secondary" color="#9A5A00"
             onclickevent="GranadoPreloader.show({ icon:'bars', text:'Sincronizando...', color:'#9A5A00' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
           </granado-button>
-          <granado-button label="pulse" variant="secondary" color="#C0392B"
-            onclickevent="GranadoPreloader.show({ icon:'pulse', text:'Conectando...', color:'#C0392B' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
+          <granado-button label="pulse" variant="secondary" color="#8C1A1A"
+            onclickevent="GranadoPreloader.show({ icon:'pulse', text:'Conectando...', color:'#8C1A1A' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
           </granado-button>
           <granado-button label="ring" variant="secondary"
             onclickevent="GranadoPreloader.show({ icon:'ring', text:'Aguarde...', color:'#C8A85A' }); setTimeout(function(){ GranadoPreloader.hide(); }, 2500)">
@@ -7765,10 +7769,10 @@ setTimeout(<span class="tk-key">() =&gt;</span> GranadoPreloader.hide(),        
 GranadoPreloader.show();
 
 <span class="tk-comment">// Genéricos (use em qualquer projeto)</span>
-GranadoPreloader.show({ icon: <span class="tk-str">'spinner'</span>, text: <span class="tk-str">'Carregando...'</span>, color: <span class="tk-str">'#2C5A8C'</span> });
+GranadoPreloader.show({ icon: <span class="tk-str">'spinner'</span>, text: <span class="tk-str">'Carregando...'</span>, color: <span class="tk-str">'#1A4A8C'</span> });
 GranadoPreloader.show({ icon: <span class="tk-str">'dots'</span>,    text: <span class="tk-str">'Processando...'</span>, color: <span class="tk-str">'#1C5C31'</span> });
 GranadoPreloader.show({ icon: <span class="tk-str">'bars'</span>,    text: <span class="tk-str">'Sincronizando...'</span>, color: <span class="tk-str">'#9A5A00'</span> });
-GranadoPreloader.show({ icon: <span class="tk-str">'pulse'</span>,   text: <span class="tk-str">'Conectando...'</span>, color: <span class="tk-str">'#C0392B'</span> });
+GranadoPreloader.show({ icon: <span class="tk-str">'pulse'</span>,   text: <span class="tk-str">'Conectando...'</span>, color: <span class="tk-str">'#8C1A1A'</span> });
 GranadoPreloader.show({ icon: <span class="tk-str">'ring'</span>,    text: <span class="tk-str">'Aguarde...'</span>,    color: <span class="tk-str">'#C8A85A'</span> });</pre>
 
         <h3 class="gd-h3">Troca de ícone em runtime</h3>
@@ -8809,7 +8813,7 @@ GranadoPreloader.hide();</pre>
               <td class="col-name">type</td>
               <td class="col-type">string</td>
               <td class="col-default">"pesagem"</td>
-              <td class="col-desc">Tipo da etiqueta. Define o layout e os campos esperados em <code>data</code>. Atual: <code>pesagem</code>.</td>
+              <td class="col-desc">Tipo da etiqueta. Define o layout e os campos esperados em <code>data</code>. Atuais: <code>pesagem</code> e <code>pesagem-gaiola</code>.</td>
             </tr>
             <tr>
               <td class="col-name">data</td>
@@ -8846,6 +8850,57 @@ GranadoPreloader.hide();</pre>
             <tr><td class="col-name">noEtiqueta</td><td class="col-type">string</td><td class="col-desc">Número da etiqueta.</td></tr>
             <tr><td class="col-name">barcode</td><td class="col-type">string</td><td class="col-desc">Conteúdo do código de barras (renderizado como barras + texto).</td></tr>
             <tr><td class="col-name">pesoLiquido</td><td class="col-type">string</td><td class="col-desc">Peso líquido (caixa preta em destaque).</td></tr>
+            <tr><td class="col-name">impressoPor</td><td class="col-type">string</td><td class="col-desc">Rodapé — quem imprimiu.</td></tr>
+            <tr><td class="col-name">impressoEm</td><td class="col-type">string</td><td class="col-desc">Rodapé — data/hora da impressão.</td></tr>
+          </tbody>
+        </table>
+
+        <h2 class="gd-h2">Uso — type="pesagem-gaiola"</h2>
+        <p class="gd-lead">
+          Reproduz a <strong>etiqueta de Gaiola</strong> (Label 004). Mesmos mecanismos do tipo
+          <code>pesagem</code> — passe os dados via <code>.data</code> (objeto) ou via o atributo
+          <code>data</code> (JSON).
+        </p>
+        <div class="gd-demo">
+          <granado-zpl type="pesagem-gaiola" data='{
+            "titulo":"PESAGEM DE MATERIAL - GAIOLA","dataImpressao":"24/03/2026",
+            "ordemFabricacao":"771166","gaiola":"3/3",
+            "granelResultante":"S0835B - SAB. PH LIMAO SICILIANO","noEtiqueta":"7951496",
+            "lote":"1621/2026","usuario":"VALMIR","matricula":"102266","noGaiola":"563943",
+            "barcode":"#G1563943:771166:7951496",
+            "impressoPor":"Claudinei","impressoEm":"31/03/2026 08:05"
+          }'></granado-zpl>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-zpl</span> <span class="tk-attr">id</span>=<span class="tk-str">"etq"</span> <span class="tk-attr">type</span>=<span class="tk-str">"pesagem-gaiola"</span><span class="tk-tag">&gt;&lt;/granado-zpl&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'etq'</span>).data = {
+    titulo: <span class="tk-str">'PESAGEM DE MATERIAL - GAIOLA'</span>, dataImpressao: <span class="tk-str">'24/03/2026'</span>,
+    ordemFabricacao: <span class="tk-str">'771166'</span>, gaiola: <span class="tk-str">'3/3'</span>,
+    granelResultante: <span class="tk-str">'S0835B - SAB. PH LIMAO SICILIANO'</span>, noEtiqueta: <span class="tk-str">'7951496'</span>,
+    lote: <span class="tk-str">'1621/2026'</span>, usuario: <span class="tk-str">'VALMIR'</span>, matricula: <span class="tk-str">'102266'</span>, noGaiola: <span class="tk-str">'563943'</span>,
+    barcode: <span class="tk-str">'#G1563943:771166:7951496'</span>,
+    impressoPor: <span class="tk-str">'Claudinei'</span>, impressoEm: <span class="tk-str">'31/03/2026 08:05'</span>
+  };
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h3 class="gd-h3">Campos de <code>data</code> — type="pesagem-gaiola"</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:120px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">titulo</td><td class="col-type">string</td><td class="col-desc">Título da etiqueta (ex.: "PESAGEM DE MATERIAL - GAIOLA").</td></tr>
+            <tr><td class="col-name">dataImpressao</td><td class="col-type">string</td><td class="col-desc">Data de impressão (canto superior direito).</td></tr>
+            <tr><td class="col-name">ordemFabricacao</td><td class="col-type">string</td><td class="col-desc">Número da Ordem de Fabricação (em destaque).</td></tr>
+            <tr><td class="col-name">gaiola</td><td class="col-type">string</td><td class="col-desc">Posição da gaiola no formato <code>atual/total</code> (ex.: <code>3/3</code>).</td></tr>
+            <tr><td class="col-name">granelResultante</td><td class="col-type">string</td><td class="col-desc">Granel resultante (código + descrição).</td></tr>
+            <tr><td class="col-name">noEtiqueta</td><td class="col-type">string</td><td class="col-desc">Número da etiqueta.</td></tr>
+            <tr><td class="col-name">lote</td><td class="col-type">string</td><td class="col-desc">Lote.</td></tr>
+            <tr><td class="col-name">usuario</td><td class="col-type">string</td><td class="col-desc">Usuário que gerou a gaiola.</td></tr>
+            <tr><td class="col-name">matricula</td><td class="col-type">string</td><td class="col-desc">Matrícula do usuário.</td></tr>
+            <tr><td class="col-name">noGaiola</td><td class="col-type">string</td><td class="col-desc">Número (sequencial) da gaiola.</td></tr>
+            <tr><td class="col-name">barcode</td><td class="col-type">string</td><td class="col-desc">Conteúdo do código de barras (renderizado como barras + texto).</td></tr>
             <tr><td class="col-name">impressoPor</td><td class="col-type">string</td><td class="col-desc">Rodapé — quem imprimiu.</td></tr>
             <tr><td class="col-name">impressoEm</td><td class="col-type">string</td><td class="col-desc">Rodapé — data/hora da impressão.</td></tr>
           </tbody>
@@ -8956,7 +9011,7 @@ GranadoPreloader.hide();</pre>
               <td class="col-name">type</td>
               <td class="col-type">string</td>
               <td class="col-default">"pesagem"</td>
-              <td class="col-desc">Tipo da etiqueta. Define o layout do preview e os campos esperados em <code>data</code>. Atual: <code>pesagem</code>.</td>
+              <td class="col-desc">Tipo da etiqueta. Define o layout do preview e os campos esperados em <code>data</code>. Atuais: <code>pesagem</code> e <code>pesagem-gaiola</code> (ver campos no <a class="gd-link" href="#granado-zpl">granado-zpl</a>).</td>
             </tr>
             <tr>
               <td class="col-name">data</td>
@@ -9029,6 +9084,254 @@ GranadoPreloader.hide();</pre>
           <li><strong>Dois caminhos para o clique:</strong> ouça o evento <code>reimprimir</code>
             (<code>addEventListener</code>) ou use o atributo <code>onPrintClick</code> — ambos
             recebem a impressora escolhida.</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores
+            Granado hardcoded como default.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-message-popup
+           ============================================================ -->
+      <section id="granado-message-popup" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-message-popup&gt;</code></h1>
+        <p class="gd-lead">
+          <strong>Popup de mensagem</strong> (modal) que fica na frente de qualquer tela, seguindo a
+          ideia dos toasts: tipos <code>success</code>, <code>error</code>, <code>warning</code> e
+          <code>info</code> — cada um com seu ícone e cor. Mostra um título, uma mensagem e um botão
+          que <strong>apenas fecha</strong> o popup.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-message-popup.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — API estática</h2>
+        <p class="gd-lead">
+          Forma recomendada (no estilo do <a class="gd-link" href="#granado-toast">granado-toast</a>):
+          chame um dos métodos estáticos — o popup é criado, exibido e removido do DOM ao fechar.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap">
+          <button type="button" onclick="GranadoMessagePopup.success('A ordem de pesagem OP-2026-0416 foi finalizada com sucesso. Todas as 3 gaiolas foram conciliadas, as etiquetas impressas e o saldo das matérias-primas atualizado no JDE. Você já pode liberar a sala para a próxima ordem.', { title: 'Ordem finalizada com sucesso' })" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1C7A38;border-radius:7px;background:#1C7A38;color:#fff;cursor:pointer">✓ Success</button>
+          <button type="button" onclick="GranadoMessagePopup.error('Não foi possível gravar a pesagem da etiqueta ETQ-SB-7788 (Aqua - Água Purificada). A comunicação com o JDE retornou erro de timeout após 3 tentativas. Verifique a conexão de rede com o servidor Apriso e tente novamente; se o problema persistir, acione o suporte de TI informando o código OP-2026-0418.', { title: 'Falha ao gravar a pesagem', buttonText: 'Entendi' })" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #8C1A1A;border-radius:7px;background:#8C1A1A;color:#fff;cursor:pointer">✕ Error</button>
+          <button type="button" onclick="GranadoMessagePopup.warning('A quantidade acumulada (1.310,500 kg) está acima da quantidade-alvo da ordem (1.250,000 kg). Confira as etiquetas lidas antes de confirmar — o excedente precisará retornar ao estoque, e a divergência ficará registrada na trilha de auditoria da ordem.', { title: 'Quantidade acima do alvo' })" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A5A00;border-radius:7px;background:#9A5A00;color:#fff;cursor:pointer">⚠ Warning</button>
+          <button type="button" onclick="GranadoMessagePopup.info('A sincronização do saldo físico com o JDE (F4101) ocorre apenas no fechamento da ordem. Até lá, a coluna Disponível reflete o consumo das ordens ativas em tempo real, enquanto o saldo do JDE permanece inalterado. Eventuais divergências indicam dosagens em curso ainda não baixadas no ERP.', { title: 'Sobre a sincronização com o JDE' })" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1A4A8C;border-radius:7px;background:#1A4A8C;color:#fff;cursor:pointer">ℹ Info</button>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoMessagePopup.<span class="tk-attr">success</span>(<span class="tk-str">'Ordem finalizada com sucesso.'</span>, { title: <span class="tk-str">'Pronto!'</span> });
+  GranadoMessagePopup.<span class="tk-attr">error</span>(<span class="tk-str">'Falha ao gravar.'</span>, { title: <span class="tk-str">'Erro'</span>, buttonText: <span class="tk-str">'Entendi'</span> });
+  GranadoMessagePopup.<span class="tk-attr">warning</span>(<span class="tk-str">'Verifique os dados.'</span>, { title: <span class="tk-str">'Atenção'</span> });
+  GranadoMessagePopup.<span class="tk-attr">info</span>(<span class="tk-str">'Mensagem informativa.'</span>);
+
+  <span class="tk-comment">// genérico</span>
+  GranadoMessagePopup.<span class="tk-attr">show</span>({ type: <span class="tk-str">'warning'</span>, title: <span class="tk-str">'Atenção'</span>, message: <span class="tk-str">'...'</span>, buttonText: <span class="tk-str">'OK'</span> });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — declarativo</h2>
+        <p class="gd-lead">
+          O popup pode iniciar oculto com <code>open="false"</code> e ser exibido via <code>el.open()</code>.
+        </p>
+        <div class="gd-demo">
+          <button type="button" onclick="document.getElementById('doc-msg-popup').open()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #C8A84B;border-radius:7px;background:#C8A84B;color:#0F3319;cursor:pointer">Abrir popup</button>
+          <granado-message-popup id="doc-msg-popup" type="information" title="Sala parada"
+            message="A sala A está parada no momento (parada registrada às 08:42 por J. Santos: Aguardando manutenção corretiva da balança BAL-02). Enquanto a sala estiver parada não é possível iniciar uma nova pesagem. Reative a sala em Pesagem › Paradas para liberar a operação." button-text="Entendi" open="false"></granado-message-popup>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-message-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"msg"</span> <span class="tk-attr">type</span>=<span class="tk-str">"information"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Sala parada"</span>
+  <span class="tk-attr">message</span>=<span class="tk-str">"A sala está parada. Não é possível iniciar a pesagem."</span>
+  <span class="tk-attr">button-text</span>=<span class="tk-str">"Entendi"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span><span class="tk-tag">&gt;&lt;/granado-message-popup&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span> document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'msg'</span>).open(); <span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:130px">Nome</th><th style="width:150px">Tipo</th><th style="width:110px">Default</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Título do popup.</td></tr>
+            <tr><td class="col-name">message</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Mensagem (texto) exibida abaixo do título.</td></tr>
+            <tr><td class="col-name">type</td><td class="col-type">string</td><td class="col-default">"info"</td><td class="col-desc">Tipo/variante: <code>info</code> · <code>information</code> (alias) · <code>success</code> · <code>error</code> · <code>warning</code>. Define ícone e cor.</td></tr>
+            <tr><td class="col-name">button-text</td><td class="col-type">string</td><td class="col-default">"OK"</td><td class="col-desc">Texto do botão (opcional). O botão <strong>apenas fecha</strong> o popup.</td></tr>
+            <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code> para alternar.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Métodos JS</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:300px">Método</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">.open()</td><td class="col-desc">Exibe o popup.</td></tr>
+            <tr><td class="col-name">.close()</td><td class="col-desc">Oculta o popup (e remove do DOM se criado via API estática).</td></tr>
+            <tr><td class="col-name">GranadoMessagePopup.show(opts)</td><td class="col-desc">Cria e exibe um popup. <code>opts = { title, message, type, buttonText }</code>.</td></tr>
+            <tr><td class="col-name">GranadoMessagePopup.success/error/warning/info(message, opts?)</td><td class="col-desc">Atalhos por tipo — o 1º argumento é a mensagem.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Botão = fechar:</strong> o botão apenas fecha o popup (sem evento). O clique fora
+            da caixa também fecha.</li>
+          <li><strong>Mesma identidade visual do toast:</strong> as cores/ícones dos tipos são os
+            mesmos do <a class="gd-link" href="#granado-toast">granado-toast</a>.</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores
+            Granado hardcoded como default.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-option-popup
+           ============================================================ -->
+      <section id="granado-option-popup" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-option-popup&gt;</code></h1>
+        <p class="gd-lead">
+          Mesma ideia do <a class="gd-link" href="#granado-message-popup">granado-message-popup</a>
+          (callout no estilo <em>abox</em>, com tipos <code>success</code>/<code>error</code>/<code>warning</code>/<code>info</code>),
+          porém com <strong>vários botões de ação (1 a 3)</strong> — cada botão dispara o seu próprio clique.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-option-popup.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso</h2>
+        <p class="gd-lead">
+          Defina os botões em <code>buttons</code> (1 a 3). Cada item aceita <code>text</code>,
+          <code>value</code>, <code>variant</code> (<code>primary</code>/<code>ghost</code>) e um
+          <code>onClick</code>. Todo clique também emite o evento <code>option-click</code>.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button type="button" onclick="docOpt1()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1A4A8C;border-radius:7px;background:#1A4A8C;color:#fff;cursor:pointer">1 botão</button>
+          <button type="button" onclick="docOpt2()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A5A00;border-radius:7px;background:#9A5A00;color:#fff;cursor:pointer">2 botões</button>
+          <button type="button" onclick="docOpt3()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #8C1A1A;border-radius:7px;background:#8C1A1A;color:#fff;cursor:pointer">3 botões</button>
+          <span id="doc-opt-status" style="font-size:12px;color:#8A9E8E"></span>
+        </div>
+        <script>
+          function docOptStatus(detail) { var s = document.getElementById('doc-opt-status'); if (s) s.textContent = '➡ ' + detail.text + ' (value="' + detail.value + '")'; }
+          function docOpt1() { GranadoOptionPopup.show({ type: 'info', title: 'Pesagem registrada', message: 'A pesagem foi registrada e vinculada à Gaiola 1.', buttons: [ { text: 'OK', value: 'ok', onClick: docOptStatus } ] }); }
+          function docOpt2() { GranadoOptionPopup.show({ type: 'warning', title: 'Reativar sala?', message: 'A sala está parada. Deseja reativar e liberar a pesagem?', buttons: [ { text: 'Cancelar', value: 'cancel', variant: 'ghost', onClick: docOptStatus }, { text: 'Reativar', value: 'reativar', variant: 'primary', onClick: docOptStatus } ] }); }
+          function docOpt3() { GranadoOptionPopup.show({ type: 'error', title: 'Alterações não salvas', message: 'Há leituras não confirmadas. O que deseja fazer?', buttons: [ { text: 'Cancelar', value: 'cancel', variant: 'ghost', onClick: docOptStatus }, { text: 'Sair sem salvar', value: 'descartar', variant: 'primary', color: '#6B3FA0', onClick: docOptStatus }, { text: 'Salvar e sair', value: 'salvar', variant: 'primary', onClick: docOptStatus } ] }); }
+        </script>
+        <pre class="gd-code"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoOptionPopup.<span class="tk-attr">show</span>({
+    type: <span class="tk-str">'warning'</span>,
+    title: <span class="tk-str">'Reativar sala?'</span>,
+    message: <span class="tk-str">'A sala está parada. Deseja reativar e liberar a pesagem?'</span>,
+    buttons: [
+      { text: <span class="tk-str">'Cancelar'</span>, value: <span class="tk-str">'cancel'</span>, variant: <span class="tk-str">'ghost'</span>,
+        onClick: <span class="tk-keyword">function</span> (detail) { console.log(detail.value); } },
+      { text: <span class="tk-str">'Reativar'</span>, value: <span class="tk-str">'reativar'</span>, variant: <span class="tk-str">'primary'</span>,
+        onClick: <span class="tk-keyword">function</span> (detail) { reativarSala(); } }
+    ]
+  });
+
+  <span class="tk-comment">// alternativa: ouvir o evento</span>
+  el.<span class="tk-attr">addEventListener</span>(<span class="tk-str">'option-click'</span>, <span class="tk-keyword">function</span> (e) { console.log(e.detail); });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2" id="opt-buttons">Como definir os botões</h2>
+        <p class="gd-lead">
+          A lista de botões pode ser passada de <strong>duas formas</strong>. A diferença está só no
+          <code>onClick</code>: como atributo ele é <strong>texto (string)</strong>; pela propriedade
+          JS ele pode ser uma <strong>função</strong>.
+        </p>
+
+        <h3 class="gd-h3">1) Pelo atributo <code>buttons</code> (JSON)</h3>
+        <p class="gd-lead">
+          Você escreve a lista direto no HTML, como um texto JSON. Aqui o <code>onClick</code> é uma
+          <strong>string</strong> de código (executada quando o botão é clicado).
+        </p>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-option-popup</span> <span class="tk-attr">type</span>=<span class="tk-str">"warning"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Reativar sala?"</span>
+  <span class="tk-attr">message</span>=<span class="tk-str">"Deseja reativar a sala?"</span>
+  <span class="tk-attr">buttons</span>=<span class="tk-str">'[
+    { "text": "Cancelar", "value": "cancel", "variant": "ghost" },
+    { "text": "Reativar", "value": "reativar", "onClick": "reativarSala()" }
+  ]'</span><span class="tk-tag">&gt;&lt;/granado-option-popup&gt;</span></pre>
+
+        <h3 class="gd-h3">2) Pela propriedade JS <code>el.buttons</code> (array) — recomendado</h3>
+        <p class="gd-lead">
+          Você pega o elemento no JavaScript e atribui um <strong>array</strong>. Aqui o
+          <code>onClick</code> pode ser uma <strong>função</strong> de verdade — sem precisar virar
+          texto — o que é mais simples de ler e dá acesso direto ao <code>detail</code> do clique.
+        </p>
+        <pre class="gd-code"><span class="tk-keyword">var</span> pop = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'pop'</span>);
+
+pop.buttons = [
+  { text: <span class="tk-str">'Cancelar'</span>, value: <span class="tk-str">'cancel'</span>, variant: <span class="tk-str">'ghost'</span> },
+  { text: <span class="tk-str">'Reativar'</span>, value: <span class="tk-str">'reativar'</span>,
+    onClick: <span class="tk-keyword">function</span> (detail) { reativarSala(detail.value); } }   <span class="tk-comment">// &lt;- função</span>
+];
+pop.open();</pre>
+        <p class="gd-lead">
+          A API estática <code>GranadoOptionPopup.show({ ..., buttons })</code> usa esse mesmo formato
+          de array (com <code>onClick</code> como função). <strong>Em resumo:</strong> se você cria o
+          popup por JavaScript, prefira <code>el.buttons = [...]</code> com funções; o atributo JSON é
+          para quando a lista já vem fixa no HTML.
+        </p>
+
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:130px">Nome</th><th style="width:150px">Tipo</th><th style="width:110px">Default</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Título do popup.</td></tr>
+            <tr><td class="col-name">message</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Mensagem (texto) no callout.</td></tr>
+            <tr><td class="col-name">type</td><td class="col-type">string</td><td class="col-default">"info"</td><td class="col-desc"><code>info</code> · <code>information</code> · <code>success</code> · <code>error</code> · <code>warning</code>. Define ícone e cor.</td></tr>
+            <tr><td class="col-name">buttons</td><td class="col-type">JSON / array</td><td class="col-default">[OK]</td><td class="col-desc">Lista de 1 a 3 botões. Sem valor, mostra um único botão "OK". Pode ser passada como atributo (JSON) ou pela propriedade JS <code>el.buttons</code> — ver <a class="gd-link" href="#opt-buttons">"Como definir os botões"</a>. Campos de cada botão na tabela abaixo.</td></tr>
+            <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code>.</td></tr>
+            <tr><td class="col-name">onOptionClick</td><td class="col-type">string (JS)</td><td class="col-default">—</td><td class="col-desc">Handler inline executado em <strong>qualquer</strong> clique de botão. Recebe <code>event</code> e <code>detail</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada botão (<code>buttons[i]</code>)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:130px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">text</td><td class="col-type">string</td><td class="col-desc">Rótulo do botão.</td></tr>
+            <tr><td class="col-name">value</td><td class="col-type">string</td><td class="col-desc">Identificador retornado no clique (default = <code>text</code>).</td></tr>
+            <tr><td class="col-name">variant</td><td class="col-type">string</td><td class="col-desc"><code>primary</code> (preenchido, cor do tipo) ou <code>ghost</code> (contorno neutro). Default: último botão = <code>primary</code>, demais = <code>ghost</code>.</td></tr>
+            <tr><td class="col-name">color</td><td class="col-type">string (cor)</td><td class="col-desc">Cor custom do botão (ex.: <code>#6B3FA0</code>). Em <code>primary</code> vira o preenchimento; em <code>ghost</code>, a borda + o texto. Sobrepõe a cor do tipo.</td></tr>
+            <tr><td class="col-name">onClick</td><td class="col-type">função / string</td><td class="col-desc">Handler do botão. Função (via <code>.buttons</code>) ou string JS (via atributo). Recebe <code>detail</code> (e <code>event</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Eventos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:130px">Evento</th><th style="width:200px">detail</th><th>Quando</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">option-click</td><td class="col-type">{ index, value, text }</td><td class="col-desc">Clique em qualquer botão (bubbles). O clique fora da caixa <strong>não</strong> emite evento — apenas fecha.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Métodos JS</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:300px">Método</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">.open() / .close()</td><td class="col-desc">Exibe / oculta o popup (remove do DOM se criado via API estática).</td></tr>
+            <tr><td class="col-name">.buttons</td><td class="col-desc">Lê/seta a lista de botões (array).</td></tr>
+            <tr><td class="col-name">GranadoOptionPopup.show(opts)</td><td class="col-desc">Cria e exibe um popup. <code>opts = { title, message, type, buttons }</code> — <code>buttons[i].onClick</code> pode ser função.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>1 a 3 botões:</strong> a lista é limitada a 3; cada botão tem o seu clique.</li>
+          <li><strong>Três formas de reagir ao clique:</strong> <code>buttons[i].onClick</code>, o
+            atributo <code>onOptionClick</code> (global) ou o evento <code>option-click</code>.</li>
+          <li><strong>Mesma identidade visual:</strong> tipos/cores iguais ao
+            <a class="gd-link" href="#granado-message-popup">granado-message-popup</a> e ao
+            <a class="gd-link" href="#granado-toast">granado-toast</a>.</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores
             Granado hardcoded como default.</li>
         </ul>

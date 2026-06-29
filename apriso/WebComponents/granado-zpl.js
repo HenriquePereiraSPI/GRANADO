@@ -13,6 +13,10 @@
         aprovado (bool), granelResultante, materiaPrima, loteMP, validade,
         tipoPesagem, qtdOrdem, pesadoPor, matricula, balanca, tara,
         pesoBruto, noEtiqueta, barcode, pesoLiquido, impressoPor, impressoEm
+     type="pesagem-gaiola" - Etiqueta de Gaiola (Label 004). Campos em "data":
+        titulo, dataImpressao, ordemFabricacao, gaiola, granelResultante,
+        noEtiqueta, lote, usuario, matricula, noGaiola, barcode,
+        impressoPor, impressoEm
 
    ── Atributos
      type   - tipo da etiqueta (default "pesagem")
@@ -124,6 +128,7 @@ if (!customElements.get('granado-zpl')) {
       const type = this.type;
       let inner;
       if (type === 'pesagem') inner = this._renderPesagem(this.data || {});
+      else if (type === 'pesagem-gaiola') inner = this._renderPesagemGaiola(this.data || {});
       else inner = `<div style="font-family:${MONO};font-size:12px;color:#8C1A1A;padding:16px">granado-zpl: tipo "${this._esc(type)}" não suportado.</div>`;
 
       // "Papel" da etiqueta: borda dupla (externa fina + moldura interna),
@@ -212,6 +217,58 @@ if (!customElements.get('granado-zpl')) {
 
       return sec1 + this._hr() + sec2 + this._hr() + sec3 + this._hr() + sec4 + this._hr() +
         sec5 + this._hr() + sec6 + this._hr() + sec7 + this._hr() + sec8;
+    }
+
+    // type="pesagem-gaiola" — Etiqueta de Gaiola (Label 004).
+    _renderPesagemGaiola(d) {
+      const cv = (l, v, s) => this._campo(l, v, s);
+      const vdiv = `border-right:2px solid ${INK}`;
+
+      // SECTION 1 — Title bar
+      const sec1 =
+        `<div style="display:flex;align-items:flex-start;justify-content:space-between;padding:8px 8px 6px">` +
+          `<div style="font-size:17px;font-weight:800;letter-spacing:.02em;color:${INK}">${this._esc(d.titulo)}</div>` +
+          `<div style="text-align:right"><div style="font-size:8px;font-weight:700;color:${INK}">DATA IMPRESSAO</div>` +
+            `<div style="font-size:12px;font-weight:700;color:${INK}">${this._esc(d.dataImpressao)}</div></div>` +
+        `</div>`;
+
+      // SECTION 2 — Ordem de Fabricacao / Gaiola
+      const sec2 =
+        `<div style="display:flex">` +
+          `<div style="flex:1;${vdiv}">${cv('ORDEM DE FABRICACAO', d.ordemFabricacao, 26)}</div>` +
+          `<div style="flex:0 0 34%;text-align:center;padding:5px 8px">` +
+            `<div style="font-size:8px;font-weight:700;color:${INK}">GAIOLA</div>` +
+            `<div style="font-size:26px;font-weight:800;color:${INK};line-height:1.1">${this._esc(d.gaiola) || '&nbsp;'}</div>` +
+          `</div>` +
+        `</div>`;
+
+      // SECTION 3 — Granel resultante / No da etiqueta
+      const sec3 =
+        `<div style="display:flex">` +
+          `<div style="flex:1;${vdiv}">${cv('GRANEL RESULTANTE', d.granelResultante, 13)}</div>` +
+          `<div style="flex:0 0 34%">${cv('No DA ETIQUETA', d.noEtiqueta, 13)}</div>` +
+        `</div>`;
+
+      // SECTION 4 — Lote / Usuario / Matricula / No da gaiola
+      const sec4 =
+        `<div style="display:flex">` +
+          `<div style="flex:1;${vdiv}">${cv('LOTE', d.lote, 13)}</div>` +
+          `<div style="flex:1;${vdiv}">${cv('USUARIO', d.usuario, 13)}</div>` +
+          `<div style="flex:1;${vdiv}">${cv('MATRICULA', d.matricula, 13)}</div>` +
+          `<div style="flex:1">${cv('No DA GAIOLA', d.noGaiola, 13)}</div>` +
+        `</div>`;
+
+      // SECTION 5 — Barcode
+      const sec5 = `<div style="padding:10px 8px;display:flex;flex-direction:column;align-items:center;min-width:0">${this._barcode(d.barcode)}</div>`;
+
+      // SECTION 6 — Footer
+      const sec6 =
+        `<div style="display:flex;justify-content:space-between;padding:6px 8px;font-size:9px;color:${INK}">` +
+          `<span>Impresso por: ${this._esc(d.impressoPor)}</span>` +
+          `<span>Impresso em: ${this._esc(d.impressoEm)}</span>` +
+        `</div>`;
+
+      return sec1 + this._hr() + sec2 + this._hr() + sec3 + this._hr() + sec4 + this._hr() + sec5 + this._hr() + sec6;
     }
   }
 
