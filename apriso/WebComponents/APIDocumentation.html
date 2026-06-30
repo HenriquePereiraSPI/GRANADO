@@ -370,6 +370,8 @@
           <div class="gd-subgroup">API</div>
           <a class="gd-link" href="#GRD_API_GetOrganizationalTree">GRD_API_GetOrganizationalTree</a>
           <a class="gd-link" href="#GRD_API_GetAllPrinters">GRD_API_GetAllPrinters</a>
+          <a class="gd-link" href="#GRD_API_PrintLabel">GRD_API_PrintLabel</a>
+          <a class="gd-link" href="#GRD_API_GetLabel">GRD_API_GetLabel</a>
         </div>
       </div>
 
@@ -1016,6 +1018,7 @@
         <pre class="gd-code">{
   <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000"</span><span class="tk-punc">,</span>
   <span class="tk-key">"ResourceIDScale"</span><span class="tk-punc">:</span> <span class="tk-str">"100000082"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ScaleName"</span><span class="tk-punc">:</span> <span class="tk-str">"TOLEDO 003"</span><span class="tk-punc">,</span>
   <span class="tk-key">"TareWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
   <span class="tk-key">"GrossWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
   <span class="tk-key">"NetWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"150.00"</span><span class="tk-punc">,</span>
@@ -1049,6 +1052,12 @@
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
               <td class="col-desc">ID do recurso da balança utilizada na pesagem.</td>
+            </tr>
+            <tr>
+              <td class="col-name">ScaleName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Nome da balança utilizada na pesagem (ex.: <code>"TOLEDO 003"</code>).</td>
             </tr>
             <tr>
               <td class="col-name">TareWeight</td>
@@ -1113,14 +1122,15 @@
         <pre class="gd-code">{
   <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
   <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Apontamento realizado com sucesso."</span><span class="tk-punc">,</span>
-  <span class="tk-key">"Data"</span><span class="tk-punc">:</span> <span class="tk-str">"100014"</span>
+  <span class="tk-key">"CreatedWeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-num">15154</span><span class="tk-punc">,</span>
+  <span class="tk-key">"CreatedLabelNo"</span><span class="tk-punc">:</span> <span class="tk-str">"00000046"</span>
 }</pre>
 
         <h3 class="gd-h3">Campos de saída</h3>
         <table class="gd-api">
           <thead>
             <tr>
-              <th style="width:180px">Campo</th>
+              <th style="width:230px">Campo</th>
               <th style="width:130px">Tipo</th>
               <th>Descrição</th>
             </tr>
@@ -1137,9 +1147,14 @@
               <td class="col-desc">Mensagem de retorno — confirmação em caso de sucesso ou detalhe do erro.</td>
             </tr>
             <tr>
-              <td class="col-name">Data</td>
+              <td class="col-name">CreatedWeighLineDetailID</td>
+              <td class="col-type">number</td>
+              <td class="col-desc">ID do detalhe da linha de pesagem (WeighLineDetail) criado pelo apontamento.</td>
+            </tr>
+            <tr>
+              <td class="col-name">CreatedLabelNo</td>
               <td class="col-type">string</td>
-              <td class="col-desc">ID do registro de apontamento de pesagem gerado.</td>
+              <td class="col-desc">Número da etiqueta gerada para o apontamento.</td>
             </tr>
           </tbody>
         </table>
@@ -2166,6 +2181,249 @@
             em <code>Equipment</code> / <code>DefaultEquipmentResourceName</code>.</li>
           <li><strong>SpoolAddress vazio:</strong> impressoras sem endereço de spool retornam o campo
             como string vazia (<code>""</code>).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_PrintLabel
+           ============================================================ -->
+      <section id="GRD_API_PrintLabel">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_PrintLabel</code></h1>
+        <p class="gd-lead">
+          <strong>Envia uma etiqueta para impressão</strong> — encaminha a etiqueta informada para a
+          impressora indicada, no número de cópias desejado.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_PrintLabel</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>).
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"LabelNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0000072"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"NumberOfCopies"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"PrinterID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000000"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">LabelNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Número da etiqueta a ser impressa.</td>
+            </tr>
+            <tr>
+              <td class="col-name">NumberOfCopies</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Quantidade de cópias a imprimir.</td>
+            </tr>
+            <tr>
+              <td class="col-name">PrinterID</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ID da impressora de destino (ver <a class="gd-link" href="#GRD_API_GetAllPrinters">GRD_API_GetAllPrinters</a>).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Etiqueta enviada para impressão com sucesso."</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">Success</td>
+              <td class="col-type">boolean</td>
+              <td class="col-desc">Indica se a etiqueta foi enviada para impressão com sucesso.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Message</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">Mensagem de retorno — confirmação em caso de sucesso ou detalhe do erro.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>PrinterID:</strong> use o <code>ID</code> retornado por
+            <a class="gd-link" href="#GRD_API_GetAllPrinters">GRD_API_GetAllPrinters</a>.</li>
+          <li><strong>Sem retorno extra:</strong> esta API devolve apenas <code>Success</code> /
+            <code>Message</code> — verifique <code>Success</code> para confirmar o envio.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetLabel
+           ============================================================ -->
+      <section id="GRD_API_GetLabel">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetLabel</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera as informações de uma etiqueta</strong> pelo seu número. Retorna o
+          conteúdo da etiqueta em <code>LabelContent</code>, incluindo lote, quantidades, pesos e os
+          <strong>campos de usuário</strong> (<code>UserField1..15</code>) no formato
+          <code>Chave|Valor</code>.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetLabel</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>LabelContent</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"LabelNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0000072"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">LabelNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Número da etiqueta a consultar.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Informações da etiqueta recuperadas com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"LabelContent"</span><span class="tk-punc">:</span> {
+    <span class="tk-key">"ID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000071"</span><span class="tk-punc">,</span> <span class="tk-key">"LabelNumber"</span><span class="tk-punc">:</span> <span class="tk-str">"0000071"</span><span class="tk-punc">,</span> <span class="tk-key">"LabelStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"Facility"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"L00078789"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"10.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"UomCode"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"ProductionDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/1900 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"ExpirationDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/1900 12:00:00 AM"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"NetWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"10.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"GrossWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"12.0000000000"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"UserField1"</span><span class="tk-punc">:</span> <span class="tk-str">"Type|PESAGEM"</span><span class="tk-punc">,</span> <span class="tk-key">"UserField2"</span><span class="tk-punc">:</span> <span class="tk-str">"WipOrderNo|1000000013"</span><span class="tk-punc">,</span> <span class="tk-key">"UserField3"</span><span class="tk-punc">:</span> <span class="tk-str">"WeighLineID|100049"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"UserField4"</span><span class="tk-punc">:</span> <span class="tk-str">"WeighLineDetailID|100229"</span><span class="tk-punc">,</span> <span class="tk-key">"UserField5"</span><span class="tk-punc">:</span> <span class="tk-str">"ProductIDMP|100000002"</span><span class="tk-punc">,</span> <span class="tk-key">"UserField6"</span><span class="tk-punc">:</span> <span class="tk-str">"ProductNoMP|TESTE999"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"UserField7"</span><span class="tk-punc">:</span> <span class="tk-str">"ProductIDResult|100000001"</span><span class="tk-punc">,</span> <span class="tk-key">"UserField8"</span><span class="tk-punc">:</span> <span class="tk-str">"ProductNoResult|52570"</span><span class="tk-punc">,</span> <span class="tk-key">"UserField9"</span><span class="tk-punc">:</span> <span class="tk-str">"ProductLotResult|L00000010"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"UserField10"</span><span class="tk-punc">:</span> <span class="tk-str">"WipOrderRequireQuantity|5000.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"UserField11"</span><span class="tk-punc">:</span> <span class="tk-str">"Usuario|winke"</span><span class="tk-punc">,</span> <span class="tk-key">"UserField12"</span><span class="tk-punc">:</span> <span class="tk-str">"Matricula|100000003"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"UserField13"</span><span class="tk-punc">:</span> <span class="tk-str">"ScaleName|S1_TOLEDO TI 400"</span><span class="tk-punc">,</span> <span class="tk-key">"UserField14"</span><span class="tk-punc">:</span> <span class="tk-str">"ScaleTare|2"</span><span class="tk-punc">,</span> <span class="tk-key">"UserField15"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+    <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"winke"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"6/30/2026 8:58:09 PM"</span>
+  }
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as informações foram recuperadas com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">LabelContent</td><td class="col-type">object</td><td class="col-desc">Conteúdo da etiqueta. Campos abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de <code>LabelContent</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:180px">Campo</th><th style="width:120px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">ID</td><td class="col-type">string</td><td class="col-desc">Identificador interno da etiqueta.</td></tr>
+            <tr><td class="col-name">LabelNumber</td><td class="col-type">string</td><td class="col-desc">Número da etiqueta.</td></tr>
+            <tr><td class="col-name">LabelStatus</td><td class="col-type">string</td><td class="col-desc">Status da etiqueta.</td></tr>
+            <tr><td class="col-name">Facility</td><td class="col-type">string</td><td class="col-desc">Facility/área da etiqueta (ex.: <code>"Pesagem"</code>).</td></tr>
+            <tr><td class="col-name">LotNo</td><td class="col-type">string</td><td class="col-desc">Lote vinculado à etiqueta.</td></tr>
+            <tr><td class="col-name">Quantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade da etiqueta.</td></tr>
+            <tr><td class="col-name">UomCode</td><td class="col-type">string</td><td class="col-desc">Unidade de medida (ex.: <code>"KG"</code>).</td></tr>
+            <tr><td class="col-name">ProductionDate</td><td class="col-type">string (data)</td><td class="col-desc">Data de produção.</td></tr>
+            <tr><td class="col-name">ExpirationDate</td><td class="col-type">string (data)</td><td class="col-desc">Data de validade.</td></tr>
+            <tr><td class="col-name">NetWeight</td><td class="col-type">string (número)</td><td class="col-desc">Peso líquido.</td></tr>
+            <tr><td class="col-name">GrossWeight</td><td class="col-type">string (número)</td><td class="col-desc">Peso bruto.</td></tr>
+            <tr><td class="col-name">UserField1..15</td><td class="col-type">string</td><td class="col-desc">Campos de usuário no formato <code>Chave|Valor</code> (ver abaixo). Vazios quando não usados.</td></tr>
+            <tr><td class="col-name">CreatedBy</td><td class="col-type">string</td><td class="col-desc">Usuário que criou a etiqueta.</td></tr>
+            <tr><td class="col-name">CreatedOn</td><td class="col-type">string (data)</td><td class="col-desc">Data/hora de criação da etiqueta.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de usuário (<code>UserField1..15</code>)</h3>
+        <p class="gd-lead">
+          Cada <code>UserFieldN</code> vem como <code>Chave|Valor</code> — ex.:
+          <code>"WipOrderNo|1000000013"</code>. Mapeamento usado nesta etiqueta:
+        </p>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:130px">Campo</th><th style="width:230px">Chave</th><th>Exemplo de valor</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">UserField1</td><td class="col-type">Type</td><td class="col-desc">PESAGEM</td></tr>
+            <tr><td class="col-name">UserField2</td><td class="col-type">WipOrderNo</td><td class="col-desc">1000000013</td></tr>
+            <tr><td class="col-name">UserField3</td><td class="col-type">WeighLineID</td><td class="col-desc">100049</td></tr>
+            <tr><td class="col-name">UserField4</td><td class="col-type">WeighLineDetailID</td><td class="col-desc">100229</td></tr>
+            <tr><td class="col-name">UserField5</td><td class="col-type">ProductIDMP</td><td class="col-desc">100000002</td></tr>
+            <tr><td class="col-name">UserField6</td><td class="col-type">ProductNoMP</td><td class="col-desc">TESTE999</td></tr>
+            <tr><td class="col-name">UserField7</td><td class="col-type">ProductIDResult</td><td class="col-desc">100000001</td></tr>
+            <tr><td class="col-name">UserField8</td><td class="col-type">ProductNoResult</td><td class="col-desc">52570</td></tr>
+            <tr><td class="col-name">UserField9</td><td class="col-type">ProductLotResult</td><td class="col-desc">L00000010</td></tr>
+            <tr><td class="col-name">UserField10</td><td class="col-type">WipOrderRequireQuantity</td><td class="col-desc">5000.0000000000</td></tr>
+            <tr><td class="col-name">UserField11</td><td class="col-type">Usuario</td><td class="col-desc">winke</td></tr>
+            <tr><td class="col-name">UserField12</td><td class="col-type">Matricula</td><td class="col-desc">100000003</td></tr>
+            <tr><td class="col-name">UserField13</td><td class="col-type">ScaleName</td><td class="col-desc">S1_TOLEDO TI 400</td></tr>
+            <tr><td class="col-name">UserField14</td><td class="col-type">ScaleTare</td><td class="col-desc">2</td></tr>
+            <tr><td class="col-name">UserField15</td><td class="col-type">—</td><td class="col-desc">(vazio)</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Campos de usuário:</strong> faça o split por <code>|</code> para obter
+            <em>chave</em> e <em>valor</em> de cada <code>UserFieldN</code>; os não utilizados vêm
+            como string vazia.</li>
+          <li><strong>Datas "1/1/1900":</strong> representam datas não preenchidas
+            (<code>ProductionDate</code> / <code>ExpirationDate</code>).</li>
         </ul>
       </section>
 
