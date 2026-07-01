@@ -547,34 +547,202 @@ export const SCREENS = {
   "fab-ordens": `      <div class="page-header">
         <div><div class="ph-eyebrow">Fabricação · MF5</div><div class="ph-title">Seleção de Ordens de Fabricação</div></div>
       </div>
-      <div class="card cv">
-        <div class="card-title">Ordens Disponíveis para Fabricação</div>
-        <table class="tbl">
-          <thead><tr><th>Ordem</th><th>Produto / Fórmula</th><th>Lote</th><th>Volume</th><th>Pesagem</th><th>Inbatch</th><th>Status</th><th></th></tr></thead>
-          <tbody>
-            <tr onclick="fabAbrirIniciar()" style="background:var(--verde-dim)">
-              <td class="mono" style="color:var(--verde)">OP-2026-0416</td>
-              <td style="font-size:12px">Loção Hidratante Rosa 200ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-089</span></td>
-              <td class="mono" style="font-size:11px">G2026-091</td>
-              <td class="mono">600 kg</td>
-              <td><span class="bdg bdg-ok">✓ Liberada</span></td>
-              <td><span class="bdg bdg-alr">Aguardando</span></td>
-              <td><span class="bdg bdg-ouro">Pronta p/ Fabricar</span></td>
-              <td><button class="btn btn-sm btn-v" onclick="fabAbrirIniciar();event.stopPropagation()">Iniciar</button></td>
-            </tr>
-            <tr>
-              <td class="mono" style="color:var(--verde)">OP-2026-0418</td>
-              <td style="font-size:12px">Polvilho Antisséptico 100g</td>
-              <td class="mono" style="font-size:11px">G2026-093</td>
-              <td class="mono">200 kg</td>
-              <td><span class="bdg bdg-alr">Em pesagem</span></td>
-              <td><span class="bdg bdg-ney">Não iniciado</span></td>
-              <td><span class="bdg bdg-ney">Aguardando Pesagem</span></td>
-              <td><button class="btn btn-sm btn-ghost">Detalhes</button></td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- KPIs — dashboard de fila de fabricação -->
+      <div class="g4 mb14" style="gap:10px">
+        <!-- Pronta p/ Fabricar -->
+        <div style="position:relative;background:var(--surface);border:1px solid var(--ouro-claro);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh);overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--ouro)"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Pronta p/ Fabricar</span>
+            <span style="font-size:14px;line-height:1;background:var(--ouro-dim);border:1px solid var(--ouro-claro);color:var(--ouro);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">📋</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
+            <div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--ouro)">2</div>
+            <div style="font-size:10px;color:var(--text3);font-weight:600">prontas p/ iniciar</div>
+          </div>
+        </div>
+
+        <!-- Em Fabricação -->
+        <div style="position:relative;background:var(--surface);border:1px solid var(--inf-b);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh);overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--inf)"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Em Fabricação</span>
+            <span style="font-size:14px;line-height:1;background:var(--inf-p);border:1px solid var(--inf-b);color:var(--inf);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">🔄</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
+            <div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--inf)">1</div>
+            <div style="font-size:10px;color:var(--text3);font-weight:600">em batch agora</div>
+          </div>
+        </div>
+
+        <!-- Finalizadas Hoje -->
+        <div style="position:relative;background:var(--surface);border:1px solid var(--ok-b);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh);overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--verde)"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Finalizadas Hoje</span>
+            <span style="font-size:16px;line-height:1;background:var(--ok-p);border:1px solid var(--ok-b);color:var(--verde);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">✓</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
+            <div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--verde)">6</div>
+            <div style="font-size:10px;color:var(--text3);font-weight:600">granéis concluídos</div>
+          </div>
+        </div>
+
+        <!-- Aguardando Pesagem -->
+        <div style="position:relative;background:var(--surface);border:1px solid var(--per-b);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh);overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--per)"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Aguardando Pesagem</span>
+            <span style="font-size:14px;line-height:1;background:var(--per-p);border:1px solid var(--per-b);color:var(--per);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">⚠</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
+            <div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--per)">1</div>
+            <div style="font-size:10px;color:var(--text3);font-weight:600">requer atenção</div>
+          </div>
+        </div>
       </div>
+
+      <!-- ── Barra de Filtros (linha única) ── -->
+      <div class="card cv mb14" style="padding:10px 14px;overflow:visible">
+        <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;flex:1 1 150px;min-width:140px">
+            <label class="lbl">Núm. da Ordem / Lote</label>
+            <input class="inp" id="fabf-ordem" placeholder="Ex.: OP-2026-0416 ou G2026-091" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)" oninput="fabFiltrarOrdens()">
+          </div>
+          <div style="display:flex;flex-direction:column;flex:1.4 1 160px;min-width:150px">
+            <label class="lbl">Produto / Fórmula</label>
+            <input class="inp" id="fabf-produto" placeholder="Buscar produto..." style="font-size:12px;padding:7px 10px" oninput="fabFiltrarOrdens()">
+          </div>
+          <div style="display:flex;flex-direction:column;flex:1.1 1 160px;min-width:150px">
+            <label class="lbl">Status</label>
+            <select class="inp" id="fabf-status" style="font-size:12px;padding:7px 10px" onchange="fabFiltrarOrdens()">
+              <option value="">Todos os status</option>
+              <option value="pronta">📋 Pronta p/ Fabricar</option>
+              <option value="fabricando">🔄 Em Fabricação</option>
+              <option value="aguardando-pesagem">⏳ Aguardando Pesagem</option>
+              <option value="finalizada">✅ Finalizada</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column;flex:1 1 130px;min-width:120px">
+            <label class="lbl">Data Prev. (de)</label>
+            <input class="inp" id="fabf-data-ini" type="date" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+          </div>
+          <div style="display:flex;flex-direction:column;flex:1 1 130px;min-width:120px">
+            <label class="lbl">Data Prev. (até)</label>
+            <input class="inp" id="fabf-data-fim" type="date" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+          </div>
+          <div style="display:flex;gap:6px;align-items:flex-end">
+            <button class="btn btn-md btn-v" onclick="fabFiltrarOrdens()" style="white-space:nowrap">🔍 Filtrar</button>
+            <button class="btn btn-md btn-ghost" onclick="fabLimparFiltrosOrdens()" title="Limpar filtros">✕</button>
+          </div>
+        </div>
+        <div id="fabf-result" style="font-size:10px;color:var(--text3);margin-top:8px;font-family:var(--font-m)"></div>
+      </div>
+
+      <div class="card-title">Fila de Fabricação — Prioridade</div>
+      <div class="abox info mb14"><span class="ai">ℹ</span><div>Ordens liberadas para fabricação do granel. O início só é possível após a <strong>Pesagem</strong> concluída — cada ordem passa por Pesagem → Fabricação (Inbatch).</div></div>
+      <div style="overflow-x:auto">
+      <table class="tbl" id="fab-ordens-tbl" style="min-width:1120px">
+        <thead>
+          <tr>
+            <th>Ordem</th>
+            <th>Produto / Fórmula</th>
+            <th>Lote</th>
+            <th>Volume</th>
+            <th>Pesagem</th>
+            <th>Inbatch</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- OP-2026-0416 — PRONTA P/ FABRICAR -->
+          <tr data-ordem="op-2026-0416" data-lote="g2026-091" data-produto="loção hidratante rosa 200ml" data-status="pronta" onclick="fabAbrirIniciar()" style="background:var(--ouro-dim);cursor:pointer">
+            <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0416</td>
+            <td style="font-size:12px">Loção Hidratante Rosa 200ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-089</span></td>
+            <td class="mono" style="font-size:11px">G2026-091</td>
+            <td class="mono">600 kg</td>
+            <td><span class="bdg bdg-ok">✓ Liberada</span></td>
+            <td><span class="bdg bdg-alr">Aguardando</span></td>
+            <td><span class="bdg bdg-ouro">📋 Pronta p/ Fabricar</span></td>
+            <td><button class="btn btn-sm btn-v" onclick="fabAbrirIniciar();event.stopPropagation()">Iniciar</button></td>
+          </tr>
+
+          <!-- OP-2026-0414 — EM FABRICAÇÃO -->
+          <tr data-ordem="op-2026-0414" data-lote="g2026-089" data-produto="creme hidratante 150g" data-status="fabricando" onclick="nav('fab-inbatch',null,null)" style="background:var(--inf-p);cursor:pointer">
+            <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0414</td>
+            <td style="font-size:12px">Creme Hidratante 150g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-076</span></td>
+            <td class="mono" style="font-size:11px">G2026-089</td>
+            <td class="mono">540 kg</td>
+            <td><span class="bdg bdg-ok">✓ Concluída</span></td>
+            <td><span class="bdg bdg-inf">🔄 Em Batch</span></td>
+            <td><span class="bdg bdg-inf">🔄 Em Fabricação</span></td>
+            <td><button class="btn btn-sm btn-v" onclick="nav('fab-inbatch',null,null);event.stopPropagation()">Continuar</button></td>
+          </tr>
+
+          <!-- OP-2026-0419 — PRONTA P/ FABRICAR -->
+          <tr data-ordem="op-2026-0419" data-lote="g2026-094" data-produto="shampoo phebo 400ml" data-status="pronta" onclick="fabAbrirIniciar()" style="cursor:pointer">
+            <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0419</td>
+            <td style="font-size:12px">Shampoo Phebo 400ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-030</span></td>
+            <td class="mono" style="font-size:11px">G2026-094</td>
+            <td class="mono">400 kg</td>
+            <td><span class="bdg bdg-ok">✓ Liberada</span></td>
+            <td><span class="bdg bdg-alr">Aguardando</span></td>
+            <td><span class="bdg bdg-ouro">📋 Pronta p/ Fabricar</span></td>
+            <td><button class="btn btn-sm btn-v" onclick="fabAbrirIniciar();event.stopPropagation()">Iniciar</button></td>
+          </tr>
+
+          <!-- OP-2026-0418 — AGUARDANDO PESAGEM -->
+          <tr data-ordem="op-2026-0418" data-lote="g2026-093" data-produto="polvilho antisséptico 100g" data-status="aguardando-pesagem">
+            <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0418</td>
+            <td style="font-size:12px">Polvilho Antisséptico 100g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-012</span></td>
+            <td class="mono" style="font-size:11px">G2026-093</td>
+            <td class="mono">200 kg</td>
+            <td><span class="bdg bdg-alr">Em pesagem</span></td>
+            <td><span class="bdg bdg-ney">Não iniciado</span></td>
+            <td><span class="bdg bdg-ney">⏳ Aguardando Pesagem</span></td>
+            <td><button class="btn btn-sm btn-ghost">Detalhes</button></td>
+          </tr>
+
+          <!-- OP-2026-0410 — FINALIZADA -->
+          <tr data-ordem="op-2026-0410" data-lote="g2026-085" data-produto="sabonete phebo glicerinado 90g" data-status="finalizada" style="background:var(--ok-p);opacity:.85">
+            <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0410</td>
+            <td style="font-size:12px">Sabonete Phebo Glicerinado 90g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-051</span></td>
+            <td class="mono" style="font-size:11px">G2026-085</td>
+            <td class="mono">320 kg</td>
+            <td><span class="bdg bdg-ok">✓ Concluída</span></td>
+            <td><span class="bdg bdg-ok">✓ Concluído</span></td>
+            <td><span class="bdg bdg-ney">✅ Finalizada</span></td>
+            <td><button class="btn btn-sm btn-ghost">Relatório</button></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+
+      <script>
+      function fabFiltrarOrdens() {
+        var q = (document.getElementById('fabf-ordem').value || '').toLowerCase();
+        var prod = (document.getElementById('fabf-produto').value || '').toLowerCase();
+        var st = document.getElementById('fabf-status').value;
+        var rows = document.querySelectorAll('#fab-ordens-tbl tbody tr');
+        var vis = 0;
+        rows.forEach(function(r){
+          var okQ = !q || (r.dataset.ordem || '').indexOf(q) !== -1 || (r.dataset.lote || '').indexOf(q) !== -1;
+          var okP = !prod || (r.dataset.produto || '').indexOf(prod) !== -1;
+          var okS = !st || r.dataset.status === st;
+          var show = okQ && okP && okS;
+          r.style.display = show ? '' : 'none';
+          if (show) vis++;
+        });
+        var res = document.getElementById('fabf-result');
+        if (res) res.textContent = vis + ' de ' + rows.length + ' ordem(ns) exibida(s)';
+      }
+      function fabLimparFiltrosOrdens() {
+        ['fabf-ordem', 'fabf-produto', 'fabf-data-ini', 'fabf-data-fim'].forEach(function(id){ var e = document.getElementById(id); if (e) e.value = ''; });
+        var s = document.getElementById('fabf-status'); if (s) s.value = '';
+        fabFiltrarOrdens();
+      }
+      </script>
 
       <!-- Popup: Iniciar Ordem — Verificacoes de Setup (acionado pelo botao "Iniciar") -->
       <div id="fab-iniciar-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:950;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 12px">
@@ -6123,7 +6291,7 @@ export const SCREENS = {
               <th>Data Prev.<br/>Fabricação</th>
               <th>Observação</th>
               <th title="Sala onde o granel será fabricado (vem da OF do PCP — não confundir com a sala de pesagem)">Sala de<br/>Fabricação ⓘ</th>
-              <th></th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -6241,6 +6409,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:11px;color:var(--text3)">—</td>
               <td style="font-size:11px;color:var(--text2);max-width:170px"></td>
               
+              <td class="mono" style="font-size:11px;color:var(--text3)">—</td>
               <td>
                 <button class="btn btn-sm btn-ghost" onclick="alert('📋 OP-2026-0411 — Hold (Aguardando)\\n\\nEm hold há 32 dias.\\nMotivo do hold: Aguardando MP importada (Vitamina E).\\nMP recebida em: 09/05/2026.\\nProgresso de pesagem: 6/10 MPs.')" style="text-decoration:none">Detalhes</button>
               </td>
@@ -6256,6 +6425,7 @@ export const SCREENS = {
               <td class="mono" style="font-size:11px;color:var(--text3)">—</td>
               <td style="font-size:11px;color:var(--text2);max-width:170px"></td>
               
+              <td class="mono" style="font-size:11px;color:var(--text3)">—</td>
               <td>
                 <button class="btn btn-sm btn-ghost" onclick="alert('📋 OP-2026-0410 — Detalhes do Cancelamento\\n\\nCancelada por: M. Oliveira (Líder PCP)\\nData: 05/05/2026 14:38\\nMotivo: Fornecedor de Camomila indisponível, MP descontinuada.\\nFOLOW-UP: nova OP gerada (OP-2026-0418) com fórmula alternativa.')" style="text-decoration:none">Detalhes</button>
               </td>
@@ -8012,80 +8182,196 @@ export const SCREENS = {
     `,
   "prod-ordens": `      <div class="page-header">
         <div><div class="ph-eyebrow">Produção · MF5</div><div class="ph-title">Ordens de Produção</div></div>
-        <div class="ph-actions">
-          <select class="inp" style="width:auto;font-size:12px;padding:8px 12px"><option>Todas as Linhas</option><option>L1</option><option>L2</option><option>L3</option><option>L4</option></select>
-          <select class="inp" style="width:auto;font-size:12px;padding:8px 12px"><option>Todos os Status</option><option>Liberada</option><option>Em Execução</option><option>Finalizada</option><option>Bloqueada</option></select>
+      </div>
+      <!-- KPIs — dashboard de fila de produção -->
+      <div class="g4 mb14" style="gap:10px">
+        <!-- Liberadas -->
+        <div style="position:relative;background:var(--surface);border:1px solid var(--ouro-claro);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh);overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--ouro)"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Liberadas</span>
+            <span style="font-size:14px;line-height:1;background:var(--ouro-dim);border:1px solid var(--ouro-claro);color:var(--ouro);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">📋</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
+            <div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--ouro)">2</div>
+            <div style="font-size:10px;color:var(--text3);font-weight:600">prontas p/ iniciar</div>
+          </div>
+        </div>
+
+        <!-- Em Execução -->
+        <div style="position:relative;background:var(--surface);border:1px solid var(--inf-b);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh);overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--inf)"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Em Execução</span>
+            <span style="font-size:14px;line-height:1;background:var(--inf-p);border:1px solid var(--inf-b);color:var(--inf);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">🔄</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
+            <div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--inf)">1</div>
+            <div style="font-size:10px;color:var(--text3);font-weight:600">em execução agora</div>
+          </div>
+        </div>
+
+        <!-- Finalizadas Hoje -->
+        <div style="position:relative;background:var(--surface);border:1px solid var(--ok-b);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh);overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--verde)"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Finalizadas Hoje</span>
+            <span style="font-size:16px;line-height:1;background:var(--ok-p);border:1px solid var(--ok-b);color:var(--verde);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">✓</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
+            <div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--verde)">8</div>
+            <div style="font-size:10px;color:var(--text3);font-weight:600">ordens finalizadas</div>
+          </div>
+        </div>
+
+        <!-- Bloqueadas -->
+        <div style="position:relative;background:var(--surface);border:1px solid var(--per-b);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh);overflow:hidden">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--per)"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Bloqueadas</span>
+            <span style="font-size:14px;line-height:1;background:var(--per-p);border:1px solid var(--per-b);color:var(--per);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">⚠</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
+            <div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--per)">1</div>
+            <div style="font-size:10px;color:var(--text3);font-weight:600">requer atenção</div>
+          </div>
         </div>
       </div>
-      <div class="g4 mb14">
-        <div class="card cv" style="text-align:center"><div style="font-family:var(--font-m);font-size:38px;font-weight:700;color:var(--verde)">12</div><div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Em Execução</div></div>
-        <div class="card co" style="text-align:center"><div style="font-family:var(--font-m);font-size:38px;font-weight:700;color:var(--ouro)">5</div><div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Liberadas</div></div>
-        <div class="card" style="text-align:center"><div style="font-family:var(--font-m);font-size:38px;font-weight:700;color:var(--inf)">28</div><div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Finalizadas</div></div>
-        <div class="card cp" style="text-align:center"><div style="font-family:var(--font-m);font-size:38px;font-weight:700;color:var(--per)">2</div><div style="font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Bloqueadas</div></div>
+      <!-- ── Barra de Filtros (linha única) ── -->
+      <div class="card cv mb14" style="padding:10px 14px;overflow:visible">
+        <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;flex:1 1 150px;min-width:140px">
+            <label class="lbl">Núm. da Ordem / Lote</label>
+            <input class="inp" id="prodf-ordem" placeholder="Ex.: OP-2026-0416 ou G2026-091" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)" oninput="prodFiltrarOrdens()">
+          </div>
+          <div style="display:flex;flex-direction:column;flex:1.4 1 160px;min-width:150px">
+            <label class="lbl">Produto / Fórmula</label>
+            <input class="inp" id="prodf-produto" placeholder="Buscar produto..." style="font-size:12px;padding:7px 10px" oninput="prodFiltrarOrdens()">
+          </div>
+          <div style="display:flex;flex-direction:column;flex:1.1 1 150px;min-width:140px">
+            <label class="lbl">Status</label>
+            <select class="inp" id="prodf-status" style="font-size:12px;padding:7px 10px" onchange="prodFiltrarOrdens()">
+              <option value="">Todos os status</option>
+              <option value="liberada">📋 Liberada</option>
+              <option value="executando">🔄 Em Execução</option>
+              <option value="bloqueada">⛔ Bloqueada</option>
+              <option value="finalizada">✅ Finalizada</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column;flex:1 1 130px;min-width:120px">
+            <label class="lbl">Data Prev. (de)</label>
+            <input class="inp" id="prodf-data-ini" type="date" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+          </div>
+          <div style="display:flex;flex-direction:column;flex:1 1 130px;min-width:120px">
+            <label class="lbl">Data Prev. (até)</label>
+            <input class="inp" id="prodf-data-fim" type="date" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+          </div>
+          <div style="display:flex;gap:6px;align-items:flex-end">
+            <button class="btn btn-md btn-v" onclick="prodFiltrarOrdens()" style="white-space:nowrap">🔍 Filtrar</button>
+            <button class="btn btn-md btn-ghost" onclick="prodLimparFiltrosOrdens()" title="Limpar filtros">✕</button>
+          </div>
+        </div>
+        <div id="prodf-result" style="font-size:10px;color:var(--text3);margin-top:8px;font-family:var(--font-m)"></div>
       </div>
-      <div class="card cv">
-        <div class="card-title">Lista de Ordens</div>
-        <table class="tbl">
-          <thead><tr><th>OP</th><th>Produto</th><th>Lote</th><th>Linha</th><th>Qtd. Planej.</th><th>Qtd. Produz.</th><th>Progresso</th><th>Status</th><th>Ações</th></tr></thead>
-          <tbody>
-            <tr onclick="nav('prod-finalizar',null,null)">
-              <td class="mono" style="color:var(--verde)">OP-2026-0414</td>
-              <td style="font-size:12px">Creme Hidratante 150g</td>
-              <td class="mono" style="font-size:11px">G2026-089</td>
-              <td class="mono">L3</td>
-              <td class="mono">5.000 un</td>
-              <td class="mono" style="color:var(--verde)">4.820 un</td>
-              <td style="min-width:100px"><div style="height:6px;background:var(--bg2);border-radius:3px;overflow:hidden"><div style="width:96%;height:100%;background:var(--verde);border-radius:3px"></div></div><div style="font-size:10px;color:var(--text3);margin-top:3px">96%</div></td>
-              <td><span class="bdg bdg-ok">Em Execução</span></td>
-              <td><button class="btn btn-sm btn-v" onclick="nav('prod-finalizar',null,null);event.stopPropagation()">Finalizar</button></td>
-            </tr>
-            <tr>
-              <td class="mono" style="color:var(--verde)">OP-2026-0415</td>
-              <td style="font-size:12px">Sabonete Líquido 500ml</td>
-              <td class="mono" style="font-size:11px">G2026-090</td>
-              <td class="mono">L4</td>
-              <td class="mono">3.000 un</td>
-              <td class="mono" style="color:var(--alr)">1.240 un</td>
-              <td style="min-width:100px"><div style="height:6px;background:var(--bg2);border-radius:3px;overflow:hidden"><div style="width:41%;height:100%;background:var(--per);border-radius:3px"></div></div><div style="font-size:10px;color:var(--text3);margin-top:3px">41% — parada</div></td>
-              <td><span class="bdg bdg-per">Bloqueada</span></td>
-              <td><button class="btn btn-sm btn-ghost" onclick="nav('prod-paradas',null,null);event.stopPropagation()">Ver Parada</button></td>
-            </tr>
-            <tr onclick="prodAbrirIniciar()">
-              <td class="mono" style="color:var(--verde)">OP-2026-0416</td>
-              <td style="font-size:12px">Loção Hidratante Rosa 200ml</td>
-              <td class="mono" style="font-size:11px">G2026-091</td>
-              <td class="mono">L3</td>
-              <td class="mono">6.000 un</td>
-              <td class="mono" style="color:var(--text3)">—</td>
-              <td style="color:var(--text3);font-size:11px">Aguardando</td>
-              <td><span class="bdg bdg-ouro">Liberada</span></td>
-              <td><button class="btn btn-sm btn-o" onclick="prodAbrirIniciar();event.stopPropagation()">Iniciar</button></td>
-            </tr>
-            <tr>
-              <td class="mono" style="color:var(--verde)">OP-2026-0417</td>
-              <td style="font-size:12px">Shampoo Phebo 400ml</td>
-              <td class="mono" style="font-size:11px">G2026-092</td>
-              <td class="mono">L2</td>
-              <td class="mono">4.000 un</td>
-              <td class="mono" style="color:var(--text3)">—</td>
-              <td style="color:var(--text3);font-size:11px">Setup em andamento</td>
-              <td><span class="bdg bdg-ouro">Liberada</span></td>
-              <td><button class="btn btn-sm btn-ghost">Detalhes</button></td>
-            </tr>
-            <tr>
-              <td class="mono" style="color:var(--text3)">OP-2026-0410</td>
-              <td style="font-size:12px;color:var(--text3)">Polvilho Antisséptico 100g</td>
-              <td class="mono" style="font-size:11px;color:var(--text3)">G2026-085</td>
-              <td class="mono" style="color:var(--text3)">L1</td>
-              <td class="mono" style="color:var(--text3)">8.000 un</td>
-              <td class="mono" style="color:var(--ok)">8.000 un</td>
-              <td style="min-width:100px"><div style="height:6px;background:var(--bg2);border-radius:3px;overflow:hidden"><div style="width:100%;height:100%;background:var(--ok);border-radius:3px"></div></div><div style="font-size:10px;color:var(--ok);margin-top:3px">100% ✓</div></td>
-              <td><span class="bdg bdg-ney">Finalizada</span></td>
-              <td><button class="btn btn-sm btn-ghost">Relatório</button></td>
-            </tr>
-          </tbody>
-        </table>
+
+      <div class="card-title">Fila de Produção — Prioridade</div>
+      <div class="abox info mb14"><span class="ai">🔗</span><div>Cada linha representa um <strong>Lote</strong> que vincula <strong>2 ordens de produção (OP's)</strong> — a ligação entre as OP's é sempre o Lote.</div></div>
+      <div style="overflow-x:auto">
+      <table class="tbl" id="prod-ordens-tbl" style="min-width:1180px">
+        <thead>
+          <tr>
+            <th>Lote 🔗</th>
+            <th>Ordens (2 OP's)</th>
+            <th>Produto / Fórmula</th>
+            <th>Quantidade</th>
+            <th>Status</th>
+            <th>Data Prev.<br/>Fabricação</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- G2026-089 — EM EXECUÇÃO -->
+          <tr data-ordem="op-2026-0414 op-2026-0514" data-lote="g2026-089" data-produto="creme hidratante 150g" data-status="executando" onclick="nav('prod-cockpit',null,null)" style="background:var(--inf-p);cursor:pointer">
+            <td class="mono" style="font-weight:800;color:var(--verde-esc)">🔗 G2026-089</td>
+            <td><div class="mono" style="color:var(--verde);font-weight:700;font-size:12px">OP-2026-0414</div><div class="mono" style="color:var(--verde);font-weight:700;font-size:12px;margin-top:2px">OP-2026-0514</div></td>
+            <td style="font-size:12px">Creme Hidratante 150g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-076</span></td>
+            <td class="mono">5.000 un</td>
+            <td><span class="bdg bdg-inf">🔄 Em Execução</span></td>
+            <td class="mono" style="font-size:11px">17/05/2026</td>
+            <td><button class="btn btn-sm btn-v" onclick="nav('prod-cockpit',null,null);event.stopPropagation()">Continuar</button></td>
+          </tr>
+
+          <!-- G2026-090 — BLOQUEADA -->
+          <tr data-ordem="op-2026-0415 op-2026-0515" data-lote="g2026-090" data-produto="sabonete líquido 500ml" data-status="bloqueada">
+            <td class="mono" style="font-weight:800;color:var(--verde-esc)">🔗 G2026-090</td>
+            <td><div class="mono" style="color:var(--verde);font-weight:700;font-size:12px">OP-2026-0415</div><div class="mono" style="color:var(--verde);font-weight:700;font-size:12px;margin-top:2px">OP-2026-0515</div></td>
+            <td style="font-size:12px">Sabonete Líquido 500ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-060</span></td>
+            <td class="mono">3.000 un</td>
+            <td><span class="bdg bdg-per">⛔ Bloqueada</span></td>
+            <td class="mono" style="font-size:11px">18/05/2026</td>
+            <td><button class="btn btn-sm btn-ghost" onclick="nav('prod-cockpit',null,null);event.stopPropagation()">Detalhes</button></td>
+          </tr>
+
+          <!-- G2026-091 — LIBERADA (pronta p/ iniciar) -->
+          <tr data-ordem="op-2026-0416 op-2026-0516" data-lote="g2026-091" data-produto="loção hidratante rosa 200ml" data-status="liberada" onclick="prodAbrirIniciar()" style="background:var(--ouro-dim);cursor:pointer">
+            <td class="mono" style="font-weight:800;color:var(--verde-esc)">🔗 G2026-091</td>
+            <td><div class="mono" style="color:var(--verde);font-weight:700;font-size:12px">OP-2026-0416</div><div class="mono" style="color:var(--verde);font-weight:700;font-size:12px;margin-top:2px">OP-2026-0516</div></td>
+            <td style="font-size:12px">Loção Hidratante Rosa 200ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-089</span></td>
+            <td class="mono">6.000 un</td>
+            <td><span class="bdg bdg-ouro">📋 Liberada</span></td>
+            <td class="mono" style="font-size:11px">18/05/2026</td>
+            <td><button class="btn btn-sm btn-o" onclick="prodAbrirIniciar();event.stopPropagation()">Iniciar</button></td>
+          </tr>
+
+          <!-- G2026-092 — LIBERADA (setup) -->
+          <tr data-ordem="op-2026-0417 op-2026-0517" data-lote="g2026-092" data-produto="shampoo phebo 400ml" data-status="liberada">
+            <td class="mono" style="font-weight:800;color:var(--verde-esc)">🔗 G2026-092</td>
+            <td><div class="mono" style="color:var(--verde);font-weight:700;font-size:12px">OP-2026-0417</div><div class="mono" style="color:var(--verde);font-weight:700;font-size:12px;margin-top:2px">OP-2026-0517</div></td>
+            <td style="font-size:12px">Shampoo Phebo 400ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-030</span></td>
+            <td class="mono">4.000 un</td>
+            <td><span class="bdg bdg-ouro">📋 Liberada</span></td>
+            <td class="mono" style="font-size:11px">19/05/2026</td>
+            <td><button class="btn btn-sm btn-ghost">Detalhes</button></td>
+          </tr>
+
+          <!-- G2026-085 — FINALIZADA -->
+          <tr data-ordem="op-2026-0410 op-2026-0510" data-lote="g2026-085" data-produto="polvilho antisséptico 100g" data-status="finalizada" style="background:var(--ok-p);opacity:.85">
+            <td class="mono" style="font-weight:800;color:var(--verde-esc)">🔗 G2026-085</td>
+            <td><div class="mono" style="color:var(--verde);font-weight:700;font-size:12px">OP-2026-0410</div><div class="mono" style="color:var(--verde);font-weight:700;font-size:12px;margin-top:2px">OP-2026-0510</div></td>
+            <td style="font-size:12px">Polvilho Antisséptico 100g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-012</span></td>
+            <td class="mono">8.000 un</td>
+            <td><span class="bdg bdg-ney">✅ Finalizada</span></td>
+            <td class="mono" style="font-size:11px">15/05/2026</td>
+            <td><button class="btn btn-sm btn-ghost">Detalhes</button></td>
+          </tr>
+        </tbody>
+      </table>
       </div>
+
+      <script>
+      function prodFiltrarOrdens() {
+        var q = (document.getElementById('prodf-ordem').value || '').toLowerCase();
+        var prod = (document.getElementById('prodf-produto').value || '').toLowerCase();
+        var st = document.getElementById('prodf-status').value;
+        var rows = document.querySelectorAll('#prod-ordens-tbl tbody tr');
+        var vis = 0;
+        rows.forEach(function(r){
+          var okQ = !q || (r.dataset.ordem || '').indexOf(q) !== -1 || (r.dataset.lote || '').indexOf(q) !== -1;
+          var okP = !prod || (r.dataset.produto || '').indexOf(prod) !== -1;
+          var okS = !st || r.dataset.status === st;
+          var show = okQ && okP && okS;
+          r.style.display = show ? '' : 'none';
+          if (show) vis++;
+        });
+        var res = document.getElementById('prodf-result');
+        if (res) res.textContent = vis + ' de ' + rows.length + ' lote(s) exibido(s)';
+      }
+      function prodLimparFiltrosOrdens() {
+        ['prodf-ordem', 'prodf-produto', 'prodf-data-ini', 'prodf-data-fim'].forEach(function(id){ var e = document.getElementById(id); if (e) e.value = ''; });
+        var s = document.getElementById('prodf-status'); if (s) s.value = '';
+        prodFiltrarOrdens();
+      }
+      </script>
 
       <!-- Popup: Iniciar Ordem — Validacoes (acionado pelo botao "Iniciar") -->
       <div id="prod-iniciar-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:950;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 12px">

@@ -326,6 +326,7 @@
         <div class="gd-cat-items">
           <div class="gd-subgroup">API</div>
           <a class="gd-link" href="#GRD_API_AppointChecklist">GRD_API_AppointChecklist</a>
+          <a class="gd-link" href="#GRD_API_VerifyCheckList">GRD_API_VerifyCheckList</a>
 
           <div class="gd-subgroup">SQL</div>
           <a class="gd-link" href="#sql-buscar-checklist-code">Buscar checklist pelo CODE</a>
@@ -566,6 +567,115 @@
             <code>Checked</code> aceita apenas <code>0</code> ou <code>1</code>;
             <code>CustomValue</code> e <code>AditionalInformation</code> são opcionais
             (envie <code>""</code> quando não houver).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_VerifyCheckList
+           ============================================================ -->
+      <section id="GRD_API_VerifyCheckList">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_VerifyCheckList</code></h1>
+        <p class="gd-lead">
+          <strong>Verifica se o checklist já foi preenchido no período</strong> para um ou mais
+          recursos. Recebe uma <strong>lista</strong> de verificações (recurso + checklist + período)
+          e devolve, para cada item, se já está preenchido (<code>Done</code>).
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_VerifyCheckList</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Diferente das demais, o corpo é um
+          <strong>array</strong> e a resposta também é um <strong>array</strong> (um item de retorno
+          por item enviado).
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON) — lista de verificações:</p>
+        <pre class="gd-code">[
+  {
+    <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"BALANCA_A"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"CheckListCode"</span><span class="tk-punc">:</span> <span class="tk-str">"CHECKLIST_BALANCA_A"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"Period"</span><span class="tk-punc">:</span> <span class="tk-str">"DAY | WEEK | MONTH"</span>
+  }<span class="tk-punc">,</span>
+  {
+    <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"BALANCA_B"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"CheckListCode"</span><span class="tk-punc">:</span> <span class="tk-str">"CHECKLIST_BALANCA_B"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"Period"</span><span class="tk-punc">:</span> <span class="tk-str">"DAY | WEEK | MONTH"</span>
+  }
+]</pre>
+
+        <h3 class="gd-h3">Campos de cada item de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">ResourceName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Nome do recurso (equipamento) a verificar.</td>
+            </tr>
+            <tr>
+              <td class="col-name">CheckListCode</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Código do checklist a verificar.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Period</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Janela de verificação: <code>DAY</code> (dia) · <code>WEEK</code> (semana) · <code>MONTH</code> (mês).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Resposta (JSON) — lista com o resultado de cada verificação:</p>
+        <pre class="gd-code">[
+  {
+    <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"BALANCA_A"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"CheckListCode"</span><span class="tk-punc">:</span> <span class="tk-str">"CHECKLIST_BALANCA_A"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"Done"</span><span class="tk-punc">:</span> <span class="tk-num">0</span>
+  }<span class="tk-punc">,</span>
+  {
+    <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"BALANCA_B"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"CheckListCode"</span><span class="tk-punc">:</span> <span class="tk-str">"CHECKLIST_BALANCA_B"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"Done"</span><span class="tk-punc">:</span> <span class="tk-num">1</span>
+  }
+]</pre>
+
+        <h3 class="gd-h3">Campos de cada item de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">ResourceName</td><td class="col-type">string</td><td class="col-desc">Recurso verificado (eco do input).</td></tr>
+            <tr><td class="col-name">CheckListCode</td><td class="col-type">string</td><td class="col-desc">Checklist verificado (eco do input).</td></tr>
+            <tr><td class="col-name">Done</td><td class="col-type">number</td><td class="col-desc"><code>1</code> = checklist já preenchido no período · <code>0</code> = ainda não preenchido.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Entrada e saída em lote:</strong> a API recebe e retorna um <strong>array</strong>;
+            a resposta traz um item para cada verificação enviada.</li>
+          <li><strong>Período:</strong> <code>Period</code> define a janela em que o preenchimento é
+            considerado válido (dia, semana ou mês corrente).</li>
+          <li><strong>Sem envelope <code>Success</code>/<code>Message</code>:</strong> diferente das
+            demais APIs, o retorno é diretamente a lista de resultados.</li>
         </ul>
       </section>
 
