@@ -117,21 +117,6 @@ export default function PesagemOeeScreen() {
         />
       </div>
 
-      {/* ── KPIs operacionais do dia ───────────────────────── */}
-      <div
-        className="card mb14"
-        style={{ padding: '10px 14px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: 12 }}
-      >
-        <KpiMini label="Ordens Iniciadas" valor={D.kpisDia.ordensIniciadas} cor="var(--verde)" />
-        <KpiMini label="Ordens Finalizadas" valor={D.kpisDia.ordensFinalizadas} cor="var(--ok)" />
-        <KpiMini label="Salas Ativas" valor={D.kpisDia.salasAtivas} cor="var(--inf)" />
-        <KpiMini label="Operadores" valor={D.kpisDia.operadores} cor="var(--text2)" />
-        <KpiMini label="MPs Pesadas" valor={D.kpisDia.mpsPesadas} cor="var(--ouro)" />
-        <KpiMini label="Variâncias Críticas" valor={D.kpisDia.desviosCriticos} cor="var(--per)" />
-        <KpiMini label="Refeições" valor={D.kpisDia.refeicoesProgramadas} cor="var(--text3)" />
-        <KpiMini label="Paradas Não-Prog." valor={D.kpisDia.paradasNaoProgramadas} cor="var(--alr)" />
-      </div>
-
       {/* ── 2 colunas: Performance Granel + Disponibilidade ─ */}
       <div className="g73 mb14">
         <CardPerformanceGranel calc={calc} />
