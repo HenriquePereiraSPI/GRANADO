@@ -2061,6 +2061,18 @@ export const SCREENS = {
             </div>
           </div>
         </div>
+
+        <!-- Modal 3: Sanitização de Sala/Box (cabeçalho por SALA, não equipamento) -->
+        <div class="abox inf" style="border-left:4px solid var(--ouro-claro);margin-top:10px">
+          <span class="ai" style="font-size:20px">🧴</span>
+          <div>
+            <div style="font-weight:800;color:var(--verde-esc);font-size:13px">Sanitização de Sala/Box <span style="font-size:10px;color:var(--text3);font-weight:600">· POP-CPG-0001</span></div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px">Reutiliza o mesmo modal genérico — cabeçalho agora referencia <strong>Sala/Box</strong> em vez de equipamento (labels customizáveis via config). 2 sanitizantes por dia (Peroxy 4D + Duocide Plus) com registro de LOTE.</div>
+            <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+              <button class="btn btn-sm btn-v" onclick="pesMedAmbAbrir(CFG_POP_SANITIZACAO)">🧴 Sanitização (POP-CPG-0001 · Sala 3 Cosméticos)</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- ═══════════ HISTÓRICO RECENTE ═══════════ -->

@@ -1707,6 +1707,18 @@ function pesMedAmbAbrir(cfg) {
   window.MED_AMB_CFG = cfg;
   window.MED_AMB_STATE = cfg.variaveis.map(() => ({ valor: null, status: null, obs: '' }));
 
+  // Labels padrão do cabeçalho (equipamento). Config pode sobrescrever via cfg.labels.
+  var DEFAULT_LABELS = {
+    eq: 'Equipamento:', tag: 'TAG:', mes: 'Mês/Ano:',
+    setor: 'Setor:', sala: 'Sala:', period: 'Periodicidade:',
+    cert: 'Certificado:', 'ult-cal': 'Últ. Calibração:', 'prox-cal': 'Próx. Calibração:'
+  };
+  var lbls = cfg.labels || {};
+  Object.keys(DEFAULT_LABELS).forEach(function(k) {
+    var el = document.getElementById('med-amb-lbl-' + k);
+    if (el) el.textContent = lbls[k] || DEFAULT_LABELS[k];
+  });
+
   // Cabeçalho
   document.getElementById('med-amb-titulo').textContent = cfg.titulo;
   document.getElementById('med-amb-sub').textContent = cfg.sub;
@@ -1720,7 +1732,7 @@ function pesMedAmbAbrir(cfg) {
   document.getElementById('med-amb-ult-cal').textContent = cfg.ultCal;
   document.getElementById('med-amb-prox-cal').textContent = cfg.proxCal;
   document.getElementById('med-amb-nota').textContent = cfg.nota;
-  document.getElementById('med-amb-tit-leitura').textContent = '📊 Leitura da medição · ' + cfg.medicaoLbl;
+  document.getElementById('med-amb-tit-leitura').textContent = '📊 ' + (cfg.tituloLeitura || 'Leitura da medição') + ' · ' + cfg.medicaoLbl;
 
   // Linhas de variáveis — formato genérico: 4 colunas (Característica · Leitura · Status · Observação)
   // A Característica combina nome + limite (1 a 3 partes, separadas por " · ").
@@ -1737,14 +1749,18 @@ function pesMedAmbAbrir(cfg) {
     }
     var caractHtml = partesCaract.join(' <span style="color:var(--text3);font-weight:600">·</span> ');
 
-    // Input da leitura + unidade ao lado
+    // Input da leitura + unidade ao lado (suporta number, time e texto)
     var inputHtml;
     if (v.tipo === 'time') {
       inputHtml = '<input class="inp mono" type="time" oninput="pesMedAmbValidar(this,' + i + ')" style="text-align:center;font-family:var(--font-m);font-weight:800;font-size:13px;padding:6px 8px">';
+    } else if (v.tipo === 'texto') {
+      // Texto livre (ex: lote de sanitizante) — status marca REG quando preenchido
+      inputHtml = '<input class="inp mono" type="text" placeholder="' + (v.placeholder || '') + '" oninput="pesMedAmbValidar(this,' + i + ')" style="text-align:left;font-family:var(--font-m);font-weight:800;font-size:12px;padding:6px 8px">';
     } else {
       inputHtml = '<input class="inp mono" type="number" step="' + v.step + '" placeholder="' + v.placeholder + '" oninput="pesMedAmbValidar(this,' + i + ')" style="text-align:right;font-family:var(--font-m);font-weight:800;font-size:13px;padding:6px 8px">';
     }
-    inputHtml = '<div style="display:flex;align-items:center;gap:4px;justify-content:flex-end">' + inputHtml + '<span class="mono" style="font-size:10px;color:var(--text2);font-weight:700;min-width:32px">' + v.unidade + '</span></div>';
+    var unidadeSpan = v.unidade ? '<span class="mono" style="font-size:10px;color:var(--text2);font-weight:700;min-width:32px">' + v.unidade + '</span>' : '';
+    inputHtml = '<div style="display:flex;align-items:center;gap:4px;justify-content:flex-end">' + inputHtml + unidadeSpan + '</div>';
 
     return '<tr>'
       + '<td>' + caractHtml + '</td>'
@@ -1773,8 +1789,8 @@ function pesMedAmbValidar(input, idx) {
     input.style.borderColor = '';
     window.MED_AMB_STATE[idx].status = null;
     window.MED_AMB_STATE[idx].valor = null;
-  } else if (v.tipo === 'time') {
-    // Hora sempre "registrada" (sem limite)
+  } else if (v.tipo === 'time' || v.tipo === 'texto') {
+    // Hora ou texto livre — sempre "registrado" quando há valor
     st.className = 'bdg bdg-inf'; st.textContent = 'REG';
     input.style.borderColor = 'var(--inf)';
     window.MED_AMB_STATE[idx].status = 'reg';
@@ -1873,10 +1889,41 @@ function pesMedAmbAcionarManut() {
   window.MED_AMB_STATE = [];
 }
 
+// ─── POP-CPG-0001 · Sanitização das Salas de Pesagem (Anexo 1) ─────────
+// Contexto = SALA/BOX (não equipamento). Labels do cabeçalho customizados.
+// Cada dia tem 2 aplicações: Peroxy 4D + Duocide Plus, rodízio diário.
+const CFG_POP_SANITIZACAO = {
+  titulo: '🧴 POP-CPG-0001 · Sanitização das Salas de Pesagem',
+  sub: 'Anexo 1 · Registro de Sanitização e Limpeza — Central de Pesagem',
+  tituloLeitura: 'Aplicação dos sanitizantes',
+  medicaoLbl: 'Registro diário (2 sanitizantes)',
+  nota: 'Aplicar os 2 sanitizantes previstos (Peroxy 4D e Duocide Plus) diariamente conforme o rodízio do POP. Registrar o lote de cada produto utilizado. Se algum sanitizante estiver indisponível, acionar o almoxarifado.',
+  // Labels do cabeçalho — sobrescrevem os padrão (voltados a equipamento)
+  labels: {
+    eq: 'Área:', tag: 'POP:', mes: 'Mês/Ano:',
+    setor: 'Setor:', sala: 'Sala/Box:', period: 'Periodicidade:',
+    cert: 'Anexo:', 'ult-cal': 'Última Sanitização:', 'prox-cal': 'Próxima:'
+  },
+  eq: 'Central de Pesagem',
+  tag: 'POP-CPG-0001',
+  setor: 'Cosméticos',
+  sala: 'Sala 3',
+  mesAno: 'Julho / 2026',
+  periodicidade: 'Diária · 2 sanitizantes por dia',
+  cert: 'Anexo 1',
+  ultCal: '01/07/2026 · L. Oliveira',
+  proxCal: '03/07/2026',
+  variaveis: [
+    { nome: '🧴 Sanitizante 01 · Peroxy 4D', limitesTxt: 'Rodízio diário · informar lote aplicado', min: null, max: null, unidade: '', tipo: 'texto', placeholder: 'ex: LOT-P4D-2026-045' },
+    { nome: '🧴 Sanitizante 02 · Duocide Plus', limitesTxt: 'Rodízio diário · informar lote aplicado', min: null, max: null, unidade: '', tipo: 'texto', placeholder: 'ex: LOT-DCP-2026-089' },
+  ],
+};
+
 // Expõe as configs demo pro escopo global (pra usar em onclick dos botões)
 window.pesMedAmbAbrir = pesMedAmbAbrir;
 window.CFG_POP_TEMP_UMID = CFG_POP_TEMP_UMID;
 window.CFG_POP_PRESSAO = CFG_POP_PRESSAO;
+window.CFG_POP_SANITIZACAO = CFG_POP_SANITIZACAO;
 
 // Inicializa o timestamp toda vez que o modal abre
 document.addEventListener('click', function(e) {

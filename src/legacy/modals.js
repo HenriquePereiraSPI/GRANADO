@@ -722,17 +722,17 @@ export const MODALS = {
       <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--verde-esc);margin-bottom:8px">📋 Dados do Equipamento <span style="color:var(--text3);letter-spacing:0;text-transform:none;font-weight:600">· cadastro MES (view)</span></div>
 
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px 14px;font-size:11px">
-        <div><span style="color:var(--text3)">Equipamento:</span> <span class="mono" style="font-weight:800;color:var(--verde)" id="med-amb-eq">—</span></div>
-        <div><span style="color:var(--text3)">TAG:</span> <span class="mono" id="med-amb-tag">—</span></div>
-        <div><span style="color:var(--text3)">Mês/Ano:</span> <span style="font-weight:700" id="med-amb-mes">—</span></div>
+        <div><span style="color:var(--text3)" id="med-amb-lbl-eq">Equipamento:</span> <span class="mono" style="font-weight:800;color:var(--verde)" id="med-amb-eq">—</span></div>
+        <div><span style="color:var(--text3)" id="med-amb-lbl-tag">TAG:</span> <span class="mono" id="med-amb-tag">—</span></div>
+        <div><span style="color:var(--text3)" id="med-amb-lbl-mes">Mês/Ano:</span> <span style="font-weight:700" id="med-amb-mes">—</span></div>
 
-        <div><span style="color:var(--text3)">Setor:</span> <span style="font-weight:700" id="med-amb-setor">—</span></div>
-        <div><span style="color:var(--text3)">Sala:</span> <span style="font-weight:700" id="med-amb-sala">—</span></div>
-        <div><span style="color:var(--text3)">Periodicidade:</span> <span style="font-weight:700;color:var(--alr)" id="med-amb-period">—</span></div>
+        <div><span style="color:var(--text3)" id="med-amb-lbl-setor">Setor:</span> <span style="font-weight:700" id="med-amb-setor">—</span></div>
+        <div><span style="color:var(--text3)" id="med-amb-lbl-sala">Sala:</span> <span style="font-weight:700" id="med-amb-sala">—</span></div>
+        <div><span style="color:var(--text3)" id="med-amb-lbl-period">Periodicidade:</span> <span style="font-weight:700;color:var(--alr)" id="med-amb-period">—</span></div>
 
-        <div><span style="color:var(--text3)">Certificado:</span> <span class="mono" id="med-amb-cert">—</span></div>
-        <div><span style="color:var(--text3)">Últ. Calibração:</span> <span class="mono" id="med-amb-ult-cal">—</span></div>
-        <div><span style="color:var(--text3)">Próx. Calibração:</span> <span class="mono" id="med-amb-prox-cal">—</span></div>
+        <div><span style="color:var(--text3)" id="med-amb-lbl-cert">Certificado:</span> <span class="mono" id="med-amb-cert">—</span></div>
+        <div><span style="color:var(--text3)" id="med-amb-lbl-ult-cal">Últ. Calibração:</span> <span class="mono" id="med-amb-ult-cal">—</span></div>
+        <div><span style="color:var(--text3)" id="med-amb-lbl-prox-cal">Próx. Calibração:</span> <span class="mono" id="med-amb-prox-cal">—</span></div>
       </div>
     </div>
 
