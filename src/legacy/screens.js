@@ -2037,43 +2037,136 @@ export const SCREENS = {
            N chamadas do modal correspondente). Aqui estão expostos os
            disparadores unitários para demonstração/validação. -->
       <div class="card cv mb14" style="border-left:4px solid var(--ouro)">
-        <div class="card-title">🧪 Modais de Registro Diário — Demonstração</div>
+        <div class="card-title">Checklist</div>
 
-        <!-- Modal 1: Verificação Diária de Balança (POP-EMB-0041) -->
-        <div class="abox inf" style="margin-bottom:10px">
-          <span class="ai" style="font-size:20px">⚖️</span>
-          <div>
-            <div style="font-weight:800;color:var(--verde-esc);font-size:13px">Verificação Diária de Balança <span style="font-size:10px;color:var(--text3);font-weight:600">· POP-EMB-0041</span></div>
-            <div style="font-size:11px;color:var(--text2);margin-top:2px">Modal unitário — o sistema aciona 1 vez por balança ≤ 30 kg da sala selecionada, no início da ordem. Cabeçalho puxado da view "Cadastro Balanças MES"; operador apenas digita o Peso Encontrado.</div>
-            <button class="btn btn-sm btn-v" style="margin-top:8px" onclick="openModal('modal-pes-verif-balanca')">▶ Abrir modal (demo · BAL-014)</button>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+
+          <!-- Card 1: Verificação Diária de Balança (POP-EMB-0041) -->
+          <div onclick="cklAbrirSala('balanca')" style="cursor:pointer;border:1px solid var(--border);border-top:3px solid var(--verde);border-radius:10px;background:var(--surface);box-shadow:var(--sh);padding:16px 18px;transition:transform .15s ease,box-shadow .15s ease" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--sh2)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--sh)'">
+            <div style="font-size:30px;line-height:1;margin-bottom:8px">⚖️</div>
+            <div style="font-weight:800;color:var(--verde-esc);font-size:13px;line-height:1.25">Verificação Diária de Balança</div>
+            <div style="margin-top:12px;font-size:11px;font-weight:800;color:var(--verde)">Abrir checklist ›</div>
           </div>
-        </div>
 
-        <!-- Modal 2: Medição Ambiental (genérico) — Temp/UR e Pressão -->
-        <div class="abox inf" style="border-left:4px solid var(--inf)">
-          <span class="ai" style="font-size:20px">📊</span>
-          <div>
-            <div style="font-weight:800;color:var(--verde-esc);font-size:13px">Registro de Medição Ambiental <span style="font-size:10px;color:var(--text3);font-weight:600">· POP-ALM-0007 · POP-ENG-0007</span></div>
-            <div style="font-size:11px;color:var(--text2);margin-top:2px">Modal <strong>genérico e reutilizável</strong> — o sistema passa a config (POP, variáveis, limites) e o mesmo modal atende Temp/UR, Pressão ou qualquer outra medição ambiental cadastrada na view MES.</div>
-            <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-              <button class="btn btn-sm btn-v" onclick="pesMedAmbAbrir(CFG_POP_TEMP_UMID)">🌡️ Temperatura e Umidade (POP-ALM-0007 · TEHI-017 · Sala 3)</button>
-              <button class="btn btn-sm btn-v" onclick="pesMedAmbAbrir(CFG_POP_PRESSAO)">📊 Pressão (POP-ENG-0007 · 822050 · Sala 3)</button>
+          <!-- Card 2: Temperatura e Umidade (POP-ALM-0007) -->
+          <div onclick="cklAbrirSala('temp')" style="cursor:pointer;border:1px solid var(--border);border-top:3px solid var(--inf);border-radius:10px;background:var(--surface);box-shadow:var(--sh);padding:16px 18px;transition:transform .15s ease,box-shadow .15s ease" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--sh2)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--sh)'">
+            <div style="font-size:30px;line-height:1;margin-bottom:8px">🌡️</div>
+            <div style="font-weight:800;color:var(--verde-esc);font-size:13px;line-height:1.25">Temperatura e Umidade</div>
+            <div style="margin-top:12px;font-size:11px;font-weight:800;color:var(--inf)">Abrir checklist ›</div>
+          </div>
+
+          <!-- Card 3: Pressão (POP-ENG-0007) -->
+          <div onclick="cklAbrirSala('pressao')" style="cursor:pointer;border:1px solid var(--border);border-top:3px solid var(--inf);border-radius:10px;background:var(--surface);box-shadow:var(--sh);padding:16px 18px;transition:transform .15s ease,box-shadow .15s ease" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--sh2)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--sh)'">
+            <div style="font-size:30px;line-height:1;margin-bottom:8px">📊</div>
+            <div style="font-weight:800;color:var(--verde-esc);font-size:13px;line-height:1.25">Pressão</div>
+            <div style="margin-top:12px;font-size:11px;font-weight:800;color:var(--inf)">Abrir checklist ›</div>
+          </div>
+
+          <!-- Card 4: Sanitização de Sala/Box (POP-CPG-0001) -->
+          <div onclick="cklAbrirSala('sanitizacao')" style="cursor:pointer;border:1px solid var(--border);border-top:3px solid var(--ouro);border-radius:10px;background:var(--surface);box-shadow:var(--sh);padding:16px 18px;transition:transform .15s ease,box-shadow .15s ease" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--sh2)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--sh)'">
+            <div style="font-size:30px;line-height:1;margin-bottom:8px">🧴</div>
+            <div style="font-weight:800;color:var(--verde-esc);font-size:13px;line-height:1.25">Sanitização de Sala/Box</div>
+            <div style="margin-top:12px;font-size:11px;font-weight:800;color:var(--ouro)">Abrir checklist ›</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── Popup: Escolha de Sala (antes de abrir o checklist) ── -->
+      <div id="modal-sala-ckl" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:965;align-items:flex-start;justify-content:center;padding-top:60px;backdrop-filter:blur(3px);overflow-y:auto">
+        <div style="background:var(--surface);border-top:4px solid var(--ouro);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:640px;width:94%;box-shadow:var(--sh2);margin-bottom:40px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
+            <div>
+              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--ouro)">🧪 Registro de Checklist · Escolha a Sala</div>
+              <div id="ckl-sala-titulo" style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-top:2px">—</div>
+            </div>
+            <button onclick="cklFecharSala()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
+          </div>
+
+          <div class="abox inf mb14"><span class="ai">ℹ️</span><div>Selecione a Sala onde este checklist será registrado. O modal do checklist abre em seguida.</div></div>
+
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px" id="ckl-sala-grid">
+            <div id="ckl-sala-btn-A" onclick="cklSelSala('A')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px 10px;background:var(--surface2);text-align:center;transition:all .18s">
+              <div style="font-size:24px;margin-bottom:4px">🅰️</div>
+              <div style="font-size:12px;font-weight:900;color:var(--text);margin-bottom:2px">Sala A</div>
+              <div style="font-family:var(--font-m);font-size:10px;color:var(--text3)">4 Balanças</div>
+              <div style="margin-top:6px"><span class="bdg bdg-ok" style="font-size:9px">Disponível</span></div>
+            </div>
+            <div id="ckl-sala-btn-B" onclick="cklSelSala('B')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px 10px;background:var(--surface2);text-align:center;transition:all .18s">
+              <div style="font-size:24px;margin-bottom:4px">🅱️</div>
+              <div style="font-size:12px;font-weight:900;color:var(--text);margin-bottom:2px">Sala B</div>
+              <div style="font-family:var(--font-m);font-size:10px;color:var(--text3)">3 Balanças</div>
+              <div style="margin-top:6px"><span class="bdg bdg-alr" style="font-size:9px">1 em uso</span></div>
+            </div>
+            <div id="ckl-sala-btn-C" onclick="cklSelSala('C')" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:14px 10px;background:var(--surface2);text-align:center;transition:all .18s">
+              <div style="font-size:24px;margin-bottom:4px">🇨</div>
+              <div style="font-size:12px;font-weight:900;color:var(--text);margin-bottom:2px">Sala C</div>
+              <div style="font-family:var(--font-m);font-size:10px;color:var(--text3)">2 Balanças</div>
+              <div style="margin-top:6px"><span class="bdg bdg-ok" style="font-size:9px">Disponível</span></div>
             </div>
           </div>
-        </div>
 
-        <!-- Modal 3: Sanitização de Sala/Box (cabeçalho por SALA, não equipamento) -->
-        <div class="abox inf" style="border-left:4px solid var(--ouro-claro);margin-top:10px">
-          <span class="ai" style="font-size:20px">🧴</span>
-          <div>
-            <div style="font-weight:800;color:var(--verde-esc);font-size:13px">Sanitização de Sala/Box <span style="font-size:10px;color:var(--text3);font-weight:600">· POP-CPG-0001</span></div>
-            <div style="font-size:11px;color:var(--text2);margin-top:2px">Reutiliza o mesmo modal genérico — cabeçalho agora referencia <strong>Sala/Box</strong> em vez de equipamento (labels customizáveis via config). 2 sanitizantes por dia (Peroxy 4D + Duocide Plus) com registro de LOTE.</div>
-            <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-              <button class="btn btn-sm btn-v" onclick="pesMedAmbAbrir(CFG_POP_SANITIZACAO)">🧴 Sanitização (POP-CPG-0001 · Sala 3 Cosméticos)</button>
+          <div id="ckl-sala-confirmada" style="display:none;margin-top:14px;background:var(--verde-dim);border:1px solid var(--ok-b);border-radius:7px;padding:10px 14px;align-items:center;gap:10px">
+            <span style="font-size:18px">✅</span>
+            <div style="flex:1">
+              <div id="ckl-sala-label" style="font-size:12px;font-weight:700;color:var(--verde)">—</div>
+              <div style="font-size:10px;color:var(--text2);margin-top:2px">O checklist selecionado será registrado nesta sala.</div>
             </div>
+            <button class="btn btn-sm btn-ghost" onclick="cklLimparSala()">Trocar</button>
+          </div>
+
+          <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;margin-top:14px;border-top:1px solid var(--border)">
+            <button class="btn btn-md btn-ghost" onclick="cklFecharSala()">Cancelar</button>
+            <button class="btn btn-md btn-v" id="btn-ckl-sala-confirmar" onclick="cklConfirmarSala()" disabled style="opacity:.5;cursor:not-allowed">✓ Confirmar e Abrir Checklist ›</button>
           </div>
         </div>
       </div>
+
+      <script>
+      // Escolha de Sala antes de abrir cada checklist (mesma ideia do início da Pesagem).
+      var CKL_PENDENTE = null, CKL_SALA_SEL = null;
+      var CKL_TITULOS = {
+        balanca: '⚖️ Verificação Diária de Balança',
+        temp: '🌡️ Temperatura e Umidade',
+        pressao: '📊 Pressão',
+        sanitizacao: '🧴 Sanitização de Sala/Box'
+      };
+      function cklAbrirSala(tipo) {
+        CKL_PENDENTE = tipo;
+        CKL_SALA_SEL = null;
+        var t = document.getElementById('ckl-sala-titulo'); if (t) t.textContent = CKL_TITULOS[tipo] || 'Checklist';
+        cklLimparSala();
+        var m = document.getElementById('modal-sala-ckl'); if (m) m.style.display = 'flex';
+      }
+      function cklSelSala(sala) {
+        CKL_SALA_SEL = sala;
+        ['A','B','C'].forEach(function(k){ var el = document.getElementById('ckl-sala-btn-' + k); if (el) { el.style.border = '2px solid var(--border)'; el.style.background = 'var(--surface2)'; } });
+        var sel = document.getElementById('ckl-sala-btn-' + sala); if (sel) { sel.style.border = '2px solid var(--verde)'; sel.style.background = 'var(--verde-dim)'; }
+        var conf = document.getElementById('ckl-sala-confirmada'); if (conf) conf.style.display = 'flex';
+        var lbl = document.getElementById('ckl-sala-label'); if (lbl) lbl.textContent = '✅ Sala ' + sala + ' selecionada';
+        var btn = document.getElementById('btn-ckl-sala-confirmar'); if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
+      }
+      function cklLimparSala() {
+        CKL_SALA_SEL = null;
+        ['A','B','C'].forEach(function(k){ var el = document.getElementById('ckl-sala-btn-' + k); if (el) { el.style.border = '2px solid var(--border)'; el.style.background = 'var(--surface2)'; } });
+        var conf = document.getElementById('ckl-sala-confirmada'); if (conf) conf.style.display = 'none';
+        var btn = document.getElementById('btn-ckl-sala-confirmar'); if (btn) { btn.disabled = true; btn.style.opacity = '.5'; btn.style.cursor = 'not-allowed'; }
+      }
+      function cklFecharSala() {
+        var m = document.getElementById('modal-sala-ckl'); if (m) m.style.display = 'none';
+        cklLimparSala();
+      }
+      function cklConfirmarSala() {
+        if (!CKL_SALA_SEL) { alert('⚠ Selecione uma Sala.'); return; }
+        var t = CKL_PENDENTE;
+        var m = document.getElementById('modal-sala-ckl'); if (m) m.style.display = 'none';
+        // Abre o checklist correspondente após a escolha da sala.
+        if (t === 'balanca') openModal('modal-pes-verif-balanca');
+        else if (t === 'temp') pesMedAmbAbrir(CFG_POP_TEMP_UMID);
+        else if (t === 'pressao') pesMedAmbAbrir(CFG_POP_PRESSAO);
+        else if (t === 'sanitizacao') pesMedAmbAbrir(CFG_POP_SANITIZACAO);
+      }
+      </script>
 
       <!-- ═══════════ HISTÓRICO RECENTE ═══════════ -->
       <div class="card cv">
