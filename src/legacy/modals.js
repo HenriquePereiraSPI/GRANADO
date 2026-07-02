@@ -611,4 +611,167 @@ export const MODALS = {
       <button class="btn btn-md btn-ghost" onclick="closeModal('modal-tractian')">Cancelar</button>
     </div>
   </div>`,
+
+  /* ══════════════════════════════════════════════════════════════════════
+     modal-pes-verif-balanca — Verificação diária de balança (POP-EMB-0041)
+     Modal UNITÁRIO — o sistema abre 1 vez por balança da sala com capacidade
+     ≤ 30 kg. Cabeçalho puxado da view "Cadastro Balanças MES" (read-only);
+     operador apenas digita o Peso Encontrado nos 5 pesos padrão.
+     Baseado no XLS "REGISTRO DE VERIFICAÇÃO DAS BALANÇAS (ANEXO 1)".
+  ══════════════════════════════════════════════════════════════════════ */
+  "modal-pes-verif-balanca": `  <div class="modal" style="max-width:860px;max-height:92vh;overflow-y:auto">
+    <button class="modal-close" onclick="closeModal('modal-pes-verif-balanca')">✕</button>
+    <div class="modal-title">⚖️ Verificação de Balança</div>
+    <div class="modal-sub"><span class="mono" style="font-weight:800;color:var(--verde)">BAL-014</span> · Toledo XK-3000 · Sala A · MD1 · <span style="color:var(--alr);font-weight:700">Balança 1 de 5 da sala</span></div>
+
+    <!-- ─── Cabeçalho técnico (view MES · read-only) ─── -->
+    <div style="margin-top:14px;background:var(--surface2);border:1px solid var(--border);border-left:4px solid var(--verde);border-radius:6px;padding:12px 14px">
+      <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--verde-esc);margin-bottom:8px">📋 Dados da Balança <span style="color:var(--text3);letter-spacing:0;text-transform:none;font-weight:600">· cadastro MES (view)</span></div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px 14px;font-size:11px">
+        <div><span style="color:var(--text3)">TAG:</span> <span class="mono" style="font-weight:800;color:var(--verde)">BAL-014</span></div>
+        <div><span style="color:var(--text3)">Modelo:</span> <span style="font-weight:700">Toledo XK-3000</span></div>
+        <div><span style="color:var(--text3)">Série:</span> <span class="mono">4478/2023</span></div>
+
+        <div><span style="color:var(--text3)">Área:</span> <span style="font-weight:700">Pesagem</span></div>
+        <div><span style="color:var(--text3)">Localização:</span> MD 1 · Sala A</div>
+        <div><span style="color:var(--text3)">Classe:</span> III</div>
+
+        <div><span style="color:var(--text3)">Carga Máx:</span> <span class="mono" style="font-weight:700">30 kg</span></div>
+        <div><span style="color:var(--text3)">Carga Mín:</span> <span class="mono" style="font-weight:700">200 g</span></div>
+        <div><span style="color:var(--text3)">d (divisão):</span> <span class="mono">1 g</span></div>
+
+        <div><span style="color:var(--text3)">e (verif.):</span> <span class="mono">10 g</span></div>
+        <div><span style="color:var(--text3)">Periodicidade:</span> <span style="font-weight:700;color:var(--alr)">DIÁRIA</span></div>
+        <div><span style="color:var(--text3)">Cert. calibr.:</span> <span style="color:var(--verde);font-weight:700">Válido · 12/2026</span></div>
+      </div>
+    </div>
+
+    <!-- ─── Nota da POP ─── -->
+    <div class="abox inf" style="margin:12px 0"><span class="ai">ℹ️</span><div style="font-size:11px">Verificação <strong>obrigatória antes de iniciar o dia</strong>. Caso algum peso esteja fora do limite, acionar a manutenção via Tractian antes de operar a balança.</div></div>
+
+    <!-- ─── Tabela dos 5 pesos padrão ─── -->
+    <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro);margin:8px 0 8px">📊 Leitura dos 5 Pesos Padrão · 02/07/2026</div>
+
+    <table class="tbl" style="font-size:11.5px;margin-bottom:10px">
+      <thead>
+        <tr style="background:var(--bg2)">
+          <th>Característica</th>
+          <th style="text-align:center;width:160px">Leitura</th>
+          <th style="text-align:center;width:80px">Status</th>
+          <th style="text-align:center">Observação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:700">Peso Padrão 01 <span style="color:var(--text3);font-weight:600">·</span> <span class="mono" style="font-weight:800">10,000 kg</span> <span style="color:var(--text3);font-weight:600">·</span> <span class="mono" style="color:var(--text2)">±10 g</span></td>
+          <td style="text-align:center"><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end"><input class="inp mono" type="number" step="0.001" placeholder="0,000" style="text-align:right;font-family:var(--font-m);font-weight:800;font-size:13px;padding:6px 8px" oninput="pesVerifValidar(this,10.000,0.010,'st-01')"><span class="mono" style="font-size:10px;color:var(--text2);font-weight:700;min-width:22px">kg</span></div></td>
+          <td style="text-align:center"><span id="st-01" class="bdg bdg-ney" style="font-size:9px">—</span></td>
+          <td><input class="inp" id="obs-01" type="text" placeholder="Anotação livre..." style="font-size:11px;padding:6px 8px"></td>
+        </tr>
+        <tr>
+          <td style="font-weight:700">Peso Padrão 02 <span style="color:var(--text3);font-weight:600">·</span> <span class="mono" style="font-weight:800">11,000 kg</span> <span style="color:var(--text3);font-weight:600">·</span> <span class="mono" style="color:var(--text2)">±10 g</span></td>
+          <td style="text-align:center"><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end"><input class="inp mono" type="number" step="0.001" placeholder="0,000" style="text-align:right;font-family:var(--font-m);font-weight:800;font-size:13px;padding:6px 8px" oninput="pesVerifValidar(this,11.000,0.010,'st-02')"><span class="mono" style="font-size:10px;color:var(--text2);font-weight:700;min-width:22px">kg</span></div></td>
+          <td style="text-align:center"><span id="st-02" class="bdg bdg-ney" style="font-size:9px">—</span></td>
+          <td><input class="inp" id="obs-02" type="text" placeholder="Anotação livre..." style="font-size:11px;padding:6px 8px"></td>
+        </tr>
+        <tr>
+          <td style="font-weight:700">Peso Padrão 03 <span style="color:var(--text3);font-weight:600">·</span> <span class="mono" style="font-weight:800">20,000 kg</span> <span style="color:var(--text3);font-weight:600">·</span> <span class="mono" style="color:var(--text2)">±10 g</span></td>
+          <td style="text-align:center"><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end"><input class="inp mono" type="number" step="0.001" placeholder="0,000" style="text-align:right;font-family:var(--font-m);font-weight:800;font-size:13px;padding:6px 8px" oninput="pesVerifValidar(this,20.000,0.010,'st-03')"><span class="mono" style="font-size:10px;color:var(--text2);font-weight:700;min-width:22px">kg</span></div></td>
+          <td style="text-align:center"><span id="st-03" class="bdg bdg-ney" style="font-size:9px">—</span></td>
+          <td><input class="inp" id="obs-03" type="text" placeholder="Anotação livre..." style="font-size:11px;padding:6px 8px"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ─── Rodapé: operador + hora (obs vira coluna dentro da tabela) ─── -->
+    <div class="form-row" style="margin-top:12px">
+      <div class="fg"><label class="lbl">Verificado por</label>
+        <input class="inp" value="J. Santos · Mat. 00412" readonly style="font-family:var(--font-m);font-size:12px;background:var(--bg2)">
+      </div>
+      <div class="fg"><label class="lbl">Data / Hora</label>
+        <input class="inp mono" id="pes-verif-ts" readonly style="font-family:var(--font-m);font-size:12px;background:var(--bg2)">
+      </div>
+    </div>
+
+    <!-- ─── Botões ─── -->
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn btn-lg btn-v" id="pes-verif-btn-ok" onclick="pesVerifConfirmar()" style="flex:2" disabled>✔ Confirmar Verificação</button>
+      <button class="btn btn-md btn-p" id="pes-verif-btn-manut" onclick="pesVerifAcionarManut()" style="flex:1;display:none">🔧 Acionar Manutenção</button>
+      <button class="btn btn-md btn-ghost" onclick="closeModal('modal-pes-verif-balanca')" style="flex:1">Cancelar</button>
+    </div>
+    <div style="font-size:10px;color:var(--text3);text-align:center;margin-top:8px" id="pes-verif-hint">Preencha os 3 pesos padrão para liberar a balança.</div>
+  </div>`,
+
+  /* ══════════════════════════════════════════════════════════════════════
+     modal-pes-medicao-ambiental — Registro Diário de Medição Ambiental
+     Modal genérico e configurável. Atende:
+       • POP-ALM-0007/08 · Anexo 4 · Registro de Temperatura e Umidade
+       • POP-ENG-0007/02 · Anexo 1 · Registro Diário de Pressão
+       • (e outros POPs similares no futuro)
+     O JS "pesMedAmbAbrir(cfg)" recebe uma config e renderiza título,
+     cabeçalho técnico e linhas de variáveis dinamicamente.
+  ══════════════════════════════════════════════════════════════════════ */
+  "modal-pes-medicao-ambiental": `  <div class="modal" style="max-width:900px;max-height:92vh;overflow-y:auto">
+    <button class="modal-close" onclick="closeModal('modal-pes-medicao-ambiental')">✕</button>
+    <div class="modal-title" id="med-amb-titulo">📊 Registro de Medição Ambiental</div>
+    <div class="modal-sub" id="med-amb-sub">—</div>
+
+    <!-- ─── Cabeçalho técnico (view MES · read-only) ─── -->
+    <div style="margin-top:14px;background:var(--surface2);border:1px solid var(--border);border-left:4px solid var(--verde);border-radius:6px;padding:12px 14px">
+      <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--verde-esc);margin-bottom:8px">📋 Dados do Equipamento <span style="color:var(--text3);letter-spacing:0;text-transform:none;font-weight:600">· cadastro MES (view)</span></div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px 14px;font-size:11px">
+        <div><span style="color:var(--text3)">Equipamento:</span> <span class="mono" style="font-weight:800;color:var(--verde)" id="med-amb-eq">—</span></div>
+        <div><span style="color:var(--text3)">TAG:</span> <span class="mono" id="med-amb-tag">—</span></div>
+        <div><span style="color:var(--text3)">Mês/Ano:</span> <span style="font-weight:700" id="med-amb-mes">—</span></div>
+
+        <div><span style="color:var(--text3)">Setor:</span> <span style="font-weight:700" id="med-amb-setor">—</span></div>
+        <div><span style="color:var(--text3)">Sala:</span> <span style="font-weight:700" id="med-amb-sala">—</span></div>
+        <div><span style="color:var(--text3)">Periodicidade:</span> <span style="font-weight:700;color:var(--alr)" id="med-amb-period">—</span></div>
+
+        <div><span style="color:var(--text3)">Certificado:</span> <span class="mono" id="med-amb-cert">—</span></div>
+        <div><span style="color:var(--text3)">Últ. Calibração:</span> <span class="mono" id="med-amb-ult-cal">—</span></div>
+        <div><span style="color:var(--text3)">Próx. Calibração:</span> <span class="mono" id="med-amb-prox-cal">—</span></div>
+      </div>
+    </div>
+
+    <!-- ─── Nota da POP ─── -->
+    <div class="abox inf" style="margin:12px 0"><span class="ai">ℹ️</span><div style="font-size:11px" id="med-amb-nota">Registrar a leitura conforme a periodicidade definida no POP. Se algum valor estiver fora do limite, acionar a manutenção antes de operar a área.</div></div>
+
+    <!-- ─── Tabela de variáveis (renderizada dinamicamente pelo JS) ─── -->
+    <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro);margin:8px 0 8px" id="med-amb-tit-leitura">📊 Leitura da medição · —</div>
+
+    <table class="tbl" style="font-size:11.5px;margin-bottom:10px">
+      <thead>
+        <tr style="background:var(--bg2)">
+          <th>Característica</th>
+          <th style="text-align:center;width:170px">Leitura</th>
+          <th style="text-align:center;width:80px">Status</th>
+          <th style="text-align:center">Observação</th>
+        </tr>
+      </thead>
+      <tbody id="med-amb-vars-tbody">
+        <!-- Linhas geradas por pesMedAmbAbrir(cfg) -->
+      </tbody>
+    </table>
+
+    <!-- ─── Rodapé: operador + hora ─── -->
+    <div class="form-row" style="margin-top:12px">
+      <div class="fg"><label class="lbl">Realizado por</label>
+        <input class="inp" value="J. Santos · Mat. 00412" readonly style="font-family:var(--font-m);font-size:12px;background:var(--bg2)">
+      </div>
+      <div class="fg"><label class="lbl">Data / Hora</label>
+        <input class="inp mono" id="med-amb-ts" readonly style="font-family:var(--font-m);font-size:12px;background:var(--bg2)">
+      </div>
+    </div>
+
+    <!-- ─── Botões ─── -->
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn btn-lg btn-v" id="med-amb-btn-ok" onclick="pesMedAmbConfirmar()" style="flex:2" disabled>✔ Confirmar Medição</button>
+      <button class="btn btn-md btn-p" id="med-amb-btn-manut" onclick="pesMedAmbAcionarManut()" style="flex:1;display:none">🔧 Acionar Manutenção</button>
+      <button class="btn btn-md btn-ghost" onclick="closeModal('modal-pes-medicao-ambiental')" style="flex:1">Cancelar</button>
+    </div>
+    <div style="font-size:10px;color:var(--text3);text-align:center;margin-top:8px" id="med-amb-hint">Preencha todas as leituras para confirmar.</div>
+  </div>`,
 };

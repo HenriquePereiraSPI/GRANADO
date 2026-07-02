@@ -2031,11 +2031,43 @@ export const SCREENS = {
         <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Checklist</div></div>
       </div>
 
+      <!-- ═══════════ DEMO · Modais unitários de checklists MES ═══════════
+           Fluxo real: cada modal é disparado pelo sistema conforme o operador
+           navega no fluxo (seleção de sala → identificação de equipamentos →
+           N chamadas do modal correspondente). Aqui estão expostos os
+           disparadores unitários para demonstração/validação. -->
+      <div class="card cv mb14" style="border-left:4px solid var(--ouro)">
+        <div class="card-title">🧪 Modais de Registro Diário — Demonstração</div>
+
+        <!-- Modal 1: Verificação Diária de Balança (POP-EMB-0041) -->
+        <div class="abox inf" style="margin-bottom:10px">
+          <span class="ai" style="font-size:20px">⚖️</span>
+          <div>
+            <div style="font-weight:800;color:var(--verde-esc);font-size:13px">Verificação Diária de Balança <span style="font-size:10px;color:var(--text3);font-weight:600">· POP-EMB-0041</span></div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px">Modal unitário — o sistema aciona 1 vez por balança ≤ 30 kg da sala selecionada, no início da ordem. Cabeçalho puxado da view "Cadastro Balanças MES"; operador apenas digita o Peso Encontrado.</div>
+            <button class="btn btn-sm btn-v" style="margin-top:8px" onclick="openModal('modal-pes-verif-balanca')">▶ Abrir modal (demo · BAL-014)</button>
+          </div>
+        </div>
+
+        <!-- Modal 2: Medição Ambiental (genérico) — Temp/UR e Pressão -->
+        <div class="abox inf" style="border-left:4px solid var(--inf)">
+          <span class="ai" style="font-size:20px">📊</span>
+          <div>
+            <div style="font-weight:800;color:var(--verde-esc);font-size:13px">Registro de Medição Ambiental <span style="font-size:10px;color:var(--text3);font-weight:600">· POP-ALM-0007 · POP-ENG-0007</span></div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px">Modal <strong>genérico e reutilizável</strong> — o sistema passa a config (POP, variáveis, limites) e o mesmo modal atende Temp/UR, Pressão ou qualquer outra medição ambiental cadastrada na view MES.</div>
+            <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+              <button class="btn btn-sm btn-v" onclick="pesMedAmbAbrir(CFG_POP_TEMP_UMID)">🌡️ Temperatura e Umidade (POP-ALM-0007 · TEHI-017 · Sala 3)</button>
+              <button class="btn btn-sm btn-v" onclick="pesMedAmbAbrir(CFG_POP_PRESSAO)">📊 Pressão (POP-ENG-0007 · 822050 · Sala 3)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ═══════════ HISTÓRICO RECENTE ═══════════ -->
       <div class="card cv">
         <div class="card-title">Histórico Recente</div>
 
-        <!-- Filtros: Sala › Ordem › Checklist › Operador › Status › Data Início/Fim (2 linhas) -->
+        <!-- Filtros: Sala › Checklist › Operador › Status › Data Início/Fim (checklists são por Sala, não por Ordem) -->
         <div style="margin-bottom:10px;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px">
           <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:12px">🔍 Filtros</div>
           <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 14px;align-items:end">
@@ -2049,15 +2081,12 @@ export const SCREENS = {
               </select>
             </div>
             <div style="display:flex;flex-direction:column">
-              <label class="lbl">Ordem</label>
-              <input class="inp" id="cklh-flt-order" placeholder="Nº da ordem" oninput="cklhFiltrar()" style="font-size:11px;padding:6px 8px;font-family:var(--font-m)">
-            </div>
-            <div style="display:flex;flex-direction:column">
               <label class="lbl">Checklist</label>
               <select class="sel" id="cklh-flt-checklist" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
                 <option value="">Todos</option>
-                <option value="balancas">⚖️ Aferição de Balanças</option>
-                <option value="ambientais">🌡️ Condições Ambientais</option>
+                <option value="balancas">⚖️ Verificação de Balança (POP-EMB-0041)</option>
+                <option value="temp-umid">🌡️ Temperatura e Umidade (POP-ALM-0007)</option>
+                <option value="pressao">📊 Pressão (POP-ENG-0007)</option>
               </select>
             </div>
             <div style="display:flex;flex-direction:column">
@@ -2086,16 +2115,14 @@ export const SCREENS = {
             </div>
           </div>
         </div>
-        <div id="cklh-resultado" style="font-size:10px;color:var(--text3);margin-bottom:8px;font-family:var(--font-m)">5 de 5 registros</div>
+        <div id="cklh-resultado" style="font-size:10px;color:var(--text3);margin-bottom:8px;font-family:var(--font-m)">3 de 3 registros</div>
 
         <table class="tbl" id="tbl-cklh" style="font-size:11px">
-          <thead><tr><th>Data</th><th>Sala</th><th>Ordem</th><th>Checklist</th><th>Operador</th><th>Status</th><th>Observação</th></tr></thead>
+          <thead><tr><th>Data</th><th>Sala</th><th>Checklist</th><th>Equipamento</th><th>Operador</th><th>Status</th><th>Observação</th></tr></thead>
           <tbody>
-            <tr data-data="2026-05-12" data-sala="Sala A" data-order="OP-2026-0416" data-checklist="balancas"  data-operador="j. santos 155"   data-status="ok"><td class="mono" style="font-size:11px">12/05/2026</td><td>Sala A</td><td class="mono" style="font-size:10px">OP-2026-0416</td><td>⚖️ Aferição de Balanças</td><td>J. Santos (155)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Todas as 3 balanças aprovadas. Concluído às 06:18.</td></tr>
-            <tr data-data="2026-05-12" data-sala="Sala A" data-order="OP-2026-0416" data-checklist="ambientais" data-operador="j. santos 155"   data-status="ok"><td class="mono" style="font-size:11px">12/05/2026</td><td>Sala A</td><td class="mono" style="font-size:10px">OP-2026-0416</td><td>🌡️ Condições Ambientais</td><td>J. Santos (155)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Temp 20,3°C · UR 47% · Exaustão OK · Impressora OK.</td></tr>
-            <tr data-data="2026-05-12" data-sala="Sala B" data-order="OP-2026-0418" data-checklist="balancas"  data-operador="c. caily 108"    data-status="ok"><td class="mono" style="font-size:11px">12/05/2026</td><td>Sala B</td><td class="mono" style="font-size:10px">OP-2026-0418</td><td>⚖️ Aferição de Balanças</td><td>C. Caily (108)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">BAL-01 nivelada — segunda leitura estável.</td></tr>
-            <tr data-data="2026-05-12" data-sala="Sala B" data-order="OP-2026-0418" data-checklist="ambientais" data-operador="c. caily 108"    data-status="ok"><td class="mono" style="font-size:11px">12/05/2026</td><td>Sala B</td><td class="mono" style="font-size:10px">OP-2026-0418</td><td>🌡️ Condições Ambientais</td><td>C. Caily (108)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Sem ocorrências.</td></tr>
-            <tr data-data="2026-05-11" data-sala="Sala C" data-order="OP-2026-0405" data-checklist="balancas"  data-operador="a. pereira 203"  data-status="alerta" style="opacity:.85"><td class="mono" style="font-size:11px">11/05/2026</td><td>Sala C</td><td class="mono" style="font-size:10px">OP-2026-0405</td><td>⚖️ Aferição de Balanças</td><td>A. Pereira (203)</td><td><span class="bdg bdg-alr">⚠ Concluído c/ alerta</span></td><td style="font-size:10px;color:var(--alr)">BAL-03 fora da faixa — recalibrada pela Manutenção. Liberada às 06:42.</td></tr>
+            <tr data-data="2026-07-02" data-sala="Sala A" data-checklist="balancas" data-operador="j. santos 412" data-status="ok"><td class="mono" style="font-size:11px">02/07/2026 07:14</td><td>Sala A · MD1</td><td>⚖️ Verificação de Balança <span style="font-size:9px;color:var(--text3)">· POP-EMB-0041</span></td><td class="mono" style="font-size:10px">BAL-014 · Toledo XK-3000</td><td>J. Santos (412)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">3 pesos padrão dentro do range (10, 11 e 20 kg · ±10 g).</td></tr>
+            <tr data-data="2026-07-02" data-sala="Sala 3" data-checklist="temp-umid" data-operador="j. santos 412" data-status="ok"><td class="mono" style="font-size:11px">02/07/2026 07:15</td><td>Sala 3 · CPG Cosmético</td><td>🌡️ Temperatura e Umidade <span style="font-size:9px;color:var(--text3)">· POP-ALM-0007</span></td><td class="mono" style="font-size:10px">TEHI-017</td><td>J. Santos (412)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Temp 17,5 °C (limite 15–22) · UR 65% (monitorada). 1ª medição do turno.</td></tr>
+            <tr data-data="2026-07-01" data-sala="Sala 3" data-checklist="pressao" data-operador="a. pereira 203" data-status="alerta" style="opacity:.9"><td class="mono" style="font-size:11px">01/07/2026 08:02</td><td>Sala 3 · CPG Cosmético</td><td>📊 Pressão <span style="font-size:9px;color:var(--text3)">· POP-ENG-0007</span></td><td class="mono" style="font-size:10px">Manômetro 822050</td><td>A. Pereira (203)</td><td><span class="bdg bdg-alr">⚠ Concluído c/ alerta</span></td><td style="font-size:10px;color:var(--alr)">Pressão 0,85 Pa — abaixo do limite (0,98). OS aberta no Tractian, recalibrada 08:47.</td></tr>
           </tbody>
         </table>
 
@@ -2103,7 +2130,6 @@ export const SCREENS = {
         // Filtra a tabela do Histórico Recente usando os atributos data-* das linhas.
         function cklhFiltrar() {
           var fSala  = (document.getElementById('cklh-flt-sala').value || '').trim();
-          var fOrder = (document.getElementById('cklh-flt-order').value || '').trim().toLowerCase();
           var fChk   = (document.getElementById('cklh-flt-checklist').value || '').trim();
           var fOp    = (document.getElementById('cklh-flt-operador').value || '').trim().toLowerCase();
           var fSt    = (document.getElementById('cklh-flt-status').value || '').trim();
@@ -2113,14 +2139,12 @@ export const SCREENS = {
           var vis = 0;
           rows.forEach(function(r){
             var sa = r.getAttribute('data-sala') || '';
-            var or = (r.getAttribute('data-order') || '').toLowerCase();
             var c  = r.getAttribute('data-checklist') || '';
             var o  = (r.getAttribute('data-operador') || '').toLowerCase();
             var s  = r.getAttribute('data-status') || '';
             var d  = r.getAttribute('data-data') || '';
             var ok = true;
             if (fSala  && sa !== fSala) ok = false;
-            if (fOrder && or.indexOf(fOrder) === -1) ok = false;
             if (fChk   && c !== fChk) ok = false;
             if (fOp    && o.indexOf(fOp) === -1) ok = false;
             if (fSt    && s !== fSt) ok = false;
@@ -2129,13 +2153,13 @@ export const SCREENS = {
             r.style.display = ok ? '' : 'none';
             if (ok) vis++;
           });
-          var temFiltro = fSala || fOrder || fChk || fOp || fSt || fDataI || fDataF;
+          var temFiltro = fSala || fChk || fOp || fSt || fDataI || fDataF;
           var lbl = vis + ' de ' + rows.length + ' registro(s)';
           if (temFiltro) lbl += ' — filtros aplicados';
           document.getElementById('cklh-resultado').textContent = lbl;
         }
         function cklhLimparFiltros() {
-          ['cklh-flt-order','cklh-flt-operador','cklh-flt-data-ini','cklh-flt-data-fim'].forEach(function(id){
+          ['cklh-flt-operador','cklh-flt-data-ini','cklh-flt-data-fim'].forEach(function(id){
             var el = document.getElementById(id); if (el) el.value = '';
           });
           document.getElementById('cklh-flt-sala').value = '';

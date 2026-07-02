@@ -1565,6 +1565,331 @@ function fabConfirmarSetup() {
   alert('✅ Setup do Reator R-01 confirmado!\n\nChecklist registrado no Apriso.\nOperador: J. Santos · ' + new Date().toLocaleTimeString('pt-BR') + '\nTodos os parâmetros dentro do especificado.');
 }
 
+// ══════════════════════════════════════════════════════════════════════
+// Verificação diária de balança (POP-EMB-0041 · Anexo 1)
+// Modal unitário — 1 balança por vez. Sistema abre N vezes conforme
+// quantidade de balanças ≤ 30 kg da sala selecionada.
+// ══════════════════════════════════════════════════════════════════════
+const PES_VERIF_STATUS = { '01': null, '02': null, '03': null };
+
+function pesVerifValidar(input, padrao, tol, statusId) {
+  const bdg = document.getElementById(statusId);
+  const key = statusId.replace('st-','');
+  const val = parseFloat((input.value || '').replace(',', '.'));
+  if (isNaN(val) || input.value === '') {
+    bdg.className = 'bdg bdg-ney';
+    bdg.textContent = '—';
+    PES_VERIF_STATUS[key] = null;
+    input.style.borderColor = '';
+  } else {
+    const diff = Math.abs(val - padrao);
+    if (diff <= tol + 1e-9) {
+      bdg.className = 'bdg bdg-ok';
+      bdg.textContent = '✓ OK';
+      PES_VERIF_STATUS[key] = 'ok';
+      input.style.borderColor = 'var(--ok)';
+    } else {
+      bdg.className = 'bdg bdg-per';
+      bdg.textContent = '✕ Fora';
+      PES_VERIF_STATUS[key] = 'fora';
+      input.style.borderColor = 'var(--per)';
+    }
+  }
+  pesVerifAtualizarBotoes();
+}
+
+function pesVerifAtualizarBotoes() {
+  const btnOk = document.getElementById('pes-verif-btn-ok');
+  const btnManut = document.getElementById('pes-verif-btn-manut');
+  const hint = document.getElementById('pes-verif-hint');
+  if (!btnOk) return;
+  const vals = Object.values(PES_VERIF_STATUS);
+  const preenchidos = vals.filter(v => v !== null).length;
+  const foraLimite = vals.some(v => v === 'fora');
+  const todosOk = vals.every(v => v === 'ok');
+  if (foraLimite) {
+    btnOk.disabled = true;
+    btnOk.textContent = '⚠ Peso fora do limite';
+    btnManut.style.display = '';
+    hint.textContent = '⚠ Peso fora do limite detectado. Acione a manutenção antes de operar.';
+    hint.style.color = 'var(--per)';
+  } else if (todosOk && preenchidos === 3) {
+    btnOk.disabled = false;
+    btnOk.textContent = '✔ Confirmar Verificação';
+    btnManut.style.display = 'none';
+    hint.textContent = 'Todos os pesos dentro do limite. Balança liberada para operação.';
+    hint.style.color = 'var(--verde)';
+  } else {
+    btnOk.disabled = true;
+    btnOk.textContent = '✔ Confirmar Verificação';
+    btnManut.style.display = 'none';
+    hint.textContent = `Preencha os 3 pesos padrão (${preenchidos}/3 lidos).`;
+    hint.style.color = 'var(--text3)';
+  }
+}
+
+function pesVerifConfirmar() {
+  const ts = document.getElementById('pes-verif-ts');
+  if (ts) ts.value = new Date().toLocaleString('pt-BR');
+  // Observação vira coluna por linha (3 pesos padrão ativos)
+  const obsLinhas = ['01','02','03']
+    .map(k => {
+      const el = document.getElementById('obs-'+k);
+      const txt = (el && el.value.trim()) || '';
+      return txt ? 'Peso 0'+k[1]+': '+txt : '';
+    })
+    .filter(Boolean);
+  const obsResumo = obsLinhas.length ? obsLinhas.join(' · ') : '(sem observações)';
+  closeModal('modal-pes-verif-balanca');
+  // Reset estado pra próxima balança
+  Object.keys(PES_VERIF_STATUS).forEach(k => PES_VERIF_STATUS[k] = null);
+  alert('✅ Verificação da balança BAL-014 registrada!\n\nReg: VBL-2026-0417\nOperador: J. Santos · ' + new Date().toLocaleTimeString('pt-BR') + '\nObs: ' + obsResumo + '\n\n➡ Próxima balança (2 de 5) será solicitada pelo sistema.');
+}
+
+function pesVerifAcionarManut() {
+  closeModal('modal-pes-verif-balanca');
+  Object.keys(PES_VERIF_STATUS).forEach(k => PES_VERIF_STATUS[k] = null);
+  if (typeof openModal === 'function') openModal('modal-tractian');
+  else alert('🔧 Manutenção acionada!\n\nAbrir OS no Tractian para calibração da balança BAL-014.\nBalança bloqueada até liberação da manutenção.');
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// Modal genérico de Medição Ambiental (POP-ALM-0007 / POP-ENG-0007 / etc.)
+// Reutilizável — recebe cfg com título, cabeçalho e lista de variáveis.
+// ══════════════════════════════════════════════════════════════════════
+
+// ─── Configs de demonstração (viriam da view MES em produção) ──────────
+const CFG_POP_TEMP_UMID = {
+  titulo: '🌡️ POP-ALM-0007/08 · Registro de Temperatura e Umidade',
+  sub: 'Anexo 4 · Log Book para Registro de Temperatura e Umidade — CPG / CQE / LCQ',
+  medicaoLbl: '1ª Medição · Manhã',
+  nota: 'Registrar Temperatura e Umidade 2× ao dia (manhã e tarde). Se a temperatura estiver fora do limite, acionar a manutenção antes de operar a sala.',
+  eq: 'TEHI-017',
+  tag: 'N/A',
+  setor: 'CPG Cosmético',
+  sala: 'Sala 3',
+  mesAno: 'Junho / 2026',
+  periodicidade: '2× ao dia (manhã e tarde)',
+  cert: 'TH-002191/2026',
+  ultCal: '09/02/2026',
+  proxCal: '09/02/2027 · válido ✓',
+  variaveis: [
+    { nome: '🌡️ Temperatura', limitesTxt: '15,0 a 22,0 °C', min: 15.0, max: 22.0, unidade: '°C', step: '0.1', placeholder: '0,0' },
+    { nome: '💧 Umidade Relativa', limitesTxt: 'Monitorada (sem limite fixo)', min: null, max: null, unidade: '%', step: '1', placeholder: '0' },
+    // 🕐 Hora da leitura removida — coletada automaticamente pelo sistema no confirmar
+  ],
+};
+
+const CFG_POP_PRESSAO = {
+  titulo: '📊 POP-ENG-0007/02 · Manômetro DM-2012-LCD',
+  sub: 'Anexo 1 · Registro Diário de Pressão',
+  medicaoLbl: 'Medição diária',
+  nota: 'Registrar a pressão diferencial 1× ao dia. Se estiver fora dos limites especificados, acionar a manutenção antes de operar a sala.',
+  eq: '822050',
+  tag: 'N/A',
+  setor: 'CPG Cosmético',
+  sala: 'Sala 3',
+  mesAno: 'Junho / 2026',
+  periodicidade: 'Diária · 1× ao dia',
+  cert: 'CAL-822050/2026',
+  ultCal: '15/03/2026',
+  proxCal: '15/03/2027 · válido ✓',
+  variaveis: [
+    { nome: '📊 Pressão Observada', limitesTxt: '0,98 a 19,61 Pa (0,1 a 2,0 mm WC)', min: 0.98, max: 19.61, unidade: 'Pa', step: '0.1', placeholder: '0,0' },
+  ],
+};
+
+// ─── Estado do modal aberto ────────────────────────────────────────────
+window.MED_AMB_CFG = null;
+window.MED_AMB_STATE = []; // { valor, status: null | 'ok' | 'fora' | 'reg' }
+
+function pesMedAmbAbrir(cfg) {
+  window.MED_AMB_CFG = cfg;
+  window.MED_AMB_STATE = cfg.variaveis.map(() => ({ valor: null, status: null, obs: '' }));
+
+  // Cabeçalho
+  document.getElementById('med-amb-titulo').textContent = cfg.titulo;
+  document.getElementById('med-amb-sub').textContent = cfg.sub;
+  document.getElementById('med-amb-eq').textContent = cfg.eq;
+  document.getElementById('med-amb-tag').textContent = cfg.tag;
+  document.getElementById('med-amb-setor').textContent = cfg.setor;
+  document.getElementById('med-amb-sala').textContent = cfg.sala;
+  document.getElementById('med-amb-mes').textContent = cfg.mesAno;
+  document.getElementById('med-amb-period').textContent = cfg.periodicidade;
+  document.getElementById('med-amb-cert').textContent = cfg.cert;
+  document.getElementById('med-amb-ult-cal').textContent = cfg.ultCal;
+  document.getElementById('med-amb-prox-cal').textContent = cfg.proxCal;
+  document.getElementById('med-amb-nota').textContent = cfg.nota;
+  document.getElementById('med-amb-tit-leitura').textContent = '📊 Leitura da medição · ' + cfg.medicaoLbl;
+
+  // Linhas de variáveis — formato genérico: 4 colunas (Característica · Leitura · Status · Observação)
+  // A Característica combina nome + limite (1 a 3 partes, separadas por " · ").
+  const tbody = document.getElementById('med-amb-vars-tbody');
+  tbody.innerHTML = cfg.variaveis.map(function(v, i) {
+    var temLimite = (v.min !== null && v.max !== null);
+    // Monta a coluna Característica: nome + limite (opcional) como texto contextual
+    var partesCaract = [ '<strong>' + v.nome + '</strong>' ];
+    if (v.limitesTxt) {
+      var limiteHtml = temLimite
+        ? '<span class="mono" style="font-weight:700;color:var(--text2)">' + v.limitesTxt + '</span>'
+        : '<span style="color:var(--text3);font-style:italic">' + v.limitesTxt + '</span>';
+      partesCaract.push(limiteHtml);
+    }
+    var caractHtml = partesCaract.join(' <span style="color:var(--text3);font-weight:600">·</span> ');
+
+    // Input da leitura + unidade ao lado
+    var inputHtml;
+    if (v.tipo === 'time') {
+      inputHtml = '<input class="inp mono" type="time" oninput="pesMedAmbValidar(this,' + i + ')" style="text-align:center;font-family:var(--font-m);font-weight:800;font-size:13px;padding:6px 8px">';
+    } else {
+      inputHtml = '<input class="inp mono" type="number" step="' + v.step + '" placeholder="' + v.placeholder + '" oninput="pesMedAmbValidar(this,' + i + ')" style="text-align:right;font-family:var(--font-m);font-weight:800;font-size:13px;padding:6px 8px">';
+    }
+    inputHtml = '<div style="display:flex;align-items:center;gap:4px;justify-content:flex-end">' + inputHtml + '<span class="mono" style="font-size:10px;color:var(--text2);font-weight:700;min-width:32px">' + v.unidade + '</span></div>';
+
+    return '<tr>'
+      + '<td>' + caractHtml + '</td>'
+      + '<td style="text-align:center">' + inputHtml + '</td>'
+      + '<td style="text-align:center"><span id="med-amb-st-' + i + '" class="bdg bdg-ney" style="font-size:9px">—</span></td>'
+      + '<td><input class="inp" type="text" placeholder="Anotação livre..." oninput="pesMedAmbObs(' + i + ', this.value)" style="font-size:11px;padding:6px 8px"></td>'
+      + '</tr>';
+  }).join('');
+
+  // Timestamp
+  var ts = document.getElementById('med-amb-ts');
+  if (ts) ts.value = new Date().toLocaleString('pt-BR');
+
+  pesMedAmbAtualizarBotoes();
+  openModal('modal-pes-medicao-ambiental');
+}
+
+function pesMedAmbValidar(input, idx) {
+  const cfg = window.MED_AMB_CFG;
+  if (!cfg) return;
+  const v = cfg.variaveis[idx];
+  const st = document.getElementById('med-amb-st-' + idx);
+  const raw = (input.value || '').trim();
+  if (raw === '') {
+    st.className = 'bdg bdg-ney'; st.textContent = '—';
+    input.style.borderColor = '';
+    window.MED_AMB_STATE[idx].status = null;
+    window.MED_AMB_STATE[idx].valor = null;
+  } else if (v.tipo === 'time') {
+    // Hora sempre "registrada" (sem limite)
+    st.className = 'bdg bdg-inf'; st.textContent = 'REG';
+    input.style.borderColor = 'var(--inf)';
+    window.MED_AMB_STATE[idx].status = 'reg';
+    window.MED_AMB_STATE[idx].valor = raw;
+  } else {
+    const val = parseFloat(raw.replace(',', '.'));
+    if (isNaN(val)) {
+      st.className = 'bdg bdg-ney'; st.textContent = '—';
+      input.style.borderColor = '';
+      window.MED_AMB_STATE[idx].status = null;
+      window.MED_AMB_STATE[idx].valor = null;
+    } else if (v.min !== null && v.max !== null) {
+      if (val >= v.min - 1e-9 && val <= v.max + 1e-9) {
+        st.className = 'bdg bdg-ok'; st.textContent = '✓ OK';
+        input.style.borderColor = 'var(--ok)';
+        window.MED_AMB_STATE[idx].status = 'ok';
+      } else {
+        st.className = 'bdg bdg-per'; st.textContent = '✕ Fora';
+        input.style.borderColor = 'var(--per)';
+        window.MED_AMB_STATE[idx].status = 'fora';
+      }
+      window.MED_AMB_STATE[idx].valor = val;
+    } else {
+      // Sem limite (ex: Umidade "monitorada")
+      st.className = 'bdg bdg-inf'; st.textContent = 'REG';
+      input.style.borderColor = 'var(--inf)';
+      window.MED_AMB_STATE[idx].status = 'reg';
+      window.MED_AMB_STATE[idx].valor = val;
+    }
+  }
+  pesMedAmbAtualizarBotoes();
+}
+
+function pesMedAmbObs(idx, txt) {
+  if (!window.MED_AMB_STATE[idx]) return;
+  window.MED_AMB_STATE[idx].obs = (txt || '').trim();
+}
+
+function pesMedAmbAtualizarBotoes() {
+  const cfg = window.MED_AMB_CFG;
+  if (!cfg) return;
+  const btnOk = document.getElementById('med-amb-btn-ok');
+  const btnManut = document.getElementById('med-amb-btn-manut');
+  const hint = document.getElementById('med-amb-hint');
+  if (!btnOk) return;
+  const total = cfg.variaveis.length;
+  const preenchidos = window.MED_AMB_STATE.filter(s => s.status !== null).length;
+  const foraLimite = window.MED_AMB_STATE.some(s => s.status === 'fora');
+  const todosPreenchidos = preenchidos === total;
+  if (foraLimite) {
+    btnOk.disabled = true;
+    btnOk.textContent = '⚠ Valor fora do limite';
+    btnManut.style.display = '';
+    hint.textContent = '⚠ Valor fora do limite detectado. Acione a manutenção antes de operar a sala.';
+    hint.style.color = 'var(--per)';
+  } else if (todosPreenchidos) {
+    btnOk.disabled = false;
+    btnOk.textContent = '✔ Confirmar Medição';
+    btnManut.style.display = 'none';
+    hint.textContent = 'Todas as leituras registradas dentro do especificado.';
+    hint.style.color = 'var(--verde)';
+  } else {
+    btnOk.disabled = true;
+    btnOk.textContent = '✔ Confirmar Medição';
+    btnManut.style.display = 'none';
+    hint.textContent = 'Preencha as ' + (total - preenchidos) + ' leituras restantes (' + preenchidos + '/' + total + ' feitas).';
+    hint.style.color = 'var(--text3)';
+  }
+}
+
+function pesMedAmbConfirmar() {
+  const cfg = window.MED_AMB_CFG;
+  if (!cfg) return;
+  const ts = document.getElementById('med-amb-ts');
+  if (ts) ts.value = new Date().toLocaleString('pt-BR');
+  var leituras = cfg.variaveis.map(function(v, i) {
+    var s = window.MED_AMB_STATE[i];
+    var valTxt = (v.tipo === 'time') ? s.valor : (s.valor + ' ' + v.unidade);
+    var obsTxt = s.obs ? ' [' + s.obs + ']' : '';
+    return v.nome + ': ' + valTxt + obsTxt;
+  }).join('\n  ');
+  closeModal('modal-pes-medicao-ambiental');
+  var reg = 'REG-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random()*9999)).padStart(4,'0');
+  alert('✅ Medição registrada!\n\n' + cfg.titulo + '\nEq.: ' + cfg.eq + ' · Sala: ' + cfg.sala + '\n\nLeituras:\n  ' + leituras + '\n\nReg: ' + reg + '\nOperador: J. Santos · ' + new Date().toLocaleTimeString('pt-BR'));
+  window.MED_AMB_CFG = null;
+  window.MED_AMB_STATE = [];
+}
+
+function pesMedAmbAcionarManut() {
+  const cfg = window.MED_AMB_CFG;
+  const nomeEq = cfg ? cfg.eq : 'equipamento';
+  closeModal('modal-pes-medicao-ambiental');
+  if (typeof openModal === 'function') openModal('modal-tractian');
+  else alert('🔧 Manutenção acionada!\n\nAbrir OS no Tractian para o equipamento ' + nomeEq + '.\nÁrea bloqueada até liberação da manutenção.');
+  window.MED_AMB_CFG = null;
+  window.MED_AMB_STATE = [];
+}
+
+// Expõe as configs demo pro escopo global (pra usar em onclick dos botões)
+window.pesMedAmbAbrir = pesMedAmbAbrir;
+window.CFG_POP_TEMP_UMID = CFG_POP_TEMP_UMID;
+window.CFG_POP_PRESSAO = CFG_POP_PRESSAO;
+
+// Inicializa o timestamp toda vez que o modal abre
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.matches && e.target.matches("[onclick*=\"modal-pes-verif-balanca\"]")) {
+    setTimeout(function() {
+      const ts = document.getElementById('pes-verif-ts');
+      if (ts && !ts.value) ts.value = new Date().toLocaleString('pt-BR');
+      Object.keys(PES_VERIF_STATUS).forEach(k => PES_VERIF_STATUS[k] = null);
+      pesVerifAtualizarBotoes();
+    }, 50);
+  }
+});
+
 // Check-in Operadores Fabricação
 const fabCiOperadores = {
   1: { nome:'José Santos',    mat:'00412', iniciais:'JS', equip:'Reator' },
