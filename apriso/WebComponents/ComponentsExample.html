@@ -42,6 +42,8 @@
   <script src="./granado-zpl-popup.js"></script>
   <script src="./granado-message-popup.js"></script>
   <script src="./granado-option-popup.js"></script>
+  <script src="./granado-quantity-popup.js"></script>
+  <script src="./granado-checklist-popup.js"></script>
 </head>
 
 <body style="margin:0;padding:24px;background:#F4EED9;font-family:'Lato','DejaVu Sans',Arial,sans-serif;color:#103E20">
@@ -1556,6 +1558,175 @@
             { text: 'Sair sem salvar', value: 'descartar', variant: 'primary', color: '#6B3FA0', onClick: optStatus },
             { text: 'Salvar e sair', value: 'salvar', variant: 'primary', onClick: optStatus }
           ]
+        });
+      }
+    </script>
+  </section>
+
+  <!-- ========== Linha 31 — granado-quantity-popup ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-quantity-popup&gt;
+    </h2>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button type="button" onclick="qtyDemoGaiolas()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A5A00;border-radius:7px;background:#9A5A00;color:#fff;cursor:pointer">Gaiolas (ícone default · sugerido 3)</button>
+      <button type="button" onclick="qtyDemoCopias()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1A4A8C;border-radius:7px;background:#1A4A8C;color:#fff;cursor:pointer">🖨️ Cópias (emoji · 1 a 4)</button>
+      <button type="button" onclick="qtyDemoSemIcone()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #555;border-radius:7px;background:#555;color:#fff;cursor:pointer">Sem ícones</button>
+      <span id="qty-status" style="font-size:12px;color:#8A9E8E"></span>
+    </div>
+
+    <script>
+      function qtyStatus(detail) {
+        var s = document.getElementById('qty-status');
+        if (s) s.textContent = '➡ Quantidade escolhida: ' + detail.quantity;
+      }
+      // Reproduz o popup "Nenhuma gaiola criada para a ordem" — ícone default = desenho da gaiola (SVG)
+      function qtyDemoGaiolas() {
+        GranadoQuantityPopup.show({
+          type: 'warning', suggested: 3,
+          title: 'Nenhuma gaiola criada para a ordem',
+          message: 'Esta ordem ainda não possui nenhuma gaiola criada. Escolha quantas gaiolas deseja criar para receber as etiquetas — sugestão do sistema: 3 gaiolas.',
+          onSelect: qtyStatus
+        });
+      }
+      // Uso genérico: nº de cópias (1 a 4), emoji custom, sem entrada manual
+      function qtyDemoCopias() {
+        GranadoQuantityPopup.show({
+          type: 'info', icon: '🖨️', min: 1, max: 4, suggested: 1, allowManual: false,
+          title: 'Cópias da impressão',
+          message: 'Quantas cópias da etiqueta deseja imprimir?',
+          onSelect: qtyStatus
+        });
+      }
+      // Sem ícones nos botões (icon vazio)
+      function qtyDemoSemIcone() {
+        GranadoQuantityPopup.show({
+          type: 'info', icon: '', min: 1, max: 6, suggested: 2,
+          title: 'Quantidade de amostras',
+          message: 'Quantas amostras serão coletadas para o lote?',
+          onSelect: qtyStatus
+        });
+      }
+    </script>
+  </section>
+
+  <!-- ========== Linha 32 — granado-checklist-popup ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-checklist-popup&gt;
+    </h2>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button type="button" onclick="cklDemoBalanca()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1F7A3D;border-radius:7px;background:#1F7A3D;color:#fff;cursor:pointer">⚖️ Verificação de Balança</button>
+      <button type="button" onclick="cklDemoAmostras()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1A4A8C;border-radius:7px;background:#1A4A8C;color:#fff;cursor:pointer">🧪 Com botão de ação</button>
+      <button type="button" onclick="cklDemoCompleto()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A5A00;border-radius:7px;background:#9A5A00;color:#fff;cursor:pointer">📋 Checklist completo (10 itens)</button>
+      <span id="ckl-status" style="font-size:12px;color:#8A9E8E"></span>
+    </div>
+
+    <script>
+      // Reproduz o popup "⚖️ Verificação de Balança"
+      function cklDemoBalanca() {
+        GranadoChecklistPopup.show({
+          title: '⚖️ Verificação de Balança',
+          subtitle: 'BAL-014 · Toledo XK-3000 · Sala A · MD1 · Balança 1 de 5 da sala',
+          headerInformation: [
+            { label: 'TAG', value: 'BAL-014' },
+            { label: 'Modelo', value: 'Toledo XK-3000' },
+            { label: 'Série', value: '4478/2023' },
+            { label: 'Classe', value: 'III' },
+            { label: 'Carga Máx', value: '30 kg' },
+            { label: 'e (verif.)', value: '10 g' },
+            { label: 'Periodicidade', value: 'DIÁRIA' },
+            { label: 'Cert. calibr.', value: 'Válido · 12/2026' }
+          ],
+          data: [
+            { caracteristica: 'Peso Padrão 01 · <b>10,000 kg</b> · ±10 g', valor: '', status: null, observacao: '' },
+            { caracteristica: 'Peso Padrão 02 · <b>11,000 kg</b> · ±10 g', valor: '11,000', status: true, observacao: 'Dentro do range' },
+            { caracteristica: 'Peso Padrão 03 · <b>20,000 kg</b> · ±10 g', valor: '20,140', status: false, observacao: 'Fora do limite (+140 g)' }
+          ],
+          verifiedBy: 'J. Santos · Mat. 00412',
+          // sem dateTime -> "Data / Hora" preenchido automaticamente (campo bloqueado)
+          confirmText: '✔ Confirmar Verificação',
+          onConfirm: function (d) {
+            console.log('[checklist-popup] confirm →', d);
+            console.table(d.rows);
+            var s = document.getElementById('ckl-status');
+            if (s) s.textContent = '✅ Confirmado por ' + d.verifiedBy + ' · ' + d.rows.length + ' itens (' + d.dateTime + ') — veja o console';
+          }
+        });
+      }
+      // Exemplo com botão de ação por linha (ex.: acionar manutenção)
+      function cklDemoAmostras() {
+        GranadoChecklistPopup.show({
+          title: '🧪 Condições Ambientais da Sala',
+          subtitle: 'Sala 3 · Cosméticos',
+          headerInformation: 'Registro obrigatório no início do turno. Itens fora do limite bloqueiam o início das ordens.',
+          data: [
+            // Com limites -> a coluna vira STATUS automático/bloqueado (✓ OK / ✕ Fora)
+            { id: 'temp', caracteristica: 'Temperatura °C', valor: '21,3', limiteInferior: 18, limiteSuperior: 24, observacao: '' },
+            { id: 'ur',   caracteristica: 'Umidade Relativa %', valor: '58', limiteSuperior: 60, observacao: '' },
+            { id: 'pd',   caracteristica: 'Pressão Diferencial Pa', valor: '', limiteInferior: 5, observacao: '',
+              acao: { text: '🔌', title: 'Buscar leitura do conector', onClick: function (ctx) {
+                // "busca" o valor (ex.: sensor) e joga no campo Valor — o status recalcula sozinho
+                var lido = (3 + Math.round(Math.random() * 40) / 10).toFixed(1);
+                ctx.setValor(lido);
+                document.getElementById('ckl-status').textContent = '📡 Leitura obtida: ' + lido + ' Pa (linha ' + (ctx.index + 1) + ')';
+              } } }
+          ],
+          verifiedBy: 'M. Lima · Mat. 00155',
+          onConfirm: function (d) {
+            console.log('[checklist-popup] confirm →', d);
+            console.table(d.rows);
+          }
+        });
+      }
+      // Checklist maior — 10 itens misturando limites, campo livre, observação e ação
+      function cklDemoCompleto() {
+        GranadoChecklistPopup.show({
+          title: '📋 Checklist de Abertura da Linha',
+          subtitle: 'Linha ENV-02 · Envase · Turno A',
+          headerInformation: [
+            { label: 'Linha', value: 'ENV-02' },
+            { label: 'Produto', value: 'Sabonete Líquido 250 ml' },
+            { label: 'OP', value: 'OP-2026-004512' },
+            { label: 'POP', value: 'POP-ENV-0007' }
+          ],
+          data: [
+            // Com limites -> STATUS automático (✓ OK / ✕ Fora) + campo só decimal
+            { id: 'temp',  caracteristica: 'Temperatura da Sala °C', valor: '21,4', limiteInferior: 18, limiteSuperior: 24, observacao: '' },
+            { id: 'ur',    caracteristica: 'Umidade Relativa %', valor: '55', limiteSuperior: 60, observacao: '' },
+            { id: 'pdif',  caracteristica: 'Pressão Diferencial Pa', valor: '', limiteInferior: 5, observacao: '',
+              acao: { text: '🔌', title: 'Buscar leitura do conector', onClick: function (ctx) {
+                var lido = (3 + Math.round(Math.random() * 40) / 10).toFixed(1);
+                ctx.setValor(lido);
+              } } },
+            { id: 'peso',  caracteristica: 'Peso de Referência g', valor: '250,0', limiteInferior: 248, limiteSuperior: 252, observacao: '' },
+            // Sem limites -> checkbox marcável (true/false/null) + campo livre
+            { id: 'limp',  caracteristica: 'Limpeza da esteira concluída', valor: 'Conforme', status: true, observacao: 'Sanitizado 06:40' },
+            { id: 'lote',  caracteristica: 'Lote de MP conferido', valor: 'MP-88213', status: true, observacao: '' },
+            { id: 'rotu',  caracteristica: 'Rótulo/arte aprovado', valor: 'Rev. 4', status: true, observacao: '' },
+            { id: 'valv',  caracteristica: 'Válvula dosadora sem vazamento', valor: '', status: null, observacao: '' },
+            { id: 'epi',   caracteristica: 'EPIs do operador OK', valor: '', status: null, observacao: '' },
+            { id: 'balca', caracteristica: 'Balança verificada hoje', valor: '', status: null, observacao: '',
+              acao: { text: 'Verificar', title: 'Abrir verificação de balança', onClick: function (ctx) {
+                ctx.setValor('BAL-014 · OK'); ctx.setCheck(true);
+              } } }
+          ],
+          verifiedBy: 'A. Costa · Mat. 00731',
+          confirmText: '✔ Liberar Linha',
+          onConfirm: function (d) {
+            console.log('[checklist-popup] confirm →', d);
+            console.table(d.rows);
+            var s = document.getElementById('ckl-status');
+            if (s) s.textContent = '✅ ' + d.rows.length + ' itens confirmados — veja o console';
+          }
         });
       }
     </script>

@@ -42,6 +42,8 @@
   <script src="./granado-zpl-popup.js"></script>
   <script src="./granado-message-popup.js"></script>
   <script src="./granado-option-popup.js"></script>
+  <script src="./granado-quantity-popup.js"></script>
+  <script src="./granado-checklist-popup.js"></script>
 
   <style>
     html,
@@ -279,6 +281,8 @@
       <a class="gd-link" href="#granado-zpl-popup">granado-zpl-popup</a>
       <a class="gd-link" href="#granado-message-popup">granado-message-popup</a>
       <a class="gd-link" href="#granado-option-popup">granado-option-popup</a>
+      <a class="gd-link" href="#granado-quantity-popup">granado-quantity-popup</a>
+      <a class="gd-link" href="#granado-checklist-popup">granado-checklist-popup</a>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -9334,6 +9338,315 @@ pop.open();</pre>
             <a class="gd-link" href="#granado-toast">granado-toast</a>.</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores
             Granado hardcoded como default.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-quantity-popup
+           ============================================================ -->
+      <section id="granado-quantity-popup" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-quantity-popup&gt;</code></h1>
+        <p class="gd-lead">
+          Popup de <strong>seleção de quantidade</strong> — reproduz o popup
+          <em>"Nenhuma gaiola criada para a ordem"</em> da Pesagem: título, mensagem (callout no
+          estilo <em>abox</em> por tipo), uma <strong>grade de botões (1 a N)</strong> com ícone +
+          número (o valor <strong>sugerido</strong> destacado) e a opção de <strong>digitar
+          manualmente</strong>.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-quantity-popup.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso</h2>
+        <p class="gd-lead">
+          Forma recomendada (API estática). Cada clique num número — ou no botão "Criar" da entrada
+          manual — dispara o evento <code>select</code> com a quantidade escolhida.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button type="button" onclick="docQtyGaiolas()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A5A00;border-radius:7px;background:#9A5A00;color:#fff;cursor:pointer">Gaiolas (ícone default · sugerido 3)</button>
+          <button type="button" onclick="docQtyCopias()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1A4A8C;border-radius:7px;background:#1A4A8C;color:#fff;cursor:pointer">🖨️ Cópias (emoji · 1 a 4)</button>
+          <button type="button" onclick="docQtySemIcone()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #555;border-radius:7px;background:#555;color:#fff;cursor:pointer">Sem ícones</button>
+          <span id="doc-qty-status" style="font-size:12px;color:#8A9E8E"></span>
+        </div>
+        <script>
+          function docQtyStatus(detail) { var s = document.getElementById('doc-qty-status'); if (s) s.textContent = '➡ Quantidade: ' + detail.quantity; }
+          function docQtyGaiolas() { GranadoQuantityPopup.show({ type: 'warning', suggested: 3, title: 'Nenhuma gaiola criada para a ordem', message: 'Esta ordem ainda não possui nenhuma gaiola criada. Escolha quantas criar.', onSelect: docQtyStatus }); }
+          function docQtyCopias() { GranadoQuantityPopup.show({ type: 'info', icon: '🖨️', min: 1, max: 4, suggested: 1, allowManual: false, title: 'Cópias da impressão', message: 'Quantas cópias imprimir?', onSelect: docQtyStatus }); }
+          function docQtySemIcone() { GranadoQuantityPopup.show({ type: 'info', icon: '', min: 1, max: 6, suggested: 2, title: 'Quantidade de amostras', message: 'Quantas amostras serão coletadas?', onSelect: docQtyStatus }); }
+        </script>
+        <pre class="gd-code"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoQuantityPopup.<span class="tk-attr">show</span>({
+    type: <span class="tk-str">'warning'</span>,
+    title: <span class="tk-str">'Nenhuma gaiola criada para a ordem'</span>,
+    message: <span class="tk-str">'Escolha quantas gaiolas criar.'</span>,
+    suggested: <span class="tk-num">3</span>,                <span class="tk-comment">// botão destacado</span>
+    onSelect: <span class="tk-keyword">function</span> (detail) { criarGaiolas(detail.quantity); }
+  });
+
+  <span class="tk-comment">// alternativa: ouvir o evento</span>
+  el.<span class="tk-attr">addEventListener</span>(<span class="tk-str">'select'</span>, <span class="tk-keyword">function</span> (e) { criarGaiolas(e.detail.quantity); });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Ícone dos botões</h2>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Sem <code>icon</code>:</strong> usa o <strong>desenho da gaiola (SVG)</strong> — igual ao popup original.</li>
+          <li><strong><code>icon="🖨️"</code>:</strong> troca o desenho por um emoji.</li>
+          <li><strong><code>icon=""</code>:</strong> não exibe ícone (só o número).</li>
+        </ul>
+
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:130px">Nome</th><th style="width:150px">Tipo</th><th style="width:110px">Default</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Título do popup.</td></tr>
+            <tr><td class="col-name">message</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Mensagem (texto) no callout.</td></tr>
+            <tr><td class="col-name">type</td><td class="col-type">string</td><td class="col-default">"info"</td><td class="col-desc"><code>info</code> · <code>information</code> · <code>success</code> · <code>error</code> · <code>warning</code>. Define ícone/cor do cabeçalho e do callout.</td></tr>
+            <tr><td class="col-name">icon</td><td class="col-type">string</td><td class="col-default">gaiola (SVG)</td><td class="col-desc">Ícone dos botões. Sem informar = gaiola SVG; emoji = troca; <code>""</code> = sem ícone.</td></tr>
+            <tr><td class="col-name">min</td><td class="col-type">number</td><td class="col-default">1</td><td class="col-desc">Menor valor da grade de botões.</td></tr>
+            <tr><td class="col-name">max</td><td class="col-type">number</td><td class="col-default">9</td><td class="col-desc">Maior valor da grade de botões.</td></tr>
+            <tr><td class="col-name">suggested</td><td class="col-type">number</td><td class="col-default">—</td><td class="col-desc">Valor sugerido — botão destacado em dourado com selo "sugerido".</td></tr>
+            <tr><td class="col-name">confirm-text</td><td class="col-type">string</td><td class="col-default">"Criar"</td><td class="col-desc">Texto do botão da entrada manual.</td></tr>
+            <tr><td class="col-name">allow-manual</td><td class="col-type">string</td><td class="col-default">exibida</td><td class="col-desc"><code>allow-manual="false"</code> oculta a entrada manual.</td></tr>
+            <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code>.</td></tr>
+            <tr><td class="col-name">onSelect</td><td class="col-type">string (JS)</td><td class="col-default">—</td><td class="col-desc">Handler inline executado ao escolher. Recebe <code>event</code> e <code>detail</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Eventos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:130px">Evento</th><th style="width:200px">detail</th><th>Quando</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">select</td><td class="col-type">{ quantity, type }</td><td class="col-desc">Clique num botão de quantidade ou no "Criar" (manual). Cancelar/✕/clique fora <strong>não</strong> emitem — apenas fecham.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Métodos JS</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:300px">Método</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">.open() / .close()</td><td class="col-desc">Exibe / oculta (remove do DOM se criado via API estática).</td></tr>
+            <tr><td class="col-name">GranadoQuantityPopup.show(opts)</td><td class="col-desc"><code>opts = { title, message, type, icon, min, max, suggested, confirmText, allowManual, onSelect }</code> — <code>onSelect</code> pode ser função.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Entrada manual:</strong> aceita qualquer valor ≥ 1 (Enter confirma); útil quando o valor está fora da grade <code>min…max</code>.</li>
+          <li><strong>Três formas de reagir:</strong> <code>onSelect</code> (função/atributo) ou o evento <code>select</code>.</li>
+          <li><strong>Mesma identidade visual:</strong> tipos/cores iguais aos demais popups Granado.</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores Granado hardcoded como default.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-checklist-popup
+           ============================================================ -->
+      <section id="granado-checklist-popup" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-checklist-popup&gt;</code></h1>
+        <p class="gd-lead">
+          Popup de <strong>checklist</strong> — inspirado no popup "Verificação de Balança" da Pesagem.
+          Mostra título, subtítulo, um bloco de <strong>informações do cabeçalho</strong>, uma
+          <strong>tabela</strong> com as características (Característica · Valor · Check · Observação ·
+          Ação) e, ao final, os campos <strong>"Verificado por"</strong> e <strong>"Data / Hora"</strong>.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-checklist-popup.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso</h2>
+        <p class="gd-lead">
+          Forma recomendada (API estática). O botão <strong>Confirmar</strong> emite o evento
+          <code>confirm</code> com o estado atual da tabela + os dois campos do rodapé.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button type="button" onclick="docCklBalanca()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1F7A3D;border-radius:7px;background:#1F7A3D;color:#fff;cursor:pointer">⚖️ Verificação de Balança</button>
+          <button type="button" onclick="docCklConector()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1A4A8C;border-radius:7px;background:#1A4A8C;color:#fff;cursor:pointer">🔌 Com botão de ação (conector)</button>
+          <span id="doc-ckl-status" style="font-size:12px;color:#8A9E8E"></span>
+        </div>
+        <script>
+          function docCklBalanca() {
+            GranadoChecklistPopup.show({
+              title: '⚖️ Verificação de Balança',
+              subtitle: 'BAL-014 · Toledo XK-3000 · Sala A · MD1',
+              headerInformation: [
+                { label: 'TAG', value: 'BAL-014' }, { label: 'Modelo', value: 'Toledo XK-3000' },
+                { label: 'Classe', value: 'III' }, { label: 'Carga Máx', value: '30 kg' },
+                { label: 'e (verif.)', value: '10 g' }, { label: 'Periodicidade', value: 'DIÁRIA' }
+              ],
+              data: [
+                { id: 'p01', caracteristica: 'Peso Padrão 01 · <b>10,000 kg</b> · ±10 g', valor: '', status: null, observacao: '',
+                  acao: { text: '🔌', title: 'Ler da balança', onClick: function (ctx) { ctx.setValor('10,002'); } } },
+                { id: 'p02', caracteristica: 'Peso Padrão 02 · <b>11,000 kg</b> · ±10 g', valor: '11,000', status: true, observacao: 'Dentro do range' },
+                { id: 'p03', caracteristica: 'Peso Padrão 03 · <b>20,000 kg</b> · ±10 g', valor: '20,140', status: false, observacao: 'Fora do limite (+140 g)' }
+              ],
+              verifiedBy: 'J. Santos · Mat. 00412',   // sem dateTime -> preenchido automaticamente
+              confirmText: '✔ Confirmar Verificação',
+              onConfirm: function (d) { console.log('confirm →', d); console.table(d.rows); var s = document.getElementById('doc-ckl-status'); if (s) s.textContent = '✅ Confirmado (veja o console)'; }
+            });
+          }
+          function docCklConector() {
+            GranadoChecklistPopup.show({
+              title: '🧪 Condições Ambientais da Sala', subtitle: 'Sala 3 · Cosméticos',
+              headerInformation: 'Registro obrigatório no início do turno. Itens fora do limite bloqueiam o início.',
+              data: [
+                { id: 'temp', caracteristica: 'Temperatura °C', valor: '21,3', limiteInferior: 18, limiteSuperior: 24, observacao: '' },
+                { id: 'pd', caracteristica: 'Pressão Diferencial Pa', valor: '', limiteInferior: 5, observacao: '',
+                  acao: { text: '🔌', title: 'Buscar leitura do conector', onClick: function (ctx) { ctx.setValor('4,2'); } } }
+              ],
+              verifiedBy: 'M. Lima · Mat. 00155',
+              onConfirm: function (d) { console.log('confirm →', d); console.table(d.rows); }
+            });
+          }
+        </script>
+        <pre class="gd-code"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoChecklistPopup.<span class="tk-attr">show</span>({
+    title: <span class="tk-str">'⚖️ Verificação de Balança'</span>,
+    subtitle: <span class="tk-str">'BAL-014 · Toledo XK-3000 · Sala A'</span>,
+    headerInformation: [                       <span class="tk-comment">// array {label,value} = grade · string = HTML</span>
+      { label: <span class="tk-str">'TAG'</span>, value: <span class="tk-str">'BAL-014'</span> }, { label: <span class="tk-str">'Classe'</span>, value: <span class="tk-str">'III'</span> }
+    ],
+    data: [
+      { id: <span class="tk-str">'p01'</span>, caracteristica: <span class="tk-str">'Peso Padrão 01 · 10,000 kg'</span>, valor: <span class="tk-str">''</span>, status: <span class="tk-keyword">null</span>, observacao: <span class="tk-str">''</span>,
+        acao: { text: <span class="tk-str">'🔌'</span>, title: <span class="tk-str">'Ler da balança'</span>,
+                onClick: <span class="tk-keyword">function</span> (ctx) { ctx.setValor(<span class="tk-str">'10,002'</span>); } } },
+      { id: <span class="tk-str">'p02'</span>, caracteristica: <span class="tk-str">'Peso Padrão 02 · 11,000 kg'</span>, valor: <span class="tk-str">'11,000'</span>, status: <span class="tk-keyword">true</span>, observacao: <span class="tk-str">'OK'</span> }
+    ],
+    verifiedBy: <span class="tk-str">'J. Santos · Mat. 00412'</span>,
+    onConfirm: <span class="tk-keyword">function</span> (d) { console.log(d.rows); }   <span class="tk-comment">// { id, caracteristica, valor, isManualValue, status, observacao }</span>
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Com limites (status automático)</h2>
+        <p class="gd-lead">
+          Ao informar <code>limiteInferior</code> e/ou <code>limiteSuperior</code> numa linha: os limites são
+          <strong>anexados entre parênteses</strong> à característica, o campo <strong>Valor</strong> passa a aceitar
+          <strong>apenas decimal</strong> e a coluna <strong>Check</strong> vira um <strong>Status automático e bloqueado</strong>
+          (<code>✓ OK</code> dentro dos limites, <code>✕ Fora</code> fora — no retorno continua <code>true</code>/<code>false</code>).
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button type="button" onclick="docCklLimites()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A5A00;border-radius:7px;background:#9A5A00;color:#fff;cursor:pointer">🌡️ Condições com limites</button>
+        </div>
+        <script>
+          function docCklLimites() {
+            GranadoChecklistPopup.show({
+              title: '🌡️ Condições Ambientais da Sala', subtitle: 'Sala 3 · Cosméticos',
+              headerInformation: 'Itens fora do limite bloqueiam o início das ordens.',
+              data: [
+                { id: 'temp', caracteristica: 'Temperatura °C', valor: '21,3', limiteInferior: 18, limiteSuperior: 24, observacao: '' },
+                { id: 'ur',   caracteristica: 'Umidade Relativa %', valor: '58', limiteSuperior: 60, observacao: '' },
+                { id: 'pd',   caracteristica: 'Pressão Diferencial Pa', valor: '3,2', limiteInferior: 5, observacao: '' }
+              ],
+              verifiedBy: 'M. Lima · Mat. 00155',
+              onConfirm: function (d) { console.log('confirm →', d); console.table(d.rows); }
+            });
+          }
+        </script>
+        <pre class="gd-code"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoChecklistPopup.<span class="tk-attr">show</span>({
+    title: <span class="tk-str">'🌡️ Condições Ambientais da Sala'</span>,
+    headerInformation: <span class="tk-str">'Itens fora do limite bloqueiam o início das ordens.'</span>,
+    data: [
+      <span class="tk-comment">// ambos os limites -> característica vira "Temperatura °C (18 – 24)"</span>
+      { id: <span class="tk-str">'temp'</span>, caracteristica: <span class="tk-str">'Temperatura °C'</span>, valor: <span class="tk-str">'21,3'</span>, limiteInferior: <span class="tk-keyword">18</span>, limiteSuperior: <span class="tk-keyword">24</span> },
+      <span class="tk-comment">// só superior -> "Umidade Relativa % (≤ 60)"</span>
+      { id: <span class="tk-str">'ur'</span>,   caracteristica: <span class="tk-str">'Umidade Relativa %'</span>, valor: <span class="tk-str">'58'</span>, limiteSuperior: <span class="tk-keyword">60</span> },
+      <span class="tk-comment">// só inferior -> "Pressão Diferencial Pa (≥ 5)" · 3,2 &lt; 5 => Status "✕ Fora"</span>
+      { id: <span class="tk-str">'pd'</span>,   caracteristica: <span class="tk-str">'Pressão Diferencial Pa'</span>, valor: <span class="tk-str">'3,2'</span>, limiteInferior: <span class="tk-keyword">5</span> }
+    ],
+    onConfirm: <span class="tk-keyword">function</span> (d) { console.log(d.rows); }   <span class="tk-comment">// status: true (OK) | false (Fora), automático</span>
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos / propriedades</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:160px">Nome</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-desc">Título do popup.</td></tr>
+            <tr><td class="col-name">subtitle</td><td class="col-type">string</td><td class="col-desc">Subtítulo (abaixo do título).</td></tr>
+            <tr><td class="col-name">headerInformation</td><td class="col-type">array / string</td><td class="col-desc">Bloco do cabeçalho: <strong>array</strong> de <code>{ label, value }</code> (grade, texto escapado) ou <strong>string</strong> (HTML livre). Em JS use a propriedade <code>.headerInformation</code>; em atributo, <code>header-information</code> (JSON).</td></tr>
+            <tr><td class="col-name">data</td><td class="col-type">array</td><td class="col-desc">Linhas da tabela (em JS use <code>.data</code>). Campos de cada item abaixo.</td></tr>
+            <tr><td class="col-name">verified-by</td><td class="col-type">string</td><td class="col-desc">Campo "Verificado por" — <strong>bloqueado</strong> (o usuário não edita). Mostra apenas o que vier deste parâmetro.</td></tr>
+            <tr><td class="col-name">date-time</td><td class="col-type">string</td><td class="col-desc">Campo "Data / Hora" — <strong>bloqueado</strong> (o usuário não edita). Sem valor, é <strong>preenchido automaticamente</strong> com a data/hora atual (<code>dd/mm/aaaa hh:mm</code>). Informe p/ fixar outro valor.</td></tr>
+            <tr><td class="col-name">confirm-text</td><td class="col-type">string</td><td class="col-desc">Texto do botão confirmar (default "Confirmar").</td></tr>
+            <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code>.</td></tr>
+            <tr><td class="col-name">onConfirm</td><td class="col-type">string (JS)</td><td class="col-desc">Handler inline ao confirmar. Recebe <code>event</code> e <code>detail</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada linha (<code>data[i]</code>)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">id</td><td class="col-type">string / number</td><td class="col-desc">Identificador da linha — devolvido em cada item do <code>confirm</code> e no <code>ctx</code>.</td></tr>
+            <tr><td class="col-name">caracteristica</td><td class="col-type">string</td><td class="col-desc">Texto da característica (aceita HTML).</td></tr>
+            <tr><td class="col-name">valor</td><td class="col-type">string</td><td class="col-desc">Valor inicial do campo <strong>Valor</strong> (texto livre). Vazio = sem default. Aceita a chave legada <code>leitura</code>. <strong>Com limites</strong>, o campo deixa de ser livre e aceita <strong>apenas decimal</strong> (dígitos, um separador <code>,</code>/<code>.</code> e sinal).</td></tr>
+            <tr><td class="col-name">limiteInferior</td><td class="col-type">decimal</td><td class="col-desc">(opcional) Mínimo aceito p/ o valor.</td></tr>
+            <tr><td class="col-name">limiteSuperior</td><td class="col-type">decimal</td><td class="col-desc">(opcional) Máximo aceito p/ o valor. <strong>Ao informar um limite</strong>: (1) ele é <strong>anexado entre parênteses à característica</strong> — <code>(18 – 24)</code>, <code>(≥ 5)</code>, <code>(≤ 60)</code>; (2) a coluna Check vira um <strong>Status automático e bloqueado</strong>: dentro dos limites → <code>✓ OK</code>, fora → <code>✕ Fora</code> (recalcula ao mudar o valor). No retorno continua <code>true</code>/<code>false</code>.</td></tr>
+            <tr><td class="col-name">status</td><td class="col-type">boolean / null</td><td class="col-desc">Só quando <strong>não há limites</strong>: estado inicial do <strong>Check</strong> (checkbox marcável): <code>true</code> = ✓ · <code>false</code>/<code>null</code> = vazio.</td></tr>
+            <tr><td class="col-name">observacao</td><td class="col-type">string</td><td class="col-desc">Valor inicial da Observação (opcional). A <strong>coluna só aparece</strong> se ao menos uma linha tiver; use <code>""</code> para input em branco.</td></tr>
+            <tr><td class="col-name">acao</td><td class="col-type">objeto / string</td><td class="col-desc">Botão de ação da linha (opcional): <code>{ text, title, onClick }</code> ou só o texto. Use um ícone em <code>text</code> p/ botão de ícone. Botão com animação do <a class="gd-link" href="#granado-button">granado-button</a> (ripple + press).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">O <code>ctx</code> do botão de ação</h3>
+        <p class="gd-lead">
+          O <code>acao.onClick</code> recebe um <code>ctx</code> que lê e <strong>atualiza a própria
+          linha</strong> — ex.: um conector "busca" o valor e joga no campo <strong>Valor</strong>.
+        </p>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:180px">Membro</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">index / row / event</td><td class="col-desc">Índice da linha, dados da linha e o evento de clique.</td></tr>
+            <tr><td class="col-name">value / check / observacao</td><td class="col-desc">Valores atuais da linha.</td></tr>
+            <tr><td class="col-name">isManualValue</td><td class="col-desc"><code>true</code> se o Valor foi digitado; <code>false</code> se veio do setter/inicial.</td></tr>
+            <tr><td class="col-name">setValor(v) / setValue(v)</td><td class="col-desc">Define o campo Valor da linha (marca como <em>não</em> manual).</td></tr>
+            <tr><td class="col-name">setCheck(bool)</td><td class="col-desc">Marca/desmarca o Check da linha.</td></tr>
+            <tr><td class="col-name">setObservacao(v)</td><td class="col-desc">Define a Observação da linha.</td></tr>
+          </tbody>
+        </table>
+        <p class="gd-lead" style="margin-top:8px">
+          Também disponível fora do clique: <code>el.setValor(i, v)</code>, <code>el.setCheck(i, bool)</code>,
+          <code>el.setObservacao(i, v)</code>.
+        </p>
+
+        <h3 class="gd-h3">Eventos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:130px">Evento</th><th style="width:230px">detail</th><th>Quando</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">confirm</td><td class="col-type">{ verifiedBy, dateTime, rows[] }</td><td class="col-desc">Clique em Confirmar. Cada linha em <code>rows</code>: <code>{ id, caracteristica, valor, isManualValue, status, observacao }</code>. Com limites, <code>status</code> é automático; sem limites, é o checkbox.</td></tr>
+            <tr><td class="col-name">row-action</td><td class="col-type">ctx</td><td class="col-desc">Clique no botão de ação da linha (mesmo <code>ctx</code> do <code>onClick</code>).</td></tr>
+          </tbody>
+        </table>
+        <p class="gd-lead" style="margin-top:8px">Cancelar, o ✕ e o clique fora <strong>não</strong> emitem evento — apenas fecham.</p>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>isManualValue:</strong> distingue Valor <em>digitado</em> (true) de Valor vindo do
+            <code>setValor</code> / inicial (false).</li>
+          <li><strong>Colunas opcionais:</strong> <em>Observação</em> e <em>Ação</em> só aparecem se ao
+            menos uma linha as usar.</li>
+          <li><strong>Tipografia:</strong> Poppins para texto, Arial para a tabela e campos (números/códigos).</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores Granado hardcoded (paleta do app).</li>
         </ul>
       </section>
 
