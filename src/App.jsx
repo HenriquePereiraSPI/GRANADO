@@ -6,6 +6,7 @@ import SinoticoScreen from './components/SinoticoScreen.jsx';
 import ProdCockpitScreen from './components/ProdCockpitScreen.jsx';
 import GenealogiaScreen from './components/GenealogiaScreen.jsx';
 import PesagemOeeScreen from './components/PesagemOeeScreen.jsx';
+import PesPerformanceOrdemScreen from './components/PesPerformanceOrdemScreen.jsx';
 import PesPerformanceOperadorScreen from './components/PesPerformanceOperadorScreen.jsx';
 import PesPerformanceGestaoScreen from './components/PesPerformanceGestaoScreen.jsx';
 import QualidadeReconciliacaoScreen from './components/QualidadeReconciliacaoScreen.jsx';
@@ -100,6 +101,9 @@ export default function App() {
 
           {/* OEE Pesagem (componente React) */}
           <Route path="/pes-oee" element={<PesagemOeeScreen />} />
+
+          {/* Pesagem — Performance por Ordem (Granel: padrão vs real) */}
+          <Route path="/pes-perf-ordem" element={<PesPerformanceOrdemScreen />} />
 
           {/* Pesagem — Performance Pessoal (Fase A) */}
           <Route path="/pes-perf-operador" element={<PesPerformanceOperadorScreen />} />

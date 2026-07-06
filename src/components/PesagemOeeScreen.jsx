@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { PESAGEM_OEE as D } from '../data/pes-oee-data.js';
+import SalasFilter from './SalasFilter.jsx';
 
 /**
  * Tela /pes-oee — OEE da Pesagem.
@@ -14,12 +15,6 @@ import { PESAGEM_OEE as D } from '../data/pes-oee-data.js';
  *   TEMPO DE CICLO POR MP (informativo) = visao operacional (Tati)
  *   DISPONIBILIDADE (sala/box)          = paradas programadas / nao
  */
-
-const COR_STATUS = {
-  dentro:  { fg: 'var(--ok)',   bg: 'var(--ok-p)',   bd: 'var(--ok-b)',   label: '✓ Dentro do padrão' },
-  atencao: { fg: 'var(--alr)',  bg: 'var(--alr-p)',  bd: 'var(--alr-b)',  label: '⚠ Atenção' },
-  fora:    { fg: 'var(--per)',  bg: 'var(--per-p)',  bd: 'var(--per-b)',  label: '⚠ Fora do padrão' },
-};
 
 /**
  * Calcula o OEE da Pesagem em runtime a partir dos dados das tabelas.
@@ -74,19 +69,13 @@ export default function PesagemOeeScreen() {
         </div>
         <div className="ph-actions">
           <select className="inp" style={{ width: 'auto', fontSize: 12, padding: '6px 10px' }} defaultValue="hoje">
-            <option value="hoje">Hoje · Turno A</option>
-            <option value="semana">Esta Semana</option>
-            <option value="mes">Este Mês</option>
-            <option value="custom">Período customizado…</option>
+            <option value="hoje">Hoje</option>
+            <option value="7d">7 dias</option>
+            <option value="30d">30 dias</option>
+            <option value="60d">60 dias</option>
           </select>
-          <select className="inp" style={{ width: 'auto', fontSize: 12, padding: '6px 10px' }} defaultValue="todas">
-            <option value="todas">Todas as Salas</option>
-            <option value="A">Sala A</option>
-            <option value="B">Sala B</option>
-            <option value="C">Sala C</option>
-          </select>
-          <button className="btn btn-sm btn-ghost" onClick={() => alert('🔄 Recalculando OEE com base nos últimos apontamentos...')}>🔄 Atualizar</button>
-          <button className="btn btn-sm btn-v" onClick={() => alert('⬇ Exportando OEE para CSV...')}>⬇ Exportar CSV</button>
+          <SalasFilter />
+          <button className="btn btn-sm btn-v" onClick={() => alert('🔄 Recalculando OEE com base nos últimos apontamentos...')}>🔄 Atualizar</button>
         </div>
       </div>
 
@@ -117,14 +106,11 @@ export default function PesagemOeeScreen() {
         />
       </div>
 
-      {/* ── 2 colunas: Performance Granel + Disponibilidade ─ */}
+      {/* ── 2 colunas: Tempo de Ciclo por MP + Disponibilidade ─ */}
       <div className="g73 mb14">
-        <CardPerformanceGranel calc={calc} />
+        <CardTempoCicloMP />
         <CardDisponibilidade calc={calc} />
       </div>
-
-      {/* ── Tempo de ciclo por MP ──────────────────────────── */}
-      <CardTempoCicloMP />
 
       {/* ── Salas + Histórico em 2 colunas ─────────────────── */}
       <div className="g64 mt14">
@@ -223,107 +209,6 @@ function KpiMini({ label, valor, cor }) {
         {label}
       </div>
       <div style={{ fontFamily: 'var(--font-m)', fontSize: 22, fontWeight: 700, color: cor, lineHeight: 1 }}>{valor}</div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   Performance — visão Granel (oficial OEE)
-───────────────────────────────────────────────────────────── */
-function CardPerformanceGranel({ calc }) {
-  const dados = D.performanceGranel;
-  const maxTempo = useMemo(() => Math.max(...dados.map((d) => Math.max(d.tempoPadrao, d.tempoReal))), [dados]);
-
-  return (
-    <div className="card cv">
-      <style>{`
-        .perf-granel-tbl th { padding: 14px 10px; font-size: 11px; }
-        .perf-granel-tbl td { padding: 22px 10px; vertical-align: middle; }
-        .perf-granel-tbl tbody tr { transition: background .15s; }
-        .perf-granel-tbl tbody tr:hover { background: var(--surface2); }
-      `}</style>
-      <div className="card-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 8 }}>
-        <span>Performance · Visão Granel (oficial OEE)</span>
-        <span style={{ fontSize: 10, fontWeight: 600, color: 'var(--text3)', letterSpacing: '.04em' }}>
-          Tempo padrão (cronoanálise) vs Tempo real
-        </span>
-      </div>
-      <table className="tbl perf-granel-tbl" style={{ fontSize: 13 }}>
-        <thead>
-          <tr>
-            <th>Granel</th>
-            <th>Ordem</th>
-            <th>Sala</th>
-            <th>Padrão</th>
-            <th>Real</th>
-            <th style={{ minWidth: 200 }}>Comparativo</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dados.map((d, i) => {
-            const corS = COR_STATUS[d.status];
-            const wPad = (d.tempoPadrao / maxTempo) * 100;
-            const wReal = (d.tempoReal / maxTempo) * 100;
-            return (
-              <tr key={i}>
-                <td>
-                  <div style={{ fontFamily: 'var(--font-m)', fontWeight: 700, color: 'var(--verde)' }}>{d.granel}</div>
-                  <div style={{ fontSize: 10, color: 'var(--text3)' }}>{d.produto}</div>
-                </td>
-                <td className="mono" style={{ fontSize: 11 }}>{d.ordem}</td>
-                <td><span className="bdg bdg-inf" style={{ fontSize: 9 }}>{d.sala}</span></td>
-                <td className="mono">{d.tempoPadrao}m</td>
-                <td className="mono" style={{ fontWeight: 700, color: corS.fg }}>{d.tempoReal}m</td>
-                <td>
-                  <div style={{ position: 'relative', height: 22 }}>
-                    {/* Barra padrão (cinza claro) */}
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: 2,
-                        left: 0,
-                        height: 8,
-                        width: `${wPad}%`,
-                        background: 'var(--border)',
-                        borderRadius: 4,
-                      }}
-                      title={`Padrão ${d.tempoPadrao}min`}
-                    />
-                    {/* Barra real (colorida) */}
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: 12,
-                        left: 0,
-                        height: 8,
-                        width: `${wReal}%`,
-                        background: corS.fg,
-                        borderRadius: 4,
-                      }}
-                      title={`Real ${d.tempoReal}min`}
-                    />
-                  </div>
-                </td>
-                <td><span className="bdg" style={{ fontSize: 9, background: corS.bg, color: corS.fg, border: `1px solid ${corS.bd}` }}>{corS.label}</span></td>
-              </tr>
-            );
-          })}
-        </tbody>
-        <tfoot>
-          <tr style={{ background: 'var(--surface2)', borderTop: '2px solid var(--ouro-claro)' }}>
-            <td colSpan="3" style={{ fontWeight: 700, color: 'var(--verde-esc)', fontSize: 11, padding: '8px 10px' }}>
-              Σ Total — Performance = {calc.padraoTotal}min ÷ {calc.realTotal}min
-            </td>
-            <td className="mono" style={{ fontWeight: 800 }}>{calc.padraoTotal}m</td>
-            <td className="mono" style={{ fontWeight: 800, color: 'var(--ouro)' }}>{calc.realTotal}m</td>
-            <td style={{ textAlign: 'right', fontFamily: 'var(--font-m)', fontWeight: 700, color: 'var(--ouro)', fontSize: 16 }}>
-              {calc.performance.toFixed(1)}%
-            </td>
-            <td><span className="bdg bdg-ouro" style={{ fontSize: 9 }}>Performance</span></td>
-          </tr>
-        </tfoot>
-      </table>
     </div>
   );
 }

@@ -373,6 +373,7 @@
           <a class="gd-link" href="#GRD_API_GetAllPrinters">GRD_API_GetAllPrinters</a>
           <a class="gd-link" href="#GRD_API_PrintLabel">GRD_API_PrintLabel</a>
           <a class="gd-link" href="#GRD_API_GetLabel">GRD_API_GetLabel</a>
+          <a class="gd-link" href="#GRD_API_GetScales">GRD_API_GetScales</a>
         </div>
       </div>
 
@@ -2534,6 +2535,159 @@
             como string vazia.</li>
           <li><strong>Datas "1/1/1900":</strong> representam datas não preenchidas
             (<code>ProductionDate</code> / <code>ExpirationDate</code>).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetScales
+           ============================================================ -->
+      <section id="GRD_API_GetScales">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetScales</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera as informações das balanças</strong> cadastradas — dados do equipamento
+          e recurso, faixa de pesagem (capacidade, precisão, tolerâncias), rede
+          (<code>ScaleIP</code>/<code>ScalePORT</code>), dados da <strong>unidade de calibração</strong>
+          (certificado, pesos-padrão e erros permitidos) e o estado atual
+          (<code>Weight</code>, <code>Tare</code>, <code>Availability</code>).
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetScales</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>Data</code> — um
+          <strong>array</strong> de balanças.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"EquipmentID"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">EquipmentID</td>
+              <td class="col-type">string (número)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ID do equipamento (balança) a consultar. Use <code>"-1"</code> para
+                retornar <strong>todas</strong> as balanças, ou um ID específico (ex.:
+                <code>"184848984"</code>) para retornar apenas aquela.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Informações recuperadas com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Data"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"EquipmentID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000001"</span><span class="tk-punc">,</span> <span class="tk-key">"Equipment"</span><span class="tk-punc">:</span> <span class="tk-str">"S3_TOLEDO 2095/1"</span><span class="tk-punc">,</span> <span class="tk-key">"ResourceID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000082"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Active"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span><span class="tk-punc">,</span> <span class="tk-key">"Short"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"WorkCenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD2_SALA3"</span><span class="tk-punc">,</span> <span class="tk-key">"Facility"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Department"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem MP"</span><span class="tk-punc">,</span> <span class="tk-key">"ScaleID"</span><span class="tk-punc">:</span> <span class="tk-str">"100002"</span><span class="tk-punc">,</span> <span class="tk-key">"UOMCode"</span><span class="tk-punc">:</span> <span class="tk-str">"KGM"</span><span class="tk-punc">,</span> <span class="tk-key">"Name"</span><span class="tk-punc">:</span> <span class="tk-str">"TOLEDO 2095/1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Precision"</span><span class="tk-punc">:</span> <span class="tk-str">"0.0010000000"</span><span class="tk-punc">,</span> <span class="tk-key">"MaxWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"6.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"MinWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"0.0200000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PositiveTolerance"</span><span class="tk-punc">:</span> <span class="tk-str">"6.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"NegativeTolerance"</span><span class="tk-punc">:</span> <span class="tk-str">"0.0200000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ScaleIP"</span><span class="tk-punc">:</span> <span class="tk-str">"10.20.1.135"</span><span class="tk-punc">,</span> <span class="tk-key">"ScalePORT"</span><span class="tk-punc">:</span> <span class="tk-str">"8881"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"UCTag"</span><span class="tk-punc">:</span> <span class="tk-str">"BALD - 820320"</span><span class="tk-punc">,</span> <span class="tk-key">"UCSerie"</span><span class="tk-punc">:</span> <span class="tk-str">"13726976"</span><span class="tk-punc">,</span> <span class="tk-key">"UCCalibrationCertificate"</span><span class="tk-punc">:</span> <span class="tk-str">"MA - 03758/25"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"UCValidity"</span><span class="tk-punc">:</span> <span class="tk-str">"2027-01-01"</span><span class="tk-punc">,</span> <span class="tk-key">"UCPortImetro"</span><span class="tk-punc">:</span> <span class="tk-str">"207/07"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"UCStandardWeight1"</span><span class="tk-punc">:</span> <span class="tk-str">"0.02"</span><span class="tk-punc">,</span> <span class="tk-key">"UCStandardWeight2"</span><span class="tk-punc">:</span> <span class="tk-str">"1.5"</span><span class="tk-punc">,</span> <span class="tk-key">"UCStandardWeight3"</span><span class="tk-punc">:</span> <span class="tk-str">"3"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"UCStandardWeight4"</span><span class="tk-punc">:</span> <span class="tk-str">"4.5"</span><span class="tk-punc">,</span> <span class="tk-key">"UCStandardWeight5"</span><span class="tk-punc">:</span> <span class="tk-str">"5.7"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"UCErrorAllowed1"</span><span class="tk-punc">:</span> <span class="tk-str">"0.0005"</span><span class="tk-punc">,</span> <span class="tk-key">"UCErrorAllowed2"</span><span class="tk-punc">:</span> <span class="tk-str">"0.001"</span><span class="tk-punc">,</span> <span class="tk-key">"UCErrorAllowed3"</span><span class="tk-punc">:</span> <span class="tk-str">"0.0015"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"UCErrorAllowed4"</span><span class="tk-punc">:</span> <span class="tk-str">"0.0015"</span><span class="tk-punc">,</span> <span class="tk-key">"UCErrorAllowed5"</span><span class="tk-punc">:</span> <span class="tk-str">"0.0015"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"WeighingScaleID"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"Weight"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"Tare"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"Availability"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"LastUpdateOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/3/2026 8:52:12 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"LastUpdatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"BalancaService"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"EquipmentID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span><span class="tk-punc">,</span> <span class="tk-key">"Equipment"</span><span class="tk-punc">:</span> <span class="tk-str">"S1_TOLEDO 3400/9"</span><span class="tk-punc">,</span> <span class="tk-key">"ResourceID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000083"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Active"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkCenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA1"</span><span class="tk-punc">,</span> <span class="tk-key">"Name"</span><span class="tk-punc">:</span> <span class="tk-str">"TOLEDO 3400/9"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Precision"</span><span class="tk-punc">:</span> <span class="tk-str">"0.0100000000"</span><span class="tk-punc">,</span> <span class="tk-key">"MaxWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"30.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"MinWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"0.2000000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ScaleIP"</span><span class="tk-punc">:</span> <span class="tk-str">"10.20.1.121"</span><span class="tk-punc">,</span> <span class="tk-key">"ScalePORT"</span><span class="tk-punc">:</span> <span class="tk-str">"8881"</span><span class="tk-punc">,</span> <span class="tk-key">"UCTag"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+      <span class="tk-comment">// balança sem calibração cadastrada -> campos UC* e pesos-padrão zerados/vazios</span>
+      <span class="tk-key">"WeighingScaleID"</span><span class="tk-punc">:</span> <span class="tk-str">"2"</span><span class="tk-punc">,</span> <span class="tk-key">"Weight"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"Tare"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"Availability"</span><span class="tk-punc">:</span> <span class="tk-str">"False"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"LastUpdateOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/3/2026 8:52:22 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"LastUpdatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"BalancaService"</span>
+    }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as informações foram recuperadas com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">Data</td><td class="col-type">array&lt;object&gt;</td><td class="col-desc">Lista de balanças. Campos de cada item abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada balança (<code>Data[]</code>)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:200px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">EquipmentID</td><td class="col-type">string (número)</td><td class="col-desc">Identificador do equipamento (balança).</td></tr>
+            <tr><td class="col-name">Equipment</td><td class="col-type">string</td><td class="col-desc">Nome do equipamento (ex.: <code>"S3_TOLEDO 2095/1"</code>).</td></tr>
+            <tr><td class="col-name">ResourceID</td><td class="col-type">string (número)</td><td class="col-desc">Identificador do recurso vinculado à balança.</td></tr>
+            <tr><td class="col-name">Active</td><td class="col-type">string (bool)</td><td class="col-desc">Equipamento ativo (<code>"True"</code>/<code>"False"</code>).</td></tr>
+            <tr><td class="col-name">Short</td><td class="col-type">string</td><td class="col-desc">Descrição curta (pode vir vazia).</td></tr>
+            <tr><td class="col-name">WorkCenter</td><td class="col-type">string</td><td class="col-desc">Centro de trabalho / sala (ex.: <code>"MD2_SALA3"</code>).</td></tr>
+            <tr><td class="col-name">Facility</td><td class="col-type">string</td><td class="col-desc">Facility/área (ex.: <code>"Pesagem"</code>).</td></tr>
+            <tr><td class="col-name">Department</td><td class="col-type">string</td><td class="col-desc">Departamento (ex.: <code>"Pesagem MP"</code>).</td></tr>
+            <tr><td class="col-name">ScaleID</td><td class="col-type">string (número)</td><td class="col-desc">Identificador da balança.</td></tr>
+            <tr><td class="col-name">UOMCode</td><td class="col-type">string</td><td class="col-desc">Unidade de medida da balança (ex.: <code>"KGM"</code>).</td></tr>
+            <tr><td class="col-name">Name</td><td class="col-type">string</td><td class="col-desc">Nome da balança (ex.: <code>"TOLEDO 2095/1"</code>).</td></tr>
+            <tr><td class="col-name">Precision</td><td class="col-type">string (número)</td><td class="col-desc">Precisão/resolução da balança (ex.: <code>"0.0010000000"</code>).</td></tr>
+            <tr><td class="col-name">MaxWeight</td><td class="col-type">string (número)</td><td class="col-desc">Peso máximo (capacidade).</td></tr>
+            <tr><td class="col-name">MinWeight</td><td class="col-type">string (número)</td><td class="col-desc">Peso mínimo aceito.</td></tr>
+            <tr><td class="col-name">PositiveTolerance</td><td class="col-type">string (número)</td><td class="col-desc">Tolerância positiva.</td></tr>
+            <tr><td class="col-name">NegativeTolerance</td><td class="col-type">string (número)</td><td class="col-desc">Tolerância negativa.</td></tr>
+            <tr><td class="col-name">ScaleIP</td><td class="col-type">string</td><td class="col-desc">Endereço IP da balança.</td></tr>
+            <tr><td class="col-name">ScalePORT</td><td class="col-type">string</td><td class="col-desc">Porta de comunicação da balança.</td></tr>
+            <tr><td class="col-name">UCTag</td><td class="col-type">string</td><td class="col-desc">TAG da unidade de calibração (ex.: <code>"BALD - 820320"</code>).</td></tr>
+            <tr><td class="col-name">UCSerie</td><td class="col-type">string</td><td class="col-desc">Número de série da unidade de calibração.</td></tr>
+            <tr><td class="col-name">UCCalibrationCertificate</td><td class="col-type">string</td><td class="col-desc">Certificado de calibração (ex.: <code>"MA - 03758/25"</code>).</td></tr>
+            <tr><td class="col-name">UCValidity</td><td class="col-type">string (data)</td><td class="col-desc">Validade do certificado de calibração.</td></tr>
+            <tr><td class="col-name">UCPortImetro</td><td class="col-type">string</td><td class="col-desc">Portaria Inmetro (ex.: <code>"207/07"</code>).</td></tr>
+            <tr><td class="col-name">UCStandardWeight1..5</td><td class="col-type">string (número)</td><td class="col-desc">Pesos-padrão usados na verificação da balança (5 posições).</td></tr>
+            <tr><td class="col-name">UCErrorAllowed1..5</td><td class="col-type">string (número)</td><td class="col-desc">Erro máximo permitido para cada peso-padrão correspondente (5 posições).</td></tr>
+            <tr><td class="col-name">WeighingScaleID</td><td class="col-type">string (número)</td><td class="col-desc">Identificador da balança no serviço de pesagem.</td></tr>
+            <tr><td class="col-name">Weight</td><td class="col-type">string (número)</td><td class="col-desc">Peso atual lido na balança.</td></tr>
+            <tr><td class="col-name">Tare</td><td class="col-type">string (número)</td><td class="col-desc">Tara atual da balança.</td></tr>
+            <tr><td class="col-name">Availability</td><td class="col-type">string (bool)</td><td class="col-desc">Disponibilidade atual (<code>"True"</code> = disponível / <code>"False"</code> = indisponível).</td></tr>
+            <tr><td class="col-name">LastUpdateOn</td><td class="col-type">string (data)</td><td class="col-desc">Data/hora da última atualização do estado.</td></tr>
+            <tr><td class="col-name">LastUpdatedBy</td><td class="col-type">string</td><td class="col-desc">Responsável pela última atualização (ex.: <code>"BalancaService"</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong><code>EquipmentID = "-1"</code>:</strong> retorna todas as balanças; um ID
+            específico retorna apenas aquela balança.</li>
+          <li><strong>Calibração:</strong> os campos <code>UC*</code> (TAG, série, certificado,
+            pesos-padrão e erros permitidos) descrevem a unidade de calibração; balanças sem
+            calibração cadastrada vêm com esses campos <strong>vazios ou zerados</strong>.</li>
+          <li><strong>Estado em tempo real:</strong> <code>Weight</code>, <code>Tare</code> e
+            <code>Availability</code> refletem a última leitura do serviço
+            (<code>LastUpdatedBy</code> / <code>LastUpdateOn</code>).</li>
         </ul>
       </section>
 

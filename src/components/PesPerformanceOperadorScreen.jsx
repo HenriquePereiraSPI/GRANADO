@@ -26,6 +26,8 @@ const PERIODO_LABEL = {
   mes:    'Este Mês',
 };
 
+const FILTRO_PADRAO = { operador: OPERADOR_LOGADO_ID, ordem: 'todos', mp: 'todos', dataInicio: '', dataFim: '' };
+
 /* ─────────────────────────────────────────────────────────────
    Helpers de UI
 ───────────────────────────────────────────────────────────── */
@@ -64,17 +66,14 @@ function TempoPill({ real, padrao, min, max }) {
 ───────────────────────────────────────────────────────────── */
 
 export default function PesPerformanceOperadorScreen() {
-  const [periodo, setPeriodo] = useState('hoje');
-  const [filtroOperador, setFiltroOperador] = useState(OPERADOR_LOGADO_ID);
-  const [filtroOrdem, setFiltroOrdem] = useState('todos');
-  const [filtroMP, setFiltroMP] = useState('todos');
+  // Período fixo (Hoje · Turno A) — o seletor foi removido do header.
+  const periodo = 'hoje';
 
-  // Operador filtrado — usado para destacar a linha no ranking e
-  // para mostrar avatar/nome no cabecalho.
-  const operador = useMemo(
-    () => OPERADORES.find((o) => o.id === filtroOperador) || OPERADORES[0],
-    [filtroOperador]
-  );
+  // Rascunho (o que esta nos campos) x aplicado (o que filtra a tabela).
+  // So vira "aplicado" ao clicar em Filtrar — dando sentido ao botao.
+  const [rascunho, setRascunho] = useState(FILTRO_PADRAO);
+  const [aplicado, setAplicado] = useState(FILTRO_PADRAO);
+  const setCampo = (campo) => (e) => setRascunho((r) => ({ ...r, [campo]: e.target.value }));
 
   // Ranking ordenado por aderencia decrescente (sempre full — nao filtrado).
   const ranking = useMemo(() => {
@@ -83,7 +82,7 @@ export default function PesPerformanceOperadorScreen() {
       .sort((a, b) => b.s.aderencia - a.s.aderencia);
   }, [periodo]);
 
-  const minhaPosicao = ranking.findIndex((r) => r.id === filtroOperador) + 1;
+  const minhaPosicao = ranking.findIndex((r) => r.id === aplicado.operador) + 1;
   const totalOperadores = ranking.length;
 
   // Listas unicas para os dropdowns de filtro (agregam todas as pesagens
@@ -100,22 +99,21 @@ export default function PesPerformanceOperadorScreen() {
     return [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));
   }, []);
 
-  // Pesagens visiveis: aplicam-se TODOS os filtros.
+  // Pesagens visiveis: aplicam-se os filtros JA APLICADOS.
   const pesagensFiltradas = useMemo(() => {
     return PESAGENS_HOJE.filter((p) => {
-      if (filtroOperador !== 'todos' && p.operadorId !== filtroOperador) return false;
-      if (filtroOrdem !== 'todos' && p.op !== filtroOrdem) return false;
-      if (filtroMP !== 'todos' && p.mp !== filtroMP) return false;
+      if (aplicado.operador !== 'todos' && p.operadorId !== aplicado.operador) return false;
+      if (aplicado.ordem !== 'todos' && p.op !== aplicado.ordem) return false;
+      if (aplicado.mp !== 'todos' && p.mp !== aplicado.mp) return false;
       return true;
     });
-  }, [filtroOperador, filtroOrdem, filtroMP]);
+  }, [aplicado]);
 
-  const limparFiltros = () => {
-    setFiltroOperador(OPERADOR_LOGADO_ID);
-    setFiltroOrdem('todos');
-    setFiltroMP('todos');
-  };
-  const algumFiltroAtivo = filtroOperador !== OPERADOR_LOGADO_ID || filtroOrdem !== 'todos' || filtroMP !== 'todos';
+  const aplicarFiltros = () => setAplicado(rascunho);
+  const limparFiltros = () => { setRascunho(FILTRO_PADRAO); setAplicado(FILTRO_PADRAO); };
+  const ehPadrao = (f) => f.operador === OPERADOR_LOGADO_ID && f.ordem === 'todos' && f.mp === 'todos' && !f.dataInicio && !f.dataFim;
+  const podeLimpar = !ehPadrao(rascunho) || !ehPadrao(aplicado);
+  const algumFiltroAtivo = !ehPadrao(aplicado);
 
   return (
     <div className="screen active" style={{ display: 'block' }}>
@@ -124,32 +122,6 @@ export default function PesPerformanceOperadorScreen() {
         <div>
           <div className="ph-eyebrow">Pesagem · Performance · MF5</div>
           <div className="ph-title">Performance</div>
-        </div>
-        <div className="ph-actions" style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-          {/* Avatar do operador filtrado */}
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 8,
-            padding: '6px 12px', background: 'var(--surface2)',
-            border: '1px solid var(--border)', borderRadius: 6,
-          }}>
-            <span style={{ fontSize: 18 }}>{operador.avatar}</span>
-            <div style={{ lineHeight: 1.2 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{operador.nome}</div>
-              <div style={{ fontSize: 10, color: 'var(--text3)', fontFamily: 'var(--font-m)' }}>Mat. {operador.matricula}</div>
-            </div>
-          </div>
-
-          {/* Periodo */}
-          <select
-            className="inp"
-            value={periodo}
-            onChange={(e) => setPeriodo(e.target.value)}
-            style={{ width: 'auto', fontSize: 12, padding: '6px 10px' }}
-          >
-            {Object.entries(PERIODO_LABEL).map(([k, v]) => (
-              <option key={k} value={k}>{v}</option>
-            ))}
-          </select>
         </div>
       </div>
 
@@ -165,11 +137,34 @@ export default function PesPerformanceOperadorScreen() {
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label className="lbl">Data início</label>
+          <input
+            type="date"
+            className="sel"
+            value={rascunho.dataInicio}
+            onChange={setCampo('dataInicio')}
+            style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }}
+          />
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label className="lbl">Data fim</label>
+          <input
+            type="date"
+            className="sel"
+            value={rascunho.dataFim}
+            min={rascunho.dataInicio || undefined}
+            onChange={setCampo('dataFim')}
+            style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }}
+          />
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
           <label className="lbl">Operador</label>
           <select
             className="sel"
-            value={filtroOperador}
-            onChange={(e) => setFiltroOperador(e.target.value)}
+            value={rascunho.operador}
+            onChange={setCampo('operador')}
             style={{ fontSize: 12, padding: '7px 10px' }}
           >
             <option value="todos">Todos os operadores</option>
@@ -185,8 +180,8 @@ export default function PesPerformanceOperadorScreen() {
           <label className="lbl">Ordem (OP)</label>
           <select
             className="sel"
-            value={filtroOrdem}
-            onChange={(e) => setFiltroOrdem(e.target.value)}
+            value={rascunho.ordem}
+            onChange={setCampo('ordem')}
             style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }}
           >
             <option value="todos">Todas as ordens</option>
@@ -200,8 +195,8 @@ export default function PesPerformanceOperadorScreen() {
           <label className="lbl">Matéria-Prima (MP)</label>
           <select
             className="sel"
-            value={filtroMP}
-            onChange={(e) => setFiltroMP(e.target.value)}
+            value={rascunho.mp}
+            onChange={setCampo('mp')}
             style={{ fontSize: 12, padding: '7px 10px' }}
           >
             <option value="todos">Todas as MPs</option>
@@ -213,12 +208,19 @@ export default function PesPerformanceOperadorScreen() {
 
         <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
           <button
-            className="btn btn-md btn-ghost"
-            onClick={limparFiltros}
-            disabled={!algumFiltroAtivo}
-            style={{ opacity: algumFiltroAtivo ? 1 : 0.5 }}
+            className="btn btn-v"
+            onClick={aplicarFiltros}
+            style={{ fontSize: 12, padding: '7px 16px', border: '1.5px solid transparent', boxSizing: 'border-box' }}
           >
-            ✕ Limpar Filtros
+            🔍 Filtrar
+          </button>
+          <button
+            className="btn btn-ghost"
+            onClick={limparFiltros}
+            disabled={!podeLimpar}
+            style={{ fontSize: 12, padding: '7px 16px', border: '1.5px solid var(--border2)', boxSizing: 'border-box', opacity: podeLimpar ? 1 : 0.5 }}
+          >
+            ✕ Limpar
           </button>
         </div>
       </div>
@@ -246,7 +248,7 @@ export default function PesPerformanceOperadorScreen() {
             </thead>
             <tbody>
               {ranking.map((r, i) => {
-                const ehLinhaAtiva = r.id === filtroOperador;
+                const ehLinhaAtiva = r.id === aplicado.operador;
                 return (
                   <tr
                     key={r.id}
