@@ -327,9 +327,9 @@
           <div class="gd-subgroup">API</div>
           <a class="gd-link" href="#GRD_API_AppointChecklist">GRD_API_AppointChecklist</a>
           <a class="gd-link" href="#GRD_API_VerifyCheckList">GRD_API_VerifyCheckList</a>
+          <a class="gd-link" href="#GRD_API_GetCheckListByCode">GRD_API_GetCheckListByCode</a>
 
           <div class="gd-subgroup">SQL</div>
-          <a class="gd-link" href="#sql-buscar-checklist-code">Buscar checklist pelo CODE</a>
           <a class="gd-link" href="#sql-historico-checklist-percentual">Histórico com % de preenchimento</a>
           <a class="gd-link" href="#sql-detalhe-respostas-checklist">Detalhe das respostas</a>
         </div>
@@ -384,6 +384,8 @@
         <div class="gd-cat-items">
           <div class="gd-subgroup">API</div>
           <a class="gd-link" href="#GRD_API_OEE_GetResourceAvailability">GRD_API_OEE_GetResourceAvailability</a>
+          <a class="gd-link" href="#GRD_API_OEE_GetOrderWeightPerformance">GRD_API_OEE_GetOrderWeightPerformance</a>
+          <a class="gd-link" href="#GRD_API_OEE_GetOrderWeightItemPerformance">GRD_API_OEE_GetOrderWeightItemPerformance</a>
         </div>
       </div>
     </nav>
@@ -681,10 +683,10 @@
       </section>
 
       <!-- ============================================================
-           SQL — Buscar checklist pelo CODE
+           GRD_API_GetCheckListByCode
            ============================================================ -->
-      <section id="sql-buscar-checklist-code">
-        <h1 class="gd-h1" style="margin-top:24px">Buscar checklist pelo CODE</h1>
+      <section id="GRD_API_GetCheckListByCode">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetCheckListByCode</code></h1>
         <p class="gd-lead">
           Retorna os <strong>checkpoints de um checklist</strong> a partir do seu código
           (<code>CheckListCode</code>), já na ordem de execução (<code>SequenceNo</code>). Útil para
@@ -692,80 +694,94 @@
           <code>CheckPointID</code> retornado é o mesmo usado no payload de apontamento.
         </p>
 
-        <h2 class="gd-h2">Query</h2>
-        <pre class="gd-code"><span class="tk-kw">SELECT</span>
-  CheckList.ID <span class="tk-kw">AS</span> ChecklistID<span class="tk-punc">,</span>
-  CheckList.CheckListCode<span class="tk-punc">,</span>
-  CheckPoints.ID <span class="tk-kw">AS</span> CheckPointID<span class="tk-punc">,</span>
-  dbo.<span class="tk-fn">fnGetTranslation</span>(CheckPoints.TextID<span class="tk-punc">,</span> <span class="tk-num">1033</span>) <span class="tk-kw">AS</span> CheckPointDescription<span class="tk-punc">,</span>
-  CheckListCheckPoint.SequenceNo
-<span class="tk-kw">FROM</span> CHECK_LIST_CHECK_POINT CheckListCheckPoint
-<span class="tk-kw">INNER JOIN</span> CHECK_LIST CheckList <span class="tk-kw">ON</span> CheckListCheckPoint.CheckListID = CheckList.ID
-<span class="tk-kw">INNER JOIN</span> CHECK_POINT CheckPoints <span class="tk-kw">ON</span> CheckListCheckPoint.CheckPointID = CheckPoints.ID
-<span class="tk-kw">WHERE</span> CheckList.CheckListCode = <span class="tk-str">'CHECKLIST_PESAGEM'</span>
-<span class="tk-kw">ORDER BY</span> CheckListCheckPoint.SequenceNo</pre>
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetCheckListByCode</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>CheckList</code> — um
+          <strong>array</strong> de checkpoints.
+        </p>
 
-        <h3 class="gd-h3">Parâmetro</h3>
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"CheckListCode"</span><span class="tk-punc">:</span> <span class="tk-str">"CHECKLIST_PESAGEM"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
         <table class="gd-api">
           <thead>
             <tr>
-              <th style="width:200px">Filtro</th>
+              <th style="width:170px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
               <th>Descrição</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="col-name">CheckList.CheckListCode</td>
-              <td class="col-desc">
-                Código do checklist a buscar (ex.: <code>'CHECKLIST_PESAGEM'</code>). Troque pelo
-                código desejado.
-              </td>
+              <td class="col-name">CheckListCode</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Código do checklist a buscar (ex.: <code>"CHECKLIST_PESAGEM"</code>).</td>
             </tr>
           </tbody>
         </table>
 
-        <h3 class="gd-h3">Colunas retornadas</h3>
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+  <span class="tk-key">"CheckList"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"ChecklistID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckListCode"</span><span class="tk-punc">:</span> <span class="tk-str">"CHECKLIST_PESAGEM"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckPointID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"CheckPointDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"Área de pesagem limpa e livre de resíduos do lote anterior"</span><span class="tk-punc">,</span> <span class="tk-key">"SequenceNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"ChecklistID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckListCode"</span><span class="tk-punc">:</span> <span class="tk-str">"CHECKLIST_PESAGEM"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckPointID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000003"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"CheckPointDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"Balanças limpas e sem resíduo de pesagem anterior"</span><span class="tk-punc">,</span> <span class="tk-key">"SequenceNo"</span><span class="tk-punc">:</span> <span class="tk-str">"2"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"ChecklistID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckListCode"</span><span class="tk-punc">:</span> <span class="tk-str">"CHECKLIST_PESAGEM"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckPointID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000004"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"CheckPointDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"Embalagens e recipientes limpos e identificados"</span><span class="tk-punc">,</span> <span class="tk-key">"SequenceNo"</span><span class="tk-punc">:</span> <span class="tk-str">"3"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"ChecklistID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckListCode"</span><span class="tk-punc">:</span> <span class="tk-str">"CHECKLIST_PESAGEM"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckPointID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000005"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"CheckPointDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"Registro de limpeza assinado pelo responsável"</span><span class="tk-punc">,</span> <span class="tk-key">"SequenceNo"</span><span class="tk-punc">:</span> <span class="tk-str">"4"</span> }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
         <table class="gd-api">
           <thead>
-            <tr>
-              <th style="width:200px">Coluna</th>
-              <th>Descrição</th>
-            </tr>
+            <tr><th style="width:170px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td class="col-name">ChecklistID</td>
-              <td class="col-desc">ID interno do checklist (<code>CHECK_LIST.ID</code>).</td>
-            </tr>
-            <tr>
-              <td class="col-name">CheckListCode</td>
-              <td class="col-desc">Código do checklist (o mesmo usado no filtro).</td>
-            </tr>
-            <tr>
-              <td class="col-name">CheckPointID</td>
-              <td class="col-desc">ID do checkpoint (<code>CHECK_POINT.ID</code>) — usado em <code>CheckPoints[].CheckpointID</code> no apontamento.</td>
-            </tr>
-            <tr>
-              <td class="col-name">CheckPointDescription</td>
-              <td class="col-desc">Descrição traduzida do checkpoint via <code>dbo.fnGetTranslation</code> (LCID <code>1033</code> = inglês).</td>
-            </tr>
-            <tr>
-              <td class="col-name">SequenceNo</td>
-              <td class="col-desc">Ordem de exibição/execução do checkpoint dentro do checklist.</td>
-            </tr>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se o checklist foi recuperado com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno (vazia em caso de sucesso).</td></tr>
+            <tr><td class="col-name">CheckList</td><td class="col-type">array&lt;object&gt;</td><td class="col-desc">Lista de checkpoints do checklist, ordenada por <code>SequenceNo</code>. Campos de cada item abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada checkpoint (<code>CheckList[]</code>)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:200px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">ChecklistID</td><td class="col-type">string (número)</td><td class="col-desc">ID interno do checklist (<code>CHECK_LIST.ID</code>).</td></tr>
+            <tr><td class="col-name">CheckListCode</td><td class="col-type">string</td><td class="col-desc">Código do checklist (eco do input).</td></tr>
+            <tr><td class="col-name">CheckPointID</td><td class="col-type">string (número)</td><td class="col-desc">ID do checkpoint (<code>CHECK_POINT.ID</code>) — usado em <code>CheckPoints[].CheckpointID</code> no apontamento via <code>GRD_API_AppointChecklist</code>.</td></tr>
+            <tr><td class="col-name">CheckPointDescription</td><td class="col-type">string</td><td class="col-desc">Descrição do checkpoint.</td></tr>
+            <tr><td class="col-name">SequenceNo</td><td class="col-type">string (número)</td><td class="col-desc">Ordem de exibição/execução do checkpoint dentro do checklist.</td></tr>
           </tbody>
         </table>
 
         <h3 class="gd-h3">Notas</h3>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
-          <li><strong>Tabelas:</strong> <code>CHECK_LIST</code> (cabeçalho),
-            <code>CHECK_POINT</code> (checkpoints) e a associativa
-            <code>CHECK_LIST_CHECK_POINT</code> (vínculo + sequência).</li>
-          <li><strong>Tradução:</strong> <code>dbo.fnGetTranslation(TextID, LCID)</code> resolve o
-            texto do checkpoint no idioma informado — <code>1033</code> (en-US). Use o LCID do
-            idioma desejado (ex.: <code>1046</code> para pt-BR).</li>
           <li><strong>Ordenação:</strong> os checkpoints já vêm por <code>SequenceNo</code>, na
             mesma ordem em que devem aparecer/apontar.</li>
+          <li><strong>Encadeamento:</strong> o <code>CheckPointID</code> retornado é o mesmo usado
+            no payload de <code>GRD_API_AppointChecklist</code>.</li>
         </ul>
       </section>
 
@@ -2841,6 +2857,374 @@
           <li><strong>ResourceName:</strong> é o mesmo <code>ResourceName</code> devolvido por
             <a class="gd-link" href="#GRD_API_GetOrganizationalTree">GRD_API_GetOrganizationalTree</a>
             (em <code>data.ResourceName</code>).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_OEE_GetOrderWeightPerformance
+           ============================================================ -->
+      <section id="GRD_API_OEE_GetOrderWeightPerformance">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_OEE_GetOrderWeightPerformance</code></h1>
+        <p class="gd-lead">
+          Recupera a <strong>performance das ordens de pesagem</strong> num período — para cada
+          ordem, compara o <strong>tempo real</strong> (do início ao fim) com o <strong>tempo
+          padrão</strong> (tempo por peça × quantidade), devolvendo o percentual
+          (<code>PerformancePct</code>) e o status <code>OK</code>/<code>FORA</code>.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_OEE_GetOrderWeightPerformance</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>Data</code> — um
+          <strong>array</strong> de ordens com sua performance.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"OK|FORA"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-01-01"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"EndDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-12-30"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">WipOrderNo</td>
+              <td class="col-type">string (número)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Número da ordem a consultar. Use <code>"-1"</code> para <strong>todas</strong> as ordens, ou um número específico.</td>
+            </tr>
+            <tr>
+              <td class="col-name">ProductID</td>
+              <td class="col-type">string (número)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ID do produto a filtrar. Use <code>"-1"</code> para <strong>todos</strong> os produtos.</td>
+            </tr>
+            <tr>
+              <td class="col-name">PerformanceStatus</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Filtro por status de performance: <code>"OK"</code>, <code>"FORA"</code> ou <code>"OK|FORA"</code> (ambos).</td>
+            </tr>
+            <tr>
+              <td class="col-name">StartDate</td>
+              <td class="col-type">string (data)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Início do período (ex.: <code>"2026-01-01"</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">EndDate</td>
+              <td class="col-type">string (data)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Fim do período (ex.: <code>"2026-12-30"</code>).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Informações recuperadas com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Data"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000010"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"52570"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"1000.0000000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"StartDateUTC"</span><span class="tk-punc">:</span> <span class="tk-str">"7/6/2026 5:50:31 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"CompletionDateUTC"</span><span class="tk-punc">:</span> <span class="tk-str">"7/6/2026 5:52:26 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"7/6/2026 2:50:31 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"CompletionDate"</span><span class="tk-punc">:</span> <span class="tk-str">"7/6/2026 2:52:26 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoTotalOrdemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"115"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoTotalOrdemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"2"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoPorPecaSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"60.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPorPecaMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"60.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPecaXQuantidadeMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"52.17"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"FORA"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000011"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"52570"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"1000.0000000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoTotalOrdemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"23"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"60.0000000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"260.87"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"OK"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000012"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"52570"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"1000.0000000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoTotalOrdemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"3200"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoTotalOrdemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"53"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"360.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPecaXQuantidadeMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"6"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"11.25"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"FORA"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000014"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"52570"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"1000.0000000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoTotalOrdemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"4260"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoTotalOrdemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"71"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"240.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPecaXQuantidadeMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"4"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"5.63"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"FORA"</span>
+    }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as informações foram recuperadas com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">Data</td><td class="col-type">array&lt;object&gt;</td><td class="col-desc">Lista de ordens com performance. Campos de cada item abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada ordem (<code>Data[]</code>)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:240px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">WipOrderNo</td><td class="col-type">string (número)</td><td class="col-desc">Número da ordem de pesagem.</td></tr>
+            <tr><td class="col-name">ProductNo</td><td class="col-type">string</td><td class="col-desc">Código do produto (granel) da ordem.</td></tr>
+            <tr><td class="col-name">Quantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade da ordem.</td></tr>
+            <tr><td class="col-name">StartDateUTC</td><td class="col-type">string (data)</td><td class="col-desc">Início da ordem em UTC.</td></tr>
+            <tr><td class="col-name">CompletionDateUTC</td><td class="col-type">string (data)</td><td class="col-desc">Fim da ordem em UTC.</td></tr>
+            <tr><td class="col-name">StartDate</td><td class="col-type">string (data)</td><td class="col-desc">Início da ordem no fuso local.</td></tr>
+            <tr><td class="col-name">CompletionDate</td><td class="col-type">string (data)</td><td class="col-desc">Fim da ordem no fuso local.</td></tr>
+            <tr><td class="col-name">TempoTotalOrdemSegundos</td><td class="col-type">string (número)</td><td class="col-desc">Tempo real total da ordem (início→fim), em segundos.</td></tr>
+            <tr><td class="col-name">TempoTotalOrdemMinutos</td><td class="col-type">string (número)</td><td class="col-desc">Tempo real total da ordem, em minutos.</td></tr>
+            <tr><td class="col-name">TempoPorPecaSegundos</td><td class="col-type">string (número)</td><td class="col-desc">Tempo padrão por peça (cronoanálise), em segundos.</td></tr>
+            <tr><td class="col-name">TempoPorPecaMinutos</td><td class="col-type">string (número)</td><td class="col-desc">Tempo padrão por peça, em minutos.</td></tr>
+            <tr><td class="col-name">TempoPecaXQuantidadeSegundos</td><td class="col-type">string (número)</td><td class="col-desc">Tempo padrão esperado da ordem (tempo por peça × quantidade), em segundos.</td></tr>
+            <tr><td class="col-name">TempoPecaXQuantidadeMinutos</td><td class="col-type">string (número)</td><td class="col-desc">Tempo padrão esperado da ordem, em minutos.</td></tr>
+            <tr><td class="col-name">PerformancePct</td><td class="col-type">string (número)</td><td class="col-desc">Performance da ordem em % (tempo padrão ÷ tempo real × 100). Acima de 100% = mais rápido que o padrão.</td></tr>
+            <tr><td class="col-name">PerformanceStatus</td><td class="col-type">string</td><td class="col-desc"><code>"OK"</code> ou <code>"FORA"</code> conforme a performance atinge (ou não) o esperado.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Filtros <code>-1</code>:</strong> <code>WipOrderNo</code> e <code>ProductID</code> aceitam <code>"-1"</code> para não filtrar (todas as ordens / todos os produtos).</li>
+          <li><strong><code>PerformanceStatus</code> de entrada:</strong> use <code>"OK|FORA"</code> para trazer os dois status; ou apenas <code>"OK"</code> / <code>"FORA"</code> para filtrar.</li>
+          <li><strong>Cálculo:</strong> <code>PerformancePct</code> = <code>TempoPecaXQuantidade</code> ÷ <code>TempoTotalOrdem</code> × 100 — quanto maior, melhor.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_OEE_GetOrderWeightItemPerformance
+           ============================================================ -->
+      <section id="GRD_API_OEE_GetOrderWeightItemPerformance">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_OEE_GetOrderWeightItemPerformance</code></h1>
+        <p class="gd-lead">
+          Recupera a <strong>performance das matérias-primas de pesagem</strong> (nível item/linha)
+          num período. Tem <strong>dois modos</strong> definidos pelo input <code>Type</code>:
+          <code>DEFAULT</code> (uma linha por pesagem) e <code>RANKED_BY_USER</code> (agregado por
+          usuário, com média e mediana).
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_OEE_GetOrderWeightItemPerformance</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>Data</code> — cujo formato
+          <strong>depende de <code>Type</code></strong> (ver Outputs).
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"OK|FORA"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000010"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Type"</span><span class="tk-punc">:</span> <span class="tk-str">"DEFAULT|RANKED_BY_USER"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-01-01"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"EndDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-12-30"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:210px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">WipOrderNo</td>
+              <td class="col-type">string (número)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Número da ordem a consultar. Use <code>"-1"</code> para <strong>todas</strong> as ordens.</td>
+            </tr>
+            <tr>
+              <td class="col-name">ProductID</td>
+              <td class="col-type">string (número)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ID do produto (MP) a filtrar. Use <code>"-1"</code> para <strong>todos</strong>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">PerformanceStatus</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Filtro por status: <code>"OK"</code>, <code>"FORA"</code> ou <code>"OK|FORA"</code> (ambos).</td>
+            </tr>
+            <tr>
+              <td class="col-name">CreatedBy</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Usuário que realizou a pesagem a filtrar. Use <code>"-1"</code> para <strong>todos</strong>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">WorkcenterResourceName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Nome/ID do recurso do centro de trabalho a filtrar (ex.: <code>"100000010"</code>). Use <code>"-1"</code> para todos.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Type</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Formato do retorno: <code>"DEFAULT"</code> (uma linha por pesagem) ou <code>"RANKED_BY_USER"</code> (agregado por usuário com média/mediana).</td>
+            </tr>
+            <tr>
+              <td class="col-name">StartDate</td>
+              <td class="col-type">string (data)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Início do período (ex.: <code>"2026-01-01"</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">EndDate</td>
+              <td class="col-type">string (data)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Fim do período (ex.: <code>"2026-12-30"</code>).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs DEFAULT ===== -->
+        <h2 class="gd-h2">Outputs — <code>Type = "DEFAULT"</code></h2>
+        <p class="gd-lead">Uma linha por <strong>pesagem</strong> (item/linha da ordem):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Informações recuperadas com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Data"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000012"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"100103"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100285"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"TESTE999"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"14.1500000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"10"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoTotalPesagemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoPorPecaSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"60.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPorPecaMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"60.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPecaXQuantidadeMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"600.00"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"OK"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"UOMCode"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA2"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Kaic Lima"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/7/2026 2:29:15 PM"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000012"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"100105"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100257"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"TESTE998"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"99.9900000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"650"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoTotalPesagemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"11"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"60.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"9.23"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"FORA"</span><span class="tk-punc">,</span> <span class="tk-key">"UOMCode"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD2_SALA1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Eduardo Aguiar"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/6/2026 6:36:05 PM"</span>
+    }
+    <span class="tk-comment">// … demais pesagens</span>
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de cada pesagem (<code>Data[]</code> · DEFAULT)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:240px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">WipOrderNo</td><td class="col-type">string (número)</td><td class="col-desc">Número da ordem de pesagem.</td></tr>
+            <tr><td class="col-name">WeighLineID</td><td class="col-type">string (número)</td><td class="col-desc">ID da linha de pesagem.</td></tr>
+            <tr><td class="col-name">WeighLineDetailID</td><td class="col-type">string (número)</td><td class="col-desc">ID do detalhe (pesagem individual).</td></tr>
+            <tr><td class="col-name">ProductNo</td><td class="col-type">string</td><td class="col-desc">Código da matéria-prima pesada.</td></tr>
+            <tr><td class="col-name">Quantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade pesada.</td></tr>
+            <tr><td class="col-name">TempoTotalPesagemSegundos</td><td class="col-type">string (número)</td><td class="col-desc">Tempo real da pesagem, em segundos.</td></tr>
+            <tr><td class="col-name">TempoTotalPesagemMinutos</td><td class="col-type">string (número)</td><td class="col-desc">Tempo real da pesagem, em minutos.</td></tr>
+            <tr><td class="col-name">TempoPorPecaSegundos</td><td class="col-type">string (número)</td><td class="col-desc">Tempo padrão por peça, em segundos.</td></tr>
+            <tr><td class="col-name">TempoPorPecaMinutos</td><td class="col-type">string (número)</td><td class="col-desc">Tempo padrão por peça, em minutos.</td></tr>
+            <tr><td class="col-name">TempoPecaXQuantidadeSegundos</td><td class="col-type">string (número)</td><td class="col-desc">Tempo padrão esperado (tempo por peça × quantidade), em segundos.</td></tr>
+            <tr><td class="col-name">TempoPecaXQuantidadeMinutos</td><td class="col-type">string (número)</td><td class="col-desc">Tempo padrão esperado, em minutos.</td></tr>
+            <tr><td class="col-name">PerformancePct</td><td class="col-type">string (número)</td><td class="col-desc">Performance da pesagem em % (padrão ÷ real × 100).</td></tr>
+            <tr><td class="col-name">PerformanceStatus</td><td class="col-type">string</td><td class="col-desc"><code>"OK"</code> ou <code>"FORA"</code>.</td></tr>
+            <tr><td class="col-name">UOMCode</td><td class="col-type">string</td><td class="col-desc">Unidade de medida (ex.: <code>"KG"</code>).</td></tr>
+            <tr><td class="col-name">Workcenter</td><td class="col-type">string</td><td class="col-desc">Centro de trabalho/sala onde a pesagem foi feita.</td></tr>
+            <tr><td class="col-name">WorkcenterResourceName</td><td class="col-type">string</td><td class="col-desc">Nome/ID do recurso do centro de trabalho (pode vir vazio).</td></tr>
+            <tr><td class="col-name">CreatedBy</td><td class="col-type">string</td><td class="col-desc">Usuário que realizou a pesagem.</td></tr>
+            <tr><td class="col-name">CreatedOn</td><td class="col-type">string (data)</td><td class="col-desc">Data/hora da pesagem.</td></tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs RANKED_BY_USER ===== -->
+        <h2 class="gd-h2">Outputs — <code>Type = "RANKED_BY_USER"</code></h2>
+        <p class="gd-lead">Um registro <strong>agregado por usuário</strong> (média e mediana):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Informações recuperadas com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Data"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Kaic Lima"</span><span class="tk-punc">,</span> <span class="tk-key">"QtdPesagens"</span><span class="tk-punc">:</span> <span class="tk-str">"34"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"MediaTempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"18.0882352941"</span><span class="tk-punc">,</span> <span class="tk-key">"MediaTempoTotalPesagemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"0.2058823529"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"MediaPerformance"</span><span class="tk-punc">:</span> <span class="tk-str">"1772.182058"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"MedianaTempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"10.5"</span><span class="tk-punc">,</span> <span class="tk-key">"MedianaTempoTotalPesagemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"MedianaPerformance"</span><span class="tk-punc">:</span> <span class="tk-str">"572.725"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"winke"</span><span class="tk-punc">,</span> <span class="tk-key">"QtdPesagens"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"MediaTempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"10.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"MediaPerformance"</span><span class="tk-punc">:</span> <span class="tk-str">"600.000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"MedianaTempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"10"</span><span class="tk-punc">,</span> <span class="tk-key">"MedianaPerformance"</span><span class="tk-punc">:</span> <span class="tk-str">"600"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Eduardo Aguiar"</span><span class="tk-punc">,</span> <span class="tk-key">"QtdPesagens"</span><span class="tk-punc">:</span> <span class="tk-str">"4"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"MediaTempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"178.5000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"MediaPerformance"</span><span class="tk-punc">:</span> <span class="tk-str">"284.520000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"MedianaTempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"27.5"</span><span class="tk-punc">,</span> <span class="tk-key">"MedianaPerformance"</span><span class="tk-punc">:</span> <span class="tk-str">"231.09"</span>
+    }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de cada usuário (<code>Data[]</code> · RANKED_BY_USER)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:280px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">CreatedBy</td><td class="col-type">string</td><td class="col-desc">Usuário que realizou as pesagens.</td></tr>
+            <tr><td class="col-name">QtdPesagens</td><td class="col-type">string (número)</td><td class="col-desc">Total de pesagens do usuário no período.</td></tr>
+            <tr><td class="col-name">MediaTempoTotalPesagemSegundos</td><td class="col-type">string (número)</td><td class="col-desc">Tempo médio por pesagem, em segundos.</td></tr>
+            <tr><td class="col-name">MediaTempoTotalPesagemMinutos</td><td class="col-type">string (número)</td><td class="col-desc">Tempo médio por pesagem, em minutos.</td></tr>
+            <tr><td class="col-name">MediaPerformance</td><td class="col-type">string (número)</td><td class="col-desc">Performance média (%) do usuário.</td></tr>
+            <tr><td class="col-name">MedianaTempoTotalPesagemSegundos</td><td class="col-type">string (número)</td><td class="col-desc">Mediana do tempo por pesagem, em segundos.</td></tr>
+            <tr><td class="col-name">MedianaTempoTotalPesagemMinutos</td><td class="col-type">string (número)</td><td class="col-desc">Mediana do tempo por pesagem, em minutos.</td></tr>
+            <tr><td class="col-name">MedianaPerformance</td><td class="col-type">string (número)</td><td class="col-desc">Mediana da performance (%) do usuário.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong><code>Type</code>:</strong> <code>"DEFAULT"</code> devolve uma linha por pesagem;
+            <code>"RANKED_BY_USER"</code> devolve o agregado por usuário (média/mediana de tempo e performance).</li>
+          <li><strong>Filtros <code>-1</code>:</strong> <code>WipOrderNo</code>, <code>ProductID</code>,
+            <code>CreatedBy</code> e <code>WorkcenterResourceName</code> aceitam <code>"-1"</code> para não filtrar.</li>
+          <li><strong>Relação com <a class="gd-link" href="#GRD_API_OEE_GetOrderWeightPerformance">GRD_API_OEE_GetOrderWeightPerformance</a>:</strong>
+            aquela dá a performance por <em>ordem</em>; esta detalha por <em>matéria-prima/pesagem</em>.</li>
         </ul>
       </section>
 

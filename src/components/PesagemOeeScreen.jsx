@@ -106,15 +106,14 @@ export default function PesagemOeeScreen() {
         />
       </div>
 
-      {/* ── 2 colunas: Tempo de Ciclo por MP + Disponibilidade ─ */}
-      <div className="g73 mb14">
-        <CardTempoCicloMP />
+      {/* ── Salas (esq.) + Disponibilidade (dir.) ──────────── */}
+      <div className="g64 mb14">
+        <CardSalas />
         <CardDisponibilidade calc={calc} />
       </div>
 
-      {/* ── Salas + Histórico em 2 colunas ─────────────────── */}
-      <div className="g64 mt14">
-        <CardSalas />
+      {/* ── Histórico ──────────────────────────────────────── */}
+      <div className="mt14">
         <CardHistorico />
       </div>
     </div>
@@ -317,64 +316,6 @@ function CardDisponibilidade({ calc }) {
           </div>
         ))}
       </div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   Tempo de ciclo por MP (acompanhamento operacional)
-───────────────────────────────────────────────────────────── */
-function CardTempoCicloMP() {
-  const dados = D.tempoCicloMP;
-
-  return (
-    <div className="card ca">
-      <div className="card-title">Tempo de Ciclo por Matéria-Prima · Acompanhamento Operacional</div>
-
-      <style>{`
-        .ciclo-mp-tbl { font-size: 13.5px; }
-        .ciclo-mp-tbl th { padding: 12px 10px; font-size: 11px; }
-        .ciclo-mp-tbl td { padding: 13px 10px; vertical-align: middle; }
-        .ciclo-mp-tbl tbody tr { transition: background .15s; }
-        .ciclo-mp-tbl tbody tr:hover { background: var(--surface2); }
-      `}</style>
-
-      <table className="tbl ciclo-mp-tbl">
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Matéria-Prima</th>
-            <th>Sala</th>
-            <th>Padrão</th>
-            <th>Real (média)</th>
-            <th>Mín</th>
-            <th>Máx</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dados.map((m, i) => {
-            const corDelta = m.variancia > 5 ? 'var(--per)' : m.variancia > 0 ? 'var(--alr)' : 'var(--ok)';
-            const dentroRange = m.real <= m.padrao;
-            return (
-              <tr key={i}>
-                <td className="mono" style={{ fontWeight: 700, color: 'var(--verde)' }}>{m.cod}</td>
-                <td>{m.desc}</td>
-                <td><span className="bdg bdg-ney" style={{ fontSize: 9 }}>{m.sala}</span></td>
-                <td className="mono">{m.padrao.toFixed(1)}</td>
-                <td className="mono" style={{ fontWeight: 700, color: corDelta }}>{m.real.toFixed(1)}</td>
-                <td className="mono" style={{ color: 'var(--text3)' }}>{m.min.toFixed(1)}</td>
-                <td className="mono" style={{ color: 'var(--text3)' }}>{m.max.toFixed(1)}</td>
-                <td>
-                  <span className={`bdg ${dentroRange ? 'bdg-ok' : 'bdg-per'}`} style={{ fontSize: 9 }}>
-                    {dentroRange ? '✓ Ok' : '✕ Fora'}
-                  </span>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
     </div>
   );
 }

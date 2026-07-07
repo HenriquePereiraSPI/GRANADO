@@ -17,13 +17,6 @@ import {
  * Gráficos: barras comparativas por operador e por turno.
  */
 
-const TURNOS = [
-  { id: 'A1', label: 'Turno A1 (06:00–18:00 dia 1)' },
-  { id: 'A2', label: 'Turno A2 (06:00–18:00 dia 2)' },
-  { id: 'B1', label: 'Turno B1 (18:00–06:00 dia 1)' },
-  { id: 'B2', label: 'Turno B2 (18:00–06:00 dia 2)' },
-];
-
 // Atribuição de turno por operador (mock — em produção vem do cadastro de escala)
 const OPERADOR_TURNO = {
   js155: 'A1',
@@ -35,10 +28,8 @@ const OPERADOR_TURNO = {
 export default function PesPerformanceGestaoScreen() {
   const [filtroOperador, setFiltroOperador] = useState('todos');
   const [filtroMP, setFiltroMP] = useState('todos');
-  const [filtroOrdem, setFiltroOrdem] = useState('todos');
-  const [filtroTurno, setFiltroTurno] = useState('todos');
+  const [filtroSala, setFiltroSala] = useState('todos');
   const [filtroData, setFiltroData] = useState('hoje');
-  const [filtroHorario, setFiltroHorario] = useState('');
 
   // Listas únicas
   const mpsUnicas = useMemo(() => {
@@ -46,8 +37,8 @@ export default function PesPerformanceGestaoScreen() {
     PESAGENS_HOJE.forEach((p) => { if (!map.has(p.mp)) map.set(p.mp, p.material); });
     return [...map.entries()].sort();
   }, []);
-  const ordensUnicas = useMemo(
-    () => [...new Set(PESAGENS_HOJE.map((p) => p.op))].sort(),
+  const salasUnicas = useMemo(
+    () => [...new Set(PESAGENS_HOJE.map((p) => p.sala))].sort(),
     []
   );
 
@@ -56,16 +47,10 @@ export default function PesPerformanceGestaoScreen() {
     return PESAGENS_HOJE.filter((p) => {
       if (filtroOperador !== 'todos' && p.operadorId !== filtroOperador) return false;
       if (filtroMP !== 'todos' && p.mp !== filtroMP) return false;
-      if (filtroOrdem !== 'todos' && p.op !== filtroOrdem) return false;
-      if (filtroTurno !== 'todos' && OPERADOR_TURNO[p.operadorId] !== filtroTurno) return false;
-      if (filtroHorario) {
-        // Filtra por hora (HH:MM) — match se pesagem está na hora informada (±30min)
-        const [hh] = filtroHorario.split(':');
-        if (!p.hora.startsWith(hh)) return false;
-      }
+      if (filtroSala !== 'todos' && p.sala !== filtroSala) return false;
       return true;
     });
-  }, [filtroOperador, filtroMP, filtroOrdem, filtroTurno, filtroHorario]);
+  }, [filtroOperador, filtroMP, filtroSala]);
 
   // Agregados por operador (para gráfico)
   const dadosPorOperador = useMemo(() => {
@@ -122,21 +107,10 @@ export default function PesPerformanceGestaoScreen() {
   const eficienciaMediana = dadosPorOperador.length > 0
     ? dadosPorOperador.map((d) => d.eficiencia).sort()[Math.floor(dadosPorOperador.length / 2)]
     : 0;
-  const totalDesvios = pesagensFiltradas.filter((p) => p.status === 'desv').length;
   const totalOps = new Set(pesagensFiltradas.map((p) => p.op)).size;
 
   // Eficiência max (pra normalizar barras)
   const maxEfic = Math.max(...dadosPorOperador.map((d) => d.eficiencia), 100);
-
-  const limparFiltros = () => {
-    setFiltroOperador('todos');
-    setFiltroMP('todos');
-    setFiltroOrdem('todos');
-    setFiltroTurno('todos');
-    setFiltroData('hoje');
-    setFiltroHorario('');
-  };
-  const algumFiltroAtivo = filtroOperador !== 'todos' || filtroMP !== 'todos' || filtroOrdem !== 'todos' || filtroTurno !== 'todos' || filtroHorario !== '';
 
   return (
     <div className="screen active" style={{ display: 'block' }}>
@@ -144,13 +118,26 @@ export default function PesPerformanceGestaoScreen() {
       <div className="page-header">
         <div>
           <div className="ph-eyebrow">Pesagem · Performance & Gestão · MF5</div>
-          <div className="ph-title">Performance Gestão — Comparativo entre Operadores</div>
+          <div className="ph-title">Performance Gestão</div>
         </div>
         <div className="ph-actions" style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-          <select className="inp" value={filtroData} onChange={(e) => setFiltroData(e.target.value)} style={{ width: 'auto', fontSize: 12, padding: '6px 10px' }}>
-            <option value="hoje">Hoje · Turno A</option>
-            <option value="semana">Esta Semana</option>
-            <option value="mes">Este Mês</option>
+          <select className="inp" value={filtroOperador} onChange={(e) => setFiltroOperador(e.target.value)} style={{ width: 'auto', fontSize: 12, padding: '6px 10px' }} title="Operador">
+            <option value="todos">Todos os operadores</option>
+            {OPERADORES.map((o) => <option key={o.id} value={o.id}>{o.nome} ({o.matricula})</option>)}
+          </select>
+          <select className="inp" value={filtroMP} onChange={(e) => setFiltroMP(e.target.value)} style={{ width: 'auto', fontSize: 12, padding: '6px 10px' }} title="Matéria-Prima">
+            <option value="todos">Todas as MPs</option>
+            {mpsUnicas.map(([cod, mat]) => <option key={cod} value={cod}>{cod} — {mat}</option>)}
+          </select>
+          <select className="inp" value={filtroSala} onChange={(e) => setFiltroSala(e.target.value)} style={{ width: 'auto', fontSize: 12, padding: '6px 10px' }} title="Sala">
+            <option value="todos">Todas as salas</option>
+            {salasUnicas.map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+          <select className="inp" value={filtroData} onChange={(e) => setFiltroData(e.target.value)} style={{ width: 'auto', fontSize: 12, padding: '6px 10px' }} title="Período">
+            <option value="hoje">Hoje</option>
+            <option value="ontem">Ontem</option>
+            <option value="7d">7 dias</option>
+            <option value="30d">30 dias</option>
           </select>
         </div>
       </div>
@@ -161,58 +148,11 @@ export default function PesPerformanceGestaoScreen() {
         <KpiGestao label="Pior Performer" valor={piorPerformer ? `${piorPerformer.eficiencia.toFixed(1)}%` : '—'} sub={piorPerformer?.nome || '—'} cor="var(--alr)" icone="⚠" />
         <KpiGestao label="Mediana Equipe" valor={`${eficienciaMediana.toFixed(1)}%`} sub="vs meta 95%" cor="var(--inf)" icone="📊" />
         <KpiGestao label="Total Pesagens" valor={totalPesagens} sub={`em ${totalOps} OP(s)`} cor="var(--verde)" icone="⚖️" />
-        <KpiGestao label="Desvios Críticos" valor={totalDesvios} sub={`${((totalDesvios / Math.max(1, totalPesagens)) * 100).toFixed(1)}% do total`} cor={totalDesvios > 0 ? 'var(--per)' : 'var(--ok)'} icone="⚠" />
-      </div>
-
-      {/* Filtros */}
-      <div className="card mb14" style={{ padding: 14, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10, alignItems: 'flex-end' }}>
-        <div>
-          <label className="lbl">Operador</label>
-          <select className="sel" value={filtroOperador} onChange={(e) => setFiltroOperador(e.target.value)} style={{ fontSize: 12, padding: '7px 10px' }}>
-            <option value="todos">Todos</option>
-            {OPERADORES.map((o) => <option key={o.id} value={o.id}>{o.nome} ({o.matricula})</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="lbl">Matéria-Prima</label>
-          <select className="sel" value={filtroMP} onChange={(e) => setFiltroMP(e.target.value)} style={{ fontSize: 12, padding: '7px 10px' }}>
-            <option value="todos">Todas</option>
-            {mpsUnicas.map(([cod, mat]) => <option key={cod} value={cod}>{cod} — {mat}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="lbl">Ordem (OP)</label>
-          <select className="sel" value={filtroOrdem} onChange={(e) => setFiltroOrdem(e.target.value)} style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }}>
-            <option value="todos">Todas</option>
-            {ordensUnicas.map((o) => <option key={o} value={o}>{o}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="lbl">Turno</label>
-          <select className="sel" value={filtroTurno} onChange={(e) => setFiltroTurno(e.target.value)} style={{ fontSize: 12, padding: '7px 10px' }}>
-            <option value="todos">Todos</option>
-            {TURNOS.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="lbl">Horário (hh)</label>
-          <input className="inp" type="text" value={filtroHorario} onChange={(e) => setFiltroHorario(e.target.value)} placeholder="Ex.: 06" maxLength={2} style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }} />
-        </div>
-        <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end' }}>
-          <button
-            className="btn btn-md btn-ghost"
-            onClick={limparFiltros}
-            disabled={!algumFiltroAtivo}
-            style={{ flex: 1, opacity: algumFiltroAtivo ? 1 : 0.5 }}
-          >
-            ✕ Limpar
-          </button>
-        </div>
       </div>
 
       {/* Gráfico de barras: Performance por Operador */}
       <div className="card cv mb14" style={{ padding: 14 }}>
-        <div className="card-title" style={{ marginBottom: 14 }}>📊 Eficiência por Operador (Padrão ÷ Real × 100)</div>
+        <div className="card-title" style={{ marginBottom: 14 }}>📊 Eficiência por Operador (TOP 4)</div>
         {dadosPorOperador.length === 0 ? (
           <div style={{ padding: 24, textAlign: 'center', color: 'var(--text3)', fontSize: 12 }}>
             Sem dados com os filtros aplicados.
@@ -285,7 +225,6 @@ export default function PesPerformanceGestaoScreen() {
                   <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 4 }}>
                     {t.nPesagens} pesagens · Δ {t.tempoMedio.toFixed(1)} min/MP
                   </div>
-                  {t.desvios > 0 && <div style={{ fontSize: 10, color: 'var(--per)', marginTop: 2 }}>⚠ {t.desvios} desvio(s)</div>}
                 </div>
               );
             })}
@@ -310,15 +249,12 @@ export default function PesPerformanceGestaoScreen() {
                 <th>Turno</th>
                 <th style={{ textAlign: 'right' }}>Pesagens</th>
                 <th style={{ textAlign: 'right' }}>Tempo Médio (min)</th>
-                <th style={{ textAlign: 'right' }}>Padrão</th>
                 <th style={{ textAlign: 'right' }}>Eficiência</th>
-                <th style={{ textAlign: 'right' }}>Desvios</th>
-                <th style={{ textAlign: 'right' }}>Peso Total (kg)</th>
               </tr>
             </thead>
             <tbody>
               {dadosPorOperador.length === 0 && (
-                <tr><td colSpan={9} style={{ textAlign: 'center', padding: 28, color: 'var(--text3)' }}>Sem dados com os filtros aplicados.</td></tr>
+                <tr><td colSpan={6} style={{ textAlign: 'center', padding: 28, color: 'var(--text3)' }}>Sem dados com os filtros aplicados.</td></tr>
               )}
               {dadosPorOperador.map((d, i) => (
                 <tr key={d.id}>
@@ -335,12 +271,9 @@ export default function PesPerformanceGestaoScreen() {
                   <td><span className="bdg" style={{ fontSize: 9, background: 'var(--inf-p)', color: 'var(--inf)', border: '1px solid var(--inf-b)' }}>{d.turno}</span></td>
                   <td className="mono" style={{ textAlign: 'right' }}>{d.nPesagens}</td>
                   <td className="mono" style={{ textAlign: 'right' }}>{d.tempoMedio.toFixed(1)}</td>
-                  <td className="mono" style={{ textAlign: 'right', color: 'var(--text3)' }}>{d.tempoMedioPadrao.toFixed(1)}</td>
                   <td className="mono" style={{ textAlign: 'right', fontWeight: 800, color: d.eficiencia >= 95 ? 'var(--ok)' : d.eficiencia >= 80 ? 'var(--inf)' : 'var(--alr)' }}>
                     {d.eficiencia.toFixed(1)}%
                   </td>
-                  <td className="mono" style={{ textAlign: 'right', color: d.desvios > 0 ? 'var(--per)' : 'var(--ok)' }}>{d.desvios}</td>
-                  <td className="mono" style={{ textAlign: 'right', color: 'var(--text2)' }}>{d.somaPesado.toFixed(2).replace('.', ',')}</td>
                 </tr>
               ))}
             </tbody>

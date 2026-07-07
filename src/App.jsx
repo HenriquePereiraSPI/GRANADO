@@ -7,6 +7,7 @@ import ProdCockpitScreen from './components/ProdCockpitScreen.jsx';
 import GenealogiaScreen from './components/GenealogiaScreen.jsx';
 import PesagemOeeScreen from './components/PesagemOeeScreen.jsx';
 import PesPerformanceOrdemScreen from './components/PesPerformanceOrdemScreen.jsx';
+import PesPerformanceMpScreen from './components/PesPerformanceMpScreen.jsx';
 import PesPerformanceOperadorScreen from './components/PesPerformanceOperadorScreen.jsx';
 import PesPerformanceGestaoScreen from './components/PesPerformanceGestaoScreen.jsx';
 import QualidadeReconciliacaoScreen from './components/QualidadeReconciliacaoScreen.jsx';
@@ -104,6 +105,9 @@ export default function App() {
 
           {/* Pesagem — Performance por Ordem (Granel: padrão vs real) */}
           <Route path="/pes-perf-ordem" element={<PesPerformanceOrdemScreen />} />
+
+          {/* Pesagem — Performance por Matéria-Prima (tempo de ciclo por MP) */}
+          <Route path="/pes-perf-mp" element={<PesPerformanceMpScreen />} />
 
           {/* Pesagem — Performance Pessoal (Fase A) */}
           <Route path="/pes-perf-operador" element={<PesPerformanceOperadorScreen />} />

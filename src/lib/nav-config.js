@@ -21,6 +21,7 @@ export const MODULES = [
       { id: 'pes-checklist-turno', label: '🧪 Checklist' },
       { id: 'pes-oee',             label: '📊 OEE Pesagem' },
       { id: 'pes-perf-ordem',      label: '📑 Performance (Ordem)' },
+      { id: 'pes-perf-mp',         label: '⚗️ Performance (MP)' },
       { id: 'pes-perf-operador',   label: '📈 Performance (Operador)' },
       { id: 'pes-perf-gestao',     label: '👔 Performance Gestao' },
       { id: 'pes-rastr',           label: '📋 Rastreabilidade' },
