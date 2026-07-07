@@ -1494,6 +1494,9 @@
       <button type="button"
         onclick="document.getElementById('msg-popup-demo').open()"
         style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #C8A84B;border-radius:7px;background:#C8A84B;color:#0F3319;cursor:pointer">Declarativo (open)</button>
+      <button type="button"
+        onclick="GranadoMessagePopup.success('A etiqueta ETQ-SB-7788 foi enviada para a impressora S1_TOLEDO. Este aviso fecha sozinho em 5 segundos.', { title: 'Etiqueta impressa', autoDestructAfterSeconds: 5 })"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1C7A38;border-radius:7px;background:#1C7A38;color:#fff;cursor:pointer">Auto-destruição (5s)</button>
     </div>
 
     <!-- Exemplo declarativo: começa oculto e abre via .open() -->
@@ -1516,6 +1519,8 @@
         style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A5A00;border-radius:7px;background:#9A5A00;color:#fff;cursor:pointer">2 botões</button>
       <button type="button" onclick="optDemo3()"
         style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #8C1A1A;border-radius:7px;background:#8C1A1A;color:#fff;cursor:pointer">3 botões</button>
+      <button type="button" onclick="optDemoAuto()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1C7A38;border-radius:7px;background:#1C7A38;color:#fff;cursor:pointer">Auto-destruição (5s)</button>
       <span id="opt-status" style="font-size:12px;color:#8A9E8E;align-self:center"></span>
     </div>
 
@@ -1557,6 +1562,19 @@
             { text: 'Cancelar', value: 'cancel', variant: 'ghost', onClick: optStatus },
             { text: 'Sair sem salvar', value: 'descartar', variant: 'primary', color: '#6B3FA0', onClick: optStatus },
             { text: 'Salvar e sair', value: 'salvar', variant: 'primary', onClick: optStatus }
+          ]
+        });
+      }
+      // Auto-destruição: fecha sozinho em 5s (com contador). Clicar num botão cancela o timer.
+      function optDemoAuto() {
+        GranadoOptionPopup.show({
+          type: 'success',
+          title: 'Etiqueta impressa',
+          message: 'A etiqueta ETQ-SB-7788 foi enviada para a impressora S1_TOLEDO. Este aviso fecha sozinho — ou escolha uma ação.',
+          autoDestructAfterSeconds: 5,
+          buttons: [
+            { text: 'Reimprimir', value: 'reimprimir', variant: 'ghost', onClick: optStatus },
+            { text: 'OK', value: 'ok', variant: 'primary', onClick: optStatus }
           ]
         });
       }

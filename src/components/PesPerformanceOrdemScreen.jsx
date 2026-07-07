@@ -12,19 +12,32 @@ import { PESAGEM_OEE as D } from '../data/pes-oee-data.js';
  * seletor de período no header + card de filtros (dropdowns + Limpar).
  */
 
-const COR_STATUS = {
-  dentro:  { fg: 'var(--ok)',   bg: 'var(--ok-p)',   bd: 'var(--ok-b)',   label: '✓ Dentro do padrão' },
-  atencao: { fg: 'var(--alr)',  bg: 'var(--alr-p)',  bd: 'var(--alr-b)',  label: '⚠ Atenção' },
-  fora:    { fg: 'var(--per)',  bg: 'var(--per-p)',  bd: 'var(--per-b)',  label: '⚠ Fora do padrão' },
+const STATUS_LABEL = {
+  ok:   'OK',
+  fora: 'FORA',
 };
 
-const STATUS_LABEL = {
-  dentro:  'Dentro do padrão',
-  atencao: 'Atenção',
-  fora:    'Fora do padrão',
-};
+// Status binário da ordem: OK quando Tempo Real <= Tempo Padrão, senão FORA.
+const ordemOk = (g) => g.tempoReal <= g.tempoPadrao;
 
 const FILTRO_PADRAO = { granel: 'todos', ordem: 'todos', status: 'todos', dataInicio: '', dataFim: '' };
+
+// Catálogo simulado de MPs pesadas — usado no popup de "Detalhes" da ordem.
+const MPS_CATALOGO = [
+  { cod: 'M0042',   desc: 'GLICERINA (VEGETAL)',           sala: 'Sala A', pesado: 12.512, tempoPadrao: 4.2, tempoReal: 4.5, usuario: 'J. Santos · 00412',   dataPesagem: '05/05/2026 06:48' },
+  { cod: 'M3302B',  desc: 'ESSÊNCIA GLICERINA REF BQ34957', sala: 'Sala A', pesado: 0.849,  tempoPadrao: 3.5, tempoReal: 3.4, usuario: 'J. Santos · 00412',   dataPesagem: '05/05/2026 06:55' },
+  { cod: 'M0328',   desc: 'AMARELO QUIMIBLEND TRAD. 128',  sala: 'Sala B', pesado: 0.126,  tempoPadrao: 2.8, tempoReal: 3.1, usuario: 'M. Oliveira · 00155', dataPesagem: '05/05/2026 07:02' },
+  { cod: 'M8020',   desc: 'AÇÚCAR CRISTAL SUPERIOR',       sala: 'Sala B', pesado: 4.998,  tempoPadrao: 6.5, tempoReal: 6.2, usuario: 'M. Oliveira · 00155', dataPesagem: '05/05/2026 07:10' },
+  { cod: 'M0001',   desc: 'AGUA PURIFICADA',               sala: 'Sala A', pesado: 30.000, tempoPadrao: 3.0, tempoReal: 3.0, usuario: 'F. Costa · 00731',    dataPesagem: '05/05/2026 07:18' },
+  { cod: 'M2256',   desc: 'FENOXIETANOL',                  sala: 'Sala A', pesado: 0.301,  tempoPadrao: 2.5, tempoReal: 2.6, usuario: 'F. Costa · 00731',    dataPesagem: '05/05/2026 07:25' },
+];
+
+// Simula as MPs pesadas numa ordem (subconjunto determinístico do catálogo).
+// Status: Ok quando Tempo Real <= Tempo Padrão.
+function mpsDaOrdem(row) {
+  const n = 3 + (String(row.ordem).charCodeAt(String(row.ordem).length - 1) % 4); // 3..6
+  return MPS_CATALOGO.slice(0, n).map((m) => ({ ...m, ok: m.tempoReal <= m.tempoPadrao }));
+}
 
 export default function PesPerformanceOrdemScreen() {
   // Rascunho (o que está nos campos) x aplicado (o que filtra a tabela).
@@ -49,7 +62,7 @@ export default function PesPerformanceOrdemScreen() {
     return D.performanceGranel.filter((g) => {
       if (aplicado.granel !== 'todos' && g.granel !== aplicado.granel) return false;
       if (aplicado.ordem !== 'todos' && g.ordem !== aplicado.ordem) return false;
-      if (aplicado.status !== 'todos' && g.status !== aplicado.status) return false;
+      if (aplicado.status !== 'todos' && (ordemOk(g) ? 'ok' : 'fora') !== aplicado.status) return false;
       return true;
     });
   }, [aplicado]);
@@ -58,8 +71,9 @@ export default function PesPerformanceOrdemScreen() {
   const calc = useMemo(() => {
     const padraoTotal = dadosFiltrados.reduce((s, g) => s + g.tempoPadrao, 0);
     const realTotal   = dadosFiltrados.reduce((s, g) => s + g.tempoReal,   0);
+    const qtdeTotal   = dadosFiltrados.reduce((s, g) => s + (g.quantidade || 0), 0);
     const performance = realTotal > 0 ? (padraoTotal / realTotal) * 100 : 0;
-    return { padraoTotal, realTotal, performance };
+    return { padraoTotal, realTotal, qtdeTotal, performance };
   }, [dadosFiltrados]);
 
   const aplicarFiltros = () => setAplicado(rascunho);
@@ -90,29 +104,6 @@ export default function PesPerformanceOrdemScreen() {
           alignItems: 'flex-end',
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label className="lbl">Data início</label>
-          <input
-            type="date"
-            className="sel"
-            value={rascunho.dataInicio}
-            onChange={setCampo('dataInicio')}
-            style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }}
-          />
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label className="lbl">Data fim</label>
-          <input
-            type="date"
-            className="sel"
-            value={rascunho.dataFim}
-            min={rascunho.dataInicio || undefined}
-            onChange={setCampo('dataFim')}
-            style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }}
-          />
-        </div>
-
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <label className="lbl">Granel</label>
           <select
@@ -158,21 +149,44 @@ export default function PesPerformanceOrdemScreen() {
           </select>
         </div>
 
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label className="lbl">Data início</label>
+          <input
+            type="date"
+            className="sel"
+            value={rascunho.dataInicio}
+            onChange={setCampo('dataInicio')}
+            style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }}
+          />
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label className="lbl">Data fim</label>
+          <input
+            type="date"
+            className="sel"
+            value={rascunho.dataFim}
+            min={rascunho.dataInicio || undefined}
+            onChange={setCampo('dataFim')}
+            style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }}
+          />
+        </div>
+
         <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
           <button
             className="btn btn-v"
             onClick={aplicarFiltros}
-            style={{ fontSize: 12, padding: '7px 16px', border: '1.5px solid transparent', boxSizing: 'border-box' }}
+            style={{ height: '2rem', fontSize: 12, padding: '0 16px', border: '1.5px solid transparent', boxSizing: 'border-box' }}
           >
-            🔍 Filtrar
+            Filtrar
           </button>
           <button
             className="btn btn-ghost"
             onClick={limparFiltros}
             disabled={!podeLimpar}
-            style={{ fontSize: 12, padding: '7px 16px', border: '1.5px solid var(--border2)', boxSizing: 'border-box', opacity: podeLimpar ? 1 : 0.5 }}
+            style={{ height: '2rem', fontSize: 12, padding: '0 16px', border: '1.5px solid var(--border2)', boxSizing: 'border-box', opacity: podeLimpar ? 1 : 0.5 }}
           >
-            ✕ Limpar
+            Limpar
           </button>
         </div>
       </div>
@@ -186,10 +200,7 @@ export default function PesPerformanceOrdemScreen() {
    Performance — visão Granel (oficial OEE)
 ───────────────────────────────────────────────────────────── */
 function CardPerformanceGranel({ dados, calc, algumFiltroAtivo, limparFiltros }) {
-  const maxTempo = useMemo(
-    () => (dados.length ? Math.max(...dados.map((d) => Math.max(d.tempoPadrao, d.tempoReal))) : 1),
-    [dados]
-  );
+  const [detalhe, setDetalhe] = useState(null);   // linha selecionada para o popup
 
   return (
     <div className="card cv">
@@ -210,16 +221,18 @@ function CardPerformanceGranel({ dados, calc, algumFiltroAtivo, limparFiltros })
           <tr>
             <th>Granel</th>
             <th>Ordem</th>
+            <th style={{ textAlign: 'right' }}>Quantidade</th>
             <th>Padrão</th>
             <th>Real</th>
-            <th style={{ minWidth: 200 }}>Comparativo</th>
             <th>Status</th>
+            <th>Data Pesagem</th>
+            <th>Ação</th>
           </tr>
         </thead>
         <tbody>
           {dados.length === 0 && (
             <tr>
-              <td colSpan={6} style={{ textAlign: 'center', padding: 28, color: 'var(--text3)' }}>
+              <td colSpan={8} style={{ textAlign: 'center', padding: 28, color: 'var(--text3)' }}>
                 <div style={{ fontSize: 22, marginBottom: 4 }}>🔍</div>
                 Nenhuma ordem corresponde aos filtros aplicados.
                 {algumFiltroAtivo && (
@@ -233,9 +246,7 @@ function CardPerformanceGranel({ dados, calc, algumFiltroAtivo, limparFiltros })
             </tr>
           )}
           {dados.map((d, i) => {
-            const corS = COR_STATUS[d.status];
-            const wPad = (d.tempoPadrao / maxTempo) * 100;
-            const wReal = (d.tempoReal / maxTempo) * 100;
+            const ok = ordemOk(d);
             return (
               <tr key={i}>
                 <td>
@@ -243,39 +254,24 @@ function CardPerformanceGranel({ dados, calc, algumFiltroAtivo, limparFiltros })
                   <div style={{ fontSize: 10, color: 'var(--text3)' }}>{d.produto}</div>
                 </td>
                 <td className="mono" style={{ fontSize: 11 }}>{d.ordem}</td>
+                <td className="mono" style={{ textAlign: 'right' }}>{d.quantidade.toLocaleString('pt-BR')} kg</td>
                 <td className="mono">{d.tempoPadrao}m</td>
-                <td className="mono" style={{ fontWeight: 700, color: corS.fg }}>{d.tempoReal}m</td>
+                <td className="mono" style={{ fontWeight: 700, color: ok ? 'var(--ok)' : 'var(--per)' }}>{d.tempoReal}m</td>
                 <td>
-                  <div style={{ position: 'relative', height: 22 }}>
-                    {/* Barra padrão (cinza claro) */}
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: 2,
-                        left: 0,
-                        height: 8,
-                        width: `${wPad}%`,
-                        background: 'var(--border)',
-                        borderRadius: 4,
-                      }}
-                      title={`Padrão ${d.tempoPadrao}min`}
-                    />
-                    {/* Barra real (colorida) */}
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: 12,
-                        left: 0,
-                        height: 8,
-                        width: `${wReal}%`,
-                        background: corS.fg,
-                        borderRadius: 4,
-                      }}
-                      title={`Real ${d.tempoReal}min`}
-                    />
-                  </div>
+                  <span className={`bdg ${ok ? 'bdg-ok' : 'bdg-per'}`} style={{ fontSize: 9 }}>
+                    {ok ? '✓ OK' : '✕ FORA'}
+                  </span>
                 </td>
-                <td><span className="bdg" style={{ fontSize: 9, background: corS.bg, color: corS.fg, border: `1px solid ${corS.bd}` }}>{corS.label}</span></td>
+                <td className="mono" style={{ fontSize: 11, color: 'var(--text2)', whiteSpace: 'nowrap' }}>{d.dataPesagem}</td>
+                <td>
+                  <button
+                    className="btn btn-ghost"
+                    onClick={() => setDetalhe(d)}
+                    style={{ height: '2rem', fontSize: 11, padding: '0 14px', border: '1.5px solid var(--border2)', boxSizing: 'border-box', whiteSpace: 'nowrap' }}
+                  >
+                    Detalhes
+                  </button>
+                </td>
               </tr>
             );
           })}
@@ -285,15 +281,124 @@ function CardPerformanceGranel({ dados, calc, algumFiltroAtivo, limparFiltros })
             <td colSpan="2" style={{ fontWeight: 700, color: 'var(--verde-esc)', fontSize: 11, padding: '8px 10px' }}>
               Σ Total — Performance = {calc.padraoTotal}min ÷ {calc.realTotal}min
             </td>
+            <td className="mono" style={{ textAlign: 'right', fontWeight: 800 }}>{calc.qtdeTotal.toLocaleString('pt-BR')} kg</td>
             <td className="mono" style={{ fontWeight: 800 }}>{calc.padraoTotal}m</td>
             <td className="mono" style={{ fontWeight: 800, color: 'var(--ouro)' }}>{calc.realTotal}m</td>
-            <td style={{ textAlign: 'right', fontFamily: 'var(--font-m)', fontWeight: 700, color: 'var(--ouro)', fontSize: 16 }}>
+            <td style={{ fontFamily: 'var(--font-m)', fontWeight: 700, color: 'var(--ouro)', fontSize: 16 }}>
               {calc.performance.toFixed(1)}%
             </td>
+            <td></td>
             <td><span className="bdg bdg-ouro" style={{ fontSize: 9 }}>Performance</span></td>
           </tr>
         </tfoot>
       </table>
+
+      {detalhe && <DetalhesOrdemModal row={detalhe} onClose={() => setDetalhe(null)} />}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Popup "Detalhes" — MPs pesadas na ordem selecionada (simulado)
+───────────────────────────────────────────────────────────── */
+function DetalhesOrdemModal({ row, onClose }) {
+  const mps = useMemo(() => mpsDaOrdem(row), [row]);
+
+  return (
+    <div
+      onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 9999,
+        background: 'rgba(15,51,25,.55)', backdropFilter: 'blur(3px)',
+        display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+        padding: '40px 12px', overflowY: 'auto',
+      }}
+    >
+      <div
+        style={{
+          background: 'var(--surface)', border: '1px solid var(--border)',
+          borderTop: '4px solid var(--verde)', borderRadius: 12,
+          padding: '20px 22px', maxWidth: 900, width: '96%',
+          boxShadow: '0 18px 50px rgba(15,51,25,.30)', margin: 'auto',
+        }}
+      >
+        {/* Cabeçalho */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 4 }}>
+          <div>
+            <div style={{ fontSize: 17, fontWeight: 800, color: 'var(--verde-esc)' }}>
+              MPs Pesadas · <span style={{ fontFamily: 'var(--font-m)' }}>{row.ordem}</span>
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--text2)', marginTop: 2 }}>
+              Granel <strong>{row.granel}</strong> · {row.produto}
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            title="Fechar"
+            style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 10px', cursor: 'pointer', fontSize: 13, color: 'var(--text2)', lineHeight: 1 }}
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Resumo */}
+        <div
+          style={{
+            display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(120px,1fr))', gap: '6px 14px',
+            background: 'var(--surface2)', border: '1px solid var(--border)', borderLeft: '4px solid var(--verde)',
+            borderRadius: 6, padding: '10px 12px', margin: '14px 0', fontSize: 11,
+          }}
+        >
+          <div><span style={{ color: 'var(--text3)' }}>Tempo padrão:</span> <strong>{row.tempoPadrao} min</strong></div>
+          <div><span style={{ color: 'var(--text3)' }}>Tempo real:</span> <strong>{row.tempoReal} min</strong></div>
+          <div><span style={{ color: 'var(--text3)' }}>MPs pesadas:</span> <strong>{mps.length}</strong></div>
+        </div>
+
+        {/* Tabela de MPs */}
+        <div style={{ overflowX: 'auto' }}>
+          <table className="tbl" style={{ fontSize: 12, minWidth: 760 }}>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Matéria-Prima</th>
+                <th>Sala</th>
+                <th style={{ textAlign: 'right' }}>Pesado (kg)</th>
+                <th style={{ textAlign: 'right' }}>Tempo Padrão</th>
+                <th style={{ textAlign: 'right' }}>Tempo Real</th>
+                <th>Usuário</th>
+                <th>Data Pesagem</th>
+                <th style={{ textAlign: 'center' }}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {mps.map((m, i) => (
+                <tr key={i}>
+                  <td className="mono" style={{ fontWeight: 700, color: 'var(--verde)' }}>{m.cod}</td>
+                  <td>{m.desc}</td>
+                  <td><span className="bdg bdg-ney" style={{ fontSize: 9 }}>{m.sala}</span></td>
+                  <td className="mono" style={{ textAlign: 'right', fontWeight: 700 }}>{m.pesado.toFixed(3)}</td>
+                  <td className="mono" style={{ textAlign: 'right', color: 'var(--text3)' }}>{m.tempoPadrao.toFixed(1)} min</td>
+                  <td className="mono" style={{ textAlign: 'right', color: m.ok ? 'var(--ok)' : 'var(--per)', fontWeight: 700 }}>{m.tempoReal.toFixed(1)} min</td>
+                  <td style={{ fontSize: 11 }}>{m.usuario}</td>
+                  <td className="mono" style={{ fontSize: 10, color: 'var(--text2)', whiteSpace: 'nowrap' }}>{m.dataPesagem}</td>
+                  <td style={{ textAlign: 'center' }}>
+                    <span className={`bdg ${m.ok ? 'bdg-ok' : 'bdg-per'}`} style={{ fontSize: 9 }}>
+                      {m.ok ? '✓ Ok' : '✕ Fora'}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Rodapé */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 16, marginTop: 16, borderTop: '1px solid var(--border)' }}>
+          <button className="btn btn-v" onClick={onClose} style={{ height: '2rem', fontSize: 12, padding: '0 18px' }}>
+            Fechar
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -137,29 +137,6 @@ export default function PesPerformanceOperadorScreen() {
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label className="lbl">Data início</label>
-          <input
-            type="date"
-            className="sel"
-            value={rascunho.dataInicio}
-            onChange={setCampo('dataInicio')}
-            style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }}
-          />
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label className="lbl">Data fim</label>
-          <input
-            type="date"
-            className="sel"
-            value={rascunho.dataFim}
-            min={rascunho.dataInicio || undefined}
-            onChange={setCampo('dataFim')}
-            style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }}
-          />
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
           <label className="lbl">Operador</label>
           <select
             className="sel"
@@ -206,21 +183,44 @@ export default function PesPerformanceOperadorScreen() {
           </select>
         </div>
 
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label className="lbl">Data início</label>
+          <input
+            type="date"
+            className="sel"
+            value={rascunho.dataInicio}
+            onChange={setCampo('dataInicio')}
+            style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }}
+          />
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label className="lbl">Data fim</label>
+          <input
+            type="date"
+            className="sel"
+            value={rascunho.dataFim}
+            min={rascunho.dataInicio || undefined}
+            onChange={setCampo('dataFim')}
+            style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }}
+          />
+        </div>
+
         <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
           <button
             className="btn btn-v"
             onClick={aplicarFiltros}
-            style={{ fontSize: 12, padding: '7px 16px', border: '1.5px solid transparent', boxSizing: 'border-box' }}
+            style={{ height: '2rem', fontSize: 12, padding: '0 16px', border: '1.5px solid transparent', boxSizing: 'border-box' }}
           >
-            🔍 Filtrar
+            Filtrar
           </button>
           <button
             className="btn btn-ghost"
             onClick={limparFiltros}
             disabled={!podeLimpar}
-            style={{ fontSize: 12, padding: '7px 16px', border: '1.5px solid var(--border2)', boxSizing: 'border-box', opacity: podeLimpar ? 1 : 0.5 }}
+            style={{ height: '2rem', fontSize: 12, padding: '0 16px', border: '1.5px solid var(--border2)', boxSizing: 'border-box', opacity: podeLimpar ? 1 : 0.5 }}
           >
-            ✕ Limpar
+            Limpar
           </button>
         </div>
       </div>

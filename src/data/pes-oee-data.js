@@ -71,10 +71,12 @@ export const PESAGEM_OEE = {
       sala: 'A',
       tempoPadrao: 95,   // minutos
       tempoReal:  102,
+      quantidade: 1200,  // kg
       variancia:   7.4,  // %
       status: 'fora',    // dentro / atencao / fora
       inicio: '06:42',
       fim: '08:24',
+      dataPesagem: '05/05/2026 08:24',
     },
     {
       granel: 'S0822B',
@@ -84,10 +86,12 @@ export const PESAGEM_OEE = {
       sala: 'A',
       tempoPadrao: 88,
       tempoReal:  88,
+      quantidade: 950,
       variancia:    0,
       status: 'dentro',
       inicio: '08:35',
       fim: '10:03',
+      dataPesagem: '05/05/2026 10:03',
     },
     {
       granel: 'S0830B',
@@ -97,10 +101,12 @@ export const PESAGEM_OEE = {
       sala: 'B',
       tempoPadrao: 72,
       tempoReal: 76,
+      quantidade: 780,
       variancia:  5.6,
       status: 'atencao',
       inicio: '07:15',
       fim: '08:31',
+      dataPesagem: '05/05/2026 08:31',
     },
     {
       granel: 'S0815B',
@@ -110,10 +116,12 @@ export const PESAGEM_OEE = {
       sala: 'C',
       tempoPadrao: 95,
       tempoReal:  92,
+      quantidade: 1200,
       variancia:  -3.2,
       status: 'dentro',
       inicio: '09:12',
       fim: '10:44',
+      dataPesagem: '05/05/2026 10:44',
     },
     {
       granel: 'S0840B',
@@ -123,27 +131,29 @@ export const PESAGEM_OEE = {
       sala: 'B',
       tempoPadrao: 110,
       tempoReal:  124,
+      quantidade: 1500,
       variancia:  12.7,
       status: 'fora',
       inicio: '10:50',
       fim: '12:54',
+      dataPesagem: '05/05/2026 12:54',
     },
   ],
 
   // ─── TEMPO DE CICLO POR MP (acompanhamento, nao OEE) ─────────
   tempoCicloMP: [
-    { cod: 'M0042',   desc: 'GLICERINA (VEGETAL)',          padrao: 4.2, real: 4.5, min: 3.8, max: 6.2, ocorr: 12, variancia: 7.1 },
-    { cod: 'M3302B',  desc: 'ESSÊNCIA GLICERINA REF BQ34957', padrao: 3.5, real: 3.4, min: 2.9, max: 4.1, ocorr: 8,  variancia: -2.9 },
-    { cod: 'M0328',   desc: 'AMARELO QUIMIBLEND TRAD. 128',  padrao: 2.8, real: 3.1, min: 2.4, max: 4.5, ocorr: 9,  variancia: 10.7 },
-    { cod: 'M8020',   desc: 'AÇÚCAR CRISTAL SUPERIOR',       padrao: 6.5, real: 6.2, min: 5.8, max: 7.3, ocorr: 5,  variancia: -4.6 },
-    { cod: 'S0800B',  desc: 'MASSA BASE SABONETE VEGETAL',   padrao: 12.0, real: 13.8, min: 11.5, max: 18.2, ocorr: 6, variancia: 15.0 },
-    { cod: 'M0001',   desc: 'AGUA PURIFICADA',                padrao: 3.0, real: 3.0, min: 2.7, max: 3.5, ocorr: 14, variancia: 0 },
-    { cod: 'M3307',   desc: 'PROPILENOGLICOL',                padrao: 3.8, real: 3.6, min: 3.2, max: 4.4, ocorr: 7,  variancia: -5.3 },
-    { cod: 'M0914',   desc: 'CARBOPOL 940',                   padrao: 5.5, real: 6.1, min: 5.0, max: 8.4, ocorr: 4,  variancia: 10.9 },
-    { cod: 'M2256',   desc: 'FENOXIETANOL',                   padrao: 2.5, real: 2.6, min: 2.2, max: 3.0, ocorr: 7,  variancia: 4.0 },
-    { cod: 'M5593',   desc: 'TEA 99%',                        padrao: 2.2, real: 2.0, min: 1.8, max: 2.5, ocorr: 8,  variancia: -9.1 },
-    { cod: 'MAP0815B',desc: 'APARA TRANSP GRANADO GLICERINA', padrao: 8.0, real: 7.8, min: 7.0, max: 9.5, ocorr: 4,  variancia: -2.5 },
-    { cod: 'M2089',   desc: 'FRAGÂNCIA ROSA',                 padrao: 2.7, real: 2.9, min: 2.5, max: 3.4, ocorr: 6,  variancia: 7.4 },
+    { cod: 'M0042',   desc: 'GLICERINA (VEGETAL)',          sala: 'Sala A', padrao: 4.2, real: 4.5, min: 3.8, max: 6.2, ocorr: 12, variancia: 7.1 },
+    { cod: 'M3302B',  desc: 'ESSÊNCIA GLICERINA REF BQ34957', sala: 'Sala A', padrao: 3.5, real: 3.4, min: 2.9, max: 4.1, ocorr: 8,  variancia: -2.9 },
+    { cod: 'M0328',   desc: 'AMARELO QUIMIBLEND TRAD. 128',  sala: 'Sala B', padrao: 2.8, real: 3.1, min: 2.4, max: 4.5, ocorr: 9,  variancia: 10.7 },
+    { cod: 'M8020',   desc: 'AÇÚCAR CRISTAL SUPERIOR',       sala: 'Sala B', padrao: 6.5, real: 6.2, min: 5.8, max: 7.3, ocorr: 5,  variancia: -4.6 },
+    { cod: 'S0800B',  desc: 'MASSA BASE SABONETE VEGETAL',   sala: 'Sala C', padrao: 12.0, real: 13.8, min: 11.5, max: 18.2, ocorr: 6, variancia: 15.0 },
+    { cod: 'M0001',   desc: 'AGUA PURIFICADA',                sala: 'Sala A', padrao: 3.0, real: 3.0, min: 2.7, max: 3.5, ocorr: 14, variancia: 0 },
+    { cod: 'M3307',   desc: 'PROPILENOGLICOL',                sala: 'Sala B', padrao: 3.8, real: 3.6, min: 3.2, max: 4.4, ocorr: 7,  variancia: -5.3 },
+    { cod: 'M0914',   desc: 'CARBOPOL 940',                   sala: 'Sala C', padrao: 5.5, real: 6.1, min: 5.0, max: 8.4, ocorr: 4,  variancia: 10.9 },
+    { cod: 'M2256',   desc: 'FENOXIETANOL',                   sala: 'Sala A', padrao: 2.5, real: 2.6, min: 2.2, max: 3.0, ocorr: 7,  variancia: 4.0 },
+    { cod: 'M5593',   desc: 'TEA 99%',                        sala: 'Sala B', padrao: 2.2, real: 2.0, min: 1.8, max: 2.5, ocorr: 8,  variancia: -9.1 },
+    { cod: 'MAP0815B',desc: 'APARA TRANSP GRANADO GLICERINA', sala: 'Sala C', padrao: 8.0, real: 7.8, min: 7.0, max: 9.5, ocorr: 4,  variancia: -2.5 },
+    { cod: 'M2089',   desc: 'FRAGÂNCIA ROSA',                 sala: 'Sala A', padrao: 2.7, real: 2.9, min: 2.5, max: 3.4, ocorr: 6,  variancia: 7.4 },
   ],
 
   // ─── DISPONIBILIDADE — paradas do dia ────────────────────────
@@ -158,9 +168,9 @@ export const PESAGEM_OEE = {
 
   // ─── DISPONIBILIDADE POR SALA ────────────────────────────────
   salas: [
-    { id: 'A', nome: 'Sala A', balancas: 4, ocupacao: 92, oee: 84.1, status: 'operando', operador: 'J. Santos / M. Oliveira' },
-    { id: 'B', nome: 'Sala B', balancas: 3, ocupacao: 78, oee: 75.3, status: 'operando', operador: 'F. Costa' },
-    { id: 'C', nome: 'Sala C', balancas: 2, ocupacao: 65, oee: 71.8, status: 'sanitizacao', operador: '— em sanitização' },
+    { id: 'A', nome: 'Sala A', balancas: 4, ocupacao: 92, disponibilidade: 96.5, performance: 95.0, oee: 91.7, status: 'operando', operador: 'J. Santos / M. Oliveira' },
+    { id: 'B', nome: 'Sala B', balancas: 3, ocupacao: 78, disponibilidade: 86.0, performance: 87.6, oee: 75.3, status: 'operando', operador: 'F. Costa' },
+    { id: 'C', nome: 'Sala C', balancas: 2, ocupacao: 65, disponibilidade: 79.9, performance: 89.9, oee: 71.8, status: 'sanitizacao', operador: '— em sanitização' },
   ],
 
   // ─── HISTÓRICO — OEE diário (últimos 7 dias) ─────────────────

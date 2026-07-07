@@ -86,7 +86,7 @@ export default function PesagemOeeScreen() {
           valor={calc.oee}
           unidade="%"
           meta={D.meta}
-          cor="verde"
+          tag="OEE"
           destaque
           memoria={`Disp × Perf = ${calc.disponibilidade.toFixed(1)}% × ${calc.performance.toFixed(1)}%`}
         />
@@ -94,14 +94,14 @@ export default function PesagemOeeScreen() {
           label="Disponibilidade"
           valor={calc.disponibilidade}
           unidade="%"
-          cor="inf"
+          tag="Disp."
           memoria={`${calc.tempoOperando}min operando ÷ ${calc.tempoDisponivel}min disponíveis`}
         />
         <KpiOEE
           label="Performance"
           valor={calc.performance}
           unidade="%"
-          cor="ouro"
+          tag="Perf."
           memoria={`Σ padrão (${calc.padraoTotal}min) ÷ Σ real (${calc.realTotal}min)`}
         />
       </div>
@@ -124,26 +124,46 @@ export default function PesagemOeeScreen() {
 /* ─────────────────────────────────────────────────────────────
    KPI OEE — usado nos 4 cards do topo
 ───────────────────────────────────────────────────────────── */
-function KpiOEE({ label, valor, unidade = '%', meta, cor = 'verde', sub, destaque, memoria }) {
-  const corMap = {
-    verde: 'var(--verde)',
-    ouro:  'var(--ouro)',
-    inf:   'var(--inf)',
-    per:   'var(--per)',
-    ney:   'var(--text3)',
-  };
-  const corValor = corMap[cor];
+function KpiOEE({ label, valor, unidade = '%', meta, tag, sub, destaque, memoria }) {
+  // Cor só verde/vermelho: verde quando atinge a meta (ou a meta global), vermelho abaixo.
+  const limite = meta != null ? meta : D.meta;
+  const ok = valor >= limite;
+  const corValor = ok ? 'var(--ok)' : 'var(--per)';
   const acimaMeta = meta != null && valor >= meta;
 
   return (
     <div
-      className={`card ${destaque ? 'cv' : ''}`}
+      className="card"
       style={{
+        position: 'relative',
         textAlign: 'center',
         padding: 16,
-        borderTop: destaque ? `4px solid ${corValor}` : undefined,
+        borderLeft: '1px solid var(--border)',
       }}
     >
+      {tag && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: 14,
+            padding: '3px 9px',
+            borderRadius: '0 0 6px 6px',
+            fontFamily: 'var(--font-b)',
+            fontSize: 9,
+            fontWeight: 900,
+            letterSpacing: '.1em',
+            textTransform: 'uppercase',
+            color: ok ? 'var(--ok)' : 'var(--per)',
+            background: ok ? 'var(--ok-p)' : 'var(--per-p)',
+            border: `1px solid ${ok ? 'var(--ok-b)' : 'var(--per-b)'}`,
+            borderTop: 'none',
+          }}
+          title={ok ? 'Dentro da meta' : 'Abaixo da meta'}
+        >
+          {tag}
+        </div>
+      )}
       <div className="kpi-l">{label}</div>
       <div
         style={{
@@ -218,7 +238,6 @@ function KpiMini({ label, valor, cor }) {
 ───────────────────────────────────────────────────────────── */
 function CardDisponibilidade({ calc }) {
   const dados = D.paradas;
-  const totalMin = dados.reduce((s, p) => s + p.min, 0);
 
   const corMap = {
     inf: 'var(--inf)',
@@ -246,24 +265,16 @@ function CardDisponibilidade({ calc }) {
           Memória de cálculo
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
-          <span style={{ color: 'var(--text2)' }}>Tempo Total do Turno</span>
-          <strong>{calc.tempoTotal} min</strong>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', color: 'var(--inf)' }}>
-          <span>(−) Paradas Programadas</span>
-          <strong>{calc.programadas} min</strong>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderTop: '1px dashed var(--border)' }}>
-          <span style={{ color: 'var(--text2)', fontWeight: 700 }}>= Tempo Disponível</span>
-          <strong style={{ color: 'var(--verde)' }}>{calc.tempoDisponivel} min</strong>
+          <span style={{ color: 'var(--text2)' }}>Tempo Total</span>
+          <strong>{calc.tempoTotal} Minutos</strong>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', color: 'var(--alr)' }}>
-          <span>(−) Paradas Não-Programadas</span>
-          <strong>{calc.naoProgramadas} min</strong>
+          <span>Tempo Parado</span>
+          <strong>{calc.programadas + calc.naoProgramadas} Minutos</strong>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0 3px', borderTop: '1px solid var(--ouro-claro)' }}>
-          <span style={{ color: 'var(--ouro)', fontWeight: 700 }}>= Tempo Operando</span>
-          <strong style={{ color: 'var(--ouro)' }}>{calc.tempoOperando} min</strong>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderTop: '1px dashed var(--border)' }}>
+          <span style={{ color: 'var(--text2)', fontWeight: 700 }}>Tempo Disponível</span>
+          <strong style={{ color: 'var(--verde)' }}>{calc.tempoOperando} Minutos</strong>
         </div>
         <div
           style={{
@@ -279,27 +290,6 @@ function CardDisponibilidade({ calc }) {
           <strong style={{ color: 'var(--verde)', fontFamily: 'var(--font-m)', fontSize: 14 }}>
             {calc.disponibilidade.toFixed(1)}%
           </strong>
-        </div>
-      </div>
-
-      {/* Barra agregada de paradas */}
-      <div style={{ marginBottom: 14 }}>
-        <div style={{ display: 'flex', height: 14, borderRadius: 7, overflow: 'hidden', border: '1px solid var(--border)' }}>
-          {dados.map((p, i) => {
-            const w = (p.min / totalMin) * 100;
-            return (
-              <div
-                key={i}
-                style={{ width: `${w}%`, background: corMap[p.cor], opacity: 0.9 }}
-                title={`${p.motivo}: ${p.min}min`}
-              />
-            );
-          })}
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--text3)', marginTop: 6 }}>
-          <span>Total paradas: <strong>{totalMin} min</strong></span>
-          <span style={{ color: 'var(--inf)' }}>Prog: <strong>{calc.programadas}m</strong></span>
-          <span style={{ color: 'var(--alr)' }}>Não-prog: <strong>{calc.naoProgramadas}m</strong></span>
         </div>
       </div>
 
@@ -349,65 +339,36 @@ function CardTempoCicloMP() {
         .ciclo-mp-tbl tbody tr:hover { background: var(--surface2); }
       `}</style>
 
-      <div className="abox info mb14" style={{ marginBottom: 12 }}>
-        <span className="ai">ℹ</span>
-        <div>
-          O <strong>tempo padrão por MP</strong> é construído pelo MES com base no <strong>histórico</strong> (média das primeiras
-          semanas). O sistema sinaliza variações para identificar MPs com dificuldade de manuseio ou diferenças entre operadores.
-        </div>
-      </div>
-
       <table className="tbl ciclo-mp-tbl">
         <thead>
           <tr>
             <th>Código</th>
             <th>Matéria-Prima</th>
-            <th>Padrão (min)</th>
-            <th>Real (min)</th>
+            <th>Sala</th>
+            <th>Padrão</th>
+            <th>Real (média)</th>
             <th>Mín</th>
             <th>Máx</th>
-            <th>Faixa</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
           {dados.map((m, i) => {
             const corDelta = m.variancia > 5 ? 'var(--per)' : m.variancia > 0 ? 'var(--alr)' : 'var(--ok)';
-            const rangeMax = 18;
+            const dentroRange = m.real <= m.padrao;
             return (
               <tr key={i}>
                 <td className="mono" style={{ fontWeight: 700, color: 'var(--verde)' }}>{m.cod}</td>
                 <td>{m.desc}</td>
+                <td><span className="bdg bdg-ney" style={{ fontSize: 9 }}>{m.sala}</span></td>
                 <td className="mono">{m.padrao.toFixed(1)}</td>
                 <td className="mono" style={{ fontWeight: 700, color: corDelta }}>{m.real.toFixed(1)}</td>
                 <td className="mono" style={{ color: 'var(--text3)' }}>{m.min.toFixed(1)}</td>
                 <td className="mono" style={{ color: 'var(--text3)' }}>{m.max.toFixed(1)}</td>
                 <td>
-                  {/* Mini-barra de min..real..max */}
-                  <div style={{ position: 'relative', height: 16, background: 'var(--bg2)', borderRadius: 8, overflow: 'hidden' }}>
-                    <div
-                      style={{
-                        position: 'absolute',
-                        left: `${(m.min / rangeMax) * 100}%`,
-                        right: `${100 - (m.max / rangeMax) * 100}%`,
-                        top: 4,
-                        bottom: 4,
-                        background: 'var(--border2)',
-                        borderRadius: 4,
-                      }}
-                    />
-                    <div
-                      style={{
-                        position: 'absolute',
-                        left: `${(m.real / rangeMax) * 100}%`,
-                        top: 1,
-                        bottom: 1,
-                        width: 3,
-                        background: corDelta,
-                        borderRadius: 1,
-                      }}
-                      title={`Real: ${m.real}min`}
-                    />
-                  </div>
+                  <span className={`bdg ${dentroRange ? 'bdg-ok' : 'bdg-per'}`} style={{ fontSize: 9 }}>
+                    {dentroRange ? '✓ Ok' : '✕ Fora'}
+                  </span>
                 </td>
               </tr>
             );
@@ -427,8 +388,8 @@ function CardSalas() {
       <div className="card-title">OEE por Sala (Box)</div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {D.salas.map((s) => {
-          const corOEE = s.oee >= 80 ? 'var(--ok)' : s.oee >= 70 ? 'var(--alr)' : 'var(--per)';
-          const corStatus = s.status === 'operando' ? 'bdg-ok' : s.status === 'sanitizacao' ? 'bdg-inf' : 'bdg-alr';
+          const corBar = (v) => (v >= D.meta ? 'var(--ok)' : 'var(--per)');
+          const corOEE = corBar(s.oee);
           return (
             <div
               key={s.id}
@@ -443,25 +404,31 @@ function CardSalas() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 8 }}>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--verde-esc)' }}>
-                    {s.nome}{' '}
-                    <span style={{ fontFamily: 'var(--font-m)', fontSize: 10, color: 'var(--text3)', fontWeight: 400 }}>
-                      · {s.balancas} balanças
-                    </span>
+                    {s.nome}
                   </div>
-                  <div style={{ fontSize: 10, color: 'var(--text3)' }}>{s.operador}</div>
                 </div>
-                <span className={`bdg ${corStatus}`} style={{ fontSize: 9 }}>{s.status === 'operando' ? '● Operando' : s.status === 'sanitizacao' ? '🧴 Sanitizando' : '⚠ Parada'}</span>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, fontSize: 11 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, fontSize: 11 }}>
                 <div>
                   <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 2 }}>
-                    Ocupação
+                    Disponibilidade
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     <div style={{ flex: 1, height: 6, background: 'var(--bg2)', borderRadius: 3, overflow: 'hidden' }}>
-                      <div style={{ width: `${s.ocupacao}%`, height: '100%', background: 'var(--inf)' }} />
+                      <div style={{ width: `${s.disponibilidade}%`, height: '100%', background: corBar(s.disponibilidade) }} />
                     </div>
-                    <span className="mono" style={{ fontWeight: 700 }}>{s.ocupacao}%</span>
+                    <span className="mono" style={{ fontWeight: 700, color: corBar(s.disponibilidade) }}>{s.disponibilidade}%</span>
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 2 }}>
+                    Performance
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <div style={{ flex: 1, height: 6, background: 'var(--bg2)', borderRadius: 3, overflow: 'hidden' }}>
+                      <div style={{ width: `${s.performance}%`, height: '100%', background: corBar(s.performance) }} />
+                    </div>
+                    <span className="mono" style={{ fontWeight: 700, color: corBar(s.performance) }}>{s.performance}%</span>
                   </div>
                 </div>
                 <div>

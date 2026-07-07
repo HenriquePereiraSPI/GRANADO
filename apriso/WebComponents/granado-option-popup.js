@@ -23,6 +23,10 @@
                         onClick - (opcional) string JS executada no clique
                                   (recebe event, detail); ou função (via .buttons)
      open         - "false" inicia oculto (default visível)
+     auto-destruct-after-seconds - (opcional) se informado (> 0), o popup se
+                    "auto-destrói" (fecha) após X segundos, exibindo um contador
+                    regressivo. Em JS use a propriedade .autoDestructAfterSeconds
+                    ou, na API estática, autoDestructAfterSeconds.
      onOptionClick- (opcional) string JS executada em QUALQUER clique de botão
                     (recebe event, detail)
 
@@ -77,7 +81,7 @@ if (!customElements.get('granado-option-popup')) {
   }
 
   class GranadoOptionPopup extends HTMLElement {
-    static get observedAttributes() { return ['title', 'message', 'type', 'buttons', 'open']; }
+    static get observedAttributes() { return ['title', 'message', 'type', 'buttons', 'open', 'auto-destruct-after-seconds']; }
 
     // ------------------------------------------------------------
     // API estática
@@ -89,6 +93,7 @@ if (!customElements.get('granado-option-popup')) {
       if (opts.title != null) el.setAttribute('title', String(opts.title));
       if (opts.message != null) el.setAttribute('message', String(opts.message));
       if (opts.onOptionClick != null) el.setAttribute('onOptionClick', String(opts.onOptionClick));
+      if (opts.autoDestructAfterSeconds != null) el.setAttribute('auto-destruct-after-seconds', String(opts.autoDestructAfterSeconds));
       el._autoRemove = true;
       document.body.appendChild(el);
       if (opts.buttons != null) el.buttons = opts.buttons;  // mantém funções onClick
@@ -105,11 +110,21 @@ if (!customElements.get('granado-option-popup')) {
       });
       if (this.getAttribute('open') === 'false') this.style.display = 'none';
       this._render();
+      if (this.getAttribute('open') !== 'false') this._startAutoDestruct();
     }
+    disconnectedCallback() { this._stopAutoDestruct(); }
     attributeChangedCallback(name) {
       if (name === 'buttons') this._buttonsArr = null;
-      if (name === 'open') this.style.display = (this.getAttribute('open') === 'false') ? 'none' : '';
+      if (name === 'open') {
+        const hidden = this.getAttribute('open') === 'false';
+        this.style.display = hidden ? 'none' : '';
+        if (hidden) this._stopAutoDestruct();
+      }
       if (this.isConnected) this._render();
+      if (name === 'auto-destruct-after-seconds' && this.isConnected && this.getAttribute('open') !== 'false') {
+        this._remaining = null;
+        this._startAutoDestruct();
+      }
     }
 
     // ------------------------------------------------------------
@@ -130,8 +145,35 @@ if (!customElements.get('granado-option-popup')) {
       if (this.isConnected) this._render();
     }
 
-    open() { this.removeAttribute('open'); this.style.display = ''; if (this.isConnected) this._render(); }
-    close() { this.style.display = 'none'; if (this._autoRemove) this.remove(); }
+    get autoDestructAfterSeconds() { return this._autoSeconds(); }
+    set autoDestructAfterSeconds(v) {
+      if (v == null || v === '' || Number(v) <= 0) this.removeAttribute('auto-destruct-after-seconds');
+      else this.setAttribute('auto-destruct-after-seconds', String(v));
+    }
+
+    open() { this.removeAttribute('open'); this.style.display = ''; if (this.isConnected) this._render(); this._remaining = null; this._startAutoDestruct(); }
+    close() { this._stopAutoDestruct(); this.style.display = 'none'; if (this._autoRemove) this.remove(); }
+
+    // ── Auto-destruição (contador regressivo) ──
+    _autoSeconds() { const v = parseInt(this.getAttribute('auto-destruct-after-seconds'), 10); return (isNaN(v) || v <= 0) ? 0 : v; }
+    _stopAutoDestruct() { if (this._adTimer) { clearInterval(this._adTimer); this._adTimer = null; } }
+    _startAutoDestruct() {
+      this._stopAutoDestruct();
+      const secs = this._autoSeconds();
+      if (!secs) return;
+      if (this._remaining == null) this._remaining = secs;
+      this._updateCountdown();
+      const self = this;
+      this._adTimer = setInterval(function () {
+        self._remaining -= 1;
+        if (self._remaining <= 0) { self._remaining = 0; self._updateCountdown(); self._stopAutoDestruct(); self.close(); return; }
+        self._updateCountdown();
+      }, 1000);
+    }
+    _updateCountdown() {
+      const el = this.querySelector('[data-role="countdown"]');
+      if (el) el.textContent = String(Math.max(0, this._remaining || 0));
+    }
 
     // ------------------------------------------------------------
     // Internals
@@ -178,10 +220,16 @@ if (!customElements.get('granado-option-popup')) {
         return `<button type="button" data-role="opt" data-index="${i}" style="flex:1;font:700 13px/1.4 ${FONT};padding:9px 16px;border-radius:8px;cursor:pointer;white-space:nowrap;${style}">${this._esc(b.text)}</button>`;
       }).join('');
 
+      const secs = this._autoSeconds();
+      const countdownHtml = secs
+        ? `<div style="position:absolute;top:12px;right:14px;padding:3px 10px;border-radius:20px;font:800 10px/1.4 ${FONT};background:${p.bg};color:${p.text};border:1px solid ${p.border};white-space:nowrap">Fechando em <span data-role="countdown">${this._remaining != null ? this._remaining : secs}</span></div>`
+        : '';
+
       this.innerHTML =
         `<div data-role="overlay" style="position:fixed;inset:0;background:${OVERLAY_BG};z-index:99999;display:flex;align-items:center;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto;box-sizing:border-box">` +
-          `<div data-role="box" style="background:${SURFACE};border:1px solid ${BORDER};border-top:4px solid ${p.text};border-radius:12px;padding:24px 26px;max-width:460px;width:94%;box-shadow:0 18px 50px rgba(15,51,25,.30);box-sizing:border-box;font:14px/1.5 ${FONT};color:#1A1A1A">` +
-            (title ? `<div style="display:flex;align-items:center;gap:9px;margin-bottom:14px"><span style="font-size:22px;flex-shrink:0;line-height:1">${p.icon}</span><span style="font-size:19px;font-weight:800;color:${p.text}">${this._esc(title)}</span></div>` : '') +
+          `<div data-role="box" style="position:relative;background:${SURFACE};border:1px solid ${BORDER};border-top:4px solid ${p.text};border-radius:12px;padding:24px 26px;max-width:460px;width:94%;box-shadow:0 18px 50px rgba(15,51,25,.30);box-sizing:border-box;font:14px/1.5 ${FONT};color:#1A1A1A">` +
+            countdownHtml +
+            (title ? `<div style="display:flex;align-items:center;gap:9px;margin-bottom:14px${secs ? ';padding-right:104px' : ''}"><span style="font-size:22px;flex-shrink:0;line-height:1">${p.icon}</span><span style="font-size:19px;font-weight:800;color:${p.text}">${this._esc(title)}</span></div>` : '') +
             callout +
             `<div style="display:flex;gap:10px">${botoes}</div>` +
           `</div>` +
