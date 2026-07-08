@@ -98,10 +98,12 @@ export default function Sidebar({ collapsed = false }) {
                   {m.items.map((it) => (
                     <button
                       key={it.id}
-                      className={`sb-sub-item${isActiveItem(it.id) ? ' active' : ''}`}
-                      onClick={() => go(it.id)}
+                      className={`sb-sub-item${!it.href && isActiveItem(it.id) ? ' active' : ''}`}
+                      onClick={() => (it.href ? window.open(it.href, '_blank', 'noopener') : go(it.id))}
+                      title={it.href ? 'Abre em nova aba' : undefined}
                     >
                       {it.label}
+                      {it.href && <span style={{ marginLeft: 'auto', fontSize: 10, opacity: 0.6 }}>↗</span>}
                     </button>
                   ))}
                 </div>

@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import {
   OPERADOR_LOGADO_ID,
-  META_ADERENCIA,
   OPERADORES,
   PESAGENS_HOJE,
 } from '../data/pes-perf-operador-data.js';
@@ -239,11 +238,9 @@ export default function PesPerformanceOperadorScreen() {
               <tr>
                 <th style={{ width: 50, textAlign: 'center' }}>Pos.</th>
                 <th>Operador</th>
-                <th style={{ textAlign: 'right' }}>Aderência</th>
-                <th style={{ textAlign: 'right' }}>Tempo Médio</th>
-                <th style={{ textAlign: 'right' }}>MPs/h</th>
-                <th style={{ textAlign: 'right' }}>MPs Total</th>
-                <th style={{ textAlign: 'right' }}>Variâncias</th>
+                <th style={{ textAlign: 'right' }}>Tempo médio</th>
+                <th style={{ textAlign: 'right' }}>Média Performance</th>
+                <th style={{ textAlign: 'right' }}>Pesagens</th>
               </tr>
             </thead>
             <tbody>
@@ -271,15 +268,9 @@ export default function PesPerformanceOperadorScreen() {
                         </div>
                       </div>
                     </td>
-                    <td className="mono" style={{ textAlign: 'right', color: r.s.aderencia >= META_ADERENCIA ? 'var(--ok)' : 'var(--text)' }}>
-                      {r.s.aderencia.toFixed(1)}%
-                    </td>
                     <td className="mono" style={{ textAlign: 'right' }}>{r.s.tempoMedio.toFixed(1)} min</td>
-                    <td className="mono" style={{ textAlign: 'right' }}>{r.s.mpsHora.toFixed(1)}</td>
+                    <td className="mono" style={{ textAlign: 'right' }}>{((r.s.padraoMedio / r.s.tempoMedio) * 100).toFixed(1)}%</td>
                     <td className="mono" style={{ textAlign: 'right' }}>{r.s.mpsTotal.toLocaleString('pt-BR')}</td>
-                    <td className="mono" style={{ textAlign: 'right', color: r.s.variancesCriticas === 0 ? 'var(--ok)' : 'var(--alr)' }}>
-                      {r.s.variancesCriticas}
-                    </td>
                   </tr>
                 );
               })}
@@ -297,7 +288,7 @@ export default function PesPerformanceOperadorScreen() {
       {/* ── Tabela "Hoje · Turno A" (abaixo) ────────────────── */}
       <div className="card cv mb14" style={{ padding: 0, overflow: 'hidden' }}>
         <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 13, fontWeight: 800 }}>📋 Hoje · Turno A</span>
+          <span style={{ fontSize: 13, fontWeight: 800 }}>📋 Histórico Usuário</span>
           <span style={{ fontSize: 10, color: 'var(--text3)', fontFamily: 'var(--font-m)' }}>
             {pesagensFiltradas.length} pesagens
             {algumFiltroAtivo && (
@@ -311,22 +302,21 @@ export default function PesPerformanceOperadorScreen() {
           <table className="tbl" style={{ fontSize: 11, minWidth: 880 }}>
             <thead>
               <tr>
-                <th>Hora</th>
                 <th>Operador</th>
                 <th>OP</th>
                 <th>MP · Material</th>
                 <th>Lote</th>
-                <th style={{ textAlign: 'right' }}>Alvo / Pesado (kg)</th>
-                <th style={{ textAlign: 'right' }}>Variância</th>
+                <th style={{ textAlign: 'right' }}>Pesado (kg)</th>
                 <th style={{ textAlign: 'right' }} title="Real / Padrão (min ↓ · max ↑)">Tempo Real / Padrão<br/><span style={{ fontWeight: 400, fontSize: 8, color: 'var(--text3)' }}>min ↓ · max ↑</span></th>
                 <th>Sala · Box</th>
+                <th>Data</th>
                 <th style={{ textAlign: 'center' }}>Status</th>
               </tr>
             </thead>
             <tbody>
               {pesagensFiltradas.length === 0 && (
                 <tr>
-                  <td colSpan={10} style={{ textAlign: 'center', padding: 28, color: 'var(--text3)' }}>
+                  <td colSpan={9} style={{ textAlign: 'center', padding: 28, color: 'var(--text3)' }}>
                     <div style={{ fontSize: 22, marginBottom: 4 }}>🔍</div>
                     Nenhuma pesagem corresponde aos filtros aplicados.
                     <div style={{ fontSize: 10, marginTop: 4 }}>
@@ -341,7 +331,6 @@ export default function PesPerformanceOperadorScreen() {
                 const op = OPERADORES.find((o) => o.id === p.operadorId);
                 return (
                   <tr key={idx} style={{ background: p.status === 'desv' ? 'var(--alr-p)' : 'transparent' }}>
-                    <td className="mono">{p.hora}</td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                         <span style={{ fontSize: 12 }}>{op?.avatar}</span>
@@ -354,12 +343,8 @@ export default function PesPerformanceOperadorScreen() {
                       <div style={{ fontSize: 11, color: 'var(--text)' }}>{p.material}</div>
                     </td>
                     <td className="mono" style={{ fontSize: 10 }}>{p.lote}</td>
-                    <td className="mono" style={{ textAlign: 'right' }}>
-                      <div style={{ color: 'var(--text3)' }}>{p.alvo}</div>
-                      <div style={{ color: 'var(--text)', fontWeight: 700 }}>{p.pesado}</div>
-                    </td>
-                    <td className="mono" style={{ textAlign: 'right', color: p.status === 'desv' ? 'var(--alr)' : 'var(--ok)', fontWeight: 700 }}>
-                      {p.variancia}
+                    <td className="mono" style={{ textAlign: 'right', color: 'var(--text)', fontWeight: 700 }}>
+                      {p.pesado}
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <TempoPill real={p.tempoReal} padrao={p.tempoPadrao} min={p.tempoMin} max={p.tempoMax} />
@@ -368,6 +353,7 @@ export default function PesPerformanceOperadorScreen() {
                       {p.sala}
                       <div className="mono" style={{ fontSize: 9, color: 'var(--text3)' }}>{p.balanca}</div>
                     </td>
+                    <td className="mono" style={{ fontSize: 10, color: 'var(--text2)', whiteSpace: 'nowrap' }}>05/05/2026 {p.hora}</td>
                     <td style={{ textAlign: 'center' }}>
                       <StatusPill status={p.status} />
                     </td>

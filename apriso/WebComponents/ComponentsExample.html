@@ -969,7 +969,7 @@
         { key: 'operador', label: 'Operador', align: 'left', width: '130px' },
         { key: 'horario', label: 'Horario', align: 'left', width: '85px', mono: true },
         { key: 'status', label: 'Status', align: 'left', width: '110px' },
-        { key: 'acao', label: 'Acao', align: 'left', width: '110px', filterable: false, sortable: false }
+        { key: 'acao', label: 'Acao', align: 'left', width: '110px', filterable: false, sortable: false, allowExport: false }
       ];
 
       const tbl = document.getElementById('tbl');
@@ -1654,6 +1654,8 @@
         GranadoChecklistPopup.show({
           title: '⚖️ Verificação de Balança',
           subtitle: 'BAL-014 · Toledo XK-3000 · Sala A · MD1 · Balança 1 de 5 da sala',
+          checklistId: '100000002',
+          checklistCode: 'CHECKLIST_BALANCA_A',
           headerInformation: [
             { label: 'TAG', value: 'BAL-014' },
             { label: 'Modelo', value: 'Toledo XK-3000' },

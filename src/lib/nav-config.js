@@ -99,6 +99,17 @@ export const MODULES = [
       { id: 'rel-auditoria',    label: '🔒 Trilha de Auditoria' },
     ],
   },
+  {
+    id: 'mod-dev',
+    label: 'Dev-Tools',
+    icon: '🛠️',
+    items: [
+      // Itens com `href` abrem um HTML estatico em nova aba (nao sao rotas React).
+      { id: 'dev-components',     label: '🧩 Components',      href: '/apriso/WebComponents/ComponentsExample.html' },
+      { id: 'dev-components-doc', label: '📄 ComponentsDoc',   href: '/apriso/WebComponents/ComponentsDocumentation.html' },
+      { id: 'dev-api',            label: '📄 API',             href: '/apriso/WebComponents/APIDocumentation.html' },
+    ],
+  },
 ];
 
 /**

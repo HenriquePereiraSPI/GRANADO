@@ -1204,6 +1204,12 @@
               <td class="col-desc">Quando <code>false</code>, desabilita a ordenação por essa coluna (header não vira clicável).</td>
             </tr>
             <tr>
+              <td class="col-name">allowExport</td>
+              <td class="col-type">boolean</td>
+              <td class="col-default">true</td>
+              <td class="col-desc">Quando <code>false</code>, a coluna é <strong>removida do CSV e do PDF</strong>. Não afeta a exibição na tabela.</td>
+            </tr>
+            <tr>
               <td class="col-name">cellStyle</td>
               <td class="col-type">string (CSS)</td>
               <td class="col-default">—</td>
@@ -1300,9 +1306,11 @@ tbl.setAttribute('ondoubleclickevent',
           Os botões <em>Exportar CSV</em> e <em>Exportar PDF</em> aparecem por padrão acima da
           tabela. CSV inclui BOM UTF-8 (abre certo no Excel). PDF abre uma janela com a tabela
           formatada e dispara o diálogo de impressão (usuário escolhe <em>Salvar como PDF</em>).
-          A exportação <strong>sempre</strong> usa <em>todas</em> as linhas (ignora paginação) e
-          os <strong>valores brutos</strong> (ignora <code>onrender</code> — botões/badges não
-          aparecem). Use <code>exportfilename</code> para fixar o nome base do arquivo.
+          A exportação <strong>sempre</strong> usa <em>todas</em> as linhas (ignora paginação).
+          Células com <strong>HTML/CSS inline</strong> (ex.: um <code>&lt;span&gt;</code> estilizado)
+          são exportadas <strong>apenas com o texto</strong> (as tags/estilos são removidos).
+          Para <strong>remover uma coluna</strong> do CSV/PDF, use <code>allowExport: false</code> no
+          objeto da coluna. Use <code>exportfilename</code> para fixar o nome base do arquivo.
         </p>
         <div class="gd-demo">
           <granado-table id="dt-export"
@@ -1312,6 +1320,9 @@ tbl.setAttribute('ondoubleclickevent',
         <pre class="gd-code"><span class="tk-tag">&lt;granado-table</span>
     <span class="tk-attr">tabletitle</span>=<span class="tk-str">"Pesagens · turno A"</span>
     <span class="tk-attr">exportfilename</span>=<span class="tk-str">"pesagens_turno_A"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
+
+<span class="tk-comment">// Coluna que NÃO entra no CSV/PDF (ex.: coluna de ações):</span>
+{ key: <span class="tk-str">'acao'</span>, label: <span class="tk-str">'Ações'</span>, allowExport: <span class="tk-keyword">false</span> }
 
 <span class="tk-comment">&lt;!-- Para esconder os botões: --&gt;</span>
 <span class="tk-tag">&lt;granado-table</span>
@@ -9483,6 +9494,8 @@ pop.open();</pre>
             GranadoChecklistPopup.show({
               title: '⚖️ Verificação de Balança',
               subtitle: 'BAL-014 · Toledo XK-3000 · Sala A · MD1',
+              checklistId: '100000002',
+              checklistCode: 'CHECKLIST_BALANCA_A',
               headerInformation: [
                 { label: 'TAG', value: 'BAL-014' }, { label: 'Modelo', value: 'Toledo XK-3000' },
                 { label: 'Classe', value: 'III' }, { label: 'Carga Máx', value: '30 kg' },
@@ -9517,6 +9530,8 @@ pop.open();</pre>
   GranadoChecklistPopup.<span class="tk-attr">show</span>({
     title: <span class="tk-str">'⚖️ Verificação de Balança'</span>,
     subtitle: <span class="tk-str">'BAL-014 · Toledo XK-3000 · Sala A'</span>,
+    checklistId: <span class="tk-str">'100000002'</span>,
+    checklistCode: <span class="tk-str">'CHECKLIST_BALANCA_A'</span>,
     headerInformation: [                       <span class="tk-comment">// array {label,value} = grade · string = HTML</span>
       { label: <span class="tk-str">'TAG'</span>, value: <span class="tk-str">'BAL-014'</span> }, { label: <span class="tk-str">'Classe'</span>, value: <span class="tk-str">'III'</span> }
     ],
@@ -9527,7 +9542,7 @@ pop.open();</pre>
       { id: <span class="tk-str">'p02'</span>, caracteristica: <span class="tk-str">'Peso Padrão 02 · 11,000 kg'</span>, valor: <span class="tk-str">'11,000'</span>, status: <span class="tk-keyword">true</span>, observacao: <span class="tk-str">'OK'</span> }
     ],
     verifiedBy: <span class="tk-str">'J. Santos · Mat. 00412'</span>,
-    onConfirm: <span class="tk-keyword">function</span> (d) { console.log(d.rows); }   <span class="tk-comment">// { id, caracteristica, valor, isManualValue, status, observacao }</span>
+    onConfirm: <span class="tk-keyword">function</span> (d) { console.log(d.checklistId, d.checklistCode, d.rows); }   <span class="tk-comment">// { checklistId, checklistCode, verifiedBy, dateTime, rows[] }</span>
   });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
 
@@ -9559,6 +9574,8 @@ pop.open();</pre>
         <pre class="gd-code"><span class="tk-tag">&lt;script&gt;</span>
   GranadoChecklistPopup.<span class="tk-attr">show</span>({
     title: <span class="tk-str">'🌡️ Condições Ambientais da Sala'</span>,
+    checklistId: <span class="tk-str">'100000003'</span>,
+    checklistCode: <span class="tk-str">'CHECKLIST_AMBIENTAL'</span>,
     headerInformation: <span class="tk-str">'Itens fora do limite bloqueiam o início das ordens.'</span>,
     data: [
       <span class="tk-comment">// ambos os limites -> característica vira "Temperatura °C (18 – 24)"</span>
@@ -9568,7 +9585,7 @@ pop.open();</pre>
       <span class="tk-comment">// só inferior -> "Pressão Diferencial Pa (≥ 5)" · 3,2 &lt; 5 => Status "✕ Fora"</span>
       { id: <span class="tk-str">'pd'</span>,   caracteristica: <span class="tk-str">'Pressão Diferencial Pa'</span>, valor: <span class="tk-str">'3,2'</span>, limiteInferior: <span class="tk-keyword">5</span> }
     ],
-    onConfirm: <span class="tk-keyword">function</span> (d) { console.log(d.rows); }   <span class="tk-comment">// status: true (OK) | false (Fora), automático</span>
+    onConfirm: <span class="tk-keyword">function</span> (d) { console.log(d.checklistId, d.checklistCode, d.rows); }   <span class="tk-comment">// status: true (OK) | false (Fora), automático</span>
   });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
 
@@ -9587,6 +9604,8 @@ pop.open();</pre>
             <tr><td class="col-name">verified-by</td><td class="col-type">string</td><td class="col-desc">Campo "Verificado por" — <strong>bloqueado</strong> (o usuário não edita). Mostra apenas o que vier deste parâmetro.</td></tr>
             <tr><td class="col-name">date-time</td><td class="col-type">string</td><td class="col-desc">Campo "Data / Hora" — <strong>bloqueado</strong> (o usuário não edita). Sem valor, é <strong>preenchido automaticamente</strong> com a data/hora atual (<code>dd/mm/aaaa hh:mm</code>). Informe p/ fixar outro valor.</td></tr>
             <tr><td class="col-name">confirm-text</td><td class="col-type">string</td><td class="col-desc">Texto do botão confirmar (default "Confirmar").</td></tr>
+            <tr><td class="col-name">checklist-id</td><td class="col-type">string / number</td><td class="col-desc">Identificador do checklist (em JS: <code>.checklistId</code>). Devolvido no <code>detail</code> do evento <code>confirm</code>.</td></tr>
+            <tr><td class="col-name">checklist-code</td><td class="col-type">string</td><td class="col-desc">Código do checklist (em JS: <code>.checklistCode</code>). Devolvido no <code>detail</code> do evento <code>confirm</code>.</td></tr>
             <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code>.</td></tr>
             <tr><td class="col-name">onConfirm</td><td class="col-type">string (JS)</td><td class="col-desc">Handler inline ao confirmar. Recebe <code>event</code> e <code>detail</code>.</td></tr>
           </tbody>
@@ -9638,7 +9657,7 @@ pop.open();</pre>
             <tr><th style="width:130px">Evento</th><th style="width:230px">detail</th><th>Quando</th></tr>
           </thead>
           <tbody>
-            <tr><td class="col-name">confirm</td><td class="col-type">{ verifiedBy, dateTime, rows[] }</td><td class="col-desc">Clique em Confirmar. Cada linha em <code>rows</code>: <code>{ id, caracteristica, valor, isManualValue, status, observacao }</code>. Com limites, <code>status</code> é automático; sem limites, é o checkbox.</td></tr>
+            <tr><td class="col-name">confirm</td><td class="col-type">{ checklistId, checklistCode, verifiedBy, dateTime, rows[] }</td><td class="col-desc">Clique em Confirmar. Inclui <code>checklistId</code>/<code>checklistCode</code> (ecos dos parâmetros). Cada linha em <code>rows</code>: <code>{ id, caracteristica, valor, isManualValue, status, observacao }</code>. Com limites, <code>status</code> é automático; sem limites, é o checkbox.</td></tr>
             <tr><td class="col-name">row-action</td><td class="col-type">ctx</td><td class="col-desc">Clique no botão de ação da linha (mesmo <code>ctx</code> do <code>onClick</code>).</td></tr>
           </tbody>
         </table>

@@ -16,13 +16,15 @@
 
    Atributos:
      columns             - JSON array. Cada coluna:
-                           { key, label, mono?, cellStyle?, width?, align?, filterable? }
+                           { key, label, mono?, cellStyle?, width?, align?, filterable?, allowExport? }
                            - width: CSS valido (ex: "120px", "18%", "10ch").
                            - align: "left" | "center" | "right" (aplica em th+td).
                            - filterable: false desabilita o filtro nesta coluna
                              (default: true quando isenablefilter ativo).
                            - sortable: false desabilita a ordenacao nesta coluna
                              (default: true quando isenablesort ativo).
+                           - allowExport: false remove esta coluna do CSV/PDF
+                             (default: true). Nao afeta a exibicao na tabela.
      rows                - JSON array. Cada linha: objeto com chaves = key das colunas.
                            Linha pode ter "_bg" para sobrepor a cor de fundo
                            padrao (ex: destacar uma linha especifica).
@@ -65,8 +67,8 @@
 
    Exportacao:
      - Sempre exporta TODAS as linhas (ignora paginacao).
-     - Usa valores brutos das celulas (ignora onrender) — botoes/badges
-       nao aparecem no CSV/PDF.
+     - Celulas com HTML/CSS inline (ex.: um <span> estilizado) sao exportadas
+       apenas com o TEXTO (as tags/estilos sao removidos) — no CSV e no PDF.
      - CSV inclui BOM UTF-8 para abrir corretamente no Excel.
 
    Observacoes:
@@ -313,13 +315,24 @@ if (!customElements.get('granado-table')) {
       return `export_${dd}${MM}${HH}${hh}${mm}${ss}`;
     }
 
+    // Extrai apenas o TEXTO de um valor de célula (que pode conter HTML/CSS
+    // inline, ex.: um <span> com estilo). Na exportação queremos só o texto.
+    _cellText(v) {
+      const s = v == null ? '' : String(v);
+      if (s.indexOf('<') === -1 && s.indexOf('&') === -1) return s;  // sem HTML/entidades
+      const tmp = document.createElement('div');
+      tmp.innerHTML = s;
+      return (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
+    }
+
     _exportCsv(rows, columns, filename) {
+      const cols = columns.filter(c => c.allowExport !== false);   // allowExport:false -> fora do export
       const escape = v => {
         const s = v == null ? '' : String(v);
         return /["\n\r,;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
       };
-      const headerLine = columns.map(c => escape(c.label || c.key)).join(',');
-      const dataLines = rows.map(row => columns.map(c => escape(row[c.key])).join(','));
+      const headerLine = cols.map(c => escape(c.label || c.key)).join(',');
+      const dataLines = rows.map(row => cols.map(c => escape(this._cellText(row[c.key]))).join(','));
       const csv = [headerLine, ...dataLines].join('\r\n');
       const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
       this._download(blob, filename + '.csv');
@@ -337,20 +350,21 @@ if (!customElements.get('granado-table')) {
     }
 
     _exportPdf(rows, columns, filename, color) {
+      const cols = columns.filter(c => c.allowExport !== false);   // allowExport:false -> fora do export
       const escapeHtml = s => String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
       const heading = this.getAttribute('tabletitle') || filename;
       const rowAltAttr = this.getAttribute('rowaltcolor');
       const rowAltColor = (rowAltAttr === 'none' || rowAltAttr === '') ? '' : (rowAltAttr || '#FEF0CC');
 
-      const colgroup = columns.some(c => c.width)
-        ? `<colgroup>${columns.map(c => `<col${c.width ? ` style="width:${c.width}"` : ''}>`).join('')}</colgroup>`
+      const colgroup = cols.some(c => c.width)
+        ? `<colgroup>${cols.map(c => `<col${c.width ? ` style="width:${c.width}"` : ''}>`).join('')}</colgroup>`
         : '';
 
       const rowHeight = this.getAttribute('rowheight') || '4px';
       const TH = 'font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#5A6B5E;padding:8px 10px;border-bottom:1px solid #E5DDC8;background:#F4EED9';
       const TD = `padding:${rowHeight} 10px;vertical-align:middle;border-bottom:1px solid #EEE6CF;font-size:11px`;
 
-      const headers = columns.map(c => {
+      const headers = cols.map(c => {
         const align = c.align || 'left';
         return `<th style="${TH};text-align:${align}">${escapeHtml(c.label || '')}</th>`;
       }).join('');
@@ -358,10 +372,10 @@ if (!customElements.get('granado-table')) {
       const body = rows.map((row, i) => {
         const bgColor = row._bg || (rowAltColor && i % 2 === 1 ? rowAltColor : '');
         const trBg = bgColor ? ` style="background:${bgColor}"` : '';
-        const tds = columns.map(c => {
+        const tds = cols.map(c => {
           const align = c.align ? `;text-align:${c.align}` : '';
           const mono = c.mono ? ";font-family:Arial,'DejaVu Sans',Helvetica,sans-serif" : '';
-          return `<td style="${TD}${align}${mono}">${escapeHtml(row[c.key])}</td>`;
+          return `<td style="${TD}${align}${mono}">${escapeHtml(this._cellText(row[c.key]))}</td>`;
         }).join('');
         return `<tr${trBg}>${tds}</tr>`;
       }).join('');

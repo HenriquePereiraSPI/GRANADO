@@ -56,11 +56,15 @@
                           Sem valor, é preenchido automaticamente com a data/hora
                           atual ("dd/mm/aaaa hh:mm"). Informe p/ fixar outro valor.
      confirm-text       - texto do botão confirmar (default "Confirmar")
+     checklist-id       - identificador do checklist. Em JS use .checklistId.
+                          Devolvido no detail do evento "confirm".
+     checklist-code     - código do checklist. Em JS use .checklistCode.
+                          Devolvido no detail do evento "confirm".
      open               - "false" inicia oculto
      onConfirm          - (opcional) string JS executada ao confirmar (event, detail)
 
    ── Eventos (CustomEvent, bubbles)
-     "confirm"    -> detail { verifiedBy, dateTime,
+     "confirm"    -> detail { checklistId, checklistCode, verifiedBy, dateTime,
                      rows: [{ id, caracteristica, valor, isManualValue, status, observacao }] }
                      isManualValue: true = usuário digitou o Valor · false = veio do setter
                      da ação (ctx.setValor) ou é o valor inicial.
@@ -111,7 +115,7 @@ if (!customElements.get('granado-checklist-popup')) {
   const MONO = "'Arial',Helvetica,sans-serif";   // números/códigos e tabelas (--font-m)
 
   class GranadoChecklistPopup extends HTMLElement {
-    static get observedAttributes() { return ['title', 'subtitle', 'header-information', 'data', 'verified-by', 'date-time', 'confirm-text', 'open']; }
+    static get observedAttributes() { return ['title', 'subtitle', 'header-information', 'data', 'verified-by', 'date-time', 'confirm-text', 'checklist-id', 'checklist-code', 'open']; }
 
     // ------------------------------------------------------------
     // API estática
@@ -124,6 +128,8 @@ if (!customElements.get('granado-checklist-popup')) {
       if (opts.verifiedBy != null) el.setAttribute('verified-by', String(opts.verifiedBy));
       if (opts.dateTime != null) el.setAttribute('date-time', String(opts.dateTime));
       if (opts.confirmText != null) el.setAttribute('confirm-text', String(opts.confirmText));
+      if (opts.checklistId != null) el.setAttribute('checklist-id', String(opts.checklistId));
+      if (opts.checklistCode != null) el.setAttribute('checklist-code', String(opts.checklistCode));
       if (opts.onConfirm != null && typeof opts.onConfirm !== 'function') el.setAttribute('onConfirm', String(opts.onConfirm));
       el._autoRemove = true;
       if (typeof opts.onConfirm === 'function') el._onConfirmFn = opts.onConfirm;
@@ -172,6 +178,10 @@ if (!customElements.get('granado-checklist-popup')) {
       else { this._headerInfo = v; }
       if (this.isConnected) this._render();
     }
+    get checklistId() { return this.getAttribute('checklist-id'); }
+    set checklistId(v) { if (v == null) this.removeAttribute('checklist-id'); else this.setAttribute('checklist-id', String(v)); }
+    get checklistCode() { return this.getAttribute('checklist-code'); }
+    set checklistCode(v) { if (v == null) this.removeAttribute('checklist-code'); else this.setAttribute('checklist-code', String(v)); }
 
     open() { this.removeAttribute('open'); this.style.display = ''; if (this.isConnected) this._render(); }
     close() { this.style.display = 'none'; if (this._autoRemove) this.remove(); }
@@ -484,7 +494,13 @@ if (!customElements.get('granado-checklist-popup')) {
           observacao: obsEl ? obsEl.value : r.observacao
         };
       });
-      const detail = { verifiedBy: val('[data-role="verifiedBy"]'), dateTime: val('[data-role="dateTime"]'), rows: rows };
+      const detail = {
+        checklistId: this.getAttribute('checklist-id'),
+        checklistCode: this.getAttribute('checklist-code'),
+        verifiedBy: val('[data-role="verifiedBy"]'),
+        dateTime: val('[data-role="dateTime"]'),
+        rows: rows
+      };
       this.dispatchEvent(new CustomEvent('confirm', { bubbles: true, composed: true, detail: detail }));
       if (typeof this._onConfirmFn === 'function') this._onConfirmFn(detail, ev);
       const h = this.getAttribute('onconfirm');

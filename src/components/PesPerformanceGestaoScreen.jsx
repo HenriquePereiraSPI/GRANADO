@@ -190,7 +190,6 @@ export default function PesPerformanceGestaoScreen() {
                   <div style={{ minWidth: 48, textAlign: 'right' }}>
                     {idx === 0 && <span className="bdg bdg-ok" style={{ fontSize: 9 }}>🏆 Top</span>}
                     {idx === dadosPorOperador.length - 1 && dadosPorOperador.length > 1 && <span className="bdg bdg-per" style={{ fontSize: 9 }}>⚠ Pior</span>}
-                    {d.desvios > 0 && <span className="bdg bdg-alr" style={{ fontSize: 9, marginLeft: 4 }}>{d.desvios} desv.</span>}
                   </div>
                 </div>
               );
@@ -244,17 +243,16 @@ export default function PesPerformanceGestaoScreen() {
           <table className="tbl" style={{ fontSize: 11, minWidth: 900 }}>
             <thead>
               <tr>
-                <th>Pos.</th>
+                <th style={{ width: 50, textAlign: 'center' }}>Pos.</th>
                 <th>Operador</th>
-                <th>Turno</th>
+                <th style={{ textAlign: 'right' }}>Tempo médio</th>
+                <th style={{ textAlign: 'right' }}>Média Performance</th>
                 <th style={{ textAlign: 'right' }}>Pesagens</th>
-                <th style={{ textAlign: 'right' }}>Tempo Médio (min)</th>
-                <th style={{ textAlign: 'right' }}>Eficiência</th>
               </tr>
             </thead>
             <tbody>
               {dadosPorOperador.length === 0 && (
-                <tr><td colSpan={6} style={{ textAlign: 'center', padding: 28, color: 'var(--text3)' }}>Sem dados com os filtros aplicados.</td></tr>
+                <tr><td colSpan={5} style={{ textAlign: 'center', padding: 28, color: 'var(--text3)' }}>Sem dados com os filtros aplicados.</td></tr>
               )}
               {dadosPorOperador.map((d, i) => (
                 <tr key={d.id}>
@@ -268,12 +266,9 @@ export default function PesPerformanceGestaoScreen() {
                       </div>
                     </div>
                   </td>
-                  <td><span className="bdg" style={{ fontSize: 9, background: 'var(--inf-p)', color: 'var(--inf)', border: '1px solid var(--inf-b)' }}>{d.turno}</span></td>
-                  <td className="mono" style={{ textAlign: 'right' }}>{d.nPesagens}</td>
-                  <td className="mono" style={{ textAlign: 'right' }}>{d.tempoMedio.toFixed(1)}</td>
-                  <td className="mono" style={{ textAlign: 'right', fontWeight: 800, color: d.eficiencia >= 95 ? 'var(--ok)' : d.eficiencia >= 80 ? 'var(--inf)' : 'var(--alr)' }}>
-                    {d.eficiencia.toFixed(1)}%
-                  </td>
+                  <td className="mono" style={{ textAlign: 'right' }}>{d.tempoMedio.toFixed(1)} min</td>
+                  <td className="mono" style={{ textAlign: 'right' }}>{d.eficiencia.toFixed(1)}%</td>
+                  <td className="mono" style={{ textAlign: 'right' }}>{d.nPesagens.toLocaleString('pt-BR')}</td>
                 </tr>
               ))}
             </tbody>
@@ -281,11 +276,6 @@ export default function PesPerformanceGestaoScreen() {
         </div>
       </div>
 
-      {/* Footer */}
-      <div style={{ padding: '10px 14px', marginTop: 14, background: 'var(--inf-p)', border: '1px solid var(--inf-b)', borderRadius: 6, color: 'var(--inf)', fontSize: 11 }}>
-        💡 <strong>Visão para Liderança</strong> — esta tela é restrita a perfis de Líder/Supervisão.
-        Operadores veem apenas a própria performance em <strong>/pes-perf-operador</strong>.
-      </div>
     </div>
   );
 }
