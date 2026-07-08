@@ -477,12 +477,8 @@ export const MODALS = {
     </div>
     <div class="form-row" style="margin-top:12px"><div class="fg"><label class="lbl">Motivo da sobra</label>
       <select class="sel"><option>Quantidade da OP inferior ao mínimo de abertura</option><option>Ajuste de fórmula durante o processo</option><option>Excesso na abertura da embalagem original</option><option>Outro</option></select></div></div>
-    <div style="background:var(--verde-dim);border:1px solid var(--ok-b);border-radius:7px;padding:12px;margin-top:14px">
-      <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--verde);margin-bottom:6px">Nova Etiqueta Gerada</div>
-      <div style="font-family:var(--font-m);font-size:11px;color:var(--text2);line-height:1.8">ID: <span style="color:var(--verde)">ETQ-2026-0498</span><br>Material: Fragância Rosa · Lote: FRA-2026-04<br>Saldo: 0,498 kg · Ref. original: ETQ-2026-0421 (cancelada)</div>
-    </div>
     <div style="display:flex;gap:10px;margin-top:20px">
-      <button class="btn btn-md btn-v" onclick="closeModal('modal-reentiqueta');alert('✅ Reentiquetagem concluída!\\n\\nETQ-2026-0421 cancelada.\\nETQ-2026-0498 gerada e impressa.\\nMovimento de retorno registrado no JDE.')">🏷️ Gerar Nova Etiqueta</button>
+      <button class="btn btn-md btn-v" onclick="closeModal('modal-reentiqueta');alert('✅ Reentiquetagem concluída!\\n\\nETQ-2026-0421 cancelada.\\nETQ-2026-0498 gerada e impressa.\\nMovimento de retorno registrado no JDE.')">🏷️ Confirmar & Imprimir</button>
       <button class="btn btn-md btn-ghost" onclick="closeModal('modal-reentiqueta')">Cancelar</button>
     </div>
   </div>`,

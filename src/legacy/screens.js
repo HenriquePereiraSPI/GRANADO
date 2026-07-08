@@ -4286,7 +4286,6 @@ export const SCREENS = {
     `,
   "pes-devol-mp": `      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · Box 3 · MF5</div><div class="ph-title">Devolução de MP ao Estoque</div></div>
-        <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416 · Pós-pesagem<br>Matérias-primas com sobra<br><span style="color:var(--verde)">J. Santos · Box 3</span></div>
       </div>
 
       <div class="abox warn mb14"><span class="ai">⚠</span><div>MPs com saldo restante após pesagem devem ser <strong>reentiquetadas e devolvidas ao almoxarifado</strong>. A etiqueta original é cancelada e uma nova etiqueta de saldo é gerada com rastreabilidade do lote original.</div></div>
@@ -4315,37 +4314,45 @@ export const SCREENS = {
         </div>
       </div>
 
-      <div class="abox warn mb14"><span class="ai">⚠</span><div>A pesagem não pode ser finalizada (checkout) enquanto houver MPs com saldo pendente de reentiquetagem e devolução.</div></div>
 
       <div class="card cv mb14">
         <div class="card-title">MPs com Saldo para Devolução</div>
         <div style="overflow-x:auto">
           <table class="tbl" style="min-width:600px">
-            <thead><tr><th>Material</th><th>Lote</th><th>Qtd. Original</th><th>Qtd. Pesada</th><th>Saldo Restante</th><th>Ação</th></tr></thead>
+            <thead><tr><th>Material</th><th>Lote</th><th>Qtd. Original</th><th>Qtd. Pesada</th><th>Saldo Restante</th><th>Usuário</th><th>Status</th><th>Data Devolução</th><th>Ação</th></tr></thead>
             <tbody>
-              <tr style="background:var(--alr-p)">
+              <tr>
                 <td style="font-size:12px">Fragância Rosa</td>
                 <td class="mono" style="font-size:11px">FRA-2026-04</td>
                 <td class="mono">5,000 kg</td>
                 <td class="mono" style="color:var(--verde)">4,502 kg</td>
                 <td class="mono" style="color:var(--alr);font-weight:700">0,498 kg</td>
+                <td class="mono" style="color:var(--text3)">—</td>
+                <td><span style="display:inline-block;padding:2px 9px;border-radius:9px;font:800 10px/1.4 var(--font-b);color:var(--alr);background:var(--alr-p);border:1px solid var(--alr-b)">PENDENTE</span></td>
+                <td class="mono" style="color:var(--text3)">—</td>
                 <td><button class="btn btn-sm btn-o" onclick="openModal('modal-reentiqueta')">🏷 Reentiquetear</button></td>
               </tr>
-              <tr style="background:var(--alr-p)">
+              <tr>
                 <td style="font-size:12px">DMDM Hydantoin</td>
                 <td class="mono" style="font-size:11px">DMD-2026-01</td>
                 <td class="mono">1,000 kg</td>
                 <td class="mono" style="color:var(--verde)">0,600 kg</td>
                 <td class="mono" style="color:var(--alr);font-weight:700">0,400 kg</td>
+                <td class="mono" style="color:var(--text3)">—</td>
+                <td><span style="display:inline-block;padding:2px 9px;border-radius:9px;font:800 10px/1.4 var(--font-b);color:var(--alr);background:var(--alr-p);border:1px solid var(--alr-b)">PENDENTE</span></td>
+                <td class="mono" style="color:var(--text3)">—</td>
                 <td><button class="btn btn-sm btn-o" onclick="openModal('modal-reentiqueta')">🏷 Reentiquetear</button></td>
               </tr>
-              <tr style="background:var(--alr-p)">
+              <tr>
                 <td style="font-size:12px">Corante Rosaline</td>
                 <td class="mono" style="font-size:11px">COR-2026-07</td>
                 <td class="mono">0,200 kg</td>
                 <td class="mono" style="color:var(--verde)">0,150 kg</td>
-                <td class="mono" style="color:var(--alr);font-weight:700">0,050 kg</td>
-                <td><button class="btn btn-sm btn-o" onclick="openModal('modal-reentiqueta')">🏷 Reentiquetear</button></td>
+                <td class="mono" style="color:var(--verde);font-weight:700">0,050 kg</td>
+                <td style="font-size:11px">J. Santos · 00412</td>
+                <td><span style="display:inline-block;padding:2px 9px;border-radius:9px;font:800 10px/1.4 var(--font-b);color:var(--ok);background:var(--ok-p);border:1px solid var(--ok-b)">OK</span></td>
+                <td class="mono" style="color:var(--text2)">05/05/2026 09:12</td>
+                <td><button class="btn btn-sm btn-ghost" onclick="alert('📄 Detalhes da devolução\\n\\nMaterial: Corante Rosaline · Lote COR-2026-07\\nSaldo devolvido: 0,050 kg\\nNova etiqueta: ETQ-2026-0499 (ref. ETQ-2026-0430)\\nDevolvido por: J. Santos · Box 3\\nData: 05/05/2026 09:12\\nMovimento de retorno registrado no JDE.')">🔍 Detalhes</button></td>
               </tr>
             </tbody>
           </table>
@@ -4380,11 +4387,6 @@ export const SCREENS = {
             <div style="font-size:10px;color:var(--text3);margin-top:3px">Movimento de retorno registrado no JDE</div>
           </div>
         </div>
-      </div>
-
-      <div style="display:flex;gap:10px;padding-top:16px;border-top:1px solid var(--border)">
-        <button class="btn btn-lg btn-o" onclick="alert('⚠ Reentiquete todas as MPs antes de confirmar a devolução.')">📦 Confirmar Devoluções</button>
-        <button class="btn btn-md btn-ghost" onclick="nav('pes-checkout',null,null)">← Voltar ao Checkout</button>
       </div>
     `,
   "pes-gaiola": `      <div class="page-header">
