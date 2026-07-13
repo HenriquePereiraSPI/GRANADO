@@ -18,6 +18,8 @@
      suggested    - valor sugerido (destacado). Opcional.
      confirm-text - texto do botão da entrada manual (default "Criar")
      allow-manual - "false" oculta a entrada manual (default exibida)
+     close-on-backdrop - "true" permite fechar ao clicar fora (backdrop). Default:
+                    NÃO fecha ao clicar fora. Em JS use .closeOnBackdrop.
      open         - "false" inicia oculto (default visível)
      onSelect     - (opcional) string JS executada ao escolher (recebe event, detail)
 
@@ -76,7 +78,7 @@ if (!customElements.get('granado-quantity-popup')) {
   function toInt(v, def) { const n = parseInt(v, 10); return isNaN(n) ? def : n; }
 
   class GranadoQuantityPopup extends HTMLElement {
-    static get observedAttributes() { return ['title', 'message', 'type', 'icon', 'min', 'max', 'suggested', 'confirm-text', 'allow-manual', 'open']; }
+    static get observedAttributes() { return ['title', 'message', 'type', 'icon', 'min', 'max', 'suggested', 'confirm-text', 'allow-manual', 'close-on-backdrop', 'open']; }
 
     // ------------------------------------------------------------
     // API estática
@@ -90,6 +92,7 @@ if (!customElements.get('granado-quantity-popup')) {
       if (opts.suggested != null) el.setAttribute('suggested', String(opts.suggested));
       if (opts.confirmText != null) el.setAttribute('confirm-text', String(opts.confirmText));
       if (opts.allowManual === false) el.setAttribute('allow-manual', 'false');
+      if (opts.closeOnBackdrop != null) el.setAttribute('close-on-backdrop', opts.closeOnBackdrop ? 'true' : 'false');
       if (opts.onSelect != null && typeof opts.onSelect !== 'function') el.setAttribute('onSelect', String(opts.onSelect));
       el._autoRemove = true;
       if (typeof opts.onSelect === 'function') el._onSelectFn = opts.onSelect;  // mantém função
@@ -128,6 +131,10 @@ if (!customElements.get('granado-quantity-popup')) {
     set max(v) { this.setAttribute('max', String(v)); }
     get suggested() { const s = this.getAttribute('suggested'); return s == null ? null : toInt(s, null); }
     set suggested(v) { this.setAttribute('suggested', String(v)); }
+    // Fechar ao clicar fora? Default: false (não fecha). Só fecha com "true".
+    _closeOnBackdrop() { return this.getAttribute('close-on-backdrop') === 'true'; }
+    get closeOnBackdrop() { return this._closeOnBackdrop(); }
+    set closeOnBackdrop(v) { this.setAttribute('close-on-backdrop', v ? 'true' : 'false'); }
 
     open() { this.removeAttribute('open'); this.style.display = ''; if (this.isConnected) this._render(); }
     close() { this.style.display = 'none'; if (this._autoRemove) this.remove(); }
@@ -223,7 +230,7 @@ if (!customElements.get('granado-quantity-popup')) {
       const box = this.querySelector('[data-role="box"]');
       const x = this.querySelector('[data-role="x"]');
       if (x) x.addEventListener('click', function () { self.close(); });
-      if (overlay && box) overlay.addEventListener('mousedown', function (e) { if (e.target === overlay) self.close(); });
+      if (overlay && box) overlay.addEventListener('mousedown', function (e) { if (e.target === overlay && self._closeOnBackdrop()) self.close(); });
 
       this.querySelectorAll('[data-role="qty"]').forEach(function (b) {
         b.addEventListener('click', function (ev) { self._emit(toInt(b.getAttribute('data-qty'), 1), ev); });

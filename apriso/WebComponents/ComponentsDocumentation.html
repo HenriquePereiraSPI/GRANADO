@@ -9041,6 +9041,12 @@ GranadoPreloader.hide();</pre>
               <td class="col-desc"><code>open="false"</code> inicia o popup oculto. Use os métodos <code>open()</code>/<code>close()</code> para alternar.</td>
             </tr>
             <tr>
+              <td class="col-name">close-on-backdrop</td>
+              <td class="col-type">boolean</td>
+              <td class="col-default">false</td>
+              <td class="col-desc"><code>"true"</code> permite <strong>fechar ao clicar fora</strong> (backdrop). Por padrão <strong>não fecha</strong> ao clicar fora. Em JS: <code>.closeOnBackdrop</code>.</td>
+            </tr>
+            <tr>
               <td class="col-name">onPrintClick</td>
               <td class="col-type">string (JS)</td>
               <td class="col-default">—</td>
@@ -9170,6 +9176,7 @@ GranadoPreloader.hide();</pre>
             <tr><td class="col-name">type</td><td class="col-type">string</td><td class="col-default">"info"</td><td class="col-desc">Tipo/variante: <code>info</code> · <code>information</code> (alias) · <code>success</code> · <code>error</code> · <code>warning</code>. Define ícone e cor.</td></tr>
             <tr><td class="col-name">button-text</td><td class="col-type">string</td><td class="col-default">"OK"</td><td class="col-desc">Texto do botão (opcional). O botão <strong>apenas fecha</strong> o popup.</td></tr>
             <tr><td class="col-name">auto-destruct-after-seconds</td><td class="col-type">number</td><td class="col-default">—</td><td class="col-desc">Se informado (&gt; 0), o popup se <strong>auto-destrói</strong> (fecha) após X segundos, exibindo um <strong>badge com contador regressivo</strong> no canto superior direito ("Fechando em XX"). Em JS use <code>el.autoDestructAfterSeconds</code> ou, na API estática, <code>autoDestructAfterSeconds</code>.</td></tr>
+            <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-default">false</td><td class="col-desc"><code>"true"</code> permite <strong>fechar ao clicar fora</strong> (backdrop). Por padrão <strong>não fecha</strong> ao clicar fora. Em JS: <code>.closeOnBackdrop</code>.</td></tr>
             <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code> para alternar.</td></tr>
           </tbody>
         </table>
@@ -9304,6 +9311,7 @@ pop.open();</pre>
             <tr><td class="col-name">buttons</td><td class="col-type">JSON / array</td><td class="col-default">[OK]</td><td class="col-desc">Lista de 1 a 3 botões. Sem valor, mostra um único botão "OK". Pode ser passada como atributo (JSON) ou pela propriedade JS <code>el.buttons</code> — ver <a class="gd-link" href="#opt-buttons">"Como definir os botões"</a>. Campos de cada botão na tabela abaixo.</td></tr>
             <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code>.</td></tr>
             <tr><td class="col-name">auto-destruct-after-seconds</td><td class="col-type">number</td><td class="col-default">—</td><td class="col-desc">Se informado (&gt; 0), o popup se <strong>auto-destrói</strong> (fecha) após X segundos, exibindo um <strong>contador regressivo</strong>. Em JS use a propriedade <code>el.autoDestructAfterSeconds</code> ou, na API estática, <code>autoDestructAfterSeconds</code>. Clicar num botão ou fechar cancela o timer.</td></tr>
+            <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-default">false</td><td class="col-desc"><code>"true"</code> permite <strong>fechar ao clicar fora</strong> (backdrop). Por padrão <strong>não fecha</strong> ao clicar fora. Em JS: <code>.closeOnBackdrop</code>.</td></tr>
             <tr><td class="col-name">onOptionClick</td><td class="col-type">string (JS)</td><td class="col-default">—</td><td class="col-desc">Handler inline executado em <strong>qualquer</strong> clique de botão. Recebe <code>event</code> e <code>detail</code>.</td></tr>
           </tbody>
         </table>
@@ -9428,6 +9436,7 @@ pop.open();</pre>
             <tr><td class="col-name">suggested</td><td class="col-type">number</td><td class="col-default">—</td><td class="col-desc">Valor sugerido — botão destacado em dourado com selo "sugerido".</td></tr>
             <tr><td class="col-name">confirm-text</td><td class="col-type">string</td><td class="col-default">"Criar"</td><td class="col-desc">Texto do botão da entrada manual.</td></tr>
             <tr><td class="col-name">allow-manual</td><td class="col-type">string</td><td class="col-default">exibida</td><td class="col-desc"><code>allow-manual="false"</code> oculta a entrada manual.</td></tr>
+            <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-default">false</td><td class="col-desc"><code>"true"</code> permite <strong>fechar ao clicar fora</strong> (backdrop). Por padrão <strong>não fecha</strong> ao clicar fora. Em JS: <code>.closeOnBackdrop</code>.</td></tr>
             <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code>.</td></tr>
             <tr><td class="col-name">onSelect</td><td class="col-type">string (JS)</td><td class="col-default">—</td><td class="col-desc">Handler inline executado ao escolher. Recebe <code>event</code> e <code>detail</code>.</td></tr>
           </tbody>
@@ -9606,6 +9615,7 @@ pop.open();</pre>
             <tr><td class="col-name">confirm-text</td><td class="col-type">string</td><td class="col-desc">Texto do botão confirmar (default "Confirmar").</td></tr>
             <tr><td class="col-name">checklist-id</td><td class="col-type">string / number</td><td class="col-desc">Identificador do checklist (em JS: <code>.checklistId</code>). Devolvido no <code>detail</code> do evento <code>confirm</code>.</td></tr>
             <tr><td class="col-name">checklist-code</td><td class="col-type">string</td><td class="col-desc">Código do checklist (em JS: <code>.checklistCode</code>). Devolvido no <code>detail</code> do evento <code>confirm</code>.</td></tr>
+            <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> permite <strong>fechar ao clicar fora</strong> (backdrop). Por padrão (default <code>false</code>) <strong>não fecha</strong> ao clicar fora. Em JS: <code>.closeOnBackdrop</code>. O ✕ e o botão Cancelar sempre fecham.</td></tr>
             <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code>.</td></tr>
             <tr><td class="col-name">onConfirm</td><td class="col-type">string (JS)</td><td class="col-desc">Handler inline ao confirmar. Recebe <code>event</code> e <code>detail</code>.</td></tr>
           </tbody>

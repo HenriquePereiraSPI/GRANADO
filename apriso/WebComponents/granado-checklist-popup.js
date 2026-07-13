@@ -56,6 +56,9 @@
                           Sem valor, é preenchido automaticamente com a data/hora
                           atual ("dd/mm/aaaa hh:mm"). Informe p/ fixar outro valor.
      confirm-text       - texto do botão confirmar (default "Confirmar")
+     close-on-backdrop  - "true" permite fechar o popup ao clicar fora (backdrop).
+                          Default: NÃO fecha ao clicar fora. Em JS use .closeOnBackdrop.
+                          (O ✕ e o botão Cancelar sempre fecham.)
      checklist-id       - identificador do checklist. Em JS use .checklistId.
                           Devolvido no detail do evento "confirm".
      checklist-code     - código do checklist. Em JS use .checklistCode.
@@ -115,7 +118,7 @@ if (!customElements.get('granado-checklist-popup')) {
   const MONO = "'Arial',Helvetica,sans-serif";   // números/códigos e tabelas (--font-m)
 
   class GranadoChecklistPopup extends HTMLElement {
-    static get observedAttributes() { return ['title', 'subtitle', 'header-information', 'data', 'verified-by', 'date-time', 'confirm-text', 'checklist-id', 'checklist-code', 'open']; }
+    static get observedAttributes() { return ['title', 'subtitle', 'header-information', 'data', 'verified-by', 'date-time', 'confirm-text', 'checklist-id', 'checklist-code', 'close-on-backdrop', 'open']; }
 
     // ------------------------------------------------------------
     // API estática
@@ -130,6 +133,7 @@ if (!customElements.get('granado-checklist-popup')) {
       if (opts.confirmText != null) el.setAttribute('confirm-text', String(opts.confirmText));
       if (opts.checklistId != null) el.setAttribute('checklist-id', String(opts.checklistId));
       if (opts.checklistCode != null) el.setAttribute('checklist-code', String(opts.checklistCode));
+      if (opts.closeOnBackdrop != null) el.setAttribute('close-on-backdrop', opts.closeOnBackdrop ? 'true' : 'false');
       if (opts.onConfirm != null && typeof opts.onConfirm !== 'function') el.setAttribute('onConfirm', String(opts.onConfirm));
       el._autoRemove = true;
       if (typeof opts.onConfirm === 'function') el._onConfirmFn = opts.onConfirm;
@@ -182,6 +186,10 @@ if (!customElements.get('granado-checklist-popup')) {
     set checklistId(v) { if (v == null) this.removeAttribute('checklist-id'); else this.setAttribute('checklist-id', String(v)); }
     get checklistCode() { return this.getAttribute('checklist-code'); }
     set checklistCode(v) { if (v == null) this.removeAttribute('checklist-code'); else this.setAttribute('checklist-code', String(v)); }
+    // Fechar ao clicar fora? Default: false (não fecha). Só fecha com "true".
+    _closeOnBackdrop() { return this.getAttribute('close-on-backdrop') === 'true'; }
+    get closeOnBackdrop() { return this._closeOnBackdrop(); }
+    set closeOnBackdrop(v) { this.setAttribute('close-on-backdrop', v ? 'true' : 'false'); }
 
     open() { this.removeAttribute('open'); this.style.display = ''; if (this.isConnected) this._render(); }
     close() { this.style.display = 'none'; if (this._autoRemove) this.remove(); }
@@ -411,7 +419,8 @@ if (!customElements.get('granado-checklist-popup')) {
       const confirm = this.querySelector('[data-role="confirm"]');
       if (x) x.addEventListener('click', function () { self.close(); });
       if (cancel) cancel.addEventListener('click', function () { self.close(); });
-      if (overlay && box) overlay.addEventListener('mousedown', function (e) { if (e.target === overlay) self.close(); });
+      // Clique fora (backdrop): só fecha se close-on-backdrop === "true" (default: NÃO fecha).
+      if (overlay && box) overlay.addEventListener('mousedown', function (e) { if (e.target === overlay && self._closeOnBackdrop()) self.close(); });
       if (confirm) confirm.addEventListener('click', function (ev) { self._confirm(ev); });
 
       // Campo "Valor": digitação manual marca a origem (isManualValue = true).

@@ -23,6 +23,8 @@
                         onClick - (opcional) string JS executada no clique
                                   (recebe event, detail); ou função (via .buttons)
      open         - "false" inicia oculto (default visível)
+     close-on-backdrop - "true" permite fechar ao clicar fora (backdrop). Default:
+                    NÃO fecha ao clicar fora. Em JS use .closeOnBackdrop.
      auto-destruct-after-seconds - (opcional) se informado (> 0), o popup se
                     "auto-destrói" (fecha) após X segundos, exibindo um contador
                     regressivo. Em JS use a propriedade .autoDestructAfterSeconds
@@ -32,7 +34,7 @@
 
    ── Eventos (CustomEvent, bubbles)
      "option-click" -> detail { index, value, text }
-   (O clique fora da caixa apenas fecha — sem evento.)
+   (Por padrão o clique fora NÃO fecha; habilite com close-on-backdrop="true".)
 
    ── Propriedades / métodos JS
      el.title / el.message / el.type / el.buttons
@@ -81,7 +83,7 @@ if (!customElements.get('granado-option-popup')) {
   }
 
   class GranadoOptionPopup extends HTMLElement {
-    static get observedAttributes() { return ['title', 'message', 'type', 'buttons', 'open', 'auto-destruct-after-seconds']; }
+    static get observedAttributes() { return ['title', 'message', 'type', 'buttons', 'open', 'auto-destruct-after-seconds', 'close-on-backdrop']; }
 
     // ------------------------------------------------------------
     // API estática
@@ -94,6 +96,7 @@ if (!customElements.get('granado-option-popup')) {
       if (opts.message != null) el.setAttribute('message', String(opts.message));
       if (opts.onOptionClick != null) el.setAttribute('onOptionClick', String(opts.onOptionClick));
       if (opts.autoDestructAfterSeconds != null) el.setAttribute('auto-destruct-after-seconds', String(opts.autoDestructAfterSeconds));
+      if (opts.closeOnBackdrop != null) el.setAttribute('close-on-backdrop', opts.closeOnBackdrop ? 'true' : 'false');
       el._autoRemove = true;
       document.body.appendChild(el);
       if (opts.buttons != null) el.buttons = opts.buttons;  // mantém funções onClick
@@ -134,6 +137,10 @@ if (!customElements.get('granado-option-popup')) {
     set message(v) { this.setAttribute('message', String(v == null ? '' : v)); }
     get type() { return this.getAttribute('type') || 'info'; }
     set type(v) { this.setAttribute('type', String(v == null ? '' : v)); }
+    // Fechar ao clicar fora? Default: false (não fecha). Só fecha com "true".
+    _closeOnBackdrop() { return this.getAttribute('close-on-backdrop') === 'true'; }
+    get closeOnBackdrop() { return this._closeOnBackdrop(); }
+    set closeOnBackdrop(v) { this.setAttribute('close-on-backdrop', v ? 'true' : 'false'); }
 
     get buttons() {
       if (this._buttonsArr && Array.isArray(this._buttonsArr)) return this._buttonsArr;
@@ -258,7 +265,7 @@ if (!customElements.get('granado-option-popup')) {
         });
       });
       // Clique fora da caixa apenas fecha (sem evento).
-      if (overlay && box) overlay.addEventListener('mousedown', (e) => { if (e.target === overlay) self.close(); });
+      if (overlay && box) overlay.addEventListener('mousedown', (e) => { if (e.target === overlay && self._closeOnBackdrop()) self.close(); });
     }
   }
 

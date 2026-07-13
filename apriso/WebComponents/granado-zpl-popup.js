@@ -34,6 +34,8 @@
    ── Atributos
      type   - tipo da etiqueta (default "pesagem")
      data   - JSON com os campos (em JS prefira a propriedade .data)
+     close-on-backdrop - "true" permite fechar ao clicar fora (backdrop). Default:
+              NÃO fecha ao clicar fora. Em JS use .closeOnBackdrop.
      open   - "false" inicia oculto (default visível)
 
    ── Propriedades / métodos JS
@@ -44,7 +46,8 @@
 
    ── Eventos (CustomEvent, bubbles)
      "reimprimir" -> detail { impressora, type, data }
-   (Cancelar, o X e o clique fora apenas fecham o popup — sem evento.)
+   (Cancelar e o X sempre fecham o popup — sem evento. Por padrão o clique fora
+    NÃO fecha; habilite com close-on-backdrop="true".)
 
    ── Handler inline (opcional)
      onPrintClick - string JS executada ao clicar em "Reimprimir"; recebe
@@ -94,7 +97,7 @@ if (!customElements.get('granado-zpl-popup')) {
   const VERMELHO = '#8C1A1A';
 
   class GranadoZplPopup extends HTMLElement {
-    static get observedAttributes() { return ['type', 'data', 'open']; }
+    static get observedAttributes() { return ['type', 'data', 'open', 'close-on-backdrop']; }
 
     connectedCallback() {
       ['type', 'data'].forEach((p) => {
@@ -129,6 +132,11 @@ if (!customElements.get('granado-zpl-popup')) {
       else { this._dataObj = v && typeof v === 'object' ? v : {}; }
       if (this.isConnected) this._render();
     }
+
+    // Fechar ao clicar fora? Default: false (não fecha). Só fecha com "true".
+    _closeOnBackdrop() { return this.getAttribute('close-on-backdrop') === 'true'; }
+    get closeOnBackdrop() { return this._closeOnBackdrop(); }
+    set closeOnBackdrop(v) { this.setAttribute('close-on-backdrop', v ? 'true' : 'false'); }
 
     open() { this.removeAttribute('open'); this.style.display = ''; if (this.isConnected) this._render(); }
     close() { this.style.display = 'none'; }
@@ -258,7 +266,7 @@ if (!customElements.get('granado-zpl-popup')) {
     _bind() {
       const overlay = this.querySelector('[data-role="overlay"]');
       const box = this.querySelector('[data-role="box"]');
-      const onClose = () => this.close();          // Cancelar / X / backdrop apenas fecham
+      const onClose = () => this.close();          // Cancelar / X sempre fecham
       const onPrint = () => this._emitPrint();
 
       const x = this.querySelector('[data-role="x"]');
@@ -267,9 +275,9 @@ if (!customElements.get('granado-zpl-popup')) {
       if (x) x.addEventListener('click', onClose);
       if (cancel) cancel.addEventListener('click', onClose);
       if (print) print.addEventListener('click', onPrint);
-      // Clique fora da caixa (no backdrop) também fecha.
+      // Clique fora da caixa (backdrop): só fecha se close-on-backdrop === "true" (default: NÃO fecha).
       if (overlay && box) {
-        overlay.addEventListener('mousedown', (e) => { if (e.target === overlay) onClose(); });
+        overlay.addEventListener('mousedown', (e) => { if (e.target === overlay && this._closeOnBackdrop()) onClose(); });
       }
     }
 

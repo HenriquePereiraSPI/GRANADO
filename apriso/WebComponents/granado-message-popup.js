@@ -11,6 +11,8 @@
      message      - mensagem (texto)
      type         - "info" (default) | "information" | "success" | "error" | "warning"
      button-text  - texto do botão (opcional, default "OK") — o botão apenas fecha
+     close-on-backdrop - "true" permite fechar ao clicar fora (backdrop). Default:
+                    NÃO fecha ao clicar fora. Em JS use .closeOnBackdrop.
      open         - "false" inicia oculto (default visível)
      auto-destruct-after-seconds - (opcional) se informado (> 0), o popup se
                     "auto-destrói" (fecha) após X segundos, exibindo um badge com
@@ -65,7 +67,7 @@ if (!customElements.get('granado-message-popup')) {
   }
 
   class GranadoMessagePopup extends HTMLElement {
-    static get observedAttributes() { return ['title', 'message', 'type', 'button-text', 'open', 'auto-destruct-after-seconds']; }
+    static get observedAttributes() { return ['title', 'message', 'type', 'button-text', 'open', 'auto-destruct-after-seconds', 'close-on-backdrop']; }
 
     // ------------------------------------------------------------
     // API estática
@@ -80,6 +82,7 @@ if (!customElements.get('granado-message-popup')) {
       const bt = opts.buttonText != null ? opts.buttonText : opts.buttontext;
       if (bt != null) el.setAttribute('button-text', String(bt));
       if (opts.autoDestructAfterSeconds != null) el.setAttribute('auto-destruct-after-seconds', String(opts.autoDestructAfterSeconds));
+      if (opts.closeOnBackdrop != null) el.setAttribute('close-on-backdrop', opts.closeOnBackdrop ? 'true' : 'false');
       el._autoRemove = true;   // criado dinamicamente -> some do DOM ao fechar
       document.body.appendChild(el);
       el.open();
@@ -124,6 +127,10 @@ if (!customElements.get('granado-message-popup')) {
     set type(v) { this.setAttribute('type', String(v == null ? '' : v)); }
     get buttonText() { return this.getAttribute('button-text') || 'OK'; }
     set buttonText(v) { this.setAttribute('button-text', String(v == null ? '' : v)); }
+    // Fechar ao clicar fora? Default: false (não fecha). Só fecha com "true".
+    _closeOnBackdrop() { return this.getAttribute('close-on-backdrop') === 'true'; }
+    get closeOnBackdrop() { return this._closeOnBackdrop(); }
+    set closeOnBackdrop(v) { this.setAttribute('close-on-backdrop', v ? 'true' : 'false'); }
 
     get autoDestructAfterSeconds() { return this._autoSeconds(); }
     set autoDestructAfterSeconds(v) {
@@ -203,8 +210,8 @@ if (!customElements.get('granado-message-popup')) {
       const okBtn = this.querySelector('[data-role="ok"]');
       const onClose = () => this.close();
       if (okBtn) okBtn.addEventListener('click', onClose);
-      // Clique fora da caixa (backdrop) também fecha.
-      if (overlay && box) overlay.addEventListener('mousedown', (e) => { if (e.target === overlay) onClose(); });
+      // Clique fora da caixa (backdrop): só fecha se close-on-backdrop === "true" (default: NÃO fecha).
+      if (overlay && box) overlay.addEventListener('mousedown', (e) => { if (e.target === overlay && this._closeOnBackdrop()) onClose(); });
     }
   }
 
