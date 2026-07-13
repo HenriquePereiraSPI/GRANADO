@@ -47,6 +47,8 @@ export default function Topbar({ onToggleSidebar, sidebarCollapsed }) {
         <button className="tb-btn" onClick={() => openModal('modal-tractian')}>
           + Solicitação Serviço
         </button>
+        {/* Badge Granado — visível apenas no mobile (via CSS) */}
+        <span className="tb-logo-mobile"><span className="tb-logo-mark">G</span>GRANADO</span>
       </div>
     </div>
   );

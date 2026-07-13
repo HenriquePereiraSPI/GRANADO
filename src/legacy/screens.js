@@ -5955,7 +5955,61 @@ export const SCREENS = {
       setTimeout(manutRender, 30);
       </script>
     `,
-  "pes-ordens": `      <div class="page-header">
+  "pes-ordens": `
+      <style>
+        /* ── Versão MOBILE (<=768px) da Seleção de Ordem de Pesagem ── */
+        @media (max-width: 768px) {
+          /* KPIs: 4 -> 2 colunas, escondendo "Concluídas Hoje" e "Com Pendência" */
+          #pes-ordens-scope .g4 { grid-template-columns: 1fr 1fr !important; }
+          #pes-ordens-scope .g4 > div:nth-child(3),
+          #pes-ordens-scope .g4 > div:nth-child(4) { display: none !important; }
+          /* Remove o informativo da fila */
+          #pes-ordens-scope .po-fila-info { display: none !important; }
+          /* Grid de salas do modal: 4 -> 2 colunas */
+          #sala-pes-grid { grid-template-columns: 1fr 1fr !important; }
+          /* Fila vira GALERIA VERTICAL de cards: nº + produto + data + status + entrar */
+          #po-tabela { min-width: 0 !important; width: 100% !important; }
+          #po-tabela thead { display: none; }
+          #po-tabela, #po-tabela tbody { display: block; width: 100%; }
+          #po-tabela tr {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 2px 10px;
+            /* cor PADRÃO para todos os cards (não colore cada um diferente) */
+            background: var(--surface) !important;
+            animation: none !important; opacity: 1 !important; text-decoration: none !important;
+            border: 1px solid var(--border); border-radius: 10px;
+            margin-bottom: 10px; padding: 12px 14px; box-shadow: var(--sh);
+            box-sizing: border-box; width: 100%; cursor: pointer;
+          }
+          #po-tabela td { border: none !important; padding: 0 !important; text-align: left !important; max-width: none !important; }
+          /* Mostra só: número (1), produto (2), data (6) e ação (9) */
+          #po-tabela td:nth-child(3),
+          #po-tabela td:nth-child(4),
+          #po-tabela td:nth-child(5),
+          #po-tabela td:nth-child(7),
+          #po-tabela td:nth-child(8) { display: none !important; }
+          #po-tabela td:nth-child(1) { order: 1; flex: 1 1 auto; font-size: 15px; font-weight: 800; }
+          #po-tabela td:nth-child(9) { order: 2; flex: 0 0 auto; margin-left: auto; display: flex; align-items: center; gap: 8px; }
+          #po-tabela td:nth-child(2) { order: 3; flex-basis: 100%; font-size: 12.5px; margin-top: 2px; }
+          #po-tabela td:nth-child(6) { order: 4; flex-basis: 100%; font-size: 11px; color: var(--text3); margin-top: 4px; }
+          #po-tabela td:nth-child(6)::before { content: '🗓 '; }
+          /* Badge de status (NOVO / PESANDO / DETALHES) — cada um com ícone */
+          #po-tabela td:nth-child(9)::before {
+            display: inline-block; padding: 3px 9px; border-radius: 9px;
+            font: 800 10px/1.4 var(--font-b); white-space: nowrap;
+          }
+          #po-tabela tr[data-mob="novo"]     td:nth-child(9)::before { content: '🆕 NOVO';     color: var(--verde); background: var(--verde-dim); border: 1px solid var(--ok-b); }
+          #po-tabela tr[data-mob="pesando"]  td:nth-child(9)::before { content: '⚖️ PESANDO';  color: var(--inf);   background: var(--inf-p);     border: 1px solid var(--inf-b); }
+          #po-tabela tr[data-mob="detalhes"] td:nth-child(9)::before { content: '📋 DETALHES'; color: var(--text2); background: var(--surface2);  border: 1px solid var(--border); }
+          /* Setinha "entrar" — o botão de ação vira só o chevron › */
+          #po-tabela td:nth-child(9) .btn {
+            font-size: 0; min-width: 0; width: auto; padding: 0 2px;
+            background: transparent !important; border: none !important; box-shadow: none !important;
+          }
+          #po-tabela td:nth-child(9) .btn::before { content: '›'; font-size: 26px; line-height: 1; color: var(--verde); font-weight: 800; }
+        }
+      </style>
+      <div id="pes-ordens-scope">
+      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Seleção de Ordem de Pesagem</div></div>
       </div>
       <!-- KPIs — dashboard de fila de pesagem -->
@@ -6477,7 +6531,7 @@ export const SCREENS = {
         </div>
 
         <div class="card-title">Fila de Pesagem — Prioridade</div>
-        <div class="abox info mb14"><span class="ai">ℹ</span><div>Esta fila mostra ordens em diferentes estágios — desde pagamento de MPs até liberação para fabricação. Linhas vermelhas piscando indicam ordens aguardando liberação para fabricação.</div></div>
+        <div class="abox info mb14 po-fila-info"><span class="ai">ℹ</span><div>Esta fila mostra ordens em diferentes estágios — desde pagamento de MPs até liberação para fabricação. Linhas vermelhas piscando indicam ordens aguardando liberação para fabricação.</div></div>
         <div style="overflow-x:auto">
         <table class="tbl" id="po-tabela" style="min-width:1180px">
           <thead>
@@ -6495,7 +6549,7 @@ export const SCREENS = {
           </thead>
           <tbody>
             <!-- OP-2026-0414 — EM PESAGEM -->
-            <tr data-op="OP-2026-0414" onclick="pesIrCockpit(event, 'continuar', 'OP-2026-0414')" style="background:var(--inf-p);cursor:pointer">
+            <tr data-op="OP-2026-0414" data-mob="pesando" onclick="pesIrCockpit(event, 'continuar', 'OP-2026-0414')" style="background:var(--inf-p);cursor:pointer">
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0414</td>
               <td style="font-size:12px">Creme Hidratante 150g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-076</span></td>
               <td class="mono">540 kg</td>
@@ -6518,7 +6572,7 @@ export const SCREENS = {
             </tr>
 
             <!-- OP-2026-0416 — PRONTA PARA PESAGEM -->
-            <tr data-op="OP-2026-0416" onclick="pesIrCockpit(event, 'inicio', 'OP-2026-0416')" style="background:var(--ouro-dim);cursor:pointer">
+            <tr data-op="OP-2026-0416" data-mob="novo" onclick="pesIrCockpit(event, 'inicio', 'OP-2026-0416')" style="background:var(--ouro-dim);cursor:pointer">
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0416</td>
               <td style="font-size:12px">Loção Hidratante Rosa 200ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-089</span></td>
               <td class="mono">600 kg</td>
@@ -6541,7 +6595,7 @@ export const SCREENS = {
             </tr>
 
             <!-- OP-2026-0413 — FINALIZADA -->
-            <tr data-op="OP-2026-0413" style="background:var(--ok-p);opacity:.85">
+            <tr data-op="OP-2026-0413" data-mob="detalhes" style="background:var(--ok-p);opacity:.85">
               <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0413</td>
               <td style="font-size:12px">Sabonete Phebo Glicerinado 90g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-051</span></td>
               <td class="mono">320 kg</td>
@@ -6564,7 +6618,7 @@ export const SCREENS = {
             </tr>
 
             <!-- OP-2026-0412 — AGUARDANDO LIBERAÇÃO PARA FABRICAÇÃO (linha vermelha piscando) -->
-            <tr data-op="OP-2026-0412" data-status="aguardando-fab" class="po-linha-fab-pendente" style="animation:po-row-blink 2s ease-in-out infinite">
+            <tr data-op="OP-2026-0412" data-status="aguardando-fab" data-mob="detalhes" class="po-linha-fab-pendente" style="animation:po-row-blink 2s ease-in-out infinite">
               <td class="mono" style="color:var(--per);font-weight:800">OP-2026-0412</td>
               <td style="font-size:12px;color:var(--per);font-weight:700">Sabonete Glicerinado Mel 90g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-051</span></td>
               <td class="mono">280 kg</td>
@@ -6587,7 +6641,7 @@ export const SCREENS = {
             </tr>
 
             <!-- OP-2026-0411 — HOLD / Aguardando -->
-            <tr data-op="OP-2026-0411" data-status="hold" data-hold-dias="32" style="background:var(--alr-p)">
+            <tr data-op="OP-2026-0411" data-status="hold" data-hold-dias="32" data-mob="detalhes" style="background:var(--alr-p)">
               <td class="mono" style="color:var(--alr);font-weight:800">OP-2026-0411</td>
               <td style="font-size:12px">Sabonete Phebo Lavanda 90g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-074</span></td>
               <td class="mono">450 kg</td>
@@ -6615,7 +6669,7 @@ export const SCREENS = {
             </tr>
 
             <!-- OP-2026-0410 — CANCELADA -->
-            <tr data-op="OP-2026-0410" data-status="cancelada" style="background:var(--per-p);opacity:.6;text-decoration:line-through">
+            <tr data-op="OP-2026-0410" data-status="cancelada" data-mob="detalhes" style="background:var(--per-p);opacity:.6;text-decoration:line-through">
               <td class="mono" style="color:var(--per);font-weight:700">OP-2026-0410</td>
               <td style="font-size:12px">Loção Hidratante Camomila 200ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-098</span></td>
               <td class="mono">350 kg</td>
@@ -6840,6 +6894,7 @@ export const SCREENS = {
           </div>
         </div>
       </div>
+      </div><!-- /#pes-ordens-scope -->
       `,
   "pes-rastr": `      <div class="page-header">
         <div>

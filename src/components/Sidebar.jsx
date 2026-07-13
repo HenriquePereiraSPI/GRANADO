@@ -22,7 +22,7 @@ function fmtDate(d) {
   });
 }
 
-export default function Sidebar({ collapsed = false }) {
+export default function Sidebar({ collapsed = false, mobileOpen = false, onNavigate }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const currentId = pathname.replace(/^\//, '').split('?')[0] || 'sinotico';
@@ -45,12 +45,12 @@ export default function Sidebar({ collapsed = false }) {
   }, []);
 
   const toggleMod = (modId) => setOpenMod((cur) => (cur === modId ? null : modId));
-  const go = (id) => navigate('/' + id);
+  const go = (id) => { navigate('/' + id); if (onNavigate) onNavigate(); };
 
   const isActiveItem = (id) => id === currentId || ALIASES[id] === resolvedId;
 
   return (
-    <aside className={`sidebar${collapsed ? ' collapsed' : ''}`}>
+    <aside className={`sidebar${collapsed ? ' collapsed' : ''}${mobileOpen ? ' mobile-open' : ''}`}>
       <div className="sb-brand">
         <div className="sb-brand-top">
           {collapsed ? (
@@ -99,7 +99,7 @@ export default function Sidebar({ collapsed = false }) {
                     <button
                       key={it.id}
                       className={`sb-sub-item${!it.href && isActiveItem(it.id) ? ' active' : ''}`}
-                      onClick={() => (it.href ? window.open(it.href, '_blank', 'noopener') : go(it.id))}
+                      onClick={() => { if (it.href) { window.open(it.href, '_blank', 'noopener'); if (onNavigate) onNavigate(); } else { go(it.id); } }}
                       title={it.href ? 'Abre em nova aba' : undefined}
                     >
                       {it.label}

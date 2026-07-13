@@ -1,6 +1,29 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { PESAGEM_OEE as D } from '../data/pes-oee-data.js';
 import SalasFilter from './SalasFilter.jsx';
+
+/**
+ * Breakpoint responsivo: > 768px = WEB · <= 768px = MOBILE.
+ * Atualiza automaticamente conforme a resolução/redimensionamento.
+ */
+function useIsMobile(breakpoint = 768) {
+  const query = `(max-width: ${breakpoint}px)`;
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(query).matches
+  );
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const handler = (e) => setIsMobile(e.matches);
+    setIsMobile(mq.matches);
+    if (mq.addEventListener) mq.addEventListener('change', handler);
+    else mq.addListener(handler);
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener('change', handler);
+      else mq.removeListener(handler);
+    };
+  }, [query]);
+  return isMobile;
+}
 
 /**
  * Tela /pes-oee — OEE da Pesagem.
@@ -58,16 +81,17 @@ function calcularOEE(dados) {
 
 export default function PesagemOeeScreen() {
   const calc = useMemo(() => calcularOEE(D), []);
+  const isMobile = useIsMobile();   // > 768px = WEB · <= 768px = MOBILE
 
   return (
     <div className="screen active" style={{ display: 'block' }}>
       {/* ── Header ─────────────────────────────────────────── */}
-      <div className="page-header">
+      <div className="page-header" style={isMobile ? { flexDirection: 'column', alignItems: 'stretch', gap: 10 } : undefined}>
         <div>
           <div className="ph-eyebrow">Pesagem · MF5 · ERU 5.2.x — OEE Operacional</div>
-          <div className="ph-title">OEE da Pesagem</div>
+          <div className="ph-title" style={isMobile ? { fontSize: 20 } : undefined}>OEE da Pesagem</div>
         </div>
-        <div className="ph-actions">
+        <div className="ph-actions" style={isMobile ? { flexWrap: 'wrap', width: '100%' } : undefined}>
           <select className="inp" style={{ width: 'auto', fontSize: 12, padding: '6px 10px' }} defaultValue="hoje">
             <option value="hoje">Hoje</option>
             <option value="7d">7 dias</option>
@@ -79,8 +103,8 @@ export default function PesagemOeeScreen() {
         </div>
       </div>
 
-      {/* ── KPIs principais (OEE breakdown) ────────────────── */}
-      <div className="g3 mb14">
+      {/* ── KPIs principais — 3 colunas (web) / 1 coluna (mobile) ── */}
+      <div className="mb14" style={{ display: 'grid', gap: 14, gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)' }}>
         <KpiOEE
           label="OEE Global"
           valor={calc.oee}
@@ -88,6 +112,7 @@ export default function PesagemOeeScreen() {
           meta={D.meta}
           tag="OEE"
           destaque
+          compact={isMobile}
           memoria={`Disp × Perf = ${calc.disponibilidade.toFixed(1)}% × ${calc.performance.toFixed(1)}%`}
         />
         <KpiOEE
@@ -95,6 +120,7 @@ export default function PesagemOeeScreen() {
           valor={calc.disponibilidade}
           unidade="%"
           tag="Disp."
+          compact={isMobile}
           memoria={`${calc.tempoOperando}min operando ÷ ${calc.tempoDisponivel}min disponíveis`}
         />
         <KpiOEE
@@ -102,12 +128,13 @@ export default function PesagemOeeScreen() {
           valor={calc.performance}
           unidade="%"
           tag="Perf."
+          compact={isMobile}
           memoria={`Σ padrão (${calc.padraoTotal}min) ÷ Σ real (${calc.realTotal}min)`}
         />
       </div>
 
-      {/* ── Salas (esq.) + Disponibilidade (dir.) ──────────── */}
-      <div className="g64 mb14">
+      {/* ── Salas + Disponibilidade — 6/4 (web) / empilhado (mobile) ── */}
+      <div className="mb14" style={{ display: 'grid', gap: 14, gridTemplateColumns: isMobile ? '1fr' : '6fr 4fr' }}>
         <CardSalas />
         <CardDisponibilidade calc={calc} />
       </div>
@@ -123,12 +150,47 @@ export default function PesagemOeeScreen() {
 /* ─────────────────────────────────────────────────────────────
    KPI OEE — usado nos 4 cards do topo
 ───────────────────────────────────────────────────────────── */
-function KpiOEE({ label, valor, unidade = '%', meta, tag, sub, destaque, memoria }) {
+function KpiOEE({ label, valor, unidade = '%', meta, tag, sub, destaque, memoria, compact }) {
   // Cor só verde/vermelho: verde quando atinge a meta (ou a meta global), vermelho abaixo.
   const limite = meta != null ? meta : D.meta;
   const ok = valor >= limite;
   const corValor = ok ? 'var(--ok)' : 'var(--per)';
   const acimaMeta = meta != null && valor >= meta;
+
+  const valorFmt = valor.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+  // ── Variante COMPACTA (mobile): card horizontal, sem memória de cálculo ──
+  if (compact) {
+    return (
+      <div
+        className="card"
+        style={{ position: 'relative', padding: '11px 14px', borderLeft: `3px solid ${corValor}`, overflow: 'hidden' }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+          <div style={{ minWidth: 0 }}>
+            <div className="kpi-l" style={{ marginBottom: 2 }}>{label}</div>
+            {meta != null ? (
+              <div style={{ fontSize: 10, color: 'var(--text3)' }}>
+                Meta {meta}%{' '}
+                <span style={{ color: acimaMeta ? 'var(--ok)' : 'var(--per)', fontWeight: 700 }}>
+                  {acimaMeta ? '✓ acima' : `Δ ${(valor - meta).toFixed(1)}pp`}
+                </span>
+              </div>
+            ) : (
+              <div style={{ fontSize: 10, color: 'var(--text3)' }}>{tag}</div>
+            )}
+          </div>
+          <div style={{ fontFamily: 'var(--font-m)', fontSize: 30, fontWeight: 700, color: corValor, lineHeight: 1, whiteSpace: 'nowrap' }}>
+            {valorFmt}
+            <span style={{ fontSize: 14, color: 'var(--text3)', marginLeft: 2 }}>{unidade}</span>
+          </div>
+        </div>
+        <div style={{ height: 5, background: 'var(--bg2)', borderRadius: 3, marginTop: 8, overflow: 'hidden' }}>
+          <div style={{ width: `${Math.min(valor, 100)}%`, height: '100%', background: corValor, borderRadius: 3, transition: 'width .4s' }} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

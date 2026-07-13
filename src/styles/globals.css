@@ -77,6 +77,72 @@ body { font-family:var(--font-b); background:var(--bg); color:var(--text); displ
 .sidebar.collapsed .sb-module-btn .sb-ico { width: auto; font-size: 18px; }
 .sidebar.collapsed .sb-module-btn .sb-dot { left: 4px; }
 
+/* ── Mobile (<=768px): sidebar vira drawer off-canvas sobre a página ── */
+.sidebar-backdrop {
+  position: fixed; inset: 0; z-index: 999;
+  background: rgba(15, 51, 25, .45);
+  backdrop-filter: blur(1px);
+}
+/* Ícone Granado no topbar — escondido por padrão, aparece só no mobile
+   (regra base ANTES do @media para o media query vencer no cascade) */
+.tb-logo-mobile { display: none; }
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed; top: 0; left: 0; height: 100%;
+    width: 250px; max-width: 82vw;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+  }
+  /* No mobile o "collapsed" (56px) não se aplica — o drawer sempre abre completo */
+  .sidebar.collapsed { width: 250px; }
+  .sidebar.collapsed .sb-brand { padding: 18px 16px 14px; }
+  .sidebar.collapsed .sb-brand-top { justify-content: flex-start; }
+  .sidebar.collapsed .sb-module-btn { padding: 11px 16px; justify-content: flex-start; gap: 10px; }
+  .sidebar.mobile-open {
+    transform: translateX(0);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .45);
+  }
+  .main { width: 100%; }
+
+  /* Topbar compacto: só menu (hambúrguer) + navegação + ícone Granado */
+  .topbar { padding: 0 12px; gap: 8px; }
+  .topbar-right .tb-pill,
+  .topbar-right .tb-btn-andon,
+  .topbar-right .tb-btn { display: none; }
+  .tb-logo-mobile {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-d);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    color: var(--verde-esc);
+    white-space: nowrap;
+  }
+  .tb-logo-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: var(--verde-esc);
+    color: var(--ouro-claro);
+    border: 1px solid var(--ouro);
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0;
+    box-shadow: 0 1px 4px rgba(15, 51, 25, .25);
+  }
+  .topbar-breadcrumb {
+    font-size: 12px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    min-width: 0;
+  }
+}
+
 /* Brand */
 .sb-brand {
   padding:18px 16px 14px;
