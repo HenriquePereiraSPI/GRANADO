@@ -6,18 +6,17 @@ function initSidebarEvents() {
     // ============================================================
     // 1. Highlight do item ativo + abre modulo pai
     //    Prioridade:
-    //      a) window.AprisoContext.inputs.current_sidebar_selected_item
-    //         (source of truth — variavel mantida pelo proprio sidebar
-    //         no Output, devolvida como Input no proximo render).
+    //      a) localStorage 'current_sidebar_selected_item'
+    //         (source of truth — item salvo no ultimo clique).
     //      b) data-active-menu (fallback quando ainda nao houve clique).
     //      c) data-current-screen (fallback final pra navegacao inter-Screen).
     // ============================================================
-    var ctx = window.AprisoContext;
-    var ctxSelected = (ctx && ctx.inputs && ctx.inputs.current_sidebar_selected_item) || '';
+    var storedSelected = '';
+    try { storedSelected = localStorage.getItem('current_sidebar_selected_item') || ''; } catch (e) { storedSelected = ''; }
     var activeMenu = sidebar.getAttribute('data-active-menu') || '';
     var currentScreen = sidebar.getAttribute('data-current-screen') || '';
 
-    var activeKey = ctxSelected || activeMenu || currentScreen;
+    var activeKey = storedSelected || activeMenu || currentScreen;
 
     if (activeKey) {
         var activeBtn = sidebar.querySelector('button[value="' + activeKey + '"]');
@@ -54,14 +53,9 @@ function initSidebarEvents() {
         });
         item.classList.add('active');
 
-        // Expoe o item selecionado como Screen Interface Output.
-        // Output 'current_sidebar_selected_item' precisa estar declarado
-        // em Screen Interface Function Outputs.
-        // window.AprisoContext e definido pela ponte inline em sidebar.html
-        // (porque $Context so existe na aba HTML, nao em arquivo externo).
-        if (window.AprisoContext && window.AprisoContext.outputs) {
-            window.AprisoContext.outputs.current_sidebar_selected_item = item.value;
-        }
+        // Persiste o item selecionado no localStorage — lido no proximo
+        // render para restaurar o highlight (ver bloco 1).
+        try { localStorage.setItem('current_sidebar_selected_item', item.value); } catch (e) { /* localStorage indisponivel */ }
     });
 
     // ============================================================

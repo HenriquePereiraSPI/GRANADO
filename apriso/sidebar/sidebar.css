@@ -80,6 +80,13 @@
     flex-shrink: 0;
 }
 
+.sb-logo {
+    width: 100%;
+    max-width: 185px;
+    height: auto;
+    display: block;
+}
+
 .sb-name {
     font-family: var(--grn-font-d);
     font-size: 14px;

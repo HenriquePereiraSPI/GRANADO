@@ -5283,6 +5283,26 @@ export const SCREENS = {
         </div>
       </div>
 
+      <!-- Popup: Confirmar envio ao TRACTIAN -->
+      <div id="modal-parar-traction" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:975;align-items:center;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto">
+        <div style="background:var(--surface);border-top:4px solid var(--inf);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:440px;width:94%;box-shadow:var(--sh2);margin:auto">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px">
+            <div style="display:flex;align-items:center;gap:9px">
+              <span style="font-size:22px">📡</span>
+              <div style="font-size:17px;font-weight:800;color:var(--verde-esc)">Enviar parada ao TRACTIAN?</div>
+            </div>
+            <button onclick="pesFecharTraction()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
+          </div>
+          <div style="font-size:12.5px;color:var(--text2);line-height:1.55;margin-bottom:18px">
+            Deseja enviar esta parada para o <strong>TRACTIAN</strong>? Escolha <strong>Sim</strong> para integrar o apontamento ao TRACTIAN, ou <strong>Não</strong> para registrar apenas localmente.
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end">
+            <button class="btn btn-md btn-ghost" onclick="pesFinalizarParar(false)">Não</button>
+            <button class="btn btn-md btn-v" onclick="pesFinalizarParar(true)">Sim, enviar</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Histórico de Paradas -->
       <div class="card">
         <div class="card-title">Histórico de Paradas — OP-2026-0416 · Turno A</div>
@@ -5456,28 +5476,42 @@ export const SCREENS = {
         var m = document.getElementById('modal-parar-sala'); if (m) m.style.display = 'flex';
       }
       function pesFecharParar() { var m = document.getElementById('modal-parar-sala'); if (m) m.style.display = 'none'; }
+      function pesFecharTraction() { var m = document.getElementById('modal-parar-traction'); if (m) m.style.display = 'none'; }
+      // Passo 1: valida os campos e abre a confirmação de envio ao TRACTIAN.
       function pesConfirmarParar() {
+        if (!PP_PARA) return;
+        var cat = document.getElementById('par-cat');
+        var just = document.getElementById('par-just');
+        if (!cat.value) { alert('⚠ Selecione a categoria'); return; }
+        if (!just.value) { alert('⚠ Selecione a justificativa'); return; }
+        var m = document.getElementById('modal-parar-traction'); if (m) m.style.display = 'flex';
+      }
+      // Passo 2: registra a parada (com o flag de envio ao TRACTIAN) e fecha os popups.
+      function pesFinalizarParar(enviarTraction) {
         if (!PP_PARA) return;
         var cat = document.getElementById('par-cat');
         var tipo = document.getElementById('par-tipo');
         var just = document.getElementById('par-just');
         var obs = document.getElementById('par-obs');
-        if (!cat.value) { alert('⚠ Selecione a categoria'); return; }
-        if (!just.value) { alert('⚠ Selecione a justificativa'); return; }
         var info = {
           alvo: ppNome(PP_PARA),
           categoria: cat.options[cat.selectedIndex].text,
           tipo: tipo.value,
           justificativa: just.options[just.selectedIndex].text,
           observacao: obs ? obs.value.trim() : '',
-          inicio: pesParAgora()
+          inicio: pesParAgora(),
+          traction: !!enviarTraction
         };
         window.PES_PP_PARADOS[PP_PARA] = info;
         pesParAddHistorico(PP_PARA, info);
+        pesFecharTraction();
         pesFecharParar();
         cat.value = ''; just.value = ''; if (obs) obs.value = '';
         ppNotificarSubmenu();
         ppRender();
+        alert(enviarTraction
+          ? '📡 Parada registrada e enviada ao TRACTIAN.'
+          : '⏸ Parada registrada localmente (não enviada ao TRACTIAN).');
       }
       // ── Iniciar: retoma o item selecionado ──
       function ppIniciar() {
@@ -5654,6 +5688,26 @@ export const SCREENS = {
         </div>
       </div>
 
+      <!-- Popup: Confirmar envio ao TRACTIAN -->
+      <div id="modal-manut-traction" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:975;align-items:center;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto">
+        <div style="background:var(--surface);border-top:4px solid var(--inf);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:440px;width:94%;box-shadow:var(--sh2);margin:auto">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px">
+            <div style="display:flex;align-items:center;gap:9px">
+              <span style="font-size:22px">📡</span>
+              <div style="font-size:17px;font-weight:800;color:var(--verde-esc)">Enviar parada ao TRACTIAN?</div>
+            </div>
+            <button onclick="manutFecharTraction()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
+          </div>
+          <div style="font-size:12.5px;color:var(--text2);line-height:1.55;margin-bottom:18px">
+            Deseja enviar esta parada para o <strong>TRACTIAN</strong>? Escolha <strong>Sim</strong> para integrar o apontamento ao TRACTIAN, ou <strong>Não</strong> para registrar apenas localmente.
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end">
+            <button class="btn btn-md btn-ghost" onclick="manutFinalizarParar(false)">Não</button>
+            <button class="btn btn-md btn-v" onclick="manutFinalizarParar(true)">Sim, enviar</button>
+          </div>
+        </div>
+      </div>
+
       <script>
       // Estrutura organizacional: Facility › Production Line › Workcenter › Equipamento
       var MANUT_DATA = {
@@ -5742,24 +5796,38 @@ export const SCREENS = {
         var m = document.getElementById('modal-manut-parar'); if (m) m.style.display = 'flex';
       }
       function manutFecharParar() { var m = document.getElementById('modal-manut-parar'); if (m) m.style.display = 'none'; }
+      function manutFecharTraction() { var m = document.getElementById('modal-manut-traction'); if (m) m.style.display = 'none'; }
+      // Passo 1: valida os campos e abre a confirmação de envio ao TRACTIAN.
       function manutConfirmarParar() {
+        if (!MANUT_PARA) return;
+        var cat = document.getElementById('manut-cat');
+        var just = document.getElementById('manut-just');
+        if (!cat.value) { alert('⚠ Selecione a categoria'); return; }
+        if (!just.value) { alert('⚠ Selecione a justificativa'); return; }
+        var m = document.getElementById('modal-manut-traction'); if (m) m.style.display = 'flex';
+      }
+      // Passo 2: registra a parada (com o flag de envio ao TRACTIAN) e fecha os popups.
+      function manutFinalizarParar(enviarTraction) {
         if (!MANUT_PARA) return;
         var cat = document.getElementById('manut-cat');
         var tipo = document.getElementById('manut-tipo');
         var just = document.getElementById('manut-just');
         var obs = document.getElementById('manut-obs');
-        if (!cat.value) { alert('⚠ Selecione a categoria'); return; }
-        if (!just.value) { alert('⚠ Selecione a justificativa'); return; }
         window.MANUT_PARADAS[MANUT_PARA] = {
           categoria: cat.options[cat.selectedIndex].text,
           tipo: tipo.value,
           justificativa: just.options[just.selectedIndex].text,
           observacao: obs ? obs.value.trim() : '',
-          inicio: manutAgora()
+          inicio: manutAgora(),
+          traction: !!enviarTraction
         };
+        manutFecharTraction();
         manutFecharParar();
         cat.value = ''; just.value = ''; if (obs) obs.value = '';
         manutRender();
+        alert(enviarTraction
+          ? '📡 Parada registrada e enviada ao TRACTIAN.'
+          : '⏸ Parada registrada localmente (não enviada ao TRACTIAN).');
       }
       function manutIniciar(key) { delete window.MANUT_PARADAS[key]; manutRender(); }
 
