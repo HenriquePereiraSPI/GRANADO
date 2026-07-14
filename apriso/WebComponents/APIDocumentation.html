@@ -374,6 +374,7 @@
           <a class="gd-link" href="#GRD_API_PrintLabel">GRD_API_PrintLabel</a>
           <a class="gd-link" href="#GRD_API_GetLabel">GRD_API_GetLabel</a>
           <a class="gd-link" href="#GRD_API_GetScales">GRD_API_GetScales</a>
+          <a class="gd-link" href="#GRD_API_GetReasonCode">GRD_API_GetReasonCode</a>
         </div>
       </div>
 
@@ -2711,6 +2712,107 @@
           <li><strong>Estado em tempo real:</strong> <code>Weight</code>, <code>Tare</code> e
             <code>Availability</code> refletem a última leitura do serviço
             (<code>LastUpdatedBy</code> / <code>LastUpdateOn</code>).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetReasonCode
+           ============================================================ -->
+      <section id="GRD_API_GetReasonCode">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetReasonCode</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera os Reason Codes</strong> (motivos de parada) cadastrados — com sua
+          descrição, <strong>categoria</strong> e o <strong>tipo</strong> de parada
+          (<em>Planned</em> / <em>Unplanned Downtime</em>). Usado para montar as listas de
+          justificativa nos apontamentos de parada.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetReasonCode</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada <strong>sem parâmetros</strong>. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>ReasonCodes</code> — um
+          <strong>array</strong> de motivos.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON) — <strong>sem campos</strong>:</p>
+        <pre class="gd-code">{}</pre>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Reason codes recuperados com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ReasonCodes"</span><span class="tk-punc">:</span> [
+    <span class="tk-comment">// ── Programado (ReasonType 23 · Planned Downtime) ──</span>
+    { <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Inspec de Equipament"</span><span class="tk-punc">,</span> <span class="tk-key">"Code"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReasonCodeDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Parada programada para inspeção e calibração de equipamentos de pesagem"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Categoria"</span><span class="tk-punc">:</span> <span class="tk-str">"Programado"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonType"</span><span class="tk-punc">:</span> <span class="tk-str">"23"</span><span class="tk-punc">,</span> <span class="tk-key">"TipoDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Planned Downtime"</span><span class="tk-punc">,</span> <span class="tk-key">"Facility"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Refeicao"</span><span class="tk-punc">,</span> <span class="tk-key">"Code"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonCodeDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Parada para Refeição"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Categoria"</span><span class="tk-punc">:</span> <span class="tk-str">"Programado"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonType"</span><span class="tk-punc">:</span> <span class="tk-str">"23"</span><span class="tk-punc">,</span> <span class="tk-key">"TipoDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Planned Downtime"</span><span class="tk-punc">,</span> <span class="tk-key">"Facility"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span> }<span class="tk-punc">,</span>
+    <span class="tk-comment">// … Limpeza de Utensilio · Organiz de Mat Prima · Parada Programada ·
+    //    Reuniao Operacional · Troca de Turno</span>
+
+    <span class="tk-comment">// ── Não programado (ReasonType 24 · Unplanned Downtime) ──</span>
+    { <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Falha Com Balanca"</span><span class="tk-punc">,</span> <span class="tk-key">"Code"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReasonCodeDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Falha de comunicação com a balança"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Categoria"</span><span class="tk-punc">:</span> <span class="tk-str">"Sistemas"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonType"</span><span class="tk-punc">:</span> <span class="tk-str">"24"</span><span class="tk-punc">,</span> <span class="tk-key">"TipoDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Unplanned Downtime"</span><span class="tk-punc">,</span> <span class="tk-key">"Facility"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Falta de Mat Prima"</span><span class="tk-punc">,</span> <span class="tk-key">"Code"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReasonCodeDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Indisponibilidade de matéria prima "</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Categoria"</span><span class="tk-punc">:</span> <span class="tk-str">"Materia Prima"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonType"</span><span class="tk-punc">:</span> <span class="tk-str">"24"</span><span class="tk-punc">,</span> <span class="tk-key">"TipoDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Unplanned Downtime"</span><span class="tk-punc">,</span> <span class="tk-key">"Facility"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span> }<span class="tk-punc">,</span>
+    <span class="tk-comment">// … Aguardando Almoxarif · Diverg. no Estoque · Etiqueta Incorreta · Falha de Rede ·
+    //    Falha Impressao Etiq · Falha no Coletor · Falha no WMS · Falta Operador ·
+    //    Falta Pallet Gaiola · Manut da balanca · Manut Equipamentos · Manut Sala Pesagem ·
+    //    Mat em Quarentena · Mat Fora da Validade · Mat Prima com Avaria</span>
+
+    <span class="tk-comment">// ── Genérico (sem categoria/tipo) ──</span>
+    { <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Outros"</span><span class="tk-punc">,</span> <span class="tk-key">"Code"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonCodeDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Paradas"</span> }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se os reason codes foram recuperados com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">ReasonCodes</td><td class="col-type">array&lt;object&gt;</td><td class="col-desc">Lista de motivos de parada. Campos de cada item abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada motivo (<code>ReasonCodes[]</code>)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:180px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">ReasonCode</td><td class="col-type">string</td><td class="col-desc">Código/nome do motivo (ex.: <code>"Falha Com Balanca"</code>) — é o identificador usado no apontamento.</td></tr>
+            <tr><td class="col-name">Code</td><td class="col-type">string</td><td class="col-desc">Código auxiliar do motivo (pode vir vazio).</td></tr>
+            <tr><td class="col-name">ReasonCodeDesc</td><td class="col-type">string</td><td class="col-desc">Descrição do motivo (texto exibido ao operador).</td></tr>
+            <tr><td class="col-name">Categoria</td><td class="col-type">string</td><td class="col-desc">Categoria do motivo — ex.: <code>Programado</code>, <code>Sistemas</code>, <code>Manutenção</code>, <code>Materia Prima</code>, <code>Impressora</code>, <code>Coletor</code>, <code>Operacional</code>, <code>Controle de Qualidade</code>.</td></tr>
+            <tr><td class="col-name">ReasonType</td><td class="col-type">string (número)</td><td class="col-desc">Tipo da parada: <code>"23"</code> = programada · <code>"24"</code> = não programada.</td></tr>
+            <tr><td class="col-name">TipoDesc</td><td class="col-type">string</td><td class="col-desc">Descrição do tipo: <code>"Planned Downtime"</code> (23) ou <code>"Unplanned Downtime"</code> (24).</td></tr>
+            <tr><td class="col-name">Facility</td><td class="col-type">string</td><td class="col-desc">Facility/área do motivo (ex.: <code>"Pesagem"</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Sem inputs:</strong> a API é chamada com corpo vazio (<code>{}</code>) e devolve
+            todos os reason codes cadastrados.</li>
+          <li><strong>Tipo x OEE:</strong> <code>ReasonType = 23</code> (Planned) normalmente
+            <em>não</em> penaliza a disponibilidade; <code>24</code> (Unplanned) sim.</li>
+          <li><strong>Motivo genérico:</strong> o item <code>"Outros"</code> vem <strong>sem</strong>
+            <code>Categoria</code>, <code>ReasonType</code>, <code>TipoDesc</code> e
+            <code>Facility</code> — trate esses campos como opcionais ao consumir a lista.</li>
         </ul>
       </section>
 
