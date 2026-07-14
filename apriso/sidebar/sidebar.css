@@ -11,7 +11,7 @@
 
 /* === Sidebar container === */
 .sidebar {
-    width: 100px;
+    width: 230px;
     height: 100%;
     flex-shrink: 0;
     background: var(--grn-verde-esc);

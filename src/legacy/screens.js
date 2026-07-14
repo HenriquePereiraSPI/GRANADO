@@ -5708,6 +5708,33 @@ export const SCREENS = {
         </div>
       </div>
 
+      <!-- Popup: Integração TRACTIAN (cadastro do ativo) -->
+      <div id="modal-manut-integ-tractian" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:975;align-items:center;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto">
+        <div style="background:var(--surface);border-top:4px solid var(--inf);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:460px;width:94%;box-shadow:var(--sh2);margin:auto">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:16px">
+            <div>
+              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--inf)">📡 Integração · TRACTIAN</div>
+              <div id="manut-integ-nome" style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc);margin-top:2px">—</div>
+            </div>
+            <button onclick="manutFecharIntegTractian()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">AssetID *</label>
+              <input class="inp" id="manut-integ-asset" type="text" placeholder="ID do ativo no TRACTIAN" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+            </div>
+            <div style="display:flex;flex-direction:column">
+              <label class="lbl">LocationID *</label>
+              <input class="inp" id="manut-integ-location" type="text" placeholder="ID da localização no TRACTIAN" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;margin-top:14px;border-top:1px solid var(--border)">
+            <button class="btn btn-md btn-ghost" onclick="manutFecharIntegTractian()">Cancelar</button>
+            <button class="btn btn-md btn-v" onclick="manutCadastrarTractian()">Cadastrar</button>
+          </div>
+        </div>
+      </div>
+
       <script>
       // Estrutura organizacional: Facility › Production Line › Workcenter › Equipamento
       var MANUT_DATA = {
@@ -5735,6 +5762,7 @@ export const SCREENS = {
         'Pesagem|MD1|Pesagem Central MD1|Balança BAL-02': ['Treinamento POP 21788'],
         'Fabricação|Production Line A|Mistura A|Reator REA-01': ['BPF — Boas Práticas de Fabricação', 'Operação de Reatores']
       };
+      window.MANUT_TRACTIAN = window.MANUT_TRACTIAN || {};   // integração Tractian por ativo (key -> {assetId, locationId})
       var MANUT_EXP = {};      // nós expandidos (key -> true)
       var MANUT_SEL = null;    // nó selecionado (key)
       var MANUT_PARA = null;   // alvo do popup de parada (key)
@@ -5831,6 +5859,34 @@ export const SCREENS = {
       }
       function manutIniciar(key) { delete window.MANUT_PARADAS[key]; manutRender(); }
 
+      // ── Integração TRACTIAN: cadastro do ativo (AssetID / LocationID) ──
+      function manutAbrirIntegTractian() {
+        var key = MANUT_SEL; if (!key) return;
+        var el = document.getElementById('manut-integ-nome');
+        if (el) el.textContent = manutLabelNivel(manutNivel(key)) + ' · ' + manutNome(key);
+        // Pré-preenche se já houver cadastro
+        var atual = window.MANUT_TRACTIAN[key] || {};
+        var a = document.getElementById('manut-integ-asset');
+        var l = document.getElementById('manut-integ-location');
+        if (a) a.value = atual.assetId || '';
+        if (l) l.value = atual.locationId || '';
+        var m = document.getElementById('modal-manut-integ-tractian'); if (m) m.style.display = 'flex';
+      }
+      function manutFecharIntegTractian() { var m = document.getElementById('modal-manut-integ-tractian'); if (m) m.style.display = 'none'; }
+      function manutCadastrarTractian() {
+        var key = MANUT_SEL; if (!key) return;
+        var a = document.getElementById('manut-integ-asset');
+        var l = document.getElementById('manut-integ-location');
+        var assetId = a ? a.value.trim() : '';
+        var locationId = l ? l.value.trim() : '';
+        if (!assetId) { alert('⚠ Informe o AssetID'); return; }
+        if (!locationId) { alert('⚠ Informe o LocationID'); return; }
+        window.MANUT_TRACTIAN[key] = { assetId: assetId, locationId: locationId };
+        manutFecharIntegTractian();
+        manutRender();
+        alert('📡 Ativo cadastrado no TRACTIAN.\\n\\nAssetID: ' + assetId + '\\nLocationID: ' + locationId);
+      }
+
       // Certificados obrigatórios para operar o ativo selecionado
       function manutCerts(key) { return (window.MANUT_CERTS[key] || []); }
       function manutAddCert() {
@@ -5919,7 +5975,7 @@ export const SCREENS = {
         var certBlock = '<div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">' +
           '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px">' +
             '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)">🎓 Certificados obrigatórios para operar (' + certs.length + ')</div>' +
-            '<button class="btn btn-sm btn-v" onclick="manutAddCert()" title="Adicionar certificado" style="padding:6px 12px;font-weight:700;white-space:nowrap">＋ Adicionar</button>' +
+            '<button class="btn btn-sm btn-v" onclick="manutAddCert()" title="Adicionar certificado" style="padding:6px 12px;font-weight:700;white-space:nowrap">＋ Certificado</button>' +
           '</div>' +
           '<table style="width:100%;border-collapse:collapse;font-size:12px">' +
             '<thead><tr>' +
@@ -5930,12 +5986,30 @@ export const SCREENS = {
             '<tbody>' + linhas + '</tbody>' +
           '</table>' +
         '</div>';
+        // Bloco de Integrações (Tractian)
+        var tr = window.MANUT_TRACTIAN[key];
+        var integStatus = tr
+          ? '<div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--font-m);font-size:11px;color:var(--text2)">' +
+              '<span class="bdg bdg-ok" style="font-size:9px">✓ Tractian</span>' +
+              '<span>AssetID: <strong>' + tr.assetId + '</strong></span>' +
+              '<span>·</span>' +
+              '<span>LocationID: <strong>' + tr.locationId + '</strong></span>' +
+            '</div>'
+          : '<div style="margin-top:8px;font-size:11px;color:var(--text3)">Nenhuma integração cadastrada para este ativo.</div>';
+        var integBlock = '<div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px">' +
+            '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)">🔌 Integrações</div>' +
+            '<button class="btn btn-sm btn-ghost" onclick="manutAbrirIntegTractian()" style="padding:6px 12px;font-weight:700;white-space:nowrap">📡 Tractian</button>' +
+          '</div>' +
+          integStatus +
+        '</div>';
         return '<div style="border:1px solid ' + (parado ? 'var(--per)' : 'var(--border)') + ';border-top:4px solid ' + (parado ? 'var(--per)' : 'var(--verde)') + ';border-radius:10px;background:var(--surface);box-shadow:var(--sh);padding:20px 22px' + (parado ? ';animation:pesSubmenuPulse 1.2s ease-in-out infinite' : '') + '">' +
           '<div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro)">Nível ' + nivel + ' · ' + manutLabelNivel(nivel) + '</div>' +
           '<div style="display:flex;align-items:center;gap:10px;margin:4px 0 2px"><span style="font-size:28px">' + manutIconNivel(nivel) + '</span><span style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--verde-esc)">' + manutNome(key) + '</span></div>' +
           '<div style="font-size:11px;color:var(--text3);margin-bottom:16px">' + parts.join(' › ') + '</div>' +
           acao +
           certBlock +
+          integBlock +
         '</div>';
       }
 
