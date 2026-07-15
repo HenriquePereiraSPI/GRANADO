@@ -1,5 +1,12 @@
 <header class="topbar">
 
+    <!-- ============ MENU (mobile) ============ -->
+    <button type="button" class="tb-hamburger" aria-label="Abrir menu">
+        <span class="tb-hamburger-bar"></span>
+        <span class="tb-hamburger-bar"></span>
+        <span class="tb-hamburger-bar"></span>
+    </button>
+
     <!-- ============ BREADCRUMB ============ -->
     <div class="topbar-breadcrumb">
         <button type="button" class="tb-home" data-flx-bind="Action" value="OPEN_HOME">
@@ -34,13 +41,23 @@
 
 <script>
     (function () {
-        var header_home = document.querySelector('.tb-home');
-        if (!header_home) return;
 
-        header_home.addEventListener('click', function (e) {
-            if (window.AprisoContext && window.AprisoContext.outputs) {
-                window.AprisoContext.outputs.current_sidebar_selected_item = '';
+        function init() {
+
+            // Decisão mobile/web feita UMA vez no load (classe no <html>).
+            if (window.innerWidth <= 768) {
+                document.documentElement.classList.add('is-granado-mobile');
             }
-        }, true);
+
+            initHeaderEvents();
+
+        }
+        // Garante que so roda depois do DOM montado
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+
     })();
 </script>

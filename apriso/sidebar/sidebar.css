@@ -307,3 +307,47 @@
     color: rgba(253, 250, 241, .35);
     margin-top: 2px;
 }
+
+/* === Drawer mobile (decidido no load via .is-granado-mobile no <html>) === */
+/* Fundo escurecido — cobre a viewport (fica dentro do painel, mas é fixed) */
+.sb-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgba(15, 51, 25, .45);
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1px);
+}
+
+/* MOBILE: o painel da sidebar fica escondido (não ocupa espaço).
+   O botão de menu (header) alterna a classe 'drawer-open' no painel. */
+html.is-granado-mobile #panel_SIDEBAR {
+    display: none;
+}
+
+/* Aberto: o painel vira um overlay fixo; a sidebar e o backdrop (ambos fixed)
+   aparecem sobre a página. NÃO há realocação de DOM. */
+html.is-granado-mobile #panel_SIDEBAR.drawer-open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: transparent;
+}
+
+html.is-granado-mobile .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    max-width: 82vw;
+    z-index: 1000;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .45);
+}
+
+/* O backdrop só renderiza quando o painel está aberto (o painel controla) */
+html.is-granado-mobile .sb-backdrop {
+    display: block;
+}

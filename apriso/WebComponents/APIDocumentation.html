@@ -2750,29 +2750,38 @@
   <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
   <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Reason codes recuperados com sucesso."</span><span class="tk-punc">,</span>
   <span class="tk-key">"ReasonCodes"</span><span class="tk-punc">:</span> [
-    <span class="tk-comment">// ── Programado (ReasonType 23 · Planned Downtime) ──</span>
-    { <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Inspec de Equipament"</span><span class="tk-punc">,</span> <span class="tk-key">"Code"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
-      <span class="tk-key">"ReasonCodeDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Parada programada para inspeção e calibração de equipamentos de pesagem"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"Categoria"</span><span class="tk-punc">:</span> <span class="tk-str">"Programado"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonType"</span><span class="tk-punc">:</span> <span class="tk-str">"23"</span><span class="tk-punc">,</span> <span class="tk-key">"TipoDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Planned Downtime"</span><span class="tk-punc">,</span> <span class="tk-key">"Facility"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span> }<span class="tk-punc">,</span>
-    { <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Refeicao"</span><span class="tk-punc">,</span> <span class="tk-key">"Code"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonCodeDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Parada para Refeição"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"Categoria"</span><span class="tk-punc">:</span> <span class="tk-str">"Programado"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonType"</span><span class="tk-punc">:</span> <span class="tk-str">"23"</span><span class="tk-punc">,</span> <span class="tk-key">"TipoDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Planned Downtime"</span><span class="tk-punc">,</span> <span class="tk-key">"Facility"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span> }<span class="tk-punc">,</span>
-    <span class="tk-comment">// … Limpeza de Utensilio · Organiz de Mat Prima · Parada Programada ·
-    //    Reuniao Operacional · Troca de Turno</span>
-
-    <span class="tk-comment">// ── Não programado (ReasonType 24 · Unplanned Downtime) ──</span>
-    { <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Falha Com Balanca"</span><span class="tk-punc">,</span> <span class="tk-key">"Code"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Refeicao"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Code"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReasonCodeDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Parada para Refeição"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Categoria"</span><span class="tk-punc">:</span> <span class="tk-str">"Programado"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReasonType"</span><span class="tk-punc">:</span> <span class="tk-str">"23"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TipoDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Planned Downtime"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Facility"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Falha Com Balanca"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Code"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
       <span class="tk-key">"ReasonCodeDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Falha de comunicação com a balança"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"Categoria"</span><span class="tk-punc">:</span> <span class="tk-str">"Sistemas"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonType"</span><span class="tk-punc">:</span> <span class="tk-str">"24"</span><span class="tk-punc">,</span> <span class="tk-key">"TipoDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Unplanned Downtime"</span><span class="tk-punc">,</span> <span class="tk-key">"Facility"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span> }<span class="tk-punc">,</span>
-    { <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Falta de Mat Prima"</span><span class="tk-punc">,</span> <span class="tk-key">"Code"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
-      <span class="tk-key">"ReasonCodeDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Indisponibilidade de matéria prima "</span><span class="tk-punc">,</span>
-      <span class="tk-key">"Categoria"</span><span class="tk-punc">:</span> <span class="tk-str">"Materia Prima"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonType"</span><span class="tk-punc">:</span> <span class="tk-str">"24"</span><span class="tk-punc">,</span> <span class="tk-key">"TipoDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Unplanned Downtime"</span><span class="tk-punc">,</span> <span class="tk-key">"Facility"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span> }<span class="tk-punc">,</span>
-    <span class="tk-comment">// … Aguardando Almoxarif · Diverg. no Estoque · Etiqueta Incorreta · Falha de Rede ·
-    //    Falha Impressao Etiq · Falha no Coletor · Falha no WMS · Falta Operador ·
-    //    Falta Pallet Gaiola · Manut da balanca · Manut Equipamentos · Manut Sala Pesagem ·
-    //    Mat em Quarentena · Mat Fora da Validade · Mat Prima com Avaria</span>
-
-    <span class="tk-comment">// ── Genérico (sem categoria/tipo) ──</span>
-    { <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Outros"</span><span class="tk-punc">,</span> <span class="tk-key">"Code"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonCodeDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Paradas"</span> }
+      <span class="tk-key">"Categoria"</span><span class="tk-punc">:</span> <span class="tk-str">"Sistemas"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReasonType"</span><span class="tk-punc">:</span> <span class="tk-str">"24"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TipoDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Unplanned Downtime"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Facility"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Manut da balanca"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Code"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReasonCodeDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Parada para manutenção da balança"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Categoria"</span><span class="tk-punc">:</span> <span class="tk-str">"Manutenção"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReasonType"</span><span class="tk-punc">:</span> <span class="tk-str">"24"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TipoDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Unplanned Downtime"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Facility"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Outros"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Code"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReasonCodeDesc"</span><span class="tk-punc">:</span> <span class="tk-str">"Paradas"</span>
+    }
   ]
 }</pre>
 

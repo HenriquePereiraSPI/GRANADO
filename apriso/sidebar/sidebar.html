@@ -1,6 +1,9 @@
 <link type="text/css" rel="stylesheet" href="[Apriso]/Scripts/FontsGranado/granado-fonts.css">
 <link type="text/css" rel="stylesheet" href="[Apriso]/Scripts/CustomStylesGranado/custom_styles_grid.css">
 
+<!-- Fundo escurecido do drawer no mobile (o botão de menu fica no HEADER) -->
+<div class="sb-backdrop"></div>
+
 <aside class="sidebar" data-current-screen="{Screen}">
 
 
@@ -129,14 +132,21 @@
     (function () {
         function init() {
 
-            console.log("CONTEXT FROM SIDEBAR:", JSON.stringify($Context));
+            //console.log("CONTEXT FROM SIDEBAR:", JSON.stringify($Context));
+
+            //[...document.fonts].forEach(f =>
+            //    console.log(f)
+            //);
+
+
             if (typeof $Context !== 'undefined') {
                 window.AprisoContext = $Context;
             }
 
-            [...document.fonts].forEach(f =>
-                console.log(f)
-            );
+            // Decisão mobile/web feita UMA vez no load (classe no <html>).
+            if (window.innerWidth <= 768) {
+                document.documentElement.classList.add('is-granado-mobile');
+            }
 
             initSidebarEvents();
 

@@ -56,7 +56,28 @@ function initSidebarEvents() {
         // Persiste o item selecionado no localStorage — lido no proximo
         // render para restaurar o highlight (ver bloco 1).
         try { localStorage.setItem('current_sidebar_selected_item', item.value); } catch (e) { /* localStorage indisponivel */ }
+
+        // Mobile: ao escolher um item, fecha o drawer.
+        closeSidebarDrawer();
     });
+
+    // ============================================================
+    // 1c. Drawer mobile (SEM realocar DOM)
+    //     A decisao mobile/web é feita UMA vez no load (classe no <html>).
+    //     Fechado: #panel_SIDEBAR fica display:none (não ocupa espaço).
+    //     Aberto: recebe a classe 'drawer-open' (o CSS mostra como overlay).
+    // ============================================================
+    if (window.innerWidth <= 768) {
+        document.documentElement.classList.add('is-granado-mobile');
+    }
+
+    function closeSidebarDrawer() {
+        var panel = document.getElementById('panel_SIDEBAR');
+        if (panel) panel.classList.remove('drawer-open');
+    }
+
+    var backdrop = document.querySelector('.sb-backdrop');
+    if (backdrop) backdrop.addEventListener('click', closeSidebarDrawer);
 
     // ============================================================
     // 2. Toggle dos modulos via event delegation
