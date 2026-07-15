@@ -11,6 +11,9 @@
     --grn-ok-p: #D2E8D7;
     --grn-ok-b: #98C8A8;
     --grn-per: #8C1A1A;
+    --grn-verde-esc: #0F3319;
+    --grn-ouro-claro: #C8A85A;
+    --grn-ouro: #9A7520;
     --grn-font-d: 'Poppins', 'DejaVu Sans', Arial, sans-serif;
     --grn-font-b: 'Poppins', 'DejaVu Sans', Arial, sans-serif;
     --grn-font-m: Arial, 'DejaVu Sans', Helvetica, sans-serif;
@@ -56,6 +59,35 @@
 
 .tb-hamburger:hover .tb-hamburger-bar {
     background: var(--grn-verde-meio);
+}
+
+/* === Badge Granado (só no mobile) — mesmo padrão da aplicação === */
+.tb-logo-mobile {
+    display: none;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--grn-font-d);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    color: var(--grn-verde-esc);
+    white-space: nowrap;
+}
+
+.tb-logo-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: var(--grn-verde-esc);
+    color: var(--grn-ouro-claro);
+    border: 1px solid var(--grn-ouro);
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0;
+    box-shadow: 0 1px 4px rgba(15, 51, 25, .25);
 }
 
 /* === Breadcrumb === */
@@ -250,4 +282,10 @@ html.is-granado-mobile .tb-page {
 /* Botões da direita saem no mobile para deixar o header limpo */
 html.is-granado-mobile .topbar-right {
     display: none;
+}
+
+/* Badge Granado aparece no mobile, alinhado à direita */
+html.is-granado-mobile .tb-logo-mobile {
+    display: inline-flex;
+    margin-left: auto;
 }

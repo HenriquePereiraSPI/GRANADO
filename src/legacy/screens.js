@@ -10219,23 +10219,29 @@ export const SCREENS = {
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px">
       <div>
         <div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--verde-esc)">Relatório de Paradas e Disponibilidade</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:3px">ERU 5.1.50 · 5.1.12 · 5.1.62 · Monitoramento de Paradas — Embalagem, Fabricação e Pesagem</div>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-sm btn-ghost" onclick="alert('⬇ Exportando...')">⬇ CSV</button>
-        <button class="btn btn-sm btn-ghost" onclick="alert('🖨 Imprimindo...')">🖨 Imprimir</button>
       </div>
     </div>
 
-    <!-- Filtros -->
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;margin-bottom:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
-      <div style="flex:1;min-width:120px"><div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase">Período</div>
-        <select class="sel" style="width:100%"><option>Hoje</option><option selected>Esta semana</option><option>Este mês</option></select></div>
-      <div style="flex:1;min-width:120px"><div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase">Linha / Sala</div>
-        <select class="sel" style="width:100%"><option>Todas</option><option>L1</option><option>L2</option><option>L3</option><option>L4</option><option>Sala Pesagem A</option></select></div>
-      <div style="flex:1;min-width:120px"><div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase">Tipo</div>
-        <select class="sel" style="width:100%"><option>Todos</option><option>Manutenção</option><option>Qualidade</option><option>Abastecimento</option><option>Setup</option><option>Outros</option></select></div>
-      <button class="btn btn-sm btn-primary" style="padding:8px 18px;align-self:flex-end">🔍 Filtrar</button>
+    <!-- ── Barra de Filtros (mesmo padrão da Seleção de Ordem de Pesagem) ── -->
+    <div class="card cv mb14" style="padding:10px 14px;overflow:visible">
+      <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;flex:1.4 1 180px;min-width:160px">
+          <label class="lbl">Recurso</label>
+          <input class="inp" id="rp-flt-recurso" placeholder="Ex.: Linha L2, Sala Pesagem A" style="font-size:12px;padding:7px 10px">
+        </div>
+        <div style="display:flex;flex-direction:column;flex:1 1 130px;min-width:120px">
+          <label class="lbl">Data Inicial</label>
+          <input class="inp" id="rp-flt-data-ini" type="date" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+        </div>
+        <div style="display:flex;flex-direction:column;flex:1 1 130px;min-width:120px">
+          <label class="lbl">Data Final</label>
+          <input class="inp" id="rp-flt-data-fim" type="date" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+        </div>
+        <div style="display:flex;gap:6px;align-items:flex-end">
+          <button class="btn btn-md btn-v" onclick="alert('🔍 Filtrando paradas...')" style="white-space:nowrap">🔍 Filtrar</button>
+          <button class="btn btn-md btn-ghost" title="Limpar filtros" onclick="document.getElementById('rp-flt-recurso').value='';document.getElementById('rp-flt-data-ini').value='';document.getElementById('rp-flt-data-fim').value=''">✕</button>
+        </div>
+      </div>
     </div>
 
     <!-- KPI Cards -->
@@ -10264,7 +10270,7 @@ export const SCREENS = {
 
     <!-- Disponibilidade por linha -->
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:18px">
-      <div style="padding:13px 16px;background:var(--verde-esc);color:#fff;font-size:13px;font-weight:700">⚡ Disponibilidade por Linha / Sala</div>
+      <div style="padding:13px 16px;background:var(--verde-esc);color:#fff;font-size:13px;font-weight:700">⚡ Disponibilidade por Recurso</div>
       <div style="padding:16px 20px;display:flex;flex-direction:column;gap:12px">
         <div id="paradas-lines-data" style="display:contents"></div>
         <script>
@@ -10296,49 +10302,44 @@ export const SCREENS = {
 
     <!-- Tabela de eventos -->
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
-      <div style="padding:13px 16px;background:var(--verde-esc);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:space-between">
+      <div style="padding:13px 16px;background:var(--verde-esc);color:#fff;font-size:13px;font-weight:700">
         <span>📋 Eventos de Parada Detalhados</span>
-        <span style="font-size:11px;font-weight:400;opacity:.8">ERU 5.1.62 — Reclassificação disponível</span>
       </div>
       <table style="width:100%;border-collapse:collapse;font-size:12px">
         <thead>
           <tr style="background:var(--surface2)">
-            <th style="padding:8px 12px;text-align:left;color:var(--text3);font-weight:700;text-transform:uppercase;font-size:10px">Data/Hora Início</th>
-            <th style="padding:8px 12px;text-align:left;color:var(--text3);font-weight:700;text-transform:uppercase;font-size:10px">Linha/Sala</th>
-            <th style="padding:8px 12px;text-align:left;color:var(--text3);font-weight:700;text-transform:uppercase;font-size:10px">Tipo</th>
-            <th style="padding:8px 12px;text-align:left;color:var(--text3);font-weight:700;text-transform:uppercase;font-size:10px">Causa</th>
+            <th style="padding:8px 12px;text-align:left;color:var(--text3);font-weight:700;text-transform:uppercase;font-size:10px">Recurso</th>
+            <th style="padding:8px 12px;text-align:left;color:var(--text3);font-weight:700;text-transform:uppercase;font-size:10px">Período Inicial</th>
+            <th style="padding:8px 12px;text-align:left;color:var(--text3);font-weight:700;text-transform:uppercase;font-size:10px">Período Final</th>
             <th style="padding:8px 12px;text-align:right;color:var(--text3);font-weight:700;text-transform:uppercase;font-size:10px">Duração</th>
-            <th style="padding:8px 12px;text-align:center;color:var(--text3);font-weight:700;text-transform:uppercase;font-size:10px">Origem</th>
-            <th style="padding:8px 12px;text-align:center;color:var(--text3);font-weight:700;text-transform:uppercase;font-size:10px">Ações</th>
+            <th style="padding:8px 12px;text-align:left;color:var(--text3);font-weight:700;text-transform:uppercase;font-size:10px">Justificativa</th>
+            <th style="padding:8px 12px;text-align:left;color:var(--text3);font-weight:700;text-transform:uppercase;font-size:10px">Comentário</th>
           </tr>
         </thead>
         <tbody>
           <tr style="border-top:1px solid var(--border)">
-            <td style="padding:9px 12px;font-family:var(--font-m);font-size:11px">09/04 07:22</td>
             <td style="padding:9px 12px;font-weight:600">Linha L3</td>
-            <td style="padding:9px 12px"><span style="background:var(--per-p);color:var(--per);border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700">Manutenção</span></td>
-            <td style="padding:9px 12px;color:var(--text2)">Falha motor esteira</td>
+            <td style="padding:9px 12px;font-family:var(--font-m);font-size:11px">09/04 07:22</td>
+            <td style="padding:9px 12px;font-family:var(--font-m);font-size:11px">09/04 09:36</td>
             <td style="padding:9px 12px;text-align:right;font-family:var(--font-m);font-weight:700;color:var(--per)">2h 14min</td>
-            <td style="padding:9px 12px;text-align:center"><span style="background:var(--inf-p);color:var(--inf);border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700">Auto</span></td>
-            <td style="padding:9px 12px;text-align:center"><button class="btn btn-sm btn-ghost" onclick="alert('Reclassificar parada — Modal de reclassificação (ERU 5.1.62)')">✏️ Reclassif.</button></td>
+            <td style="padding:9px 12px;color:var(--text2)">Falha motor esteira</td>
+            <td style="padding:9px 12px;color:var(--text3);font-size:11px">Motor substituído; aguardando peça reserva.</td>
           </tr>
           <tr style="border-top:1px solid var(--border);background:var(--bg)">
+            <td style="padding:9px 12px;font-weight:600">Linha L1</td>
             <td style="padding:9px 12px;font-family:var(--font-m);font-size:11px">09/04 10:05</td>
-            <td style="padding:9px 12px;font-weight:600">L1</td>
-            <td style="padding:9px 12px"><span style="background:var(--alr-p);color:var(--alr);border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700">Abastecimento</span></td>
-            <td style="padding:9px 12px;color:var(--text2)">Falta de embalagem PVC</td>
+            <td style="padding:9px 12px;font-family:var(--font-m);font-size:11px">09/04 10:43</td>
             <td style="padding:9px 12px;text-align:right;font-family:var(--font-m);font-weight:700;color:var(--alr)">0h 38min</td>
-            <td style="padding:9px 12px;text-align:center"><span style="background:var(--ok-p);color:var(--ok);border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700">Manual</span></td>
-            <td style="padding:9px 12px;text-align:center"><button class="btn btn-sm btn-ghost" onclick="alert('Reclassificar parada')">✏️ Reclassif.</button></td>
+            <td style="padding:9px 12px;color:var(--text2)">Falta de embalagem PVC</td>
+            <td style="padding:9px 12px;color:var(--text3);font-size:11px">Reposição solicitada ao almoxarifado.</td>
           </tr>
           <tr style="border-top:1px solid var(--border)">
+            <td style="padding:9px 12px;font-weight:600">Sala Pesagem A</td>
             <td style="padding:9px 12px;font-family:var(--font-m);font-size:11px">08/04 14:30</td>
-            <td style="padding:9px 12px;font-weight:600">Pesa. A</td>
-            <td style="padding:9px 12px"><span style="background:var(--inf-p);color:var(--inf);border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700">Setup</span></td>
-            <td style="padding:9px 12px;color:var(--text2)">Troca de produto</td>
+            <td style="padding:9px 12px;font-family:var(--font-m);font-size:11px">08/04 15:15</td>
             <td style="padding:9px 12px;text-align:right;font-family:var(--font-m)">0h 45min</td>
-            <td style="padding:9px 12px;text-align:center"><span style="background:var(--inf-p);color:var(--inf);border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700">Auto</span></td>
-            <td style="padding:9px 12px;text-align:center"><button class="btn btn-sm btn-ghost" onclick="alert('Reclassificar parada')">✏️ Reclassif.</button></td>
+            <td style="padding:9px 12px;color:var(--text2)">Troca de produto</td>
+            <td style="padding:9px 12px;color:var(--text3);font-size:11px">Setup planejado entre ordens.</td>
           </tr>
         </tbody>
       </table>
