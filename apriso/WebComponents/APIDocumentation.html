@@ -2833,8 +2833,9 @@
         <p class="gd-lead">
           Recupera as informações de <strong>disponibilidade e paradas</strong> de um recurso
           (equipamento) num período. Retorna um <strong>resumo agregado</strong>
-          (<code>ResourceGrouped</code>) e a <strong>linha do tempo dos estados</strong>
-          (<code>ResourceStates</code>) — cada intervalo de operação ou parada.
+          (<code>ResourceGrouped</code>), a <strong>linha do tempo dos estados</strong>
+          (<code>ResourceStates</code> — cada intervalo de operação ou parada) e um
+          <strong>resumo consolidado</strong> do período (<code>ResourceOverall</code>).
         </p>
 
         <h2 class="gd-h2">Chamada</h2>
@@ -2844,8 +2845,8 @@
         </div>
         <p class="gd-lead">
           Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
-          (<code>Success</code> / <code>Message</code>) acrescido de <code>ResourceGrouped</code> e
-          <code>ResourceStates</code>.
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>ResourceGrouped</code>,
+          <code>ResourceStates</code> e <code>ResourceOverall</code>.
         </p>
 
         <!-- ===== Inputs ===== -->
@@ -2911,6 +2912,14 @@
       <span class="tk-key">"DurSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"34783"</span><span class="tk-punc">,</span> <span class="tk-key">"Parado"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Outros"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonCodeComment"</span><span class="tk-punc">:</span> <span class="tk-str">"rdf"</span>
     }
     <span class="tk-comment">// … demais intervalos de estado seguem o mesmo formato</span>
+  ]<span class="tk-punc">,</span>
+  <span class="tk-key">"ResourceOverall"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"OVERALL"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PeriodoIniUTC"</span><span class="tk-punc">:</span> <span class="tk-str">"7/6/2026 2:21:30 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoFimUTC"</span><span class="tk-punc">:</span> <span class="tk-str">"7/16/2026 11:48:05 AM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PeriodoIni"</span><span class="tk-punc">:</span> <span class="tk-str">"7/6/2026 11:21:30 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoFim"</span><span class="tk-punc">:</span> <span class="tk-str">"7/16/2026 8:48:05 AM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoTotalSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"5007959"</span><span class="tk-punc">,</span> <span class="tk-key">"DowntimeSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"2795"</span><span class="tk-punc">,</span> <span class="tk-key">"RunTimeSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"5005164"</span><span class="tk-punc">,</span> <span class="tk-key">"DisponibilidadePct"</span><span class="tk-punc">:</span> <span class="tk-str">"99.94"</span>
+    }
   ]
 }</pre>
 
@@ -2924,6 +2933,7 @@
             <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
             <tr><td class="col-name">ResourceGrouped</td><td class="col-type">array&lt;resumo&gt;</td><td class="col-desc">Resumo agregado do período (totais e disponibilidade). Campos abaixo.</td></tr>
             <tr><td class="col-name">ResourceStates</td><td class="col-type">array&lt;estado&gt;</td><td class="col-desc">Linha do tempo dos estados do recurso (cada intervalo de operação/parada). Campos abaixo.</td></tr>
+            <tr><td class="col-name">ResourceOverall</td><td class="col-type">array&lt;resumo&gt;</td><td class="col-desc">Resumo <strong>consolidado</strong> (linha <code>"OVERALL"</code>) do período, com datas em UTC e local. Campos abaixo.</td></tr>
           </tbody>
         </table>
 
@@ -2956,6 +2966,24 @@
             <tr><td class="col-name">Parado</td><td class="col-type">string (bool)</td><td class="col-desc"><code>"1"</code> = recurso parado (downtime) · <code>"0"</code> = em operação.</td></tr>
             <tr><td class="col-name">ReasonCode</td><td class="col-type">string</td><td class="col-desc">Motivo da parada (ex.: <code>"Outros"</code>). Vazio quando em operação.</td></tr>
             <tr><td class="col-name">ReasonCodeComment</td><td class="col-type">string</td><td class="col-desc">Observação/justificativa do estado. Pode vir vazio.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de <code>ResourceOverall</code> (resumo consolidado)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">ResourceName</td><td class="col-type">string</td><td class="col-desc">Sempre <code>"OVERALL"</code> — indica o consolidado do período.</td></tr>
+            <tr><td class="col-name">PeriodoIniUTC</td><td class="col-type">string (data)</td><td class="col-desc">Início efetivo do período, em <strong>UTC</strong>.</td></tr>
+            <tr><td class="col-name">PeriodoFimUTC</td><td class="col-type">string (data)</td><td class="col-desc">Fim efetivo do período, em <strong>UTC</strong>.</td></tr>
+            <tr><td class="col-name">PeriodoIni</td><td class="col-type">string (data)</td><td class="col-desc">Início efetivo do período, no fuso <strong>local</strong>.</td></tr>
+            <tr><td class="col-name">PeriodoFim</td><td class="col-type">string (data)</td><td class="col-desc">Fim efetivo do período, no fuso <strong>local</strong>.</td></tr>
+            <tr><td class="col-name">TempoTotalSeg</td><td class="col-type">string (número)</td><td class="col-desc">Tempo total do período, em segundos.</td></tr>
+            <tr><td class="col-name">DowntimeSeg</td><td class="col-type">string (número)</td><td class="col-desc">Tempo parado (downtime) total, em segundos.</td></tr>
+            <tr><td class="col-name">RunTimeSeg</td><td class="col-type">string (número)</td><td class="col-desc">Tempo em operação (run time) total, em segundos.</td></tr>
+            <tr><td class="col-name">DisponibilidadePct</td><td class="col-type">string (número)</td><td class="col-desc">Disponibilidade consolidada, em % (RunTime ÷ TempoTotal).</td></tr>
           </tbody>
         </table>
 

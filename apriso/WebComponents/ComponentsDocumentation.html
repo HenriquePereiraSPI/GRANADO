@@ -44,6 +44,7 @@
   <script src="./granado-option-popup.js"></script>
   <script src="./granado-quantity-popup.js"></script>
   <script src="./granado-checklist-popup.js"></script>
+  <script src="./granado-gallery.js"></script>
 
   <style>
     html,
@@ -283,6 +284,7 @@
       <a class="gd-link" href="#granado-option-popup">granado-option-popup</a>
       <a class="gd-link" href="#granado-quantity-popup">granado-quantity-popup</a>
       <a class="gd-link" href="#granado-checklist-popup">granado-checklist-popup</a>
+      <a class="gd-link" href="#granado-gallery">granado-gallery</a>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -9681,6 +9683,131 @@ pop.open();</pre>
             menos uma linha as usar.</li>
           <li><strong>Tipografia:</strong> Poppins para texto, Arial para a tabela e campos (números/códigos).</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores Granado hardcoded (paleta do app).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-gallery
+           ============================================================ -->
+      <section id="granado-gallery" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-gallery&gt;</code></h1>
+        <p class="gd-lead">
+          Galeria <strong>vertical de cards</strong> — mesma ideia da versão mobile da fila em
+          "Pesagem › Seleção de Ordem de Pesagem". Cada card mostra (todos opcionais)
+          <strong>title</strong>, <strong>subtitle</strong>, <strong>data</strong> e um
+          <strong>badge de status</strong>; ao clicar, devolve o item inteiro + <code>metadata</code>.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-gallery.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso</h2>
+        <p class="gd-lead">
+          Passe os itens pela propriedade JS <code>.data</code> (array). O clique dispara o evento
+          <code>item-click</code> e chama <code>.onItemClick(detail)</code> se definido.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+          <div style="flex:1 1 280px;max-width:400px"><granado-gallery id="doc-gal"></granado-gallery></div>
+          <div style="flex:1 1 280px;max-width:400px"><granado-gallery id="doc-gal-scroll" enable-scroll="true" scroll-height="220px" card-color="#F4EED9" title-color="#1A4A8C" status-color="#8C1A1A"></granado-gallery></div>
+        </div>
+        <div id="doc-gal-status" style="font-size:12px;color:#8A9E8E;margin-top:8px"></div>
+        <script>
+          (function () {
+            var itens = [
+              { title: 'OP-2026-0416', subtitle: 'Loção Rosa 200ml', data: '18/05/2026', status: 'NOVO', metadata: { op: 'OP-2026-0416', sala: 'A' } },
+              { title: 'OP-2026-0414', subtitle: 'Creme 150g', data: '17/05/2026', status: 'PESANDO', metadata: { op: 'OP-2026-0414' } },
+              { title: 'OP-2026-0413', subtitle: 'Sabonete Glicerinado 90g', data: '14/05/2026', status: 'DETALHES', metadata: { op: 'OP-2026-0413' } }
+            ];
+            function onClick(d) { var s = document.getElementById('doc-gal-status'); if (s) s.textContent = '➡ ' + d.title + ' · ' + JSON.stringify(d.metadata); }
+            var g1 = document.getElementById('doc-gal'); g1.data = itens; g1.onItemClick = onClick;
+            var g2 = document.getElementById('doc-gal-scroll'); g2.data = itens.concat(itens); g2.onItemClick = onClick;
+          })();
+        </script>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-gallery</span> <span class="tk-attr">id</span>=<span class="tk-str">"g"</span><span class="tk-tag">&gt;&lt;/granado-gallery&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">var</span> g = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'g'</span>);
+  g.data = [
+    { title: <span class="tk-str">'OP-2026-0416'</span>, subtitle: <span class="tk-str">'Loção Rosa 200ml'</span>, data: <span class="tk-str">'18/05/2026'</span>,
+      status: <span class="tk-str">'NOVO'</span>, metadata: { op: <span class="tk-str">'OP-2026-0416'</span>, sala: <span class="tk-str">'A'</span> } },
+    { title: <span class="tk-str">'OP-2026-0414'</span>, subtitle: <span class="tk-str">'Creme 150g'</span>, data: <span class="tk-str">'17/05/2026'</span>, status: <span class="tk-str">'PESANDO'</span> }
+  ];
+  g.onItemClick = <span class="tk-keyword">function</span> (d) { console.log(d.title, d.status, d.metadata); };
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h3 class="gd-h3">Sem JS — tudo por atributos</h3>
+        <p class="gd-lead">
+          Também dá para configurar 100% no HTML: os itens vão no atributo <code>data</code> como
+          <strong>JSON</strong> e o clique em <code>onitemclick</code> (string JS que recebe
+          <code>event</code> e <code>detail</code>).
+        </p>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-gallery</span>
+    <span class="tk-attr">card-color</span>=<span class="tk-str">"#FDFAF1"</span> <span class="tk-attr">title-color</span>=<span class="tk-str">"#0F3319"</span> <span class="tk-attr">status-color</span>=<span class="tk-str">"#1C5C31"</span>
+    <span class="tk-attr">enable-scroll</span>=<span class="tk-str">"true"</span> <span class="tk-attr">scroll-height</span>=<span class="tk-str">"260px"</span> <span class="tk-attr">scroll-color</span>=<span class="tk-str">"#9A7520"</span>
+    <span class="tk-attr">enable-shadow</span>=<span class="tk-str">"false"</span>
+    <span class="tk-attr">onitemclick</span>=<span class="tk-str">"console.log(detail.title, detail.status, detail.metadata)"</span>
+    <span class="tk-attr">data</span>=<span class="tk-str">'[
+      {"title":"OP-2026-0416","subtitle":"Loção Rosa 200ml","data":"18/05/2026","status":"NOVO","metadata":{"op":"OP-2026-0416","sala":"A"}},
+      {"title":"OP-2026-0414","subtitle":"Creme 150g","data":"17/05/2026","status":"PESANDO"},
+      {"title":"BAL-021","status":"FORA"}
+    ]'</span><span class="tk-tag">&gt;&lt;/granado-gallery&gt;</span></pre>
+        <p class="gd-lead" style="font-size:12px">
+          Obs.: no atributo <code>data</code> use <strong>JSON válido</strong> (chaves e strings com
+          aspas duplas) e envolva o valor com aspas <strong>simples</strong>. <code>metadata</code>
+          aceita qualquer objeto e volta no <code>detail</code> do clique.
+        </p>
+
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos / propriedades</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:160px">Nome</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">data</td><td class="col-type">array</td><td class="col-desc">Itens da galeria (em JS use <code>.data</code>). Campos de cada item na tabela abaixo — <strong>todos opcionais</strong>.</td></tr>
+            <tr><td class="col-name">card-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor de fundo dos cards. Default <code>#FDFAF1</code>.</td></tr>
+            <tr><td class="col-name">title-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor do título. Default <code>#0F3319</code>.</td></tr>
+            <tr><td class="col-name">subtitle-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor do subtítulo. Default <code>#555555</code>.</td></tr>
+            <tr><td class="col-name">data-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor do texto <code>data</code>. Default <code>#8A8575</code>.</td></tr>
+            <tr><td class="col-name">status-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor do badge de status (texto + borda). Default <code>#1C5C31</code>.</td></tr>
+            <tr><td class="col-name">enable-scroll</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> envolve os itens num container com scroll. Em JS: <code>.enableScroll</code>.</td></tr>
+            <tr><td class="col-name">scroll-height</td><td class="col-type">CSS length</td><td class="col-desc">Altura a partir da qual aparece o scroll (ex.: <code>"420px"</code>, <code>"60vh"</code>). Default <code>"420px"</code>. Só vale com <code>enable-scroll="true"</code>. Em JS: <code>.scrollHeight</code>.</td></tr>
+            <tr><td class="col-name">scroll-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor do "polegar" do scroll (fino). Default <code>rgba(191,177,114,.55)</code> (ouro discreto). Em JS: <code>.scrollColor</code>.</td></tr>
+            <tr><td class="col-name">enable-shadow</td><td class="col-type">boolean</td><td class="col-desc"><code>"false"</code> remove a sombra dos cards (e o realce no hover). Default <code>true</code>. Em JS: <code>.enableShadow</code>.</td></tr>
+            <tr><td class="col-name">onItemClick</td><td class="col-type">função / string (JS)</td><td class="col-desc">Executado ao clicar num card, recebe o <code>detail</code>. Em JS prefira a propriedade (função); como atributo é string JS.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada item (<code>data[i]</code>) — todos opcionais</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-desc">Título do card (destaque, na primeira linha).</td></tr>
+            <tr><td class="col-name">subtitle</td><td class="col-type">string</td><td class="col-desc">Subtítulo (linha abaixo do título).</td></tr>
+            <tr><td class="col-name">data</td><td class="col-type">string</td><td class="col-desc">Texto auxiliar (ex.: data/hora) — exibido em fonte mono.</td></tr>
+            <tr><td class="col-name">status</td><td class="col-type">string</td><td class="col-desc">Texto do badge no canto direito (cor = <code>status-color</code>).</td></tr>
+            <tr><td class="col-name">metadata</td><td class="col-type">any</td><td class="col-desc"><strong>Não é exibido</strong> — qualquer objeto/valor extra devolvido no clique.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Evento</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:160px">Evento</th><th style="width:230px">detail</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">item-click</td><td class="col-type">{ index, title, subtitle, data, status, metadata }</td><td class="col-desc">Clique num card. Também chama <code>.onItemClick(detail)</code> / o atributo <code>onitemclick</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Campos opcionais:</strong> linhas sem <code>title/subtitle/data/status</code> simplesmente omitem aquele trecho do card.</li>
+          <li><strong>metadata:</strong> ideal para carregar o identificador/contexto (ex.: OP, sala) e recuperá-lo no clique sem precisar de estado externo.</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (o usuário pode passar <code>var(--x)</code> pelos atributos).</li>
         </ul>
       </section>
 

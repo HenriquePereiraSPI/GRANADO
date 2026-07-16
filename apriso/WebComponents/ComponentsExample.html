@@ -44,6 +44,7 @@
   <script src="./granado-option-popup.js"></script>
   <script src="./granado-quantity-popup.js"></script>
   <script src="./granado-checklist-popup.js"></script>
+  <script src="./granado-gallery.js"></script>
 </head>
 
 <body style="margin:0;padding:24px;background:#F4EED9;font-family:'Lato','DejaVu Sans',Arial,sans-serif;color:#103E20">
@@ -1749,6 +1750,72 @@
           }
         });
       }
+    </script>
+  </section>
+
+  <!-- ========== Linha 32 — granado-gallery ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-gallery&gt;
+    </h2>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+      <!-- Galeria simples (cores default) -->
+      <div style="flex:1 1 300px;min-width:280px;max-width:420px">
+        <div style="font-size:11px;font-weight:700;color:#8A9E8E;margin-bottom:6px">Default</div>
+        <granado-gallery id="gal-default"></granado-gallery>
+      </div>
+      <!-- Galeria com scroll + cores custom (inclui scroll-color) -->
+      <div style="flex:1 1 300px;min-width:280px;max-width:420px">
+        <div style="font-size:11px;font-weight:700;color:#8A9E8E;margin-bottom:6px">Com scroll (240px) + cores custom</div>
+        <granado-gallery id="gal-scroll" enable-scroll="true" scroll-height="240px"
+          card-color="#F4EED9" title-color="#1A4A8C" status-color="#8C1A1A" scroll-color="#1A4A8C"></granado-gallery>
+      </div>
+      <!-- Galeria só com title + status (sem sombra) -->
+      <div style="flex:1 1 240px;min-width:220px;max-width:340px">
+        <div style="font-size:11px;font-weight:700;color:#8A9E8E;margin-bottom:6px">Só title + status (sem sombra)</div>
+        <granado-gallery id="gal-min" enable-shadow="false"></granado-gallery>
+      </div>
+    </div>
+    <div id="gal-status" style="font-size:12px;color:#8A9E8E;margin-top:10px"></div>
+
+    <script>
+      var galItens = [
+        { title: 'OP-2026-0416', subtitle: 'Loção Hidratante Rosa 200ml', data: '18/05/2026', status: 'NOVO',
+          metadata: { op: 'OP-2026-0416', sala: 'A', qtd: '600 kg' } },
+        { title: 'OP-2026-0414', subtitle: 'Creme Hidratante 150g', data: '17/05/2026', status: 'PESANDO',
+          metadata: { op: 'OP-2026-0414', sala: '4' } },
+        { title: 'OP-2026-0413', subtitle: 'Sabonete Phebo Glicerinado 90g', data: '14/05/2026', status: 'DETALHES',
+          metadata: { op: 'OP-2026-0413' } },
+        { title: 'OP-2026-0412', subtitle: 'Sabonete Glicerinado Mel 90g', data: '13/05/2026', status: 'DETALHES',
+          metadata: { op: 'OP-2026-0412' } },
+        { title: 'OP-2026-0411', subtitle: 'Sabonete Phebo Lavanda 90g', data: '—', status: 'HOLD',
+          metadata: { op: 'OP-2026-0411', diasHold: 32 } }
+      ];
+
+      function galOnClick(d) {
+        var s = document.getElementById('gal-status');
+        if (s) s.textContent = '➡ Clicou: ' + d.title + ' (' + (d.status || '') + ') · metadata: ' + JSON.stringify(d.metadata);
+        console.log('[granado-gallery] item-click →', d);
+      }
+
+      var gd = document.getElementById('gal-default');
+      gd.data = galItens;
+      gd.onItemClick = galOnClick;
+
+      var gs = document.getElementById('gal-scroll');
+      gs.data = galItens.concat(galItens);   // duplica para mostrar o scroll
+      gs.onItemClick = galOnClick;
+
+      // Só title + status (demais campos omitidos)
+      var gm = document.getElementById('gal-min');
+      gm.data = [
+        { title: 'BAL-014', status: 'OK', metadata: { tag: 'BAL-014' } },
+        { title: 'BAL-021', status: 'FORA', metadata: { tag: 'BAL-021' } },
+        { title: 'BAL-033', status: 'OK', metadata: { tag: 'BAL-033' } },
+        { title: 'BAL-042', status: 'MANUTENÇÃO', metadata: { tag: 'BAL-042' } }
+      ];
+      gm.onItemClick = galOnClick;
     </script>
   </section>
 </body>
