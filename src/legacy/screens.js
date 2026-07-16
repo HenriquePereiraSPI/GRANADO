@@ -10239,7 +10239,6 @@ export const SCREENS = {
         </div>
         <div style="display:flex;gap:6px;align-items:flex-end">
           <button class="btn btn-md btn-v" onclick="alert('🔍 Filtrando paradas...')" style="white-space:nowrap">🔍 Filtrar</button>
-          <button class="btn btn-md btn-ghost" title="Limpar filtros" onclick="document.getElementById('rp-flt-recurso').value='';document.getElementById('rp-flt-data-ini').value='';document.getElementById('rp-flt-data-fim').value=''">✕</button>
         </div>
       </div>
     </div>
