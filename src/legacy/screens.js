@@ -2106,13 +2106,10 @@ export const SCREENS = {
             </div>
           </div>
 
-          <div id="ckl-sala-confirmada" style="display:none;margin-top:14px;background:var(--verde-dim);border:1px solid var(--ok-b);border-radius:7px;padding:10px 14px;align-items:center;gap:10px">
-            <span style="font-size:18px">✅</span>
-            <div style="flex:1">
-              <div id="ckl-sala-label" style="font-size:12px;font-weight:700;color:var(--verde)">—</div>
-              <div style="font-size:10px;color:var(--text2);margin-top:2px">O checklist selecionado será registrado nesta sala.</div>
-            </div>
-            <button class="btn btn-sm btn-ghost" onclick="cklLimparSala()">Trocar</button>
+          <div id="ckl-sala-alvo-wrap" style="display:none;margin-top:14px;flex-direction:column">
+            <label class="lbl">Registrar checklist em</label>
+            <select class="sel" id="ckl-sala-alvo" style="font-size:12px;padding:8px 10px"></select>
+            <div style="font-size:10px;color:var(--text2);margin-top:5px">Escolha a própria sala ou um equipamento dentro dela.</div>
           </div>
 
           <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;margin-top:14px;border-top:1px solid var(--border)">
@@ -2124,12 +2121,18 @@ export const SCREENS = {
 
       <script>
       // Escolha de Sala antes de abrir cada checklist (mesma ideia do início da Pesagem).
-      var CKL_PENDENTE = null, CKL_SALA_SEL = null;
+      var CKL_PENDENTE = null, CKL_SALA_SEL = null, CKL_ALVO_SEL = null;
       var CKL_TITULOS = {
         balanca: '⚖️ Verificação Diária de Balança',
         temp: '🌡️ Temperatura e Umidade',
         pressao: '📊 Pressão',
         sanitizacao: '🧴 Sanitização de Sala/Box'
+      };
+      // Equipamentos (balanças) dentro de cada sala — alimentam o dropdown de alvo.
+      var CKL_EQUIP = {
+        A: ['BAL-01', 'BAL-02', 'BAL-03', 'BAL-04'],
+        B: ['BAL-05', 'BAL-06', 'BAL-07'],
+        C: ['BAL-08', 'BAL-09']
       };
       function cklAbrirSala(tipo) {
         CKL_PENDENTE = tipo;
@@ -2142,14 +2145,22 @@ export const SCREENS = {
         CKL_SALA_SEL = sala;
         ['A','B','C'].forEach(function(k){ var el = document.getElementById('ckl-sala-btn-' + k); if (el) { el.style.border = '2px solid var(--border)'; el.style.background = 'var(--surface2)'; } });
         var sel = document.getElementById('ckl-sala-btn-' + sala); if (sel) { sel.style.border = '2px solid var(--verde)'; sel.style.background = 'var(--verde-dim)'; }
-        var conf = document.getElementById('ckl-sala-confirmada'); if (conf) conf.style.display = 'flex';
-        var lbl = document.getElementById('ckl-sala-label'); if (lbl) lbl.textContent = '✅ Sala ' + sala + ' selecionada';
+        // Popula o dropdown de alvo: a própria sala + seus equipamentos.
+        var alvo = document.getElementById('ckl-sala-alvo');
+        if (alvo) {
+          var opts = ['Sala ' + sala].concat(CKL_EQUIP[sala] || []);
+          alvo.innerHTML = opts.map(function(o){ return '<option value="' + o + '">' + o + '</option>'; }).join('');
+          CKL_ALVO_SEL = alvo.value;
+          alvo.onchange = function(){ CKL_ALVO_SEL = alvo.value; };
+        }
+        var wrap = document.getElementById('ckl-sala-alvo-wrap'); if (wrap) wrap.style.display = 'flex';
         var btn = document.getElementById('btn-ckl-sala-confirmar'); if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
       }
       function cklLimparSala() {
-        CKL_SALA_SEL = null;
+        CKL_SALA_SEL = null; CKL_ALVO_SEL = null;
         ['A','B','C'].forEach(function(k){ var el = document.getElementById('ckl-sala-btn-' + k); if (el) { el.style.border = '2px solid var(--border)'; el.style.background = 'var(--surface2)'; } });
-        var conf = document.getElementById('ckl-sala-confirmada'); if (conf) conf.style.display = 'none';
+        var wrap = document.getElementById('ckl-sala-alvo-wrap'); if (wrap) wrap.style.display = 'none';
+        var alvo = document.getElementById('ckl-sala-alvo'); if (alvo) alvo.innerHTML = '';
         var btn = document.getElementById('btn-ckl-sala-confirmar'); if (btn) { btn.disabled = true; btn.style.opacity = '.5'; btn.style.cursor = 'not-allowed'; }
       }
       function cklFecharSala() {
