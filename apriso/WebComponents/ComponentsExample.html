@@ -45,6 +45,7 @@
   <script src="./granado-quantity-popup.js"></script>
   <script src="./granado-checklist-popup.js"></script>
   <script src="./granado-gallery.js"></script>
+  <script src="./granado-box-popup.js"></script>
 </head>
 
 <body style="margin:0;padding:24px;background:#F4EED9;font-family:'Lato','DejaVu Sans',Arial,sans-serif;color:#103E20">
@@ -1816,6 +1817,47 @@
         { title: 'BAL-042', status: 'MANUTENÇÃO', metadata: { tag: 'BAL-042' } }
       ];
       gm.onItemClick = galOnClick;
+    </script>
+  </section>
+
+  <!-- ========== Linha 33 — granado-box-popup ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-box-popup&gt;
+    </h2>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button type="button" onclick="boxDemoSalas()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#9A7520;color:#fff;cursor:pointer">🧪 Escolha a Sala (com equipamentos)</button>
+      <span id="box-status" style="font-size:12px;color:#8A9E8E"></span>
+    </div>
+
+    <script>
+      function boxDemoSalas() {
+        GranadoBoxPopup.show({
+          subtitle: 'ESCOLHA A SALA',
+          confirmText: '✓ Confirmar',
+          data: [
+            { id: 'A', icon: '🅰️', title: 'Sala A', subtitle: '4 balanças', status: 'Disponível',
+              metadata: { setor: 'MP', box: 3 },
+              equipamentos: [
+                { id: 'BAL-01', descricao: 'Toledo XK 01' }, { id: 'BAL-02', descricao: 'Toledo XK 02' },
+                { id: 'BAL-03', descricao: 'Toledo XK 03' }, { id: 'BAL-04', descricao: 'Toledo XK 04' }
+              ] },
+            { id: 'B', icon: '🅱️', title: 'Sala B', subtitle: '3 balanças', status: '1 em uso',
+              equipamentos: [ { id: 'BAL-05', descricao: 'Toledo 05' }, { id: 'BAL-06', descricao: 'Toledo 06' }, { id: 'BAL-07', descricao: 'Toledo 07' } ] },
+            // Sem equipamentos -> não abre dropdown, confirma direto na sala
+            { id: 'C', icon: '🇨', title: 'Sala C', subtitle: '2 balanças', status: 'Disponível',
+              metadata: { setor: 'MP' } }
+          ],
+          onConfirm: function (d) {
+            console.log('[box-popup] confirm →', d);
+            var s = document.getElementById('box-status');
+            var alvo = d.equipamento ? (d.equipamento.id + ' · ' + (d.equipamento.descricao || '')) : (d.title + ' (sala inteira)');
+            if (s) s.textContent = '✅ ' + (d.title || d.id) + ' → ' + alvo + ' · metadata: ' + JSON.stringify(d.metadata);
+          }
+        });
+      }
     </script>
   </section>
 </body>

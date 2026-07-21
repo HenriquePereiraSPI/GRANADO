@@ -360,6 +360,7 @@
           <a class="gd-link" href="#GRD_API_CreateEquipmentCertificate">GRD_API_CreateEquipmentCertificate</a>
           <a class="gd-link" href="#GRD_API_DeleteEquipmentCertificate">GRD_API_DeleteEquipmentCertificate</a>
           <a class="gd-link" href="#GRD_API_GetEquipmentCertificate">GRD_API_GetEquipmentCertificate</a>
+          <a class="gd-link" href="#GRD_API_CreateEquipmentIntegrationTractian">GRD_API_CreateEquipmentIntegrationTractian</a>
         </div>
       </div>
 
@@ -1633,7 +1634,8 @@
   <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"10000"</span><span class="tk-punc">,</span>
   <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"1|0"</span><span class="tk-punc">,</span>
   <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Outros"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"DowntimeComment"</span><span class="tk-punc">:</span> <span class="tk-str">"Observação sobre o motivo da parada"</span>
+  <span class="tk-key">"DowntimeComment"</span><span class="tk-punc">:</span> <span class="tk-str">"Observação sobre o motivo da parada"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"IsSendToTractian"</span><span class="tk-punc">:</span> <span class="tk-str">"1|0"</span>
 }</pre>
 
         <h3 class="gd-h3">Campos de entrada</h3>
@@ -1670,6 +1672,12 @@
               <td class="col-type">string</td>
               <td class="col-req">Não</td>
               <td class="col-desc">Observação livre sobre o motivo da parada.</td>
+            </tr>
+            <tr>
+              <td class="col-name">IsSendToTractian</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Não</td>
+              <td class="col-desc">Sinaliza se a parada deve abrir uma OS no sistema Tractian: <code>"1"</code> = envia (abre OS) · <code>"0"</code> = não envia.</td>
             </tr>
           </tbody>
         </table>
@@ -2136,6 +2144,97 @@
             <a class="gd-link" href="#GRD_API_CreateEquipmentCertificate">GRD_API_CreateEquipmentCertificate</a> e
             <a class="gd-link" href="#GRD_API_DeleteEquipmentCertificate">GRD_API_DeleteEquipmentCertificate</a>
             para gerenciar os certificados do equipamento.</li>
+        </ul>
+      </section>
+
+      <!-- ==================================================================
+           GRD_API_CreateEquipmentIntegrationTractian
+           ================================================================== -->
+      <section id="GRD_API_CreateEquipmentIntegrationTractian">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_CreateEquipmentIntegrationTractian</code></h1>
+        <p class="gd-lead">
+          <strong>Cria as informações necessárias para integração com a Tractian</strong> —
+          anexa ao equipamento os identificadores (<code>AssetID</code> / <code>LocationID</code>)
+          usados para vinculá-lo ao ativo correspondente na plataforma Tractian.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_CreateEquipmentIntegrationTractian</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>).
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"EquipmentResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000020"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"AssetID"</span><span class="tk-punc">:</span> <span class="tk-str">"8498487242"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"LocationID"</span><span class="tk-punc">:</span> <span class="tk-str">"484844364"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:210px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">EquipmentResourceName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ResourceName do equipamento que receberá os dados de integração.</td>
+            </tr>
+            <tr>
+              <td class="col-name">AssetID</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Identificador do ativo (Asset) correspondente na plataforma Tractian.</td>
+            </tr>
+            <tr>
+              <td class="col-name">LocationID</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Identificador da localização (Location) do ativo na plataforma Tractian.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Dados de integração anexados com sucesso."</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:160px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se os dados de integração foram anexados com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>EquipmentResourceName:</strong> é o mesmo <code>ResourceName</code> devolvido por
+            <a class="gd-link" href="#GRD_API_GetOrganizationalTree">GRD_API_GetOrganizationalTree</a>
+            (em <code>data.ResourceName</code>).</li>
+          <li><strong>AssetID / LocationID:</strong> são obtidos na própria plataforma Tractian e
+            identificam o ativo e sua localização a serem monitorados.</li>
         </ul>
       </section>
 

@@ -45,6 +45,7 @@
   <script src="./granado-quantity-popup.js"></script>
   <script src="./granado-checklist-popup.js"></script>
   <script src="./granado-gallery.js"></script>
+  <script src="./granado-box-popup.js"></script>
 
   <style>
     html,
@@ -285,6 +286,7 @@
       <a class="gd-link" href="#granado-quantity-popup">granado-quantity-popup</a>
       <a class="gd-link" href="#granado-checklist-popup">granado-checklist-popup</a>
       <a class="gd-link" href="#granado-gallery">granado-gallery</a>
+      <a class="gd-link" href="#granado-box-popup">granado-box-popup</a>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -9808,6 +9810,150 @@ pop.open();</pre>
           <li><strong>Campos opcionais:</strong> linhas sem <code>title/subtitle/data/status</code> simplesmente omitem aquele trecho do card.</li>
           <li><strong>metadata:</strong> ideal para carregar o identificador/contexto (ex.: OP, sala) e recuperá-lo no clique sem precisar de estado externo.</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (o usuário pode passar <code>var(--x)</code> pelos atributos).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-box-popup
+           ============================================================ -->
+      <section id="granado-box-popup" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-box-popup&gt;</code></h1>
+        <p class="gd-lead">
+          Popup de <strong>escolha</strong> — referência ao popup "Registro de Checklist · Escolha a Sala"
+          da Pesagem. Mostra um <strong>grid de cards</strong>; ao selecionar um card que tenha
+          <code>equipamentos</code>, abre um <strong>dropdown</strong> para escolher um deles. No
+          <strong>Confirmar</strong>, devolve o card selecionado + o equipamento escolhido (se houver).
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-box-popup.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso</h2>
+        <p class="gd-lead">
+          Forma recomendada (API estática). Cards com <code>equipamentos</code> abrem o dropdown; sem
+          eles, o <strong>Confirmar</strong> registra na própria opção.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button type="button" onclick="docBoxSalas()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#9A7520;color:#fff;cursor:pointer">🧪 Escolha a Sala</button>
+          <button type="button" onclick="docBoxSalas10()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#fff;color:#9A7520;cursor:pointer">🏭 10 salas</button>
+          <span id="doc-box-status" style="font-size:12px;color:#8A9E8E"></span>
+        </div>
+        <script>
+          function docBoxSalas() {
+            GranadoBoxPopup.show({
+              subtitle: 'ESCOLHA A SALA',
+              confirmText: '✓ Confirmar',
+              data: [
+                { id: 'A', icon: '🅰️', title: 'Sala A', subtitle: '4 balanças', status: 'Disponível',
+                  metadata: { setor: 'MP' },
+                  equipamentos: [ { id: 'BAL-01', descricao: 'Toledo 01' }, { id: 'BAL-02', descricao: 'Toledo 02' } ] },
+                { id: 'C', icon: '🇨', title: 'Sala C', subtitle: '2 balanças', status: 'Disponível' }
+              ],
+              onConfirm: function (d) {
+                var s = document.getElementById('doc-box-status');
+                var alvo = d.equipamento ? d.equipamento.id : (d.title + ' (sala)');
+                if (s) s.textContent = '✅ ' + d.title + ' → ' + alvo;
+                console.log('[box-popup] confirm →', d);
+              }
+            });
+          }
+
+          // Exemplo com 10 salas — grid rola quando há muitos cards.
+          function docBoxSalas10() {
+            var salas = [];
+            for (var i = 1; i <= 10; i++) {
+              var id = 'S' + (i < 10 ? '0' + i : i);
+              salas.push({
+                id: id,
+                icon: '⚖️',
+                title: 'Sala ' + i,
+                subtitle: (1 + (i % 4)) + ' balança(s)',
+                status: (i % 3 === 0) ? 'Ocupada' : 'Disponível',
+                metadata: { setor: 'MP', ordem: i },
+                // Salas pares têm equipamentos (abrem dropdown); ímpares, não.
+                equipamentos: (i % 2 === 0)
+                  ? [ { id: id + '-BAL-01', descricao: 'Toledo 0' + i }, { id: id + '-BAL-02', descricao: 'Filizola 0' + i } ]
+                  : undefined
+              });
+            }
+            GranadoBoxPopup.show({
+              subtitle: 'ESCOLHA A SALA',
+              confirmText: '✓ Confirmar',
+              data: salas,
+              onConfirm: function (d) {
+                var s = document.getElementById('doc-box-status');
+                var alvo = d.equipamento ? d.equipamento.id : (d.title + ' (sala)');
+                if (s) s.textContent = '✅ ' + d.title + ' → ' + alvo;
+                console.log('[box-popup] confirm →', d);
+              }
+            });
+          }
+        </script>
+        <pre class="gd-code"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoBoxPopup.<span class="tk-attr">show</span>({
+    title: <span class="tk-str">'🧪 Registro de Checklist · Escolha a Sala'</span>,
+    subtitle: <span class="tk-str">'⚖️ Verificação Diária de Balança'</span>,
+    data: [
+      { id: <span class="tk-str">'A'</span>, icon: <span class="tk-str">'🅰️'</span>, title: <span class="tk-str">'Sala A'</span>, subtitle: <span class="tk-str">'4 balanças'</span>, status: <span class="tk-str">'Disponível'</span>,
+        metadata: { setor: <span class="tk-str">'MP'</span> },
+        equipamentos: [ { id: <span class="tk-str">'BAL-01'</span>, descricao: <span class="tk-str">'Toledo 01'</span> }, { id: <span class="tk-str">'BAL-02'</span>, descricao: <span class="tk-str">'Toledo 02'</span> } ] },
+      { id: <span class="tk-str">'C'</span>, icon: <span class="tk-str">'🇨'</span>, title: <span class="tk-str">'Sala C'</span>, subtitle: <span class="tk-str">'2 balanças'</span> }   <span class="tk-comment">// sem equipamentos</span>
+    ],
+    onConfirm: <span class="tk-keyword">function</span> (d) { console.log(d.id, d.equipamento); }   <span class="tk-comment">// equipamento = null se escolheu a sala</span>
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos / propriedades</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:160px">Nome</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-desc">Rótulo pequeno (eyebrow) no topo do popup.</td></tr>
+            <tr><td class="col-name">subtitle</td><td class="col-type">string</td><td class="col-desc">Título principal (abaixo do <code>title</code>).</td></tr>
+            <tr><td class="col-name">data</td><td class="col-type">array</td><td class="col-desc">Cards da escolha (em JS use <code>.data</code>). Campos de cada item abaixo.</td></tr>
+            <tr><td class="col-name">confirm-text</td><td class="col-type">string</td><td class="col-desc">Texto do botão confirmar (default "Confirmar").</td></tr>
+            <tr><td class="col-name">equip-label</td><td class="col-type">string</td><td class="col-desc">Rótulo do dropdown de equipamentos (default "Equipamentos").</td></tr>
+            <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> fecha ao clicar fora. Default <strong>não fecha</strong>. Em JS: <code>.closeOnBackdrop</code>.</td></tr>
+            <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code>.</td></tr>
+            <tr><td class="col-name">onConfirm</td><td class="col-type">função / string (JS)</td><td class="col-desc">Executado ao confirmar; recebe <code>event</code> e <code>detail</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada card (<code>data[i]</code>) — só <code>id</code> é obrigatório</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">id</td><td class="col-type">string / number</td><td class="col-desc">Identificador do card (obrigatório) — devolvido no confirm.</td></tr>
+            <tr><td class="col-name">icon</td><td class="col-type">string</td><td class="col-desc">Emoji/ícone exibido no topo do card (opcional).</td></tr>
+            <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-desc">Título do card (opcional; sem ele, mostra o <code>id</code>).</td></tr>
+            <tr><td class="col-name">subtitle</td><td class="col-type">string</td><td class="col-desc">Texto auxiliar (opcional).</td></tr>
+            <tr><td class="col-name">status</td><td class="col-type">string</td><td class="col-desc">Texto do badge do card (opcional).</td></tr>
+            <tr><td class="col-name">metadata</td><td class="col-type">any</td><td class="col-desc">Valor extra — não exibido, devolvido no confirm (opcional).</td></tr>
+            <tr><td class="col-name">equipamentos</td><td class="col-type">array&lt;{id, descricao}&gt;</td><td class="col-desc">Equipamentos ligados ao card. Se houver, aparece o <strong>dropdown</strong> (a própria opção + os equipamentos). Opcional.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Evento</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Evento</th><th style="width:260px">detail</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">confirm</td><td class="col-type">{ index, id, icon, title, subtitle, status, metadata, equipamentos, equipamento }</td><td class="col-desc">Clique em Confirmar. <code>equipamento</code> = o <code>{ id, descricao }</code> escolhido, ou <strong><code>null</code></strong> (escolheu a própria opção / não há equipamentos). Cancelar/✕/fora apenas fecham.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Dropdown condicional:</strong> só aparece quando o card selecionado tem <code>equipamentos</code>. A primeira opção é a própria "sala" (equipamento = <code>null</code> no retorno).</li>
+          <li><strong>metadata:</strong> use para carregar o contexto (ex.: setor/box) e recuperá-lo no confirm sem estado externo.</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
         </ul>
       </section>
 
