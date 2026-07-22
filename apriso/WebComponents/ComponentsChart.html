@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gráficos Granado — Exemplos</title>
+
+  <!-- Fontes Granado self-host (em Apriso vivem em [AprisoScripts]/fonts/). -->
+  <link rel="stylesheet" href="../fonts/granado-fonts.css">
+
+  <script src="./granado-chart-bar.js"></script>
+</head>
+
+<body style="margin:0;padding:24px;background:#F4EED9;font-family:'Lato','DejaVu Sans',Arial,sans-serif;color:#103E20">
+  <h1 style="font-size:20px;font-weight:700;margin:0 0 4px;color:#1C5C31">Gráficos Granado</h1>
+  <p style="font-size:12px;color:#5A6B5E;margin:0 0 24px">Exemplos visuais do <code>&lt;granado-chart-bar&gt;</code> — gráfico à esquerda, snippet que o gerou à direita.</p>
+
+  <style>
+    .card { background:#FDFAF1;border:1px solid #D6CDA4;border-radius:12px;padding:18px 20px;margin-bottom:22px }
+    .card h2 { font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#6B7280;margin:0 0 14px }
+    /* corpo: gráfico à esquerda, snippet à direita */
+    .body { display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:stretch }
+    .body > granado-chart-bar { min-width:0;align-self:center }
+    @media (max-width:900px){ .body { grid-template-columns:1fr } }
+    pre.code { background:#0F3319;color:#EAF1EA;border-radius:8px;padding:12px 14px;margin:0;
+      font:12px/1.55 'DejaVu Sans Mono','Consolas','Courier New',monospace;
+      overflow:auto;max-height:360px;white-space:pre }
+    pre.code .cmt { color:#8FB89C }
+  </style>
+
+  <!-- 1 — Simples -->
+  <div class="card">
+    <h2>type="simple" · uma série · valores + tooltip</h2>
+    <div class="body">
+      <granado-chart-bar id="c-simple" title="Vendas por mês" show-values="true"></granado-chart-bar>
+      <pre class="code">&lt;granado-chart-bar id="c" title="Vendas por mês" show-values="true"&gt;&lt;/granado-chart-bar&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'month';
+  c.yFields = [{ field: 'sales', label: 'Vendas' }];
+  c.data = [
+    { month: 'Jan', sales: 120 }, { month: 'Fev', sales: 180 }, { month: 'Mar', sales: 150 },
+    { month: 'Abr', sales: 220 }, { month: 'Mai', sales: 200 }, { month: 'Jun', sales: 260 }
+  ];
+&lt;/script&gt;</pre>
+    </div>
+  </div>
+
+  <!-- 2 — Agrupado (formato largo: várias yFields) + export -->
+  <div class="card">
+    <h2>type="grouped" · múltiplas séries (yFields) · show-export</h2>
+    <div class="body">
+      <granado-chart-bar id="c-grouped" title="Vendas x Meta por mês" show-export="true"></granado-chart-bar>
+      <pre class="code">&lt;granado-chart-bar id="c" type="grouped" title="Vendas x Meta por mês" show-export="true"&gt;&lt;/granado-chart-bar&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'month';
+  c.yFields = [{ field: 'sales', label: 'Vendas' }, { field: 'target', label: 'Meta' }];
+  c.data = [
+    { month: 'Jan', sales: 120, target: 150 }, { month: 'Fev', sales: 180, target: 160 },
+    { month: 'Mar', sales: 150, target: 170 }, { month: 'Abr', sales: 220, target: 190 }
+  ];
+
+  <span class="cmt">// export por código (ex.: botão próprio):</span>
+  <span class="cmt">// c.exportPNG('vendas_meta');  c.exportSVG('vendas_meta');</span>
+&lt;/script&gt;</pre>
+    </div>
+  </div>
+
+  <!-- 3 — Empilhado -->
+  <div class="card">
+    <h2>type="stacked"</h2>
+    <div class="body">
+      <granado-chart-bar id="c-stacked" title="Composição por mês"></granado-chart-bar>
+      <pre class="code">&lt;granado-chart-bar id="c" type="stacked" title="Composição por mês"&gt;&lt;/granado-chart-bar&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'month';
+  c.yFields = [
+    { field: 'a', label: 'Linha A' },
+    { field: 'b', label: 'Linha B' },
+    { field: 'c', label: 'Linha C' }
+  ];
+  c.data = [
+    { month: 'Jan', a: 40, b: 30, c: 20 }, { month: 'Fev', a: 50, b: 40, c: 30 },
+    { month: 'Mar', a: 35, b: 45, c: 25 }, { month: 'Abr', a: 60, b: 35, c: 40 }
+  ];
+&lt;/script&gt;</pre>
+    </div>
+  </div>
+
+  <!-- 4 — Empilhado 100% -->
+  <div class="card">
+    <h2>type="stacked100"</h2>
+    <div class="body">
+      <granado-chart-bar id="c-stacked100" title="Participação (%) por mês"></granado-chart-bar>
+      <pre class="code">&lt;granado-chart-bar id="c" type="stacked100" title="Participação (%) por mês"&gt;&lt;/granado-chart-bar&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'month';
+  c.yFields = [
+    { field: 'a', label: 'Linha A' },
+    { field: 'b', label: 'Linha B' },
+    { field: 'c', label: 'Linha C' }
+  ];
+  c.data = [ <span class="cmt">/* mesmos dados do stacked */</span>
+    { month: 'Jan', a: 40, b: 30, c: 20 }, { month: 'Fev', a: 50, b: 40, c: 30 },
+    { month: 'Mar', a: 35, b: 45, c: 25 }, { month: 'Abr', a: 60, b: 35, c: 40 }
+  ];
+&lt;/script&gt;</pre>
+    </div>
+  </div>
+
+  <!-- 5 — Target (faixa min→max) -->
+  <div class="card">
+    <h2>type="target" · faixa min→max (horizontal)</h2>
+    <div class="body">
+      <granado-chart-bar id="c-target" title="Faixa salarial por cargo" orientation="horizontal" show-values="true"></granado-chart-bar>
+      <pre class="code">&lt;granado-chart-bar id="c" type="target" title="Faixa salarial por cargo"
+    orientation="horizontal" show-values="true"&gt;&lt;/granado-chart-bar&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'employee';
+  c.yFields = [{ field: 'min' }, { field: 'max', label: 'Faixa (R$)' }]; <span class="cmt">// [low, high]</span>
+  c.data = [
+    { employee: 'João', min: 4000, max: 7000 },
+    { employee: 'Maria', min: 5000, max: 8500 },
+    { employee: 'Ana', min: 3500, max: 6200 }
+  ];
+&lt;/script&gt;</pre>
+    </div>
+  </div>
+
+  <!-- 6 — x2-field (formato longo) -->
+  <div class="card">
+    <h2>x2-field="region" · segundo agrupador (formato longo)</h2>
+    <div class="body">
+      <granado-chart-bar id="c-group" type="grouped" title="Vendas por trimestre e região"></granado-chart-bar>
+      <pre class="code">&lt;granado-chart-bar id="c" type="grouped" title="Vendas por trimestre e região"&gt;&lt;/granado-chart-bar&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'quarter';
+  c.x2Field = 'region';              <span class="cmt">// 2º agrupador: uma série por região</span>
+  c.yFields = [{ field: 'sales' }];  <span class="cmt">// valor usado no pivot</span>
+  c.data = [
+    { quarter: 'Q1', region: 'Sul', sales: 120 }, { quarter: 'Q1', region: 'Norte', sales: 90 },
+    { quarter: 'Q2', region: 'Sul', sales: 150 }, { quarter: 'Q2', region: 'Norte', sales: 110 },
+    { quarter: 'Q3', region: 'Sul', sales: 170 }, { quarter: 'Q3', region: 'Norte', sales: 140 }
+  ];
+&lt;/script&gt;</pre>
+    </div>
+  </div>
+
+  <!-- 7 — Horizontal simples -->
+  <div class="card">
+    <h2>orientation="horizontal" · sem grade</h2>
+    <div class="body">
+      <granado-chart-bar id="c-horiz" title="Top produtos" orientation="horizontal" show-grid="false" show-values="true"></granado-chart-bar>
+      <pre class="code">&lt;granado-chart-bar id="c" title="Top produtos" orientation="horizontal"
+    show-grid="false" show-values="true"&gt;&lt;/granado-chart-bar&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'produto';
+  c.yFields = [{ field: 'qtd', label: 'Unidades' }];
+  c.data = [
+    { produto: 'Loção Rosa 200ml', qtd: 320 }, { produto: 'Creme 150g', qtd: 260 },
+    { produto: 'Sabonete 90g', qtd: 480 }, { produto: 'Perfume 100ml', qtd: 180 }
+  ];
+&lt;/script&gt;</pre>
+    </div>
+  </div>
+
+  <!-- 8 — Cores/estilos por série -->
+  <div class="card">
+    <h2>cores/opacidade/borderRadius por série</h2>
+    <div class="body">
+      <granado-chart-bar id="c-styled" type="grouped" title="Estilo customizado"></granado-chart-bar>
+      <pre class="code">&lt;granado-chart-bar id="c" type="grouped" title="Estilo customizado"&gt;&lt;/granado-chart-bar&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'month';
+  c.yFields = [
+    { field: 'sales',  label: 'Vendas', color: '#1F7A3D', borderRadius: 6 },
+    { field: 'target', label: 'Meta',   color: '#9A7520', opacity: 0.55, borderRadius: 6 }
+  ];
+  c.data = [
+    { month: 'Jan', sales: 120, target: 150 }, { month: 'Fev', sales: 180, target: 160 },
+    { month: 'Mar', sales: 150, target: 170 }, { month: 'Abr', sales: 220, target: 190 }
+  ];
+&lt;/script&gt;</pre>
+    </div>
+  </div>
+
+  <!-- 9 — barRole por série (meta como linha / tracejado) -->
+  <div class="card">
+    <h2>barRole · vendas (barra) + meta ("line") + limite ("dashed")</h2>
+    <div class="body">
+      <granado-chart-bar id="c-role" type="grouped" title="Vendas x Meta x Limite"></granado-chart-bar>
+      <pre class="code">&lt;granado-chart-bar id="c" type="grouped" title="Vendas x Meta x Limite"&gt;&lt;/granado-chart-bar&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'month';
+  c.yFields = [
+    { field: 'sales',  label: 'Vendas' },                          <span class="cmt">// barRole 'default'</span>
+    { field: 'target', label: 'Meta',   barRole: 'line',   color: '#8C1A1A' },
+    { field: 'limite', label: 'Limite', barRole: 'dashed', color: '#1A4A8C' }
+  ];
+  c.data = [
+    { month: 'Jan', sales: 120, target: 150, limite: 180 },
+    { month: 'Fev', sales: 180, target: 160, limite: 190 },
+    { month: 'Mar', sales: 150, target: 170, limite: 200 },
+    { month: 'Abr', sales: 220, target: 190, limite: 210 }
+  ];
+&lt;/script&gt;</pre>
+    </div>
+  </div>
+
+  <!-- 10 — overallTarget (meta única, linha horizontal) -->
+  <div class="card">
+    <h2>overallTarget · meta única (linha horizontal entre as barras)</h2>
+    <div class="body">
+      <granado-chart-bar id="c-target-line" title="Vendas por mês (meta 200)" show-values="true"></granado-chart-bar>
+      <pre class="code">&lt;granado-chart-bar id="c" title="Vendas por mês (meta 200)" show-values="true"&gt;&lt;/granado-chart-bar&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'month';
+  c.yFields = [{ field: 'sales', label: 'Vendas' }];
+  c.overallTarget = { value: 200, label: 'Meta 200' }; <span class="cmt">// ou só: c.overallTarget = 200</span>
+  c.data = [
+    { month: 'Jan', sales: 120 }, { month: 'Fev', sales: 180 }, { month: 'Mar', sales: 150 },
+    { month: 'Abr', sales: 220 }, { month: 'Mai', sales: 200 }, { month: 'Jun', sales: 260 }
+  ];
+&lt;/script&gt;</pre>
+    </div>
+  </div>
+
+  <script>
+    // 1 — Simples
+    var cSimple = document.getElementById('c-simple');
+    cSimple.xField = 'month';
+    cSimple.yFields = [{ field: 'sales', label: 'Vendas' }];
+    cSimple.data = [
+      { month: 'Jan', sales: 120 }, { month: 'Fev', sales: 180 }, { month: 'Mar', sales: 150 },
+      { month: 'Abr', sales: 220 }, { month: 'Mai', sales: 200 }, { month: 'Jun', sales: 260 }
+    ];
+
+    // 2 — Agrupado (várias yFields)
+    var cGrouped = document.getElementById('c-grouped');
+    cGrouped.type = 'grouped';
+    cGrouped.xField = 'month';
+    cGrouped.yFields = [{ field: 'sales', label: 'Vendas' }, { field: 'target', label: 'Meta' }];
+    cGrouped.data = [
+      { month: 'Jan', sales: 120, target: 150 }, { month: 'Fev', sales: 180, target: 160 },
+      { month: 'Mar', sales: 150, target: 170 }, { month: 'Abr', sales: 220, target: 190 }
+    ];
+
+    // 3 — Empilhado
+    var cStacked = document.getElementById('c-stacked');
+    cStacked.type = 'stacked';
+    cStacked.xField = 'month';
+    cStacked.yFields = [{ field: 'a', label: 'Linha A' }, { field: 'b', label: 'Linha B' }, { field: 'c', label: 'Linha C' }];
+    cStacked.data = [
+      { month: 'Jan', a: 40, b: 30, c: 20 }, { month: 'Fev', a: 50, b: 40, c: 30 },
+      { month: 'Mar', a: 35, b: 45, c: 25 }, { month: 'Abr', a: 60, b: 35, c: 40 }
+    ];
+
+    // 4 — Empilhado 100%
+    var cS100 = document.getElementById('c-stacked100');
+    cS100.type = 'stacked100';
+    cS100.xField = 'month';
+    cS100.yFields = [{ field: 'a', label: 'Linha A' }, { field: 'b', label: 'Linha B' }, { field: 'c', label: 'Linha C' }];
+    cS100.data = cStacked.data;
+
+    // 5 — Target (min→max)
+    var cTarget = document.getElementById('c-target');
+    cTarget.type = 'target';
+    cTarget.xField = 'employee';
+    cTarget.yFields = [{ field: 'min' }, { field: 'max', label: 'Faixa (R$)' }];
+    cTarget.data = [
+      { employee: 'João', min: 4000, max: 7000 },
+      { employee: 'Maria', min: 5000, max: 8500 },
+      { employee: 'Ana', min: 3500, max: 6200 }
+    ];
+
+    // 6 — x2-field (formato longo)
+    var cGroup = document.getElementById('c-group');
+    cGroup.xField = 'quarter';
+    cGroup.x2Field = 'region';
+    cGroup.yFields = [{ field: 'sales' }];
+    cGroup.data = [
+      { quarter: 'Q1', region: 'Sul', sales: 120 }, { quarter: 'Q1', region: 'Norte', sales: 90 },
+      { quarter: 'Q2', region: 'Sul', sales: 150 }, { quarter: 'Q2', region: 'Norte', sales: 110 },
+      { quarter: 'Q3', region: 'Sul', sales: 170 }, { quarter: 'Q3', region: 'Norte', sales: 140 }
+    ];
+
+    // 7 — Horizontal simples
+    var cHoriz = document.getElementById('c-horiz');
+    cHoriz.xField = 'produto';
+    cHoriz.yFields = [{ field: 'qtd', label: 'Unidades' }];
+    cHoriz.data = [
+      { produto: 'Loção Rosa 200ml', qtd: 320 }, { produto: 'Creme 150g', qtd: 260 },
+      { produto: 'Sabonete 90g', qtd: 480 }, { produto: 'Perfume 100ml', qtd: 180 }
+    ];
+
+    // 8 — Estilo customizado por série
+    var cStyled = document.getElementById('c-styled');
+    cStyled.type = 'grouped';
+    cStyled.xField = 'month';
+    cStyled.yFields = [
+      { field: 'sales', label: 'Vendas', color: '#1F7A3D', borderRadius: 6 },
+      { field: 'target', label: 'Meta', color: '#9A7520', opacity: 0.55, borderRadius: 6 }
+    ];
+    cStyled.data = cGrouped.data;
+
+    // 9 — barRole por série
+    var cRole = document.getElementById('c-role');
+    cRole.type = 'grouped';
+    cRole.xField = 'month';
+    cRole.yFields = [
+      { field: 'sales', label: 'Vendas' },
+      { field: 'target', label: 'Meta', barRole: 'line', color: '#8C1A1A' },
+      { field: 'limite', label: 'Limite', barRole: 'dashed', color: '#1A4A8C' }
+    ];
+    cRole.data = [
+      { month: 'Jan', sales: 120, target: 150, limite: 180 },
+      { month: 'Fev', sales: 180, target: 160, limite: 190 },
+      { month: 'Mar', sales: 150, target: 170, limite: 200 },
+      { month: 'Abr', sales: 220, target: 190, limite: 210 }
+    ];
+
+    // 10 — overallTarget (meta única)
+    var cTargetLine = document.getElementById('c-target-line');
+    cTargetLine.xField = 'month';
+    cTargetLine.yFields = [{ field: 'sales', label: 'Vendas' }];
+    cTargetLine.overallTarget = { value: 200, label: 'Meta 200' };
+    cTargetLine.data = [
+      { month: 'Jan', sales: 120 }, { month: 'Fev', sales: 180 }, { month: 'Mar', sales: 150 },
+      { month: 'Abr', sales: 220 }, { month: 'Mai', sales: 200 }, { month: 'Jun', sales: 260 }
+    ];
+  </script>
+</body>
+
+</html>

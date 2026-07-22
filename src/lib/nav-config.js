@@ -107,6 +107,8 @@ export const MODULES = [
       // Itens com `href` abrem um HTML estatico em nova aba (nao sao rotas React).
       { id: 'dev-components',     label: '🧩 Components',      href: '/apriso/WebComponents/ComponentsExample.html' },
       { id: 'dev-components-doc', label: '📄 ComponentsDoc',   href: '/apriso/WebComponents/ComponentsDocumentation.html' },
+      { id: 'dev-charts',         label: '📊 Charts',          href: '/apriso/WebComponents/ComponentsChart.html' },
+      { id: 'dev-charts-doc',     label: '📄 ChartsDoc',       href: '/apriso/WebComponents/ComponentsChartDocumentation.html' },
       { id: 'dev-api',            label: '📄 API',             href: '/apriso/WebComponents/APIDocumentation.html' },
     ],
   },
