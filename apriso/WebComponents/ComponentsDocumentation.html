@@ -9256,9 +9256,6 @@ GranadoPreloader.hide();</pre>
         onClick: <span class="tk-keyword">function</span> (detail) { reativarSala(); } }
     ]
   });
-
-  <span class="tk-comment">// alternativa: ouvir o evento</span>
-  el.<span class="tk-attr">addEventListener</span>(<span class="tk-str">'option-click'</span>, <span class="tk-keyword">function</span> (e) { console.log(e.detail); });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
 
         <h2 class="gd-h2" id="opt-buttons">Como definir os botões</h2>
@@ -9411,9 +9408,40 @@ pop.open();</pre>
     suggested: <span class="tk-num">3</span>,                <span class="tk-comment">// botão destacado</span>
     onSelect: <span class="tk-keyword">function</span> (detail) { criarGaiolas(detail.quantity); }
   });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
 
-  <span class="tk-comment">// alternativa: ouvir o evento</span>
-  el.<span class="tk-attr">addEventListener</span>(<span class="tk-str">'select'</span>, <span class="tk-keyword">function</span> (e) { criarGaiolas(e.detail.quantity); });
+        <h2 class="gd-h2">Uso — declarativo (HTML)</h2>
+        <p class="gd-lead">
+          Também dá para deixar o popup no HTML e configurá-lo por atributos. Inicie oculto com
+          <code>open="false"</code> e exiba com <code>el.open()</code>; escute a escolha com o evento
+          <code>select</code> (<code>e.detail.quantity</code>).
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button type="button" onclick="document.getElementById('doc-qty-html').open()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A5A00;border-radius:7px;background:#9A5A00;color:#fff;cursor:pointer">Abrir popup (HTML)</button>
+          <span id="doc-qty-html-status" style="font-size:12px;color:#8A9E8E"></span>
+          <granado-quantity-popup id="doc-qty-html" type="warning" title="Nenhuma gaiola criada para a ordem"
+            message="Esta ordem ainda não possui nenhuma gaiola criada. Escolha quantas criar."
+            min="1" max="9" suggested="3" open="false"></granado-quantity-popup>
+        </div>
+        <script>
+          (function () {
+            var el = document.getElementById('doc-qty-html');
+            if (el) el.addEventListener('select', function (e) {
+              var s = document.getElementById('doc-qty-html-status');
+              if (s) s.textContent = '➡ Quantidade: ' + e.detail.quantity;
+            });
+          })();
+        </script>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-quantity-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"qty"</span> <span class="tk-attr">type</span>=<span class="tk-str">"warning"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Nenhuma gaiola criada para a ordem"</span>
+  <span class="tk-attr">message</span>=<span class="tk-str">"Escolha quantas gaiolas criar."</span>
+  <span class="tk-attr">min</span>=<span class="tk-str">"1"</span> <span class="tk-attr">max</span>=<span class="tk-str">"9"</span> <span class="tk-attr">suggested</span>=<span class="tk-str">"3"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span><span class="tk-tag">&gt;&lt;/granado-quantity-popup&gt;</span>
+
+<span class="tk-comment">&lt;!-- abre o popup e escuta a escolha --&gt;</span>
+<span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-str">"document.getElementById('qty').open()"</span><span class="tk-tag">&gt;</span>Criar gaiolas<span class="tk-tag">&lt;/button&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'qty'</span>).addEventListener(<span class="tk-str">'select'</span>, <span class="tk-keyword">function</span> (e) {
+    criarGaiolas(e.detail.quantity);
+  });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
 
         <h2 class="gd-h2">Ícone dos botões</h2>
@@ -9599,6 +9627,53 @@ pop.open();</pre>
       { id: <span class="tk-str">'pd'</span>,   caracteristica: <span class="tk-str">'Pressão Diferencial Pa'</span>, valor: <span class="tk-str">'3,2'</span>, limiteInferior: <span class="tk-keyword">5</span> }
     ],
     onConfirm: <span class="tk-keyword">function</span> (d) { console.log(d.checklistId, d.checklistCode, d.rows); }   <span class="tk-comment">// status: true (OK) | false (Fora), automático</span>
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — declarativo (HTML)</h2>
+        <p class="gd-lead">
+          Também dá para deixar o popup no HTML e passar <code>header-information</code> e <code>data</code>
+          por atributo (JSON). Inicie oculto com <code>open="false"</code> e exiba com <code>el.open()</code>;
+          leia o resultado com o evento <code>confirm</code>.
+          <strong>Observação:</strong> por serem JSON, as linhas com <code>acao.onClick</code> (função) só
+          funcionam pela API/propriedade — no modo declarativo use linhas simples (com/sem
+          <code>limiteInferior</code>/<code>limiteSuperior</code>).
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button type="button" onclick="document.getElementById('doc-ckl-html').open()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1F7A3D;border-radius:7px;background:#1F7A3D;color:#fff;cursor:pointer">Abrir checklist (HTML)</button>
+          <span id="doc-ckl-html-status" style="font-size:12px;color:#8A9E8E"></span>
+          <granado-checklist-popup id="doc-ckl-html" open="false"
+            title="🌡️ Condições Ambientais da Sala" subtitle="Sala 3 · Cosméticos"
+            checklist-id="100000003" checklist-code="CHECKLIST_AMBIENTAL"
+            verified-by="M. Lima · Mat. 00155" confirm-text="✔ Confirmar Verificação"
+            header-information='[{"label":"Sala","value":"Sala 3"},{"label":"Setor","value":"Cosméticos"},{"label":"Periodicidade","value":"TURNO"}]'
+            data='[{"id":"temp","caracteristica":"Temperatura °C","valor":"21,3","limiteInferior":18,"limiteSuperior":24,"observacao":""},{"id":"ur","caracteristica":"Umidade Relativa %","valor":"58","limiteSuperior":60,"observacao":""},{"id":"pd","caracteristica":"Pressão Diferencial Pa","valor":"3,2","limiteInferior":5,"observacao":""}]'></granado-checklist-popup>
+        </div>
+        <script>
+          (function () {
+            var el = document.getElementById('doc-ckl-html');
+            if (el) el.addEventListener('confirm', function (ev) {
+              var s = document.getElementById('doc-ckl-html-status');
+              if (s) s.textContent = '✅ Confirmado (veja o console)';
+              console.log('confirm →', ev.detail); console.table(ev.detail.rows);
+            });
+          })();
+        </script>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- header-information e data recebem JSON (aspas simples no atributo) --&gt;</span>
+<span class="tk-tag">&lt;granado-checklist-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"ckl"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span>
+  <span class="tk-attr">title</span>=<span class="tk-str">"🌡️ Condições Ambientais da Sala"</span> <span class="tk-attr">subtitle</span>=<span class="tk-str">"Sala 3 · Cosméticos"</span>
+  <span class="tk-attr">checklist-id</span>=<span class="tk-str">"100000003"</span> <span class="tk-attr">checklist-code</span>=<span class="tk-str">"CHECKLIST_AMBIENTAL"</span>
+  <span class="tk-attr">verified-by</span>=<span class="tk-str">"M. Lima · Mat. 00155"</span> <span class="tk-attr">confirm-text</span>=<span class="tk-str">"✔ Confirmar Verificação"</span>
+  <span class="tk-attr">header-information</span>=<span class="tk-str">'[{"label":"Sala","value":"Sala 3"},{"label":"Setor","value":"Cosméticos"}]'</span>
+  <span class="tk-attr">data</span>=<span class="tk-str">'[{"id":"temp","caracteristica":"Temperatura °C","valor":"21,3","limiteInferior":18,"limiteSuperior":24},
+        {"id":"ur","caracteristica":"Umidade Relativa %","valor":"58","limiteSuperior":60},
+        {"id":"pd","caracteristica":"Pressão Diferencial Pa","valor":"3,2","limiteInferior":5}]'</span><span class="tk-tag">&gt;&lt;/granado-checklist-popup&gt;</span>
+
+<span class="tk-comment">&lt;!-- abre o popup e escuta o confirm --&gt;</span>
+<span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-str">"document.getElementById('ckl').open()"</span><span class="tk-tag">&gt;</span>Abrir checklist<span class="tk-tag">&lt;/button&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'ckl'</span>).addEventListener(<span class="tk-str">'confirm'</span>, <span class="tk-keyword">function</span> (ev) {
+    console.log(ev.detail.checklistId, ev.detail.checklistCode, ev.detail.rows);
   });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
 
@@ -9892,8 +9967,8 @@ pop.open();</pre>
         </script>
         <pre class="gd-code"><span class="tk-tag">&lt;script&gt;</span>
   GranadoBoxPopup.<span class="tk-attr">show</span>({
-    title: <span class="tk-str">'🧪 Registro de Checklist · Escolha a Sala'</span>,
-    subtitle: <span class="tk-str">'⚖️ Verificação Diária de Balança'</span>,
+    subtitle: <span class="tk-str">'ESCOLHA A SALA'</span>,
+    confirmText: <span class="tk-str">'✓ Confirmar'</span>,
     data: [
       { id: <span class="tk-str">'A'</span>, icon: <span class="tk-str">'🅰️'</span>, title: <span class="tk-str">'Sala A'</span>, subtitle: <span class="tk-str">'4 balanças'</span>, status: <span class="tk-str">'Disponível'</span>,
         metadata: { setor: <span class="tk-str">'MP'</span> },
@@ -9901,6 +9976,43 @@ pop.open();</pre>
       { id: <span class="tk-str">'C'</span>, icon: <span class="tk-str">'🇨'</span>, title: <span class="tk-str">'Sala C'</span>, subtitle: <span class="tk-str">'2 balanças'</span> }   <span class="tk-comment">// sem equipamentos</span>
     ],
     onConfirm: <span class="tk-keyword">function</span> (d) { console.log(d.id, d.equipamento); }   <span class="tk-comment">// equipamento = null se escolheu a sala</span>
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — declarativo (HTML)</h2>
+        <p class="gd-lead">
+          Também dá para deixar o popup no HTML e passar as salas pelo atributo <code>data</code>
+          (JSON). Inicie oculto com <code>open="false"</code> e exiba com <code>el.open()</code>;
+          escute o resultado com o evento <code>confirm</code>.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button type="button" onclick="document.getElementById('doc-box-html').open()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#9A7520;color:#fff;cursor:pointer">Abrir popup (HTML)</button>
+          <span id="doc-box-html-status" style="font-size:12px;color:#8A9E8E"></span>
+          <granado-box-popup id="doc-box-html" subtitle="ESCOLHA A SALA" confirm-text="✓ Confirmar" open="false"
+            data='[{"id":"A","icon":"🅰️","title":"Sala A","subtitle":"4 balanças","status":"Disponível","equipamentos":[{"id":"BAL-01","descricao":"Toledo 01"},{"id":"BAL-02","descricao":"Toledo 02"}]},{"id":"C","icon":"🇨","title":"Sala C","subtitle":"2 balanças"}]'></granado-box-popup>
+        </div>
+        <script>
+          (function () {
+            var el = document.getElementById('doc-box-html');
+            if (el) el.addEventListener('confirm', function (ev) {
+              var d = ev.detail;
+              var s = document.getElementById('doc-box-html-status');
+              var alvo = d.equipamento ? d.equipamento.id : (d.title + ' (sala)');
+              if (s) s.textContent = '✅ ' + d.title + ' → ' + alvo;
+            });
+          })();
+        </script>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- data recebe o array de salas como JSON (aspas simples no atributo) --&gt;</span>
+<span class="tk-tag">&lt;granado-box-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"box"</span> <span class="tk-attr">subtitle</span>=<span class="tk-str">"ESCOLHA A SALA"</span> <span class="tk-attr">confirm-text</span>=<span class="tk-str">"✓ Confirmar"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span>
+  <span class="tk-attr">data</span>=<span class="tk-str">'[{"id":"A","title":"Sala A","subtitle":"4 balanças","status":"Disponível",
+        "equipamentos":[{"id":"BAL-01","descricao":"Toledo 01"},{"id":"BAL-02","descricao":"Toledo 02"}]},
+       {"id":"C","title":"Sala C","subtitle":"2 balanças"}]'</span><span class="tk-tag">&gt;&lt;/granado-box-popup&gt;</span>
+
+<span class="tk-comment">&lt;!-- abre o popup e escuta o confirm --&gt;</span>
+<span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-str">"document.getElementById('box').open()"</span><span class="tk-tag">&gt;</span>Escolher sala<span class="tk-tag">&lt;/button&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'box'</span>).addEventListener(<span class="tk-str">'confirm'</span>, <span class="tk-keyword">function</span> (ev) {
+    console.log(ev.detail.id, ev.detail.equipamento);   <span class="tk-comment">// equipamento = null se escolheu a sala</span>
   });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
 

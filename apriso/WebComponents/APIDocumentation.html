@@ -328,6 +328,8 @@
           <a class="gd-link" href="#GRD_API_AppointChecklist">GRD_API_AppointChecklist</a>
           <a class="gd-link" href="#GRD_API_VerifyCheckList">GRD_API_VerifyCheckList</a>
           <a class="gd-link" href="#GRD_API_GetCheckListByCode">GRD_API_GetCheckListByCode</a>
+          <a class="gd-link" href="#GRD_API_GetCheckListHistory">GRD_API_GetCheckListHistory</a>
+          <a class="gd-link" href="#GRD_API_GetCheckListHistoryDetail">GRD_API_GetCheckListHistoryDetail</a>
 
           <div class="gd-subgroup">SQL</div>
           <a class="gd-link" href="#sql-historico-checklist-percentual">Histórico com % de preenchimento</a>
@@ -376,6 +378,7 @@
           <a class="gd-link" href="#GRD_API_GetLabel">GRD_API_GetLabel</a>
           <a class="gd-link" href="#GRD_API_GetScales">GRD_API_GetScales</a>
           <a class="gd-link" href="#GRD_API_GetReasonCode">GRD_API_GetReasonCode</a>
+          <a class="gd-link" href="#GRD_API_GetUsers">GRD_API_GetUsers</a>
         </div>
       </div>
 
@@ -784,6 +787,271 @@
             mesma ordem em que devem aparecer/apontar.</li>
           <li><strong>Encadeamento:</strong> o <code>CheckPointID</code> retornado é o mesmo usado
             no payload de <code>GRD_API_AppointChecklist</code>.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetCheckListHistory
+           ============================================================ -->
+      <section id="GRD_API_GetCheckListHistory">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetCheckListHistory</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera o histórico de checklists</strong> — devolve os checklists já apontados,
+          com o percentual de preenchimento e o status final, filtráveis por ordem, código, recurso,
+          usuário, período e status.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetCheckListHistory</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>CheckListHistory</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON) — filtros opcionais. Use <code>"-1"</code> para ignorar um filtro:</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"CheckListCode"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-01-01"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"EndDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-12-20"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"OK|NOK|-1"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">WipOrderNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Não</td>
+              <td class="col-desc">Filtra pela ordem (WIP). <code>"-1"</code> = todas.</td>
+            </tr>
+            <tr>
+              <td class="col-name">CheckListCode</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Não</td>
+              <td class="col-desc">Filtra pelo código do checklist. <code>"-1"</code> = todos.</td>
+            </tr>
+            <tr>
+              <td class="col-name">ResourceName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Não</td>
+              <td class="col-desc">Filtra pelo recurso (equipamento). <code>"-1"</code> = todos.</td>
+            </tr>
+            <tr>
+              <td class="col-name">CreatedBy</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Não</td>
+              <td class="col-desc">Filtra pelo usuário que apontou. <code>"-1"</code> = todos.</td>
+            </tr>
+            <tr>
+              <td class="col-name">StartDate</td>
+              <td class="col-type">string (data)</td>
+              <td class="col-req">Não</td>
+              <td class="col-desc">Início do período (<code>YYYY-MM-DD</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">EndDate</td>
+              <td class="col-type">string (data)</td>
+              <td class="col-req">Não</td>
+              <td class="col-desc">Fim do período (<code>YYYY-MM-DD</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">Status</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Não</td>
+              <td class="col-desc">Filtra pelo status final: <code>"OK"</code> · <code>"NOK"</code> · <code>"-1"</code> (todos).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON) — <code>CheckListHistory</code> é a lista de checklists apontados:</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Histórico de CheckList recuperado com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"CheckListHistory"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"CheckListHistoryID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000026"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckListCode"</span><span class="tk-punc">:</span> <span class="tk-str">"CHECKLIST_BALANCA"</span><span class="tk-punc">,</span> <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000007"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ResourceNameDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"S1_TOLEDO 2095/1"</span><span class="tk-punc">,</span> <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"610137"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Eduardo Morais"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/21/2026 6:31:00 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TotalChecks"</span><span class="tk-punc">:</span> <span class="tk-str">"12"</span><span class="tk-punc">,</span> <span class="tk-key">"SumChecked"</span><span class="tk-punc">:</span> <span class="tk-str">"11"</span><span class="tk-punc">,</span> <span class="tk-key">"PercentOfTotalChecked"</span><span class="tk-punc">:</span> <span class="tk-str">"91.67"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckListStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"NOK"</span>
+    }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:160px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se o histórico foi recuperado com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">CheckListHistory</td><td class="col-type">array&lt;checklist&gt;</td><td class="col-desc">Lista dos checklists apontados. Campos de cada item abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada checklist</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:200px">Campo</th><th style="width:120px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">CheckListHistoryID</td><td class="col-type">string</td><td class="col-desc">Identificador do registro de histórico do checklist.</td></tr>
+            <tr><td class="col-name">CheckListCode</td><td class="col-type">string</td><td class="col-desc">Código do checklist apontado.</td></tr>
+            <tr><td class="col-name">ResourceName</td><td class="col-type">string</td><td class="col-desc">Recurso (equipamento) associado ao apontamento.</td></tr>
+            <tr><td class="col-name">ResourceNameDescription</td><td class="col-type">string</td><td class="col-desc">Descrição/nome do recurso (ex.: <code>"S1_TOLEDO 2095/1"</code>).</td></tr>
+            <tr><td class="col-name">WipOrderNo</td><td class="col-type">string</td><td class="col-desc">Número da ordem (WIP) em que o checklist foi apontado.</td></tr>
+            <tr><td class="col-name">CreatedBy</td><td class="col-type">string</td><td class="col-desc">Usuário que realizou o apontamento.</td></tr>
+            <tr><td class="col-name">CreatedOn</td><td class="col-type">string (data)</td><td class="col-desc">Data/hora do apontamento.</td></tr>
+            <tr><td class="col-name">TotalChecks</td><td class="col-type">string (número)</td><td class="col-desc">Total de itens (checkpoints) do checklist.</td></tr>
+            <tr><td class="col-name">SumChecked</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade de itens efetivamente marcados/preenchidos.</td></tr>
+            <tr><td class="col-name">PercentOfTotalChecked</td><td class="col-type">string (número)</td><td class="col-desc">Percentual de preenchimento (<code>SumChecked ÷ TotalChecks × 100</code>).</td></tr>
+            <tr><td class="col-name">CheckListStatus</td><td class="col-type">string</td><td class="col-desc">Status final do checklist: <code>"OK"</code> / <code>"NOK"</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Filtros:</strong> qualquer filtro com <code>"-1"</code> é ignorado — combine-os
+            à vontade (ex.: só <code>StartDate</code>/<code>EndDate</code> para um período).</li>
+          <li><strong>Status:</strong> <code>NOK</code> indica que ao menos um item ficou fora do
+            padrão ou não foi preenchido (<code>PercentOfTotalChecked &lt; 100</code>).</li>
+          <li><strong>CheckListCode:</strong> é o mesmo código usado por
+            <a class="gd-link" href="#GRD_API_GetCheckListByCode">GRD_API_GetCheckListByCode</a>.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetCheckListHistoryDetail
+           ============================================================ -->
+      <section id="GRD_API_GetCheckListHistoryDetail">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetCheckListHistoryDetail</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera os detalhes do que foi preenchido no checklist</strong> — devolve, para
+          um apontamento (<code>CheckListHistoryID</code>), a resposta de cada checkpoint (item):
+          se foi marcado, o valor informado e observações.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetCheckListHistoryDetail</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>CheckListHistoryDetail</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"CheckListHistoryID"</span><span class="tk-punc">:</span> <span class="tk-str">"848484894"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:200px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">CheckListHistoryID</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Identificador do apontamento cujo detalhe será recuperado (o
+                <code>CheckListHistoryID</code> devolvido por
+                <a class="gd-link" href="#GRD_API_GetCheckListHistory">GRD_API_GetCheckListHistory</a>).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON) — <code>CheckListHistoryDetail</code> é a lista de respostas (uma por checkpoint):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Detalhe do histórico de CheckList recuperado com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"CheckListHistoryDetail"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"CheckListHistoryID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000026"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckPointHistoryID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000021"</span><span class="tk-punc">,</span> <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000007"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"610137"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Eduardo Morais"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/21/2026 6:31:00 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"CheckPointDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"PESO 1"</span><span class="tk-punc">,</span> <span class="tk-key">"Checked"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"CustomValue"</span><span class="tk-punc">:</span> <span class="tk-str">"0,020"</span><span class="tk-punc">,</span> <span class="tk-key">"AditionalInformation"</span><span class="tk-punc">:</span> <span class="tk-str">""</span>
+    }<span class="tk-punc">,</span>
+    { <span class="tk-key">"CheckPointHistoryID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000022"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckPointDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"PESO 2"</span><span class="tk-punc">,</span> <span class="tk-key">"Checked"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"CustomValue"</span><span class="tk-punc">:</span> <span class="tk-str">"1,5"</span><span class="tk-punc">,</span> <span class="tk-key">"AditionalInformation"</span><span class="tk-punc">:</span> <span class="tk-str">""</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"CheckPointHistoryID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000027"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckPointDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"PESO 5"</span><span class="tk-punc">,</span> <span class="tk-key">"Checked"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"CustomValue"</span><span class="tk-punc">:</span> <span class="tk-str">"0,000"</span><span class="tk-punc">,</span> <span class="tk-key">"AditionalInformation"</span><span class="tk-punc">:</span> <span class="tk-str">""</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"CheckPointHistoryID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000008"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckPointDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"TAG"</span><span class="tk-punc">,</span> <span class="tk-key">"Checked"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"CustomValue"</span><span class="tk-punc">:</span> <span class="tk-str">"BALD - 820110"</span><span class="tk-punc">,</span> <span class="tk-key">"AditionalInformation"</span><span class="tk-punc">:</span> <span class="tk-str">""</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"CheckPointHistoryID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000011"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckPointDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"SALA"</span><span class="tk-punc">,</span> <span class="tk-key">"Checked"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"CustomValue"</span><span class="tk-punc">:</span> <span class="tk-str">"MD2_SALA1"</span><span class="tk-punc">,</span> <span class="tk-key">"AditionalInformation"</span><span class="tk-punc">:</span> <span class="tk-str">""</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"CheckPointHistoryID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000025"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckPointDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"DATA"</span><span class="tk-punc">,</span> <span class="tk-key">"Checked"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"CustomValue"</span><span class="tk-punc">:</span> <span class="tk-str">"21/07/2026, 15:30:45"</span><span class="tk-punc">,</span> <span class="tk-key">"AditionalInformation"</span><span class="tk-punc">:</span> <span class="tk-str">""</span> }
+  ]
+}</pre>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575">
+          Exemplo resumido — a resposta real traz uma linha por checkpoint (PESO 1–5, TAG, Nº SÉRIE,
+          SALA, CERTIFICADO, VALIDADE, DATA, USUÁRIO). Todas as linhas repetem
+          <code>CheckListHistoryID</code>, <code>ResourceName</code>, <code>WipOrderNo</code>,
+          <code>CreatedBy</code> e <code>CreatedOn</code>.
+        </p>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:200px">Campo</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se o detalhe foi recuperado com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">CheckListHistoryDetail</td><td class="col-type">array&lt;checkpoint&gt;</td><td class="col-desc">Respostas do apontamento — uma por checkpoint. Campos de cada item abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada checkpoint</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:210px">Campo</th><th style="width:120px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">CheckListHistoryID</td><td class="col-type">string</td><td class="col-desc">Identificador do apontamento (o mesmo do input) — repetido em cada linha.</td></tr>
+            <tr><td class="col-name">CheckPointHistoryID</td><td class="col-type">string</td><td class="col-desc">Identificador da resposta do checkpoint.</td></tr>
+            <tr><td class="col-name">ResourceName</td><td class="col-type">string</td><td class="col-desc">Recurso (equipamento) associado ao apontamento.</td></tr>
+            <tr><td class="col-name">WipOrderNo</td><td class="col-type">string</td><td class="col-desc">Número da ordem (WIP) do apontamento.</td></tr>
+            <tr><td class="col-name">CreatedBy</td><td class="col-type">string</td><td class="col-desc">Usuário que realizou o apontamento.</td></tr>
+            <tr><td class="col-name">CreatedOn</td><td class="col-type">string (data)</td><td class="col-desc">Data/hora do apontamento.</td></tr>
+            <tr><td class="col-name">CheckPointDescription</td><td class="col-type">string</td><td class="col-desc">Descrição do checkpoint (ex.: <code>"PESO 1"</code>, <code>"TAG"</code>, <code>"SALA"</code>).</td></tr>
+            <tr><td class="col-name">Checked</td><td class="col-type">string (bool)</td><td class="col-desc">Se o item foi marcado/preenchido: <code>"1"</code> = sim · <code>"0"</code> = não.</td></tr>
+            <tr><td class="col-name">CustomValue</td><td class="col-type">string</td><td class="col-desc">Valor informado no checkpoint (número, texto, data — conforme o item).</td></tr>
+            <tr><td class="col-name">AditionalInformation</td><td class="col-type">string</td><td class="col-desc">Observação/informação adicional do checkpoint (opcional; vazio quando não há).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Detalhe de um apontamento:</strong> use o <code>CheckListHistoryID</code> obtido em
+            <a class="gd-link" href="#GRD_API_GetCheckListHistory">GRD_API_GetCheckListHistory</a>
+            para trazer as respostas item a item.</li>
+          <li><strong>Checked = "0":</strong> checkpoint não preenchido — é o que faz o apontamento
+            fechar como <code>NOK</code> / abaixo de 100%.</li>
         </ul>
       </section>
 
@@ -2921,6 +3189,80 @@
           <li><strong>Motivo genérico:</strong> o item <code>"Outros"</code> vem <strong>sem</strong>
             <code>Categoria</code>, <code>ReasonType</code>, <code>TipoDesc</code> e
             <code>Facility</code> — trate esses campos como opcionais ao consumir a lista.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetUsers
+           ============================================================ -->
+      <section id="GRD_API_GetUsers">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetUsers</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera todos os usuários ativos</strong> — devolve a lista de funcionários
+          (usuários) ativos em <code>Employees</code>.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetUsers</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com corpo vazio. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>Employees</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Sem parâmetros — corpo da requisição vazio:</p>
+        <pre class="gd-code">{}</pre>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON) — <code>Employees</code> é a lista de usuários ativos:</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Usuarios recuperados com sucesso"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Employees"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"ID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000006"</span><span class="tk-punc">,</span> <span class="tk-key">"EmployeeNo"</span><span class="tk-punc">:</span> <span class="tk-str">"claudinei"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"ID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span><span class="tk-punc">,</span> <span class="tk-key">"EmployeeNo"</span><span class="tk-punc">:</span> <span class="tk-str">"Eduardo Aguiar"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"ID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000009"</span><span class="tk-punc">,</span> <span class="tk-key">"EmployeeNo"</span><span class="tk-punc">:</span> <span class="tk-str">"Eduardo Morais"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"ID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000004"</span><span class="tk-punc">,</span> <span class="tk-key">"EmployeeNo"</span><span class="tk-punc">:</span> <span class="tk-str">"Funcionario"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"ID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000007"</span><span class="tk-punc">,</span> <span class="tk-key">"EmployeeNo"</span><span class="tk-punc">:</span> <span class="tk-str">"ivan"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"ID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000001"</span><span class="tk-punc">,</span> <span class="tk-key">"EmployeeNo"</span><span class="tk-punc">:</span> <span class="tk-str">"Kaic Lima"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"ID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000008"</span><span class="tk-punc">,</span> <span class="tk-key">"EmployeeNo"</span><span class="tk-punc">:</span> <span class="tk-str">"Matheus Morais"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"ID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000005"</span><span class="tk-punc">,</span> <span class="tk-key">"EmployeeNo"</span><span class="tk-punc">:</span> <span class="tk-str">"Rodrigo Contino"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"ID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000003"</span><span class="tk-punc">,</span> <span class="tk-key">"EmployeeNo"</span><span class="tk-punc">:</span> <span class="tk-str">"winke"</span> }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:160px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se os usuários foram recuperados com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">Employees</td><td class="col-type">array&lt;usuário&gt;</td><td class="col-desc">Lista dos usuários ativos. Campos de cada item abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada usuário</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:120px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">ID</td><td class="col-type">string</td><td class="col-desc">Identificador do usuário (funcionário).</td></tr>
+            <tr><td class="col-name">EmployeeNo</td><td class="col-type">string</td><td class="col-desc">Número/login do funcionário (nome de usuário).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Sem inputs:</strong> a API é chamada com corpo vazio (<code>{}</code>) e devolve
+            todos os usuários <strong>ativos</strong>.</li>
         </ul>
       </section>
 
