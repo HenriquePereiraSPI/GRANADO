@@ -393,6 +393,16 @@
           <a class="gd-link" href="#GRD_API_OEE_GetOrderWeightItemPerformance">GRD_API_OEE_GetOrderWeightItemPerformance</a>
         </div>
       </div>
+
+      <div class="gd-cat">
+        <button class="gd-cat-toggle" aria-expanded="false" onclick="gdToggleCat(this)">
+          <span class="gd-cat-chevron">▸</span> JDE
+        </button>
+        <div class="gd-cat-items">
+          <div class="gd-subgroup">API</div>
+          <a class="gd-link" href="#GRD_API_JDE_GetStockInformation">GRD_API_JDE_GetStockInformation</a>
+        </div>
+      </div>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -3805,6 +3815,123 @@
             <code>CreatedBy</code> e <code>WorkcenterResourceName</code> aceitam <code>"-1"</code> para não filtrar.</li>
           <li><strong>Relação com <a class="gd-link" href="#GRD_API_OEE_GetOrderWeightPerformance">GRD_API_OEE_GetOrderWeightPerformance</a>:</strong>
             aquela dá a performance por <em>ordem</em>; esta detalha por <em>matéria-prima/pesagem</em>.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_JDE_GetStockInformation
+           ============================================================ -->
+      <section id="GRD_API_JDE_GetStockInformation">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_JDE_GetStockInformation</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera informações de estoque no JDE</strong> — devolve o saldo por
+          <strong>material</strong> e <strong>lote</strong>, com localização, validade e status,
+          em <code>JDEStockInformation</code>.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_JDE_GetStockInformation</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>JDEStockInformation</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON) — use <code>"-1"</code> para ignorar um filtro:</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"516151|-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Lot"</span><span class="tk-punc">:</span> <span class="tk-str">"515158181|-1"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">ProductNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Não</td>
+              <td class="col-desc">Filtra pelo material (produto). <code>"-1"</code> = todos.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Lot</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Não</td>
+              <td class="col-desc">Filtra pelo lote. <code>"-1"</code> = todos.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON) — <code>JDEStockInformation</code> é a lista de saldos por lote/localização:</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Informações de estoque recuperadas com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"JDEStockInformation"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"P_Branch"</span><span class="tk-punc">:</span> <span class="tk-str">"0015"</span><span class="tk-punc">,</span> <span class="tk-key">"P_Product"</span><span class="tk-punc">:</span> <span class="tk-str">"E10139B"</span><span class="tk-punc">,</span> <span class="tk-key">"P_Description"</span><span class="tk-punc">:</span> <span class="tk-str">"RTL FUNDO DIF.AGUAS/AMIR 250ML"</span><span class="tk-punc">,</span> <span class="tk-key">"P_UOM"</span><span class="tk-punc">:</span> <span class="tk-str">"UN"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"P_Lot"</span><span class="tk-punc">:</span> <span class="tk-str">"0623321"</span><span class="tk-punc">,</span> <span class="tk-key">"P_StatusLot"</span><span class="tk-punc">:</span> <span class="tk-str">"V"</span><span class="tk-punc">,</span> <span class="tk-key">"P_EffectiveDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/4/2022 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"P_ExpirationDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/4/2022 12:00:00 AM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"P_Location"</span><span class="tk-punc">:</span> <span class="tk-str">"MQ1B01005"</span><span class="tk-punc">,</span> <span class="tk-key">"P_Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"56"</span><span class="tk-punc">,</span> <span class="tk-key">"P_StatusLocation"</span><span class="tk-punc">:</span> <span class="tk-str">"V"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"P_Branch"</span><span class="tk-punc">:</span> <span class="tk-str">"0015"</span><span class="tk-punc">,</span> <span class="tk-key">"P_Product"</span><span class="tk-punc">:</span> <span class="tk-str">"E10139B"</span><span class="tk-punc">,</span> <span class="tk-key">"P_Lot"</span><span class="tk-punc">:</span> <span class="tk-str">"0720621"</span><span class="tk-punc">,</span> <span class="tk-key">"P_StatusLot"</span><span class="tk-punc">:</span> <span class="tk-str">"V"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"P_Location"</span><span class="tk-punc">:</span> <span class="tk-str">"MQ1B01007"</span><span class="tk-punc">,</span> <span class="tk-key">"P_Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"177"</span><span class="tk-punc">,</span> <span class="tk-key">"P_StatusLocation"</span><span class="tk-punc">:</span> <span class="tk-str">"V"</span>
+    }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as informações foram recuperadas com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">JDEStockInformation</td><td class="col-type">array&lt;estoque&gt;</td><td class="col-desc">Saldos de estoque por lote/localização. Campos de cada item abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada item de estoque</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:120px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">P_Branch</td><td class="col-type">string</td><td class="col-desc">Filial/planta (Branch/Plant) no JDE.</td></tr>
+            <tr><td class="col-name">P_Product</td><td class="col-type">string</td><td class="col-desc">Código do material (produto).</td></tr>
+            <tr><td class="col-name">P_Description</td><td class="col-type">string</td><td class="col-desc">Descrição do material.</td></tr>
+            <tr><td class="col-name">P_UOM</td><td class="col-type">string</td><td class="col-desc">Unidade de medida (ex.: <code>"UN"</code>).</td></tr>
+            <tr><td class="col-name">P_Lot</td><td class="col-type">string</td><td class="col-desc">Número do lote.</td></tr>
+            <tr><td class="col-name">P_StatusLot</td><td class="col-type">string</td><td class="col-desc">Status do lote (ex.: <code>"V"</code> = válido).</td></tr>
+            <tr><td class="col-name">P_EffectiveDate</td><td class="col-type">string (data)</td><td class="col-desc">Data de vigência/entrada do lote.</td></tr>
+            <tr><td class="col-name">P_ExpirationDate</td><td class="col-type">string (data)</td><td class="col-desc">Data de validade do lote.</td></tr>
+            <tr><td class="col-name">P_Location</td><td class="col-type">string</td><td class="col-desc">Localização (endereço) no estoque.</td></tr>
+            <tr><td class="col-name">P_Quantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade disponível naquele lote/localização.</td></tr>
+            <tr><td class="col-name">P_StatusLocation</td><td class="col-type">string</td><td class="col-desc">Status da localização (ex.: <code>"V"</code> = válida).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Filtros:</strong> <code>ProductNo</code> e <code>Lot</code> aceitam <code>"-1"</code>
+            para não filtrar — combine-os (ex.: só <code>ProductNo</code> para ver todos os lotes do material).</li>
+          <li><strong>Múltiplas linhas por lote:</strong> o mesmo lote pode aparecer em mais de uma
+            <code>P_Location</code>, cada uma com sua <code>P_Quantity</code>.</li>
+          <li><strong>Origem:</strong> os dados vêm diretamente do <strong>JDE</strong> — os campos
+            usam o prefixo <code>P_</code> conforme retornados pela integração.</li>
         </ul>
       </section>
 

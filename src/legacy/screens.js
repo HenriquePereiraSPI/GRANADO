@@ -2188,12 +2188,20 @@ export const SCREENS = {
           <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:12px">🔍 Filtros</div>
           <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 14px;align-items:end">
             <div style="display:flex;flex-direction:column">
-              <label class="lbl">Sala</label>
-              <select class="sel" id="cklh-flt-sala" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
-                <option value="">Todas</option>
-                <option value="Sala A">Sala A</option>
-                <option value="Sala B">Sala B</option>
-                <option value="Sala C">Sala C</option>
+              <label class="lbl">Recurso</label>
+              <select class="sel" id="cklh-flt-recurso" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
+                <option value="">Todos</option>
+                <optgroup label="Salas">
+                  <option value="Sala A">Sala A</option>
+                  <option value="Sala B">Sala B</option>
+                  <option value="Sala C">Sala C</option>
+                  <option value="Sala 3">Sala 3</option>
+                </optgroup>
+                <optgroup label="Equipamentos">
+                  <option value="BAL-014">BAL-014 · Toledo XK-3000</option>
+                  <option value="TEHI-017">TEHI-017</option>
+                  <option value="Manômetro 822050">Manômetro 822050</option>
+                </optgroup>
               </select>
             </div>
             <div style="display:flex;flex-direction:column">
@@ -2234,18 +2242,18 @@ export const SCREENS = {
         <div id="cklh-resultado" style="font-size:10px;color:var(--text3);margin-bottom:8px;font-family:var(--font-m)">3 de 3 registros</div>
 
         <table class="tbl" id="tbl-cklh" style="font-size:11px">
-          <thead><tr><th>Data</th><th>Sala</th><th>Checklist</th><th>Equipamento</th><th>Operador</th><th>Status</th><th>Observação</th></tr></thead>
+          <thead><tr><th>Data</th><th>Recurso</th><th>Checklist</th><th>Operador</th><th>Status</th><th style="text-align:center">Detalhes</th></tr></thead>
           <tbody>
-            <tr data-data="2026-07-02" data-sala="Sala A" data-checklist="balancas" data-operador="j. santos 412" data-status="ok"><td class="mono" style="font-size:11px">02/07/2026 07:14</td><td>Sala A · MD1</td><td>⚖️ Verificação de Balança <span style="font-size:9px;color:var(--text3)">· POP-EMB-0041</span></td><td class="mono" style="font-size:10px">BAL-014 · Toledo XK-3000</td><td>J. Santos (412)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">3 pesos padrão dentro do range (10, 11 e 20 kg · ±10 g).</td></tr>
-            <tr data-data="2026-07-02" data-sala="Sala 3" data-checklist="temp-umid" data-operador="j. santos 412" data-status="ok"><td class="mono" style="font-size:11px">02/07/2026 07:15</td><td>Sala 3 · CPG Cosmético</td><td>🌡️ Temperatura e Umidade <span style="font-size:9px;color:var(--text3)">· POP-ALM-0007</span></td><td class="mono" style="font-size:10px">TEHI-017</td><td>J. Santos (412)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="font-size:10px;color:var(--text3)">Temp 17,5 °C (limite 15–22) · UR 65% (monitorada). 1ª medição do turno.</td></tr>
-            <tr data-data="2026-07-01" data-sala="Sala 3" data-checklist="pressao" data-operador="a. pereira 203" data-status="alerta" style="opacity:.9"><td class="mono" style="font-size:11px">01/07/2026 08:02</td><td>Sala 3 · CPG Cosmético</td><td>📊 Pressão <span style="font-size:9px;color:var(--text3)">· POP-ENG-0007</span></td><td class="mono" style="font-size:10px">Manômetro 822050</td><td>A. Pereira (203)</td><td><span class="bdg bdg-alr">⚠ Concluído c/ alerta</span></td><td style="font-size:10px;color:var(--alr)">Pressão 0,85 Pa — abaixo do limite (0,98). OS aberta no Tractian, recalibrada 08:47.</td></tr>
+            <tr data-data="2026-07-02" data-recurso="BAL-014" data-checklist="balancas" data-operador="j. santos 412" data-status="ok"><td class="mono" style="font-size:11px">02/07/2026 07:14</td><td class="mono" style="font-size:10px">BAL-014 · Toledo XK-3000</td><td>⚖️ Verificação de Balança <span style="font-size:9px;color:var(--text3)">· POP-EMB-0041</span></td><td>J. Santos (412)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="text-align:center"><button class="btn btn-sm btn-ghost" style="font-size:10px">🔎 Detalhes</button></td></tr>
+            <tr data-data="2026-07-02" data-recurso="Sala 3" data-checklist="temp-umid" data-operador="j. santos 412" data-status="ok"><td class="mono" style="font-size:11px">02/07/2026 07:15</td><td>Sala 3 · CPG Cosmético</td><td>🌡️ Temperatura e Umidade <span style="font-size:9px;color:var(--text3)">· POP-ALM-0007</span></td><td>J. Santos (412)</td><td><span class="bdg bdg-ok">✓ Concluído</span></td><td style="text-align:center"><button class="btn btn-sm btn-ghost" style="font-size:10px">🔎 Detalhes</button></td></tr>
+            <tr data-data="2026-07-01" data-recurso="Manômetro 822050" data-checklist="pressao" data-operador="a. pereira 203" data-status="alerta" style="opacity:.9"><td class="mono" style="font-size:11px">01/07/2026 08:02</td><td class="mono" style="font-size:10px">Manômetro 822050</td><td>📊 Pressão <span style="font-size:9px;color:var(--text3)">· POP-ENG-0007</span></td><td>A. Pereira (203)</td><td><span class="bdg bdg-alr">⚠ Concluído c/ alerta</span></td><td style="text-align:center"><button class="btn btn-sm btn-ghost" style="font-size:10px">🔎 Detalhes</button></td></tr>
           </tbody>
         </table>
 
         <script>
         // Filtra a tabela do Histórico Recente usando os atributos data-* das linhas.
         function cklhFiltrar() {
-          var fSala  = (document.getElementById('cklh-flt-sala').value || '').trim();
+          var fRec   = (document.getElementById('cklh-flt-recurso').value || '').trim();
           var fChk   = (document.getElementById('cklh-flt-checklist').value || '').trim();
           var fOp    = (document.getElementById('cklh-flt-operador').value || '').trim().toLowerCase();
           var fSt    = (document.getElementById('cklh-flt-status').value || '').trim();
@@ -2254,13 +2262,14 @@ export const SCREENS = {
           var rows   = document.querySelectorAll('#tbl-cklh tbody tr');
           var vis = 0;
           rows.forEach(function(r){
-            var sa = r.getAttribute('data-sala') || '';
+            var rec = r.getAttribute('data-recurso') || '';
             var c  = r.getAttribute('data-checklist') || '';
             var o  = (r.getAttribute('data-operador') || '').toLowerCase();
             var s  = r.getAttribute('data-status') || '';
             var d  = r.getAttribute('data-data') || '';
             var ok = true;
-            if (fSala  && sa !== fSala) ok = false;
+            // Recurso: cada linha tem UM recurso (sala OU equipamento).
+            if (fRec   && rec !== fRec) ok = false;
             if (fChk   && c !== fChk) ok = false;
             if (fOp    && o.indexOf(fOp) === -1) ok = false;
             if (fSt    && s !== fSt) ok = false;
@@ -2269,7 +2278,7 @@ export const SCREENS = {
             r.style.display = ok ? '' : 'none';
             if (ok) vis++;
           });
-          var temFiltro = fSala || fChk || fOp || fSt || fDataI || fDataF;
+          var temFiltro = fRec || fChk || fOp || fSt || fDataI || fDataF;
           var lbl = vis + ' de ' + rows.length + ' registro(s)';
           if (temFiltro) lbl += ' — filtros aplicados';
           document.getElementById('cklh-resultado').textContent = lbl;
@@ -2278,7 +2287,7 @@ export const SCREENS = {
           ['cklh-flt-operador','cklh-flt-data-ini','cklh-flt-data-fim'].forEach(function(id){
             var el = document.getElementById(id); if (el) el.value = '';
           });
-          document.getElementById('cklh-flt-sala').value = '';
+          document.getElementById('cklh-flt-recurso').value = '';
           document.getElementById('cklh-flt-checklist').value = '';
           document.getElementById('cklh-flt-status').value = '';
           cklhFiltrar();
