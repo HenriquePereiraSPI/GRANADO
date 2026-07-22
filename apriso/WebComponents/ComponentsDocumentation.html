@@ -46,6 +46,7 @@
   <script src="./granado-checklist-popup.js"></script>
   <script src="./granado-gallery.js"></script>
   <script src="./granado-box-popup.js"></script>
+  <script src="./granado-table-popup.js"></script>
 
   <style>
     html,
@@ -287,6 +288,7 @@
       <a class="gd-link" href="#granado-checklist-popup">granado-checklist-popup</a>
       <a class="gd-link" href="#granado-gallery">granado-gallery</a>
       <a class="gd-link" href="#granado-box-popup">granado-box-popup</a>
+      <a class="gd-link" href="#granado-table-popup">granado-table-popup</a>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -10058,6 +10060,143 @@ pop.open();</pre>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong>Dropdown condicional:</strong> só aparece quando o card selecionado tem <code>equipamentos</code>. A primeira opção é a própria "sala" (equipamento = <code>null</code> no retorno).</li>
           <li><strong>metadata:</strong> use para carregar o contexto (ex.: setor/box) e recuperá-lo no confirm sem estado externo.</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-table-popup
+           ============================================================ -->
+      <section id="granado-table-popup" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-table-popup&gt;</code></h1>
+        <p class="gd-lead">
+          Popup <strong>genérico</strong> com <strong>título</strong>, <strong>subtítulo</strong> e uma
+          <strong>tabela</strong>. A tabela é um <code>&lt;granado-table&gt;</code> embutido — então os
+          parâmetros de tabela (<code>columns</code>, <code>rows</code> e todas as opções) são
+          <strong>exatamente os mesmos</strong> do
+          <a class="gd-link" href="#granado-table">granado-table</a>.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Requer o granado-table (a tabela embutida) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-table.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-table-popup.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — API estática</h2>
+        <p class="gd-lead">
+          Forma recomendada. Abre imediatamente; fecha no botão, no ✕ (e, se
+          <code>closeOnBackdrop</code>, ao clicar fora). As opções da tabela vão no mesmo objeto.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button type="button" onclick="docTablePopup()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1F7A3D;border-radius:7px;background:#1F7A3D;color:#fff;cursor:pointer">📋 Itens da Ordem</button>
+          <button type="button" onclick="docTablePopupBig()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#fff;color:#9A7520;cursor:pointer">📊 Paginação + filtro (30 linhas)</button>
+        </div>
+        <script>
+          function docTablePopup() {
+            GranadoTablePopup.show({
+              title: 'Itens da Ordem OP-2026-0416',
+              subtitle: 'Loção Rosa 200ml · Box 3',
+              columns: [
+                { key: 'cod', label: 'Código', mono: true },
+                { key: 'mp', label: 'Matéria-Prima' },
+                { key: 'kg', label: 'Pesado (kg)', mono: true, align: 'right' },
+                { key: 'status', label: 'Status', align: 'center' }
+              ],
+              rows: [
+                { cod: 'MP-001', mp: 'Água Purificada', kg: '120,500', status: 'OK' },
+                { cod: 'MP-002', mp: 'Álcool Etílico', kg: '18,000', status: 'OK' },
+                { cod: 'MP-003', mp: 'Essência Rosa', kg: '2,350', status: 'FORA' }
+              ]
+            });
+          }
+          function docTablePopupBig() {
+            var rows = [];
+            for (var i = 1; i <= 30; i++) {
+              rows.push({ cod: 'MP-' + (i < 10 ? '00' + i : '0' + i), mp: 'Matéria-Prima ' + i, kg: (i * 1.37).toFixed(3).replace('.', ','), status: (i % 5 === 0) ? 'FORA' : 'OK' });
+            }
+            GranadoTablePopup.show({
+              title: 'Consumo de Matérias-Primas', subtitle: '30 itens · paginação + filtro + ordenação',
+              isEnablePagination: 'true', pageSize: '8',
+              columns: [
+                { key: 'cod', label: 'Código', mono: true },
+                { key: 'mp', label: 'Matéria-Prima' },
+                { key: 'kg', label: 'Pesado (kg)', mono: true, align: 'right' },
+                { key: 'status', label: 'Status', align: 'center' }
+              ],
+              rows: rows
+            });
+          }
+        </script>
+        <pre class="gd-code"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoTablePopup.<span class="tk-attr">show</span>({
+    title: <span class="tk-str">'Itens da Ordem OP-2026-0416'</span>,
+    subtitle: <span class="tk-str">'Loção Rosa 200ml · Box 3'</span>,
+    <span class="tk-comment">// columns e rows: idênticos ao &lt;granado-table&gt;</span>
+    columns: [
+      { key: <span class="tk-str">'cod'</span>, label: <span class="tk-str">'Código'</span>, mono: <span class="tk-keyword">true</span> },
+      { key: <span class="tk-str">'mp'</span>,  label: <span class="tk-str">'Matéria-Prima'</span> },
+      { key: <span class="tk-str">'kg'</span>,  label: <span class="tk-str">'Pesado (kg)'</span>, mono: <span class="tk-keyword">true</span>, align: <span class="tk-str">'right'</span> }
+    ],
+    rows: [
+      { cod: <span class="tk-str">'MP-001'</span>, mp: <span class="tk-str">'Água Purificada'</span>, kg: <span class="tk-str">'120,500'</span> },
+      { cod: <span class="tk-str">'MP-002'</span>, mp: <span class="tk-str">'Álcool Etílico'</span>, kg: <span class="tk-str">'18,000'</span> }
+    ],
+    <span class="tk-comment">// opções da tabela (camelCase) — todas opcionais:</span>
+    isEnablePagination: <span class="tk-str">'true'</span>, pageSize: <span class="tk-str">'8'</span>
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — declarativo (HTML)</h2>
+        <p class="gd-lead">
+          Também dá para deixar no HTML: <code>columns</code> e <code>rows</code> por atributo (JSON),
+          <code>open="false"</code> para iniciar oculto e <code>el.open()</code> para exibir.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button type="button" onclick="document.getElementById('doc-tbl-html').open()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1F7A3D;border-radius:7px;background:#1F7A3D;color:#fff;cursor:pointer">Abrir tabela (HTML)</button>
+          <granado-table-popup id="doc-tbl-html" open="false"
+            title="Itens da Ordem OP-2026-0416" subtitle="Loção Rosa 200ml · Box 3"
+            columns='[{"key":"cod","label":"Código","mono":true},{"key":"mp","label":"Matéria-Prima"},{"key":"kg","label":"Pesado (kg)","mono":true,"align":"right"}]'
+            rows='[{"cod":"MP-001","mp":"Água Purificada","kg":"120,500"},{"cod":"MP-002","mp":"Álcool Etílico","kg":"18,000"}]'></granado-table-popup>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-table-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"tbl"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span>
+  <span class="tk-attr">title</span>=<span class="tk-str">"Itens da Ordem OP-2026-0416"</span> <span class="tk-attr">subtitle</span>=<span class="tk-str">"Loção Rosa 200ml · Box 3"</span>
+  <span class="tk-attr">columns</span>=<span class="tk-str">'[{"key":"cod","label":"Código","mono":true},{"key":"mp","label":"Matéria-Prima"}]'</span>
+  <span class="tk-attr">rows</span>=<span class="tk-str">'[{"cod":"MP-001","mp":"Água Purificada"},{"cod":"MP-002","mp":"Álcool Etílico"}]'</span><span class="tk-tag">&gt;&lt;/granado-table-popup&gt;</span>
+
+<span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-str">"document.getElementById('tbl').open()"</span><span class="tk-tag">&gt;</span>Ver itens<span class="tk-tag">&lt;/button&gt;</span></pre>
+
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos / propriedades</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:200px">Nome</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-desc">Título principal do popup (destaque).</td></tr>
+            <tr><td class="col-name">subtitle</td><td class="col-type">string</td><td class="col-desc">Subtítulo — linha discreta abaixo do título.</td></tr>
+            <tr><td class="col-name">columns</td><td class="col-type">array / JSON</td><td class="col-desc">Colunas da tabela — <strong>idêntico ao <a class="gd-link" href="#granado-table">granado-table</a></strong>. Em JS use <code>.columns</code>.</td></tr>
+            <tr><td class="col-name">rows</td><td class="col-type">array / JSON</td><td class="col-desc">Linhas da tabela — <strong>idêntico ao granado-table</strong>. Em JS use <code>.rows</code>.</td></tr>
+            <tr><td class="col-name">confirm-text</td><td class="col-type">string</td><td class="col-desc">Texto do botão de fechar (default "Fechar").</td></tr>
+            <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> fecha ao clicar fora. Default <strong>não fecha</strong>. Em JS: <code>.closeOnBackdrop</code>.</td></tr>
+            <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code>.</td></tr>
+            <tr><td colspan="3" style="background:#F4EED9;font-weight:800;color:#0F3319">Opções da tabela — repassadas ao <code>&lt;granado-table&gt;</code> (todas opcionais). show(): use camelCase</td></tr>
+            <tr><td class="col-name">color</td><td class="col-type">string</td><td class="col-desc">Cor da faixa lateral da tabela.</td></tr>
+            <tr><td class="col-name">isenablepagination / <em>isEnablePagination</em></td><td class="col-type">boolean</td><td class="col-desc">Ativa paginação.</td></tr>
+            <tr><td class="col-name">pagesize / <em>pageSize</em></td><td class="col-type">number</td><td class="col-desc">Linhas por página.</td></tr>
+            <tr><td class="col-name">isenablefilter / <em>isEnableFilter</em></td><td class="col-type">boolean</td><td class="col-desc">Filtros por coluna + filtro global.</td></tr>
+            <tr><td class="col-name">isenablesort / <em>isEnableSort</em></td><td class="col-type">boolean</td><td class="col-desc">Ordenação por coluna.</td></tr>
+            <tr><td class="col-name">isenableexportcsv / isenableexportpdf</td><td class="col-type">boolean</td><td class="col-desc">Botões de exportar CSV / PDF.</td></tr>
+            <tr><td class="col-name">onrender / onclickevent / ondoubleclickevent</td><td class="col-type">string (JS)</td><td class="col-desc">Render por célula / clique / duplo-clique na linha.</td></tr>
+            <tr><td class="col-name">tablelayout · exportfilename · tabletitle · rowaltcolor · rowheight</td><td class="col-type">—</td><td class="col-desc">Demais opções do <a class="gd-link" href="#granado-table">granado-table</a> (mesmo comportamento).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Requer o granado-table:</strong> inclua o <code>granado-table.js</code> <em>antes</em> — a tabela é renderizada por ele.</li>
+          <li><strong>columns/rows:</strong> a estrutura é a mesma do <code>&lt;granado-table&gt;</code> — colunas com <code>key</code>/<code>label</code>/<code>mono</code>/<code>align</code>/<code>width</code>… e linhas com as chaves das colunas.</li>
+          <li><strong>Rola sozinho:</strong> tabelas grandes rolam dentro do popup; combine com <code>isEnablePagination</code> para listas longas.</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
         </ul>
       </section>

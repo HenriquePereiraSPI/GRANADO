@@ -46,6 +46,7 @@
   <script src="./granado-checklist-popup.js"></script>
   <script src="./granado-gallery.js"></script>
   <script src="./granado-box-popup.js"></script>
+  <script src="./granado-table-popup.js"></script>
 </head>
 
 <body style="margin:0;padding:24px;background:#F4EED9;font-family:'Lato','DejaVu Sans',Arial,sans-serif;color:#103E20">
@@ -1856,6 +1857,66 @@
             var alvo = d.equipamento ? (d.equipamento.id + ' · ' + (d.equipamento.descricao || '')) : (d.title + ' (sala inteira)');
             if (s) s.textContent = '✅ ' + (d.title || d.id) + ' → ' + alvo + ' · metadata: ' + JSON.stringify(d.metadata);
           }
+        });
+      }
+    </script>
+  </section>
+
+  <!-- ========== Linha 34 — granado-table-popup ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-table-popup&gt;
+    </h2>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button type="button" onclick="tablePopupDemo()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1F7A3D;border-radius:7px;background:#1F7A3D;color:#fff;cursor:pointer">📋 Itens da Ordem (tabela em popup)</button>
+      <button type="button" onclick="tablePopupDemoBig()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#fff;color:#9A7520;cursor:pointer">📊 Com paginação + filtro (30 linhas)</button>
+    </div>
+
+    <script>
+      function tablePopupDemo() {
+        GranadoTablePopup.show({
+          title: 'Itens da Ordem OP-2026-0416',
+          subtitle: 'Loção Rosa 200ml · Box 3',
+          columns: [
+            { key: 'cod', label: 'Código', mono: true },
+            { key: 'mp', label: 'Matéria-Prima' },
+            { key: 'kg', label: 'Pesado (kg)', mono: true, align: 'right' },
+            { key: 'status', label: 'Status', align: 'center' }
+          ],
+          rows: [
+            { cod: 'MP-001', mp: 'Água Purificada', kg: '120,500', status: 'OK' },
+            { cod: 'MP-002', mp: 'Álcool Etílico', kg: '18,000', status: 'OK' },
+            { cod: 'MP-003', mp: 'Essência Rosa', kg: '2,350', status: 'FORA' },
+            { cod: 'MP-004', mp: 'Glicerina', kg: '9,120', status: 'OK' }
+          ]
+        });
+      }
+
+      function tablePopupDemoBig() {
+        var rows = [];
+        for (var i = 1; i <= 30; i++) {
+          rows.push({
+            cod: 'MP-' + (i < 10 ? '00' + i : '0' + i),
+            mp: 'Matéria-Prima ' + i,
+            kg: (i * 1.37).toFixed(3).replace('.', ','),
+            status: (i % 5 === 0) ? 'FORA' : 'OK'
+          });
+        }
+        GranadoTablePopup.show({
+          title: 'Consumo de Matérias-Primas',
+          subtitle: '30 itens · com paginação, filtro e ordenação',
+          isEnablePagination: 'true',
+          pageSize: '8',
+          columns: [
+            { key: 'cod', label: 'Código', mono: true },
+            { key: 'mp', label: 'Matéria-Prima', filterable: true },
+            { key: 'kg', label: 'Pesado (kg)', mono: true, align: 'right' },
+            { key: 'status', label: 'Status', align: 'center' }
+          ],
+          rows: rows
         });
       }
     </script>
