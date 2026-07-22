@@ -10021,33 +10021,26 @@ pop.open();</pre>
         <h3 class="gd-h3">Atributos / propriedades</h3>
         <table class="gd-api">
           <thead>
-            <tr><th style="width:160px">Nome</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+            <tr><th style="width:200px">Nome</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
           </thead>
           <tbody>
             <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-desc">Rótulo pequeno (eyebrow) no topo do popup.</td></tr>
             <tr><td class="col-name">subtitle</td><td class="col-type">string</td><td class="col-desc">Título principal (abaixo do <code>title</code>).</td></tr>
-            <tr><td class="col-name">data</td><td class="col-type">array</td><td class="col-desc">Cards da escolha (em JS use <code>.data</code>). Campos de cada item abaixo.</td></tr>
+            <tr><td class="col-name">data</td><td class="col-type">array</td><td class="col-desc">Cards da escolha (em JS use <code>.data</code>). Os campos de cada card (<code>data[]</code>) estão listados abaixo, na mesma tabela.</td></tr>
             <tr><td class="col-name">confirm-text</td><td class="col-type">string</td><td class="col-desc">Texto do botão confirmar (default "Confirmar").</td></tr>
             <tr><td class="col-name">equip-label</td><td class="col-type">string</td><td class="col-desc">Rótulo do dropdown de equipamentos (default "Equipamentos").</td></tr>
             <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> fecha ao clicar fora. Default <strong>não fecha</strong>. Em JS: <code>.closeOnBackdrop</code>.</td></tr>
             <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code>.</td></tr>
             <tr><td class="col-name">onConfirm</td><td class="col-type">função / string (JS)</td><td class="col-desc">Executado ao confirmar; recebe <code>event</code> e <code>detail</code>.</td></tr>
-          </tbody>
-        </table>
-
-        <h3 class="gd-h3">Campos de cada card (<code>data[i]</code>) — só <code>id</code> é obrigatório</h3>
-        <table class="gd-api">
-          <thead>
-            <tr><th style="width:150px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
-          </thead>
-          <tbody>
-            <tr><td class="col-name">id</td><td class="col-type">string / number</td><td class="col-desc">Identificador do card (obrigatório) — devolvido no confirm.</td></tr>
-            <tr><td class="col-name">icon</td><td class="col-type">string</td><td class="col-desc">Emoji/ícone exibido no topo do card (opcional).</td></tr>
-            <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-desc">Título do card (opcional; sem ele, mostra o <code>id</code>).</td></tr>
-            <tr><td class="col-name">subtitle</td><td class="col-type">string</td><td class="col-desc">Texto auxiliar (opcional).</td></tr>
-            <tr><td class="col-name">status</td><td class="col-type">string</td><td class="col-desc">Texto do badge do card (opcional).</td></tr>
-            <tr><td class="col-name">metadata</td><td class="col-type">any</td><td class="col-desc">Valor extra — não exibido, devolvido no confirm (opcional).</td></tr>
-            <tr><td class="col-name">equipamentos</td><td class="col-type">array&lt;{id, descricao}&gt;</td><td class="col-desc">Equipamentos ligados ao card. Se houver, aparece o <strong>dropdown</strong> (a própria opção + os equipamentos). Opcional.</td></tr>
+            <tr><td colspan="3" style="background:#F4EED9;font-weight:800;color:#0F3319">Campos de cada card — dentro de <code>data[]</code> (só <code>id</code> é obrigatório)</td></tr>
+            <tr><td class="col-name">data[].id</td><td class="col-type">string / number</td><td class="col-desc">Identificador do card (obrigatório) — devolvido no confirm.</td></tr>
+            <tr><td class="col-name">data[].icon</td><td class="col-type">string</td><td class="col-desc">Emoji/ícone exibido no topo do card (opcional).</td></tr>
+            <tr><td class="col-name">data[].title</td><td class="col-type">string</td><td class="col-desc">Título do card (opcional; sem ele, mostra o <code>id</code>).</td></tr>
+            <tr><td class="col-name">data[].subtitle</td><td class="col-type">string</td><td class="col-desc">Texto auxiliar (opcional).</td></tr>
+            <tr><td class="col-name">data[].status</td><td class="col-type">string</td><td class="col-desc">Texto do badge do card (opcional).</td></tr>
+            <tr><td class="col-name">data[].statusColor</td><td class="col-type">string</td><td class="col-desc">Cor do badge de status (texto + borda). Sem ele, usa o verde padrão. Aceita <code>hex</code>, <code>rgb()</code> ou <code>var(--x)</code> (opcional).</td></tr>
+            <tr><td class="col-name">data[].metadata</td><td class="col-type">any</td><td class="col-desc">Valor extra — não exibido, devolvido no confirm (opcional).</td></tr>
+            <tr><td class="col-name">data[].equipamentos</td><td class="col-type">array&lt;{id, descricao}&gt;</td><td class="col-desc">Equipamentos ligados ao card. Se houver, aparece o <strong>dropdown</strong> (a própria opção + os equipamentos). Opcional.</td></tr>
           </tbody>
         </table>
 

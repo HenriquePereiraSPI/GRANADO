@@ -19,6 +19,9 @@
                         title        - título do card
                         subtitle     - subtítulo (texto auxiliar)
                         status       - texto do badge (canto do card)
+                        statusColor  - cor do badge de status (texto + borda).
+                                       Sem ele, usa o verde padrão. Aceita hex,
+                                       rgb() ou var(--x).
                         metadata     - qualquer valor extra (volta no confirm)
                         equipamentos - equipamentos ligados ao card. Se houver,
                                        aparece o dropdown. Cada equipamento:
@@ -203,8 +206,14 @@ if (!customElements.get('granado-box-popup')) {
         ? `<div style="font-size:13px;font-weight:900;color:${TEXT};margin-bottom:2px">${this._esc(it.title)}</div>`
         : `<div style="font-size:13px;font-weight:900;color:${TEXT};margin-bottom:2px">${this._esc(it.id)}</div>`;
       const subtitle = this._has(it.subtitle) ? `<div style="font-family:${MONO};font-size:10px;color:${TEXT3}">${this._esc(it.subtitle)}</div>` : '';
+      // statusColor (opcional): troca a cor do badge. Se informado, usa a cor no
+      // texto + borda e fundo transparente; sem ele, mantém a paleta verde padrão.
+      const sc = this._has(it.statusColor) ? this._esc(it.statusColor) : null;
+      const badgeStyle = sc
+        ? `color:${sc};background:transparent;border:1px solid ${sc}`
+        : `color:${STATUS.txt};background:${STATUS.bg};border:1px solid ${STATUS.bd}`;
       const status = this._has(it.status)
-        ? `<div style="margin-top:6px"><span style="display:inline-block;padding:2px 8px;border-radius:9px;font:800 9px/1.4 ${FONT};color:${STATUS.txt};background:${STATUS.bg};border:1px solid ${STATUS.bd}">${this._esc(it.status)}</span></div>`
+        ? `<div style="margin-top:6px"><span style="display:inline-block;padding:2px 8px;border-radius:9px;font:800 9px/1.4 ${FONT};${badgeStyle}">${this._esc(it.status)}</span></div>`
         : '';
       return `<div data-role="box-card" data-idx="${i}" style="cursor:pointer;border:2px solid ${BORDER};border-radius:10px;padding:14px 10px;background:${SURFACE2};text-align:center;transition:all .18s">${icon}${title}${subtitle}${status}</div>`;
     }
