@@ -8,6 +8,8 @@
 
   <link rel="stylesheet" href="../fonts/granado-fonts.css">
   <script src="./granado-chart-bar.js"></script>
+  <script src="./granado-chart-line.js"></script>
+  <script src="./granado-chart-pie.js"></script>
 
   <style>
     html, body { margin:0; padding:0; background:#F4EED9; color:#103E20; font-family:'Lato','DejaVu Sans',Arial,sans-serif }
@@ -47,6 +49,8 @@
     <nav class="gd-side" style="width:230px;flex-shrink:0;position:sticky;top:0;height:calc(100vh - 49px);overflow-y:auto;background:#F8F1D8;border-right:1px solid #D6CDA4;padding:18px 0 32px">
       <div style="font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#8A9E8E;padding:0 14px 8px">Componentes</div>
       <a class="gd-link" href="#granado-chart-bar">granado-chart-bar</a>
+      <a class="gd-link" href="#granado-chart-line">granado-chart-line</a>
+      <a class="gd-link" href="#granado-chart-pie">granado-chart-pie</a>
     </nav>
 
     <main style="flex:1;min-width:0;padding:28px 36px 80px;max-width:1000px">
@@ -313,6 +317,192 @@ c.exportCSV(<span class="tk-str">'vendas'</span>);
         </ul>
       </section>
 
+      <!-- ============================================================
+           granado-chart-line
+           ============================================================ -->
+      <section id="granado-chart-line" style="margin-top:48px;border-top:2px solid #D6CDA4;padding-top:28px">
+        <h1 class="gd-h1"><code>&lt;granado-chart-line&gt;</code></h1>
+        <p class="gd-lead">
+          Gráfico de <strong>linhas</strong> em SVG — mesma ideia do <a class="gd-link" href="#granado-chart-bar">granado-chart-bar</a>.
+          Suporta <strong>linha</strong>, <strong>área</strong>, <strong>área empilhada</strong> e
+          <strong>área 100%</strong>, com legenda, grade, tooltip, pontos, curva (<code>smooth</code>),
+          meta global, seleção no clique e exportação PNG/CSV. Só na vertical.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-line.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — via script</h2>
+        <div class="gd-split">
+          <div class="gd-demo"><granado-chart-line id="ld-basic" title="Vendas por mês" show-values="true"></granado-chart-line></div>
+          <pre class="gd-code"><span class="tk-tag">&lt;granado-chart-line</span> <span class="tk-attr">id</span>=<span class="tk-str">"c"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Vendas por mês"</span> <span class="tk-attr">show-values</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-chart-line&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'c'</span>);
+  c.xField  = <span class="tk-str">'month'</span>;
+  c.yFields = [{ field: <span class="tk-str">'sales'</span>, label: <span class="tk-str">'Vendas'</span> }];
+  c.data    = [
+    { month: <span class="tk-str">'Jan'</span>, sales: <span class="tk-num">120</span> }, { month: <span class="tk-str">'Fev'</span>, sales: <span class="tk-num">180</span> },
+    { month: <span class="tk-str">'Mar'</span>, sales: <span class="tk-num">150</span> }, { month: <span class="tk-str">'Abr'</span>, sales: <span class="tk-num">220</span> }
+  ];
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">Tipos — <code>type</code></h2>
+        <table class="gd-api" style="margin-bottom:12px">
+          <thead><tr><th style="width:150px">type</th><th>O que faz</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">line</td><td class="col-desc">Linhas (default).</td></tr>
+            <tr><td class="col-name">area</td><td class="col-desc">Linha com área preenchida.</td></tr>
+            <tr><td class="col-name">stacked</td><td class="col-desc">Áreas empilhadas (soma por categoria).</td></tr>
+            <tr><td class="col-name">stacked100</td><td class="col-desc">Áreas empilhadas normalizadas a 100%.</td></tr>
+          </tbody>
+        </table>
+        <div class="gd-split">
+          <div class="gd-demo"><granado-chart-line id="ld-area" type="area" title="area"></granado-chart-line></div>
+          <div class="gd-demo"><granado-chart-line id="ld-stacked" type="stacked" title="stacked"></granado-chart-line></div>
+        </div>
+
+        <h2 class="gd-h2">Curva, tracejado, pontos — props de série</h2>
+        <div class="gd-split">
+          <div class="gd-demo"><granado-chart-line id="ld-multi" title="Vendas x Meta (curva)"></granado-chart-line></div>
+          <pre class="gd-code">c.yFields = [
+  { field: <span class="tk-str">'sales'</span>,  label: <span class="tk-str">'Vendas'</span>, smooth: <span class="tk-key">true</span> },              <span class="tk-comment">// curva</span>
+  { field: <span class="tk-str">'target'</span>, label: <span class="tk-str">'Meta'</span>,   smooth: <span class="tk-key">true</span>, dashed: <span class="tk-key">true</span>, <span class="tk-comment">// tracejada</span>
+    showDots: <span class="tk-key">false</span> }                                     <span class="tk-comment">// sem pontos</span>
+];</pre>
+        </div>
+
+        <h2 class="gd-h2">Clique &amp; seleção — <code>point-click</code></h2>
+        <p class="gd-lead">Clicar num ponto <strong>destaca a série</strong> e esmaece as demais (toggle); o evento devolve os valores.</p>
+        <div class="gd-split">
+          <div class="gd-demo"><granado-chart-line id="ld-click" title="Clique num ponto"></granado-chart-line></div>
+          <pre class="gd-code">c.addEventListener(<span class="tk-str">'point-click'</span>, <span class="tk-key">function</span> (ev) {
+  <span class="tk-comment">// { index, category, series, field, value, color,</span>
+  <span class="tk-comment">//   categoryValues, selected }</span>
+  console.log(ev.detail);
+});</pre>
+        </div>
+
+        <h2 class="gd-h2">API</h2>
+        <p class="gd-lead">
+          Mesmos atributos do <a class="gd-link" href="#granado-chart-bar">granado-chart-bar</a>
+          (<code>data</code>, <code>x-field</code>, <code>y-fields</code>, <code>x2-field</code>,
+          <code>overall-target</code>, <code>title</code>, <code>show-legend/grid/values/tooltip</code>,
+          <code>animated</code>, <code>show-export</code>, <code>export-position</code>,
+          <code>height</code>, <code>width</code>), <strong>exceto</strong>: não tem <code>orientation</code>
+          nem <code>type="target"</code>. O <code>type</code> é <code>line/area/stacked/stacked100</code>.
+        </p>
+        <h3 class="gd-h3">Campos de série (<code>yFields[i]</code>) específicos de linha</h3>
+        <table class="gd-api">
+          <thead><tr><th style="width:150px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">lineWidth</td><td class="col-type">number</td><td class="col-desc">Espessura da linha (default 2.5).</td></tr>
+            <tr><td class="col-name">dashed</td><td class="col-type">boolean</td><td class="col-desc">Linha tracejada.</td></tr>
+            <tr><td class="col-name">showDots</td><td class="col-type">boolean</td><td class="col-desc">Pontos nos vértices (default true).</td></tr>
+            <tr><td class="col-name">smooth</td><td class="col-type">boolean</td><td class="col-desc">Curva suave (spline) em vez de retas.</td></tr>
+            <tr><td class="col-name">area</td><td class="col-type">boolean</td><td class="col-desc">Preenche a área desta série (mesmo em type "line").</td></tr>
+            <tr><td class="col-name">color · label · formatter · tooltipFormatter · sort · opacity</td><td class="col-type">—</td><td class="col-desc">Iguais ao granado-chart-bar.</td></tr>
+          </tbody>
+        </table>
+        <h3 class="gd-h3">Evento &amp; métodos</h3>
+        <table class="gd-api">
+          <thead><tr><th style="width:200px">Nome</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">point-click</td><td class="col-desc"><code>detail</code>: { index, category, series, field, value, color, categoryValues, selected }.</td></tr>
+            <tr><td class="col-name">.exportPNG(nome?, escala?)</td><td class="col-desc">Imagem .png (título + legenda).</td></tr>
+            <tr><td class="col-name">.exportCSV(nome?)</td><td class="col-desc">Dados em tabela .csv (<code>;</code> + BOM).</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ============================================================
+           granado-chart-pie
+           ============================================================ -->
+      <section id="granado-chart-pie" style="margin-top:48px;border-top:2px solid #D6CDA4;padding-top:28px">
+        <h1 class="gd-h1"><code>&lt;granado-chart-pie&gt;</code></h1>
+        <p class="gd-lead">
+          Gráfico de <strong>pizza</strong> em SVG — mesma ideia dos demais. Suporta
+          <strong>pizza</strong>, <strong>rosca</strong> (donut) e <strong>semicírculo</strong> (gauge),
+          com legenda, tooltip, rótulos de %, rótulo central, seleção no clique e exportação PNG/CSV.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-pie.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — via script</h2>
+        <p class="gd-lead">A pizza tem <strong>um</strong> valor por rótulo: use <code>x-field</code> (rótulo) + <code>value-field</code> (valor).</p>
+        <div class="gd-split">
+          <div class="gd-demo"><granado-chart-pie id="pd-pie" title="Pesagens por sala" show-values="true"></granado-chart-pie></div>
+          <pre class="gd-code"><span class="tk-tag">&lt;granado-chart-pie</span> <span class="tk-attr">id</span>=<span class="tk-str">"c"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Pesagens por sala"</span> <span class="tk-attr">show-values</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-chart-pie&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'c'</span>);
+  c.xField     = <span class="tk-str">'sala'</span>;
+  c.valueField = <span class="tk-str">'total'</span>;
+  c.data = [
+    { sala: <span class="tk-str">'Sala A'</span>, total: <span class="tk-num">120</span> }, { sala: <span class="tk-str">'Sala B'</span>, total: <span class="tk-num">80</span> },
+    { sala: <span class="tk-str">'Sala C'</span>, total: <span class="tk-num">60</span> }, { sala: <span class="tk-str">'Sala D'</span>, total: <span class="tk-num">40</span> }
+  ];
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">Tipos — <code>type</code></h2>
+        <table class="gd-api" style="margin-bottom:12px">
+          <thead><tr><th style="width:150px">type</th><th>O que faz</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">pie</td><td class="col-desc">Pizza cheia (default).</td></tr>
+            <tr><td class="col-name">donut</td><td class="col-desc">Rosca (raio interno). Aceita <code>center-label</code>.</td></tr>
+            <tr><td class="col-name">semi</td><td class="col-desc">Semicírculo (gauge). Aceita <code>center-label</code>.</td></tr>
+          </tbody>
+        </table>
+        <div class="gd-split">
+          <div class="gd-demo"><granado-chart-pie id="pd-donut" type="donut" title="Donut" center-label="300 kg" show-values="true"></granado-chart-pie></div>
+          <div class="gd-demo"><granado-chart-pie id="pd-semi" type="semi" title="Semi (gauge)" center-label="85%" show-values="true"></granado-chart-pie></div>
+        </div>
+
+        <h2 class="gd-h2">Cores por fatia + clique</h2>
+        <p class="gd-lead">Cada item de <code>data</code> pode ter <code>color</code>. Clicar numa fatia destaca (toggle) e emite <code>slice-click</code>. A legenda também é clicável.</p>
+        <div class="gd-split">
+          <div class="gd-demo"><granado-chart-pie id="pd-click" type="donut" title="Clique numa fatia" show-values="true"></granado-chart-pie></div>
+          <pre class="gd-code">c.xField = <span class="tk-str">'status'</span>; c.valueField = <span class="tk-str">'qtd'</span>;
+c.data = [
+  { status: <span class="tk-str">'OK'</span>,     qtd: <span class="tk-num">320</span>, color: <span class="tk-str">'#1F7A3D'</span> },
+  { status: <span class="tk-str">'Alerta'</span>, qtd: <span class="tk-num">60</span>,  color: <span class="tk-str">'#9A7520'</span> },
+  { status: <span class="tk-str">'Fora'</span>,   qtd: <span class="tk-num">40</span>,  color: <span class="tk-str">'#B5342F'</span> }
+];
+c.tooltipFormatter = <span class="tk-key">function</span> (ctx) {
+  <span class="tk-key">return</span> <span class="tk-str">'&lt;b&gt;'</span> + ctx.label + <span class="tk-str">'&lt;/b&gt;&lt;br&gt;'</span> + ctx.value + <span class="tk-str">' un · '</span> + ctx.percent.toFixed(<span class="tk-num">0</span>) + <span class="tk-str">'%'</span>;
+};
+c.addEventListener(<span class="tk-str">'slice-click'</span>, <span class="tk-key">function</span> (ev) {
+  console.log(ev.detail);  <span class="tk-comment">// { index, label, value, percent, color, selected }</span>
+});</pre>
+        </div>
+
+        <h2 class="gd-h2">API</h2>
+        <table class="gd-api">
+          <thead><tr><th style="width:170px">Nome</th><th style="width:150px">Tipo</th><th style="width:110px">Default</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">data</td><td class="col-type">array / JSON</td><td class="col-default">[]</td><td class="col-desc">Objetos. Rótulos (x) repetidos são somados. Item pode ter <code>color</code>.</td></tr>
+            <tr><td class="col-name">x-field</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Chave do rótulo da fatia. Em JS <code>.xField</code>.</td></tr>
+            <tr><td class="col-name">value-field</td><td class="col-type">string</td><td class="col-default">"value"</td><td class="col-desc">Chave do valor. Em JS <code>.valueField</code>.</td></tr>
+            <tr><td class="col-name">type</td><td class="col-type">string</td><td class="col-default">"pie"</td><td class="col-desc"><code>pie</code> · <code>donut</code> · <code>semi</code>.</td></tr>
+            <tr><td class="col-name">inner-radius</td><td class="col-type">number</td><td class="col-default">donut .55 / semi .5</td><td class="col-desc">Raio interno (0–0.9). Em JS <code>.innerRadius</code>.</td></tr>
+            <tr><td class="col-name">center-label</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Texto no centro (donut/semi). Em JS <code>.centerLabel</code>.</td></tr>
+            <tr><td class="col-name">show-legend / show-values</td><td class="col-type">boolean</td><td class="col-default">true / false</td><td class="col-desc">Legenda (com %) / rótulo de % nas fatias.</td></tr>
+            <tr><td class="col-name">show-tooltip · animated · show-export · export-position · height · width</td><td class="col-type">—</td><td class="col-default">—</td><td class="col-desc">Iguais aos demais gráficos.</td></tr>
+            <tr><td class="col-name">.formatter / .tooltipFormatter</td><td class="col-type">função</td><td class="col-default">—</td><td class="col-desc">Formata valor / HTML do tooltip (via JS).</td></tr>
+          </tbody>
+        </table>
+        <h3 class="gd-h3">Evento &amp; métodos</h3>
+        <table class="gd-api">
+          <thead><tr><th style="width:200px">Nome</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">slice-click</td><td class="col-desc"><code>detail</code>: { index, label, value, percent, color, selected }.</td></tr>
+            <tr><td class="col-name">.exportPNG(nome?, escala?)</td><td class="col-desc">Imagem .png (título + legenda).</td></tr>
+            <tr><td class="col-name">.exportCSV(nome?)</td><td class="col-desc">Dados em tabela .csv (rótulo/valor/%).</td></tr>
+          </tbody>
+        </table>
+      </section>
+
     </main>
   </div>
 
@@ -379,6 +569,25 @@ c.exportCSV(<span class="tk-str">'vendas'</span>);
         out.textContent = '▶ ' + d.category + ' · ' + d.series + ' = ' + d.value +
           '  |  categoria: ' + JSON.stringify(d.categoryValues);
       });
+    });
+
+    // ===== granado-chart-line (demos) =====
+    set('ld-basic', function (c) { c.xField = 'month'; c.yFields = [{ field: 'sales', label: 'Vendas' }]; c.data = VENDAS; });
+    set('ld-area', function (c) { c.type = 'area'; c.xField = 'month'; c.yFields = [{ field: 'sales', label: 'Volume' }]; c.data = VENDAS; });
+    set('ld-stacked', function (c) { c.type = 'stacked'; c.xField = 'month'; c.yFields = ABC; c.data = COMPO; });
+    set('ld-multi', function (c) { c.xField = 'month'; c.yFields = [{ field: 'sales', label: 'Vendas', smooth: true }, { field: 'target', label: 'Meta', smooth: true, dashed: true, showDots: false }]; c.data = VM; });
+    set('ld-click', function (c) { c.xField = 'month'; c.yFields = [{ field: 'sales', label: 'Vendas' }, { field: 'target', label: 'Meta' }]; c.data = VM; c.addEventListener('point-click', function (ev) { console.log('[point-click]', ev.detail); }); });
+
+    // ===== granado-chart-pie (demos) =====
+    var PIE_SALA = [{ sala: 'Sala A', total: 120 }, { sala: 'Sala B', total: 80 }, { sala: 'Sala C', total: 60 }, { sala: 'Sala D', total: 40 }];
+    set('pd-pie', function (c) { c.xField = 'sala'; c.valueField = 'total'; c.data = PIE_SALA; });
+    set('pd-donut', function (c) { c.type = 'donut'; c.xField = 'mp'; c.valueField = 'kg'; c.data = [{ mp: 'Água', kg: 150 }, { mp: 'Álcool', kg: 90 }, { mp: 'Essência', kg: 40 }, { mp: 'Glicerina', kg: 20 }]; });
+    set('pd-semi', function (c) { c.type = 'semi'; c.xField = 'estado'; c.valueField = 'min'; c.data = [{ estado: 'Operando', min: 425, color: '#1F7A3D' }, { estado: 'Parado', min: 75, color: '#B5342F' }]; });
+    set('pd-click', function (c) {
+      c.type = 'donut'; c.xField = 'status'; c.valueField = 'qtd';
+      c.data = [{ status: 'OK', qtd: 320, color: '#1F7A3D' }, { status: 'Alerta', qtd: 60, color: '#9A7520' }, { status: 'Fora', qtd: 40, color: '#B5342F' }];
+      c.tooltipFormatter = function (ctx) { return '<b>' + ctx.label + '</b><br>' + ctx.value + ' un · ' + ctx.percent.toFixed(0) + '%'; };
+      c.addEventListener('slice-click', function (ev) { console.log('[slice-click]', ev.detail); });
     });
   </script>
 </body>

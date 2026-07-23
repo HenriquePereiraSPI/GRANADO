@@ -10,24 +10,40 @@
   <link rel="stylesheet" href="../fonts/granado-fonts.css">
 
   <script src="./granado-chart-bar.js"></script>
+  <script src="./granado-chart-line.js"></script>
+  <script src="./granado-chart-pie.js"></script>
 </head>
 
 <body style="margin:0;padding:24px;background:#F4EED9;font-family:'Lato','DejaVu Sans',Arial,sans-serif;color:#103E20">
   <h1 style="font-size:20px;font-weight:700;margin:0 0 4px;color:#1C5C31">Gráficos Granado</h1>
-  <p style="font-size:12px;color:#5A6B5E;margin:0 0 24px">Exemplos visuais do <code>&lt;granado-chart-bar&gt;</code> — gráfico à esquerda, snippet que o gerou à direita.</p>
+  <p style="font-size:12px;color:#5A6B5E;margin:0 0 18px">Exemplos visuais dos gráficos — gráfico à esquerda, snippet que o gerou à direita.</p>
 
   <style>
     .card { background:#FDFAF1;border:1px solid #D6CDA4;border-radius:12px;padding:18px 20px;margin-bottom:22px }
     .card h2 { font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#6B7280;margin:0 0 14px }
     /* corpo: gráfico à esquerda, snippet à direita */
     .body { display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:stretch }
-    .body > granado-chart-bar { min-width:0;align-self:center }
+    .body > granado-chart-bar, .body > granado-chart-line, .body > granado-chart-pie { min-width:0;align-self:center }
     @media (max-width:900px){ .body { grid-template-columns:1fr } }
     pre.code { background:#0F3319;color:#EAF1EA;border-radius:8px;padding:12px 14px;margin:0;
       font:12px/1.55 'DejaVu Sans Mono','Consolas','Courier New',monospace;
       overflow:auto;max-height:360px;white-space:pre }
     pre.code .cmt { color:#8FB89C }
+    /* Tabs */
+    .tabs { display:flex;gap:6px;margin-bottom:22px;border-bottom:1px solid #D6CDA4 }
+    .tabs button { background:transparent;border:none;border-bottom:3px solid transparent;padding:10px 18px;cursor:pointer;
+      font:800 11px/1.4 'Lato',Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E }
+    .tabs button.active { color:#1C5C31;border-bottom-color:#1C5C31 }
+    .panel { display:none } .panel.active { display:block }
   </style>
+
+  <div class="tabs">
+    <button type="button" data-tab="bar" class="active" onclick="showTab('bar')">Chart Bar</button>
+    <button type="button" data-tab="line" onclick="showTab('line')">Chart Line</button>
+    <button type="button" data-tab="pie" onclick="showTab('pie')">Chart Pie</button>
+  </div>
+
+  <div id="panel-bar" class="panel active">
 
   <!-- 1 — Simples -->
   <div class="card">
@@ -235,7 +251,285 @@
     </div>
   </div>
 
+  <!-- 11 — bar-click + várias props de yField -->
+  <div class="card">
+    <h2>bar-click (log no console) + props de yField (color · formatter · tooltipFormatter · borderRadius · opacity · barWidth · sort)</h2>
+    <div class="body">
+      <granado-chart-bar id="c-click" type="grouped" title="Clique numa barra (veja o console)" show-values="true"></granado-chart-bar>
+      <pre class="code">&lt;granado-chart-bar id="c" type="grouped" title="Clique numa barra" show-values="true"&gt;&lt;/granado-chart-bar&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'month';
+  c.yFields = [
+    {
+      field: 'sales', label: 'Vendas',
+      color: '#1F7A3D',                                  <span class="cmt">// cor da série</span>
+      borderRadius: 6,                                   <span class="cmt">// pontas arredondadas</span>
+      barWidth: 26,                                      <span class="cmt">// largura fixa da barra</span>
+      sort: 1,                                           <span class="cmt">// ordem de render</span>
+      formatter: function (v) { return 'R$ ' + v; },     <span class="cmt">// rótulo/valor</span>
+      tooltipFormatter: function (ctx) {                 <span class="cmt">// HTML do tooltip</span>
+        return '&lt;b&gt;' + ctx.category + '&lt;/b&gt;&lt;br&gt;Vendas: R$ ' + ctx.value;
+      }
+    },
+    {
+      field: 'target', label: 'Meta',
+      color: '#9A7520', opacity: 0.55, borderRadius: 6, sort: 2,
+      formatter: function (v) { return 'R$ ' + v; }
+    }
+  ];
+  c.data = [
+    { month: 'Jan', sales: 120, target: 150 }, { month: 'Fev', sales: 180, target: 160 },
+    { month: 'Mar', sales: 150, target: 170 }, { month: 'Abr', sales: 220, target: 190 }
+  ];
+
+  <span class="cmt">// clique numa barra -> loga os valores no console</span>
+  c.addEventListener('bar-click', function (ev) {
+    console.log('[bar-click]', ev.detail);
+  });
+&lt;/script&gt;</pre>
+    </div>
+  </div>
+
+  </div><!-- /panel-bar -->
+
+  <div id="panel-line" class="panel">
+
+    <!-- L1 — Linha simples -->
+    <div class="card">
+      <h2>type="line" · uma série · pontos + tooltip</h2>
+      <div class="body">
+        <granado-chart-line id="l-simple" title="Vendas por mês" show-values="true"></granado-chart-line>
+        <pre class="code">&lt;granado-chart-line id="c" title="Vendas por mês" show-values="true"&gt;&lt;/granado-chart-line&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'month';
+  c.yFields = [{ field: 'sales', label: 'Vendas' }];
+  c.data = [
+    { month: 'Jan', sales: 120 }, { month: 'Fev', sales: 180 }, { month: 'Mar', sales: 150 },
+    { month: 'Abr', sales: 220 }, { month: 'Mai', sales: 200 }, { month: 'Jun', sales: 260 }
+  ];
+&lt;/script&gt;</pre>
+      </div>
+    </div>
+
+    <!-- L2 — Multi-séries + smooth -->
+    <div class="card">
+      <h2>múltiplas séries · smooth (curva)</h2>
+      <div class="body">
+        <granado-chart-line id="l-multi" title="Vendas x Meta (curva)"></granado-chart-line>
+        <pre class="code">&lt;granado-chart-line id="c" title="Vendas x Meta (curva)"&gt;&lt;/granado-chart-line&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'month';
+  c.yFields = [
+    { field: 'sales',  label: 'Vendas', smooth: true },
+    { field: 'target', label: 'Meta',   smooth: true, dashed: true }
+  ];
+  c.data = [
+    { month: 'Jan', sales: 120, target: 150 }, { month: 'Fev', sales: 180, target: 160 },
+    { month: 'Mar', sales: 150, target: 170 }, { month: 'Abr', sales: 220, target: 190 }
+  ];
+&lt;/script&gt;</pre>
+      </div>
+    </div>
+
+    <!-- L3 — Área -->
+    <div class="card">
+      <h2>type="area" · área preenchida</h2>
+      <div class="body">
+        <granado-chart-line id="l-area" type="area" title="Volume por mês"></granado-chart-line>
+        <pre class="code">&lt;granado-chart-line id="c" type="area" title="Volume por mês"&gt;&lt;/granado-chart-line&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'month';
+  c.yFields = [{ field: 'sales', label: 'Volume' }];
+  c.data = [
+    { month: 'Jan', sales: 120 }, { month: 'Fev', sales: 180 }, { month: 'Mar', sales: 150 },
+    { month: 'Abr', sales: 220 }, { month: 'Mai', sales: 200 }, { month: 'Jun', sales: 260 }
+  ];
+&lt;/script&gt;</pre>
+      </div>
+    </div>
+
+    <!-- L4 — Área empilhada -->
+    <div class="card">
+      <h2>type="stacked" · área empilhada</h2>
+      <div class="body">
+        <granado-chart-line id="l-stacked" type="stacked" title="Composição por mês"></granado-chart-line>
+        <pre class="code">&lt;granado-chart-line id="c" type="stacked" title="Composição por mês"&gt;&lt;/granado-chart-line&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.type   = 'stacked';   <span class="cmt">// ou 'stacked100'</span>
+  c.xField = 'month';
+  c.yFields = [
+    { field: 'a', label: 'Linha A' },
+    { field: 'b', label: 'Linha B' },
+    { field: 'c', label: 'Linha C' }
+  ];
+  c.data = [
+    { month: 'Jan', a: 40, b: 30, c: 20 }, { month: 'Fev', a: 50, b: 40, c: 30 },
+    { month: 'Mar', a: 35, b: 45, c: 25 }, { month: 'Abr', a: 60, b: 35, c: 40 }
+  ];
+&lt;/script&gt;</pre>
+      </div>
+    </div>
+
+    <!-- L5 — x2Field + overallTarget -->
+    <div class="card">
+      <h2>x2-field (formato longo) + overallTarget</h2>
+      <div class="body">
+        <granado-chart-line id="l-x2" title="Vendas por trimestre e região (meta 140)"></granado-chart-line>
+        <pre class="code">&lt;granado-chart-line id="c" title="Vendas por trimestre e região (meta 140)"&gt;&lt;/granado-chart-line&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField  = 'quarter';
+  c.x2Field = 'region';              <span class="cmt">// uma série por região</span>
+  c.yFields = [{ field: 'sales' }];
+  c.overallTarget = { value: 140, label: 'Meta' };
+  c.data = [
+    { quarter: 'Q1', region: 'Sul', sales: 120 }, { quarter: 'Q1', region: 'Norte', sales: 90 },
+    { quarter: 'Q2', region: 'Sul', sales: 150 }, { quarter: 'Q2', region: 'Norte', sales: 110 },
+    { quarter: 'Q3', region: 'Sul', sales: 170 }, { quarter: 'Q3', region: 'Norte', sales: 140 }
+  ];
+&lt;/script&gt;</pre>
+      </div>
+    </div>
+
+    <!-- L6 — point-click (log no console) + props -->
+    <div class="card">
+      <h2>point-click (log no console) + props de yField (color · lineWidth · dashed · showDots · formatter · tooltipFormatter)</h2>
+      <div class="body">
+        <granado-chart-line id="l-click" title="Clique num ponto (veja o console)" show-values="true"></granado-chart-line>
+        <pre class="code">&lt;granado-chart-line id="c" title="Clique num ponto" show-values="true"&gt;&lt;/granado-chart-line&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'month';
+  c.yFields = [
+    {
+      field: 'sales', label: 'Vendas',
+      color: '#1F7A3D', lineWidth: 3, smooth: true,
+      formatter: function (v) { return 'R$ ' + v; },
+      tooltipFormatter: function (ctx) { return '&lt;b&gt;' + ctx.category + '&lt;/b&gt;&lt;br&gt;R$ ' + ctx.value; }
+    },
+    {
+      field: 'target', label: 'Meta',
+      color: '#9A7520', dashed: true, showDots: false
+    }
+  ];
+  c.data = [
+    { month: 'Jan', sales: 120, target: 150 }, { month: 'Fev', sales: 180, target: 160 },
+    { month: 'Mar', sales: 150, target: 170 }, { month: 'Abr', sales: 220, target: 190 }
+  ];
+
+  <span class="cmt">// clique num ponto -> loga no console + destaca a série</span>
+  c.addEventListener('point-click', function (ev) {
+    console.log('[point-click]', ev.detail);
+  });
+&lt;/script&gt;</pre>
+      </div>
+    </div>
+
+  </div><!-- /panel-line -->
+
+  <div id="panel-pie" class="panel">
+
+    <!-- P1 — Pizza -->
+    <div class="card">
+      <h2>type="pie" · rótulos de % + tooltip</h2>
+      <div class="body">
+        <granado-chart-pie id="p-pie" title="Pesagens por sala" show-values="true"></granado-chart-pie>
+        <pre class="code">&lt;granado-chart-pie id="c" title="Pesagens por sala" show-values="true"&gt;&lt;/granado-chart-pie&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'sala';
+  c.valueField = 'total';
+  c.data = [
+    { sala: 'Sala A', total: 120 }, { sala: 'Sala B', total: 80 },
+    { sala: 'Sala C', total: 60 }, { sala: 'Sala D', total: 40 }
+  ];
+&lt;/script&gt;</pre>
+      </div>
+    </div>
+
+    <!-- P2 — Donut + rótulo central -->
+    <div class="card">
+      <h2>type="donut" · center-label</h2>
+      <div class="body">
+        <granado-chart-pie id="p-donut" type="donut" title="Participação por MP" center-label="300 kg" show-values="true"></granado-chart-pie>
+        <pre class="code">&lt;granado-chart-pie id="c" type="donut" title="Participação por MP"
+    center-label="300 kg" show-values="true"&gt;&lt;/granado-chart-pie&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'mp';
+  c.valueField = 'kg';
+  c.data = [
+    { mp: 'Água', kg: 150 }, { mp: 'Álcool', kg: 90 },
+    { mp: 'Essência', kg: 40 }, { mp: 'Glicerina', kg: 20 }
+  ];
+&lt;/script&gt;</pre>
+      </div>
+    </div>
+
+    <!-- P3 — Semicírculo -->
+    <div class="card">
+      <h2>type="semi" · semicírculo (gauge)</h2>
+      <div class="body">
+        <granado-chart-pie id="p-semi" type="semi" title="Disponibilidade" center-label="85%" show-values="true"></granado-chart-pie>
+        <pre class="code">&lt;granado-chart-pie id="c" type="semi" title="Disponibilidade"
+    center-label="85%" show-values="true"&gt;&lt;/granado-chart-pie&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'estado';
+  c.valueField = 'min';
+  c.data = [
+    { estado: 'Operando', min: 425, color: '#1F7A3D' },
+    { estado: 'Parado',   min: 75,  color: '#B5342F' }
+  ];
+&lt;/script&gt;</pre>
+      </div>
+    </div>
+
+    <!-- P4 — Cores por item + slice-click (log no console) -->
+    <div class="card">
+      <h2>cores por item + slice-click (log no console) + formatter/tooltipFormatter</h2>
+      <div class="body">
+        <granado-chart-pie id="p-click" type="donut" title="Clique numa fatia (veja o console)" show-values="true"></granado-chart-pie>
+        <pre class="code">&lt;granado-chart-pie id="c" type="donut" title="Clique numa fatia" show-values="true"&gt;&lt;/granado-chart-pie&gt;
+&lt;script&gt;
+  var c = document.getElementById('c');
+  c.xField = 'status';
+  c.valueField = 'qtd';
+  c.data = [
+    { status: 'OK',       qtd: 320, color: '#1F7A3D' },
+    { status: 'Alerta',   qtd: 60,  color: '#9A7520' },
+    { status: 'Fora',     qtd: 40,  color: '#B5342F' }
+  ];
+  c.formatter = function (v) { return v + ' un'; };
+  c.tooltipFormatter = function (ctx) {
+    return '&lt;b&gt;' + ctx.label + '&lt;/b&gt;&lt;br&gt;' + ctx.value + ' un · ' + ctx.percent.toFixed(0) + '%';
+  };
+
+  <span class="cmt">// clique numa fatia -> loga no console + destaca (toggle)</span>
+  c.addEventListener('slice-click', function (ev) {
+    console.log('[slice-click]', ev.detail);
+  });
+&lt;/script&gt;</pre>
+      </div>
+    </div>
+
+  </div><!-- /panel-pie -->
+
   <script>
+    function showTab(name) {
+      ['bar', 'line', 'pie'].forEach(function (t) {
+        var p = document.getElementById('panel-' + t); if (p) p.classList.toggle('active', t === name);
+        var b = document.querySelector('.tabs button[data-tab="' + t + '"]'); if (b) b.classList.toggle('active', t === name);
+      });
+      // dispara resize para os gráficos do painel recém-exibido recalcularem a largura
+      try { window.dispatchEvent(new Event('resize')); } catch (e) { }
+    }
+
     // 1 — Simples
     var cSimple = document.getElementById('c-simple');
     cSimple.xField = 'month';
@@ -338,6 +632,125 @@
       { month: 'Jan', sales: 120 }, { month: 'Fev', sales: 180 }, { month: 'Mar', sales: 150 },
       { month: 'Abr', sales: 220 }, { month: 'Mai', sales: 200 }, { month: 'Jun', sales: 260 }
     ];
+
+    // 11 — bar-click + várias props de yField
+    var cClick = document.getElementById('c-click');
+    cClick.xField = 'month';
+    cClick.yFields = [
+      {
+        field: 'sales', label: 'Vendas',
+        color: '#1F7A3D', borderRadius: 6, barWidth: 26, sort: 1,
+        formatter: function (v) { return 'R$ ' + v; },
+        tooltipFormatter: function (ctx) { return '<b>' + ctx.category + '</b><br>Vendas: R$ ' + ctx.value; }
+      },
+      {
+        field: 'target', label: 'Meta',
+        color: '#9A7520', opacity: 0.55, borderRadius: 6, sort: 2,
+        formatter: function (v) { return 'R$ ' + v; }
+      }
+    ];
+    cClick.data = [
+      { month: 'Jan', sales: 120, target: 150 }, { month: 'Fev', sales: 180, target: 160 },
+      { month: 'Mar', sales: 150, target: 170 }, { month: 'Abr', sales: 220, target: 190 }
+    ];
+    cClick.addEventListener('bar-click', function (ev) {
+      console.log('[bar-click]', ev.detail);
+    });
+
+    // ========================= CHART LINE =========================
+    var LVENDAS = [
+      { month: 'Jan', sales: 120 }, { month: 'Fev', sales: 180 }, { month: 'Mar', sales: 150 },
+      { month: 'Abr', sales: 220 }, { month: 'Mai', sales: 200 }, { month: 'Jun', sales: 260 }
+    ];
+    var LVM = [
+      { month: 'Jan', sales: 120, target: 150 }, { month: 'Fev', sales: 180, target: 160 },
+      { month: 'Mar', sales: 150, target: 170 }, { month: 'Abr', sales: 220, target: 190 }
+    ];
+    var LCOMPO = [
+      { month: 'Jan', a: 40, b: 30, c: 20 }, { month: 'Fev', a: 50, b: 40, c: 30 },
+      { month: 'Mar', a: 35, b: 45, c: 25 }, { month: 'Abr', a: 60, b: 35, c: 40 }
+    ];
+
+    // L1 — Linha simples
+    var lSimple = document.getElementById('l-simple');
+    lSimple.xField = 'month'; lSimple.yFields = [{ field: 'sales', label: 'Vendas' }]; lSimple.data = LVENDAS;
+
+    // L2 — Multi + smooth
+    var lMulti = document.getElementById('l-multi');
+    lMulti.xField = 'month';
+    lMulti.yFields = [{ field: 'sales', label: 'Vendas', smooth: true }, { field: 'target', label: 'Meta', smooth: true, dashed: true }];
+    lMulti.data = LVM;
+
+    // L3 — Área
+    var lArea = document.getElementById('l-area');
+    lArea.type = 'area'; lArea.xField = 'month'; lArea.yFields = [{ field: 'sales', label: 'Volume' }]; lArea.data = LVENDAS;
+
+    // L4 — Área empilhada
+    var lStacked = document.getElementById('l-stacked');
+    lStacked.type = 'stacked'; lStacked.xField = 'month';
+    lStacked.yFields = [{ field: 'a', label: 'Linha A' }, { field: 'b', label: 'Linha B' }, { field: 'c', label: 'Linha C' }];
+    lStacked.data = LCOMPO;
+
+    // L5 — x2Field + overallTarget
+    var lX2 = document.getElementById('l-x2');
+    lX2.xField = 'quarter'; lX2.x2Field = 'region'; lX2.yFields = [{ field: 'sales' }];
+    lX2.overallTarget = { value: 140, label: 'Meta' };
+    lX2.data = [
+      { quarter: 'Q1', region: 'Sul', sales: 120 }, { quarter: 'Q1', region: 'Norte', sales: 90 },
+      { quarter: 'Q2', region: 'Sul', sales: 150 }, { quarter: 'Q2', region: 'Norte', sales: 110 },
+      { quarter: 'Q3', region: 'Sul', sales: 170 }, { quarter: 'Q3', region: 'Norte', sales: 140 }
+    ];
+
+    // L6 — point-click + props
+    var lClick = document.getElementById('l-click');
+    lClick.xField = 'month';
+    lClick.yFields = [
+      {
+        field: 'sales', label: 'Vendas', color: '#1F7A3D', lineWidth: 3, smooth: true,
+        formatter: function (v) { return 'R$ ' + v; },
+        tooltipFormatter: function (ctx) { return '<b>' + ctx.category + '</b><br>R$ ' + ctx.value; }
+      },
+      { field: 'target', label: 'Meta', color: '#9A7520', dashed: true, showDots: false }
+    ];
+    lClick.data = LVM;
+    lClick.addEventListener('point-click', function (ev) { console.log('[point-click]', ev.detail); });
+
+    // ========================= CHART PIE =========================
+    // P1 — Pizza
+    var pPie = document.getElementById('p-pie');
+    pPie.xField = 'sala'; pPie.valueField = 'total';
+    pPie.data = [
+      { sala: 'Sala A', total: 120 }, { sala: 'Sala B', total: 80 },
+      { sala: 'Sala C', total: 60 }, { sala: 'Sala D', total: 40 }
+    ];
+
+    // P2 — Donut + center-label
+    var pDonut = document.getElementById('p-donut');
+    pDonut.type = 'donut'; pDonut.xField = 'mp'; pDonut.valueField = 'kg';
+    pDonut.data = [
+      { mp: 'Água', kg: 150 }, { mp: 'Álcool', kg: 90 },
+      { mp: 'Essência', kg: 40 }, { mp: 'Glicerina', kg: 20 }
+    ];
+
+    // P3 — Semicírculo
+    var pSemi = document.getElementById('p-semi');
+    pSemi.type = 'semi'; pSemi.xField = 'estado'; pSemi.valueField = 'min';
+    pSemi.data = [
+      { estado: 'Operando', min: 425, color: '#1F7A3D' },
+      { estado: 'Parado', min: 75, color: '#B5342F' }
+    ];
+
+    // P4 — Cores por item + slice-click
+    var pClick = document.getElementById('p-click');
+    pClick.type = 'donut'; pClick.xField = 'status'; pClick.valueField = 'qtd';
+    pClick.data = [
+      { status: 'OK', qtd: 320, color: '#1F7A3D' },
+      { status: 'Alerta', qtd: 60, color: '#9A7520' },
+      { status: 'Fora', qtd: 40, color: '#B5342F' }
+    ];
+    pClick.formatter = function (v) { return v + ' un'; };
+    pClick.tooltipFormatter = function (ctx) { return '<b>' + ctx.label + '</b><br>' + ctx.value + ' un · ' + ctx.percent.toFixed(0) + '%'; };
+    pClick.addEventListener('slice-click', function (ev) { console.log('[slice-click]', ev.detail); });
   </script>
 </body>
 
