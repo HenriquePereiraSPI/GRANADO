@@ -6,10 +6,25 @@
 
    Atributos (todos opcionais):
      value          - valor da aba ativa. Se ausente, ativa a primeira.
-     color          - cor de destaque (texto + underline da aba ativa).
-                      Default: "#1C5C31".
+     color          - cor de destaque (aba ativa). Default: "#1C5C31".
+     type           - estilo do cabecalho:
+                        "line" (default) -> underline sob a aba ativa;
+                        "folder"/"enclosed" -> abas em pasta (fundo cheio na
+                        ativa, borda e canto arredondado no topo) — mesmo
+                        visual de Qualidade > Genealogia de Lote.
      onchangeevent  - JS executado ao trocar de aba.
                       Variaveis: value (string), tab (elemento).
+
+   Evento (CustomEvent, bubbles):
+     "change" -> detail { value, tab }  (use addEventListener('change', ...))
+
+   Icones disponiveis para o atributo "icon" (preset):
+     info · settings · user · mail · search · calendar · edit · list · file
+     (qualquer outro texto/emoji/SVG bruto tambem e aceito)
+
+   Atributos por <granado-tab> (alem de value/label/icon/disabled):
+     badge          - texto/numero opcional exibido como pill (ex.: contagem),
+                      no estilo dos contadores da Genealogia.
 
    Propriedades JS:
      elemento.value -> getter/setter
@@ -36,7 +51,7 @@
 if (!customElements.get('granado-tabs')) {
   class GranadoTabs extends HTMLElement {
     static get observedAttributes() {
-      return ['value', 'color', 'onchangeevent'];
+      return ['value', 'color', 'onchangeevent', 'type'];
     }
 
     connectedCallback() {
@@ -79,6 +94,11 @@ if (!customElements.get('granado-tabs')) {
       if (this._observer) this._observer.disconnect();
 
       const color = this.getAttribute('color') || '#1C5C31';
+      // Estilo do cabecalho: "line" (default, underline) ou "folder"/"enclosed"
+      // (abas em pasta — mesmo visual de Qualidade > Genealogia de Lote).
+      const type = (this.getAttribute('type') || 'line').toLowerCase();
+      const isFolder = (type === 'folder' || type === 'enclosed');
+      const BORDER = '#D6CDA4';
 
       // Captura todos os <granado-tab>: do conteudo anterior + diretos do host.
       const fragment = document.createDocumentFragment();
@@ -121,22 +141,45 @@ if (!customElements.get('granado-tabs')) {
         const iconHtml = iconAttr ? this._resolveIcon(iconAttr) : '';
         const disabled = tab.getAttribute('disabled') === 'true';
         const isActive = v === currentValue;
+        const badgeAttr = tab.getAttribute('badge');
 
-        const baseStyle = 'padding:10px 14px;height:auto;font-size:13px;background:transparent;border:none;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;margin-bottom:-1px;border-bottom:2px solid;line-height:1';
-        const styleActive = `${baseStyle};font-weight:700;color:${color};border-bottom-color:${color}`;
-        const styleInactive = `${baseStyle};font-weight:600;color:#5A6B5E;border-bottom-color:transparent`;
-        const styleDisabled = `${baseStyle};font-weight:600;color:#B5AB85;border-bottom-color:transparent;cursor:not-allowed;opacity:0.6`;
+        let style, styleActive, styleInactive, styleDisabled;
+        if (isFolder) {
+          // Abas em pasta (Genealogia): fundo cheio na ativa, borda, canto arredondado no topo.
+          const base = 'padding:8px 16px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px;border-radius:6px 6px 0 0;margin-bottom:-2px;line-height:1';
+          styleActive = `${base};background:${color};color:#fff;border:1px solid ${BORDER};border-bottom:2px solid ${color}`;
+          styleInactive = `${base};background:#FDFAF1;color:#5A6B5E;border:1px solid ${BORDER};border-bottom:1px solid ${BORDER}`;
+          styleDisabled = `${styleInactive};cursor:not-allowed;opacity:0.6`;
+        } else {
+          // Underline (default).
+          const base = 'padding:10px 14px;height:auto;font-size:13px;background:transparent;border:none;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;margin-bottom:-1px;border-bottom:2px solid;line-height:1';
+          styleActive = `${base};font-weight:700;color:${color};border-bottom-color:${color}`;
+          styleInactive = `${base};font-weight:600;color:#5A6B5E;border-bottom-color:transparent`;
+          styleDisabled = `${base};font-weight:600;color:#B5AB85;border-bottom-color:transparent;cursor:not-allowed;opacity:0.6`;
+        }
+        style = disabled ? styleDisabled : (isActive ? styleActive : styleInactive);
 
-        const style = disabled ? styleDisabled : (isActive ? styleActive : styleInactive);
+        // Badge opcional (pill de contagem/rotulo) — como os contadores da Genealogia.
+        let badgeHtml = '';
+        if (badgeAttr != null && badgeAttr !== '') {
+          const badgeStyle = (isFolder && isActive)
+            ? 'background:rgba(255,255,255,.22);color:#fff;border:1px solid rgba(255,255,255,.4)'
+            : `background:#F4EED9;color:#8A8575;border:1px solid ${BORDER}`;
+          badgeHtml = `<span style="font-size:10px;font-weight:800;padding:1px 6px;border-radius:8px;${badgeStyle}">${this._escape(badgeAttr)}</span>`;
+        }
 
-        return `<button data-tab-btn="${this._escapeAttr(v)}" type="button" ${disabled ? 'disabled' : ''} style="${style}">${iconHtml ? `<span style="display:inline-flex;align-items:center;line-height:0">${iconHtml}</span>` : ''}${label ? `<span>${label}</span>` : ''}</button>`;
+        return `<button data-tab-btn="${this._escapeAttr(v)}" type="button" ${disabled ? 'disabled' : ''} style="${style}">${iconHtml ? `<span style="display:inline-flex;align-items:center;line-height:0">${iconHtml}</span>` : ''}${label ? `<span>${label}</span>` : ''}${badgeHtml}</button>`;
       }).join('');
 
       this.style.display = this.style.display || 'block';
 
+      const headerStyle = isFolder
+        ? `display:flex;flex-wrap:wrap;border-bottom:2px solid ${BORDER};gap:4px`
+        : 'display:flex;flex-wrap:wrap;border-bottom:1px solid #E5DDC8;gap:2px';
+
       this.innerHTML = `
         <div class="gt-card" style="font-family:'Poppins','DejaVu Sans',Arial,sans-serif">
-          <div class="gt-header" role="tablist" style="display:flex;flex-wrap:wrap;border-bottom:1px solid #E5DDC8;gap:2px">
+          <div class="gt-header" role="tablist" style="${headerStyle}">
             ${buttonsHtml}
           </div>
           <div class="gt-content" style="padding-top:14px"></div>
@@ -158,25 +201,26 @@ if (!customElements.get('granado-tabs')) {
           const v = btn.getAttribute('data-tab-btn');
           if (v === this.getAttribute('value')) return;
           this.setAttribute('value', v);
+          const tab = tabs.find(t => (t.getAttribute('value') || '') === v) || null;
+          // Evento real (CustomEvent) — permite addEventListener('change', ...)
+          this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true, detail: { value: v, tab: tab } }));
+          // Handler inline (atributo onchangeevent)
           const handler = this.getAttribute('onchangeevent');
-          if (handler) {
-            const tab = tabs.find(t => (t.getAttribute('value') || '') === v) || null;
-            new Function('value', 'tab', handler).call(this, v, tab);
-          }
+          if (handler) new Function('value', 'tab', handler).call(this, v, tab);
         });
 
-        // Hover sutil
+        // Hover sutil (type-aware)
         btn.addEventListener('mouseenter', () => {
           if (btn.disabled) return;
           const v = btn.getAttribute('data-tab-btn');
           if (v === this.getAttribute('value')) return;
-          btn.style.color = color;
+          if (isFolder) btn.style.background = '#F4EED9'; else btn.style.color = color;
         });
         btn.addEventListener('mouseleave', () => {
           if (btn.disabled) return;
           const v = btn.getAttribute('data-tab-btn');
           if (v === this.getAttribute('value')) return;
-          btn.style.color = '#5A6B5E';
+          if (isFolder) btn.style.background = '#FDFAF1'; else btn.style.color = '#5A6B5E';
         });
       });
 
@@ -185,7 +229,7 @@ if (!customElements.get('granado-tabs')) {
           childList: true,
           subtree: true,
           attributes: true,
-          attributeFilter: ['value', 'label', 'icon', 'disabled']
+          attributeFilter: ['value', 'label', 'icon', 'disabled', 'badge']
         });
       }
     }

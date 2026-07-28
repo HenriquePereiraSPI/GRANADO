@@ -47,6 +47,8 @@
   <script src="./granado-gallery.js"></script>
   <script src="./granado-box-popup.js"></script>
   <script src="./granado-table-popup.js"></script>
+  <script src="./granado-timeline-item.js"></script>
+  <script src="./granado-timeline.js"></script>
 </head>
 
 <body style="margin:0;padding:24px;background:#F4EED9;font-family:'Lato','DejaVu Sans',Arial,sans-serif;color:#103E20">
@@ -597,6 +599,26 @@
 
       <granado-tab value="bloq" label="Auditoria" icon="file" disabled="true">
         <p style="margin:0;font-size:13px;color:#5A6B5E">Aba indisponivel.</p>
+      </granado-tab>
+    </granado-tabs>
+
+    <!-- type="folder" (abas em pasta) + badges — visual de Qualidade > Genealogia de Lote -->
+    <div style="font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E;margin:22px 0 8px">type="folder" · badges</div>
+    <granado-tabs type="folder" color="#1F7A3D" value="fab">
+      <granado-tab value="todos" label="Todos" icon="list" badge="18">
+        <p style="margin:0;font-size:13px;color:#103E20">Cadeia completa do lote (todos os nós).</p>
+      </granado-tab>
+      <granado-tab value="fab" label="Fabricacao" icon="settings" badge="7">
+        <p style="margin:0;font-size:13px;color:#103E20">Fases de fabricação (InBatch) e reatores.</p>
+      </granado-tab>
+      <granado-tab value="pes" label="Pesagem" icon="file" badge="6">
+        <p style="margin:0;font-size:13px;color:#103E20">Matérias-primas pesadas e etiquetas.</p>
+      </granado-tab>
+      <granado-tab value="env" label="Envase" icon="calendar" badge="3">
+        <p style="margin:0;font-size:13px;color:#103E20">Envase, rotulagem e paletização.</p>
+      </granado-tab>
+      <granado-tab value="qua" label="Qualidade" icon="search" badge="2">
+        <p style="margin:0;font-size:13px;color:#103E20">Análises e liberação de qualidade.</p>
       </granado-tab>
     </granado-tabs>
   </section>
@@ -1920,6 +1942,42 @@
         });
       }
     </script>
+  </section>
+
+  <!-- ========== Linha 35 — granado-timeline ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-timeline&gt; · &lt;granado-timeline-item&gt;
+    </h2>
+    <div style="max-width:680px">
+      <granado-timeline single-open="true">
+        <granado-timeline-item icon="⚖️" title="Pesagem" subtitle="Matérias-primas e etiquetas" status="ouro" badge="6" open="true">
+          <div style="font-size:13px;color:#103E20;margin-bottom:8px">6 MPs pesadas · 2 com reetiquetagem pendente.</div>
+          <granado-table
+            columns='[{"key":"cod","label":"Código","mono":true},{"key":"mp","label":"Matéria-Prima"},{"key":"lote","label":"Lote","mono":true},{"key":"kg","label":"Pesado (kg)","mono":true,"align":"right"},{"key":"status","label":"Status","align":"center"}]'
+            rows='[{"cod":"MP-001","mp":"Água Purificada","lote":"0641519","kg":"120,500","status":"OK"},{"cod":"MP-002","mp":"Álcool Etílico","lote":"1033625","kg":"18,000","status":"OK"},{"cod":"MP-003","mp":"Essência Rosa","lote":"0720621","kg":"2,350","status":"FORA"}]'>
+          </granado-table>
+        </granado-timeline-item>
+        <granado-timeline-item icon="⚙️" title="Fabricação" subtitle="Fases InBatch · Reator R-02" status="verde" badge="7">
+          <div style="font-size:13px;color:#103E20;margin-bottom:8px">7 fases concluídas · ciclo dentro do padrão.</div>
+          <granado-table color="#1F7A3D"
+            columns='[{"key":"fase","label":"Fase"},{"key":"ini","label":"Início","mono":true},{"key":"dur","label":"Duração","mono":true,"align":"right"},{"key":"status","label":"Status","align":"center"}]'
+            rows='[{"fase":"Carga de água","ini":"07:10","dur":"12 min","status":"OK"},{"fase":"Aquecimento","ini":"07:22","dur":"25 min","status":"OK"},{"fase":"Adição de fase oleosa","ini":"07:47","dur":"18 min","status":"OK"},{"fase":"Homogeneização","ini":"08:05","dur":"40 min","status":"OK"},{"fase":"Resfriamento","ini":"08:45","dur":"30 min","status":"OK"}]'>
+          </granado-table>
+        </granado-timeline-item>
+        <granado-timeline-item icon="🧴" title="Envase" subtitle="Envase · Rotulagem · Paletização" status="azul" badge="3">
+          <div style="font-size:13px;color:#103E20">Envase 3 lotes · 4820 unidades.</div>
+        </granado-timeline-item>
+        <granado-timeline-item icon="🔬" title="Qualidade" subtitle="Análises pendentes" status="vermelho" badge="2">
+          <div style="font-size:13px;color:#103E20;margin-bottom:8px">2 análises aguardando liberação do CQ.</div>
+          <granado-table color="#8C1A1A"
+            columns='[{"key":"analise","label":"Análise"},{"key":"metodo","label":"Método","mono":true},{"key":"resultado","label":"Resultado","align":"center"}]'
+            rows='[{"analise":"pH","metodo":"POP-CQ-002","resultado":"Pendente"},{"analise":"Microbiologia","metodo":"POP-CQ-014","resultado":"Pendente"}]'>
+          </granado-table>
+        </granado-timeline-item>
+      </granado-timeline>
+    </div>
   </section>
 </body>
 

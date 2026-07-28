@@ -47,6 +47,8 @@
   <script src="./granado-gallery.js"></script>
   <script src="./granado-box-popup.js"></script>
   <script src="./granado-table-popup.js"></script>
+  <script src="./granado-timeline-item.js"></script>
+  <script src="./granado-timeline.js"></script>
 
   <style>
     html,
@@ -289,6 +291,7 @@
       <a class="gd-link" href="#granado-gallery">granado-gallery</a>
       <a class="gd-link" href="#granado-box-popup">granado-box-popup</a>
       <a class="gd-link" href="#granado-table-popup">granado-table-popup</a>
+      <a class="gd-link" href="#granado-timeline">granado-timeline</a>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -4934,8 +4937,45 @@ tg.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tr
                 continua existindo no DOM, apenas inacessível pelos botões.
               </td>
             </tr>
+            <tr>
+              <td class="col-name">badge</td>
+              <td class="col-type">string / número</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">
+                Pill opcional exibido no botão da aba (ex.: contagem), no estilo dos
+                contadores de <em>Qualidade &gt; Genealogia de Lote</em>. Funciona nos
+                dois estilos de <code>granado-tabs</code> (fica branco na aba ativa do
+                <code>type="folder"</code>).
+              </td>
+            </tr>
           </tbody>
         </table>
+
+        <h3 class="gd-h3">Ícones disponíveis (<code>icon</code>)</h3>
+        <p class="gd-lead">
+          O atributo <code>icon</code> aceita um destes <strong>presets</strong> (SVG embutido no
+          <code>granado-tabs</code>). Qualquer outro valor (emoji, texto ou SVG bruto) é usado como está.
+        </p>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:160px">Preset</th><th>Uso</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">info</td><td class="col-desc">Informações / detalhes.</td></tr>
+            <tr><td class="col-name">settings</td><td class="col-desc">Configurações.</td></tr>
+            <tr><td class="col-name">user</td><td class="col-desc">Pessoa / operador.</td></tr>
+            <tr><td class="col-name">mail</td><td class="col-desc">E-mail / mensagens.</td></tr>
+            <tr><td class="col-name">search</td><td class="col-desc">Busca / consulta.</td></tr>
+            <tr><td class="col-name">calendar</td><td class="col-desc">Data / histórico.</td></tr>
+            <tr><td class="col-name">edit</td><td class="col-desc">Edição.</td></tr>
+            <tr><td class="col-name">list</td><td class="col-desc">Lista / itens.</td></tr>
+            <tr><td class="col-name">file</td><td class="col-desc">Documento / arquivo.</td></tr>
+          </tbody>
+        </table>
+        <p class="gd-lead" style="margin-top:6px">
+          Ex.: <code>icon="settings"</code> (preset) · <code>icon="⚙️"</code> (emoji) ·
+          <code>icon="&lt;svg&gt;…&lt;/svg&gt;"</code> (SVG bruto).
+        </p>
 
         <h3 class="gd-h3">Notas</h3>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
@@ -5047,6 +5087,36 @@ tg.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tr
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-tabs</span> <span class="tk-attr">color</span>=<span class="tk-str">"#9A7520"</span><span class="tk-tag">&gt;</span> ... <span class="tk-tag">&lt;/granado-tabs&gt;</span></pre>
 
+        <!-- ===== Estilo (type) ===== -->
+        <h2 class="gd-h2">Estilo do cabeçalho — <code>type</code></h2>
+        <p class="gd-lead">
+          <code>type="line"</code> (default) usa underline sob a aba ativa.
+          <code>type="folder"</code> (ou <code>"enclosed"</code>) desenha <strong>abas em pasta</strong>
+          — fundo cheio na cor da aba ativa, borda e canto arredondado no topo — o mesmo visual de
+          <em>Qualidade &gt; Genealogia de Lote</em>. Combine com <code>badge</code> por aba para os
+          contadores.
+        </p>
+        <div class="gd-demo">
+          <granado-tabs type="folder" color="#1F7A3D" value="fab">
+            <granado-tab value="todos" label="Todos" icon="list" badge="18">
+              <div style="font-size:13px;color:#103E20">Cadeia completa do lote (todos os nós).</div>
+            </granado-tab>
+            <granado-tab value="fab" label="Fabricação" icon="settings" badge="7">
+              <div style="font-size:13px;color:#103E20">Fases de fabricação (InBatch) e reatores.</div>
+            </granado-tab>
+            <granado-tab value="pes" label="Pesagem" icon="file" badge="6">
+              <div style="font-size:13px;color:#103E20">Matérias-primas pesadas e etiquetas.</div>
+            </granado-tab>
+            <granado-tab value="qua" label="Qualidade" icon="search" badge="2">
+              <div style="font-size:13px;color:#103E20">Análises e liberação de qualidade.</div>
+            </granado-tab>
+          </granado-tabs>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-tabs</span> <span class="tk-attr">type</span>=<span class="tk-str">"folder"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1F7A3D"</span> <span class="tk-attr">value</span>=<span class="tk-str">"fab"</span><span class="tk-tag">&gt;</span>
+    <span class="tk-tag">&lt;granado-tab</span> <span class="tk-attr">value</span>=<span class="tk-str">"fab"</span> <span class="tk-attr">label</span>=<span class="tk-str">"Fabricação"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"settings"</span> <span class="tk-attr">badge</span>=<span class="tk-str">"7"</span><span class="tk-tag">&gt;</span> ... <span class="tk-tag">&lt;/granado-tab&gt;</span>
+    <span class="tk-tag">&lt;granado-tab</span> <span class="tk-attr">value</span>=<span class="tk-str">"pes"</span> <span class="tk-attr">label</span>=<span class="tk-str">"Pesagem"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"file"</span> <span class="tk-attr">badge</span>=<span class="tk-str">"6"</span><span class="tk-tag">&gt;</span> ... <span class="tk-tag">&lt;/granado-tab&gt;</span>
+<span class="tk-tag">&lt;/granado-tabs&gt;</span></pre>
+
         <!-- ===== Acesso programático ===== -->
         <h2 class="gd-h2">Acesso programático</h2>
         <p class="gd-lead">
@@ -5060,6 +5130,29 @@ console.log(tabs.value);  <span class="tk-comment">// "info"</span>
 
 <span class="tk-comment">// Trocar para outra aba programaticamente</span>
 tabs.value = <span class="tk-str">'hist'</span>;</pre>
+
+        <!-- ===== Evento change ===== -->
+        <h2 class="gd-h2">Evento de troca — <code>change</code></h2>
+        <p class="gd-lead">
+          Ao trocar de aba, o <code>granado-tabs</code> dispara um <strong>CustomEvent
+          <code>change</code></strong> (bubbles) com <code>detail</code>
+          <code>{ value, tab }</code>. Há duas formas de ouvir:
+        </p>
+        <pre class="gd-code"><span class="tk-comment">// 1) addEventListener (recomendado)</span>
+document.querySelector(<span class="tk-str">'granado-tabs'</span>).addEventListener(<span class="tk-str">'change'</span>, <span class="tk-keyword">function</span> (ev) {
+  console.log(ev.detail.value, ev.detail.tab);  <span class="tk-comment">// "hist", &lt;granado-tab&gt;</span>
+});
+
+<span class="tk-comment">// 2) atributo inline onchangeevent (variáveis: value, tab)</span>
+<span class="tk-tag">&lt;granado-tabs</span> <span class="tk-attr">onchangeevent</span>=<span class="tk-str">"console.log(value, tab)"</span><span class="tk-tag">&gt;</span> ... <span class="tk-tag">&lt;/granado-tabs&gt;</span></pre>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Evento</th><th style="width:200px">detail</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">change</td><td class="col-type">{ value, tab }</td><td class="col-desc">Disparado ao ativar outra aba. <code>value</code> = valor da nova aba; <code>tab</code> = elemento <code>&lt;granado-tab&gt;</code>. Não dispara ao reclicar a aba já ativa.</td></tr>
+          </tbody>
+        </table>
 
         <!-- ===== API ===== -->
         <h2 class="gd-h2">API</h2>
@@ -5089,7 +5182,18 @@ tabs.value = <span class="tk-str">'hist'</span>;</pre>
               <td class="col-type">string (cor CSS)</td>
               <td class="col-default">"#1C5C31"</td>
               <td class="col-desc">
-                Cor do texto e do underline da aba ativa, e do hover das inativas.
+                Cor de destaque da aba ativa (underline no <code>type="line"</code>;
+                fundo cheio no <code>type="folder"</code>) e do hover das inativas.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">type</td>
+              <td class="col-type">"line" | "folder"</td>
+              <td class="col-default">"line"</td>
+              <td class="col-desc">
+                Estilo do cabeçalho. <code>"line"</code> = underline (default);
+                <code>"folder"</code> (ou <code>"enclosed"</code>) = abas em pasta
+                (visual de <em>Genealogia de Lote</em>). Veja acima.
               </td>
             </tr>
             <tr>
@@ -9977,7 +10081,7 @@ pop.open();</pre>
         equipamentos: [ { id: <span class="tk-str">'BAL-01'</span>, descricao: <span class="tk-str">'Toledo 01'</span> }, { id: <span class="tk-str">'BAL-02'</span>, descricao: <span class="tk-str">'Toledo 02'</span> } ] },
       { id: <span class="tk-str">'C'</span>, icon: <span class="tk-str">'🇨'</span>, title: <span class="tk-str">'Sala C'</span>, subtitle: <span class="tk-str">'2 balanças'</span> }   <span class="tk-comment">// sem equipamentos</span>
     ],
-    onConfirm: <span class="tk-keyword">function</span> (d) { console.log(d.id, d.equipamento); }   <span class="tk-comment">// equipamento = null se escolheu a sala</span>
+    onConfirm: <span class="tk-keyword">function</span> (d) { console.log(d.id, d.equipamento); }   <span class="tk-comment">// equipamento = null se o card não tiver equipamentos</span>
   });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
 
@@ -10014,7 +10118,7 @@ pop.open();</pre>
 <span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-str">"document.getElementById('box').open()"</span><span class="tk-tag">&gt;</span>Escolher sala<span class="tk-tag">&lt;/button&gt;</span>
 <span class="tk-tag">&lt;script&gt;</span>
   document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'box'</span>).addEventListener(<span class="tk-str">'confirm'</span>, <span class="tk-keyword">function</span> (ev) {
-    console.log(ev.detail.id, ev.detail.equipamento);   <span class="tk-comment">// equipamento = null se escolheu a sala</span>
+    console.log(ev.detail.id, ev.detail.equipamento);   <span class="tk-comment">// equipamento = null se o card não tiver equipamentos</span>
   });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
 
@@ -10042,7 +10146,7 @@ pop.open();</pre>
             <tr><td class="col-name">data[].status</td><td class="col-type">string</td><td class="col-desc">Texto do badge do card (opcional).</td></tr>
             <tr><td class="col-name">data[].statusColor</td><td class="col-type">string</td><td class="col-desc">Cor do badge de status (texto + borda). Sem ele, usa o verde padrão. Aceita <code>hex</code>, <code>rgb()</code> ou <code>var(--x)</code> (opcional).</td></tr>
             <tr><td class="col-name">data[].metadata</td><td class="col-type">any</td><td class="col-desc">Valor extra — não exibido, devolvido no confirm (opcional).</td></tr>
-            <tr><td class="col-name">data[].equipamentos</td><td class="col-type">array&lt;{id, descricao}&gt;</td><td class="col-desc">Equipamentos ligados ao card. Se houver, aparece o <strong>dropdown</strong> (a própria opção + os equipamentos). Opcional.</td></tr>
+            <tr><td class="col-name">data[].equipamentos</td><td class="col-type">array&lt;{id, descricao}&gt;</td><td class="col-desc">Equipamentos ligados ao card. Se houver, aparece um <strong>dropdown</strong> listando <strong>apenas os equipamentos</strong> (o próprio card não entra na lista). Opcional.</td></tr>
           </tbody>
         </table>
 
@@ -10052,13 +10156,13 @@ pop.open();</pre>
             <tr><th style="width:150px">Evento</th><th style="width:260px">detail</th><th>Descrição</th></tr>
           </thead>
           <tbody>
-            <tr><td class="col-name">confirm</td><td class="col-type">{ index, id, icon, title, subtitle, status, metadata, equipamentos, equipamento }</td><td class="col-desc">Clique em Confirmar. <code>equipamento</code> = o <code>{ id, descricao }</code> escolhido, ou <strong><code>null</code></strong> (escolheu a própria opção / não há equipamentos). Cancelar/✕/fora apenas fecham.</td></tr>
+            <tr><td class="col-name">confirm</td><td class="col-type">{ index, id, icon, title, subtitle, status, metadata, equipamentos, equipamento }</td><td class="col-desc">Clique em Confirmar. <code>equipamento</code> = o <code>{ id, descricao }</code> escolhido no dropdown, ou <strong><code>null</code></strong> quando o card não tem equipamentos. Cancelar/✕/fora apenas fecham.</td></tr>
           </tbody>
         </table>
 
         <h3 class="gd-h3">Notas</h3>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
-          <li><strong>Dropdown condicional:</strong> só aparece quando o card selecionado tem <code>equipamentos</code>. A primeira opção é a própria "sala" (equipamento = <code>null</code> no retorno).</li>
+          <li><strong>Dropdown condicional:</strong> só aparece quando o card selecionado tem <code>equipamentos</code>, e lista <strong>apenas os equipamentos</strong> (o próprio card não entra). Card sem equipamentos → confirma direto nele (<code>equipamento = null</code>).</li>
           <li><strong>metadata:</strong> use para carregar o contexto (ex.: setor/box) e recuperá-lo no confirm sem estado externo.</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
         </ul>
@@ -10197,6 +10301,99 @@ pop.open();</pre>
           <li><strong>Requer o granado-table:</strong> inclua o <code>granado-table.js</code> <em>antes</em> — a tabela é renderizada por ele.</li>
           <li><strong>columns/rows:</strong> a estrutura é a mesma do <code>&lt;granado-table&gt;</code> — colunas com <code>key</code>/<code>label</code>/<code>mono</code>/<code>align</code>/<code>width</code>… e linhas com as chaves das colunas.</li>
           <li><strong>Rola sozinho:</strong> tabelas grandes rolam dentro do popup; combine com <code>isEnablePagination</code> para listas longas.</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-timeline
+           ============================================================ -->
+      <section id="granado-timeline" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-timeline&gt;</code> · <code>&lt;granado-timeline-item&gt;</code></h1>
+        <p class="gd-lead">
+          Timeline <strong>vertical</strong> de etapas: uma linha conectando marcadores circulares,
+          com <strong>cards expansíveis</strong>. Referência à cadeia da tela
+          <em>Qualidade &gt; Genealogia de Lote</em>. Os itens são
+          <code>&lt;granado-timeline-item&gt;</code> como filhos diretos.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua os dois scripts no &lt;head&gt; (item antes do container) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-timeline-item.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-timeline.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso</h2>
+        <div class="gd-demo">
+          <granado-timeline single-open="true">
+            <granado-timeline-item icon="⚖️" title="Pesagem" subtitle="Matérias-primas e etiquetas" status="ouro" badge="6" open="true">
+              <div style="font-size:13px;color:#103E20;margin-bottom:8px">6 MPs pesadas · 2 com reetiquetagem pendente.</div>
+              <granado-table
+                columns='[{"key":"cod","label":"Código","mono":true},{"key":"mp","label":"Matéria-Prima"},{"key":"lote","label":"Lote","mono":true},{"key":"kg","label":"Pesado (kg)","mono":true,"align":"right"},{"key":"status","label":"Status","align":"center"}]'
+                rows='[{"cod":"MP-001","mp":"Água Purificada","lote":"0641519","kg":"120,500","status":"OK"},{"cod":"MP-002","mp":"Álcool Etílico","lote":"1033625","kg":"18,000","status":"OK"},{"cod":"MP-003","mp":"Essência Rosa","lote":"0720621","kg":"2,350","status":"FORA"}]'>
+              </granado-table>
+            </granado-timeline-item>
+            <granado-timeline-item icon="⚙️" title="Fabricação" subtitle="Fases InBatch · Reator R-02" status="verde" badge="7">
+              <div style="font-size:13px;color:#103E20;margin-bottom:8px">7 fases concluídas · ciclo dentro do padrão.</div>
+              <granado-table color="#1F7A3D"
+                columns='[{"key":"fase","label":"Fase"},{"key":"ini","label":"Início","mono":true},{"key":"dur","label":"Duração","mono":true,"align":"right"},{"key":"status","label":"Status","align":"center"}]'
+                rows='[{"fase":"Carga de água","ini":"07:10","dur":"12 min","status":"OK"},{"fase":"Aquecimento","ini":"07:22","dur":"25 min","status":"OK"},{"fase":"Homogeneização","ini":"08:05","dur":"40 min","status":"OK"},{"fase":"Resfriamento","ini":"08:45","dur":"30 min","status":"OK"}]'>
+              </granado-table>
+            </granado-timeline-item>
+            <granado-timeline-item icon="🔬" title="Qualidade" subtitle="Análises pendentes" status="vermelho" badge="2">
+              <div style="font-size:13px;color:#103E20;margin-bottom:8px">2 análises aguardando liberação do CQ.</div>
+              <granado-table color="#8C1A1A"
+                columns='[{"key":"analise","label":"Análise"},{"key":"metodo","label":"Método","mono":true},{"key":"resultado","label":"Resultado","align":"center"}]'
+                rows='[{"analise":"pH","metodo":"POP-CQ-002","resultado":"Pendente"},{"analise":"Microbiologia","metodo":"POP-CQ-014","resultado":"Pendente"}]'>
+              </granado-table>
+            </granado-timeline-item>
+          </granado-timeline>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-timeline</span> <span class="tk-attr">single-open</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span>
+    <span class="tk-tag">&lt;granado-timeline-item</span> <span class="tk-attr">icon</span>=<span class="tk-str">"⚖️"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Pesagem"</span> <span class="tk-attr">subtitle</span>=<span class="tk-str">"MP e etiquetas"</span>
+        <span class="tk-attr">status</span>=<span class="tk-str">"ouro"</span> <span class="tk-attr">badge</span>=<span class="tk-str">"6"</span> <span class="tk-attr">open</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span>
+        <span class="tk-tag">&lt;p&gt;</span>Conteúdo da etapa de pesagem…<span class="tk-tag">&lt;/p&gt;</span>
+    <span class="tk-tag">&lt;/granado-timeline-item&gt;</span>
+    <span class="tk-tag">&lt;granado-timeline-item</span> <span class="tk-attr">icon</span>=<span class="tk-str">"⚙️"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Fabricação"</span> <span class="tk-attr">status</span>=<span class="tk-str">"verde"</span> <span class="tk-attr">badge</span>=<span class="tk-str">"7"</span><span class="tk-tag">&gt;</span> ... <span class="tk-tag">&lt;/granado-timeline-item&gt;</span>
+<span class="tk-tag">&lt;/granado-timeline&gt;</span></pre>
+
+        <h2 class="gd-h2">API — <code>&lt;granado-timeline&gt;</code> (container)</h2>
+        <table class="gd-api">
+          <thead><tr><th style="width:150px">Atributo</th><th style="width:150px">Tipo</th><th style="width:120px">Default</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">line-color</td><td class="col-type">string (CSS)</td><td class="col-default">gradiente Granado</td><td class="col-desc">Cor/gradiente da linha vertical. Aceita qualquer valor CSS (inclusive <code>linear-gradient</code>).</td></tr>
+            <tr><td class="col-name">numbered</td><td class="col-type">boolean</td><td class="col-default">true</td><td class="col-desc"><code>"false"</code> oculta o eyebrow automático "Etapa X/Y" nos itens.</td></tr>
+            <tr><td class="col-name">single-open</td><td class="col-type">boolean</td><td class="col-default">false</td><td class="col-desc"><code>"true"</code> = acordeão (só um item expandido por vez).</td></tr>
+          </tbody>
+        </table>
+
+        <h2 class="gd-h2">API — <code>&lt;granado-timeline-item&gt;</code> (nó)</h2>
+        <table class="gd-api">
+          <thead><tr><th style="width:130px">Atributo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">icon</td><td class="col-type">string</td><td class="col-desc">Emoji/texto/SVG exibido no marcador circular.</td></tr>
+            <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-desc">Título do card.</td></tr>
+            <tr><td class="col-name">subtitle</td><td class="col-type">string</td><td class="col-desc">Subtítulo (linha abaixo do título).</td></tr>
+            <tr><td class="col-name">status</td><td class="col-type">string</td><td class="col-desc">Paleta de cor: <code>verde</code> (default) · <code>ouro</code> · <code>azul</code> · <code>vermelho</code> · <code>alr</code>. Aliases: <code>ok</code>→verde, <code>inf</code>/<code>info</code>→azul, <code>err</code>/<code>per</code>→vermelho, <code>warn</code>→alr.</td></tr>
+            <tr><td class="col-name">color</td><td class="col-type">string</td><td class="col-desc">Cor de destaque customizada (sobrepõe o accent do status: borda esquerda, marcador, eyebrow). Aceita hex/rgb/var().</td></tr>
+            <tr><td class="col-name">badge</td><td class="col-type">string / número</td><td class="col-desc">Pill opcional no cabeçalho (ex.: contagem).</td></tr>
+            <tr><td class="col-name">eyebrow</td><td class="col-type">string</td><td class="col-desc">Texto acima do título. Se ausente e a timeline numerada, mostra "Etapa X/Y".</td></tr>
+            <tr><td class="col-name">open</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> começa expandido. Em JS: <code>.open</code> · <code>.toggle()</code> · <code>.expand()</code> · <code>.collapse()</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Evento</h3>
+        <table class="gd-api">
+          <thead><tr><th style="width:170px">Evento</th><th style="width:180px">detail</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">timeline-toggle</td><td class="col-type">{ open, title, order }</td><td class="col-desc">Disparado ao expandir/recolher um item (bubbles — pode ser ouvido no container).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Ordem dos scripts:</strong> inclua <code>granado-timeline-item.js</code> <em>antes</em> do <code>granado-timeline.js</code>.</li>
+          <li><strong>Conteúdo:</strong> o corpo expansível é qualquer HTML dentro do <code>&lt;granado-timeline-item&gt;</code> (Light DOM) — preservado entre re-renders.</li>
+          <li><strong>Numeração automática:</strong> o container define <code>data-order</code>/<code>data-total</code>; o "Etapa X/Y" aparece se não houver <code>eyebrow</code> e <code>numbered</code> não for false.</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
         </ul>
       </section>

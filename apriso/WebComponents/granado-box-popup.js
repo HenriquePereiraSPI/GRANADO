@@ -24,8 +24,9 @@
                                        rgb() ou var(--x).
                         metadata     - qualquer valor extra (volta no confirm)
                         equipamentos - equipamentos ligados ao card. Se houver,
-                                       aparece o dropdown. Cada equipamento:
-                                         { id, descricao }
+                                       aparece um dropdown listando SÓ eles
+                                       (o próprio card não entra na lista).
+                                       Cada equipamento: { id, descricao }
      confirm-text - texto do botão confirmar (default "Confirmar")
      equip-label  - rótulo do dropdown (default "Equipamentos")
      open         - "false" inicia oculto
@@ -36,8 +37,8 @@
      "confirm" -> detail {
                     index, id, icon, title, subtitle, status, metadata,
                     equipamentos,     // array do item (ou undefined)
-                    equipamento       // { id, descricao } escolhido, ou null
-                                      //   (null = escolheu a própria "sala")
+                    equipamento       // { id, descricao } escolhido no dropdown,
+                                      //   ou null (card sem equipamentos)
                   }
    (Cancelar, o X e — se habilitado — o clique fora apenas fecham, sem evento.)
 
@@ -79,7 +80,6 @@ if (!customElements.get('granado-box-popup')) {
   const FONT = "'Poppins',sans-serif";
   const MONO = "'Arial',Helvetica,sans-serif";
   const SCROLL_THUMB = 'rgba(191,177,114,.55)';   // polegar do scroll (ouro discreto)
-  const SALA_VALUE = '__sala__';   // valor do dropdown que representa a própria "sala"
 
   class GranadoBoxPopup extends HTMLElement {
     static get observedAttributes() { return ['title', 'subtitle', 'data', 'confirm-text', 'equip-label', 'close-on-backdrop', 'open']; }
@@ -234,10 +234,8 @@ if (!customElements.get('granado-box-popup')) {
       const sel = this.querySelector('[data-role="equip"]');
       if (sel) {
         if (equips.length) {
-          const salaTxt = this._has(item.title) ? item.title : String(item.id);
-          const opts = ['<option value="' + SALA_VALUE + '">' + this._esc(salaTxt) + '</option>']
-            .concat(equips.map((e) => '<option value="' + this._esc(e.id) + '">' + this._esc(this._equipDesc(e)) + '</option>'));
-          sel.innerHTML = opts.join('');
+          // Lista APENAS os equipamentos (o próprio item pai não entra no dropdown).
+          sel.innerHTML = equips.map((e) => '<option value="' + this._esc(e.id) + '">' + this._esc(this._equipDesc(e)) + '</option>').join('');
           if (wrap) wrap.style.display = 'block';
         } else {
           sel.innerHTML = '';
@@ -274,13 +272,13 @@ if (!customElements.get('granado-box-popup')) {
       const item = items[this._selIdx] || {};
       const equips = this._equipsOf(item);
 
+      // Card com equipamentos -> devolve o equipamento escolhido no dropdown.
+      // Card sem equipamentos -> equipamento = null (confirma no próprio item).
       let equipamento = null;
       if (equips.length) {
         const sel = this.querySelector('[data-role="equip"]');
-        const val = sel ? sel.value : SALA_VALUE;
-        if (val !== SALA_VALUE) {
-          for (let i = 0; i < equips.length; i++) { if (String(equips[i].id) === String(val)) { equipamento = equips[i]; break; } }
-        }
+        const val = sel ? sel.value : '';
+        for (let i = 0; i < equips.length; i++) { if (String(equips[i].id) === String(val)) { equipamento = equips[i]; break; } }
       }
 
       const detail = {

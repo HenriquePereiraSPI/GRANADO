@@ -215,6 +215,10 @@
       padding-left: 44px;
     }
 
+    .gd-api td.col-name.gd-nest3 {
+      padding-left: 62px;
+    }
+
     /* Section pieces */
     .gd-h1 {
       font-size: 26px;
@@ -326,7 +330,7 @@
         <div class="gd-cat-items">
           <div class="gd-subgroup">API</div>
           <a class="gd-link" href="#GRD_API_AppointChecklist">GRD_API_AppointChecklist</a>
-          <a class="gd-link" href="#GRD_API_VerifyCheckList">GRD_API_VerifyCheckList</a>
+          <a class="gd-link" href="#GRD_API_VerifyChecklistStatus">GRD_API_VerifyChecklistStatus</a>
           <a class="gd-link" href="#GRD_API_GetCheckListByCode">GRD_API_GetCheckListByCode</a>
           <a class="gd-link" href="#GRD_API_GetCheckListHistory">GRD_API_GetCheckListHistory</a>
           <a class="gd-link" href="#GRD_API_GetCheckListHistoryDetail">GRD_API_GetCheckListHistoryDetail</a>
@@ -446,7 +450,9 @@
 
         <!-- ===== Inputs ===== -->
         <h2 class="gd-h2">Inputs</h2>
-        <p class="gd-lead">Corpo da requisição (JSON):</p>
+
+        <h3 class="gd-h3">Payload (antes do <code>JSON.stringify</code>)</h3>
+        <p class="gd-lead">Estrutura do objeto serializado em <code>ChecklistPayload</code>:</p>
         <pre class="gd-code">{
   <span class="tk-key">"CheckListID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span><span class="tk-punc">,</span>
   <span class="tk-key">"WIPOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000001"</span><span class="tk-punc">,</span>
@@ -458,6 +464,7 @@
     { <span class="tk-key">"CheckpointID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000005"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckpointValue"</span><span class="tk-punc">:</span> { <span class="tk-key">"Checked"</span><span class="tk-punc">:</span> <span class="tk-num">1</span><span class="tk-punc">,</span> <span class="tk-key">"CustomValue"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"AditionalInformation"</span><span class="tk-punc">:</span> <span class="tk-str">""</span> } }
   ]
 }</pre>
+        <pre class="gd-code" style="margin-top:10px"><span class="tk-kw">const</span> body <span class="tk-punc">=</span> { ChecklistPayload<span class="tk-punc">:</span> <span class="tk-fn">JSON.stringify</span>(payload) }<span class="tk-punc">;</span>   <span class="tk-comment">// &lt;- é isto que o endpoint recebe</span></pre>
 
         <h3 class="gd-h3">Campos de entrada</h3>
         <table class="gd-api">
@@ -471,43 +478,49 @@
           </thead>
           <tbody>
             <tr>
-              <td class="col-name">CheckListID</td>
+              <td class="col-name">ChecklistPayload</td>
+              <td class="col-type">string (JSON)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Payload do checklist serializado com <code>JSON.stringify(...)</code>. Os campos abaixo compõem esse payload (antes de serializar).</td>
+            </tr>
+            <tr>
+              <td class="col-name gd-nest">CheckListID</td>
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
               <td class="col-desc">ID do checklist que está sendo apontado.</td>
             </tr>
             <tr>
-              <td class="col-name">WIPOrderNo</td>
+              <td class="col-name gd-nest">WIPOrderNo</td>
               <td class="col-type">string</td>
               <td class="col-req">Não</td>
               <td class="col-desc">Número da ordem (WIP Order) à qual o apontamento se vincula. Opcional — quando não for informar, envie <code>"-1"</code>.</td>
             </tr>
             <tr>
-              <td class="col-name">ResourceName</td>
+              <td class="col-name gd-nest">ResourceName</td>
               <td class="col-type">string</td>
               <td class="col-req">Não</td>
               <td class="col-desc">Identificador do recurso/equipamento onde o checklist foi executado. Opcional — quando não for informar, envie <code>"-1"</code>.</td>
             </tr>
             <tr>
-              <td class="col-name">CheckPoints</td>
+              <td class="col-name gd-nest">CheckPoints</td>
               <td class="col-type">array&lt;object&gt;</td>
               <td class="col-req">Sim</td>
               <td class="col-desc">Lista dos checkpoints respondidos. Cada item contém os campos abaixo.</td>
             </tr>
             <tr>
-              <td class="col-name gd-nest">CheckpointID</td>
+              <td class="col-name gd-nest gd-nest2">CheckpointID</td>
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
               <td class="col-desc">ID do checkpoint dentro do checklist.</td>
             </tr>
             <tr>
-              <td class="col-name gd-nest">CheckpointValue</td>
+              <td class="col-name gd-nest gd-nest2">CheckpointValue</td>
               <td class="col-type">object</td>
               <td class="col-req">Sim</td>
               <td class="col-desc">Valor apontado para o checkpoint. Contém os campos abaixo.</td>
             </tr>
             <tr>
-              <td class="col-name gd-nest gd-nest2">Checked</td>
+              <td class="col-name gd-nest gd-nest2 gd-nest3">Checked</td>
               <td class="col-type">number (0 | 1)</td>
               <td class="col-req">Sim</td>
               <td class="col-desc">
@@ -516,7 +529,7 @@
               </td>
             </tr>
             <tr>
-              <td class="col-name gd-nest gd-nest2">CustomValue</td>
+              <td class="col-name gd-nest gd-nest2 gd-nest3">CustomValue</td>
               <td class="col-type">string</td>
               <td class="col-req">Não</td>
               <td class="col-desc">
@@ -525,7 +538,7 @@
               </td>
             </tr>
             <tr>
-              <td class="col-name gd-nest gd-nest2">AditionalInformation</td>
+              <td class="col-name gd-nest gd-nest2 gd-nest3">AditionalInformation</td>
               <td class="col-type">string</td>
               <td class="col-req">Não</td>
               <td class="col-desc">
@@ -575,6 +588,9 @@
 
         <h3 class="gd-h3">Notas</h3>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>ChecklistPayload (string):</strong> o corpo tem só esse campo, e ele é o payload
+            <strong>serializado</strong> — não envie o objeto direto. Use
+            <code>{ ChecklistPayload: JSON.stringify(payload) }</code>.</li>
           <li><strong>Envelope padrão:</strong> todas as APIs <code>GRD_API_</code> retornam
             <code>Success</code>, <code>Message</code> e <code>Data</code>. Verifique
             <code>Success</code> antes de usar <code>Data</code>.</li>
@@ -590,10 +606,10 @@
       </section>
 
       <!-- ============================================================
-           GRD_API_VerifyCheckList
+           GRD_API_VerifyChecklistStatus
            ============================================================ -->
-      <section id="GRD_API_VerifyCheckList">
-        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_VerifyCheckList</code></h1>
+      <section id="GRD_API_VerifyChecklistStatus">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_VerifyChecklistStatus</code></h1>
         <p class="gd-lead">
           <strong>Verifica se o checklist já foi preenchido no período</strong> para um ou mais
           recursos. Recebe uma <strong>lista</strong> de verificações (recurso + checklist + período)
@@ -603,7 +619,7 @@
         <h2 class="gd-h2">Chamada</h2>
         <div class="gd-endpoint">
           <span class="gd-method">API</span>
-          <span class="gd-path">GRD_API_VerifyCheckList</span>
+          <span class="gd-path">GRD_API_VerifyChecklistStatus</span>
         </div>
         <p class="gd-lead">
           Operação de servidor invocada com um corpo JSON. Diferente das demais, o corpo é um
@@ -613,7 +629,9 @@
 
         <!-- ===== Inputs ===== -->
         <h2 class="gd-h2">Inputs</h2>
-        <p class="gd-lead">Corpo da requisição (JSON) — lista de verificações:</p>
+
+        <h3 class="gd-h3">Payload (antes do <code>JSON.stringify</code>)</h3>
+        <p class="gd-lead">Lista de verificações (recurso + checklist + período):</p>
         <pre class="gd-code">[
   {
     <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"BALANCA_A"</span><span class="tk-punc">,</span>
@@ -626,6 +644,7 @@
     <span class="tk-key">"Period"</span><span class="tk-punc">:</span> <span class="tk-str">"DAY | WEEK | MONTH"</span>
   }
 ]</pre>
+        <pre class="gd-code" style="margin-top:10px"><span class="tk-kw">const</span> body <span class="tk-punc">=</span> { Parameters<span class="tk-punc">:</span> <span class="tk-fn">JSON.stringify</span>(payload) }<span class="tk-punc">;</span>   <span class="tk-comment">// &lt;- é isto que o endpoint recebe</span></pre>
 
         <h3 class="gd-h3">Campos de cada item de entrada</h3>
         <table class="gd-api">
