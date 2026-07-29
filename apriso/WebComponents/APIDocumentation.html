@@ -3611,8 +3611,8 @@
         <p class="gd-lead">Corpo da requisição (JSON):</p>
         <pre class="gd-code">{
   <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"OK|FORA"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"OK | FORA | -1"</span><span class="tk-punc">,</span>
   <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-01-01"</span><span class="tk-punc">,</span>
   <span class="tk-key">"EndDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-12-30"</span>
 }</pre>
@@ -3635,16 +3635,16 @@
               <td class="col-desc">Número da ordem a consultar. Use <code>"-1"</code> para <strong>todas</strong> as ordens, ou um número específico.</td>
             </tr>
             <tr>
-              <td class="col-name">ProductID</td>
-              <td class="col-type">string (número)</td>
+              <td class="col-name">ProductNo</td>
+              <td class="col-type">string</td>
               <td class="col-req">Sim</td>
-              <td class="col-desc">ID do produto a filtrar. Use <code>"-1"</code> para <strong>todos</strong> os produtos.</td>
+              <td class="col-desc">Código do produto a filtrar. Use <code>"-1"</code> para <strong>todos</strong> os produtos.</td>
             </tr>
             <tr>
               <td class="col-name">PerformanceStatus</td>
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
-              <td class="col-desc">Filtro por status de performance: <code>"OK"</code>, <code>"FORA"</code> ou <code>"OK|FORA"</code> (ambos).</td>
+              <td class="col-desc">Filtro por status de performance: <code>"OK"</code>, <code>"FORA"</code> ou <code>"-1"</code> (ambos).</td>
             </tr>
             <tr>
               <td class="col-name">StartDate</td>
@@ -3735,8 +3735,8 @@
 
         <h3 class="gd-h3">Notas</h3>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
-          <li><strong>Filtros <code>-1</code>:</strong> <code>WipOrderNo</code> e <code>ProductID</code> aceitam <code>"-1"</code> para não filtrar (todas as ordens / todos os produtos).</li>
-          <li><strong><code>PerformanceStatus</code> de entrada:</strong> use <code>"OK|FORA"</code> para trazer os dois status; ou apenas <code>"OK"</code> / <code>"FORA"</code> para filtrar.</li>
+          <li><strong>Filtros <code>-1</code>:</strong> <code>WipOrderNo</code> e <code>ProductNo</code> aceitam <code>"-1"</code> para não filtrar (todas as ordens / todos os produtos).</li>
+          <li><strong><code>PerformanceStatus</code> de entrada:</strong> use <code>"-1"</code> para trazer os dois status; ou apenas <code>"OK"</code> / <code>"FORA"</code> para filtrar.</li>
           <li><strong>Cálculo:</strong> <code>PerformancePct</code> = <code>TempoPecaXQuantidade</code> ÷ <code>TempoTotalOrdem</code> × 100 — quanto maior, melhor.</li>
         </ul>
       </section>
@@ -3769,10 +3769,11 @@
         <p class="gd-lead">Corpo da requisição (JSON):</p>
         <pre class="gd-code">{
   <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"OK|FORA"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"OK | FORA | -1"</span><span class="tk-punc">,</span>
   <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
   <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000010"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Shift"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
   <span class="tk-key">"Type"</span><span class="tk-punc">:</span> <span class="tk-str">"DEFAULT|RANKED_BY_USER"</span><span class="tk-punc">,</span>
   <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-01-01"</span><span class="tk-punc">,</span>
   <span class="tk-key">"EndDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-12-30"</span>
@@ -3796,16 +3797,16 @@
               <td class="col-desc">Número da ordem a consultar. Use <code>"-1"</code> para <strong>todas</strong> as ordens.</td>
             </tr>
             <tr>
-              <td class="col-name">ProductID</td>
-              <td class="col-type">string (número)</td>
+              <td class="col-name">ProductNo</td>
+              <td class="col-type">string</td>
               <td class="col-req">Sim</td>
-              <td class="col-desc">ID do produto (MP) a filtrar. Use <code>"-1"</code> para <strong>todos</strong>.</td>
+              <td class="col-desc">Código do produto (MP) a filtrar. Use <code>"-1"</code> para <strong>todos</strong>.</td>
             </tr>
             <tr>
               <td class="col-name">PerformanceStatus</td>
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
-              <td class="col-desc">Filtro por status: <code>"OK"</code>, <code>"FORA"</code> ou <code>"OK|FORA"</code> (ambos).</td>
+              <td class="col-desc">Filtro por status: <code>"OK"</code>, <code>"FORA"</code> ou <code>"-1"</code> (ambos).</td>
             </tr>
             <tr>
               <td class="col-name">CreatedBy</td>
@@ -3818,6 +3819,12 @@
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
               <td class="col-desc">Nome/ID do recurso do centro de trabalho a filtrar (ex.: <code>"100000010"</code>). Use <code>"-1"</code> para todos.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Shift</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Turno a filtrar. Use <code>"-1"</code> para <strong>todos</strong> os turnos.</td>
             </tr>
             <tr>
               <td class="col-name">Type</td>
@@ -3855,7 +3862,7 @@
       <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"60.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPecaXQuantidadeMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
       <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"600.00"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"OK"</span><span class="tk-punc">,</span>
       <span class="tk-key">"UOMCode"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA2"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
-      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Kaic Lima"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/7/2026 2:29:15 PM"</span>
+      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Kaic Lima"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/7/2026 2:29:15 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"Shift"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span>
     }<span class="tk-punc">,</span>
     {
       <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000012"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"100105"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100257"</span><span class="tk-punc">,</span>
@@ -3863,7 +3870,7 @@
       <span class="tk-key">"TempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"650"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoTotalPesagemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"11"</span><span class="tk-punc">,</span>
       <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"60.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"9.23"</span><span class="tk-punc">,</span>
       <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"FORA"</span><span class="tk-punc">,</span> <span class="tk-key">"UOMCode"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD2_SALA1"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Eduardo Aguiar"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/6/2026 6:36:05 PM"</span>
+      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Eduardo Aguiar"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/6/2026 6:36:05 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"Shift"</span><span class="tk-punc">:</span> <span class="tk-str">"2"</span>
     }
     <span class="tk-comment">// … demais pesagens</span>
   ]
@@ -3893,6 +3900,7 @@
             <tr><td class="col-name">WorkcenterResourceName</td><td class="col-type">string</td><td class="col-desc">Nome/ID do recurso do centro de trabalho (pode vir vazio).</td></tr>
             <tr><td class="col-name">CreatedBy</td><td class="col-type">string</td><td class="col-desc">Usuário que realizou a pesagem.</td></tr>
             <tr><td class="col-name">CreatedOn</td><td class="col-type">string (data)</td><td class="col-desc">Data/hora da pesagem.</td></tr>
+            <tr><td class="col-name">Shift</td><td class="col-type">string</td><td class="col-desc">Turno em que a pesagem aconteceu.</td></tr>
           </tbody>
         </table>
 
@@ -3944,8 +3952,8 @@
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong><code>Type</code>:</strong> <code>"DEFAULT"</code> devolve uma linha por pesagem;
             <code>"RANKED_BY_USER"</code> devolve o agregado por usuário (média/mediana de tempo e performance).</li>
-          <li><strong>Filtros <code>-1</code>:</strong> <code>WipOrderNo</code>, <code>ProductID</code>,
-            <code>CreatedBy</code> e <code>WorkcenterResourceName</code> aceitam <code>"-1"</code> para não filtrar.</li>
+          <li><strong>Filtros <code>-1</code>:</strong> <code>WipOrderNo</code>, <code>ProductNo</code>,
+            <code>CreatedBy</code>, <code>WorkcenterResourceName</code> e <code>Shift</code> aceitam <code>"-1"</code> para não filtrar.</li>
           <li><strong>Relação com <a class="gd-link" href="#GRD_API_OEE_GetOrderWeightPerformance">GRD_API_OEE_GetOrderWeightPerformance</a>:</strong>
             aquela dá a performance por <em>ordem</em>; esta detalha por <em>matéria-prima/pesagem</em>.</li>
         </ul>
