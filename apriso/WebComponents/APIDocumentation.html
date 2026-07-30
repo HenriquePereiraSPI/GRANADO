@@ -384,6 +384,7 @@
           <a class="gd-link" href="#GRD_API_GetScales">GRD_API_GetScales</a>
           <a class="gd-link" href="#GRD_API_GetReasonCode">GRD_API_GetReasonCode</a>
           <a class="gd-link" href="#GRD_API_GetUsers">GRD_API_GetUsers</a>
+          <a class="gd-link" href="#GRD_API_GetEquipmentInformation">GRD_API_GetEquipmentInformation</a>
         </div>
       </div>
 
@@ -2646,6 +2647,141 @@
             (em <code>data.ResourceName</code>).</li>
           <li><strong>AssetID / LocationID:</strong> são obtidos na própria plataforma Tractian e
             identificam o ativo e sua localização a serem monitorados.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetEquipmentInformation
+           ============================================================ -->
+      <section id="GRD_API_GetEquipmentInformation">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetEquipmentInformation</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera as informações de um equipamento</strong> — devolve o cabeçalho
+          (<code>EquipmentHeader</code>) e a lista de características/parâmetros da unidade
+          (<code>EquipmentUnitChar</code>), como IP, porta, certificado de calibração e valores de divisão.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetEquipmentInformation</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>EquipmentHeader</code> e
+          <code>EquipmentUnitChar</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"EquipmentResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000010"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:210px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">EquipmentResourceName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ResourceName do equipamento cujas informações serão recuperadas.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Informações recuperadas com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"EquipmentHeader"</span><span class="tk-punc">:</span> {
+    <span class="tk-key">"ResourceID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000082"</span><span class="tk-punc">,</span> <span class="tk-key">"EquipmentName"</span><span class="tk-punc">:</span> <span class="tk-str">"S3_TOLEDO 2095/1"</span><span class="tk-punc">,</span> <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000001"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"UnitID"</span><span class="tk-punc">:</span> <span class="tk-str">"100005936"</span><span class="tk-punc">,</span> <span class="tk-key">"Active"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span>
+  }<span class="tk-punc">,</span>
+  <span class="tk-key">"EquipmentUnitChar"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"UnitID"</span><span class="tk-punc">:</span> <span class="tk-str">"100005936"</span><span class="tk-punc">,</span> <span class="tk-key">"Characteristic"</span><span class="tk-punc">:</span> <span class="tk-str">"SCALE_IP"</span><span class="tk-punc">,</span> <span class="tk-key">"UpperSpecificationLimit"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"UpperControlLimit"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"TargetValue"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"LowerControlLimit"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"LowerSpecificationLimit"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"Value_"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"Attribute_"</span><span class="tk-punc">:</span> <span class="tk-str">"10.20.1.135"</span><span class="tk-punc">,</span> <span class="tk-key">"Active"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span>
+    }<span class="tk-punc">,</span>
+    { <span class="tk-key">"UnitID"</span><span class="tk-punc">:</span> <span class="tk-str">"100005936"</span><span class="tk-punc">,</span> <span class="tk-key">"Characteristic"</span><span class="tk-punc">:</span> <span class="tk-str">"SCALE_PORTA"</span><span class="tk-punc">,</span> <span class="tk-key">"Attribute_"</span><span class="tk-punc">:</span> <span class="tk-str">"8881"</span><span class="tk-punc">,</span> <span class="tk-key">"Active"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"UnitID"</span><span class="tk-punc">:</span> <span class="tk-str">"100005936"</span><span class="tk-punc">,</span> <span class="tk-key">"Characteristic"</span><span class="tk-punc">:</span> <span class="tk-str">"UCCalibrationCertificate"</span><span class="tk-punc">,</span> <span class="tk-key">"Attribute_"</span><span class="tk-punc">:</span> <span class="tk-str">"MA - 03758/25"</span><span class="tk-punc">,</span> <span class="tk-key">"Active"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"UnitID"</span><span class="tk-punc">:</span> <span class="tk-str">"100005936"</span><span class="tk-punc">,</span> <span class="tk-key">"Characteristic"</span><span class="tk-punc">:</span> <span class="tk-str">"UCDivisionValue1"</span><span class="tk-punc">,</span> <span class="tk-key">"Attribute_"</span><span class="tk-punc">:</span> <span class="tk-str">"0.001"</span><span class="tk-punc">,</span> <span class="tk-key">"Active"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"UnitID"</span><span class="tk-punc">:</span> <span class="tk-str">"100005936"</span><span class="tk-punc">,</span> <span class="tk-key">"Characteristic"</span><span class="tk-punc">:</span> <span class="tk-str">"UCDivisionValue2"</span><span class="tk-punc">,</span> <span class="tk-key">"Attribute_"</span><span class="tk-punc">:</span> <span class="tk-str">"0.001"</span><span class="tk-punc">,</span> <span class="tk-key">"Active"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span> }
+  ]
+}</pre>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575">
+          Exemplo resumido — os itens de <code>EquipmentUnitChar</code> (exceto o 1º) trazem também
+          <code>UpperSpecificationLimit</code>, <code>UpperControlLimit</code>, <code>TargetValue</code>,
+          <code>LowerControlLimit</code>, <code>LowerSpecificationLimit</code> e <code>Value_</code>
+          (todos <code>"0"</code> no exemplo).
+        </p>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as informações foram recuperadas com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">EquipmentHeader</td><td class="col-type">object</td><td class="col-desc">Cabeçalho do equipamento. Campos abaixo.</td></tr>
+            <tr><td class="col-name">EquipmentUnitChar</td><td class="col-type">array&lt;característica&gt;</td><td class="col-desc">Características/parâmetros da unidade do equipamento. Campos de cada item abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de <code>EquipmentHeader</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:120px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">ResourceID</td><td class="col-type">string</td><td class="col-desc">Identificador interno do recurso/equipamento.</td></tr>
+            <tr><td class="col-name">EquipmentName</td><td class="col-type">string</td><td class="col-desc">Nome/descrição do equipamento (ex.: <code>"S3_TOLEDO 2095/1"</code>).</td></tr>
+            <tr><td class="col-name">ResourceName</td><td class="col-type">string</td><td class="col-desc">ResourceName do equipamento.</td></tr>
+            <tr><td class="col-name">UnitID</td><td class="col-type">string</td><td class="col-desc">Identificador da unidade a que as características pertencem.</td></tr>
+            <tr><td class="col-name">Active</td><td class="col-type">string (bool)</td><td class="col-desc">Indica se o equipamento está ativo (<code>"True"</code> / <code>"False"</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada <code>EquipmentUnitChar</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:210px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">UnitID</td><td class="col-type">string</td><td class="col-desc">Identificador da unidade do equipamento.</td></tr>
+            <tr><td class="col-name">Characteristic</td><td class="col-type">string</td><td class="col-desc">Nome da característica/parâmetro (ex.: <code>"SCALE_IP"</code>, <code>"SCALE_PORTA"</code>, <code>"UCCalibrationCertificate"</code>).</td></tr>
+            <tr><td class="col-name">UpperSpecificationLimit</td><td class="col-type">string (número)</td><td class="col-desc">Limite superior de especificação.</td></tr>
+            <tr><td class="col-name">UpperControlLimit</td><td class="col-type">string (número)</td><td class="col-desc">Limite superior de controle.</td></tr>
+            <tr><td class="col-name">TargetValue</td><td class="col-type">string (número)</td><td class="col-desc">Valor alvo (target) da característica.</td></tr>
+            <tr><td class="col-name">LowerControlLimit</td><td class="col-type">string (número)</td><td class="col-desc">Limite inferior de controle.</td></tr>
+            <tr><td class="col-name">LowerSpecificationLimit</td><td class="col-type">string (número)</td><td class="col-desc">Limite inferior de especificação.</td></tr>
+            <tr><td class="col-name">Value_</td><td class="col-type">string (número)</td><td class="col-desc">Valor numérico da característica.</td></tr>
+            <tr><td class="col-name">Attribute_</td><td class="col-type">string</td><td class="col-desc">Valor textual/atributo da característica (ex.: IP <code>"10.20.1.135"</code>, porta <code>"8881"</code>, certificado <code>"MA - 03758/25"</code>).</td></tr>
+            <tr><td class="col-name">Active</td><td class="col-type">string (bool)</td><td class="col-desc">Indica se a característica está ativa (<code>"True"</code> / <code>"False"</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Header × características:</strong> o <code>UnitID</code> do <code>EquipmentHeader</code>
+            é o mesmo dos itens de <code>EquipmentUnitChar</code> — usa-se para relacionar as duas partes.</li>
+          <li><strong>Valor textual x numérico:</strong> parâmetros como IP, porta e certificado vêm em
+            <code>Attribute_</code> (texto); use <code>Value_</code> para os numéricos.</li>
+          <li><strong>EquipmentResourceName:</strong> é o mesmo <code>ResourceName</code> devolvido por
+            <a class="gd-link" href="#GRD_API_GetOrganizationalTree">GRD_API_GetOrganizationalTree</a>.</li>
         </ul>
       </section>
 

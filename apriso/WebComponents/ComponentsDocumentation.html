@@ -222,6 +222,30 @@
       margin-bottom: 10px;
     }
 
+    /* Demo à esquerda, snippet à direita */
+    .gd-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+
+    .gd-split > .gd-demo {
+      margin: 0;
+    }
+
+    .gd-split > .gd-code {
+      max-height: 420px;
+      overflow: auto;
+    }
+
+    @media (max-width: 900px) {
+      .gd-split {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .gd-soon {
       background: #FDFAF1;
       border: 1px dashed #D6CDA4;
@@ -9626,11 +9650,53 @@ pop.open();</pre>
         <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
 <span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-checklist-popup.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
 
+        <h2 class="gd-h2">Exemplo mínimo</h2>
+        <p class="gd-lead">
+          A forma mais simples: só <code>title</code> e <code>data</code>, com cada linha tendo apenas
+          <code>caracteristica</code>. Cada item vira um <strong>check</strong> simples.
+        </p>
+        <script>
+          function docCklSimples() {
+            GranadoChecklistPopup.show({
+              title: '✅ Checklist Rápido de Turno',
+              data: [
+                { id: 'a', caracteristica: 'Área limpa e organizada' },
+                { id: 'b', caracteristica: 'EPIs disponíveis e em uso' },
+                { id: 'c', caracteristica: 'Equipamento identificado com o lote' }
+              ],
+              onConfirm: function (d) {
+                console.log('confirm →', d);   // { verifiedBy, dateTime, rows[] }
+                console.table(d.rows);          // cada linha: { id, caracteristica, valor, status, observacao }
+              }
+            });
+          }
+        </script>
+        <div class="gd-split">
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button type="button" onclick="docCklSimples()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1F7A3D;border-radius:7px;background:#1F7A3D;color:#fff;cursor:pointer">✅ Checklist rápido</button>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoChecklistPopup.<span class="tk-attr">show</span>({
+    title: <span class="tk-str">'✅ Checklist Rápido de Turno'</span>,
+    data: [
+      { id: <span class="tk-str">'a'</span>, caracteristica: <span class="tk-str">'Área limpa e organizada'</span> },
+      { id: <span class="tk-str">'b'</span>, caracteristica: <span class="tk-str">'EPIs disponíveis e em uso'</span> },
+      { id: <span class="tk-str">'c'</span>, caracteristica: <span class="tk-str">'Equipamento identificado com o lote'</span> }
+    ],
+    onConfirm: <span class="tk-keyword">function</span> (d) {
+      console.log(d.verifiedBy, d.dateTime, d.rows);   <span class="tk-comment">// dados do rodapé + linhas</span>
+      <span class="tk-comment">// cada linha: { id, caracteristica, valor, status, observacao }</span>
+    }
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
         <h2 class="gd-h2">Uso</h2>
         <p class="gd-lead">
           Forma recomendada (API estática). O botão <strong>Confirmar</strong> emite o evento
           <code>confirm</code> com o estado atual da tabela + os dois campos do rodapé.
         </p>
+        <div class="gd-split">
         <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <button type="button" onclick="docCklBalanca()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1F7A3D;border-radius:7px;background:#1F7A3D;color:#fff;cursor:pointer">⚖️ Verificação de Balança</button>
           <button type="button" onclick="docCklConector()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1A4A8C;border-radius:7px;background:#1A4A8C;color:#fff;cursor:pointer">🔌 Com botão de ação (conector)</button>
@@ -9692,6 +9758,7 @@ pop.open();</pre>
     onConfirm: <span class="tk-keyword">function</span> (d) { console.log(d.checklistId, d.checklistCode, d.rows); }   <span class="tk-comment">// { checklistId, checklistCode, verifiedBy, dateTime, rows[] }</span>
   });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
 
         <h2 class="gd-h2">Com limites (status automático)</h2>
         <p class="gd-lead">
@@ -9700,6 +9767,7 @@ pop.open();</pre>
           <strong>apenas decimal</strong> e a coluna <strong>Check</strong> vira um <strong>Status automático e bloqueado</strong>
           (<code>✓ OK</code> dentro dos limites, <code>✕ Fora</code> fora — no retorno continua <code>true</code>/<code>false</code>).
         </p>
+        <div class="gd-split">
         <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <button type="button" onclick="docCklLimites()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A5A00;border-radius:7px;background:#9A5A00;color:#fff;cursor:pointer">🌡️ Condições com limites</button>
         </div>
@@ -9735,6 +9803,7 @@ pop.open();</pre>
     onConfirm: <span class="tk-keyword">function</span> (d) { console.log(d.checklistId, d.checklistCode, d.rows); }   <span class="tk-comment">// status: true (OK) | false (Fora), automático</span>
   });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
 
         <h2 class="gd-h2">Uso — declarativo (HTML)</h2>
         <p class="gd-lead">
@@ -9745,6 +9814,7 @@ pop.open();</pre>
           funcionam pela API/propriedade — no modo declarativo use linhas simples (com/sem
           <code>limiteInferior</code>/<code>limiteSuperior</code>).
         </p>
+        <div class="gd-split">
         <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <button type="button" onclick="document.getElementById('doc-ckl-html').open()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1F7A3D;border-radius:7px;background:#1F7A3D;color:#fff;cursor:pointer">Abrir checklist (HTML)</button>
           <span id="doc-ckl-html-status" style="font-size:12px;color:#8A9E8E"></span>
@@ -9782,6 +9852,7 @@ pop.open();</pre>
     console.log(ev.detail.checklistId, ev.detail.checklistCode, ev.detail.rows);
   });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
 
         <h2 class="gd-h2">API</h2>
 
