@@ -9956,38 +9956,136 @@ pop.open();</pre>
         <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
 <span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-gallery.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
 
-        <h2 class="gd-h2">Uso</h2>
+        <h2 class="gd-h2">Uso — sem scroll (clique inline)</h2>
         <p class="gd-lead">
-          Passe os itens pela propriedade JS <code>.data</code> (array). O clique dispara o evento
-          <code>item-click</code> e chama <code>.onItemClick(detail)</code> se definido.
+          Passe os itens pela propriedade JS <code>.data</code> (array) e trate o clique de forma
+          <strong>tradicional inline</strong>, pelo atributo <code>onitemclick</code> (string JS que
+          recebe <code>event</code> e <code>detail</code>). Exemplo à esquerda, o código exato à direita.
         </p>
-        <div class="gd-demo" style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
-          <div style="flex:1 1 280px;max-width:400px"><granado-gallery id="doc-gal"></granado-gallery></div>
-          <div style="flex:1 1 280px;max-width:400px"><granado-gallery id="doc-gal-scroll" enable-scroll="true" scroll-height="220px" card-color="#F4EED9" title-color="#1A4A8C" status-color="#8C1A1A"></granado-gallery></div>
+        <div class="gd-split">
+        <div class="gd-demo" style="height:300px;overflow:auto;box-sizing:border-box">
+          <granado-gallery id="gal"
+            onitemclick="document.getElementById('gal-out').textContent = '➡ ' + detail.title + ' · ' + JSON.stringify(detail.metadata)"></granado-gallery>
+          <div id="gal-out" style="font-size:12px;color:#8A9E8E;margin-top:10px"></div>
         </div>
-        <div id="doc-gal-status" style="font-size:12px;color:#8A9E8E;margin-top:8px"></div>
         <script>
-          (function () {
-            var itens = [
-              { title: 'OP-2026-0416', subtitle: 'Loção Rosa 200ml', data: '18/05/2026', status: 'NOVO', metadata: { op: 'OP-2026-0416', sala: 'A' } },
-              { title: 'OP-2026-0414', subtitle: 'Creme 150g', data: '17/05/2026', status: 'PESANDO', metadata: { op: 'OP-2026-0414' } },
-              { title: 'OP-2026-0413', subtitle: 'Sabonete Glicerinado 90g', data: '14/05/2026', status: 'DETALHES', metadata: { op: 'OP-2026-0413' } }
-            ];
-            function onClick(d) { var s = document.getElementById('doc-gal-status'); if (s) s.textContent = '➡ ' + d.title + ' · ' + JSON.stringify(d.metadata); }
-            var g1 = document.getElementById('doc-gal'); g1.data = itens; g1.onItemClick = onClick;
-            var g2 = document.getElementById('doc-gal-scroll'); g2.data = itens.concat(itens); g2.onItemClick = onClick;
-          })();
+          document.getElementById('gal').data = [
+            { title: 'OP-2026-0416', subtitle: 'Loção Rosa 200ml', data: '18/05/2026', status: 'NOVO', metadata: { op: 'OP-2026-0416', sala: 'A' } },
+            { title: 'OP-2026-0414', subtitle: 'Creme 150g', data: '17/05/2026', status: 'PESANDO', metadata: { op: 'OP-2026-0414' } },
+            { title: 'OP-2026-0413', subtitle: 'Sabonete Glicerinado 90g', data: '14/05/2026', status: 'DETALHES', metadata: { op: 'OP-2026-0413' } }
+          ];
         </script>
-        <pre class="gd-code"><span class="tk-tag">&lt;granado-gallery</span> <span class="tk-attr">id</span>=<span class="tk-str">"g"</span><span class="tk-tag">&gt;&lt;/granado-gallery&gt;</span>
+        <pre class="gd-code" style="height:300px;max-height:300px;overflow:auto"><span class="tk-tag">&lt;granado-gallery</span> <span class="tk-attr">id</span>=<span class="tk-str">"gal"</span>
+  <span class="tk-attr">onitemclick</span>=<span class="tk-str">"document.getElementById('gal-out').textContent = '➡ ' + detail.title + ' · ' + JSON.stringify(detail.metadata)"</span><span class="tk-tag">&gt;&lt;/granado-gallery&gt;</span>
+<span class="tk-tag">&lt;div</span> <span class="tk-attr">id</span>=<span class="tk-str">"gal-out"</span><span class="tk-tag">&gt;&lt;/div&gt;</span>
+
 <span class="tk-tag">&lt;script&gt;</span>
-  <span class="tk-kw">var</span> g = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'g'</span>);
-  g.data = [
-    { title: <span class="tk-str">'OP-2026-0416'</span>, subtitle: <span class="tk-str">'Loção Rosa 200ml'</span>, data: <span class="tk-str">'18/05/2026'</span>,
-      status: <span class="tk-str">'NOVO'</span>, metadata: { op: <span class="tk-str">'OP-2026-0416'</span>, sala: <span class="tk-str">'A'</span> } },
-    { title: <span class="tk-str">'OP-2026-0414'</span>, subtitle: <span class="tk-str">'Creme 150g'</span>, data: <span class="tk-str">'17/05/2026'</span>, status: <span class="tk-str">'PESANDO'</span> }
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'gal'</span>).data = [
+    { title: <span class="tk-str">'OP-2026-0416'</span>, subtitle: <span class="tk-str">'Loção Rosa 200ml'</span>, data: <span class="tk-str">'18/05/2026'</span>, status: <span class="tk-str">'NOVO'</span>, metadata: { op: <span class="tk-str">'OP-2026-0416'</span>, sala: <span class="tk-str">'A'</span> } },
+    { title: <span class="tk-str">'OP-2026-0414'</span>, subtitle: <span class="tk-str">'Creme 150g'</span>, data: <span class="tk-str">'17/05/2026'</span>, status: <span class="tk-str">'PESANDO'</span>, metadata: { op: <span class="tk-str">'OP-2026-0414'</span> } },
+    { title: <span class="tk-str">'OP-2026-0413'</span>, subtitle: <span class="tk-str">'Sabonete Glicerinado 90g'</span>, data: <span class="tk-str">'14/05/2026'</span>, status: <span class="tk-str">'DETALHES'</span>, metadata: { op: <span class="tk-str">'OP-2026-0413'</span> } }
   ];
-  g.onItemClick = <span class="tk-keyword">function</span> (d) { console.log(d.title, d.status, d.metadata); };
 <span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">Uso — com scroll + cores (clique inline)</h2>
+        <p class="gd-lead">
+          Mesma ideia com <code>enable-scroll="true"</code> + <code>scroll-height</code> e cores
+          customizadas (<code>card-color</code>, <code>title-color</code>, <code>status-color</code>).
+          O clique continua inline pelo <code>onitemclick</code>.
+        </p>
+        <div class="gd-split">
+        <div class="gd-demo" style="height:300px;overflow:auto;box-sizing:border-box">
+          <granado-gallery id="gal-scroll" enable-scroll="true" scroll-height="150px"
+            card-color="#F4EED9" title-color="#1A4A8C" status-color="#8C1A1A"
+            onitemclick="document.getElementById('gal-scroll-out').textContent = '➡ ' + detail.title"></granado-gallery>
+          <div id="gal-scroll-out" style="font-size:12px;color:#8A9E8E;margin-top:10px"></div>
+        </div>
+        <script>
+          document.getElementById('gal-scroll').data = [
+            { title: 'OP-2026-0416', subtitle: 'Loção Rosa 200ml', data: '18/05/2026', status: 'NOVO', metadata: { op: 'OP-2026-0416' } },
+            { title: 'OP-2026-0414', subtitle: 'Creme 150g', data: '17/05/2026', status: 'PESANDO', metadata: { op: 'OP-2026-0414' } },
+            { title: 'OP-2026-0413', subtitle: 'Sabonete Glicerinado 90g', data: '14/05/2026', status: 'DETALHES', metadata: { op: 'OP-2026-0413' } },
+            { title: 'OP-2026-0412', subtitle: 'Shampoo Neutro 300ml', data: '13/05/2026', status: 'CONCLUÍDO', metadata: { op: 'OP-2026-0412' } }
+          ];
+        </script>
+        <pre class="gd-code" style="height:300px;max-height:300px;overflow:auto"><span class="tk-tag">&lt;granado-gallery</span> <span class="tk-attr">id</span>=<span class="tk-str">"gal-scroll"</span> <span class="tk-attr">enable-scroll</span>=<span class="tk-str">"true"</span> <span class="tk-attr">scroll-height</span>=<span class="tk-str">"150px"</span>
+  <span class="tk-attr">card-color</span>=<span class="tk-str">"#F4EED9"</span> <span class="tk-attr">title-color</span>=<span class="tk-str">"#1A4A8C"</span> <span class="tk-attr">status-color</span>=<span class="tk-str">"#8C1A1A"</span>
+  <span class="tk-attr">onitemclick</span>=<span class="tk-str">"document.getElementById('gal-scroll-out').textContent = '➡ ' + detail.title"</span><span class="tk-tag">&gt;&lt;/granado-gallery&gt;</span>
+<span class="tk-tag">&lt;div</span> <span class="tk-attr">id</span>=<span class="tk-str">"gal-scroll-out"</span><span class="tk-tag">&gt;&lt;/div&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'gal-scroll'</span>).data = [
+    { title: <span class="tk-str">'OP-2026-0416'</span>, subtitle: <span class="tk-str">'Loção Rosa 200ml'</span>, data: <span class="tk-str">'18/05/2026'</span>, status: <span class="tk-str">'NOVO'</span>, metadata: { op: <span class="tk-str">'OP-2026-0416'</span> } },
+    { title: <span class="tk-str">'OP-2026-0414'</span>, subtitle: <span class="tk-str">'Creme 150g'</span>, data: <span class="tk-str">'17/05/2026'</span>, status: <span class="tk-str">'PESANDO'</span>, metadata: { op: <span class="tk-str">'OP-2026-0414'</span> } },
+    { title: <span class="tk-str">'OP-2026-0413'</span>, subtitle: <span class="tk-str">'Sabonete Glicerinado 90g'</span>, data: <span class="tk-str">'14/05/2026'</span>, status: <span class="tk-str">'DETALHES'</span>, metadata: { op: <span class="tk-str">'OP-2026-0413'</span> } },
+    { title: <span class="tk-str">'OP-2026-0412'</span>, subtitle: <span class="tk-str">'Shampoo Neutro 300ml'</span>, data: <span class="tk-str">'13/05/2026'</span>, status: <span class="tk-str">'CONCLUÍDO'</span>, metadata: { op: <span class="tk-str">'OP-2026-0412'</span> } }
+  ];
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">Com filhos (expansível)</h2>
+        <p class="gd-lead">
+          Quando um item traz <code>children</code> (array de sub-itens, mesmos campos), o card vira
+          <strong>expansível</strong>: clicar no pai abre/fecha os filhos indentados abaixo. O pai
+          <strong>não</strong> dispara <code>item-click</code> — só expande; o clique num filho traz
+          <code>isChild:true</code>, <code>parentIndex</code>, <code>childIndex</code> e <code>parent</code> no <code>detail</code>.
+          Clique numa OP para ver as MPs.
+        </p>
+        <div class="gd-split">
+        <div class="gd-demo" style="height:420px;overflow:auto;box-sizing:border-box">
+          <granado-gallery id="gal-op" enable-scroll="true" scroll-height="300px" child-card-color="#EFEAD6"></granado-gallery>
+          <div id="gal-op-out" style="font-size:12px;color:#8A9E8E;margin-top:10px"></div>
+        </div>
+        <script>
+          document.getElementById('gal-op').data = [
+            { title: 'OP-2026-0416', subtitle: 'Loção Rosa 200ml', data: '3 MPs · Sala A', status: 'PESANDO', statusColor: '#9A5A00',
+              metadata: { op: 'OP-2026-0416' },
+              children: [
+                { title: '🧪 Glicerina USP', subtitle: 'Lote GLI-2026-08', data: '🎯 45,000 → ⚖️ 44,983 kg', status: 'OK', statusColor: '#1C7A38' },
+                { title: '🧪 Álcool Cetílico', subtitle: 'Lote ACT-2026-02', data: '🎯 12,500 → ⚖️ 12,500 kg', status: 'OK', statusColor: '#1C7A38' },
+                { title: '🧪 Essência Rosa', subtitle: 'Lote ESR-2026-11', data: '🎯 0,250 → ⚖️ 0,318 kg', status: 'FORA', statusColor: '#8C1A1A' }
+              ] },
+            { title: 'OP-2026-0414', subtitle: 'Creme Hidratante 150g', data: '2 MPs · Sala C', status: 'NOVO', statusColor: '#1A4A8C',
+              metadata: { op: 'OP-2026-0414' },
+              children: [
+                { title: '🧪 Base Aquosa', subtitle: 'Lote BAQ-2026-05', data: '🎯 30,000 → ⚖️ 30,000 kg', status: 'OK', statusColor: '#1C7A38' },
+                { title: '🧪 Conservante', subtitle: 'Lote CNS-2026-01', data: '🎯 0,900 → ⚖️ 0,902 kg', status: 'OK', statusColor: '#1C7A38' }
+              ] }
+          ];
+          document.getElementById('gal-op').onItemClick = function (detail) {
+            var o = document.getElementById('gal-op-out');
+            if (detail.isChild) o.textContent = '🧪 ' + detail.title + ' (MP de ' + detail.parent.title + ')';
+            else o.textContent = '➡ ' + detail.title; // pai só expande
+          };
+        </script>
+        <pre class="gd-code" style="height:420px;max-height:420px;overflow:auto"><span class="tk-tag">&lt;granado-gallery</span> <span class="tk-attr">id</span>=<span class="tk-str">"gal-op"</span> <span class="tk-attr">enable-scroll</span>=<span class="tk-str">"true"</span> <span class="tk-attr">scroll-height</span>=<span class="tk-str">"300px"</span> <span class="tk-attr">child-card-color</span>=<span class="tk-str">"#EFEAD6"</span><span class="tk-tag">&gt;&lt;/granado-gallery&gt;</span>
+<span class="tk-tag">&lt;div</span> <span class="tk-attr">id</span>=<span class="tk-str">"gal-op-out"</span><span class="tk-tag">&gt;&lt;/div&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'gal-op'</span>).data = [
+    { title: <span class="tk-str">'OP-2026-0416'</span>, subtitle: <span class="tk-str">'Loção Rosa 200ml'</span>, data: <span class="tk-str">'3 MPs · Sala A'</span>, status: <span class="tk-str">'PESANDO'</span>, statusColor: <span class="tk-str">'#9A5A00'</span>,
+      metadata: { op: <span class="tk-str">'OP-2026-0416'</span> },
+      <span class="tk-comment">// filhos -> o card vira expansível</span>
+      children: [
+        { title: <span class="tk-str">'🧪 Glicerina USP'</span>, subtitle: <span class="tk-str">'Lote GLI-2026-08'</span>, data: <span class="tk-str">'🎯 45,000 → ⚖️ 44,983 kg'</span>, status: <span class="tk-str">'OK'</span>, statusColor: <span class="tk-str">'#1C7A38'</span> },
+        { title: <span class="tk-str">'🧪 Álcool Cetílico'</span>, subtitle: <span class="tk-str">'Lote ACT-2026-02'</span>, data: <span class="tk-str">'🎯 12,500 → ⚖️ 12,500 kg'</span>, status: <span class="tk-str">'OK'</span>, statusColor: <span class="tk-str">'#1C7A38'</span> },
+        { title: <span class="tk-str">'🧪 Essência Rosa'</span>, subtitle: <span class="tk-str">'Lote ESR-2026-11'</span>, data: <span class="tk-str">'🎯 0,250 → ⚖️ 0,318 kg'</span>, status: <span class="tk-str">'FORA'</span>, statusColor: <span class="tk-str">'#8C1A1A'</span> }
+      ] },
+    { title: <span class="tk-str">'OP-2026-0414'</span>, subtitle: <span class="tk-str">'Creme Hidratante 150g'</span>, data: <span class="tk-str">'2 MPs · Sala C'</span>, status: <span class="tk-str">'NOVO'</span>, statusColor: <span class="tk-str">'#1A4A8C'</span>,
+      metadata: { op: <span class="tk-str">'OP-2026-0414'</span> },
+      children: [
+        { title: <span class="tk-str">'🧪 Base Aquosa'</span>, subtitle: <span class="tk-str">'Lote BAQ-2026-05'</span>, data: <span class="tk-str">'🎯 30,000 → ⚖️ 30,000 kg'</span>, status: <span class="tk-str">'OK'</span>, statusColor: <span class="tk-str">'#1C7A38'</span> },
+        { title: <span class="tk-str">'🧪 Conservante'</span>, subtitle: <span class="tk-str">'Lote CNS-2026-01'</span>, data: <span class="tk-str">'🎯 0,900 → ⚖️ 0,902 kg'</span>, status: <span class="tk-str">'OK'</span>, statusColor: <span class="tk-str">'#1C7A38'</span> }
+      ] }
+  ];
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'gal-op'</span>).onItemClick = <span class="tk-keyword">function</span> (detail) {
+    <span class="tk-kw">var</span> o = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'gal-op-out'</span>);
+    <span class="tk-keyword">if</span> (detail.isChild) o.textContent = <span class="tk-str">'🧪 '</span> + detail.title + <span class="tk-str">' (MP de '</span> + detail.parent.title + <span class="tk-str">')'</span>;
+    <span class="tk-keyword">else</span> o.textContent = <span class="tk-str">'➡ '</span> + detail.title; <span class="tk-comment">// pai só expande</span>
+  };
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
 
         <h3 class="gd-h3">Sem JS — tudo por atributos</h3>
         <p class="gd-lead">
@@ -9996,7 +10094,7 @@ pop.open();</pre>
           <code>event</code> e <code>detail</code>).
         </p>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-gallery</span>
-    <span class="tk-attr">card-color</span>=<span class="tk-str">"#FDFAF1"</span> <span class="tk-attr">title-color</span>=<span class="tk-str">"#0F3319"</span> <span class="tk-attr">status-color</span>=<span class="tk-str">"#1C5C31"</span>
+    <span class="tk-attr">bg-color</span>=<span class="tk-str">"#F4EED9"</span> <span class="tk-attr">card-color</span>=<span class="tk-str">"#FDFAF1"</span> <span class="tk-attr">title-color</span>=<span class="tk-str">"#0F3319"</span> <span class="tk-attr">status-color</span>=<span class="tk-str">"#1C5C31"</span>
     <span class="tk-attr">enable-scroll</span>=<span class="tk-str">"true"</span> <span class="tk-attr">scroll-height</span>=<span class="tk-str">"260px"</span> <span class="tk-attr">scroll-color</span>=<span class="tk-str">"#9A7520"</span>
     <span class="tk-attr">enable-shadow</span>=<span class="tk-str">"false"</span>
     <span class="tk-attr">onitemclick</span>=<span class="tk-str">"console.log(detail.title, detail.status, detail.metadata)"</span>
@@ -10021,6 +10119,8 @@ pop.open();</pre>
           <tbody>
             <tr><td class="col-name">data</td><td class="col-type">array</td><td class="col-desc">Itens da galeria (em JS use <code>.data</code>). Campos de cada item na tabela abaixo — <strong>todos opcionais</strong>.</td></tr>
             <tr><td class="col-name">card-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor de fundo dos cards. Default <code>#FDFAF1</code>.</td></tr>
+            <tr><td class="col-name">child-card-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor de fundo <strong>apenas dos cards filhos</strong> (itens dentro de <code>children</code>). Vazio (default) = usam a mesma cor dos pais (<code>card-color</code>). Em JS: <code>.childCardColor</code>.</td></tr>
+            <tr><td class="col-name">bg-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor de fundo do <strong>container</strong> da galeria (atrás dos cards). Default <code>transparent</code> (mostra o fundo da página). Com uma cor, o container ganha padding e cantos arredondados. Em JS: <code>.bgColor</code>.</td></tr>
             <tr><td class="col-name">title-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor do título. Default <code>#0F3319</code>.</td></tr>
             <tr><td class="col-name">subtitle-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor do subtítulo. Default <code>#555555</code>.</td></tr>
             <tr><td class="col-name">data-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor do texto <code>data</code>. Default <code>#8A8575</code>.</td></tr>
@@ -10043,6 +10143,8 @@ pop.open();</pre>
             <tr><td class="col-name">subtitle</td><td class="col-type">string</td><td class="col-desc">Subtítulo (linha abaixo do título).</td></tr>
             <tr><td class="col-name">data</td><td class="col-type">string</td><td class="col-desc">Texto auxiliar (ex.: data/hora) — exibido em fonte mono.</td></tr>
             <tr><td class="col-name">status</td><td class="col-type">string</td><td class="col-desc">Texto do badge no canto direito (cor = <code>status-color</code>).</td></tr>
+            <tr><td class="col-name">statusColor</td><td class="col-type">string</td><td class="col-desc">Cor do badge deste item (texto + borda), sobrepondo <code>status-color</code>. Opcional.</td></tr>
+            <tr><td class="col-name">children</td><td class="col-type">array&lt;item&gt;</td><td class="col-desc">Sub-itens (mesmos campos). Se houver, o card vira <strong>expansível</strong>: clicar no pai abre/fecha os filhos abaixo (indentados). O pai <strong>não</strong> dispara <code>item-click</code> — apenas expande.</td></tr>
             <tr><td class="col-name">metadata</td><td class="col-type">any</td><td class="col-desc"><strong>Não é exibido</strong> — qualquer objeto/valor extra devolvido no clique.</td></tr>
           </tbody>
         </table>
@@ -10053,7 +10155,7 @@ pop.open();</pre>
             <tr><th style="width:160px">Evento</th><th style="width:230px">detail</th><th>Descrição</th></tr>
           </thead>
           <tbody>
-            <tr><td class="col-name">item-click</td><td class="col-type">{ index, title, subtitle, data, status, metadata }</td><td class="col-desc">Clique num card. Também chama <code>.onItemClick(detail)</code> / o atributo <code>onitemclick</code>.</td></tr>
+            <tr><td class="col-name">item-click</td><td class="col-type">{ index, title, subtitle, data, status, metadata }</td><td class="col-desc">Clique num card. Também chama <code>.onItemClick(detail)</code> / o atributo <code>onitemclick</code>. Num <strong>filho</strong>, o <code>detail</code> também traz <code>isChild:true</code>, <code>parentIndex</code>, <code>childIndex</code> e <code>parent</code>.</td></tr>
           </tbody>
         </table>
 

@@ -2855,9 +2855,13 @@ export const SCREENS = {
             var p = document.getElementById('pes-panel-' + i);
             if (p) p.style.display = (i === n) ? 'block' : 'none';
           }
-          // Ao entrar no step 4: validar balanças contra o alvo da MP
+          // Ao entrar no step 4: validar balanças contra o alvo da MP + ajustar
+          // a visibilidade grid(desktop)/galeria(mobile).
           if (n === 4) {
-            setTimeout(function(){ if (typeof pesValidarBalancas === 'function') pesValidarBalancas(); }, 30);
+            setTimeout(function(){
+              if (typeof pesValidarBalancas === 'function') pesValidarBalancas();
+              if (typeof pesRenderManual === 'function') pesRenderManual();
+            }, 30);
           }
         }
 
@@ -2868,6 +2872,18 @@ export const SCREENS = {
         function pesConfirmarInicio() {
           document.getElementById('modal-pes-confirm').style.display = 'none';
           pesSetStep(3);
+        }
+        // Toggle do teclado num input de leitura (barcode): 1º clique abre
+        // (inputmode "text" + focus); 2º clique fecha (inputmode "none" + blur).
+        function mesHabilitarDigitacao(id) {
+          var i = document.getElementById(id); if (!i) return;
+          if (i.getAttribute('inputmode') === 'text') {
+            i.setAttribute('inputmode', 'none');
+            i.blur();
+          } else {
+            i.setAttribute('inputmode', 'text');
+            i.focus();
+          }
         }
         function pesScanEtiqueta() {
           var v = document.getElementById('pes-scan-inp').value.trim();
@@ -2914,10 +2930,10 @@ export const SCREENS = {
                     '</div>' +
                   '</div>';
               } else {
-                setTimeout(function(){ pesSetStep(4); }, 1200);
+                setTimeout(function(){ pesSetStep(4); }, 300);
               }
-            }, 1200);
-          }, 1800);
+            }, 300);
+          }, 300);
         }
 
         // Sem Balança: confirma direto com o peso lido da etiqueta (sem pesar).
@@ -2979,8 +2995,17 @@ export const SCREENS = {
           var wrapS4 = document.getElementById('pes-bal-manual-wrap');
           var aboxInfo = document.getElementById('pes-bal-abox-info');
           var balEscolhida = document.getElementById('pes-bal-escolhida');
-          if (grid)     grid.style.display     = on ? 'none' : 'grid';
+          // Mobile: as balanças viram galeria (granado-gallery); desktop mantém o grid.
+          var isMobBal = window.matchMedia && window.matchMedia('(max-width:768px)').matches;
+          var galBal = document.getElementById('pes-bal-gallery');
+          if (grid)     grid.style.display     = on ? 'none' : (isMobBal ? 'none' : 'grid');
+          if (galBal)   galBal.style.display   = on ? 'none' : (isMobBal ? 'block' : 'none');
           if (wrapS4)   wrapS4.style.display   = on ? 'block' : 'none';
+          // Peso Manual ligado: dispensa a seleção de balança -> some o informativo.
+          if (aboxInfo) aboxInfo.style.display = on ? 'none' : '';
+          // Step 5 · Peso Manual: some o bloco Material/Alvo/Variância.
+          var s5Info = document.getElementById('pes-s5-mp-info');
+          if (s5Info) s5Info.style.display = on ? 'none' : 'flex';
           if (balEscolhida && on) balEscolhida.innerHTML = '';
           // Step 5 · resumo readonly quando manual ativo (substitui a leitura ao vivo).
           var summary = document.getElementById('pes-peso-manual-summary');
@@ -3037,6 +3062,9 @@ export const SCREENS = {
           var nomeLive = document.getElementById('pes-bal-nome-live');
           if (nomeLive) nomeLive.textContent = 'Peso Manual';
           pesSetStep(5);
+          // Peso Manual: já abre o popup de confirmar pesagem & imprimir etiqueta
+          // (mesma ação do botão Confirmar do Step 5), sem exigir novo clique.
+          if (typeof pesValidarLimiteEAvancar === 'function') pesValidarLimiteEAvancar();
         }
 
         function pesValidarLimiteEAvancar() {
@@ -3106,9 +3134,20 @@ export const SCREENS = {
               </div>
               <div style="margin-bottom:12px">
                 <label class="lbl">Filtrar MP <span style="font-size:9px;font-weight:600;color:var(--text3);margin-left:8px">— Escaneie o número da etiqueta, exemplo: <code style="background:var(--bg2);padding:1px 6px;border-radius:3px;font-family:var(--font-m);color:var(--verde-esc)">ETQ-SB-7788</code>, <code style="background:var(--bg2);padding:1px 6px;border-radius:3px;font-family:var(--font-m);color:var(--verde-esc)">ETQ-SB-3050</code> ou <code style="background:var(--bg2);padding:1px 6px;border-radius:3px;font-family:var(--font-m);color:var(--verde-esc)">ETQ-SB-7789</code></span></label>
-                <input class="inp" id="pes-mp-filtro" placeholder="Filtre a MP ou escaneie a etiqueta, ex.: ETQ-SB-7788" oninput="pesFiltrarMPs(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();pesScanEtiquetaSB(this.value);}" style="margin-bottom:6px">
+                <div style="position:relative;margin-bottom:6px">
+                  <input class="inp" id="pes-mp-filtro" inputmode="none" placeholder="Filtre a MP ou escaneie a etiqueta, ex.: ETQ-SB-7788" oninput="pesFiltrarMPs(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();pesScanEtiquetaSB(this.value);}" style="width:100%;box-sizing:border-box;padding-right:44px">
+                  <button type="button" title="Digitar/filtrar manualmente (abre o teclado)" onclick="mesHabilitarDigitacao('pes-mp-filtro')" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:1px solid var(--ouro-claro);border-radius:6px;cursor:pointer;font-size:14px;line-height:1;padding:4px 9px">⌨️</button>
+                </div>
                 <div id="pes-scan-feedback" style="display:none;font-size:11px;font-weight:700;padding:6px 10px;border-radius:4px;margin-bottom:4px"></div>
               </div>
+              <style>
+                /* Mobile (<=768px): esconde a tabela de MP e mostra a galeria vertical. */
+                #pes-mp-gallery { display: none; }
+                @media (max-width: 768px) {
+                  #pes-mp-tabela { display: none !important; }
+                  #pes-mp-gallery { display: block !important; }
+                }
+              </style>
               <table class="tbl" id="pes-mp-tabela" style="font-size:11px">
                 <thead><tr><th>#</th><th>Código</th><th>Lote</th><th>Material</th><th>Qtd. Estoque</th><th>Qtd. Alvo</th><th title="Disponibilidade = Estoque − Alvo">Disponibilidade</th><th>Pesado</th><th>Pendente</th><th>Local</th><th>Status</th><th>Ações</th></tr></thead>
                 <tbody>
@@ -3196,6 +3235,52 @@ export const SCREENS = {
                   </tr>
                 </tbody>
               </table>
+
+              <!-- Versão MOBILE: galeria vertical das MPs (granado-gallery), sincronizada com a tabela -->
+              <granado-gallery id="pes-mp-gallery"></granado-gallery>
+              <script>
+              // Reflete as linhas VISÍVEIS da tabela de MP na galeria (mobile).
+              function pesSyncMpGallery() {
+                var g = document.getElementById('pes-mp-gallery'); if (!g) return;
+                var COR = { proxima: '#1F7A3D', aguardando: '#9A5A00', pesada: '#1C7A38', cancelada: '#8C1A1A' };
+                var LBL = { proxima: 'PRÓXIMA', aguardando: 'AGUARDANDO', pesada: 'CONCLUÍDO', cancelada: 'CANCELADA' };
+                var items = [];
+                document.querySelectorAll('#pes-mp-tabela tbody tr').forEach(function (r) {
+                  if (r.style.display === 'none') return;   // respeita filtro/scan e linhas concluídas ocultas
+                  var d = r.dataset;
+                  var st = d.status || '';
+                  var tds = r.querySelectorAll('td');
+                  var pendente = tds[8] ? tds[8].textContent.trim() : '';
+                  items.push({
+                    title: '🧪 ' + (d.cod || ''),
+                    subtitle: (d.mp || '') + (d.lote ? ' · Lote ' + d.lote : ''),
+                    data: '🎯 Alvo ' + (d.alvo || '—') + (pendente && pendente !== '—' ? ' · Pendente ' + pendente : ''),
+                    status: LBL[st] || (st ? st.toUpperCase() : ''),
+                    statusColor: COR[st] || '#8A8575',
+                    metadata: { cod: d.cod, status: st }
+                  });
+                });
+                g.data = items;
+                g.onItemClick = function (dd) {
+                  var m = dd.metadata || {};
+                  // Só as pesáveis abrem o fluxo; canceladas/concluídas não fazem nada.
+                  if (m.status === 'proxima' || m.status === 'aguardando') {
+                    var row = document.querySelector('#pes-mp-tabela tbody tr[data-cod="' + m.cod + '"]');
+                    if (row && typeof pesSetMP === 'function') pesSetMP(row);
+                  }
+                };
+              }
+              // Observa a tabela e re-sincroniza a galeria a cada mudança (filtro, status, pesagem).
+              (function () {
+                var tb = document.querySelector('#pes-mp-tabela tbody');
+                if (tb && window.MutationObserver && !tb._mpGalObs) {
+                  var t;
+                  tb._mpGalObs = new MutationObserver(function () { clearTimeout(t); t = setTimeout(pesSyncMpGallery, 0); });
+                  tb._mpGalObs.observe(tb, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class', 'data-status'] });
+                }
+                pesSyncMpGallery();
+              })();
+              </script>
 
               <!-- Legenda + nota de ordenação -->
               <div style="margin-top:8px;font-size:10px;color:var(--text3);display:flex;gap:12px;flex-wrap:wrap;align-items:center">
@@ -3546,6 +3631,8 @@ export const SCREENS = {
               // Popup 3: quantos gaiolas criar (botões 1–9 + digitar manual).
               // aviso=true  -> modo "aviso" (nenhuma gaiola criada para a ordem), exibido na leitura.
               function sbAbrirQtdGaiolas(aviso) {
+                // Fecha o teclado do mobile (dispensa o foco do input que abriu o fluxo).
+                if (document.activeElement && typeof document.activeElement.blur === 'function') document.activeElement.blur();
                 var box = document.getElementById('modal-sb-qtd-box'); if (!box) return;
                 var sug = sbSugestaoGaiolas();
                 var btns = '';
@@ -3577,7 +3664,6 @@ export const SCREENS = {
                     '<button class="btn btn-md btn-v" onclick="sbConfirmarQtdGaiolas()">Criar</button>' +
                   '</div>';
                 var m = document.getElementById('modal-sb-qtd'); if (m) m.style.display = 'flex';
-                setTimeout(function(){ var i = document.getElementById('sb-qtd-manual'); if (i) i.focus(); }, 40);
               }
               function sbFecharQtdGaiolas() { var m = document.getElementById('modal-sb-qtd'); if (m) m.style.display = 'none'; }
               function sbConfirmarQtdGaiolas(n) {
@@ -3627,7 +3713,7 @@ export const SCREENS = {
                   var cor = sel ? '#9A7520' : 'var(--verde-esc)';
                   var bg = sel ? 'var(--ouro-dim)' : 'var(--verde-dim)';
                   var bd = sel ? 'var(--ouro)' : 'var(--ok-b)';
-                  return '<div onclick="sbGaiolaSel(' + i + ')"' + (sel ? ' id="sb-gaiola-sel"' : '') + ' style="cursor:pointer;position:relative;width:104px;height:84px;border-radius:10px;border:2px solid ' + bd + ';background:' + bg + ';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:transform .15s ease;' + (sel ? 'transform:scale(1.1);z-index:1;' : '') + '">' +
+                  return '<div class="sb-gaiola-card" onclick="sbGaiolaSel(' + i + ')"' + (sel ? ' id="sb-gaiola-sel"' : '') + ' style="cursor:pointer;position:relative;width:104px;height:84px;border-radius:10px;border:2px solid ' + bd + ';background:' + bg + ';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:transform .15s ease;' + (sel ? 'transform:scale(1.1);z-index:1;' : '') + '">' +
                     (sel ? '<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#fff;font-size:8px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap">✓ Selecionada</div>' : '') +
                     '<button onclick="event.stopPropagation();sbReimprimirGaiola(' + i + ')" title="Reimprimir etiqueta da gaiola" style="position:absolute;top:4px;right:4px;width:20px;height:20px;padding:0;line-height:1;border:1px solid ' + cor + ';border-radius:5px;background:var(--surface);color:' + cor + ';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px">🖨️</button>' +
                     sbCageSvg(sel ? '#9A7520' : '#0F3319', 30) +
@@ -3635,7 +3721,7 @@ export const SCREENS = {
                     '<div class="mono" style="font-size:12px;font-weight:900;color:' + cor + ';line-height:1">' + g.seq + '</div>' +
                   '</div>';
                 }).join('');
-                var add = '<button onclick="sbGaiolaAdd()" title="Criar nova gaiola" style="width:104px;height:84px;border:2.5px dashed var(--border2);border-radius:10px;background:var(--surface2);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text3)"><div style="font-size:24px;font-weight:300;line-height:1">+</div><div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Nova Gaiola</div></button>';
+                var add = '<button class="sb-gaiola-card" onclick="sbGaiolaAdd()" title="Criar nova gaiola" style="width:104px;height:84px;border:2.5px dashed var(--border2);border-radius:10px;background:var(--surface2);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text3)"><div style="font-size:24px;font-weight:300;line-height:1">+</div><div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Nova Gaiola</div></button>';
                 var scan = SB_LENDO
                   ? '<div style="margin-bottom:12px"><label class="lbl">Comunicando com o JDE…</label>' +
                       '<div style="display:flex;align-items:center;gap:12px;border:1.5px dashed var(--inf);border-radius:8px;background:var(--inf-p);padding:12px 14px">' +
@@ -3645,7 +3731,8 @@ export const SCREENS = {
                   : '<div style="margin-bottom:12px"><label class="lbl">Escanear próxima etiqueta (mesmo material + lote)</label>' +
                       '<div style="display:flex;align-items:center;gap:12px;border:1.5px dashed var(--ouro);border-radius:8px;background:var(--ouro-dim);padding:10px 14px">' +
                         '<div style="width:20px;height:20px;border:3px solid var(--ouro-claro);border-top-color:var(--ouro);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0"></div>' +
-                        '<input id="sb-scan-mais" placeholder="Aguardando leitura da próxima etiqueta… (ou digite o código)" autocomplete="off" style="flex:1;border:none;outline:none;background:transparent;font-family:var(--font-m);font-size:13px;color:var(--text)" onkeydown="if(event.keyCode===13){event.preventDefault();sbLerMais();}">' +
+                        '<input id="sb-scan-mais" inputmode="none" placeholder="Aguardando leitura da próxima etiqueta… (ou digite o código)" autocomplete="off" style="flex:1;border:none;outline:none;background:transparent;font-family:var(--font-m);font-size:13px;color:var(--text)" onkeydown="if(event.keyCode===13){event.preventDefault();sbLerMais();}">' +
+                        '<button title="Digitar manualmente (abre o teclado)" onclick="mesHabilitarDigitacao(\\'sb-scan-mais\\')" style="background:none;border:1px solid var(--ouro-claro);border-radius:6px;padding:4px 9px;cursor:pointer;font-size:14px;flex-shrink:0">⌨️</button>' +
                       '</div></div>';
                 box.innerHTML =
                   '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">' +
@@ -3657,7 +3744,7 @@ export const SCREENS = {
                   '</div>' +
                   scan +
                   '<div style="font-size:12px;color:var(--text2);margin-bottom:8px"><span style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-right:6px">Material · Lote</span>' + e.mp + ' · <span class="mono">' + e.lote + '</span></div>' +
-                  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px">' +
+                  '<div class="sb-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px">' +
                     '<div style="background:' + (acExcede ? 'var(--per-p)' : 'var(--ouro-dim)') + ';border:1px solid ' + (acExcede ? 'var(--per-b)' : 'var(--ouro-claro)') + ';border-radius:8px;padding:12px 16px">' +
                       '<div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">📦 Acumulado · ' + SB_LIDAS.length + ' etiq.</div>' +
                       '<div class="mono" style="font-size:22px;font-weight:900;color:' + corAc + ';line-height:1">' + sbFmtKg(acumulado) + '</div>' +
@@ -3668,22 +3755,37 @@ export const SCREENS = {
                     '</div>' +
                   '</div>' +
                   '<div style="margin-bottom:14px">' +
-                    '<div style="display:flex;justify-content:space-between;font-size:9px;font-weight:700;color:var(--text3);margin-bottom:3px"><span>' + pct + '% do alvo</span><span>' + (acExcede ? '⚠ acima do alvo' : 'restante: ' + sbFmtKg(Math.max(0, e.alvoNum - acumulado))) + '</span></div>' +
+                    '<div style="display:flex;justify-content:space-between;font-size:9px;font-weight:700;color:var(--text3);margin-bottom:3px"><span class="sb-bar-pct">' + pct + '% do alvo</span><span class="sb-bar-acc" style="color:' + corAc + '">' + sbFmtKg(acumulado) + ' / ' + e.alvo + '</span><span>' + (acExcede ? '⚠ acima do alvo' : 'restante: ' + sbFmtKg(Math.max(0, e.alvoNum - acumulado))) + '</span></div>' +
                     '<div style="height:8px;border-radius:4px;background:var(--border);overflow:hidden"><div style="height:100%;width:' + pct + '%;background:' + (acExcede ? 'var(--per)' : 'var(--verde)') + '"></div></div>' +
                   '</div>' +
-                  '<div style="display:grid;grid-template-columns:1.25fr 1fr;gap:16px;margin-bottom:16px">' +
-                    '<div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;align-self:start">' +
+                  '<style>#sb-etq-gallery{display:none}.sb-bar-acc{display:none}@media (max-width:768px){' +
+                    '.sb-cards{display:none!important}' +
+                    '.sb-bar-pct{display:none!important}.sb-bar-acc{display:inline!important}' +
+                    '.sb-gaiola-hint{display:none!important}' +
+                    '.sb-leitura-grid{display:flex!important;flex-direction:column!important;gap:12px!important}' +
+                    '.sb-leitura-left{order:2;width:100%}' +
+                    '.sb-gaiola-cell{order:1}' +
+                    '.sb-etq-table{display:none!important}' +
+                    '#sb-etq-gallery{display:block!important}' +
+                    '#sb-gaiola-list{flex-direction:row!important;flex-wrap:nowrap!important;overflow-x:auto;overflow-y:hidden;gap:10px!important;padding:16px 12px 12px!important;scrollbar-width:thin;scrollbar-color:rgba(191,177,114,.55) transparent}' +
+                    '.sb-gaiola-card{width:78px!important;height:62px!important;flex-shrink:0}' +
+                  '}</style>' +
+                  '<div class="sb-leitura-grid" style="display:grid;grid-template-columns:1.25fr 1fr;gap:16px;margin-bottom:16px">' +
+                    '<div class="sb-leitura-left">' +
+                    '<div class="sb-etq-table" style="border:1px solid var(--border);border-radius:8px;overflow:hidden;align-self:start">' +
                       '<div style="background:var(--surface2);padding:8px 12px;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Etiquetas lidas</div>' +
                       '<table class="tbl" style="font-size:11px;width:100%"><thead><tr><th>Etiqueta</th><th>Material</th><th>Lote</th><th style="text-align:right">Qtd.</th><th>Gaiola</th><th></th></tr></thead><tbody>' + linhas + '</tbody></table>' +
                     '</div>' +
-                    '<div>' +
+                    '<granado-gallery id="sb-etq-gallery" enable-scroll="true" scroll-height="52vh"></granado-gallery>' +
+                    '</div>' +
+                    '<div class="sb-gaiola-cell">' +
                       '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">' +
-                        '<span style="font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Gaiola <span style="font-weight:600;text-transform:none;letter-spacing:0">(vincula à última etiqueta lida)</span></span>' +
+                        '<span style="font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Gaiola <span class="sb-gaiola-hint" style="font-weight:600;text-transform:none;letter-spacing:0">(vincula à última etiqueta lida)</span></span>' +
                         (SB_GAIOLAS.length === 0
                           ? '<button onclick="sbCriarGaiolasSugeridas()" title="Criar a quantidade sugerida automaticamente" style="display:inline-flex;align-items:center;gap:4px;font-family:var(--font-b);font-size:9px;font-weight:800;letter-spacing:.04em;color:#9A7520;background:var(--ouro-dim);border:1px solid var(--ouro);border-radius:11px;padding:3px 10px;cursor:pointer">💡 Sugestão: ' + sbSugestaoGaiolas() + ' Gaiola' + (sbSugestaoGaiolas() > 1 ? 's' : '') + '</button>'
                           : '') +
                       '</div>' +
-                      '<div style="display:flex;gap:10px;flex-wrap:wrap">' + cards + add + '</div>' +
+                      '<div id="sb-gaiola-list" style="display:flex;gap:10px;flex-wrap:wrap">' + cards + add + '</div>' +
                     '</div>' +
                   '</div>';
                 // Destaque animado (anel dourado pulsante + leve "respiração") na gaiola selecionada.
@@ -3694,6 +3796,19 @@ export const SCREENS = {
                     { boxShadow: '0 0 0 12px rgba(200,168,75,0)' },
                     { boxShadow: '0 0 0 0 rgba(200,168,75,0)' }
                   ], { duration: 1400, iterations: Infinity, easing: 'ease-in-out' });
+                }
+                // Mobile: espelha as etiquetas lidas na galeria (mesma lista da tabela).
+                var eg = document.getElementById('sb-etq-gallery');
+                if (eg) {
+                  eg.data = SB_LIDAS.map(function (l) {
+                    return {
+                      title: l.codigo,
+                      subtitle: l.material + ' · Lote ' + l.lote,
+                      data: '⚖️ ' + sbFmtKg(l.qtd) + (l.gaiolaSeq ? ' · 📦 ' + l.gaiolaNum + ' · ' + l.gaiolaSeq : ''),
+                      status: l.gaiolaSeq ? ('📦 ' + l.gaiolaNum) : 'sem gaiola',
+                      statusColor: l.gaiolaSeq ? '#1C7A38' : '#8A8575'
+                    };
+                  });
                 }
                 setTimeout(function(){ var i = document.getElementById('sb-scan-mais'); if (i) i.focus(); }, 40);
               }
@@ -3838,33 +3953,39 @@ export const SCREENS = {
                   var cor = sel ? '#9A7520' : 'var(--verde-esc)';
                   var bg = sel ? 'var(--ouro-dim)' : 'var(--verde-dim)';
                   var bd = sel ? 'var(--ouro)' : 'var(--ok-b)';
-                  return '<div onclick="gvGaiolaSel(' + i + ')" style="cursor:pointer;position:relative;width:104px;height:84px;border-radius:10px;border:2px solid ' + bd + ';background:' + bg + ';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">' +
+                  return '<div class="gv-gaiola-card" onclick="gvGaiolaSel(' + i + ')" style="cursor:pointer;position:relative;width:104px;height:84px;border-radius:10px;border:2px solid ' + bd + ';background:' + bg + ';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px">' +
                     (sel ? '<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#fff;font-size:8px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap">✓ Selecionada</div>' : '') +
                     '<div style="font-size:22px">📦</div>' +
                     '<div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:' + cor + '">Gaiola ' + g.num + '</div>' +
                     '<div class="mono" style="font-size:12px;font-weight:900;color:' + cor + ';line-height:1">' + g.seq + '</div>' +
                   '</div>';
                 }).join('');
-                var add = '<button onclick="gvGaiolaAdd()" title="Criar nova gaiola" style="width:104px;height:84px;border:2.5px dashed var(--border2);border-radius:10px;background:var(--surface2);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text3)"><div style="font-size:24px;font-weight:300;line-height:1">+</div><div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Nova Gaiola</div></button>';
+                var add = '<button class="gv-gaiola-card" onclick="gvGaiolaAdd()" title="Criar nova gaiola" style="width:104px;height:84px;border:2.5px dashed var(--border2);border-radius:10px;background:var(--surface2);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text3)"><div style="font-size:24px;font-weight:300;line-height:1">+</div><div style="font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Nova Gaiola</div></button>';
                 box.innerHTML =
                   '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">' +
                     '<div><div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--ouro)">📦 Pesagem · Grande Volume</div>' +
                     '<div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc)">Peso automático &amp; gaiola</div></div>' +
                     '<button onclick="gvFechar()" title="Fechar" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>' +
                   '</div>' +
-                  '<div style="display:flex;gap:16px;align-items:stretch;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:12px 16px;margin-bottom:16px">' +
+                  '<div class="gv-info" style="display:flex;gap:16px;align-items:stretch;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:12px 16px;margin-bottom:16px">' +
                     '<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px">' +
                       gvFld('Matéria-Prima', GV_MAT) +
                       gvFld('Lote', GV_LOTE) +
                       gvFld('Etiqueta', GV_ETQ, true) +
                     '</div>' +
-                    '<div style="flex-shrink:0;border-left:1px solid var(--border);padding-left:16px;display:flex;flex-direction:column;justify-content:center;text-align:right">' +
+                    '<div class="gv-peso" style="flex-shrink:0;border-left:1px solid var(--border);padding-left:16px;display:flex;flex-direction:column;justify-content:center;text-align:right">' +
                       '<div style="font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Peso automático</div>' +
                       '<div class="mono" style="font-size:22px;font-weight:900;color:var(--verde)">' + GV_PESO + '</div>' +
                     '</div>' +
                   '</div>' +
                   '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Gaiola para vincular o peso</div>' +
-                  '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px">' + cards + add + '</div>' +
+                  '<style>@media (max-width:768px){' +
+                    '.gv-info{flex-direction:column!important;gap:10px!important}' +
+                    '.gv-peso{border-left:none!important;border-top:1px solid var(--border)!important;padding-left:0!important;padding-top:10px!important;text-align:left!important}' +
+                    '#gv-gaiola-list{flex-wrap:nowrap!important;overflow-x:auto;overflow-y:hidden;gap:10px!important;padding:16px 12px 12px!important;margin-bottom:12px!important;scrollbar-width:thin;scrollbar-color:rgba(191,177,114,.55) transparent}' +
+                    '.gv-gaiola-card{width:78px!important;height:62px!important;flex-shrink:0}' +
+                  '}</style>' +
+                  '<div id="gv-gaiola-list" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px">' + cards + add + '</div>' +
                   '<div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap">' +
                     '<button class="btn btn-md btn-v" onclick="pesGVConfirmar(false)">✔ Concluir</button>' +
                     '<button class="btn btn-md" style="background:var(--ouro);color:#fff;border:1px solid var(--ouro)" onclick="pesGVConfirmar(true)">🖨️ Concluir &amp; Imprimir nova etiqueta</button>' +
@@ -3981,13 +4102,16 @@ export const SCREENS = {
               <div class="card-title">③ Leitura da Etiqueta da Matéria-Prima</div>
               <div class="abox inf mb14"><span class="ai">🏷️</span><div>Escaneie o código de barras / QR Code da etiqueta da MP ou digite manualmente o código de identificação do container/saco.</div></div>
               <div style="display:flex;gap:10px;align-items:flex-end">
-                <div class="fg" style="flex:1"><label class="lbl">Código da Etiqueta da MP</label><input class="inp" id="pes-scan-inp" placeholder="Ex: ETQ-MP-AGUA-2026-0341" style="font-size:16px;font-family:var(--font-m);letter-spacing:.06em" autofocus></div>
+                <div class="fg" style="flex:1">
+                  <label class="lbl">Código da Etiqueta da MP</label>
+                  <div style="position:relative">
+                    <input class="inp" id="pes-scan-inp" inputmode="none" placeholder="Ex: ETQ-MP-AGUA-2026-0341" style="width:100%;box-sizing:border-box;font-size:16px;font-family:var(--font-m);letter-spacing:.06em;padding-right:44px" autofocus>
+                    <button type="button" title="Digitar manualmente (abre o teclado)" onclick="mesHabilitarDigitacao('pes-scan-inp')" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:1px solid var(--ouro-claro);border-radius:6px;cursor:pointer;font-size:14px;line-height:1;padding:4px 9px">⌨️</button>
+                  </div>
+                </div>
                 <button class="btn btn-md btn-v" onclick="pesScanEtiqueta()">🔍 Validar</button>
               </div>
               <div id="pes-scan-result"></div>
-              <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:flex-start">
-                <button class="btn btn-sm btn-cancelar-pes" onclick="pesSetStep(1)">✕ Cancelar — Voltar para Selecionar MP</button>
-              </div>
             </div>
           </div>
 
@@ -4001,7 +4125,11 @@ export const SCREENS = {
                   <span id="pes-pm-switch" style="position:relative;display:inline-block;width:40px;height:22px;border-radius:11px;background:var(--border2);transition:background .15s"><span id="pes-pm-knob" style="position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:left .15s"></span></span>
                 </label>
               </div>
-              <div id="pes-bal-abox-info" class="abox inf mb14"><span class="ai">⚖️</span><div>Selecione a balança disponível para esta pesagem. O sistema sugere a balança com maior disponibilidade e capacidade adequada à quantidade alvo (<strong id="pes-bal-alvo-display">412,50 kg</strong>). <strong style="color:var(--per)">Balanças inadequadas ficam bloqueadas automaticamente</strong> — divisão insuficiente para a fração ou capacidade menor que o alvo.<br><span style="font-size:10.5px;color:var(--alr)">💡 Se a balança/integração não estiver disponível, ative <strong>Peso Manual</strong> no canto superior direito — a seleção de balança é dispensada e o operador informa Peso e Tara aqui mesmo.</span></div></div>
+              <style>
+                /* Mobile: mostra só a 1ª frase do informativo de balança. */
+                @media (max-width: 768px) { .pes-bal-info-extra { display: none !important; } }
+              </style>
+              <div id="pes-bal-abox-info" class="abox inf mb14"><span class="ai">⚖️</span><div>Selecione a balança disponível para esta pesagem.<span class="pes-bal-info-extra"> O sistema sugere a balança com maior disponibilidade e capacidade adequada à quantidade alvo (<strong id="pes-bal-alvo-display">412,50 kg</strong>). <strong style="color:var(--per)">Balanças inadequadas ficam bloqueadas automaticamente</strong> — divisão insuficiente para a fração ou capacidade menor que o alvo.<br><span style="font-size:10.5px;color:var(--alr)">💡 Se a balança/integração não estiver disponível, ative <strong>Peso Manual</strong> no canto superior direito — a seleção de balança é dispensada e o operador informa Peso e Tara aqui mesmo.</span></span></div></div>
 
               <!-- BYPASS: Peso Manual — substitui a seleção de balança -->
               <div id="pes-bal-manual-wrap" style="display:none;background:var(--ouro-dim);border:2px dashed var(--ouro);border-radius:8px;padding:16px 18px;margin-bottom:14px">
@@ -4067,6 +4195,10 @@ export const SCREENS = {
 
               </div>
 
+              <!-- Versão MOBILE: galeria (com scroll) das balanças, sincronizada com o grid -->
+              <style>#pes-bal-gallery{display:none}</style>
+              <granado-gallery id="pes-bal-gallery" enable-scroll="true" scroll-height="46vh"></granado-gallery>
+
               <script>
               // Le o alvo (em kg) da MP atualmente selecionada
               function pesObterAlvoKg() {
@@ -4123,6 +4255,39 @@ export const SCREENS = {
                     el.appendChild(aviso);
                   }
                 });
+                // Reflete o estado atual das balanças na galeria (mobile).
+                if (typeof pesSyncBalGallery === 'function') pesSyncBalGallery();
+              }
+
+              // Galeria de balanças (mobile) — FIXO em 3 por enquanto. O status/
+              // bloqueio é lido do grid quando o step 4 valida (data-bloqueada).
+              function pesSyncBalGallery() {
+                var g = document.getElementById('pes-bal-gallery'); if (!g) return;
+                var BALS = [
+                  { id: 'BAL-01', nome: 'Toledo PC Link 7 — Bancada A', cap: 'Cap: 600 kg · Div: 0,01 kg', ul: '20/03/2026' },
+                  { id: 'BAL-02', nome: 'Toledo PC Link 7 — Bancada B', cap: 'Cap: 100 kg · Div: 0,5 kg', ul: '18/03/2026' },
+                  { id: 'BAL-03', nome: 'Toledo PC Link 7 — Bancada C', cap: 'Cap: 5 kg · Div: 0,01 kg', ul: '15/03/2026', uso: '⚠ Em uso por: M. Oliveira · OP-2026-0417' }
+                ];
+                var items = BALS.map(function (b) {
+                  var el = document.getElementById('bal-btn-' + b.id);
+                  var bloq = el ? el.getAttribute('data-bloqueada') : null;
+                  var badge = el ? el.querySelector('.bal-status-bdg') : null;
+                  var stTxt = badge ? badge.textContent.trim() : (bloq ? '⛔ Inadequada' : 'Disponível');
+                  return {
+                    title: '⚖️ ' + b.id,
+                    subtitle: b.nome,
+                    data: b.cap + ' · Calibração: ' + b.ul + (b.uso ? ' · ' + b.uso : ''),
+                    status: stTxt,
+                    statusColor: bloq ? '#8C1A1A' : '#1C7A38',
+                    metadata: { id: b.id, nome: b.nome, cap: b.cap, ul: b.ul }
+                  };
+                });
+                g.data = items;
+                g.onItemClick = function (dd) {
+                  var mm = dd.metadata || {};
+                  // pesTentarEscolherBalanca já bloqueia as inadequadas (mostra alerta).
+                  if (typeof pesTentarEscolherBalanca === 'function') pesTentarEscolherBalanca(mm.id, mm.nome, mm.cap, mm.ul);
+                };
               }
 
               // Wrapper: bloqueia o click se a balança estiver inadequada
@@ -4134,6 +4299,18 @@ export const SCREENS = {
                 }
                 if (typeof pesEscolherBalanca === 'function') pesEscolherBalanca(id, nome, cap, ul);
               }
+
+              // Popula a galeria já no load (grid é estático) e re-sincroniza a cada
+              // mudança do grid (bloqueio de balança em pesValidarBalancas).
+              (function () {
+                var grid = document.getElementById('pes-bal-grid');
+                if (grid && window.MutationObserver && !grid._balGalObs) {
+                  var t;
+                  grid._balGalObs = new MutationObserver(function () { clearTimeout(t); t = setTimeout(pesSyncBalGallery, 0); });
+                  grid._balGalObs.observe(grid, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class', 'data-bloqueada'] });
+                }
+                pesSyncBalGallery();
+              })();
               </script>
 
               <div id="pes-bal-escolhida"></div>
@@ -4145,7 +4322,7 @@ export const SCREENS = {
           <div id="pes-panel-5">
             <div class="card cv mb14" style="border:2px solid var(--verde)">
               <div class="card-title">⑤ Pesagem em Andamento — Aqua (Água Purificada)</div>
-              <div style="display:flex;gap:16px;margin-bottom:16px">
+              <div id="pes-s5-mp-info" style="display:flex;gap:16px;margin-bottom:16px">
                 <div style="flex:1">
                   <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Material</div>
                   <div style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--verde-esc)">Aqua (Água Purificada)</div>
@@ -4307,13 +4484,14 @@ export const SCREENS = {
         if (!box) return;
         var tem = P5_GAIOLAS.length > 0;
         var html =
+          '<style>@media (max-width:768px){#p5-gaiola-list{flex-wrap:nowrap!important;overflow-x:auto;overflow-y:hidden;gap:10px!important;padding:16px 12px 12px!important;margin-bottom:14px!important;scrollbar-width:thin;scrollbar-color:rgba(191,177,114,.55) transparent}.p5-gaiola-card{width:84px!important;height:74px!important;flex-shrink:0}}</style>' +
           '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">✔ Confirmar Pesagem &amp; Imprimir Etiqueta</div>' +
           '<div style="font-size:12px;color:var(--text2);margin-bottom:16px">Aqua (Água Purificada) · <strong>411,840 kg</strong> · ' + (window.PES_SALA_SEL === 'SB' ? 'Sem balança · etiqueta ' + PES_ETIQUETA_MOCK.codigo : 'BAL-01') + '</div>' +
           '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Gaiola a vincular</div>';
 
         if (tem) {
           html += '<div style="font-size:11px;color:var(--text2);margin-bottom:10px">Selecione a gaiola que receberá esta MP (por padrão, a última).</div>';
-          html += '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px">';
+          html += '<div id="p5-gaiola-list" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px">';
           P5_GAIOLAS.forEach(function(g, i) {
             var sel = (i === P5_SEL);
             var cardStyle = sel
@@ -4322,7 +4500,7 @@ export const SCREENS = {
             var cor    = sel ? '#9A7520' : 'var(--verde-esc)';
             var corSvg = sel ? '#9A7520' : '#0F3319';
             html +=
-              '<div onclick="p5Selecionar(' + i + ')" style="cursor:pointer;position:relative;width:120px;height:110px;border-radius:10px;' +
+              '<div class="p5-gaiola-card" onclick="p5Selecionar(' + i + ')" style="cursor:pointer;position:relative;width:120px;height:110px;border-radius:10px;' +
                 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;' + cardStyle + '">' +
                 (sel ? '<div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--ouro);color:#fff;font-size:8px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px;white-space:nowrap;box-shadow:var(--sh)">✓ Selecionada</div>' : '') +
                 '<button onclick="event.stopPropagation();p5ReimprimirGaiola(' + i + ')" title="Reimprimir etiqueta desta gaiola" style="position:absolute;top:5px;right:5px;width:24px;height:24px;padding:0;line-height:1;border:1px solid ' + cor + ';border-radius:6px;background:var(--surface);color:' + cor + ';cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px">🖨️</button>' +
@@ -4333,7 +4511,7 @@ export const SCREENS = {
           });
           // Tile "+" para criar nova gaiola
           html +=
-            '<button onclick="p5Adicionar()" title="Criar nova gaiola" style="width:120px;height:110px;border:2.5px dashed var(--border2);border-radius:10px;background:var(--surface2);cursor:pointer;' +
+            '<button class="p5-gaiola-card" onclick="p5Adicionar()" title="Criar nova gaiola" style="width:120px;height:110px;border:2.5px dashed var(--border2);border-radius:10px;background:var(--surface2);cursor:pointer;' +
               'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text3)">' +
               '<div style="font-size:28px;font-weight:300;line-height:1">+</div>' +
               '<div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Nova Gaiola</div>' +
@@ -4653,7 +4831,7 @@ export const SCREENS = {
         <div class="form-row">
           <div class="fg" style="max-width:320px">
             <label class="lbl">ID da Gaiola <span style="font-size:9px;color:var(--text3);font-weight:400;margin-left:4px">(gaiolas desta OP)</span></label>
-            <select class="sel" id="pgaio-sel" style="font-family:var(--font-m);color:var(--verde);font-weight:700">
+            <select class="sel" id="pgaio-sel" onchange="gaioRenderTabela()" style="font-family:var(--font-m);color:var(--verde);font-weight:700">
               <option value="GAI-2026-0089" selected>GAI-2026-0089</option>
               <option value="GAI-2026-0090">GAI-2026-0090</option>
               <option value="GAI-2026-0091">GAI-2026-0091</option>
@@ -4666,59 +4844,21 @@ export const SCREENS = {
           </div>
         </div>
 
-        <!-- MPs já associadas — ação ÚNICA por linha = MOVER (destino: gaiola existente) -->
+        <!-- MPs da gaiola selecionada — renderizadas por JS conforme o dropdown.
+             Ação ÚNICA por linha = MOVER (destino: gaiola existente). -->
+        <div id="gaiola-tabela-wrap" style="overflow-x:auto">
         <table class="tbl" id="tbl-gaiola-mps" style="margin-top:14px">
           <thead><tr><th>#</th><th>ID Etiqueta Filha</th><th>Material</th><th>Lote</th><th>Qtd. Pesada</th><th>Fase Destino</th><th>Ação</th></tr></thead>
-          <tbody>
-            <tr style="background:var(--ok-p)" data-etq="ETQ-2026-0412">
-              <td class="mono" style="color:var(--ok)">1</td>
-              <td class="mono" style="font-size:11px;color:var(--verde)">ETQ-2026-0412</td>
-              <td style="font-size:12px">Glicerina USP</td>
-              <td class="mono" style="font-size:11px">GLI-2026-08</td>
-              <td class="mono">44,983 kg</td>
-              <td style="font-size:11px">Fase 1 — Aquosa</td>
-              <td><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button></td>
-            </tr>
-            <tr style="background:var(--ok-p)" data-etq="ETQ-2026-0413">
-              <td class="mono" style="color:var(--ok)">2</td>
-              <td class="mono" style="font-size:11px;color:var(--verde)">ETQ-2026-0413</td>
-              <td style="font-size:12px">Propilenoglicol</td>
-              <td class="mono" style="font-size:11px">PPG-2026-12</td>
-              <td class="mono">18,005 kg</td>
-              <td style="font-size:11px">Fase 1 — Aquosa</td>
-              <td><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button></td>
-            </tr>
-            <tr style="background:var(--ok-p)" data-etq="ETQ-2026-0414">
-              <td class="mono" style="color:var(--ok)">3</td>
-              <td class="mono" style="font-size:11px;color:var(--verde)">ETQ-2026-0414</td>
-              <td style="font-size:12px">Carbopol 940</td>
-              <td class="mono" style="font-size:11px">CAR-2026-05</td>
-              <td class="mono">2,498 kg</td>
-              <td style="font-size:11px">Fase 1 — Aquosa</td>
-              <td><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button></td>
-            </tr>
-            <tr style="background:var(--ok-p)" data-etq="ETQ-2026-0415">
-              <td class="mono" style="color:var(--ok)">4</td>
-              <td class="mono" style="font-size:11px;color:var(--verde)">ETQ-2026-0415</td>
-              <td style="font-size:12px">TEA 99%</td>
-              <td class="mono" style="font-size:11px">TEA-2026-07</td>
-              <td class="mono">1,801 kg</td>
-              <td style="font-size:11px">Fase 1 — Aquosa</td>
-              <td><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button></td>
-            </tr>
-            <tr style="background:var(--ok-p)" data-etq="ETQ-2026-0416">
-              <td class="mono" style="color:var(--ok)">5</td>
-              <td class="mono" style="font-size:11px;color:var(--verde)">ETQ-2026-0416</td>
-              <td style="font-size:12px">Aqua (Água Purificada)</td>
-              <td class="mono" style="font-size:11px">AGUA-2026-03</td>
-              <td class="mono">411,840 kg</td>
-              <td style="font-size:11px">Fase 1 — Aquosa</td>
-              <td><button class="btn btn-sm btn-ghost" style="font-size:10px" onclick="gaioAbrirMover(this.closest('tr'))">↔ Mover</button></td>
-            </tr>
-          </tbody>
+          <tbody><!-- preenchido por gaioRenderTabela() --></tbody>
         </table>
+        </div>
+
+        <!-- Mobile: mesma lista como galeria de cards (toque no card = mover) -->
+        <style>#gaiola-mps-gallery{display:none}@media (max-width:768px){#gaiola-tabela-wrap{display:none!important}#gaiola-mps-gallery{display:block!important}}</style>
+        <granado-gallery id="gaiola-mps-gallery" enable-scroll="true" scroll-height="58vh"></granado-gallery>
+
         <div style="display:flex;gap:10px;margin-top:14px">
-          <button class="btn btn-md btn-v" onclick="alert('✅ Gaiola GAI-2026-0089 montada!\\n\\nEtiqueta mãe impressa (Zebra).\\n5 MPs · 479,127 kg total\\nDestino: Reator R-01\\nRel. pai-filho registrada no Apriso.')">🏷️ Imprimir Etiqueta Mãe</button>
+          <button class="btn btn-md btn-v" id="gaio-print-mae" onclick="gaioImprimirMae()">🏷️ Imprimir Etiqueta Mãe</button>
         </div>
       </div>
 
@@ -4811,8 +4951,10 @@ export const SCREENS = {
         var etq = _gaioMpMover.getAttribute('data-etq') || '—';
         var mat = _gaioMpMover.cells[2].textContent.trim();
         var origem = (document.getElementById('pgaio-sel')||{value:'—'}).value;
-        // Aqui no mock: removemos da linha atual (foi "movida")
-        _gaioMpMover.remove();
+        // Move a MP no modelo de dados (origem -> destino) e re-renderiza a
+        // gaiola atual (tabela + galeria) a partir do modelo atualizado.
+        gaioMoverNoModelo(origem, dest, etq);
+        gaioRenderTabela();
         // Decrementa contador de MPs da gaiola origem na tabela "Gaiolas Montadas"
         gaioAtualizarContadorMPs(origem, -1);
         // Incrementa contador da gaiola destino
@@ -4901,65 +5043,116 @@ export const SCREENS = {
           }
         }
       }
+
+      // ====== Modelo de dados: MPs por gaiola (mock) ======
+      // Coerente com a tabela "Gaiolas Montadas": 0089=5, 0087=3, 0088=4, 0090/0091 vazias.
+      var GAIO_MPS = {
+        'GAI-2026-0089': [
+          { etq:'ETQ-2026-0412', mat:'Glicerina USP',          lote:'GLI-2026-08',  qtd:'44,983 kg',  fase:'Fase 1 — Aquosa' },
+          { etq:'ETQ-2026-0413', mat:'Propilenoglicol',        lote:'PPG-2026-12',  qtd:'18,005 kg',  fase:'Fase 1 — Aquosa' },
+          { etq:'ETQ-2026-0414', mat:'Carbopol 940',           lote:'CAR-2026-05',  qtd:'2,498 kg',   fase:'Fase 1 — Aquosa' },
+          { etq:'ETQ-2026-0415', mat:'TEA 99%',                lote:'TEA-2026-07',  qtd:'1,801 kg',   fase:'Fase 1 — Aquosa' },
+          { etq:'ETQ-2026-0416', mat:'Aqua (Água Purificada)', lote:'AGUA-2026-03', qtd:'411,840 kg', fase:'Fase 1 — Aquosa' }
+        ],
+        'GAI-2026-0087': [
+          { etq:'ETQ-2026-0401', mat:'Óleo Mineral USP',       lote:'OLE-2026-04',  qtd:'40,000 kg',  fase:'Fase 2 — Oleosa' },
+          { etq:'ETQ-2026-0402', mat:'Álcool Cetoestearílico', lote:'ACE-2026-09',  qtd:'22,300 kg',  fase:'Fase 2 — Oleosa' },
+          { etq:'ETQ-2026-0403', mat:'BHT (Antioxidante)',     lote:'BHT-2026-02',  qtd:'4,998 kg',   fase:'Fase 2 — Oleosa' }
+        ],
+        'GAI-2026-0088': [
+          { etq:'ETQ-2026-0421', mat:'Metilparabeno',              lote:'MET-2026-06', qtd:'0,450 kg',  fase:'Fase 3 — Aditivos' },
+          { etq:'ETQ-2026-0422', mat:'Propilparabeno',             lote:'PRO-2026-03', qtd:'0,200 kg',  fase:'Fase 3 — Aditivos' },
+          { etq:'ETQ-2026-0423', mat:'Fragrância Rosa',            lote:'FRG-2026-11', qtd:'1,500 kg',  fase:'Fase 3 — Aditivos' },
+          { etq:'ETQ-2026-0424', mat:'Trietanolamina (ajuste pH)', lote:'TEA-2026-07', qtd:'10,000 kg', fase:'Fase 3 — Aditivos' }
+        ],
+        'GAI-2026-0090': [],
+        'GAI-2026-0091': []
+      };
+
+      function gaioSelId() { var s = document.getElementById('pgaio-sel'); return s ? s.value : ''; }
+      function gaioParseKg(q) { var n = parseFloat(String(q).split(' ')[0].split('.').join('').replace(',', '.')); return isNaN(n) ? 0 : n; }
+      function gaioFmtKg(n) { return n.toFixed(3).replace('.', ','); }
+
+      // Move a MP (por etiqueta) de uma gaiola para outra no modelo de dados.
+      function gaioMoverNoModelo(origem, dest, etq) {
+        var o = GAIO_MPS[origem], d = GAIO_MPS[dest];
+        if (!o || !d) return;
+        for (var i = 0; i < o.length; i++) {
+          if (o[i].etq === etq) { d.push(o.splice(i, 1)[0]); return; }
+        }
+      }
+
+      // Re-renderiza a tabela + a galeria mobile a partir da gaiola selecionada.
+      function gaioRenderTabela() {
+        var gai = gaioSelId();
+        var mps = GAIO_MPS[gai] || [];
+        var tb = document.querySelector('#tbl-gaiola-mps tbody');
+        if (tb) {
+          if (!mps.length) {
+            tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:18px;font-size:12px">— Nenhuma MP nesta gaiola —</td></tr>';
+          } else {
+            tb.innerHTML = mps.map(function (m, i) {
+              return '<tr style="background:var(--ok-p)" data-etq="' + m.etq + '">' +
+                '<td class="mono" style="color:var(--ok)">' + (i + 1) + '</td>' +
+                '<td class="mono" style="font-size:11px;color:var(--verde)">' + m.etq + '</td>' +
+                '<td style="font-size:12px">' + m.mat + '</td>' +
+                '<td class="mono" style="font-size:11px">' + m.lote + '</td>' +
+                '<td class="mono">' + m.qtd + '</td>' +
+                '<td style="font-size:11px">' + m.fase + '</td>' +
+                '<td><button class="btn btn-sm btn-ghost" data-mover="1" style="font-size:10px">↔ Mover</button></td>' +
+              '</tr>';
+            }).join('');
+            Array.from(tb.querySelectorAll('button[data-mover]')).forEach(function (btn) {
+              btn.onclick = function () { gaioAbrirMover(btn.closest('tr')); };
+            });
+          }
+        }
+        gaioSyncGallery(gai, mps);
+        // Botão "Imprimir Etiqueta Mãe": desabilita se a gaiola está vazia.
+        var pb = document.getElementById('gaio-print-mae');
+        if (pb) {
+          var vazia = !mps.length;
+          pb.disabled = vazia;
+          pb.style.opacity = vazia ? '.45' : '1';
+          pb.style.cursor = vazia ? 'not-allowed' : 'pointer';
+          pb.title = vazia ? 'Gaiola vazia — nada a imprimir' : 'Imprimir etiqueta mãe da ' + gai;
+        }
+      }
+
+      // Constrói os cards da galeria (mobile) a partir das MPs da gaiola.
+      function gaioSyncGallery(gai, mps) {
+        var g = document.getElementById('gaiola-mps-gallery');
+        if (!g) return;
+        g.data = mps.map(function (m, i) {
+          return {
+            title: '🧪 ' + m.mat,
+            subtitle: '#' + (i + 1) + ' · ' + m.etq,
+            data: '📋 Lote ' + m.lote + ' · ⚖️ ' + m.qtd + ' · ' + m.fase,
+            status: '↔ Mover', statusColor: '#1A4A8C',
+            metadata: { etq: m.etq }
+          };
+        });
+        g.onItemClick = function (detail) {
+          var etq = (detail.metadata || {}).etq;
+          var row = document.querySelector('#tbl-gaiola-mps tbody tr[data-etq="' + etq + '"]');
+          if (row) gaioAbrirMover(row);
+        };
+      }
+
+      // Imprime a etiqueta mãe da gaiola selecionada (peso/qtd calculados).
+      function gaioImprimirMae() {
+        var gai = gaioSelId();
+        var mps = GAIO_MPS[gai] || [];
+        if (!mps.length) { alert('⚠ Gaiola ' + gai + ' está vazia — nada a imprimir.'); return; }
+        var total = 0;
+        mps.forEach(function (m) { total += gaioParseKg(m.qtd); });
+        alert('✅ Gaiola ' + gai + ' montada!\\n\\nEtiqueta mãe impressa (Zebra).\\n' + mps.length + ' MPs · ' + gaioFmtKg(total) + ' kg total\\nDestino: Reator R-01\\nRel. pai-filho registrada no Apriso.');
+      }
+
+      // Render inicial (na carga da tela).
+      gaioRenderTabela();
       </script>
 
-      <!-- Modal "Remover MP" removido — operação foi descontinuada; só Mover entre gaiolas existe. -->
-
-
-      <!-- Gaiolas já montadas — ocupa toda a largura -->
-      <div class="card">
-        <div class="card-title">Gaiolas Montadas — OP-2026-0416</div>
-        <div class="abox inf mb14" style="margin-bottom:10px"><span class="ai">📦</span><div>Todas as gaiolas da OP permanecem com status <strong>"Aguardando envio para fabricação"</strong> e abertas para realocação de MPs até que o envio físico em bloco seja confirmado pelo operador no final da ordem.</div></div>
-        <table class="tbl" id="tbl-gaiolas-montadas">
-          <thead><tr><th>Gaiola</th><th>MPs</th><th>Peso Total</th><th>Etiqueta Mãe</th><th>Status</th><th>Ação</th></tr></thead>
-          <tbody>
-            <tr data-gai="GAI-2026-0087" data-mps="3">
-              <td class="mono" style="color:var(--verde)">GAI-2026-0087</td>
-              <td class="mono">3 MPs</td>
-              <td class="mono">67,298 kg</td>
-              <td><span class="bdg bdg-ok">✓ Impressa</span></td>
-              <td><span class="bdg bdg-alr">⏳ Aguardando envio para fabricação</span></td>
-              <td><button class="btn btn-sm btn-ghost gaio-del-btn" onclick="gaioDeletarGaiola(this.closest('tr'))" disabled title="Remova as 3 MPs antes de deletar" style="opacity:.4;cursor:not-allowed;font-size:10px">🗑 Deletar</button></td>
-            </tr>
-            <tr data-gai="GAI-2026-0088" data-mps="4">
-              <td class="mono" style="color:var(--verde)">GAI-2026-0088</td>
-              <td class="mono">4 MPs</td>
-              <td class="mono">12,150 kg</td>
-              <td><span class="bdg bdg-ok">✓ Impressa</span></td>
-              <td><span class="bdg bdg-alr">⏳ Aguardando envio para fabricação</span></td>
-              <td><button class="btn btn-sm btn-ghost gaio-del-btn" onclick="gaioDeletarGaiola(this.closest('tr'))" disabled title="Remova as 4 MPs antes de deletar" style="opacity:.4;cursor:not-allowed;font-size:10px">🗑 Deletar</button></td>
-            </tr>
-            <tr data-gai="GAI-2026-0089" data-mps="5" style="background:var(--verde-dim)">
-              <td class="mono" style="color:var(--alr)">GAI-2026-0089</td>
-              <td class="mono">5 MPs (em montagem)</td>
-              <td class="mono">479,127 kg</td>
-              <td><span class="bdg bdg-alr">⏳ Pendente</span></td>
-              <td><span class="bdg bdg-alr">⏳ Aguardando envio para fabricação</span></td>
-              <td><button class="btn btn-sm btn-ghost gaio-del-btn" onclick="gaioDeletarGaiola(this.closest('tr'))" disabled title="Remova as 5 MPs antes de deletar" style="opacity:.4;cursor:not-allowed;font-size:10px">🗑 Deletar</button></td>
-            </tr>
-            <tr data-gai="GAI-2026-0090" data-mps="0">
-              <td class="mono" style="color:var(--text3)">GAI-2026-0090</td>
-              <td class="mono" style="color:var(--text3)">— vazia —</td>
-              <td class="mono" style="color:var(--text3)">—</td>
-              <td><span class="bdg bdg-ney">— sem etiqueta —</span></td>
-              <td><span class="bdg bdg-alr">⏳ Aguardando envio para fabricação</span></td>
-              <td><button class="btn btn-sm btn-p gaio-del-btn" onclick="gaioDeletarGaiola(this.closest('tr'))" style="font-size:10px">🗑 Deletar</button></td>
-            </tr>
-            <tr data-gai="GAI-2026-0091" data-mps="0">
-              <td class="mono" style="color:var(--text3)">GAI-2026-0091</td>
-              <td class="mono" style="color:var(--text3)">— vazia —</td>
-              <td class="mono" style="color:var(--text3)">—</td>
-              <td><span class="bdg bdg-ney">— sem etiqueta —</span></td>
-              <td><span class="bdg bdg-alr">⏳ Aguardando envio para fabricação</span></td>
-              <td><button class="btn btn-sm btn-p gaio-del-btn" onclick="gaioDeletarGaiola(this.closest('tr'))" style="font-size:10px">🗑 Deletar</button></td>
-            </tr>
-          </tbody>
-        </table>
-        <!-- O envio em bloco das gaiolas à Fabricação acontece na tela /pes-checkout -->
-        <div style="margin-top:14px;padding:10px 14px;background:var(--surface2);border:1px dashed var(--border);border-radius:7px;font-size:11px;color:var(--text3);font-style:italic">
-          ℹ️ O envio das gaiolas à Fabricação é confirmado na tela <strong>/pes-checkout</strong> (Gate 4 do checkout da OP). Enquanto a OP não passar pelo checkout, as MPs podem ser movidas ou removidas livremente.
-        </div>
-      </div>
     `,
   "pes-mps": `      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Matérias-Primas Pesadas</div></div>
@@ -4971,7 +5164,7 @@ export const SCREENS = {
       <div class="card cv">
         <div class="card-title">Registro de Pesagens Confirmadas — Clique na linha para ações</div>
 
-        <div style="overflow-x:auto">
+        <div id="mps-tabela-wrap" style="overflow-x:auto">
         <table class="tbl" id="tbl-mps-pesadas" style="font-size:11px;min-width:1180px">
           <thead>
             <tr>
@@ -5153,6 +5346,10 @@ export const SCREENS = {
         </table>
         </div><!-- /overflow-x:auto -->
 
+        <!-- Versão MOBILE: galeria das MPs pesadas (granado-gallery), sincronizada com a tabela -->
+        <style>#pes-mps-gallery{display:none}@media (max-width:768px){#mps-tabela-wrap{display:none!important}#pes-mps-gallery{display:block!important}}</style>
+        <granado-gallery id="pes-mps-gallery" enable-scroll="true" scroll-height="60vh"></granado-gallery>
+
         <script>
         // Remove as colunas "Desvio" (índice 7) e "Variância máx." (índice 8)
         // de todas as linhas (thead + tbody). Idempotente por carga da tela.
@@ -5167,6 +5364,64 @@ export const SCREENS = {
             });
           }
           run();
+        })();
+
+        // Mobile: espelha as MPs pesadas numa granado-gallery. Lê os dados do
+        // objeto do onclick da linha (pesAbrirDesvio({...})) — estável mesmo com
+        // a remoção de colunas acima. Clique no card reabre o popup de ações.
+        function pesMpsSyncGallery() {
+          var g = document.getElementById('pes-mps-gallery'); if (!g) return;
+          var SC = { ok:'#1C7A38', alerta:'#9A5A00', desvio:'#9A5A00', perda:'#8C1A1A', cancelada:'#8C1A1A', reprovada:'#8C1A1A' };
+          var SL = { ok:'✓ OK', alerta:'⚠ Alerta', desvio:'⚠ Desvio', perda:'⛔ Perda', cancelada:'⛔ Cancelada', reprovada:'⛔ Reprovada' };
+          var items = [];
+          document.querySelectorAll('#tbl-mps-pesadas tbody tr').forEach(function (r) {
+            if (r.style.display === 'none') return;
+            var oc = r.getAttribute('onclick') || '';
+            var s = oc.indexOf('{'), en = oc.lastIndexOf('}');
+            if (s === -1 || en === -1) return;
+            var d = null;
+            try { d = new Function('return (' + oc.slice(s, en + 1) + ')')(); } catch (e) { d = null; }
+            if (!d) return;
+            var st = d.status || 'ok';
+            // Simulação: cada MP tem 2~3 filhos = leituras/gaiolas parciais que
+            // compõem o peso total. Clicar num filho abre as ações da MP (pai).
+            var nP = 2 + ((parseInt(d.n, 10) || 1) % 2);   // 2 ou 3
+            var pesadoNum = parseFloat(String(d.pesado || '0').replace(/\./g, '').replace(',', '.')) || 0;
+            var seqBase = 563943 + (parseInt(d.n, 10) || 1) * 3;
+            var children = [];
+            for (var k = 0; k < nP; k++) {
+              children.push({
+                title: '📦 Gaiola ' + (seqBase + k),
+                subtitle: 'Leitura ' + (k + 1) + ' de ' + nP + (d.etq ? ' · ' + d.etq : ''),
+                data: '⚖️ ' + (pesadoNum / nP).toFixed(3).replace('.', ',') + ' kg' + (d.bal ? ' · ' + d.bal : ''),
+                status: 'OK', statusColor: '#1C7A38'
+              });
+            }
+            items.push({
+              title: '🧪 ' + (d.mat || ''),
+              subtitle: (d.n ? '#' + d.n + ' · ' : '') + (d.lote ? 'Lote ' + d.lote : ''),
+              data: '🎯 ' + (d.alvo || '—') + ' → ⚖️ ' + (d.pesado || '—') + ' kg · Δ ' + (d.desv || '—') + (d.bal ? ' · ' + d.bal : ''),
+              status: SL[st] || String(st).toUpperCase(),
+              statusColor: SC[st] || '#8A8575',
+              metadata: { row: r },
+              children: children
+            });
+          });
+          g.data = items;
+          g.onItemClick = function (dd) {
+            // Filho -> abre as ações da MP pai; pai sem filhos -> abre direto.
+            var row = (dd.isChild && dd.parent && dd.parent.metadata) ? dd.parent.metadata.row : (dd.metadata && dd.metadata.row);
+            if (row) row.click();
+          };
+        }
+        (function () {
+          var tb = document.querySelector('#tbl-mps-pesadas tbody');
+          if (tb && window.MutationObserver && !tb._mpsGalObs) {
+            var t;
+            tb._mpsGalObs = new MutationObserver(function () { clearTimeout(t); t = setTimeout(pesMpsSyncGallery, 0); });
+            tb._mpsGalObs.observe(tb, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] });
+          }
+          pesMpsSyncGallery();
         })();
         </script>
       </div><!-- /card -->
@@ -5557,7 +5812,7 @@ export const SCREENS = {
       <!-- Histórico de Paradas -->
       <div class="card">
         <div class="card-title">Histórico de Paradas — OP-2026-0416 · Turno A</div>
-        <div style="overflow-x:auto">
+        <div id="par-tabela-wrap" style="overflow-x:auto">
           <table class="tbl" id="par-tabela" style="min-width:1180px;font-size:11px">
             <thead>
               <tr>
@@ -5664,6 +5919,52 @@ export const SCREENS = {
             </tbody>
           </table>
         </div>
+
+        <!-- Mobile: histórico de paradas como galeria de cards -->
+        <style>#par-gallery{display:none}@media (max-width:768px){#par-tabela-wrap{display:none!important}#par-gallery{display:block!important}}</style>
+        <granado-gallery id="par-gallery" enable-scroll="true" scroll-height="58vh"></granado-gallery>
+        <script>
+        (function () {
+          function parSyncGallery() {
+            var tb = document.querySelector('#par-tabela tbody');
+            var g = document.getElementById('par-gallery');
+            if (!tb || !g) return;
+            var items = [];
+            Array.from(tb.rows).forEach(function (r) {
+              if (!r.cells || r.cells.length < 11) return;
+              var num  = r.cells[0].textContent.trim();
+              var cat  = r.cells[1].textContent.trim();
+              var tipo = r.cells[2].textContent.trim();
+              var ini  = r.cells[3].textContent.trim();
+              var fim  = r.cells[4].textContent.trim();
+              var dur  = r.cells[5].textContent.trim();
+              var just = r.cells[7].textContent.trim();
+              var oper = r.cells[8].textContent.trim();
+              var oee  = r.cells[9].textContent.trim();
+              var st   = r.cells[10].textContent.trim();
+              var aberta = (st.indexOf('Aberto') >= 0) || (fim.indexOf('andamento') >= 0);
+              items.push({
+                title: cat,
+                subtitle: '#' + num + ' · ' + tipo + ' · OEE ' + oee,
+                data: '⏱ ' + ini + ' → ' + fim + ' · ' + dur + ' · 📝 ' + just + ' · 👤 ' + oper,
+                status: st,
+                statusColor: aberta ? '#9A5A00' : '#1C7A38',
+                metadata: { row: r }
+              });
+            });
+            g.data = items;
+            g.onItemClick = function (d) {
+              var mm = d.metadata || {};
+              if (mm.row) { var b = mm.row.querySelector('td:last-child button'); if (b) b.click(); }
+            };
+          }
+          parSyncGallery();
+          var _tb = document.querySelector('#par-tabela tbody');
+          if (_tb && window.MutationObserver) {
+            new MutationObserver(parSyncGallery).observe(_tb, { childList: true, subtree: true });
+          }
+        })();
+        </script>
 
         <!-- Rodape: linkar ao OEE -->
         <div style="display:flex;gap:10px;padding-top:14px;margin-top:14px;border-top:1px solid var(--border);flex-wrap:wrap;align-items:center">
@@ -6282,6 +6583,8 @@ export const SCREENS = {
     `,
   "pes-ordens": `
       <style>
+        /* Galeria (granado-gallery) só aparece no mobile; no desktop fica a tabela. */
+        #po-gallery { display: none; }
         /* ── Versão MOBILE (<=768px) da Seleção de Ordem de Pesagem ── */
         @media (max-width: 768px) {
           /* KPIs: 4 -> 2 colunas, escondendo "Concluídas Hoje" e "Com Pendência" */
@@ -6292,45 +6595,9 @@ export const SCREENS = {
           #pes-ordens-scope .po-fila-info { display: none !important; }
           /* Grid de salas do modal: 4 -> 2 colunas */
           #sala-pes-grid { grid-template-columns: 1fr 1fr !important; }
-          /* Fila vira GALERIA VERTICAL de cards: nº + produto + data + status + entrar */
-          #po-tabela { min-width: 0 !important; width: 100% !important; }
-          #po-tabela thead { display: none; }
-          #po-tabela, #po-tabela tbody { display: block; width: 100%; }
-          #po-tabela tr {
-            display: flex; flex-wrap: wrap; align-items: center; gap: 2px 10px;
-            /* cor PADRÃO para todos os cards (não colore cada um diferente) */
-            background: var(--surface) !important;
-            animation: none !important; opacity: 1 !important; text-decoration: none !important;
-            border: 1px solid var(--border); border-radius: 10px;
-            margin-bottom: 10px; padding: 12px 14px; box-shadow: var(--sh);
-            box-sizing: border-box; width: 100%; cursor: pointer;
-          }
-          #po-tabela td { border: none !important; padding: 0 !important; text-align: left !important; max-width: none !important; }
-          /* Mostra só: número (1), produto (2), data (6) e ação (9) */
-          #po-tabela td:nth-child(3),
-          #po-tabela td:nth-child(4),
-          #po-tabela td:nth-child(5),
-          #po-tabela td:nth-child(7),
-          #po-tabela td:nth-child(8) { display: none !important; }
-          #po-tabela td:nth-child(1) { order: 1; flex: 1 1 auto; font-size: 15px; font-weight: 800; }
-          #po-tabela td:nth-child(9) { order: 2; flex: 0 0 auto; margin-left: auto; display: flex; align-items: center; gap: 8px; }
-          #po-tabela td:nth-child(2) { order: 3; flex-basis: 100%; font-size: 12.5px; margin-top: 2px; }
-          #po-tabela td:nth-child(6) { order: 4; flex-basis: 100%; font-size: 11px; color: var(--text3); margin-top: 4px; }
-          #po-tabela td:nth-child(6)::before { content: '🗓 '; }
-          /* Badge de status (NOVO / PESANDO / DETALHES) — cada um com ícone */
-          #po-tabela td:nth-child(9)::before {
-            display: inline-block; padding: 3px 9px; border-radius: 9px;
-            font: 800 10px/1.4 var(--font-b); white-space: nowrap;
-          }
-          #po-tabela tr[data-mob="novo"]     td:nth-child(9)::before { content: '🆕 NOVO';     color: var(--verde); background: var(--verde-dim); border: 1px solid var(--ok-b); }
-          #po-tabela tr[data-mob="pesando"]  td:nth-child(9)::before { content: '⚖️ PESANDO';  color: var(--inf);   background: var(--inf-p);     border: 1px solid var(--inf-b); }
-          #po-tabela tr[data-mob="detalhes"] td:nth-child(9)::before { content: '📋 DETALHES'; color: var(--text2); background: var(--surface2);  border: 1px solid var(--border); }
-          /* Setinha "entrar" — o botão de ação vira só o chevron › */
-          #po-tabela td:nth-child(9) .btn {
-            font-size: 0; min-width: 0; width: auto; padding: 0 2px;
-            background: transparent !important; border: none !important; box-shadow: none !important;
-          }
-          #po-tabela td:nth-child(9) .btn::before { content: '›'; font-size: 26px; line-height: 1; color: var(--verde); font-weight: 800; }
+          /* Fila: some a tabela e aparece a galeria (granado-gallery) */
+          #po-tabela-wrap { display: none !important; }
+          #po-gallery { display: block !important; }
         }
       </style>
       <div id="pes-ordens-scope">
@@ -6431,15 +6698,6 @@ export const SCREENS = {
             </div>
           </div>
 
-          <div id="sala-pes-confirmada" style="display:none;margin-top:14px;background:var(--verde-dim);border:1px solid var(--ok-b);border-radius:7px;padding:10px 14px;align-items:center;gap:10px">
-            <span style="font-size:18px">✅</span>
-            <div style="flex:1">
-              <div id="sala-pes-label" style="font-size:12px;font-weight:700;color:var(--verde)">—</div>
-              <div id="sala-pes-sub" style="font-size:10px;color:var(--text2);margin-top:2px">—</div>
-            </div>
-            <button class="btn btn-sm btn-ghost" onclick="pesLimparSala()">Trocar</button>
-          </div>
-
           <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;margin-top:14px;border-top:1px solid var(--border)">
             <button class="btn btn-md btn-ghost" onclick="pesFecharSelSala()">Cancelar</button>
             <button class="btn btn-md btn-v" id="btn-sala-confirmar" onclick="pesConfirmarSelSala()" disabled style="opacity:.5;cursor:not-allowed">✓ Confirmar e Iniciar Pesagem ›</button>
@@ -6469,17 +6727,6 @@ export const SCREENS = {
           sel.style.border = '2px solid var(--verde)';
           sel.style.background = 'var(--verde-dim)';
         }
-        var labels = {
-          'A':  { lbl: '✅ Sala A selecionada',              sub: '4 balanças disponíveis — Box integrado à Sala A' },
-          'B':  { lbl: '✅ Sala B selecionada',              sub: '3 balanças (1 em uso) — verifique disponibilidade antes de iniciar' },
-          'C':  { lbl: '✅ Sala C selecionada',              sub: '2 balanças disponíveis — Box integrado à Sala C' },
-          'SB': { lbl: '⚠ Pesagem sem balança selecionada',  sub: 'Modo manual — o peso será obtido da etiqueta da MP no cockpit' }
-        };
-        var info = labels[sala];
-        var confEl = document.getElementById('sala-pes-confirmada');
-        document.getElementById('sala-pes-label').textContent = info.lbl;
-        document.getElementById('sala-pes-sub').textContent = info.sub;
-        confEl.style.display = 'flex';
         // Habilita o botão Confirmar
         var btn = document.getElementById('btn-sala-confirmar');
         if (btn) {
@@ -6501,7 +6748,6 @@ export const SCREENS = {
           var el = document.getElementById('sala-btn-' + k);
           if (el) { el.style.border = '2px solid var(--border)'; el.style.background = 'var(--surface2)'; }
         });
-        document.getElementById('sala-pes-confirmada').style.display = 'none';
         var btn = document.getElementById('btn-sala-confirmar');
         if (btn) { btn.disabled = true; btn.style.opacity = '.5'; btn.style.cursor = 'not-allowed'; }
       }
@@ -6857,7 +7103,7 @@ export const SCREENS = {
 
         <div class="card-title">Fila de Pesagem — Prioridade</div>
         <div class="abox info mb14 po-fila-info"><span class="ai">ℹ</span><div>Esta fila mostra ordens em diferentes estágios — desde pagamento de MPs até liberação para fabricação. Linhas vermelhas piscando indicam ordens aguardando liberação para fabricação.</div></div>
-        <div style="overflow-x:auto">
+        <div id="po-tabela-wrap" style="overflow-x:auto">
         <table class="tbl" id="po-tabela" style="min-width:1180px">
           <thead>
             <tr>
@@ -7011,6 +7257,40 @@ export const SCREENS = {
           </tbody>
         </table>
         </div><!-- /overflow-x:auto -->
+
+        <!-- Versão MOBILE: galeria vertical das ordens (granado-gallery) -->
+        <granado-gallery id="po-gallery"></granado-gallery>
+        <script>
+          (function () {
+            var g = document.getElementById('po-gallery');
+            if (!g) return;
+            // Cores por status (mesma ideia dos badges NOVO / PESANDO / DETALHES)
+            var C = { novo: '#1F7A3D', pesando: '#1A4A8C', detalhes: '#8A8575' };
+            g.data = [
+              { title: 'OP-2026-0414', subtitle: 'Creme Hidratante 150g', data: '🗓 17/05/2026',
+                status: 'PESANDO', statusColor: C.pesando, metadata: { op: 'OP-2026-0414', action: 'continuar' } },
+              { title: 'OP-2026-0416', subtitle: 'Loção Hidratante Rosa 200ml', data: '🗓 18/05/2026',
+                status: 'NOVO', statusColor: C.novo, metadata: { op: 'OP-2026-0416', action: 'inicio' } },
+              { title: 'OP-2026-0413', subtitle: 'Sabonete Phebo Glicerinado 90g', data: '🗓 14/05/2026',
+                status: 'DETALHES', statusColor: C.detalhes, metadata: { op: 'OP-2026-0413', action: 'checkout' } },
+              { title: 'OP-2026-0412', subtitle: 'Sabonete Glicerinado Mel 90g', data: '🗓 13/05/2026',
+                status: 'DETALHES', statusColor: C.detalhes, metadata: { op: 'OP-2026-0412', action: 'detalhes' } },
+              { title: 'OP-2026-0411', subtitle: 'Sabonete Phebo Lavanda 90g', data: '🗓 —',
+                status: 'DETALHES', statusColor: C.detalhes, metadata: { op: 'OP-2026-0411', action: 'detalhes' } },
+              { title: 'OP-2026-0410', subtitle: 'Loção Hidratante Camomila 200ml', data: '🗓 —',
+                status: 'DETALHES', statusColor: C.detalhes, metadata: { op: 'OP-2026-0410', action: 'detalhes' } }
+            ];
+            g.onItemClick = function (d, ev) {
+              var m = d.metadata || {};
+              if (m.action === 'continuar' || m.action === 'inicio') {
+                if (typeof pesIrCockpit === 'function') pesIrCockpit(ev, m.action, m.op);
+              } else {
+                if (typeof PES_OP_SEL !== 'undefined') { try { PES_OP_SEL = m.op; } catch (e) {} }
+                if (typeof nav === 'function') nav('pes-checkout?op=' + m.op, null, null);
+              }
+            };
+          })();
+        </script>
 
         <!-- Animação para linhas piscando -->
         <style>

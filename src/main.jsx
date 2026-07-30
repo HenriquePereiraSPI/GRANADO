@@ -6,6 +6,11 @@ import { injectLegacyScripts } from './lib/legacy-bridge.js';
 import './styles/globals.css';
 import './styles/app-layout.css';
 
+// Web components Apriso usados dentro das telas legadas (registram os custom
+// elements globalmente ao serem importados). Ex.: <granado-gallery> na versão
+// mobile de "Pesagem > Seleção de Ordem".
+import '../apriso/WebComponents/granado-gallery.js';
+
 // Injeta o JS legado ANTES de montar o React, para que `window.nav`,
 // `window.drawSinotico`, `window.andFiltrar`, FAB_APROVACOES etc. existam quando
 // a primeira tela tentar inicializar.

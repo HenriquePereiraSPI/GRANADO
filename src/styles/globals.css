@@ -55,7 +55,7 @@
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:var(--font-b); background:var(--bg); color:var(--text); display:flex; height:100vh; max-height:100vh; overflow:hidden; }
+body { font-family:var(--font-b); background:var(--bg); color:var(--text); display:flex; height:100vh; height:100dvh; max-height:100vh; max-height:100dvh; overflow:hidden; }
 
 /* ══════════════════════════════════════════════════════
    SIDEBAR
@@ -248,7 +248,8 @@ body { font-family:var(--font-b); background:var(--bg); color:var(--text); displ
   flex-direction: column;
   min-width: 0;
   overflow: hidden;
-  height: 100vh;   /* garante coluna ocupa viewport inteiro */
+  height: 100vh;   /* fallback — garante coluna ocupa viewport inteiro */
+  height: 100dvh;  /* iOS: acompanha teclado/barra; header fica fixo, só o conteúdo rola */
 }
 
 /* Topbar */
@@ -458,6 +459,17 @@ table th, table td { font-family:var(--font-m); }
   box-shadow:0 0 0 3px rgba(28,92,49,.1);
 }
 .txta { resize:vertical; min-height:76px; font-size:12px; }
+
+/* Mobile: >=16px em todos os campos de texto evita o auto-zoom do iOS Safari ao
+   focar (o iOS dá zoom quando o font-size do input é < 16px). Cobre inclusive
+   inputs sem a classe .inp (ex.: campos inline dentro de popups/modais, filtros
+   .tv-inp, valores de checklist). Exclui os intencionalmente grandes (.qty-i) e
+   os que não abrem teclado (checkbox/radio/range/color/file). Desktop inalterado. */
+@media (max-width: 768px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]):not(.qty-i),
+  select,
+  textarea { font-size: 16px !important; }
+}
 
 /* Qty control */
 .qty-w { display:flex; align-items:center; background:var(--bg); border:1.5px solid var(--border); border-radius:6px; overflow:hidden; }

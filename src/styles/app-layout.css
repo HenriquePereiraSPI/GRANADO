@@ -12,7 +12,8 @@
 
 #root {
   display: flex;
-  height: 100vh;
+  height: 100vh;      /* fallback */
+  height: 100dvh;     /* iOS: acompanha barra de endereço/teclado (header não some) */
   width: 100%;
   overflow: hidden;
 }

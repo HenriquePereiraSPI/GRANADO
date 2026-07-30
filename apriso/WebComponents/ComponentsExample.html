@@ -1800,6 +1800,11 @@
         <div style="font-size:11px;font-weight:700;color:#8A9E8E;margin-bottom:6px">Só title + status (sem sombra)</div>
         <granado-gallery id="gal-min" enable-shadow="false"></granado-gallery>
       </div>
+      <!-- Galeria com FILHOS (expansível) -->
+      <div style="flex:1 1 300px;min-width:280px;max-width:420px">
+        <div style="font-size:11px;font-weight:700;color:#8A9E8E;margin-bottom:6px">Com filhos (clique no pai p/ expandir)</div>
+        <granado-gallery id="gal-tree"></granado-gallery>
+      </div>
     </div>
     <div id="gal-status" style="font-size:12px;color:#8A9E8E;margin-top:10px"></div>
 
@@ -1840,6 +1845,29 @@
         { title: 'BAL-042', status: 'MANUTENÇÃO', metadata: { tag: 'BAL-042' } }
       ];
       gm.onItemClick = galOnClick;
+
+      // Com filhos: pais com "children" expandem ao clicar; filhos disparam item-click.
+      var gt = document.getElementById('gal-tree');
+      gt.data = [
+        { title: 'OP-2026-0416', subtitle: 'Loção Rosa 200ml · 6 MPs', status: 'PESANDO', statusColor: '#1A4A8C',
+          children: [
+            { title: 'MP-0001 · Água', subtitle: 'Lote AGUA-2026-03', data: '⚖️ 412,500 kg', status: 'OK', statusColor: '#1C7A38' },
+            { title: 'MP-3307 · Propilenoglicol', subtitle: 'Lote PPG-2026-12', data: '⚖️ 18,005 kg', status: 'OK', statusColor: '#1C7A38' },
+            { title: 'MP-9999 · Conservante BHT', subtitle: 'Lote BHT-2026-01', data: '⚠ estoque insuficiente', status: 'FORA', statusColor: '#8C1A1A' }
+          ] },
+        { title: 'OP-2026-0413', subtitle: 'Sabonete Glicerinado · 3 MPs', status: 'CONCLUÍDO', statusColor: '#1C7A38',
+          children: [
+            { title: 'MP-4821 · Glicerina USP', subtitle: 'Lote GLI-2026-08', data: '⚖️ 44,983 kg', status: 'OK', statusColor: '#1C7A38' },
+            { title: 'MP-0914 · Carbopol 940', subtitle: 'Lote CAR-2026-05', data: '⚖️ 2,498 kg', status: 'OK', statusColor: '#1C7A38' }
+          ] },
+        { title: 'OP-2026-0410', subtitle: 'Sem MPs · cancelada', status: 'CANCELADA', statusColor: '#8C1A1A' }
+      ];
+      gt.onItemClick = function (d) {
+        var s = document.getElementById('gal-status');
+        var pref = d.isChild ? ('↳ filho de #' + d.parentIndex + ': ') : '';
+        if (s) s.textContent = '➡ ' + pref + d.title + ' (' + (d.status || '') + ')';
+        console.log('[granado-gallery] item-click →', d);
+      };
     </script>
   </section>
 
