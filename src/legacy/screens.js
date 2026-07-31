@@ -2730,12 +2730,20 @@ export const SCREENS = {
 
   "pes-checkout": `      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · MF5 · Sala A (Box 3)</div><div class="ph-title">Checkout — Validação Final da Ordem</div></div>
-        <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416 · 12/12 MPs pesadas<br><span style="color:var(--verde)">Pronto para Fabricação</span></div>
       </div>
-      <div class="abox ok mb14"><span class="ai">✅</span><div><strong>Todas as 12 MPs pesadas com sucesso.</strong> Revise o resumo abaixo e confirme a liberação para a fabricação.</div></div>
+      <style>@media (max-width:768px){
+        #checkout-ok-box,#checkout-lock-box,#checkout-kpi-var{display:none!important}
+        #checkout-kpis{grid-template-columns:1fr 1fr!important;gap:8px!important;width:100%}
+        #checkout-kpis .card{padding:10px 8px!important}
+        #checkout-kpis .kpi-l{font-size:10px}
+        #checkout-kpis .card>div:nth-child(2){font-size:22px!important;margin:2px 0!important}
+        #checkout-kpis .card>div:nth-child(2) span{font-size:12px!important}
+        #checkout-kpis .card>div:nth-child(3){font-size:9px}
+      }</style>
+      <div class="abox ok mb14" id="checkout-ok-box"><span class="ai">✅</span><div><strong>Todas as 12 MPs pesadas com sucesso.</strong> Revise o resumo abaixo e confirme a liberação para a fabricação.</div></div>
 
       <!-- Aviso de bloqueio por sala de pesagem -->
-      <div class="abox warn mb14" style="border-top-width:3px;border-top-style:solid;border-top-color:var(--alr)">
+      <div class="abox warn mb14" id="checkout-lock-box" style="border-top-width:3px;border-top-style:solid;border-top-color:var(--alr)">
         <span class="ai">🔒</span>
         <div>
           <strong>Regra de bloqueio da Sala A:</strong> enquanto esta ordem não for liberada para a fabricação (botão abaixo),
@@ -2744,7 +2752,7 @@ export const SCREENS = {
         </div>
       </div>
       <!-- KPIs topo — Validação Final -->
-      <div class="g3 mb14">
+      <div class="g3 mb14" id="checkout-kpis">
         <div class="card cv" style="text-align:center;padding:14px">
           <div class="kpi-l">Total MPs</div>
           <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--verde)">12<span style="font-size:16px;color:var(--text3)">/12</span></div>
@@ -2755,7 +2763,7 @@ export const SCREENS = {
           <div style="font-family:var(--font-m);font-size:28px;font-weight:700;color:var(--ok)">599,87 <span style="font-size:16px;color:var(--text3)">/ 600,00 kg</span></div>
           <div style="font-size:10px;color:var(--text3)">Pesado / Alvo</div>
         </div>
-        <div class="card" style="text-align:center;padding:14px">
+        <div class="card" id="checkout-kpi-var" style="text-align:center;padding:14px">
           <div class="kpi-l">Variação Total</div>
           <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--ok)">–0,02<span style="font-size:16px">%</span></div>
         </div>
@@ -2763,8 +2771,8 @@ export const SCREENS = {
 
       <div class="card cv mb14">
         <div class="card-title">Resumo de Pesagens — OP-2026-0416</div>
-        <div style="overflow-x:auto">
-          <table class="tbl" style="min-width:780px">
+        <div id="checkout-resumo-wrap" style="overflow-x:auto">
+          <table class="tbl" id="tbl-checkout-resumo" style="min-width:780px">
             <thead><tr><th>#</th><th>Código</th><th>Lote</th><th>Material</th><th>Nº Gaiola</th><th>Alvo</th><th>Pesado</th><th>Variância de pesagem</th><th>Status</th></tr></thead>
             <tbody>
               <tr><td class="mono" style="color:var(--ok)">1</td><td class="mono" style="font-size:11px;color:var(--text3)">MP-4821</td><td class="mono" style="font-size:11px;color:var(--text3)">GLI-2026-08</td><td style="font-size:12px">Glicerina USP</td><td class="mono" style="font-size:11px;color:var(--inf)">563944</td><td class="mono">45,000 kg</td><td class="mono">44,983 kg</td><td class="mono" style="color:var(--ok)">–0,017</td><td><span class="bdg bdg-ok">OK</span></td></tr>
@@ -2778,6 +2786,57 @@ export const SCREENS = {
             </tbody>
           </table>
         </div>
+
+        <!-- Mobile: resumo como galeria só-visualização -->
+        <style>#checkout-resumo-gallery{display:none}@media (max-width:768px){#checkout-resumo-wrap{display:none!important}#checkout-resumo-gallery{display:block!important}}</style>
+        <granado-gallery id="checkout-resumo-gallery" type="view-only" enable-scroll="true" scroll-height="56vh"></granado-gallery>
+        <script>
+        (function () {
+          function checkoutResumoSync() {
+            var tb = document.querySelector('#tbl-checkout-resumo tbody');
+            var g = document.getElementById('checkout-resumo-gallery');
+            if (!tb || !g) return;
+            var items = [];
+            Array.from(tb.rows).forEach(function (r) {
+              var c = r.cells;
+              if (!c) return;
+              if (c.length >= 9) {
+                var num = c[0].textContent.trim();
+                var cod = c[1].textContent.trim();
+                var lote = c[2].textContent.trim();
+                var mat = c[3].textContent.trim();
+                var gai = c[4].textContent.trim();
+                var alvo = c[5].textContent.trim();
+                var pes = c[6].textContent.trim();
+                var varc = c[7].textContent.trim();
+                var st = c[8].textContent.trim();
+                items.push({
+                  title: mat,
+                  subtitle: '#' + num + ' · ' + cod + ' · Lote ' + lote,
+                  data: '🎯 ' + alvo + ' → ⚖️ ' + pes + ' · Δ ' + varc + ' · 📦 ' + gai,
+                  status: st, statusColor: '#1C7A38'
+                });
+              } else {
+                // Linha-resumo "8–12" (com colspan): item consolidado.
+                var lbl = c[1] ? c[1].textContent.trim() : 'Demais MPs';
+                var stx = c[c.length - 1] ? c[c.length - 1].textContent.trim() : 'OK';
+                items.push({
+                  title: lbl,
+                  subtitle: '#' + (c[0] ? c[0].textContent.trim() : ''),
+                  data: 'Dentro do limite',
+                  status: stx, statusColor: '#1C7A38'
+                });
+              }
+            });
+            g.data = items;
+          }
+          checkoutResumoSync();
+          var _tb = document.querySelector('#tbl-checkout-resumo tbody');
+          if (_tb && window.MutationObserver) {
+            new MutationObserver(checkoutResumoSync).observe(_tb, { childList: true, subtree: true });
+          }
+        })();
+        </script>
       </div>
 
       <div style="display:flex;gap:10px;padding-top:16px;border-top:1px solid var(--border);flex-wrap:wrap">
@@ -4717,10 +4776,10 @@ export const SCREENS = {
         <div><div class="ph-eyebrow">Pesagem · Box 3 · MF5</div><div class="ph-title">Devolução de MP ao Estoque</div></div>
       </div>
 
-      <div class="abox warn mb14"><span class="ai">⚠</span><div>MPs com saldo restante após pesagem devem ser <strong>reentiquetadas e devolvidas ao almoxarifado</strong>. A etiqueta original é cancelada e uma nova etiqueta de saldo é gerada com rastreabilidade do lote original.</div></div>
+      <div class="abox warn mb14" id="devol-info-box"><span class="ai">⚠</span><div>MPs com saldo restante após pesagem devem ser <strong>reentiquetadas e devolvidas ao almoxarifado</strong>. A etiqueta original é cancelada e uma nova etiqueta de saldo é gerada com rastreabilidade do lote original.</div></div>
 
       <!-- KPIs topo — Resumo da Devolução -->
-      <div class="g4 mb14">
+      <div class="g4 mb14" id="devol-kpis">
         <div class="card" style="text-align:center;padding:14px">
           <div class="kpi-l">Ordem</div>
           <div style="font-family:var(--font-m);font-size:18px;font-weight:700;color:var(--verde);margin:6px 0">OP-2026-0416</div>
@@ -4746,8 +4805,8 @@ export const SCREENS = {
 
       <div class="card cv mb14">
         <div class="card-title">MPs com Saldo para Devolução</div>
-        <div style="overflow-x:auto">
-          <table class="tbl" style="min-width:600px">
+        <div id="devol-tabela-wrap" style="overflow-x:auto">
+          <table class="tbl" id="tbl-devol-mp" style="min-width:600px">
             <thead><tr><th>Material</th><th>Lote</th><th>Qtd. Original</th><th>Qtd. Pesada</th><th>Saldo Restante</th><th>Usuário</th><th>Status</th><th>Data Devolução</th><th>Ação</th></tr></thead>
             <tbody>
               <tr>
@@ -4786,10 +4845,57 @@ export const SCREENS = {
             </tbody>
           </table>
         </div>
+
+        <!-- Mobile: MPs com saldo como galeria de cards (toque = reentiquetear/detalhes) -->
+        <style>#devol-gallery{display:none}@media (max-width:768px){#devol-tabela-wrap{display:none!important}#devol-gallery{display:block!important}#devol-info-box,#devol-kpis,#devol-fluxo{display:none!important}}</style>
+        <granado-gallery id="devol-gallery" enable-scroll="true" scroll-height="60vh"></granado-gallery>
+        <script>
+        (function () {
+          function devolSyncGallery() {
+            var tb = document.querySelector('#tbl-devol-mp tbody');
+            var g = document.getElementById('devol-gallery');
+            if (!tb || !g) return;
+            var items = [];
+            Array.from(tb.rows).forEach(function (r) {
+              if (!r.cells || r.cells.length < 9) return;
+              var mat  = r.cells[0].textContent.trim();
+              var lote = r.cells[1].textContent.trim();
+              var orig = r.cells[2].textContent.trim();
+              var pes  = r.cells[3].textContent.trim();
+              var sal  = r.cells[4].textContent.trim();
+              var usr  = r.cells[5].textContent.trim();
+              var st   = r.cells[6].textContent.trim();
+              var dt   = r.cells[7].textContent.trim();
+              var pend = st.toUpperCase().indexOf('PENDENTE') >= 0;
+              var extra = '';
+              if (usr && usr !== '—') extra += ' · 👤 ' + usr;
+              if (dt && dt !== '—') extra += ' · 🗓 ' + dt;
+              items.push({
+                title: '🧪 ' + mat,
+                subtitle: 'Lote ' + lote,
+                data: '📦 Orig ' + orig + ' · ⚖️ Pesada ' + pes + ' · 🔁 Saldo ' + sal + extra,
+                status: st,
+                statusColor: pend ? '#9A5A00' : '#1C7A38',
+                metadata: { row: r }
+              });
+            });
+            g.data = items;
+            g.onItemClick = function (d) {
+              var mm = d.metadata || {};
+              if (mm.row) { var b = mm.row.querySelector('td:last-child button'); if (b) b.click(); }
+            };
+          }
+          devolSyncGallery();
+          var _tb = document.querySelector('#tbl-devol-mp tbody');
+          if (_tb && window.MutationObserver) {
+            new MutationObserver(devolSyncGallery).observe(_tb, { childList: true, subtree: true });
+          }
+        })();
+        </script>
       </div>
 
       <!-- Fluxo de Reentiquetagem -->
-      <div class="card mb14">
+      <div class="card mb14" id="devol-fluxo">
         <div class="card-title">Fluxo de Reentiquetagem</div>
         <div style="display:flex;align-items:flex-start;gap:0;padding:8px 0">
           <div style="text-align:center;flex:1">
@@ -4820,10 +4926,9 @@ export const SCREENS = {
     `,
   "pes-gaiola": `      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · Box 3 · MF5</div><div class="ph-title">Gestão de Gaiola — Containers de MPs</div></div>
-        <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416 · 12 MPs pesadas<br>Loção Hidratante Rosa 200ml<br><span style="color:var(--verde)">Pronto para montar gaiolas</span></div>
       </div>
 
-      <div class="abox info mb14"><span class="ai">ℹ</span><div>A <strong>Gaiola</strong> é o container físico que agrupa as MPs pesadas de uma ordem para transporte até o reator. Cada gaiola recebe uma <strong>etiqueta mãe</strong> com rastreabilidade das etiquetas filhas (MPs individuais).</div></div>
+      <div class="abox info mb14" id="gaiola-info-box"><span class="ai">ℹ</span><div>A <strong>Gaiola</strong> é o container físico que agrupa as MPs pesadas de uma ordem para transporte até o reator. Cada gaiola recebe uma <strong>etiqueta mãe</strong> com rastreabilidade das etiquetas filhas (MPs individuais).</div></div>
 
       <!-- Gerenciar etiquetas das gaiolas — ocupa toda a largura -->
       <div class="card cv mb14">
@@ -4854,7 +4959,7 @@ export const SCREENS = {
         </div>
 
         <!-- Mobile: mesma lista como galeria de cards (toque no card = mover) -->
-        <style>#gaiola-mps-gallery{display:none}@media (max-width:768px){#gaiola-tabela-wrap{display:none!important}#gaiola-mps-gallery{display:block!important}}</style>
+        <style>#gaiola-mps-gallery{display:none}@media (max-width:768px){#gaiola-tabela-wrap{display:none!important}#gaiola-mps-gallery{display:block!important}#gaiola-info-box{display:none!important}}</style>
         <granado-gallery id="gaiola-mps-gallery" enable-scroll="true" scroll-height="58vh"></granado-gallery>
 
         <div style="display:flex;gap:10px;margin-top:14px">
@@ -5713,10 +5818,9 @@ export const SCREENS = {
     `,
   "pes-paradas": `      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Apontamento de Paradas</div></div>
-        <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416 · Sala A · BAL-01<br>Loção Hidratante Rosa 200ml<br><span style="color:var(--verde)">J. Santos (155)</span></div>
       </div>
 
-      <div class="abox info mb14"><span class="ai">⏸</span><div>Registre aqui todas as <strong>paradas/eventos não-produtivos</strong> ocorridos durante a pesagem da OP. Estes apontamentos são consumidos pelo <strong>OEE Pesagem</strong>.</div></div>
+      <div class="abox info mb14" id="par-info-box"><span class="ai">⏸</span><div>Registre aqui todas as <strong>paradas/eventos não-produtivos</strong> ocorridos durante a pesagem da OP. Estes apontamentos são consumidos pelo <strong>OEE Pesagem</strong>.</div></div>
 
       <!-- Controle de Paradas — árvore (Sala → Balança) + painel -->
       <div class="card mb14"><div id="pp-root"></div></div>
@@ -5921,7 +6025,7 @@ export const SCREENS = {
         </div>
 
         <!-- Mobile: histórico de paradas como galeria de cards -->
-        <style>#par-gallery{display:none}@media (max-width:768px){#par-tabela-wrap{display:none!important}#par-gallery{display:block!important}}</style>
+        <style>#par-gallery{display:none}@media (max-width:768px){#par-tabela-wrap{display:none!important}#par-gallery{display:block!important}#par-info-box{display:none!important}}</style>
         <granado-gallery id="par-gallery" enable-scroll="true" scroll-height="58vh"></granado-gallery>
         <script>
         (function () {

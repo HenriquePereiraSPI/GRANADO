@@ -9956,6 +9956,32 @@ pop.open();</pre>
         <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
 <span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-gallery.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
 
+        <h2 class="gd-h2">Uso — mínimo (só título)</h2>
+        <p class="gd-lead">
+          O único campo realmente necessário é o <code>title</code>. Passe uma lista de objetos
+          só com <code>title</code> e a galeria já renderiza os cards.
+        </p>
+        <div class="gd-split">
+        <div class="gd-demo" style="height:220px;overflow:auto;box-sizing:border-box">
+          <granado-gallery id="gal-min"></granado-gallery>
+        </div>
+        <script>
+          document.getElementById('gal-min').data = [
+            { title: 'OP-2026-0416' },
+            { title: 'OP-2026-0414' },
+            { title: 'OP-2026-0413' }
+          ];
+        </script>
+        <pre class="gd-code" style="height:220px;max-height:220px;overflow:auto"><span class="tk-tag">&lt;granado-gallery</span> <span class="tk-attr">id</span>=<span class="tk-str">"gal-min"</span><span class="tk-tag">&gt;&lt;/granado-gallery&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'gal-min'</span>).data = [
+    { title: <span class="tk-str">'OP-2026-0416'</span> },
+    { title: <span class="tk-str">'OP-2026-0414'</span> },
+    { title: <span class="tk-str">'OP-2026-0413'</span> }
+  ];
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
         <h2 class="gd-h2">Uso — sem scroll (clique inline)</h2>
         <p class="gd-lead">
           Passe os itens pela propriedade JS <code>.data</code> (array) e trate o clique de forma
@@ -10087,6 +10113,103 @@ pop.open();</pre>
 <span class="tk-tag">&lt;/script&gt;</span></pre>
         </div>
 
+        <h2 class="gd-h2">Só visualização — <code>type="view-only"</code></h2>
+        <p class="gd-lead">
+          Para <strong>apenas exibir</strong> uma lista (sem navegação): a setinha some, o hover some e
+          os itens ficam <strong>sem bordas/cards</strong>, separados por uma <strong>divisória fina em
+          gradiente</strong> que some nas pontas. Ótimo para resumos/leituras.
+          <strong>Obs.:</strong> neste modo os <code>children</code> não expandem.
+        </p>
+        <div class="gd-split">
+        <div class="gd-demo" style="height:280px;overflow:auto;box-sizing:border-box">
+          <granado-gallery id="gal-vo" type="view-only"></granado-gallery>
+        </div>
+        <script>
+          document.getElementById('gal-vo').data = [
+            { title: 'Glicerina USP', subtitle: 'Lote GLI-2026-08', data: '🎯 45,000 → ⚖️ 44,983 kg', status: 'OK', statusColor: '#1C7A38' },
+            { title: 'Propilenoglicol', subtitle: 'Lote PPG-2026-12', data: '🎯 18,000 → ⚖️ 18,005 kg', status: 'OK', statusColor: '#1C7A38' },
+            { title: 'Essência Rosa', subtitle: 'Lote ESR-2026-11', data: '🎯 0,250 → ⚖️ 0,318 kg', status: 'FORA', statusColor: '#8C1A1A' },
+            { title: 'Aqua (Água Purificada)', subtitle: 'Lote AGUA-2026-03', data: '🎯 411,800 → ⚖️ 411,840 kg', status: 'OK', statusColor: '#1C7A38' }
+          ];
+        </script>
+        <pre class="gd-code" style="height:280px;max-height:280px;overflow:auto"><span class="tk-tag">&lt;granado-gallery</span> <span class="tk-attr">id</span>=<span class="tk-str">"gal-vo"</span> <span class="tk-attr">type</span>=<span class="tk-str">"view-only"</span><span class="tk-tag">&gt;&lt;/granado-gallery&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'gal-vo'</span>).data = [
+    { title: <span class="tk-str">'Glicerina USP'</span>, subtitle: <span class="tk-str">'Lote GLI-2026-08'</span>, data: <span class="tk-str">'🎯 45,000 → ⚖️ 44,983 kg'</span>, status: <span class="tk-str">'OK'</span>, statusColor: <span class="tk-str">'#1C7A38'</span> },
+    { title: <span class="tk-str">'Propilenoglicol'</span>, subtitle: <span class="tk-str">'Lote PPG-2026-12'</span>, data: <span class="tk-str">'🎯 18,000 → ⚖️ 18,005 kg'</span>, status: <span class="tk-str">'OK'</span>, statusColor: <span class="tk-str">'#1C7A38'</span> },
+    { title: <span class="tk-str">'Essência Rosa'</span>, subtitle: <span class="tk-str">'Lote ESR-2026-11'</span>, data: <span class="tk-str">'🎯 0,250 → ⚖️ 0,318 kg'</span>, status: <span class="tk-str">'FORA'</span>, statusColor: <span class="tk-str">'#8C1A1A'</span> },
+    { title: <span class="tk-str">'Aqua (Água Purificada)'</span>, subtitle: <span class="tk-str">'Lote AGUA-2026-03'</span>, data: <span class="tk-str">'🎯 411,800 → ⚖️ 411,840 kg'</span>, status: <span class="tk-str">'OK'</span>, statusColor: <span class="tk-str">'#1C7A38'</span> }
+  ];
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">Horizontal (scroll horizontal)</h2>
+        <p class="gd-lead">
+          Com <code>orientation="horizontal"</code> os cards ficam <strong>lado a lado</strong> e a lista
+          rola na <strong>horizontal</strong>; a largura de cada card vem de <code>card-width</code>
+          (default <code>220px</code>). Útil para carrosséis / listas horizontais.
+          <strong>Obs.:</strong> neste modo os <code>children</code> <strong>não expandem</strong> — cada item é um card simples.
+        </p>
+        <div class="gd-split">
+        <div class="gd-demo" style="height:210px;overflow:auto;box-sizing:border-box">
+          <granado-gallery id="gal-h" orientation="horizontal" card-width="200px"
+            onitemclick="document.getElementById('gal-h-out').textContent = '➡ ' + detail.title"></granado-gallery>
+          <div id="gal-h-out" style="font-size:12px;color:#8A9E8E;margin-top:10px"></div>
+        </div>
+        <script>
+          document.getElementById('gal-h').data = [
+            { title: 'BAL-01', subtitle: 'Toledo · Sala A', data: 'Últ. aferição 05/05', status: 'OK', statusColor: '#1C7A38' },
+            { title: 'BAL-02', subtitle: 'Toledo · Sala A', data: 'Últ. aferição 04/05', status: 'OK', statusColor: '#1C7A38' },
+            { title: 'BAL-03', subtitle: 'Marte · Sala B', data: 'Recalibrar hoje', status: 'ATENÇÃO', statusColor: '#9A5A00' },
+            { title: 'BAL-04', subtitle: 'Marte · Sala B', data: 'Fora de uso', status: 'PARADA', statusColor: '#8C1A1A' },
+            { title: 'BAL-05', subtitle: 'Toledo · Sala C', data: 'Últ. aferição 01/05', status: 'OK', statusColor: '#1C7A38' }
+          ];
+        </script>
+        <pre class="gd-code" style="height:210px;max-height:210px;overflow:auto"><span class="tk-tag">&lt;granado-gallery</span> <span class="tk-attr">id</span>=<span class="tk-str">"gal-h"</span> <span class="tk-attr">orientation</span>=<span class="tk-str">"horizontal"</span> <span class="tk-attr">card-width</span>=<span class="tk-str">"200px"</span>
+  <span class="tk-attr">onitemclick</span>=<span class="tk-str">"document.getElementById('gal-h-out').textContent = '➡ ' + detail.title"</span><span class="tk-tag">&gt;&lt;/granado-gallery&gt;</span>
+<span class="tk-tag">&lt;div</span> <span class="tk-attr">id</span>=<span class="tk-str">"gal-h-out"</span><span class="tk-tag">&gt;&lt;/div&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'gal-h'</span>).data = [
+    { title: <span class="tk-str">'BAL-01'</span>, subtitle: <span class="tk-str">'Toledo · Sala A'</span>, data: <span class="tk-str">'Últ. aferição 05/05'</span>, status: <span class="tk-str">'OK'</span>, statusColor: <span class="tk-str">'#1C7A38'</span> },
+    { title: <span class="tk-str">'BAL-02'</span>, subtitle: <span class="tk-str">'Toledo · Sala A'</span>, data: <span class="tk-str">'Últ. aferição 04/05'</span>, status: <span class="tk-str">'OK'</span>, statusColor: <span class="tk-str">'#1C7A38'</span> },
+    { title: <span class="tk-str">'BAL-03'</span>, subtitle: <span class="tk-str">'Marte · Sala B'</span>, data: <span class="tk-str">'Recalibrar hoje'</span>, status: <span class="tk-str">'ATENÇÃO'</span>, statusColor: <span class="tk-str">'#9A5A00'</span> },
+    { title: <span class="tk-str">'BAL-04'</span>, subtitle: <span class="tk-str">'Marte · Sala B'</span>, data: <span class="tk-str">'Fora de uso'</span>, status: <span class="tk-str">'PARADA'</span>, statusColor: <span class="tk-str">'#8C1A1A'</span> },
+    { title: <span class="tk-str">'BAL-05'</span>, subtitle: <span class="tk-str">'Toledo · Sala C'</span>, data: <span class="tk-str">'Últ. aferição 01/05'</span>, status: <span class="tk-str">'OK'</span>, statusColor: <span class="tk-str">'#1C7A38'</span> }
+  ];
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">Horizontal — mínimo (ícone + subtítulo)</h2>
+        <p class="gd-lead">
+          Versão enxuta: cada card recebe só um <strong>ícone</strong> (emoji no <code>title</code>) e um
+          <code>subtitle</code>. Combinado com um <code>card-width</code> pequeno, vira uma tira de atalhos.
+        </p>
+        <div class="gd-split">
+        <div class="gd-demo" style="height:150px;overflow:auto;box-sizing:border-box">
+          <granado-gallery id="gal-hm" orientation="horizontal" card-width="130px"></granado-gallery>
+        </div>
+        <script>
+          document.getElementById('gal-hm').data = [
+            { title: '⚖️', subtitle: 'BAL-01' },
+            { title: '⚖️', subtitle: 'BAL-02' },
+            { title: '🧪', subtitle: 'Sala A' },
+            { title: '📦', subtitle: 'Gaiola 89' },
+            { title: '🏷️', subtitle: 'Etiquetas' }
+          ];
+        </script>
+        <pre class="gd-code" style="height:150px;max-height:150px;overflow:auto"><span class="tk-tag">&lt;granado-gallery</span> <span class="tk-attr">id</span>=<span class="tk-str">"gal-hm"</span> <span class="tk-attr">orientation</span>=<span class="tk-str">"horizontal"</span> <span class="tk-attr">card-width</span>=<span class="tk-str">"130px"</span><span class="tk-tag">&gt;&lt;/granado-gallery&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'gal-hm'</span>).data = [
+    { title: <span class="tk-str">'⚖️'</span>, subtitle: <span class="tk-str">'BAL-01'</span> },
+    { title: <span class="tk-str">'⚖️'</span>, subtitle: <span class="tk-str">'BAL-02'</span> },
+    { title: <span class="tk-str">'🧪'</span>, subtitle: <span class="tk-str">'Sala A'</span> },
+    { title: <span class="tk-str">'📦'</span>, subtitle: <span class="tk-str">'Gaiola 89'</span> },
+    { title: <span class="tk-str">'🏷️'</span>, subtitle: <span class="tk-str">'Etiquetas'</span> }
+  ];
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
         <h3 class="gd-h3">Sem JS — tudo por atributos</h3>
         <p class="gd-lead">
           Também dá para configurar 100% no HTML: os itens vão no atributo <code>data</code> como
@@ -10118,8 +10241,12 @@ pop.open();</pre>
           </thead>
           <tbody>
             <tr><td class="col-name">data</td><td class="col-type">array</td><td class="col-desc">Itens da galeria (em JS use <code>.data</code>). Campos de cada item na tabela abaixo — <strong>todos opcionais</strong>.</td></tr>
+            <tr><td class="col-name">type</td><td class="col-type">string</td><td class="col-desc"><code>"view-only"</code> transforma a galeria em <strong>lista de visualização</strong>: a setinha some, sem hover, cursor normal e (no vertical) os itens ficam <strong>sem bordas/cards</strong>, separados por uma <strong>divisória fina em gradiente</strong> (some nas pontas). <code>children</code> não expandem neste modo. Em JS: <code>.type</code>.</td></tr>
+            <tr><td class="col-name">orientation</td><td class="col-type">string</td><td class="col-desc"><code>"vertical"</code> (default) ou <code>"horizontal"</code>. No <strong>horizontal</strong> os cards ficam lado a lado com <strong>scroll horizontal</strong> e os <code>children</code> <strong>não expandem</strong> (cada item vira um card simples). Em JS: <code>.orientation</code>.</td></tr>
+            <tr><td class="col-name">card-width</td><td class="col-type">CSS length</td><td class="col-desc">Largura de cada card no modo <strong>horizontal</strong> (ex.: <code>"220px"</code>, <code>"70vw"</code>). Default <code>"220px"</code>. Ignorado no vertical. Em JS: <code>.cardWidth</code>.</td></tr>
             <tr><td class="col-name">card-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor de fundo dos cards. Default <code>#FDFAF1</code>.</td></tr>
             <tr><td class="col-name">child-card-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor de fundo <strong>apenas dos cards filhos</strong> (itens dentro de <code>children</code>). Vazio (default) = usam a mesma cor dos pais (<code>card-color</code>). Em JS: <code>.childCardColor</code>.</td></tr>
+            <tr><td class="col-name">border-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor da <strong>borda dos cards</strong>. Default <code>#D6CDA4</code>. No modo <code>type="view-only"</code> também define a cor da <strong>divisória</strong> entre os itens. Em JS: <code>.borderColor</code>.</td></tr>
             <tr><td class="col-name">bg-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor de fundo do <strong>container</strong> da galeria (atrás dos cards). Default <code>transparent</code> (mostra o fundo da página). Com uma cor, o container ganha padding e cantos arredondados. Em JS: <code>.bgColor</code>.</td></tr>
             <tr><td class="col-name">title-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor do título. Default <code>#0F3319</code>.</td></tr>
             <tr><td class="col-name">subtitle-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor do subtítulo. Default <code>#555555</code>.</td></tr>

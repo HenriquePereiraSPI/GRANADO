@@ -21,9 +21,23 @@
                                       o pai não dispara item-click, só expande.
                           metadata  - qualquer objeto/valor extra; NÃO é
                                       exibido, mas volta no clique.
+     type           - (opcional) "view-only" transforma a galeria numa LISTA
+                      de visualização: a setinha some, o hover some, o cursor
+                      fica normal e (no vertical) os itens ficam sem bordas/cards,
+                      separados por uma divisória fina em gradiente (some nas
+                      pontas). Filhos não expandem no view-only. Em JS use .type.
+     orientation    - "vertical" (default) | "horizontal". No horizontal os
+                      cards ficam lado a lado com scroll horizontal e os
+                      "children" NÃO expandem (cada item é um card simples).
+                      Em JS use .orientation.
+     card-width     - largura de cada card no modo horizontal (CSS válido,
+                      default "220px"). Ignorado no vertical. Em JS .cardWidth.
      card-color     - cor de fundo dos cards (default "#FDFAF1")
      child-card-color - cor de fundo APENAS dos cards filhos. Vazio (default)
                       = usam a mesma cor dos pais (card-color).
+     border-color   - cor da borda dos cards (default "#D6CDA4"). No view-only
+                      também define a cor da divisória entre os itens.
+                      Em JS use .borderColor.
      bg-color       - cor de fundo do container da galeria (default
                       "transparent"). Com cor, ganha padding + cantos.
      title-color    - cor do título (default "#0F3319")
@@ -73,6 +87,9 @@ if (!customElements.get('granado-gallery')) {
   const DATA_COLOR = '#8A8575';
   const STATUS_COLOR = '#1C5C31';
   const BORDER = '#D6CDA4';
+  const DIVIDER = 'rgba(154,117,32,.38)';   // divisória (ouro) da lista view-only
+  const ORIENTATION = 'vertical';   // 'vertical' (default) | 'horizontal'
+  const CARD_WIDTH = '220px';       // largura de cada card no modo horizontal
   const SCROLL_HEIGHT = '420px';
   const SCROLL_THUMB = 'rgba(191,177,114,.55)';   // polegar do scroll (ouro discreto)
   const SHADOW_BASE = '0 1px 4px rgba(15,51,25,.08)';
@@ -82,7 +99,7 @@ if (!customElements.get('granado-gallery')) {
 
   class GranadoGallery extends HTMLElement {
     static get observedAttributes() {
-      return ['data', 'card-color', 'child-card-color', 'bg-color', 'title-color', 'subtitle-color', 'data-color', 'status-color', 'enable-scroll', 'scroll-height', 'scroll-color', 'enable-shadow'];
+      return ['data', 'type', 'orientation', 'card-width', 'card-color', 'child-card-color', 'border-color', 'bg-color', 'title-color', 'subtitle-color', 'data-color', 'status-color', 'enable-scroll', 'scroll-height', 'scroll-color', 'enable-shadow'];
     }
 
     // ------------------------------------------------------------
@@ -115,10 +132,19 @@ if (!customElements.get('granado-gallery')) {
       if (this.isConnected) this._render();
     }
 
+    get type() { return (this.getAttribute('type') || '').toLowerCase(); }
+    set type(v) { this.setAttribute('type', String(v)); }
+    get isViewOnly() { return this.type === 'view-only'; }
+    get orientation() { return (this.getAttribute('orientation') || ORIENTATION).toLowerCase() === 'horizontal' ? 'horizontal' : 'vertical'; }
+    set orientation(v) { this.setAttribute('orientation', String(v)); }
+    get cardWidth() { return this.getAttribute('card-width') || CARD_WIDTH; }
+    set cardWidth(v) { this.setAttribute('card-width', String(v)); }
     get cardColor() { return this.getAttribute('card-color') || CARD_COLOR; }
     set cardColor(v) { this.setAttribute('card-color', String(v)); }
     get childCardColor() { return this.getAttribute('child-card-color') || CHILD_CARD_COLOR; }
     set childCardColor(v) { this.setAttribute('child-card-color', String(v)); }
+    get borderColor() { return this.getAttribute('border-color') || ''; }
+    set borderColor(v) { this.setAttribute('border-color', String(v)); }
     get bgColor() { return this.getAttribute('bg-color') || BG_COLOR; }
     set bgColor(v) { this.setAttribute('bg-color', String(v)); }
     get titleColor() { return this.getAttribute('title-color') || TITLE_COLOR; }
@@ -151,20 +177,46 @@ if (!customElements.get('granado-gallery')) {
 
     _render() {
       const items = (this.data || []);
+      // border-color (opcional) define a borda dos cards E a cor da divisória do
+      // view-only. Sem ele: borda default (#D6CDA4) e divisória ouro default.
+      const brd = this._has(this.borderColor) ? this.borderColor : BORDER;
+      const dvd = this._has(this.borderColor) ? this.borderColor : DIVIDER;
       const colors = {
-        card: this.cardColor, childCard: this.childCardColor, title: this.titleColor,
+        card: this.cardColor, childCard: this.childCardColor, border: brd, title: this.titleColor,
         subtitle: this.subtitleColor, data: this.dataColor, status: this.statusColor
       };
       const shadow = this.enableShadow;
-      const cards = items.length
-        ? items.map((it, i) => this._itemBlock(it || {}, i, colors, shadow)).join('')
-        : `<div style="border:1px dashed ${BORDER};border-radius:10px;padding:26px 16px;text-align:center;color:${DATA_COLOR};font:12px/1.5 ${FONT}">Nenhum item para exibir.</div>`;
+      const horizontal = this.orientation === 'horizontal';
+      const viewOnly = this.isViewOnly;
+      const cardWidth = this.cardWidth;
+      const itemBlocks = items.length
+        ? items.map((it, i) => this._itemBlock(it || {}, i, colors, shadow, horizontal, cardWidth, viewOnly))
+        : null;
+      const emptyState = `<div style="border:1px dashed ${brd};border-radius:10px;padding:26px 16px;text-align:center;color:${DATA_COLOR};font:12px/1.5 ${FONT}">Nenhum item para exibir.</div>`;
 
       // Scroll fino e discreto — propriedades PADRÃO (inline, sem stylesheet):
       // scrollbar-width/scrollbar-color funcionam em Chrome 121+, Edge e Firefox.
-      const inner = this.enableScroll
-        ? `<div data-role="scroll" style="max-height:${this.scrollHeight};overflow-y:auto;padding-right:6px;box-sizing:border-box;scrollbar-width:thin;scrollbar-color:${this.scrollColor} transparent">${cards}</div>`
-        : cards;
+      let inner;
+      if (horizontal) {
+        // Lista horizontal: flex-row com scroll horizontal. Filhos NÃO expandem
+        // neste modo (cada item é um card simples, lado a lado).
+        const cards = itemBlocks ? itemBlocks.join('') : emptyState;
+        inner = `<div data-role="scroll" style="display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;padding:2px 4px 10px 2px;box-sizing:border-box;scrollbar-width:thin;scrollbar-color:${this.scrollColor} transparent">${cards}</div>`;
+      } else {
+        // Vertical. No view-only vira uma lista limpa (sem bordas/cards soltos):
+        // itens transparentes separados por uma hairline em gradiente que some
+        // nas pontas. Fora do view-only, cards normais empilhados.
+        let body;
+        if (viewOnly) {
+          const sep = `<div aria-hidden="true" style="height:1px;margin:0 4px;background:linear-gradient(90deg,transparent,${dvd},transparent)"></div>`;
+          body = itemBlocks ? itemBlocks.join(sep) : emptyState;
+        } else {
+          body = itemBlocks ? itemBlocks.join('') : emptyState;
+        }
+        inner = this.enableScroll
+          ? `<div data-role="scroll" style="max-height:${this.scrollHeight};overflow-y:auto;padding-right:6px;box-sizing:border-box;scrollbar-width:thin;scrollbar-color:${this.scrollColor} transparent">${body}</div>`
+          : body;
+      }
 
       // Fundo do container (opcional). Só ganha padding/cantos quando há cor.
       const bg = this.bgColor;
@@ -177,20 +229,28 @@ if (!customElements.get('granado-gallery')) {
     }
 
     // Item + (se houver) container dos filhos logo abaixo, indentado.
-    _itemBlock(it, i, colors, shadow) {
+    _itemBlock(it, i, colors, shadow, horizontal, cardWidth, viewOnly) {
+      if (horizontal) {
+        // Sem expansão de filhos no modo horizontal — card simples de largura fixa.
+        return this._card(it, String(i), colors, shadow, { hasChildren: false, expanded: false, isChild: false, horizontal: true, cardWidth: cardWidth, viewOnly: viewOnly });
+      }
+      if (viewOnly) {
+        // Lista conectada: cada item é uma linha rente; filhos NÃO expandem aqui.
+        return this._card(it, String(i), colors, shadow, { hasChildren: false, expanded: false, isChild: false, viewOnly: true, first: i === 0 });
+      }
       const hasCh = Array.isArray(it.children) && it.children.length > 0;
       const expanded = hasCh && this._isExpanded(i);
       let html = this._card(it, String(i), colors, shadow, { hasChildren: hasCh, expanded: expanded, isChild: false });
       if (hasCh) {
         const childCards = it.children.map((c, ci) => this._card(c || {}, i + '.' + ci, colors, shadow, { hasChildren: false, expanded: false, isChild: true })).join('');
-        html += `<div data-role="children" data-parent="${i}" style="margin:-4px 0 10px 14px;padding-left:10px;border-left:2px solid ${BORDER};display:${expanded ? 'block' : 'none'}">${childCards}</div>`;
+        html += `<div data-role="children" data-parent="${i}" style="margin:-4px 0 10px 14px;padding-left:10px;border-left:2px solid ${colors.border};display:${expanded ? 'block' : 'none'}">${childCards}</div>`;
       }
       return html;
     }
 
     _card(it, idx, colors, shadow, opts) {
       opts = opts || {};
-      const titleColor = colors.title, isChild = !!opts.isChild;
+      const titleColor = colors.title, isChild = !!opts.isChild, viewOnly = !!opts.viewOnly;
       // statusColor por item (opcional) sobrepõe a cor padrão da série.
       const sc = this._has(it.statusColor) ? this._esc(it.statusColor) : colors.status;
       const status = this._has(it.status)
@@ -201,9 +261,12 @@ if (!customElements.get('granado-gallery')) {
         ? `<div style="font:800 ${tSize}/1.25 ${FONT};color:${titleColor};min-width:0;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${this._esc(it.title)}</div>`
         : '<div style="flex:1 1 auto"></div>';
       // Chevron: se tem filhos, gira ao expandir; senão, é o "entrar".
-      const chevron = opts.hasChildren
-        ? `<span data-role="chev" aria-hidden="true" style="flex-shrink:0;font:800 22px/1 ${FONT};color:${titleColor};transition:transform .18s ease;transform:${opts.expanded ? 'rotate(90deg)' : 'rotate(0deg)'}">&rsaquo;</span>`
-        : `<span aria-hidden="true" style="flex-shrink:0;font:800 26px/1 ${FONT};color:${titleColor}">&rsaquo;</span>`;
+      // No view-only a setinha some (galeria é só para visualização).
+      const chevron = viewOnly
+        ? ''
+        : (opts.hasChildren
+          ? `<span data-role="chev" aria-hidden="true" style="flex-shrink:0;font:800 22px/1 ${FONT};color:${titleColor};transition:transform .18s ease;transform:${opts.expanded ? 'rotate(90deg)' : 'rotate(0deg)'}">&rsaquo;</span>`
+          : `<span aria-hidden="true" style="flex-shrink:0;font:800 26px/1 ${FONT};color:${titleColor}">&rsaquo;</span>`);
       const subtitle = this._has(it.subtitle)
         ? `<div style="font:12.5px/1.4 ${FONT};color:${colors.subtitle};margin-top:2px">${this._esc(it.subtitle)}</div>`
         : '';
@@ -211,12 +274,26 @@ if (!customElements.get('granado-gallery')) {
         ? `<div style="font:11px/1.4 ${MONO};color:${colors.data};margin-top:4px">${this._esc(it.data)}</div>`
         : '';
 
+      // ── View-only vertical: linha de uma lista limpa ──
+      // Sem borda/raio/sombra/fundo próprios; a divisória em gradiente entre os
+      // itens é inserida pelo _render (fica "estilosa" e some nas pontas).
+      if (viewOnly && !opts.horizontal) {
+        return `<div data-role="item" data-idx="${idx}" style="background:transparent;padding:13px 6px;cursor:default;box-sizing:border-box">` +
+            `<div style="display:flex;align-items:center;gap:10px">${title}${status}</div>` +
+            subtitle +
+            dataLine +
+          `</div>`;
+      }
+
       const pad = isChild ? '10px 12px' : '12px 14px';
-      const mb = isChild ? '8px' : '10px';
+      const mb = opts.horizontal ? '0' : (isChild ? '8px' : '10px');
       const boxShadow = (shadow && !isChild) ? `box-shadow:${SHADOW_BASE};` : '';
+      // No horizontal, cada card tem largura fixa e não encolhe (flex-shrink:0).
+      const widthStyle = opts.horizontal ? `flex:0 0 ${opts.cardWidth};width:${opts.cardWidth};` : '';
+      const cursor = viewOnly ? 'default' : 'pointer';   // view-only: cursor normal
       // Filhos podem ter fundo próprio (child-card-color); senão usam card-color.
       const cardBg = (isChild && this._has(colors.childCard)) ? colors.childCard : colors.card;
-      return `<div data-role="item" data-idx="${idx}"${isChild ? ' data-child="true"' : ''} style="background:${cardBg};border:1px solid ${BORDER};border-radius:10px;padding:${pad};margin-bottom:${mb};${boxShadow}cursor:pointer;transition:box-shadow .15s ease,transform .1s ease;box-sizing:border-box">` +
+      return `<div data-role="item" data-idx="${idx}"${isChild ? ' data-child="true"' : ''} style="background:${cardBg};border:1px solid ${colors.border};border-radius:10px;padding:${pad};margin-bottom:${mb};${widthStyle}${boxShadow}cursor:${cursor};transition:box-shadow .15s ease,transform .1s ease;box-sizing:border-box">` +
           `<div style="display:flex;align-items:center;gap:10px">${title}${status}${chevron}</div>` +
           subtitle +
           dataLine +
@@ -249,16 +326,20 @@ if (!customElements.get('granado-gallery')) {
     _bind() {
       const self = this;
       const shadow = this.enableShadow;
+      const horizontal = this.orientation === 'horizontal';
+      const viewOnly = this.isViewOnly;
       this.querySelectorAll('[data-role="item"]').forEach(function (el) {
-        el.addEventListener('mouseenter', function () { if (shadow && el.getAttribute('data-child') !== 'true') el.style.boxShadow = SHADOW_HOVER; el.style.transform = 'translateY(-1px)'; });
-        el.addEventListener('mouseleave', function () { if (shadow && el.getAttribute('data-child') !== 'true') el.style.boxShadow = SHADOW_BASE; el.style.transform = ''; });
+        if (!viewOnly) {
+          el.addEventListener('mouseenter', function () { if (shadow && el.getAttribute('data-child') !== 'true') el.style.boxShadow = SHADOW_HOVER; el.style.transform = 'translateY(-1px)'; });
+          el.addEventListener('mouseleave', function () { if (shadow && el.getAttribute('data-child') !== 'true') el.style.boxShadow = SHADOW_BASE; el.style.transform = ''; });
+        }
         el.addEventListener('click', function (ev) {
           const idxStr = el.getAttribute('data-idx') || '0';
           if (idxStr.indexOf('.') === -1) {
             // Pai. Se tem filhos, expande/recolhe; senão, dispara o clique.
             const idx = parseInt(idxStr, 10) || 0;
             const item = (self.data || [])[idx] || {};
-            if (Array.isArray(item.children) && item.children.length) { self._toggleExpand(idx); return; }
+            if (!horizontal && Array.isArray(item.children) && item.children.length) { self._toggleExpand(idx); return; }
             self._fire(idx, item, ev, { isChild: false });
           } else {
             // Filho.
