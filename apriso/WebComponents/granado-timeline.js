@@ -8,10 +8,10 @@
    Atributos (todos opcionais):
      line-color  - cor/gradiente da linha vertical. Aceita qualquer valor
                    CSS (inclusive linear-gradient). Default: gradiente Granado.
-     numbered    - "false" oculta o "Etapa X/Y" automático nos itens.
-                   Default: numerado.
-     single-open - "true" mantém só UM item expandido por vez (acordeão).
-                   Default: vários podem ficar abertos.
+     expande-all-items            - "true" inicia com TODOS os itens
+                   expandidos. Default: false (todos recolhidos).
+     expande-single-item-at-time  - "true" = acordeão: ao expandir um item,
+                   recolhe os demais. Default: false (vários podem ficar abertos).
 
    Evento (CustomEvent, bubbles) — repassado dos itens:
      "timeline-toggle" -> detail { open, title, order }
@@ -20,7 +20,7 @@
      <script src="[AprisoScripts]/WebComponents/granado-timeline-item.js"></script>
      <script src="[AprisoScripts]/WebComponents/granado-timeline.js"></script>
 
-     <granado-timeline single-open="true">
+     <granado-timeline expande-single-item-at-time="true">
        <granado-timeline-item icon="⚖️" title="Pesagem" subtitle="MP e etiquetas" status="ouro" badge="6" open="true">
          <p>Conteúdo da etapa de pesagem…</p>
        </granado-timeline-item>
@@ -35,7 +35,7 @@ if (!customElements.get('granado-timeline')) {
   const LINE_DEFAULT = 'linear-gradient(to bottom,#1F7A3D,#C8A85A,#1C7A38)';
 
   class GranadoTimeline extends HTMLElement {
-    static get observedAttributes() { return ['line-color', 'numbered', 'single-open']; }
+    static get observedAttributes() { return ['line-color', 'expande-all-items', 'expande-single-item-at-time']; }
 
     connectedCallback() {
       if (!this._observer) {
@@ -49,10 +49,10 @@ if (!customElements.get('granado-timeline')) {
           this._renderTimer = setTimeout(() => this.render(), 0);
         });
       }
-      // Acordeão: fecha os outros quando um abre (single-open).
+      // Acordeão: fecha os outros quando um abre (expande-single-item-at-time).
       if (!this._toggleBound) {
         this.addEventListener('timeline-toggle', (ev) => {
-          if (this.getAttribute('single-open') !== 'true') return;
+          if (this.getAttribute('expande-single-item-at-time') !== 'true') return;
           if (!ev.detail || !ev.detail.open) return;
           const items = this._items();
           items.forEach((it) => { if (it !== ev.target && it.open) it.open = false; });
@@ -79,7 +79,7 @@ if (!customElements.get('granado-timeline')) {
 
       const items = this._items();
       const lineColor = this.getAttribute('line-color') || LINE_DEFAULT;
-      const numbered = this.getAttribute('numbered') !== 'false';
+      const expandAll = this.getAttribute('expande-all-items') === 'true';
 
       // Estrutura: wrapper relativo + linha vertical + slot de itens.
       const wrap = document.createElement('div');
@@ -100,11 +100,19 @@ if (!customElements.get('granado-timeline')) {
       wrap.appendChild(itemsC);
 
       items.forEach((it, i) => {
+        // Metadados de posição (usados no detail do evento e disponíveis para o
+        // item montar sua própria numeração, se quiser). Sem eyebrow automático.
         it.setAttribute('data-order', String(i + 1));
         it.setAttribute('data-total', String(items.length));
-        it.setAttribute('data-numbered', numbered ? 'true' : 'false');
         itemsC.appendChild(it);   // move (preserva o item e seu conteúdo)
       });
+
+      // expande-all-items: inicia com todos abertos (uma única vez, assim que
+      // os itens existem). Usa setAttribute (não dispara o evento de acordeão).
+      if (expandAll && !this._expandAllApplied && items.length) {
+        items.forEach((it) => it.setAttribute('open', 'true'));
+        this._expandAllApplied = true;
+      }
 
       // troca o conteúdo do host pela nova wrapper (itens já migrados para dentro)
       this.textContent = '';

@@ -10684,23 +10684,25 @@ pop.open();</pre>
 <span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-timeline.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
 
         <h2 class="gd-h2">Uso</h2>
-        <div class="gd-demo">
-          <granado-timeline single-open="true">
-            <granado-timeline-item icon="⚖️" title="Pesagem" subtitle="Matérias-primas e etiquetas" status="ouro" badge="6" open="true">
+        <p class="gd-lead">Exemplo à esquerda, o código exato que o gerou à direita.</p>
+        <div class="gd-split">
+        <div class="gd-demo" style="height:520px;overflow:auto;box-sizing:border-box">
+          <granado-timeline expande-single-item-at-time="true">
+            <granado-timeline-item eyebrow="Etapa 1 de 3" icon="⚖️" title="Pesagem" subtitle="Matérias-primas e etiquetas" status="ouro" badge="6" open="true">
               <div style="font-size:13px;color:#103E20;margin-bottom:8px">6 MPs pesadas · 2 com reetiquetagem pendente.</div>
               <granado-table
                 columns='[{"key":"cod","label":"Código","mono":true},{"key":"mp","label":"Matéria-Prima"},{"key":"lote","label":"Lote","mono":true},{"key":"kg","label":"Pesado (kg)","mono":true,"align":"right"},{"key":"status","label":"Status","align":"center"}]'
                 rows='[{"cod":"MP-001","mp":"Água Purificada","lote":"0641519","kg":"120,500","status":"OK"},{"cod":"MP-002","mp":"Álcool Etílico","lote":"1033625","kg":"18,000","status":"OK"},{"cod":"MP-003","mp":"Essência Rosa","lote":"0720621","kg":"2,350","status":"FORA"}]'>
               </granado-table>
             </granado-timeline-item>
-            <granado-timeline-item icon="⚙️" title="Fabricação" subtitle="Fases InBatch · Reator R-02" status="verde" badge="7">
+            <granado-timeline-item eyebrow="Etapa 2 de 3" icon="⚙️" title="Fabricação" subtitle="Fases InBatch · Reator R-02" status="verde" badge="7">
               <div style="font-size:13px;color:#103E20;margin-bottom:8px">7 fases concluídas · ciclo dentro do padrão.</div>
               <granado-table color="#1F7A3D"
                 columns='[{"key":"fase","label":"Fase"},{"key":"ini","label":"Início","mono":true},{"key":"dur","label":"Duração","mono":true,"align":"right"},{"key":"status","label":"Status","align":"center"}]'
                 rows='[{"fase":"Carga de água","ini":"07:10","dur":"12 min","status":"OK"},{"fase":"Aquecimento","ini":"07:22","dur":"25 min","status":"OK"},{"fase":"Homogeneização","ini":"08:05","dur":"40 min","status":"OK"},{"fase":"Resfriamento","ini":"08:45","dur":"30 min","status":"OK"}]'>
               </granado-table>
             </granado-timeline-item>
-            <granado-timeline-item icon="🔬" title="Qualidade" subtitle="Análises pendentes" status="vermelho" badge="2">
+            <granado-timeline-item eyebrow="Etapa 3 de 3" icon="🔬" title="Qualidade" subtitle="Análises pendentes" status="vermelho" badge="2">
               <div style="font-size:13px;color:#103E20;margin-bottom:8px">2 análises aguardando liberação do CQ.</div>
               <granado-table color="#8C1A1A"
                 columns='[{"key":"analise","label":"Análise"},{"key":"metodo","label":"Método","mono":true},{"key":"resultado","label":"Resultado","align":"center"}]'
@@ -10709,21 +10711,94 @@ pop.open();</pre>
             </granado-timeline-item>
           </granado-timeline>
         </div>
-        <pre class="gd-code"><span class="tk-tag">&lt;granado-timeline</span> <span class="tk-attr">single-open</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span>
-    <span class="tk-tag">&lt;granado-timeline-item</span> <span class="tk-attr">icon</span>=<span class="tk-str">"⚖️"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Pesagem"</span> <span class="tk-attr">subtitle</span>=<span class="tk-str">"MP e etiquetas"</span>
-        <span class="tk-attr">status</span>=<span class="tk-str">"ouro"</span> <span class="tk-attr">badge</span>=<span class="tk-str">"6"</span> <span class="tk-attr">open</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span>
-        <span class="tk-tag">&lt;p&gt;</span>Conteúdo da etapa de pesagem…<span class="tk-tag">&lt;/p&gt;</span>
-    <span class="tk-tag">&lt;/granado-timeline-item&gt;</span>
-    <span class="tk-tag">&lt;granado-timeline-item</span> <span class="tk-attr">icon</span>=<span class="tk-str">"⚙️"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Fabricação"</span> <span class="tk-attr">status</span>=<span class="tk-str">"verde"</span> <span class="tk-attr">badge</span>=<span class="tk-str">"7"</span><span class="tk-tag">&gt;</span> ... <span class="tk-tag">&lt;/granado-timeline-item&gt;</span>
+        <pre class="gd-code" style="height:520px;max-height:520px;overflow:auto"><span class="tk-tag">&lt;granado-timeline</span> <span class="tk-attr">expande-single-item-at-time</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span>
+
+  <span class="tk-tag">&lt;granado-timeline-item</span> <span class="tk-attr">eyebrow</span>=<span class="tk-str">"Etapa 1 de 3"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"⚖️"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Pesagem"</span> <span class="tk-attr">subtitle</span>=<span class="tk-str">"Matérias-primas e etiquetas"</span> <span class="tk-attr">status</span>=<span class="tk-str">"ouro"</span> <span class="tk-attr">badge</span>=<span class="tk-str">"6"</span> <span class="tk-attr">open</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span>
+    <span class="tk-tag">&lt;div</span> <span class="tk-attr">style</span>=<span class="tk-str">"font-size:13px;color:#103E20;margin-bottom:8px"</span><span class="tk-tag">&gt;</span>6 MPs pesadas · 2 com reetiquetagem pendente.<span class="tk-tag">&lt;/div&gt;</span>
+    <span class="tk-tag">&lt;granado-table</span>
+      <span class="tk-attr">columns</span>=<span class="tk-str">'[{"key":"cod","label":"Código","mono":true},{"key":"mp","label":"Matéria-Prima"},{"key":"lote","label":"Lote","mono":true},{"key":"kg","label":"Pesado (kg)","mono":true,"align":"right"},{"key":"status","label":"Status","align":"center"}]'</span>
+      <span class="tk-attr">rows</span>=<span class="tk-str">'[{"cod":"MP-001","mp":"Água Purificada","lote":"0641519","kg":"120,500","status":"OK"},{"cod":"MP-002","mp":"Álcool Etílico","lote":"1033625","kg":"18,000","status":"OK"},{"cod":"MP-003","mp":"Essência Rosa","lote":"0720621","kg":"2,350","status":"FORA"}]'</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
+  <span class="tk-tag">&lt;/granado-timeline-item&gt;</span>
+
+  <span class="tk-tag">&lt;granado-timeline-item</span> <span class="tk-attr">eyebrow</span>=<span class="tk-str">"Etapa 2 de 3"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"⚙️"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Fabricação"</span> <span class="tk-attr">subtitle</span>=<span class="tk-str">"Fases InBatch · Reator R-02"</span> <span class="tk-attr">status</span>=<span class="tk-str">"verde"</span> <span class="tk-attr">badge</span>=<span class="tk-str">"7"</span><span class="tk-tag">&gt;</span>
+    <span class="tk-tag">&lt;div</span> <span class="tk-attr">style</span>=<span class="tk-str">"font-size:13px;color:#103E20;margin-bottom:8px"</span><span class="tk-tag">&gt;</span>7 fases concluídas · ciclo dentro do padrão.<span class="tk-tag">&lt;/div&gt;</span>
+    <span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1F7A3D"</span>
+      <span class="tk-attr">columns</span>=<span class="tk-str">'[{"key":"fase","label":"Fase"},{"key":"ini","label":"Início","mono":true},{"key":"dur","label":"Duração","mono":true,"align":"right"},{"key":"status","label":"Status","align":"center"}]'</span>
+      <span class="tk-attr">rows</span>=<span class="tk-str">'[{"fase":"Carga de água","ini":"07:10","dur":"12 min","status":"OK"},{"fase":"Aquecimento","ini":"07:22","dur":"25 min","status":"OK"},{"fase":"Homogeneização","ini":"08:05","dur":"40 min","status":"OK"},{"fase":"Resfriamento","ini":"08:45","dur":"30 min","status":"OK"}]'</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
+  <span class="tk-tag">&lt;/granado-timeline-item&gt;</span>
+
+  <span class="tk-tag">&lt;granado-timeline-item</span> <span class="tk-attr">eyebrow</span>=<span class="tk-str">"Etapa 3 de 3"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"🔬"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Qualidade"</span> <span class="tk-attr">subtitle</span>=<span class="tk-str">"Análises pendentes"</span> <span class="tk-attr">status</span>=<span class="tk-str">"vermelho"</span> <span class="tk-attr">badge</span>=<span class="tk-str">"2"</span><span class="tk-tag">&gt;</span>
+    <span class="tk-tag">&lt;div</span> <span class="tk-attr">style</span>=<span class="tk-str">"font-size:13px;color:#103E20;margin-bottom:8px"</span><span class="tk-tag">&gt;</span>2 análises aguardando liberação do CQ.<span class="tk-tag">&lt;/div&gt;</span>
+    <span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">color</span>=<span class="tk-str">"#8C1A1A"</span>
+      <span class="tk-attr">columns</span>=<span class="tk-str">'[{"key":"analise","label":"Análise"},{"key":"metodo","label":"Método","mono":true},{"key":"resultado","label":"Resultado","align":"center"}]'</span>
+      <span class="tk-attr">rows</span>=<span class="tk-str">'[{"analise":"pH","metodo":"POP-CQ-002","resultado":"Pendente"},{"analise":"Microbiologia","metodo":"POP-CQ-014","resultado":"Pendente"}]'</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
+  <span class="tk-tag">&lt;/granado-timeline-item&gt;</span>
+
 <span class="tk-tag">&lt;/granado-timeline&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">Criando os itens via JS</h2>
+        <p class="gd-lead">
+          Dá para montar a timeline por código: crie os <code>&lt;granado-timeline-item&gt;</code> com
+          <code>createElement</code>, defina os atributos, coloque o conteúdo em <code>innerHTML</code> e
+          dê <code>appendChild</code> no container — a timeline detecta os novos itens e se reorganiza sozinha.
+        </p>
+        <div class="gd-split">
+        <div class="gd-demo" style="height:360px;overflow:auto;box-sizing:border-box">
+          <granado-timeline id="tl-js" expande-single-item-at-time="true"></granado-timeline>
+        </div>
+        <script>
+          (function () {
+            var tl = document.getElementById('tl-js');
+            var etapas = [
+              { eyebrow: 'Etapa 1 de 3', icon: '⚖️', title: 'Pesagem', subtitle: 'MP e etiquetas', status: 'ouro', badge: '6', open: true, html: '<div style="font-size:13px;color:#103E20">6 MPs pesadas · 2 com reetiquetagem pendente.</div>' },
+              { eyebrow: 'Etapa 2 de 3', icon: '⚙️', title: 'Fabricação', subtitle: 'Reator R-02', status: 'verde', badge: '7', html: '<div style="font-size:13px;color:#103E20">7 fases concluídas · ciclo dentro do padrão.</div>' },
+              { eyebrow: 'Etapa 3 de 3', icon: '🔬', title: 'Qualidade', subtitle: 'Análises pendentes', status: 'vermelho', badge: '2', html: '<div style="font-size:13px;color:#103E20">2 análises aguardando o CQ.</div>' }
+            ];
+            etapas.forEach(function (e) {
+              var item = document.createElement('granado-timeline-item');
+              item.setAttribute('eyebrow', e.eyebrow);
+              item.setAttribute('icon', e.icon);
+              item.setAttribute('title', e.title);
+              item.setAttribute('subtitle', e.subtitle);
+              item.setAttribute('status', e.status);
+              item.setAttribute('badge', e.badge);
+              if (e.open) item.setAttribute('open', 'true');
+              item.innerHTML = e.html;
+              tl.appendChild(item);
+            });
+          })();
+        </script>
+        <pre class="gd-code" style="height:360px;max-height:360px;overflow:auto"><span class="tk-tag">&lt;granado-timeline</span> <span class="tk-attr">id</span>=<span class="tk-str">"tl"</span> <span class="tk-attr">expande-single-item-at-time</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-timeline&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">var</span> tl = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'tl'</span>);
+  <span class="tk-kw">var</span> etapas = [
+    { eyebrow: <span class="tk-str">'Etapa 1 de 3'</span>, icon: <span class="tk-str">'⚖️'</span>, title: <span class="tk-str">'Pesagem'</span>, subtitle: <span class="tk-str">'MP e etiquetas'</span>, status: <span class="tk-str">'ouro'</span>, badge: <span class="tk-str">'6'</span>, open: <span class="tk-keyword">true</span>, html: <span class="tk-str">'&lt;div&gt;6 MPs pesadas…&lt;/div&gt;'</span> },
+    { eyebrow: <span class="tk-str">'Etapa 2 de 3'</span>, icon: <span class="tk-str">'⚙️'</span>, title: <span class="tk-str">'Fabricação'</span>, subtitle: <span class="tk-str">'Reator R-02'</span>, status: <span class="tk-str">'verde'</span>, badge: <span class="tk-str">'7'</span>, html: <span class="tk-str">'&lt;div&gt;7 fases concluídas…&lt;/div&gt;'</span> },
+    { eyebrow: <span class="tk-str">'Etapa 3 de 3'</span>, icon: <span class="tk-str">'🔬'</span>, title: <span class="tk-str">'Qualidade'</span>, subtitle: <span class="tk-str">'Análises pendentes'</span>, status: <span class="tk-str">'vermelho'</span>, badge: <span class="tk-str">'2'</span>, html: <span class="tk-str">'&lt;div&gt;2 análises aguardando o CQ.&lt;/div&gt;'</span> }
+  ];
+  etapas.forEach(<span class="tk-keyword">function</span> (e) {
+    <span class="tk-kw">var</span> item = document.<span class="tk-attr">createElement</span>(<span class="tk-str">'granado-timeline-item'</span>);
+    item.setAttribute(<span class="tk-str">'eyebrow'</span>, e.eyebrow);
+    item.setAttribute(<span class="tk-str">'icon'</span>, e.icon);
+    item.setAttribute(<span class="tk-str">'title'</span>, e.title);
+    item.setAttribute(<span class="tk-str">'subtitle'</span>, e.subtitle);
+    item.setAttribute(<span class="tk-str">'status'</span>, e.status);
+    item.setAttribute(<span class="tk-str">'badge'</span>, e.badge);
+    <span class="tk-keyword">if</span> (e.open) item.setAttribute(<span class="tk-str">'open'</span>, <span class="tk-str">'true'</span>);
+    item.innerHTML = e.html;   <span class="tk-comment">// conteúdo expansível</span>
+    tl.appendChild(item);      <span class="tk-comment">// a timeline reorganiza sozinha</span>
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
 
         <h2 class="gd-h2">API — <code>&lt;granado-timeline&gt;</code> (container)</h2>
         <table class="gd-api">
           <thead><tr><th style="width:150px">Atributo</th><th style="width:150px">Tipo</th><th style="width:120px">Default</th><th>Descrição</th></tr></thead>
           <tbody>
             <tr><td class="col-name">line-color</td><td class="col-type">string (CSS)</td><td class="col-default">gradiente Granado</td><td class="col-desc">Cor/gradiente da linha vertical. Aceita qualquer valor CSS (inclusive <code>linear-gradient</code>).</td></tr>
-            <tr><td class="col-name">numbered</td><td class="col-type">boolean</td><td class="col-default">true</td><td class="col-desc"><code>"false"</code> oculta o eyebrow automático "Etapa X/Y" nos itens.</td></tr>
-            <tr><td class="col-name">single-open</td><td class="col-type">boolean</td><td class="col-default">false</td><td class="col-desc"><code>"true"</code> = acordeão (só um item expandido por vez).</td></tr>
+            <tr><td class="col-name">expande-all-items</td><td class="col-type">boolean</td><td class="col-default">false</td><td class="col-desc"><code>"true"</code> inicia com <strong>todos os itens expandidos</strong>.</td></tr>
+            <tr><td class="col-name">expande-single-item-at-time</td><td class="col-type">boolean</td><td class="col-default">false</td><td class="col-desc"><code>"true"</code> = <strong>acordeão</strong>: ao expandir um item, recolhe os demais.</td></tr>
           </tbody>
         </table>
 
@@ -10737,7 +10812,7 @@ pop.open();</pre>
             <tr><td class="col-name">status</td><td class="col-type">string</td><td class="col-desc">Paleta de cor: <code>verde</code> (default) · <code>ouro</code> · <code>azul</code> · <code>vermelho</code> · <code>alr</code>. Aliases: <code>ok</code>→verde, <code>inf</code>/<code>info</code>→azul, <code>err</code>/<code>per</code>→vermelho, <code>warn</code>→alr.</td></tr>
             <tr><td class="col-name">color</td><td class="col-type">string</td><td class="col-desc">Cor de destaque customizada (sobrepõe o accent do status: borda esquerda, marcador, eyebrow). Aceita hex/rgb/var().</td></tr>
             <tr><td class="col-name">badge</td><td class="col-type">string / número</td><td class="col-desc">Pill opcional no cabeçalho (ex.: contagem).</td></tr>
-            <tr><td class="col-name">eyebrow</td><td class="col-type">string</td><td class="col-desc">Texto acima do título. Se ausente e a timeline numerada, mostra "Etapa X/Y".</td></tr>
+            <tr><td class="col-name">eyebrow</td><td class="col-type">string</td><td class="col-desc">Texto pequeno acima do título (opcional). Ex.: use-o para uma numeração própria como <code>"Etapa 1 de 4"</code>, se quiser. Sem numeração automática.</td></tr>
             <tr><td class="col-name">open</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> começa expandido. Em JS: <code>.open</code> · <code>.toggle()</code> · <code>.expand()</code> · <code>.collapse()</code>.</td></tr>
           </tbody>
         </table>
@@ -10754,7 +10829,7 @@ pop.open();</pre>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong>Ordem dos scripts:</strong> inclua <code>granado-timeline-item.js</code> <em>antes</em> do <code>granado-timeline.js</code>.</li>
           <li><strong>Conteúdo:</strong> o corpo expansível é qualquer HTML dentro do <code>&lt;granado-timeline-item&gt;</code> (Light DOM) — preservado entre re-renders.</li>
-          <li><strong>Numeração automática:</strong> o container define <code>data-order</code>/<code>data-total</code>; o "Etapa X/Y" aparece se não houver <code>eyebrow</code> e <code>numbered</code> não for false.</li>
+          <li><strong>Sem numeração automática:</strong> se quiser um "Etapa X/Y", passe você mesmo no <code>eyebrow</code> do item. O container ainda expõe <code>data-order</code>/<code>data-total</code> (usados no <code>detail</code> do evento).</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
         </ul>
       </section>

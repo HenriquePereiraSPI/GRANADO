@@ -14,8 +14,8 @@
      color     - cor de destaque customizada (sobrepõe o fg do status:
                  borda esquerda, marcador e eyebrow). Aceita hex/rgb/var().
      badge     - pill opcional no cabeçalho (ex.: contagem/rótulo).
-     eyebrow   - texto pequeno acima do título. Se ausente e a timeline
-                 estiver numerada, mostra "Etapa X/Y" automaticamente.
+     eyebrow   - texto pequeno acima do título (opcional). Ex.: use-o para
+                 uma numeração própria como "Etapa 1 de 4", se quiser.
      open      - "true" começa expandido.
 
      O CONTEÚDO expansível é qualquer HTML colocado dentro do elemento.
@@ -46,7 +46,7 @@ if (!customElements.get('granado-timeline-item')) {
 
   class GranadoTimelineItem extends HTMLElement {
     static get observedAttributes() {
-      return ['icon', 'title', 'subtitle', 'status', 'color', 'badge', 'eyebrow', 'open', 'data-order', 'data-total', 'data-numbered'];
+      return ['icon', 'title', 'subtitle', 'status', 'color', 'badge', 'eyebrow', 'open', 'data-order', 'data-total'];
     }
 
     connectedCallback() {
@@ -105,11 +105,15 @@ if (!customElements.get('granado-timeline-item')) {
       card.setAttribute('data-role', 'card');
       card.style.cssText = `background:${SURFACE};border-radius:10px;overflow:hidden;box-sizing:border-box`;
 
-      // Header (botão clicável)
-      const header = document.createElement('button');
-      header.type = 'button';
+      // Header (área clicável). Usamos um <div role="button"> em vez de <button>
+      // DE PROPÓSITO: o Apriso aplica CSS global agressivo em <button> (padding,
+      // altura, line-height, white-space) que vaza para o Light DOM e desfigura o
+      // cabeçalho. Um <div> escapa dessas regras — o layout/padding fica só aqui.
+      const header = document.createElement('div');
       header.setAttribute('data-role', 'header');
-      header.style.cssText = `width:100%;background:transparent;border:none;padding:14px 18px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;font:inherit`;
+      header.setAttribute('role', 'button');
+      header.setAttribute('tabindex', '0');
+      header.style.cssText = `width:100%;box-sizing:border-box;background:transparent;border:none;margin:0;padding:14px 18px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;font:inherit;line-height:1.4;white-space:normal`;
 
       const textWrap = document.createElement('div');
       textWrap.style.cssText = 'flex:1;min-width:0';
@@ -120,14 +124,14 @@ if (!customElements.get('granado-timeline-item')) {
       eyebrow.style.cssText = `font:900 9px/1.4 ${FONT};letter-spacing:.16em;text-transform:uppercase;font-family:${MONO}`;
       const title = document.createElement('span');
       title.setAttribute('data-role', 'title');
-      title.style.cssText = `font:700 16px/1.25 ${FONT};color:${VERDE_ESC}`;
+      title.style.cssText = `font:700 16px/1.3 ${FONT};color:${VERDE_ESC};white-space:normal;text-transform:none;letter-spacing:normal`;
       const badge = document.createElement('span');
       badge.setAttribute('data-role', 'badge');
       badge.style.cssText = 'font-size:10px;font-weight:800;padding:1px 7px;border-radius:8px';
       line1.appendChild(eyebrow); line1.appendChild(title); line1.appendChild(badge);
       const subtitle = document.createElement('div');
       subtitle.setAttribute('data-role', 'subtitle');
-      subtitle.style.cssText = `font-size:11px;color:${TEXT2}`;
+      subtitle.style.cssText = `font-size:11px;line-height:1.4;color:${TEXT2};white-space:normal;text-transform:none;letter-spacing:normal`;
       textWrap.appendChild(line1); textWrap.appendChild(subtitle);
 
       const chevron = document.createElement('span');
@@ -153,6 +157,12 @@ if (!customElements.get('granado-timeline-item')) {
 
       this._els = { marker, card, header, eyebrow, title, subtitle, badge, chevron, body, content: bodyInner };
       header.addEventListener('click', () => { this.toggle(); this._emit(); });
+      // Como o header é um <div role="button">, tratamos o teclado (Enter/Espaço).
+      header.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'Spacebar') {
+          ev.preventDefault(); this.toggle(); this._emit();
+        }
+      });
 
       // Observa filhos diretos que cheguem depois (parser/append dinâmico) e
       // os move para dentro do painel (body). Sem isso, conteúdo declarado no
@@ -196,13 +206,10 @@ if (!customElements.get('granado-timeline-item')) {
       e.card.style.border = `2px solid ${pal.bd}`;
       e.card.style.borderLeft = `5px solid ${accent}`;
 
-      // eyebrow (custom ou "Etapa X/Y")
+      // eyebrow — texto acima do título, exibido APENAS se o item o definir.
+      // (Não há mais numeração automática; se quiser "Etapa X/Y", passe no eyebrow.)
       const eb = this.getAttribute('eyebrow');
-      const numbered = this.getAttribute('data-numbered') !== 'false';
-      const order = this.getAttribute('data-order');
-      let ebText = '';
-      if (eb != null && eb !== '') ebText = eb;
-      else if (numbered && order) ebText = 'Etapa ' + order + '/' + (this.getAttribute('data-total') || order);
+      const ebText = (eb != null && eb !== '') ? eb : '';
       e.eyebrow.textContent = ebText;
       e.eyebrow.style.display = ebText ? '' : 'none';
       e.eyebrow.style.color = accent;
