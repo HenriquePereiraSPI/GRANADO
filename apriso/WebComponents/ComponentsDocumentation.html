@@ -1397,6 +1397,43 @@ tbl.setAttribute('ondoubleclickevent',
         </p>
         <pre class="gd-code">{ cod: 'MP-01006', mat: 'Óleo de Amêndoa', status: 'Desvio', <span class="tk-attr">_bg</span>: <span class="tk-str">'#FFE5E0'</span> }</pre>
 
+        <!-- ===== Linhas com filhos (children) ===== -->
+        <h2 class="gd-h2">Linhas com filhos (expansível)</h2>
+        <p class="gd-lead">
+          Quando um objeto de linha traz <code>children</code> (array de linhas com as mesmas
+          keys), a linha vira <strong>expansível</strong>: ganha um <em>chevron</em> na 1ª coluna e,
+          ao clicar, mostra as linhas-filhas logo abaixo (indentadas). A linha-pai com filhos
+          <strong>não</strong> dispara <code>onclickevent</code> — apenas expande/recolhe; o clique
+          num filho dispara <code>onclickevent</code> com a linha-filha e <code>rowIndex = -1</code>.
+          Filhos ficam <strong>fora</strong> de ordenação, filtro, paginação e export.
+          <em>Clique numa OP para ver as MPs.</em>
+        </p>
+        <div class="gd-demo">
+          <granado-table id="dt-children" tabletitle="Ordens · clique para ver as MPs" childrowcolor="#EEF4FC"></granado-table>
+        </div>
+        <pre class="gd-code"><span class="tk-kw">const</span> rows = [
+  { cod: <span class="tk-str">'OP-0416'</span>, mat: <span class="tk-str">'Loção Rosa 200ml'</span>, pesado: <span class="tk-str">'599,87'</span>, status: <span class="tk-str">'OK'</span>,
+    <span class="tk-comment">// children -> a linha vira expansível</span>
+    children: [
+      { cod: <span class="tk-str">'MP-01001'</span>, mat: <span class="tk-str">'Glicerina USP'</span>, pesado: <span class="tk-str">'44,98'</span>, status: <span class="tk-str">'OK'</span> },
+      { cod: <span class="tk-str">'MP-01002'</span>, mat: <span class="tk-str">'Fenoxietanol'</span>,  pesado: <span class="tk-str">'3,03'</span>,  status: <span class="tk-str">'Desvio'</span> },
+      { cod: <span class="tk-str">'MP-01003'</span>, mat: <span class="tk-str">'Ácido Cítrico'</span>, pesado: <span class="tk-str">'12,45'</span>, status: <span class="tk-str">'OK'</span> }
+    ] },
+  { cod: <span class="tk-str">'OP-0414'</span>, mat: <span class="tk-str">'Creme Hidratante 150g'</span>, pesado: <span class="tk-str">'312,40'</span>, status: <span class="tk-str">'OK'</span>,
+    children: [
+      { cod: <span class="tk-str">'MP-02001'</span>, mat: <span class="tk-str">'Base Aquosa'</span>, pesado: <span class="tk-str">'30,00'</span>, status: <span class="tk-str">'OK'</span> },
+      { cod: <span class="tk-str">'MP-02002'</span>, mat: <span class="tk-str">'Conservante'</span>, pesado: <span class="tk-str">'0,90'</span>,  status: <span class="tk-str">'OK'</span> }
+    ] }
+];
+tbl.setAttribute(<span class="tk-str">'rows'</span>, JSON.stringify(rows));
+
+<span class="tk-comment">// cor de fundo das linhas-filhas (azul bem delicado)</span>
+tbl.setAttribute(<span class="tk-str">'childrowcolor'</span>, <span class="tk-str">'#EEF4FC'</span>);
+
+<span class="tk-comment">// no clique, o filho vem com rowIndex = -1</span>
+tbl.setAttribute(<span class="tk-str">'onclickevent'</span>,
+  <span class="tk-str">"console.log(rowIndex === -1 ? 'MP (filho): ' + row.cod : 'OP: ' + row.cod)"</span>);</pre>
+
         <!-- ===== API ===== -->
         <h2 class="gd-h2">API</h2>
 
@@ -1421,7 +1458,7 @@ tbl.setAttribute('ondoubleclickevent',
               <td class="col-name">rows</td>
               <td class="col-type">JSON array</td>
               <td class="col-default">[]</td>
-              <td class="col-desc">Linhas de dados. Cada objeto tem as keys das colunas. Suporta a chave especial <code>_bg</code> para sobrepor a cor de fundo.</td>
+              <td class="col-desc">Linhas de dados. Cada objeto tem as keys das colunas. Suporta a chave especial <code>_bg</code> (sobrepõe a cor de fundo) e <code>children</code> (array de linhas → a linha vira <strong>expansível</strong>; veja <em>Linhas com filhos</em> acima).</td>
             </tr>
             <tr>
               <td class="col-name">color</td>
@@ -1494,6 +1531,12 @@ tbl.setAttribute('ondoubleclickevent',
               <td class="col-type">string (cor CSS)</td>
               <td class="col-default">"#FEF0CC"</td>
               <td class="col-desc">Cor das linhas alternadas (zebra). Use <code>"none"</code> ou <code>""</code> para desligar. <code>_bg</code> por linha sempre sobrepõe.</td>
+            </tr>
+            <tr>
+              <td class="col-name">childrowcolor</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#FBF7EA"</td>
+              <td class="col-desc">Cor de fundo das <strong>linhas-filhas</strong> (<code>children</code> expandidos).</td>
             </tr>
             <tr>
               <td class="col-name">rowheight</td>
@@ -1614,8 +1657,26 @@ tbl.setAttribute('ondoubleclickevent',
             if (opts && opts.ondblclick) t.setAttribute('ondoubleclickevent', opts.ondblclick);
           }
 
+          // Dataset em árvore (linhas com children) para o demo expansível
+          const rowsTree = [
+            { cod: 'OP-0416', mat: 'Loção Rosa 200ml', pesado: '599,87', status: 'OK', children: [
+              { cod: 'MP-01001', mat: 'Glicerina USP',  pesado: '44,98', status: 'OK' },
+              { cod: 'MP-01002', mat: 'Fenoxietanol',   pesado: '3,03',  status: 'Desvio' },
+              { cod: 'MP-01003', mat: 'Ácido Cítrico',  pesado: '12,45', status: 'OK' }
+            ] },
+            { cod: 'OP-0414', mat: 'Creme Hidratante 150g', pesado: '312,40', status: 'OK', children: [
+              { cod: 'MP-02001', mat: 'Base Aquosa',    pesado: '30,00', status: 'OK' },
+              { cod: 'MP-02002', mat: 'Conservante',    pesado: '0,90',  status: 'OK' }
+            ] }
+          ];
+
           // Demos
           setup('dt-basic',      colsBasic, { rows: rows.slice(0, 4) });
+          setup('dt-children',   colsBasic, {
+            rows: rowsTree,
+            onrender: renderStatusBadge,
+            onclick: "console.log(rowIndex === -1 ? 'MP (filho): ' + row.cod : 'OP: ' + row.cod);"
+          });
           setup('dt-render',     colsFull,  { rows: rows.slice(0, 6), onrender: renderStatusBadge });
           setup('dt-paged',      colsFull,  { onrender: renderStatusBadge });
           setup('dt-filtersort', colsFull,  { onrender: renderStatusBadge });

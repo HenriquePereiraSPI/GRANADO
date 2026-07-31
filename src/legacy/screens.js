@@ -2813,7 +2813,7 @@ export const SCREENS = {
                 items.push({
                   title: mat,
                   subtitle: '#' + num + ' · ' + cod + ' · Lote ' + lote,
-                  data: '🎯 ' + alvo + ' → ⚖️ ' + pes + ' · Δ ' + varc + ' · 📦 ' + gai,
+                  data: '🎯 ' + alvo + ' → ⚖️ ' + pes,
                   status: st, statusColor: '#1C7A38'
                 });
               } else {

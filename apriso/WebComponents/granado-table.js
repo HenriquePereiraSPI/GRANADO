@@ -28,6 +28,14 @@
      rows                - JSON array. Cada linha: objeto com chaves = key das colunas.
                            Linha pode ter "_bg" para sobrepor a cor de fundo
                            padrao (ex: destacar uma linha especifica).
+                           Linha pode ter "children" (array de linhas, mesmas
+                           keys): a linha vira EXPANSIVEL — ganha um chevron na
+                           1a coluna e, ao clicar, mostra as linhas-filhas logo
+                           abaixo (indentadas). A linha-pai com filhos NAO dispara
+                           onclickevent (apenas expande/recolhe); o clique num
+                           filho dispara onclickevent com a linha-filha e
+                           rowIndex = -1. Filhos nao entram em ordenacao, filtro,
+                           paginacao nem export.
      color               - cor da faixa lateral (default: #1C5C31)
      onrender            - JS por celula. Variaveis: cell, col, row, rowIndex.
                            Retorne string com o HTML da celula.
@@ -51,6 +59,8 @@
      rowaltcolor         - cor de fundo das linhas alternadas (zebra).
                            Default: "#FEF0CC". Use "none" ou "" para desabilitar.
                            "_bg" por linha sempre sobrepoe esta cor.
+     childrowcolor       - cor de fundo das linhas-filhas (children expandidos).
+                           Default: "#FBF7EA".
      rowheight           - padding vertical das celulas (CSS valido).
                            Default: "4px" (linhas finas). Aumente para
                            "8px", "12px", etc. para linhas mais altas.
@@ -100,7 +110,7 @@
 if (!customElements.get('granado-table')) {
   class GranadoTable extends HTMLElement {
     static get observedAttributes() {
-      return ['columns', 'rows', 'color', 'onrender', 'onclickevent', 'ondoubleclickevent', 'isenablepagination', 'pagesize', 'tablelayout', 'isenableexportcsv', 'isenableexportpdf', 'exportfilename', 'tabletitle', 'rowaltcolor', 'rowheight', 'isenablefilter', 'isenablesort'];
+      return ['columns', 'rows', 'color', 'onrender', 'onclickevent', 'ondoubleclickevent', 'isenablepagination', 'pagesize', 'tablelayout', 'isenableexportcsv', 'isenableexportpdf', 'exportfilename', 'tabletitle', 'rowaltcolor', 'childrowcolor', 'rowheight', 'isenablefilter', 'isenablesort'];
     }
 
     constructor() {
@@ -110,6 +120,7 @@ if (!customElements.get('granado-table')) {
       this._filterDocHandler = null;
       this._globalFilter = '';
       this._sort = { key: null, dir: null };
+      this._expanded = new Set();   // linhas-pai expandidas (por __i estável)
     }
 
     connectedCallback() { this.render(); }
@@ -118,19 +129,25 @@ if (!customElements.get('granado-table')) {
 
     attributeChangedCallback(name) {
       if (name === 'rows' || name === 'pagesize' || name === 'isenablepagination') this._page = 0;
+      if (name === 'rows' || name === 'columns') this._expanded = new Set();   // dados novos: recolhe tudo
       this.render();
     }
 
     render() {
       const columns = JSON.parse(this.getAttribute('columns') || '[]');
       const allRows = JSON.parse(this.getAttribute('rows') || '[]');
+      // Índice estável por linha (sobrevive a filtro/ordenação/paginação) —
+      // usado como chave do estado de expansão dos "children".
+      allRows.forEach((r, idx) => { if (r && typeof r === 'object') r.__i = idx; });
+      const hasChildrenAny = allRows.some(r => r && Array.isArray(r.children) && r.children.length > 0);
       const color = this.getAttribute('color') || '#1C5C31';
       const onRender = new Function('cell', 'col', 'row', 'rowIndex', this.getAttribute('onrender') || 'return cell;');
       const onClickAttr = this.getAttribute('onclickevent');
       const onDblClickAttr = this.getAttribute('ondoubleclickevent');
       const hasClick = !!onClickAttr;
       const hasDblClick = !!onDblClickAttr;
-      const interactive = hasClick || hasDblClick;
+      // Expansível também torna as linhas "interativas" (clicáveis) mesmo sem onclick.
+      const interactive = hasClick || hasDblClick || hasChildrenAny;
 
       const isFilterEnabled = this.getAttribute('isenablefilter') !== 'false';
       const isSortEnabled = this.getAttribute('isenablesort') !== 'false';
@@ -176,22 +193,21 @@ if (!customElements.get('granado-table')) {
       const rowAltAttr = this.getAttribute('rowaltcolor');
       const rowAltColor = (rowAltAttr === 'none' || rowAltAttr === '') ? '' : (rowAltAttr || '#FEF0CC');
 
+      const childRowColor = this.getAttribute('childrowcolor') || '#FBF7EA';
+      const ctx = { columns, onRender, TD_BASE, MONO, color, hasClick, hasDblClick, childBg: childRowColor };
       const body = pageRows.map((row, i) => {
         const globalIdx = pageStart + i;
-        const tds = columns.map(col => {
-          const value = row[col.key];
-          const html = onRender(value, col, row, globalIdx);
-          const align = col.align ? `;text-align:${col.align}` : '';
-          const overflow = col.width ? ';overflow:hidden;text-overflow:ellipsis;white-space:nowrap' : '';
-          const style = TD_BASE + align + (col.mono ? MONO : '') + overflow + (col.cellStyle ? ';' + col.cellStyle : '');
-          return `<td style="${style}">${html}</td>`;
-        }).join('');
-        const bgColor = row._bg || (rowAltColor && i % 2 === 1 ? rowAltColor : '');
-        const trBg = bgColor ? `;background:${bgColor}` : '';
-        const trCursor = interactive ? 'cursor:pointer' : '';
-        const hoverIn = `this.style.background='#ECE3C2'`;
-        const hoverOut = `this.style.background=this.dataset.bg||''`;
-        return `<tr style="${trCursor}${trBg}" data-row="${globalIdx}" data-bg="${bgColor}" onmouseover="${hoverIn}" onmouseout="${hoverOut}">${tds}</tr>`;
+        const hasCh = Array.isArray(row.children) && row.children.length > 0;
+        const expanded = hasCh && this._expanded.has(row.__i);
+        const altBg = row._bg || (rowAltColor && i % 2 === 1 ? rowAltColor : '');
+        let html = this._rowTrHtml(row, ctx, { globalIdx, hasChildren: hasCh, expanded, altBg });
+        // Linhas-filhas renderizadas logo abaixo da linha-pai, quando expandida.
+        if (expanded) {
+          html += row.children.map((ch, ci) => this._rowTrHtml(ch || {}, ctx, {
+            globalIdx, isChild: true, parentI: row.__i, childIdx: ci, childClickable: hasClick
+          })).join('');
+        }
+        return html;
       }).join('');
 
       const tableLayout = this.getAttribute('tablelayout') === 'fixed' ? 'fixed' : 'auto';
@@ -492,35 +508,89 @@ if (!customElements.get('granado-table')) {
       });
     }
 
-    _wireRowEvents(allRows, pageStart, hasClick, hasDblClick, onClickAttr, onDblClickAttr) {
+    // Monta o <tr> de uma linha (pai ou filho). No pai com filhos, injeta o
+    // chevron na 1ª célula; nos filhos, indenta a 1ª célula.
+    _rowTrHtml(row, ctx, opts) {
+      const { columns, onRender, TD_BASE, MONO, color } = ctx;
+      const isChild = !!opts.isChild;
+      const tds = columns.map((col, ci) => {
+        const value = row[col.key];
+        let html = onRender(value, col, row, opts.globalIdx);
+        if (ci === 0) {
+          if (opts.hasChildren) {
+            html = `<span data-role="chev" aria-hidden="true" style="display:inline-block;width:10px;margin-right:7px;color:${color};font-weight:800;transition:transform .15s ease;transform:rotate(${opts.expanded ? 90 : 0}deg)">&rsaquo;</span>` + html;
+          } else if (isChild) {
+            html = `<span aria-hidden="true" style="display:inline-block;width:17px"></span>` + html;
+          }
+        }
+        const align = col.align ? `;text-align:${col.align}` : '';
+        const overflow = col.width ? ';overflow:hidden;text-overflow:ellipsis;white-space:nowrap' : '';
+        const style = TD_BASE + align + (col.mono ? MONO : '') + overflow + (col.cellStyle ? ';' + col.cellStyle : '');
+        return `<td style="${style}">${html}</td>`;
+      }).join('');
+
+      const bgColor = isChild ? (ctx.childBg || '') : (opts.altBg || '');
+      const trBg = bgColor ? `;background:${bgColor}` : '';
+      const clickable = isChild
+        ? !!opts.childClickable
+        : (opts.hasChildren || ctx.hasClick || ctx.hasDblClick);
+      const trCursor = clickable ? 'cursor:pointer' : '';
+      const hoverIn = `this.style.background='#ECE3C2'`;
+      const hoverOut = `this.style.background=this.dataset.bg||''`;
+      const idAttrs = isChild
+        ? `data-child="1" data-parent="${opts.parentI}" data-cidx="${opts.childIdx}"`
+        : `data-row="${opts.globalIdx}" data-hi="${row.__i}"`;
+      return `<tr style="${trCursor}${trBg}" ${idAttrs} data-bg="${bgColor}" onmouseover="${hoverIn}" onmouseout="${hoverOut}">${tds}</tr>`;
+    }
+
+    _toggleExpand(hi) {
+      if (!this._expanded) this._expanded = new Set();
+      if (this._expanded.has(hi)) this._expanded.delete(hi); else this._expanded.add(hi);
+      this.render();
+    }
+
+    _wireRowEvents(sortedRows, pageStart, hasClick, hasDblClick, onClickAttr, onDblClickAttr) {
       const onClick = hasClick ? new Function('row', 'rowIndex', 'event', onClickAttr) : null;
       const onDblClick = hasDblClick ? new Function('row', 'rowIndex', 'event', onDblClickAttr) : null;
+      const self = this;
 
-      this.querySelectorAll('tbody tr').forEach((tr, i) => {
-        const globalIdx = pageStart + i;
+      // Linhas-pai (data-row): pai com filhos expande/recolhe; senão, dispara o clique.
+      this.querySelectorAll('tbody tr[data-row]').forEach(tr => {
+        const globalIdx = parseInt(tr.dataset.row, 10);
+        const hi = parseInt(tr.dataset.hi, 10);
+        const row = sortedRows[globalIdx];
+        const hasCh = row && Array.isArray(row.children) && row.children.length > 0;
         let clickTimer = null;
 
-        if (onClick) {
-          tr.addEventListener('click', e => {
-            if (!hasDblClick) {
-              onClick(allRows[globalIdx], globalIdx, e);
-              return;
-            }
-            if (clickTimer) clearTimeout(clickTimer);
-            clickTimer = setTimeout(() => {
-              clickTimer = null;
-              onClick(allRows[globalIdx], globalIdx, e);
-            }, 250);
-          });
-        }
+        tr.addEventListener('click', e => {
+          if (hasCh) { self._toggleExpand(hi); return; }   // pai com filhos: só expande
+          if (!onClick) return;
+          if (!hasDblClick) { onClick(row, globalIdx, e); return; }
+          if (clickTimer) clearTimeout(clickTimer);
+          clickTimer = setTimeout(() => { clickTimer = null; onClick(row, globalIdx, e); }, 250);
+        });
 
-        if (onDblClick) {
+        if (onDblClick && !hasCh) {
           tr.addEventListener('dblclick', e => {
             if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
-            onDblClick(allRows[globalIdx], globalIdx, e);
+            onDblClick(row, globalIdx, e);
           });
         }
       });
+
+      // Linhas-filhas (data-child): se houver onclick, dispara com a linha filha
+      // (rowIndex = -1 para sinalizar que é um filho).
+      if (onClick) {
+        this.querySelectorAll('tbody tr[data-child]').forEach(tr => {
+          const parentHi = parseInt(tr.dataset.parent, 10);
+          const cidx = parseInt(tr.dataset.cidx, 10);
+          tr.addEventListener('click', e => {
+            const parent = sortedRows.find(r => r && r.__i === parentHi);
+            const ch = (parent && parent.children) ? parent.children[cidx] : null;
+            if (ch) onClick(ch, -1, e);
+          });
+        });
+      }
     }
 
     // ------------------------------------------------------------
