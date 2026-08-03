@@ -385,6 +385,7 @@
           <a class="gd-link" href="#GRD_API_GetReasonCode">GRD_API_GetReasonCode</a>
           <a class="gd-link" href="#GRD_API_GetUsers">GRD_API_GetUsers</a>
           <a class="gd-link" href="#GRD_API_GetEquipmentInformation">GRD_API_GetEquipmentInformation</a>
+          <a class="gd-link" href="#GRD_API_GetShift">GRD_API_GetShift</a>
         </div>
       </div>
 
@@ -458,6 +459,7 @@
   <span class="tk-key">"CheckListID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span><span class="tk-punc">,</span>
   <span class="tk-key">"WIPOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000001"</span><span class="tk-punc">,</span>
   <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000032"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ResourceNameWorkcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"100000045"</span><span class="tk-punc">,</span>
   <span class="tk-key">"CheckPoints"</span><span class="tk-punc">:</span> [
     { <span class="tk-key">"CheckpointID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckpointValue"</span><span class="tk-punc">:</span> { <span class="tk-key">"Checked"</span><span class="tk-punc">:</span> <span class="tk-num">1</span><span class="tk-punc">,</span> <span class="tk-key">"CustomValue"</span><span class="tk-punc">:</span> <span class="tk-str">"1.500"</span><span class="tk-punc">,</span> <span class="tk-key">"AditionalInformation"</span><span class="tk-punc">:</span> <span class="tk-str">"Alguma informação do checklist"</span> } }<span class="tk-punc">,</span>
     { <span class="tk-key">"CheckpointID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000003"</span><span class="tk-punc">,</span> <span class="tk-key">"CheckpointValue"</span><span class="tk-punc">:</span> { <span class="tk-key">"Checked"</span><span class="tk-punc">:</span> <span class="tk-num">1</span><span class="tk-punc">,</span> <span class="tk-key">"CustomValue"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"AditionalInformation"</span><span class="tk-punc">:</span> <span class="tk-str">""</span> } }<span class="tk-punc">,</span>
@@ -501,6 +503,12 @@
               <td class="col-type">string</td>
               <td class="col-req">Não</td>
               <td class="col-desc">Identificador do recurso/equipamento onde o checklist foi executado. Opcional — quando não for informar, envie <code>"-1"</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name gd-nest">ResourceNameWorkcenter</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Não</td>
+              <td class="col-desc">Identificador do <strong>workcenter</strong> (centro de trabalho) associado ao apontamento. Opcional — quando não for informar, envie <code>"-1"</code>.</td>
             </tr>
             <tr>
               <td class="col-name gd-nest">CheckPoints</td>
@@ -2782,6 +2790,77 @@
             <code>Attribute_</code> (texto); use <code>Value_</code> para os numéricos.</li>
           <li><strong>EquipmentResourceName:</strong> é o mesmo <code>ResourceName</code> devolvido por
             <a class="gd-link" href="#GRD_API_GetOrganizationalTree">GRD_API_GetOrganizationalTree</a>.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetShift
+           ============================================================ -->
+      <section id="GRD_API_GetShift">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetShift</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera as informações dos turnos</strong> — devolve a lista de turnos
+          (<code>Shifts</code>) com o período de trabalho, horários de início/fim e os
+          equivalentes em minutos do dia (<code>MinIni</code>/<code>MinFim</code>).
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetShift</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON vazio. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>Shifts</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON) — <strong>sem parâmetros</strong>:</p>
+        <pre class="gd-code">{}</pre>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Informações recuperadas com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Shifts"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"WorkPeriod"</span><span class="tk-punc">:</span> <span class="tk-str">"MANHA"</span><span class="tk-punc">,</span> <span class="tk-key">"ScheduleStartTime"</span><span class="tk-punc">:</span> <span class="tk-str">"06:00:00"</span><span class="tk-punc">,</span> <span class="tk-key">"ScheduleEndTime"</span><span class="tk-punc">:</span> <span class="tk-str">"17:59:00"</span><span class="tk-punc">,</span> <span class="tk-key">"MinIni"</span><span class="tk-punc">:</span> <span class="tk-str">"360"</span><span class="tk-punc">,</span> <span class="tk-key">"MinFim"</span><span class="tk-punc">:</span> <span class="tk-str">"1079"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WorkPeriod"</span><span class="tk-punc">:</span> <span class="tk-str">"NOITE"</span><span class="tk-punc">,</span> <span class="tk-key">"ScheduleStartTime"</span><span class="tk-punc">:</span> <span class="tk-str">"18:00:00"</span><span class="tk-punc">,</span> <span class="tk-key">"ScheduleEndTime"</span><span class="tk-punc">:</span> <span class="tk-str">"05:59:00"</span><span class="tk-punc">,</span> <span class="tk-key">"MinIni"</span><span class="tk-punc">:</span> <span class="tk-str">"1080"</span><span class="tk-punc">,</span> <span class="tk-key">"MinFim"</span><span class="tk-punc">:</span> <span class="tk-str">"359"</span> }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as informações foram recuperadas com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">Shifts</td><td class="col-type">array&lt;turno&gt;</td><td class="col-desc">Lista de turnos cadastrados. Campos de cada item abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada <code>Shift</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">WorkPeriod</td><td class="col-type">string</td><td class="col-desc">Nome/identificação do turno (ex.: <code>"MANHA"</code>, <code>"NOITE"</code>).</td></tr>
+            <tr><td class="col-name">ScheduleStartTime</td><td class="col-type">string (hh:mm:ss)</td><td class="col-desc">Horário de início do turno.</td></tr>
+            <tr><td class="col-name">ScheduleEndTime</td><td class="col-type">string (hh:mm:ss)</td><td class="col-desc">Horário de fim do turno.</td></tr>
+            <tr><td class="col-name">MinIni</td><td class="col-type">string (número)</td><td class="col-desc">Início do turno em <strong>minutos do dia</strong> (0–1439). Ex.: <code>"360"</code> = 06:00.</td></tr>
+            <tr><td class="col-name">MinFim</td><td class="col-type">string (número)</td><td class="col-desc">Fim do turno em <strong>minutos do dia</strong> (0–1439). Ex.: <code>"1079"</code> = 17:59.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Minutos do dia:</strong> <code>MinIni</code>/<code>MinFim</code> são o horário convertido em minutos desde 00:00 — úteis para comparar/faixar sem parsear <code>hh:mm:ss</code>.</li>
+          <li><strong>Turno que cruza a meia-noite:</strong> quando <code>MinFim &lt; MinIni</code> (ex.: NOITE, <code>1080</code> → <code>359</code>), o turno vira o dia — a faixa vale de <code>MinIni</code> até 1439 e de 0 até <code>MinFim</code>.</li>
         </ul>
       </section>
 
