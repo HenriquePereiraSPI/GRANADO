@@ -388,6 +388,7 @@
           <a class="gd-link" href="#GRD_API_GetShift">GRD_API_GetShift</a>
           <a class="gd-link" href="#GRD_API_GetWipOrder">GRD_API_GetWipOrder</a>
           <a class="gd-link" href="#GRD_API_GetCage">GRD_API_GetCage</a>
+          <a class="gd-link" href="#GRD_API_GetWipOrderSimplified">GRD_API_GetWipOrderSimplified</a>
         </div>
       </div>
 
@@ -3166,6 +3167,118 @@
             <tr><td class="col-name">Active</td><td class="col-type">string (bool)</td><td class="col-desc">Indica se a gaiola está ativa (<code>"True"</code> / <code>"False"</code>).</td></tr>
           </tbody>
         </table>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetWipOrderSimplified
+           ============================================================ -->
+      <section id="GRD_API_GetWipOrderSimplified">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetWipOrderSimplified</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera as informações da ordem de forma simplificada</strong> — apenas o
+          <em>header</em> (sem componentes/pesagem). Devolve a lista <code>OrderSimplified</code> com
+          os dados essenciais da ordem e o progresso de itens (<code>OkItems</code>/<code>TotalItems</code>).
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetWipOrderSimplified</span>
+        </div>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"4874454|-1"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">WipOrderNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">
+                Número da ordem (WIP Order). Aceita o formato <code>"WipOrderNo|WipOrderType"</code>
+                (separado por <code>|</code>); use <code>"-1"</code> na 2ª parte para não filtrar por tipo
+                (ex.: <code>"4874454|-1"</code>).
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+  <span class="tk-key">"OrderSimplified"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"620942"</span><span class="tk-punc">,</span> <span class="tk-key">"WipOrderType"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"OrderStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"Started"</span><span class="tk-punc">,</span> <span class="tk-key">"UOM"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReleaseDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/4/2025 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"175.0000000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ExpectedStartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"4/28/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"ExpectedFinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/1900 12:00:00 AM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ProductIDResult"</span><span class="tk-punc">:</span> <span class="tk-str">"100024300"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNoResult"</span><span class="tk-punc">:</span> <span class="tk-str">"2985860"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"PERFUME PHEBO PATCHOULI"</span><span class="tk-punc">,</span> <span class="tk-key">"LotResult"</span><span class="tk-punc">:</span> <span class="tk-str">"5853/2025"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Facility"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span><span class="tk-punc">,</span> <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"OkItems"</span><span class="tk-punc">:</span> <span class="tk-str">"7"</span><span class="tk-punc">,</span> <span class="tk-key">"TotalItems"</span><span class="tk-punc">:</span> <span class="tk-str">"7"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TotalItemsFormatted"</span><span class="tk-punc">:</span> <span class="tk-str">"7/7"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/29/2026 1:30:11 PM"</span>
+    }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as informações foram recuperadas com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno (vazia em caso de sucesso).</td></tr>
+            <tr><td class="col-name">OrderSimplified</td><td class="col-type">array&lt;ordem&gt;</td><td class="col-desc">Header(s) da ordem. Campos de cada item abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada <code>OrderSimplified</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:210px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">WipOrderNo</td><td class="col-type">string</td><td class="col-desc">Número da ordem.</td></tr>
+            <tr><td class="col-name">WipOrderType</td><td class="col-type">string</td><td class="col-desc">Tipo da ordem.</td></tr>
+            <tr><td class="col-name">OrderStatus</td><td class="col-type">string</td><td class="col-desc">Status da ordem (ex.: <code>"Started"</code>).</td></tr>
+            <tr><td class="col-name">UOM</td><td class="col-type">string</td><td class="col-desc">Unidade de medida (ex.: <code>"KG"</code>).</td></tr>
+            <tr><td class="col-name">ReleaseDate</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data de liberação da ordem.</td></tr>
+            <tr><td class="col-name">Quantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade planejada da ordem.</td></tr>
+            <tr><td class="col-name">ExpectedStartDate</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data prevista de início.</td></tr>
+            <tr><td class="col-name">ExpectedFinishDate</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data prevista de término. <code>"1/1/1900 …"</code> indica não preenchida.</td></tr>
+            <tr><td class="col-name">ProductIDResult</td><td class="col-type">string</td><td class="col-desc">ID do produto resultante (produto acabado).</td></tr>
+            <tr><td class="col-name">ProductNoResult</td><td class="col-type">string</td><td class="col-desc">Número/código do produto resultante.</td></tr>
+            <tr><td class="col-name">ProductDescription</td><td class="col-type">string</td><td class="col-desc">Descrição do produto resultante (ex.: <code>"PERFUME PHEBO PATCHOULI"</code>).</td></tr>
+            <tr><td class="col-name">LotResult</td><td class="col-type">string</td><td class="col-desc">Lote do produto resultante (ex.: <code>"5853/2025"</code>).</td></tr>
+            <tr><td class="col-name">Facility</td><td class="col-type">string</td><td class="col-desc">Facility/etapa da ordem (ex.: <code>"Pesagem"</code>).</td></tr>
+            <tr><td class="col-name">Workcenter</td><td class="col-type">string</td><td class="col-desc">Centro de trabalho (pode vir vazio).</td></tr>
+            <tr><td class="col-name">OkItems</td><td class="col-type">string (número)</td><td class="col-desc">Itens concluídos/OK da ordem.</td></tr>
+            <tr><td class="col-name">TotalItems</td><td class="col-type">string (número)</td><td class="col-desc">Total de itens da ordem.</td></tr>
+            <tr><td class="col-name">TotalItemsFormatted</td><td class="col-type">string</td><td class="col-desc">Progresso formatado <code>OkItems/TotalItems</code> (ex.: <code>"7/7"</code>).</td></tr>
+            <tr><td class="col-name">CreatedOn</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data/hora de criação da ordem.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Somente header:</strong> versão enxuta de <a class="gd-link" href="#GRD_API_GetWipOrder">GRD_API_GetWipOrder</a> — não traz componentes nem o bloco de pesagem.</li>
+          <li><strong>Progresso:</strong> use <code>TotalItemsFormatted</code> para exibir direto (ex.: <code>"7/7"</code>) ou <code>OkItems</code>/<code>TotalItems</code> para cálculos.</li>
+        </ul>
       </section>
 
       <!-- ============================================================

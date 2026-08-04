@@ -567,7 +567,7 @@ export default function QualidadeFilaReconciliacaoScreen() {
                 <th title="ID da reconciliação">#</th>
                 <th>Lote<br />PA</th>
                 <th>Produto</th>
-                <th title="Prioridade do PCP — sinaliza lotes preferenciais">🚩 PCP</th>
+                <th title="Prioridade do PCP — sinaliza lotes preferenciais">🚩 PrioridadePCP</th>
                 <th>Processo</th>
                 <th>Status do<br />Processo</th>
                 <th>Última<br />Atualização</th>
