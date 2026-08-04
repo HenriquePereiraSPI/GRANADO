@@ -400,6 +400,34 @@
     <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span><span class="tk-tag">&gt;</span>
 <span class="tk-tag">&lt;/granado-simple-card&gt;</span></pre>
 
+        <!-- ===== Terceiro texto (caption) ===== -->
+        <h2 class="gd-h2">Terceiro texto (<code>caption</code>)</h2>
+        <p class="gd-lead">
+          Além de <code>title</code> e <code>subtitle</code>, o card aceita um 3º texto
+          (<code>caption</code>) exibido abaixo do subtítulo. Cada um dos três tem
+          <strong>cor</strong> e <strong>tamanho de fonte</strong> próprios
+          (<code>text-color</code>/<code>title-size</code>, <code>subtitle-color</code>/<code>subtitle-size</code>,
+          <code>caption-color</code>/<code>caption-size</code>).
+        </p>
+        <div class="gd-demo">
+          <granado-simple-card style="max-width:320px"
+            title="OP-2025-0042"
+            subtitle="Shampoo Phebo · 5000un"
+            caption="Atualizado há 3 min · turno A"
+            color="#1C5C31"
+            caption-color="#8A8575"
+            caption-size="11px">
+          </granado-simple-card>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-simple-card</span>
+    <span class="tk-attr">title</span>=<span class="tk-str">"OP-2025-0042"</span>
+    <span class="tk-attr">subtitle</span>=<span class="tk-str">"Shampoo Phebo · 5000un"</span>
+    <span class="tk-attr">caption</span>=<span class="tk-str">"Atualizado há 3 min · turno A"</span>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#1C5C31"</span>
+    <span class="tk-attr">caption-color</span>=<span class="tk-str">"#8A8575"</span>
+    <span class="tk-attr">caption-size</span>=<span class="tk-str">"11px"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-simple-card&gt;</span></pre>
+
         <!-- ===== Interativo ===== -->
         <h2 class="gd-h2">Interativo (clicável)</h2>
         <p class="gd-lead">
@@ -532,6 +560,12 @@
               <td class="col-desc">Texto secundário, exibido logo abaixo do título.</td>
             </tr>
             <tr>
+              <td class="col-name">caption</td>
+              <td class="col-type">string</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">3º texto, exibido <strong>abaixo do subtítulo</strong>. Só aparece quando informado.</td>
+            </tr>
+            <tr>
               <td class="col-name">color</td>
               <td class="col-type">string (cor CSS)</td>
               <td class="col-default">"#1C5C31"</td>
@@ -572,6 +606,12 @@
               <td class="col-desc">Sobrescreve a cor do subtítulo (cinza neutro por padrão).</td>
             </tr>
             <tr>
+              <td class="col-name">caption-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#8A8575"</td>
+              <td class="col-desc">Sobrescreve a cor do 3º texto (<code>caption</code>).</td>
+            </tr>
+            <tr>
               <td class="col-name">title-size</td>
               <td class="col-type">string (tamanho CSS)</td>
               <td class="col-default">"16px"</td>
@@ -588,6 +628,33 @@
                 Tamanho da fonte do subtítulo. Aceita qualquer unidade CSS (<code>px</code>,
                 <code>rem</code>, <code>em</code>).
               </td>
+            </tr>
+            <tr>
+              <td class="col-name">caption-size</td>
+              <td class="col-type">string (tamanho CSS)</td>
+              <td class="col-default">"12px"</td>
+              <td class="col-desc">
+                Tamanho da fonte do 3º texto (<code>caption</code>). Aceita qualquer unidade CSS
+                (<code>px</code>, <code>rem</code>, <code>em</code>).
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">title-weight</td>
+              <td class="col-type">string (peso CSS)</td>
+              <td class="col-default">"700"</td>
+              <td class="col-desc">Peso da fonte do título (<code>400</code>, <code>600</code>, <code>700</code>, <code>bold</code>…).</td>
+            </tr>
+            <tr>
+              <td class="col-name">subtitle-weight</td>
+              <td class="col-type">string (peso CSS)</td>
+              <td class="col-default">"400"</td>
+              <td class="col-desc">Peso da fonte do subtítulo.</td>
+            </tr>
+            <tr>
+              <td class="col-name">caption-weight</td>
+              <td class="col-type">string (peso CSS)</td>
+              <td class="col-default">"400"</td>
+              <td class="col-desc">Peso da fonte do 3º texto (<code>caption</code>).</td>
             </tr>
             <tr>
               <td class="col-name">icon-color</td>

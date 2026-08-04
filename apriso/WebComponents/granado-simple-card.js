@@ -5,6 +5,8 @@
    Atributos:
      title            - texto do titulo
      subtitle         - texto secundario
+     caption          - 3o texto, exibido ABAIXO do subtitulo (opcional).
+                        So aparece quando informado.
      color            - cor base do card. Por padrao a faixa de destaque,
                         o titulo, o icone e a borda fina DERIVAM desta cor.
      border-position  - posicao da faixa de destaque ("borda mais forte"):
@@ -15,6 +17,7 @@
    Overrides opcionais de cor (cada um sobrepoe o default vindo de `color`):
      text-color       - cor do titulo            (default: color)
      subtitle-color   - cor do subtitulo         (default: #4B5563)
+     caption-color    - cor do 3o texto          (default: #8A8575)
      icon-color       - cor do icone + badge     (default: color)
      border-color     - cor da borda fina 1px    (default: tom claro de color)
                         Use border-color="transparent" para SEM borda fina.
@@ -22,6 +25,12 @@
    Overrides opcionais de tamanho de fonte (aceitam px, rem, etc.):
      title-size       - tamanho da fonte do titulo    (default: 16px)
      subtitle-size    - tamanho da fonte do subtitulo (default: 13px)
+     caption-size     - tamanho da fonte do 3o texto  (default: 12px)
+
+   Overrides opcionais de peso da fonte (400, 600, 700, bold, etc.):
+     title-weight     - peso da fonte do titulo    (default: 700)
+     subtitle-weight  - peso da fonte do subtitulo (default: 400)
+     caption-weight   - peso da fonte do 3o texto  (default: 400)
 
      onclickevent     - codigo JS executado no clique (opcional).
                         Quando setado, o card vira clicavel (cursor + hover).
@@ -62,9 +71,10 @@ if (!customElements.get('granado-simple-card')) {
   class GranadoSimpleCard extends HTMLElement {
       static get observedAttributes() {
           return [
-              'title', 'subtitle', 'color', 'border-position',
-              'text-color', 'subtitle-color', 'icon-color', 'border-color', 'icon',
-              'title-size', 'subtitle-size', 'onclickevent',
+              'title', 'subtitle', 'caption', 'color', 'border-position',
+              'text-color', 'subtitle-color', 'caption-color', 'icon-color', 'border-color', 'icon',
+              'title-size', 'subtitle-size', 'caption-size',
+              'title-weight', 'subtitle-weight', 'caption-weight', 'onclickevent',
           ];
       }
 
@@ -84,6 +94,7 @@ if (!customElements.get('granado-simple-card')) {
       render() {
           const title = this.getAttribute('title') || '';
           const subtitle = this.getAttribute('subtitle') || '';
+          const caption = this.getAttribute('caption') || '';
           const color = this.getAttribute('color') || '#1C5C31';
           const icon = this.getAttribute('icon');
           const onClickEvent = this.getAttribute('onclickevent');
@@ -92,12 +103,19 @@ if (!customElements.get('granado-simple-card')) {
           /* Overrides opcionais — default segue `color`. */
           const textColor = this.getAttribute('text-color') || color;
           const subtitleColor = this.getAttribute('subtitle-color') || '#4B5563';
+          const captionColor = this.getAttribute('caption-color') || '#8A8575';
           const iconColor = this.getAttribute('icon-color') || color;
           const borderColorAttr = this.getAttribute('border-color');
 
           /* Overrides opcionais de tamanho de fonte. */
           const titleSize = this.getAttribute('title-size') || '16px';
           const subtitleSize = this.getAttribute('subtitle-size') || '13px';
+          const captionSize = this.getAttribute('caption-size') || '12px';
+
+          /* Overrides opcionais de peso da fonte. */
+          const titleWeight = this.getAttribute('title-weight') || '700';
+          const subtitleWeight = this.getAttribute('subtitle-weight') || '400';
+          const captionWeight = this.getAttribute('caption-weight') || '400';
 
           const RADIUS = '8px';
           const THICK = '4px';
@@ -160,7 +178,7 @@ if (!customElements.get('granado-simple-card')) {
                           margin: 0;
                           font-family: 'Poppins', 'DejaVu Sans', Arial, sans-serif;
                           font-size: ${titleSize};
-                          font-weight: 700;
+                          font-weight: ${titleWeight};
                           color: ${textColor};
                           line-height: 1.2;
                       ">${title}</h3>
@@ -170,9 +188,18 @@ if (!customElements.get('granado-simple-card')) {
                   <p style="
                       margin: 0;
                       font-size: ${subtitleSize};
+                      font-weight: ${subtitleWeight};
                       line-height: 1.5;
                       color: ${subtitleColor};
                   ">${subtitle}</p>
+
+                  ${caption ? `<p style="
+                      margin: 6px 0 0;
+                      font-size: ${captionSize};
+                      font-weight: ${captionWeight};
+                      line-height: 1.45;
+                      color: ${captionColor};
+                  ">${caption}</p>` : ''}
               </div>
           `;
 
