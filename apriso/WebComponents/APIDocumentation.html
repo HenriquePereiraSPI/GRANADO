@@ -387,6 +387,7 @@
           <a class="gd-link" href="#GRD_API_GetEquipmentInformation">GRD_API_GetEquipmentInformation</a>
           <a class="gd-link" href="#GRD_API_GetShift">GRD_API_GetShift</a>
           <a class="gd-link" href="#GRD_API_GetWipOrder">GRD_API_GetWipOrder</a>
+          <a class="gd-link" href="#GRD_API_GetCage">GRD_API_GetCage</a>
         </div>
       </div>
 
@@ -3081,6 +3082,90 @@
           <li><strong>Linha × detalhe:</strong> <code>WeighLineDetail[].WeighLineID</code> referencia a <code>WeighLine</code> correspondente — uma linha pode ter vários detalhes (várias pesagens/etiquetas).</li>
           <li><strong>Datas "1/1/1900":</strong> valor sentinela para "não preenchido" (ex.: ordem não concluída, sem devolução ao estoque).</li>
         </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetCage
+           ============================================================ -->
+      <section id="GRD_API_GetCage">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetCage</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera as informações das gaiolas de uma ordem</strong> (por <code>WipOrderNo</code>) —
+          devolve a lista de gaiolas (<code>Cages</code>) com a etiqueta mãe e a sequência de cada uma.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetCage</span>
+        </div>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1518852"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">WipOrderNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Número da ordem (WIP Order) cujas gaiolas serão recuperadas.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">".."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Cages"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"783662"</span><span class="tk-punc">,</span> <span class="tk-key">"Cage"</span><span class="tk-punc">:</span> <span class="tk-str">"G000185"</span><span class="tk-punc">,</span> <span class="tk-key">"Sequence"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"LabelNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0000178"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/22/2026 9:36:14 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"Active"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"783662"</span><span class="tk-punc">,</span> <span class="tk-key">"Cage"</span><span class="tk-punc">:</span> <span class="tk-str">"G000186"</span><span class="tk-punc">,</span> <span class="tk-key">"Sequence"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"LabelNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0000179"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/22/2026 9:36:14 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"Active"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"783662"</span><span class="tk-punc">,</span> <span class="tk-key">"Cage"</span><span class="tk-punc">:</span> <span class="tk-str">"G000187"</span><span class="tk-punc">,</span> <span class="tk-key">"Sequence"</span><span class="tk-punc">:</span> <span class="tk-str">"2"</span><span class="tk-punc">,</span> <span class="tk-key">"LabelNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0000180"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/22/2026 9:36:14 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"Active"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span> }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as informações foram recuperadas com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">Cages</td><td class="col-type">array&lt;gaiola&gt;</td><td class="col-desc">Lista de gaiolas da ordem. Campos de cada item abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada <code>Cage</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">WipOrderNo</td><td class="col-type">string</td><td class="col-desc">Número da ordem à qual a gaiola pertence.</td></tr>
+            <tr><td class="col-name">Cage</td><td class="col-type">string</td><td class="col-desc">Identificador da gaiola (ex.: <code>"G000185"</code>).</td></tr>
+            <tr><td class="col-name">Sequence</td><td class="col-type">string (número)</td><td class="col-desc">Sequência/ordem da gaiola dentro da ordem (base 0).</td></tr>
+            <tr><td class="col-name">LabelNo</td><td class="col-type">string</td><td class="col-desc">Número da etiqueta (mãe) da gaiola.</td></tr>
+            <tr><td class="col-name">CreatedOn</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data/hora de criação da gaiola.</td></tr>
+            <tr><td class="col-name">Active</td><td class="col-type">string (bool)</td><td class="col-desc">Indica se a gaiola está ativa (<code>"True"</code> / <code>"False"</code>).</td></tr>
+          </tbody>
+        </table>
       </section>
 
       <!-- ============================================================

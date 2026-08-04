@@ -2886,6 +2886,30 @@ dd.value = <span class="tk-str">'OK,DEV,PEN'</span>;</pre>
           </granado-input>
         </div>
 
+        <!-- ===== Teclado virtual ===== -->
+        <h2 class="gd-h2">Teclado virtual (mobile)</h2>
+        <p class="gd-lead">
+          Com <code>enable-virtual-keyboard="true"</code>, aparece um <strong>botão de teclado</strong>
+          dentro do campo (à direita) e o input fica em <code>inputmode="none"</code>. No <strong>mobile</strong>,
+          o teclado do celular <strong>só abre/fecha por esse botão</strong> — tocar no campo apenas o foca,
+          sem subir o teclado automaticamente. Útil para leitura de código de barras/etiqueta, onde o teclado
+          atrapalha. No desktop não muda nada (o teclado físico segue funcionando).
+        </p>
+        <div class="gd-demo" style="max-width:340px">
+          <granado-input
+            label="Código da etiqueta"
+            icon="search"
+            placeholder="Escaneie ou toque no ⌨ para digitar"
+            enable-virtual-keyboard="true">
+          </granado-input>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-input</span>
+    <span class="tk-attr">label</span>=<span class="tk-str">"Código da etiqueta"</span>
+    <span class="tk-attr">icon</span>=<span class="tk-str">"search"</span>
+    <span class="tk-attr">placeholder</span>=<span class="tk-str">"Escaneie ou toque no teclado para digitar"</span>
+    <span class="tk-attr">enable-virtual-keyboard</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-input&gt;</span></pre>
+
         <!-- ===== Disabled / Readonly ===== -->
         <h2 class="gd-h2">Desabilitado / readonly</h2>
         <p class="gd-lead">
@@ -3019,6 +3043,18 @@ inp.blur();</pre>
               <td class="col-type">string (cor CSS)</td>
               <td class="col-default">"#1C5C31"</td>
               <td class="col-desc">Cor da borda em foco.</td>
+            </tr>
+            <tr>
+              <td class="col-name">enable-virtual-keyboard</td>
+              <td class="col-type">"true" | "false"</td>
+              <td class="col-default">"false"</td>
+              <td class="col-desc">
+                Mostra um <strong>botão de teclado</strong> dentro do campo (à direita) e coloca o input
+                em <code>inputmode="none"</code>. No <strong>mobile</strong>, o teclado virtual só abre/fecha
+                por esse botão — <strong>não</strong> abre automaticamente ao tocar no input. No desktop não
+                muda nada (o teclado físico continua funcionando). Perde o foco (toque fora) volta ao estado
+                "fechado".
+              </td>
             </tr>
             <tr>
               <td class="col-name">disabled</td>

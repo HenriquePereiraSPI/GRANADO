@@ -24,6 +24,11 @@
                       visualizacao. Sobrepoe o atributo "type". Nao se aplica
                       a textarea.
      color          - cor da borda em foco. Default: "#1C5C31".
+     enable-virtual-keyboard - "true" mostra um botao de teclado dentro do
+                      campo (a direita) e coloca o input em inputmode="none".
+                      No MOBILE, o teclado virtual so abre/fecha por esse botao
+                      — nao abre automaticamente ao tocar no input. No desktop
+                      nao muda nada (o teclado fisico continua funcionando).
      disabled       - "true" desabilita o campo.
      readonly       - "true" deixa apenas-leitura.
      rows           - linhas iniciais quando type="textarea". Default: 4.
@@ -69,7 +74,8 @@ if (!customElements.get('granado-input')) {
   class GranadoInput extends HTMLElement {
     static get observedAttributes() {
       return ['label', 'placeholder', 'value', 'type', 'icon', 'mask', 'color',
-        'disabled', 'readonly', 'rows', 'ispassword', 'oninputevent', 'onchangeevent', 'onkeydownevent'];
+        'disabled', 'readonly', 'rows', 'ispassword', 'enable-virtual-keyboard',
+        'oninputevent', 'onchangeevent', 'onkeydownevent'];
     }
 
     connectedCallback() {
@@ -87,7 +93,7 @@ if (!customElements.get('granado-input')) {
 
     attributeChangedCallback(name, oldVal, newVal) {
       if (!this._built) return;
-      if (['type', 'icon', 'rows', 'ispassword'].includes(name)) {
+      if (['type', 'icon', 'rows', 'ispassword', 'enable-virtual-keyboard'].includes(name)) {
         this._showPassword = false;
         this._build();
         this._sync();
@@ -158,6 +164,29 @@ if (!customElements.get('granado-input')) {
         ">${this._eyeIcon(false)}</button>
       ` : '';
 
+      // Botao do teclado virtual (opcional). Fica a esquerda do "olho" quando ambos existem.
+      const vkbEnabled = this.getAttribute('enable-virtual-keyboard') === 'true';
+      const vkbRight = isPassword ? '32px' : '6px';
+      const vkbPos = isTextarea
+        ? `right:${vkbRight};top:8px;`
+        : `right:${vkbRight};top:50%;transform:translateY(-50%);`;
+      const vkbHtml = vkbEnabled ? `
+        <button data-vkb-toggle type="button" tabindex="-1" aria-label="Abrir/fechar teclado" title="Abrir/fechar teclado" style="
+          position:absolute;
+          ${vkbPos}
+          background:transparent;
+          border:none;
+          cursor:pointer;
+          padding:4px;
+          height:auto;
+          color:#8A9E8E;
+          display:flex;
+          align-items:center;
+          line-height:0;
+          border-radius:4px;
+        ">${this._keyboardIcon()}</button>
+      ` : '';
+
       this.style.display = this.style.display || 'block';
 
       this.innerHTML = `
@@ -167,6 +196,7 @@ if (!customElements.get('granado-input')) {
             ${iconHtml ? `<span data-input-icon style="${iconStyle}">${iconHtml}</span>` : ''}
             ${fieldTag}
             ${eyeHtml}
+            ${vkbHtml}
           </div>
         </div>
       `;
@@ -176,7 +206,27 @@ if (!customElements.get('granado-input')) {
       field.addEventListener('change', (e) => this._handleChange(e));
       field.addEventListener('keydown', (e) => this._handleKeydown(e));
       field.addEventListener('focus', () => this._setFocus(true));
-      field.addEventListener('blur', () => this._setFocus(false));
+      field.addEventListener('blur', () => { this._setFocus(false); this._onFieldBlur(); });
+
+      // Teclado virtual: inicia em inputmode="none" (nao abre ao focar) e liga o botao.
+      if (vkbEnabled) {
+        field.setAttribute('inputmode', 'none');
+        this._vkbOpen = false;
+        const vkbBtn = this.querySelector('[data-vkb-toggle]');
+        if (vkbBtn) {
+          // Marca que o blur (que ocorre ANTES do click) foi causado pelo botao,
+          // para _onFieldBlur nao resetar o estado e o click alternar corretamente.
+          const markDown = () => { this._vkbBtnDown = true; };
+          vkbBtn.addEventListener('mousedown', (e) => { e.preventDefault(); markDown(); });
+          vkbBtn.addEventListener('touchstart', markDown, { passive: true });
+          vkbBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this._toggleVirtualKeyboard();
+            this._vkbBtnDown = false;
+          });
+        }
+      }
 
       const eyeBtn = this.querySelector('[data-eye-toggle]');
       if (eyeBtn) {
@@ -223,8 +273,9 @@ if (!customElements.get('granado-input')) {
 
       const hasIcon = !!iconEl;
       const hasEye = !!this.querySelector('[data-eye-toggle]');
+      const hasVkb = !!this.querySelector('[data-vkb-toggle]');
       const padLeft = hasIcon ? '34px' : '12px';
-      const padRight = hasEye ? '34px' : '12px';
+      const padRight = (hasEye && hasVkb) ? '58px' : ((hasEye || hasVkb) ? '34px' : '12px');
 
       field.style.cssText = `
         width:100%;
@@ -281,6 +332,51 @@ if (!customElements.get('granado-input')) {
     }
 
     // ------------------------------------------------------------
+    // Teclado virtual (enable-virtual-keyboard)
+    // ------------------------------------------------------------
+    // inputmode adequado ao "abrir" — casa com o type do campo.
+    _kbInputMode() {
+      const map = { number: 'numeric', tel: 'tel', email: 'email', search: 'search', url: 'url' };
+      return map[this.getAttribute('type') || 'text'] || 'text';
+    }
+
+    // Abre/fecha o teclado virtual (mobile) manualmente pelo botao.
+    _toggleVirtualKeyboard() {
+      const field = this.querySelector('[data-input-field]');
+      const btn = this.querySelector('[data-vkb-toggle]');
+      if (!field) return;
+      const activeColor = this.getAttribute('color') || '#1C5C31';
+      if (!this._vkbOpen) {
+        // Abrir: troca o inputmode e re-foca (blur+focus) dentro do gesto do clique.
+        this._vkbToggling = true;
+        field.setAttribute('inputmode', this._kbInputMode());
+        field.blur();
+        field.focus();
+        this._vkbToggling = false;
+        this._vkbOpen = true;
+        if (btn) btn.style.color = activeColor;
+      } else {
+        // Fechar: volta para "none" e tira o foco.
+        field.setAttribute('inputmode', 'none');
+        this._vkbOpen = false;
+        field.blur();
+        if (btn) btn.style.color = '#8A9E8E';
+      }
+    }
+
+    // Ao perder o foco (tocar fora), reseta o estado para "fechado".
+    _onFieldBlur() {
+      if (this.getAttribute('enable-virtual-keyboard') !== 'true') return;
+      if (this._vkbToggling) return;   // ignora o blur interno do "abrir"
+      if (this._vkbBtnDown) return;    // blur causado pelo clique no proprio botao
+      const field = this.querySelector('[data-input-field]');
+      const btn = this.querySelector('[data-vkb-toggle]');
+      if (field) field.setAttribute('inputmode', 'none');
+      this._vkbOpen = false;
+      if (btn) btn.style.color = '#8A9E8E';
+    }
+
+    // ------------------------------------------------------------
     // Helpers
     // ------------------------------------------------------------
     _safeType(t) {
@@ -305,6 +401,10 @@ if (!customElements.get('granado-input')) {
         return `<svg width="14" height="14" ${COMMON}><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
       }
       return `<svg width="14" height="14" ${COMMON}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    }
+
+    _keyboardIcon() {
+      return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M10 13h.01M14 13h.01M18 13h.01M7 16.5h10"/></svg>`;
     }
 
     _resolveIcon(name) {
