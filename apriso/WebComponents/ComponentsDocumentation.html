@@ -4706,6 +4706,39 @@ tg.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tr
     Apenas conteúdo, sem cabeçalho.
 <span class="tk-tag">&lt;/granado-panel&gt;</span></pre>
 
+        <!-- ===== Conteúdo HTML (estilo header do checklist) ===== -->
+        <h2 class="gd-h2">Conteúdo HTML — "header de informações" (estilo checklist)</h2>
+        <p class="gd-lead">
+          O conteúdo é HTML livre. Aqui, um <strong>bloco de informações</strong> no mesmo estilo do
+          cabeçalho do <a class="gd-link" href="#granado-checklist-popup">granado-checklist-popup</a>:
+          uma caixa com <strong>faixa lateral</strong> e uma <strong>grade de rótulo → valor</strong>.
+        </p>
+        <div class="gd-demo">
+          <granado-panel color="#1C5C31">
+            <div style="background:#F4EED9;border:1px solid #E5DDC8;border-radius:6px;padding:12px 14px">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px 14px;font-size:11px">
+                <div><span style="color:#8A9E8E">TAG:</span> <span style="font-weight:700;color:#103E20">BAL-014</span></div>
+                <div><span style="color:#8A9E8E">Modelo:</span> <span style="font-weight:700;color:#103E20">Toledo XK-3000</span></div>
+                <div><span style="color:#8A9E8E">Classe:</span> <span style="font-weight:700;color:#103E20">III</span></div>
+                <div><span style="color:#8A9E8E">Sala:</span> <span style="font-weight:700;color:#103E20">Sala A</span></div>
+                <div><span style="color:#8A9E8E">Periodicidade:</span> <span style="font-weight:700;color:#103E20">TURNO</span></div>
+                <div><span style="color:#8A9E8E">Verificado por:</span> <span style="font-weight:700;color:#103E20">J. Santos · Mat. 00412</span></div>
+              </div>
+            </div>
+          </granado-panel>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-panel</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1C5C31"</span><span class="tk-tag">&gt;</span>
+
+  <span class="tk-comment">&lt;!-- Bloco de informações no estilo do header do checklist --&gt;</span>
+  <span class="tk-tag">&lt;div</span> <span class="tk-attr">style</span>=<span class="tk-str">"background:#F4EED9;border:1px solid #E5DDC8;border-radius:6px;padding:12px 14px"</span><span class="tk-tag">&gt;</span>
+    <span class="tk-tag">&lt;div</span> <span class="tk-attr">style</span>=<span class="tk-str">"display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px 14px;font-size:11px"</span><span class="tk-tag">&gt;</span>
+      <span class="tk-tag">&lt;div&gt;&lt;span</span> <span class="tk-attr">style</span>=<span class="tk-str">"color:#8A9E8E"</span><span class="tk-tag">&gt;</span>TAG:<span class="tk-tag">&lt;/span&gt;</span> <span class="tk-tag">&lt;span</span> <span class="tk-attr">style</span>=<span class="tk-str">"font-weight:700;color:#103E20"</span><span class="tk-tag">&gt;</span>BAL-014<span class="tk-tag">&lt;/span&gt;&lt;/div&gt;</span>
+      <span class="tk-tag">&lt;div&gt;&lt;span</span> <span class="tk-attr">style</span>=<span class="tk-str">"color:#8A9E8E"</span><span class="tk-tag">&gt;</span>Modelo:<span class="tk-tag">&lt;/span&gt;</span> <span class="tk-tag">&lt;span</span> <span class="tk-attr">style</span>=<span class="tk-str">"font-weight:700;color:#103E20"</span><span class="tk-tag">&gt;</span>Toledo XK-3000<span class="tk-tag">&lt;/span&gt;&lt;/div&gt;</span>
+      <span class="tk-comment">&lt;!-- …demais pares rótulo → valor (Classe, Sala, Periodicidade, Verificado por)… --&gt;</span>
+    <span class="tk-tag">&lt;/div&gt;</span>
+  <span class="tk-tag">&lt;/div&gt;</span>
+<span class="tk-tag">&lt;/granado-panel&gt;</span></pre>
+
         <!-- ===== API ===== -->
         <h2 class="gd-h2">API</h2>
 
