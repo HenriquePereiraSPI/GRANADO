@@ -10,6 +10,7 @@ import './styles/app-layout.css';
 // elements globalmente ao serem importados). Ex.: <granado-gallery> na versão
 // mobile de "Pesagem > Seleção de Ordem".
 import '../apriso/WebComponents/granado-gallery.js';
+import '../apriso/WebComponents/granado-button-save-page.js';
 
 // Injeta o JS legado ANTES de montar o React, para que `window.nav`,
 // `window.drawSinotico`, `window.andFiltrar`, FAB_APROVACOES etc. existam quando

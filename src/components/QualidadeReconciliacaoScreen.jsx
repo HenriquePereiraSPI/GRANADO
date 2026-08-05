@@ -362,6 +362,8 @@ const CHECKLIST_ITENS = [
   { id: 'bol_fq',             label: 'Boletim de Análise Físico-Químico' },
   { id: 'bol_micro',          label: 'Boletim de Análise Microbiológico' },
   { id: 'rel_desvio',         label: 'Relatório de Desvio' },
+  { id: 'ordem_parcial',      label: 'Ordem Parcial' },
+  { id: 'produto_kit',        label: 'Produto Destinado para KIT' },
 ];
 
 // Opcoes do campo "Status do Lote" (alinhadas a tabela 41/F4108 do JDE).
@@ -1149,7 +1151,6 @@ function ChecklistEstadoToggle({ estado, onChange }) {
 
 function ChecklistModal({ checklist, setChecklist, onClose, lote, marcados, total }) {
   const setItem = (id, valor) => setChecklist((c) => ({ ...c, itens: { ...c.itens, [id]: valor } }));
-  const setBool = (campo, valor) => setChecklist((c) => ({ ...c, [campo]: valor }));
   const setCampo = (campo, valor) => setChecklist((c) => ({ ...c, [campo]: valor }));
   const pct = Math.round((marcados / total) * 100);
 
@@ -1193,7 +1194,7 @@ function ChecklistModal({ checklist, setChecklist, onClose, lote, marcados, tota
         <div
           style={{
             background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 6,
-            padding: '10px 14px', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr',
+            padding: '10px 14px', display: 'grid', gridTemplateColumns: '2fr 1fr',
             gap: 12, fontSize: 11, marginBottom: 14,
           }}
         >
@@ -1204,23 +1205,6 @@ function ChecklistModal({ checklist, setChecklist, onClose, lote, marcados, tota
           <div>
             <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase' }}>Lote Fabricação</div>
             <div className="mono" style={{ fontWeight: 700, marginTop: 2 }}>{lote?.loteGranel || '—'}</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 9, color: 'var(--text3)', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase' }}>Lote Embalagem (PA)</div>
-            <div className="mono" style={{ fontWeight: 700, marginTop: 2 }}>{lote?.lotePA || '—'}</div>
-          </div>
-        </div>
-
-        {/* Barra de progresso */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12, background: 'var(--surface2)', padding: '8px 12px', borderRadius: 6, border: '1px solid var(--border)' }}>
-          <div style={{ fontFamily: 'var(--font-m)', fontSize: 22, fontWeight: 700, color: pct === 100 ? 'var(--ok)' : 'var(--ouro)', minWidth: 48 }}>{pct}%</div>
-          <div style={{ flex: 1 }}>
-            <div style={{ height: 6, background: 'var(--bg2)', borderRadius: 3, overflow: 'hidden' }}>
-              <div style={{ width: `${pct}%`, height: '100%', background: pct === 100 ? 'var(--ok)' : 'linear-gradient(90deg, var(--ouro), var(--ok))', transition: 'width .3s' }} />
-            </div>
-            <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 3 }}>
-              {marcados} de {total} itens marcados (concluído ou N/A)
-            </div>
           </div>
         </div>
 
@@ -1243,28 +1227,6 @@ function ChecklistModal({ checklist, setChecklist, onClose, lote, marcados, tota
               <ChecklistEstadoToggle estado={checklist.itens[it.id]} onChange={(v) => setItem(it.id, v)} />
             </div>
           ))}
-        </div>
-
-        {/* Flags extras */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 6, cursor: 'pointer', fontSize: 12 }}>
-            <input
-              type="checkbox"
-              checked={checklist.ordemParcial}
-              onChange={(e) => setBool('ordemParcial', e.target.checked)}
-              style={{ width: 16, height: 16 }}
-            />
-            <span><strong>Ordem Parcial</strong> <span style={{ color: 'var(--text3)' }}>(N/A se desmarcado)</span></span>
-          </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 6, cursor: 'pointer', fontSize: 12 }}>
-            <input
-              type="checkbox"
-              checked={checklist.produtoKit}
-              onChange={(e) => setBool('produtoKit', e.target.checked)}
-              style={{ width: 16, height: 16 }}
-            />
-            <span><strong>Produto destinado para Kit</strong> <span style={{ color: 'var(--text3)' }}>(N/A se desmarcado)</span></span>
-          </label>
         </div>
 
         {/* Observação */}
@@ -1874,19 +1836,10 @@ export default function QualidadeReconciliacaoScreen() {
               <Campo label="RD JDE (F4108)" value={lote.rdJde} />
               <Campo label="Filial / Fábrica" value={lote.filial} />
               <Campo label="Produto Acabado" value={lote.produtoAcabado} />
-              <Campo label="Granel" value={lote.granel} />
               <Campo label="Lote PA" value={lote.lotePA} obrigatorio />
-              <CampoSelect
-                label="Status do Lote"
-                value={lote.statusLote}
-                opcoes={STATUS_LOTE_OPCOES}
-                onChange={(v) => setLote({ ...lote, statusLote: v })}
-                obrigatorio
-              />
               <Campo label="Data Fabricação" value={lote.dataFabricacao} />
               <Campo label="Data Validade" value={lote.dataValidade} />
               <Campo label="Status Reconciliação" value={lote.statusReconciliacao} />
-              <Campo label="Status Documentação" value={lote.statusDocumentacao} />
             </div>
 
           </div>
@@ -2097,43 +2050,23 @@ export default function QualidadeReconciliacaoScreen() {
               <button
                 className="btn btn-lg btn-v"
                 onClick={liberarParaCED}
-                disabled={!podeLiberar}
-                style={{
-                  opacity: podeLiberar ? 1 : 0.5,
-                  cursor: podeLiberar ? 'pointer' : 'not-allowed',
-                  minWidth: 230,
-                }}
-                title={
-                  !todasAprovadas
-                    ? 'Todas as áreas precisam estar APROVADAS ou N/A'
-                    : anexosBloqueando
-                    ? `Faltam ${anexosFaltando.length} anexo(s) obrigatório(s)`
-                    : !checklistCompleto
-                    ? 'Preencha o Checklist de Reconciliação antes de liberar'
-                    : desviosBloqueando
-                    ? `Trate os ${desviosAbertos.length} registro(s) de correção em aberto antes de liberar`
-                    : 'Liberar lote para o CED'
-                }
+                style={{ minWidth: 230 }}
+                title="Liberar lote para o CED"
               >
-                ✓ Liberar para o CED
+                Liberar para CED
               </button>
               <button
                 className="btn btn-md btn-p"
                 onClick={reprovarLote}
-                disabled={!algumaReprovada}
-                style={{
-                  opacity: algumaReprovada ? 1 : 0.5,
-                  cursor: algumaReprovada ? 'pointer' : 'not-allowed',
-                  minWidth: 230,
-                }}
+                style={{ minWidth: 230 }}
               >
-                ✗ Reprovar Lote
+                Reprovar
               </button>
               <div style={{ fontSize: 10, color: 'var(--text3)', textAlign: 'right', maxWidth: 230, lineHeight: 1.5 }}>
                 {podeLiberar
                   ? '✓ Pronto para liberar — áreas + anexos + checklist + correções OK.'
                   : !todasAprovadas
-                  ? 'Liberação habilita quando as 4 áreas estão APROVADAS ou N/A.'
+                  ? ''
                   : anexosBloqueando
                   ? `Falta(m) ${anexosFaltando.length} anexo(s) obrigatório(s).`
                   : !checklistCompleto

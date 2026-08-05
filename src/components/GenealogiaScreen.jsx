@@ -21,22 +21,22 @@ const AREA_PARA_NO = {
 
 /**
  * Wave 2.6 — Genealogia em abas por fase.
- * Cada aba filtra a cadeia em um subconjunto de nós. Aba "Todos"
- * mostra a cadeia completa (comportamento legado).
+ * Cada aba filtra a cadeia em um subconjunto de nós; "Todos" mostra a
+ * cadeia completa. Abas: Todos · Pesagem · Fabricação · Produção · Qualidade.
  */
 const FASES = [
   { id: 'todos',     label: 'Todos',     icon: '🧬', ids: null },
   { id: 'pesagem',   label: 'Pesagem',   icon: '⚖️', ids: ['pesagem'] },
   { id: 'fabricacao',label: 'Fabricação',icon: '🧪', ids: ['fabricacao', 'granel'] },
-  { id: 'embalagem', label: 'Embalagem', icon: '📦', ids: ['embalagem-ean', 'embalagem-dun', 'cq-ean'] },
+  { id: 'producao',  label: 'Produção',  icon: '📦', ids: ['embalagem-ean', 'embalagem-dun', 'cq-ean', 'liberacao'] },
   { id: 'qualidade', label: 'Qualidade', icon: '🔬', ids: ['lims-granel', 'lims-pa', 'qa-reconciliacao'] },
-  { id: 'liberacao', label: 'Liberação', icon: '✓',  ids: ['liberacao'] },
 ];
 
 const AREA_PARA_FASE = {
   pesagem:       'pesagem',
   fabricacao:    'fabricacao',
-  embalagem:     'embalagem',
+  embalagem:     'producao',
+  producao:      'producao',
   fisicoQuimico: 'qualidade',
   microbiologia: 'qualidade',
 };
@@ -132,37 +132,29 @@ export default function GenealogiaScreen() {
     setAnexos((s) => ({ ...s, [faseAtiva]: (s[faseAtiva] || []).filter((_, idx) => idx !== i) }));
 
   return (
-    <div className="screen active" style={{ display: 'block' }}>
+    <div className="screen active" id="genealogia-dossie" style={{ display: 'block' }}>
       {/* ── Cabeçalho da página ─────────────────────────────── */}
       <div className="page-header">
         <div>
           <div className="ph-eyebrow">EBR · Dossiê Eletrônico de Produção · WO {DOSSIE.wo}</div>
           <div className="ph-title">Genealogia de Lote — {DOSSIE.lote}</div>
         </div>
-        <div className="ph-actions">
-          <button className="btn btn-sm btn-v" onClick={() => alert('⬇ Baixando PDF assinado eletronicamente...')}>⬇ Baixar PDF</button>
+        <div className="ph-actions no-print">
+          {/* Salva o dossiê (esta tela) em PDF via impressão nativa. */}
+          <granado-button-save-page
+            format="pdf"
+            target="#genealogia-dossie"
+            label="Baixar PDF"
+            filename={`genealogia-${DOSSIE.lote}`}
+          ></granado-button-save-page>
         </div>
       </div>
 
       {/* ── Hero card com resumo da WO ──────────────────────── */}
       <div className="card cv mb14" style={{ padding: 18 }}>
-        {/* KPIs */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: 12,
-          }}
-        >
-          <Kpi label="Tamanho do Batch" valor={DOSSIE.batchSize} cor="var(--verde)" />
-          <Kpi label="Rendimento Granel" valor="100,10%" cor="var(--ok)" sub="dentro do limite (97–103%)" />
-          <Kpi label="MPs Consumidas" valor="7" cor="var(--inf)" sub="3 pesagens + 4 mid-process" />
-          <Kpi label="PA Produzido" valor="48.531 un" cor="var(--ouro)" sub="cartuchos 90g · rend. 93,23%" />
-        </div>
-
         {/* Cronograma da Ordem (timeline horizontal) */}
         {DOSSIE.cronograma && (
-          <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
+          <div>
             <div className="card-title" style={{ marginBottom: 10, padding: 0, border: 'none' }}>
               📅 Cronograma da Ordem
             </div>
@@ -374,12 +366,12 @@ function AnexarNo({ ordem, total, faseLabel, lista, expandido, onToggle, onAdd, 
 /* Timeline horizontal mostrando o ciclo de vida da OF (datas) */
 function CronogramaTimeline({ cronograma }) {
   const steps = [
-    { id: 'ordemInicio',   label: 'Ordem Início',   icon: '📋', cor: 'var(--inf)'  },
-    { id: 'pesagem',       label: 'Pesagem',        icon: '⚖️', cor: 'var(--verde)' },
-    { id: 'conferencia',   label: 'Conferência',    icon: '🔍', cor: 'var(--inf)'  },
-    { id: 'inbatchInicio', label: 'InBatch Início', icon: '🧪', cor: 'var(--ouro)' },
-    { id: 'inbatchFim',    label: 'InBatch Fim',    icon: '✓',  cor: 'var(--ok)'   },
-    { id: 'ordemFim',      label: 'Ordem Fim',      icon: '🏁', cor: 'var(--ok)'   },
+    { id: 'ordemInicio',      label: 'Ordem Início',      icon: '📋', cor: 'var(--inf)'  },
+    { id: 'pesagem',          label: 'Pesagem',           icon: '⚖️', cor: 'var(--verde)' },
+    { id: 'fabricacaoInicio', label: 'Fabricação Início', icon: '🧪', cor: 'var(--ouro)' },
+    { id: 'fabricacaoFim',    label: 'Fabricação Fim',    icon: '🏭', cor: 'var(--ouro)' },
+    { id: 'producaoInicio',   label: 'Produção Início',   icon: '⚙️', cor: 'var(--inf)'  },
+    { id: 'producaoFim',      label: 'Produção Fim',      icon: '🏁', cor: 'var(--ok)'   },
   ];
   return (
     <div
@@ -427,26 +419,6 @@ function CronogramaTimeline({ cronograma }) {
           </div>
         </div>
       ))}
-    </div>
-  );
-}
-
-function Kpi({ label, valor, cor, sub }) {
-  return (
-    <div
-      style={{
-        background: 'var(--surface2)',
-        border: '1px solid var(--border)',
-        borderRadius: 6,
-        padding: '10px 14px',
-        textAlign: 'center',
-      }}
-    >
-      <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: 4 }}>
-        {label}
-      </div>
-      <div style={{ fontFamily: 'var(--font-m)', fontSize: 26, fontWeight: 700, color: cor, lineHeight: 1 }}>{valor}</div>
-      {sub && <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 4 }}>{sub}</div>}
     </div>
   );
 }

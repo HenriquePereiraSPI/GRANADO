@@ -1116,3 +1116,6 @@ table th, table td { font-family:var(--font-m); }
 /* ── Overrides inline de linhas escuras ── */
 tr[style*="background:#2A0D0D"] { background: #FEF0F0 !important; }
 tr[style*="background:#0D200F"] { background: #F8F4EE !important; }
+
+/* Utilitário: esconder na impressão / export PDF (granado-button-save-page). */
+@media print { .no-print { display: none !important; } }

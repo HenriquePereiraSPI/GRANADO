@@ -29,12 +29,12 @@ export const DOSSIE = {
 
   // Cronograma da Ordem (extraído do documento de Reconciliacao QA).
   cronograma: {
-    ordemInicio:    '14/04/2026',
-    pesagem:        '16/04/2026',
-    conferencia:    '16/04/2026',
-    inbatchInicio:  '16/04/2026',
-    inbatchFim:     '16/04/2026',
-    ordemFim:       '17/04/2026',
+    ordemInicio:      '14/04/2026',
+    pesagem:          '16/04/2026',
+    fabricacaoInicio: '16/04/2026',
+    fabricacaoFim:    '16/04/2026',
+    producaoInicio:   '16/04/2026',
+    producaoFim:      '17/04/2026',
   },
 
   // ── Cadeia genealogica (nos da arvore visual) ────────────────────────────

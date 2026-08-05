@@ -50,6 +50,7 @@
   <script src="./granado-timeline-item.js"></script>
   <script src="./granado-timeline.js"></script>
   <script src="./granado-empty-popup.js"></script>
+  <script src="./granado-button-save-page.js"></script>
 
   <style>
     html,
@@ -318,6 +319,7 @@
       <a class="gd-link" href="#granado-table-popup">granado-table-popup</a>
       <a class="gd-link" href="#granado-timeline">granado-timeline</a>
       <a class="gd-link" href="#granado-empty-popup">granado-empty-popup</a>
+      <a class="gd-link" href="#granado-button-save-page">granado-button-save-page</a>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -9263,56 +9265,130 @@ GranadoPreloader.hide();</pre>
         <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
 <span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-zpl-popup.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
 
-        <h2 class="gd-h2">Uso</h2>
         <p class="gd-lead">
           O popup inicia oculto com <code>open="false"</code>; abra-o com <code>el.open()</code>.
           Cancelar, o <strong>✕</strong> e o clique fora apenas fecham (sem evento). O botão
-          <strong>Reimprimir</strong> dispara o evento <code>reimprimir</code> e o handler inline
-          <code>onPrintClick</code>.
+          <strong>Reimprimir</strong> dispara o evento <code>reimprimir</code> (e o handler inline
+          <code>onPrintClick</code>). Abaixo, um exemplo <strong>por tipo</strong>, com <strong>todos os campos</strong>.
         </p>
+
+        <h2 class="gd-h2">Uso — <code>type="pesagem"</code></h2>
+        <p class="gd-lead">Etiqueta de <strong>Pesagem de Material</strong> (Label 001).</p>
+        <div class="gd-split">
         <div class="gd-demo">
-          <button type="button" onclick="document.getElementById('doc-zpl-popup').open()"
-            style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:10px 18px;border:1px solid #C8A84B;border-radius:7px;background:#C8A84B;color:#0F3319;cursor:pointer">🖨️ Reimprimir etiqueta</button>
-          <span id="doc-zpl-popup-status" style="font-size:12px;color:#8A9E8E;margin-left:10px"></span>
-
-          <granado-zpl-popup id="doc-zpl-popup" type="pesagem" open="false"
-            onPrintClick="var s=document.getElementById('doc-zpl-popup-status');if(s)s.textContent=detail.impressora?('✅ Enviado para '+detail.impressora.id+' - '+detail.impressora.descricao+' ('+detail.copias+'x)'):'⚠ Nenhuma impressora';document.getElementById('doc-zpl-popup').close()"
-            data='{
-              "etiqueta":"Etiqueta Nº 7953072",
-              "titulo":"PESAGEM DE MATERIAL","dataImpressao":"24/03/2026",
-              "ordemFabricacao":"771166","loteGranel":"1621/2026","dataPesagem":"24/03/2026 07:42","aprovado":true,
-              "granelResultante":"S0835B - SAB. PH LIMAO SICILIANO","materiaPrima":"M9808 - MANTEIGA DE MURUMURU STD (SAB)",
-              "loteMP":"0273826","validade":"30/07/2028","tipoPesagem":"SIMPLES","qtdOrdem":"37,440 KG",
-              "pesadoPor":"VALMIR MENDES","matricula":"102266","balanca":"16","tara":"0,021 KG","pesoBruto":"3,141 KG","noEtiqueta":"7953072",
-              "barcode":"#P12814471417953072","pesoLiquido":"3,120 KG",
-              "impressoPor":"Claudinei","impressoEm":"31/03/2026 08:05",
-              "impressoras":[{"id":"PRN-BOX3","descricao":"Zebra ZD420 (Box Pesagem)"},{"id":"PRN-LAB","descricao":"Zebra GK420t (Laboratório)"}],
-              "impressora":{"id":"PRN-BOX3","descricao":"Zebra ZD420 (Box Pesagem)"},
-              "copias":1
-            }'></granado-zpl-popup>
+          <button type="button" onclick="document.getElementById('doc-zpl-pesagem').open()"
+            style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:10px 18px;border:1px solid #C8A84B;border-radius:7px;background:#C8A84B;color:#0F3319;cursor:pointer">🖨️ Reimprimir (Pesagem)</button>
+          <div id="doc-zpl-pesagem-status" style="font-size:12px;color:#8A9E8E;margin-top:8px"></div>
+          <granado-zpl-popup id="doc-zpl-pesagem" type="pesagem" open="false"></granado-zpl-popup>
         </div>
-        <pre class="gd-code"><span class="tk-tag">&lt;granado-zpl-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"pop"</span> <span class="tk-attr">type</span>=<span class="tk-str">"pesagem"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span>
-  <span class="tk-attr">onPrintClick</span>=<span class="tk-str">"imprimir(detail.impressora)"</span><span class="tk-tag">&gt;&lt;/granado-zpl-popup&gt;</span>
-
+        <script>
+          (function () {
+            var pop = document.getElementById('doc-zpl-pesagem');
+            pop.data = {
+              etiqueta: 'Etiqueta Nº 7953072',
+              titulo: 'PESAGEM DE MATERIAL', dataImpressao: '24/03/2026',
+              ordemFabricacao: '771166', loteGranel: '1621/2026', dataPesagem: '24/03/2026 07:42', aprovado: true,
+              granelResultante: 'S0835B - SAB. PH LIMAO SICILIANO', materiaPrima: 'M9808 - MANTEIGA DE MURUMURU STD (SAB)',
+              loteMP: '0273826', validade: '30/07/2028', tipoPesagem: 'SIMPLES', qtdOrdem: '37,440 KG',
+              pesadoPor: 'VALMIR MENDES', matricula: '102266', balanca: '16', tara: '0,021 KG', pesoBruto: '3,141 KG',
+              noEtiqueta: '7953072', barcode: '#P12814471417953072', pesoLiquido: '3,120 KG',
+              impressoPor: 'Claudinei', impressoEm: '31/03/2026 08:05',
+              impressoras: [
+                { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' },
+                { id: 'PRN-LAB', descricao: 'Zebra GK420t (Laboratório)' }
+              ],
+              impressora: { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' }, copias: 1
+            };
+            pop.addEventListener('reimprimir', function (e) {
+              var s = document.getElementById('doc-zpl-pesagem-status');
+              if (s) s.textContent = e.detail.impressora ? ('✅ ' + e.detail.impressora.id + ' · ' + e.detail.copias + 'x') : '⚠ Nenhuma impressora';
+              pop.close();
+            });
+          })();
+        </script>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-zpl-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"pop"</span> <span class="tk-attr">type</span>=<span class="tk-str">"pesagem"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span><span class="tk-tag">&gt;&lt;/granado-zpl-popup&gt;</span>
 <span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-str">"document.getElementById('pop').open()"</span><span class="tk-tag">&gt;</span>Reimprimir<span class="tk-tag">&lt;/button&gt;</span>
 
 <span class="tk-tag">&lt;script&gt;</span>
-  <span class="tk-keyword">var</span> pop = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'pop'</span>);
+  <span class="tk-kw">var</span> pop = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'pop'</span>);
   pop.data = {
     etiqueta: <span class="tk-str">'Etiqueta Nº 7953072'</span>,
-    titulo: <span class="tk-str">'PESAGEM DE MATERIAL'</span>, ordemFabricacao: <span class="tk-str">'771166'</span>, <span class="tk-comment">/* ...demais campos da pesagem... */</span>
+    titulo: <span class="tk-str">'PESAGEM DE MATERIAL'</span>, dataImpressao: <span class="tk-str">'24/03/2026'</span>,
+    ordemFabricacao: <span class="tk-str">'771166'</span>, loteGranel: <span class="tk-str">'1621/2026'</span>, dataPesagem: <span class="tk-str">'24/03/2026 07:42'</span>, aprovado: <span class="tk-keyword">true</span>,
+    granelResultante: <span class="tk-str">'S0835B - SAB. PH LIMAO SICILIANO'</span>, materiaPrima: <span class="tk-str">'M9808 - MANTEIGA DE MURUMURU STD (SAB)'</span>,
+    loteMP: <span class="tk-str">'0273826'</span>, validade: <span class="tk-str">'30/07/2028'</span>, tipoPesagem: <span class="tk-str">'SIMPLES'</span>, qtdOrdem: <span class="tk-str">'37,440 KG'</span>,
+    pesadoPor: <span class="tk-str">'VALMIR MENDES'</span>, matricula: <span class="tk-str">'102266'</span>, balanca: <span class="tk-str">'16'</span>, tara: <span class="tk-str">'0,021 KG'</span>, pesoBruto: <span class="tk-str">'3,141 KG'</span>,
+    noEtiqueta: <span class="tk-str">'7953072'</span>, barcode: <span class="tk-str">'#P12814471417953072'</span>, pesoLiquido: <span class="tk-str">'3,120 KG'</span>,
+    impressoPor: <span class="tk-str">'Claudinei'</span>, impressoEm: <span class="tk-str">'31/03/2026 08:05'</span>,
     impressoras: [
       { id: <span class="tk-str">'PRN-BOX3'</span>, descricao: <span class="tk-str">'Zebra ZD420 (Box Pesagem)'</span> },
       { id: <span class="tk-str">'PRN-LAB'</span>, descricao: <span class="tk-str">'Zebra GK420t (Laboratório)'</span> }
     ],
-    impressora: { id: <span class="tk-str">'PRN-BOX3'</span>, descricao: <span class="tk-str">'Zebra ZD420 (Box Pesagem)'</span> }
+    impressora: { id: <span class="tk-str">'PRN-BOX3'</span>, descricao: <span class="tk-str">'Zebra ZD420 (Box Pesagem)'</span> }, copias: <span class="tk-keyword">1</span>
   };
-  <span class="tk-comment">// alternativa ao onPrintClick: ouvir o evento</span>
   pop.<span class="tk-attr">addEventListener</span>(<span class="tk-str">'reimprimir'</span>, <span class="tk-keyword">function</span> (e) {
-    imprimir(e.detail.impressora);
+    imprimir(e.detail.impressora, e.detail.copias);   <span class="tk-comment">// impressora = { id, descricao } | null</span>
     pop.<span class="tk-attr">close</span>();
   });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">Uso — <code>type="pesagem-gaiola"</code></h2>
+        <p class="gd-lead">Etiqueta de <strong>Gaiola</strong> (Label 004).</p>
+        <div class="gd-split">
+        <div class="gd-demo">
+          <button type="button" onclick="document.getElementById('doc-zpl-gaiola').open()"
+            style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:10px 18px;border:1px solid #1F7A3D;border-radius:7px;background:#1F7A3D;color:#fff;cursor:pointer">📦 Reimprimir (Gaiola)</button>
+          <div id="doc-zpl-gaiola-status" style="font-size:12px;color:#8A9E8E;margin-top:8px"></div>
+          <granado-zpl-popup id="doc-zpl-gaiola" type="pesagem-gaiola" open="false"></granado-zpl-popup>
+        </div>
+        <script>
+          (function () {
+            var pop = document.getElementById('doc-zpl-gaiola');
+            pop.data = {
+              etiqueta: 'Etiqueta Nº 7951496',
+              titulo: 'ETIQUETA DE GAIOLA', dataImpressao: '24/03/2026',
+              ordemFabricacao: '771166', gaiola: 'GAI-2026-0089',
+              granelResultante: 'S0835B - SAB. PH LIMAO SICILIANO', noEtiqueta: '7951496',
+              lote: '1621/2026', usuario: 'VALMIR MENDES', matricula: '102266', noGaiola: '89',
+              barcode: '#P12814471417951496', impressoPor: 'Claudinei', impressoEm: '31/03/2026 08:05',
+              impressoras: [
+                { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' },
+                { id: 'PRN-LAB', descricao: 'Zebra GK420t (Laboratório)' }
+              ],
+              impressora: { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' }, copias: 1
+            };
+            pop.addEventListener('reimprimir', function (e) {
+              var s = document.getElementById('doc-zpl-gaiola-status');
+              if (s) s.textContent = e.detail.impressora ? ('✅ ' + e.detail.impressora.id + ' · ' + e.detail.copias + 'x') : '⚠ Nenhuma impressora';
+              pop.close();
+            });
+          })();
+        </script>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-zpl-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"pop"</span> <span class="tk-attr">type</span>=<span class="tk-str">"pesagem-gaiola"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span><span class="tk-tag">&gt;&lt;/granado-zpl-popup&gt;</span>
+<span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-str">"document.getElementById('pop').open()"</span><span class="tk-tag">&gt;</span>Reimprimir<span class="tk-tag">&lt;/button&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">var</span> pop = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'pop'</span>);
+  pop.data = {
+    etiqueta: <span class="tk-str">'Etiqueta Nº 7951496'</span>,
+    titulo: <span class="tk-str">'ETIQUETA DE GAIOLA'</span>, dataImpressao: <span class="tk-str">'24/03/2026'</span>,
+    ordemFabricacao: <span class="tk-str">'771166'</span>, gaiola: <span class="tk-str">'GAI-2026-0089'</span>,
+    granelResultante: <span class="tk-str">'S0835B - SAB. PH LIMAO SICILIANO'</span>, noEtiqueta: <span class="tk-str">'7951496'</span>,
+    lote: <span class="tk-str">'1621/2026'</span>, usuario: <span class="tk-str">'VALMIR MENDES'</span>, matricula: <span class="tk-str">'102266'</span>, noGaiola: <span class="tk-str">'89'</span>,
+    barcode: <span class="tk-str">'#P12814471417951496'</span>, impressoPor: <span class="tk-str">'Claudinei'</span>, impressoEm: <span class="tk-str">'31/03/2026 08:05'</span>,
+    impressoras: [
+      { id: <span class="tk-str">'PRN-BOX3'</span>, descricao: <span class="tk-str">'Zebra ZD420 (Box Pesagem)'</span> },
+      { id: <span class="tk-str">'PRN-LAB'</span>, descricao: <span class="tk-str">'Zebra GK420t (Laboratório)'</span> }
+    ],
+    impressora: { id: <span class="tk-str">'PRN-BOX3'</span>, descricao: <span class="tk-str">'Zebra ZD420 (Box Pesagem)'</span> }, copias: <span class="tk-keyword">1</span>
+  };
+  pop.<span class="tk-attr">addEventListener</span>(<span class="tk-str">'reimprimir'</span>, <span class="tk-keyword">function</span> (e) {
+    imprimir(e.detail.impressora, e.detail.copias);
+    pop.<span class="tk-attr">close</span>();
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
 
         <h2 class="gd-h2">API</h2>
 
@@ -11126,6 +11202,80 @@ pop.open();</pre>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong>Fechar por um botão do conteúdo:</strong> dê o atributo <code>data-close</code> a qualquer elemento (ex.: <code>&lt;button data-close&gt;Fechar&lt;/button&gt;</code>) — ele fecha o popup ao clicar. Alternativa em JS: <code>this.closest('granado-empty-popup').close()</code>.</li>
           <li><strong>4 formas de conteúdo:</strong> <code>show({content})</code>, propriedade <code>.content</code>, atributo <code>content</code> ou <strong>filhos declarativos</strong> (movidos para o card).</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-button-save-page
+           ============================================================ -->
+      <section id="granado-button-save-page" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-button-save-page&gt;</code></h1>
+        <p class="gd-lead">
+          Botão que <strong>salva o conteúdo da página</strong> em <strong>PDF</strong> ou <strong>HTML</strong>.
+          Sem bibliotecas externas: <em>HTML</em> serializa o DOM atual num arquivo <code>.html</code> (download direto);
+          <em>PDF</em> abre o <strong>diálogo de impressão nativo</strong> (o usuário escolhe "Salvar como PDF").
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-button-save-page.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso</h2>
+        <p class="gd-lead">
+          Sem <code>format</code> (default <code>"both"</code>), o clique abre um menu com <strong>PDF</strong> e
+          <strong>HTML</strong>. Sem <code>target</code>, salva a <strong>página inteira</strong>.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <granado-button-save-page label="Salvar esta página" filename="componentes-granado"></granado-button-save-page>
+          <granado-button-save-page format="pdf" label="Só PDF" filename="componentes-granado"></granado-button-save-page>
+          <granado-button-save-page format="html" color="#9A7520" label="Só HTML" filename="componentes-granado"></granado-button-save-page>
+        </div>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- PDF ou HTML (menu) da página inteira --&gt;</span>
+<span class="tk-tag">&lt;granado-button-save-page</span> <span class="tk-attr">label</span>=<span class="tk-str">"Salvar Página"</span> <span class="tk-attr">filename</span>=<span class="tk-str">"relatorio"</span><span class="tk-tag">&gt;&lt;/granado-button-save-page&gt;</span>
+
+<span class="tk-comment">&lt;!-- Só PDF, salvando apenas um container --&gt;</span>
+<span class="tk-tag">&lt;granado-button-save-page</span> <span class="tk-attr">format</span>=<span class="tk-str">"pdf"</span> <span class="tk-attr">target</span>=<span class="tk-str">"#dossie"</span> <span class="tk-attr">label</span>=<span class="tk-str">"Imprimir Dossiê"</span><span class="tk-tag">&gt;&lt;/granado-button-save-page&gt;</span>
+
+<span class="tk-comment">// Também via JS:</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">var</span> b = document.<span class="tk-attr">querySelector</span>(<span class="tk-str">'granado-button-save-page'</span>);
+  b.savePdf();   <span class="tk-comment">// abre o diálogo de impressão (Salvar como PDF)</span>
+  b.saveHtml();  <span class="tk-comment">// baixa o .html</span>
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">API</h2>
+        <h3 class="gd-h3">Atributos / propriedades</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Nome</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">label</td><td class="col-type">string</td><td class="col-desc">Texto do botão. Default <code>"Salvar Página"</code> (com ícone de download embutido).</td></tr>
+            <tr><td class="col-name">format</td><td class="col-type">"both" | "pdf" | "html"</td><td class="col-desc">Default <code>"both"</code> (menu com as duas opções). <code>"pdf"</code>/<code>"html"</code> executam direto no clique.</td></tr>
+            <tr><td class="col-name">target</td><td class="col-type">seletor CSS</td><td class="col-desc">O que salvar (ex.: <code>"#conteudo"</code>). Sem ele, salva a <strong>página inteira</strong>. Para PDF de um alvo, imprime num <code>&lt;iframe&gt;</code> com os estilos do <code>&lt;head&gt;</code>.</td></tr>
+            <tr><td class="col-name">filename</td><td class="col-type">string</td><td class="col-desc">Nome base do arquivo (sem extensão). Default <code>"pagina"</code>. No PDF, vira o nome sugerido no diálogo.</td></tr>
+            <tr><td class="col-name">color</td><td class="col-type">CSS color</td><td class="col-desc">Cor de fundo do botão. Default <code>#1C5C31</code>.</td></tr>
+            <tr><td class="col-name">disabled</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> desabilita o botão.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Métodos JS</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:160px">Método</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">el.savePdf()</td><td class="col-desc">Abre o diálogo de impressão nativo (o usuário escolhe "Salvar como PDF").</td></tr>
+            <tr><td class="col-name">el.saveHtml()</td><td class="col-desc">Baixa o conteúdo como arquivo <code>.html</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>PDF = impressão:</strong> não gera o PDF "no navegador" via lib; usa o <em>Print → Salvar como PDF</em> do sistema (confiável e sem dependências).</li>
+          <li><strong>HTML da página inteira:</strong> salva o <code>outerHTML</code> atual (inclui o estado dinâmico). CSS/JS externos referenciados por <code>&lt;link&gt;</code>/<code>&lt;script&gt;</code> continuam apontando para a origem — ao abrir o arquivo fora do servidor, esses recursos podem não resolver.</li>
+          <li><strong>Dica p/ PDF limpo:</strong> aponte <code>target</code> para o container do relatório para não imprimir menus/cabeçalhos do app.</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
         </ul>
       </section>
