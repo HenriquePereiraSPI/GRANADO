@@ -3232,7 +3232,8 @@
       <span class="tk-key">"Facility"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span><span class="tk-punc">,</span> <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"OkItems"</span><span class="tk-punc">:</span> <span class="tk-str">"7"</span><span class="tk-punc">,</span> <span class="tk-key">"TotalItems"</span><span class="tk-punc">:</span> <span class="tk-str">"7"</span><span class="tk-punc">,</span>
       <span class="tk-key">"TotalItemsFormatted"</span><span class="tk-punc">:</span> <span class="tk-str">"7/7"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/29/2026 1:30:11 PM"</span>
     }
-  ]
+  ]<span class="tk-punc">,</span>
+  <span class="tk-key">"OrderOverall"</span><span class="tk-punc">:</span> { <span class="tk-key">"New"</span><span class="tk-punc">:</span> <span class="tk-str">"289"</span><span class="tk-punc">,</span> <span class="tk-key">"Started"</span><span class="tk-punc">:</span> <span class="tk-str">"8"</span><span class="tk-punc">,</span> <span class="tk-key">"Completed"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"CompletedToday"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"CompletedWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"3"</span><span class="tk-punc">,</span> <span class="tk-key">"CompletedWeightToday"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"Cancelled"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span> }
 }</pre>
 
         <h3 class="gd-h3">Campos de saída</h3>
@@ -3244,6 +3245,7 @@
             <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as informações foram recuperadas com sucesso.</td></tr>
             <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno (vazia em caso de sucesso).</td></tr>
             <tr><td class="col-name">OrderSimplified</td><td class="col-type">array&lt;ordem&gt;</td><td class="col-desc">Header(s) da ordem. Campos de cada item abaixo.</td></tr>
+            <tr><td class="col-name">OrderOverall</td><td class="col-type">object</td><td class="col-desc">Resumo/contagem geral de ordens por status. Campos abaixo.</td></tr>
           </tbody>
         </table>
 
@@ -3271,6 +3273,23 @@
             <tr><td class="col-name">TotalItems</td><td class="col-type">string (número)</td><td class="col-desc">Total de itens da ordem.</td></tr>
             <tr><td class="col-name">TotalItemsFormatted</td><td class="col-type">string</td><td class="col-desc">Progresso formatado <code>OkItems/TotalItems</code> (ex.: <code>"7/7"</code>).</td></tr>
             <tr><td class="col-name">CreatedOn</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data/hora de criação da ordem.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de <code>OrderOverall</code></h3>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575">Contagens gerais (não se referem à ordem consultada, e sim ao panorama de ordens).</p>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:210px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">New</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade de ordens em <strong>Novo</strong>.</td></tr>
+            <tr><td class="col-name">Started</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade de ordens <strong>iniciadas</strong> (Started).</td></tr>
+            <tr><td class="col-name">Completed</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade de ordens <strong>concluídas</strong>.</td></tr>
+            <tr><td class="col-name">CompletedToday</td><td class="col-type">string (número)</td><td class="col-desc">Ordens concluídas <strong>hoje</strong>.</td></tr>
+            <tr><td class="col-name">CompletedWeight</td><td class="col-type">string (número)</td><td class="col-desc">Concluídas por <strong>peso</strong> (pesagem finalizada).</td></tr>
+            <tr><td class="col-name">CompletedWeightToday</td><td class="col-type">string (número)</td><td class="col-desc">Concluídas por peso <strong>hoje</strong>.</td></tr>
+            <tr><td class="col-name">Cancelled</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade de ordens <strong>canceladas</strong>.</td></tr>
           </tbody>
         </table>
 
