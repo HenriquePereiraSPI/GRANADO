@@ -20,7 +20,7 @@ import { findDossie } from '../data/dossie-wo-784426.js';
  * Lotes em status 20/30 ficam visiveis pra acompanhamento, mas nao
  * permitem abertura ate a etapa anterior terminar.
  *
- * Inclui: KPIs no topo, filtros por status / processo / tipo / busca,
+ * Inclui: KPIs no topo, filtros por lote / produto / prioridade / status / período,
  * grid horizontal-scroll e rodape com legenda.
  */
 
@@ -181,9 +181,11 @@ export default function QualidadeFilaReconciliacaoScreen() {
   const navigate = useNavigate();
   const [aba, setAba] = useState('pendentes'); // 'pendentes' | 'finalizadas'
   const [filtroStatus, setFiltroStatus] = useState('todos');
-  const [filtroProcesso, setFiltroProcesso] = useState('todos');
-  const [filtroTipo, setFiltroTipo] = useState('todos');
-  const [busca, setBusca] = useState('');
+  const [filtroLote, setFiltroLote] = useState('');
+  const [filtroProduto, setFiltroProduto] = useState('');
+  const [filtroPrioridade, setFiltroPrioridade] = useState('todos');
+  const [dataInicio, setDataInicio] = useState('');
+  const [dataFim, setDataFim] = useState('');
   const [aviso, setAviso] = useState('');
   const [info, setInfo] = useState('');
 
@@ -218,31 +220,23 @@ export default function QualidadeFilaReconciliacaoScreen() {
   const loteEncontrado = useMemo(() => buscarDadosDoLote(novoLote), [novoLote]); // eslint-disable-line react-hooks/exhaustive-deps
   const loteJaNaFila = loteEncontrado && lotes.some((l) => l.lotePA === loteEncontrado.lotePA);
 
-  // Listas unicas pra filtros (dropdowns).
-  const processosUnicos = useMemo(
-    () => [...new Set(lotes.map((i) => i.processo))],
-    [lotes]
-  );
-  const tiposUnicos = useMemo(
-    () => [...new Set(lotes.map((i) => i.tipoRelato))],
-    [lotes]
-  );
-
   // Itens apos filtragem.
   // Wave 3.8 — sort: prioridade critica → alta → normal, mantendo a
   // ordem original dentro de cada grupo.
   const PRIORIDADE_PESO = { critica: 0, alta: 1, normal: 2 };
   const itensFiltrados = useMemo(() => {
-    const q = busca.trim().toLowerCase();
+    const qLote = filtroLote.trim().toLowerCase();
+    const qProd = filtroProduto.trim().toLowerCase();
     return lotes
       .filter((item) => {
         if (filtroStatus !== 'todos' && item.statusReconciliacao !== filtroStatus) return false;
-        if (filtroProcesso !== 'todos' && item.processo !== filtroProcesso) return false;
-        if (filtroTipo !== 'todos' && item.tipoRelato !== filtroTipo) return false;
-        if (q) {
-          const hay = `${item.lotePA} ${item.produto} ${item.wo} ${item.descStatus}`.toLowerCase();
-          if (!hay.includes(q)) return false;
-        }
+        if (filtroPrioridade !== 'todos' && item.prioridadePcp !== filtroPrioridade) return false;
+        if (qLote && !String(item.lotePA).toLowerCase().includes(qLote)) return false;
+        if (qProd && !String(item.produto).toLowerCase().includes(qProd)) return false;
+        // Data (compara a parte AAAA-MM-DD de dataAtualizacao contra o range).
+        const dia = String(item.dataAtualizacao || '').slice(0, 10);
+        if (dataInicio && dia < dataInicio) return false;
+        if (dataFim && dia > dataFim) return false;
         return true;
       })
       .slice()
@@ -252,7 +246,7 @@ export default function QualidadeFilaReconciliacaoScreen() {
         if (pa !== pb) return pa - pb;
         return a.linha - b.linha;
       });
-  }, [lotes, filtroStatus, filtroProcesso, filtroTipo, busca]);
+  }, [lotes, filtroStatus, filtroPrioridade, filtroLote, filtroProduto, dataInicio, dataFim]);
 
   // KPIs (calculados sobre o conjunto total — nao filtrado).
   const stats = useMemo(() => {
@@ -267,9 +261,11 @@ export default function QualidadeFilaReconciliacaoScreen() {
 
   const limparFiltros = () => {
     setFiltroStatus('todos');
-    setFiltroProcesso('todos');
-    setFiltroTipo('todos');
-    setBusca('');
+    setFiltroLote('');
+    setFiltroProduto('');
+    setFiltroPrioridade('todos');
+    setDataInicio('');
+    setDataFim('');
     setAviso('');
     setInfo('');
   };
@@ -343,7 +339,9 @@ export default function QualidadeFilaReconciliacaoScreen() {
   };
 
   const filtroAtivo =
-    filtroStatus !== 'todos' || filtroProcesso !== 'todos' || filtroTipo !== 'todos' || busca.trim() !== '';
+    filtroStatus !== 'todos' || filtroPrioridade !== 'todos' ||
+    filtroLote.trim() !== '' || filtroProduto.trim() !== '' ||
+    dataInicio !== '' || dataFim !== '';
 
   return (
     <div className="screen active" style={{ display: 'block' }}>
@@ -463,6 +461,45 @@ export default function QualidadeFilaReconciliacaoScreen() {
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label className="lbl">Lote</label>
+          <input
+            className="inp"
+            type="text"
+            value={filtroLote}
+            onChange={(e) => setFiltroLote(e.target.value)}
+            placeholder="Ex.: 262417"
+            style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }}
+          />
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label className="lbl">Produto</label>
+          <input
+            className="inp"
+            type="text"
+            value={filtroProduto}
+            onChange={(e) => setFiltroProduto(e.target.value)}
+            placeholder="Ex.: Verbena"
+            style={{ fontSize: 12, padding: '7px 10px' }}
+          />
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label className="lbl">Prioridade</label>
+          <select
+            className="sel"
+            value={filtroPrioridade}
+            onChange={(e) => setFiltroPrioridade(e.target.value)}
+            style={{ fontSize: 12, padding: '7px 10px' }}
+          >
+            <option value="todos">Todas</option>
+            <option value="critica">Crítica</option>
+            <option value="alta">Alta</option>
+            <option value="normal">Normal</option>
+          </select>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
           <label className="lbl">Status do Processo</label>
           <select
             className="sel"
@@ -478,43 +515,23 @@ export default function QualidadeFilaReconciliacaoScreen() {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label className="lbl">Processo</label>
-          <select
-            className="sel"
-            value={filtroProcesso}
-            onChange={(e) => setFiltroProcesso(e.target.value)}
-            style={{ fontSize: 12, padding: '7px 10px' }}
-          >
-            <option value="todos">Todos</option>
-            {processosUnicos.map((p) => (
-              <option key={p} value={p}>{p}</option>
-            ))}
-          </select>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label className="lbl">Tipo de Relato</label>
-          <select
-            className="sel"
-            value={filtroTipo}
-            onChange={(e) => setFiltroTipo(e.target.value)}
-            style={{ fontSize: 12, padding: '7px 10px' }}
-          >
-            <option value="todos">Todos</option>
-            {tiposUnicos.map((t) => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label className="lbl">Buscar (Lote / Produto / WO)</label>
+          <label className="lbl">Data Início</label>
           <input
             className="inp"
-            type="text"
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-            placeholder="Ex.: 262417, Verbena, 784426…"
+            type="date"
+            value={dataInicio}
+            onChange={(e) => setDataInicio(e.target.value)}
+            style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }}
+          />
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label className="lbl">Data Fim</label>
+          <input
+            className="inp"
+            type="date"
+            value={dataFim}
+            onChange={(e) => setDataFim(e.target.value)}
             style={{ fontSize: 12, padding: '7px 10px', fontFamily: 'var(--font-m)' }}
           />
         </div>
@@ -567,8 +584,7 @@ export default function QualidadeFilaReconciliacaoScreen() {
                 <th title="ID da reconciliação">#</th>
                 <th>Lote<br />PA</th>
                 <th>Produto</th>
-                <th title="Prioridade do PCP — sinaliza lotes preferenciais">🚩 PrioridadePCP</th>
-                <th>Processo</th>
+                <th title="Prioridade do PCP — sinaliza lotes preferenciais">🚩 Prioridade</th>
                 <th>Status do<br />Processo</th>
                 <th>Última<br />Atualização</th>
                 <th style={{ textAlign: 'center' }}>Ação</th>
@@ -577,7 +593,7 @@ export default function QualidadeFilaReconciliacaoScreen() {
             <tbody>
               {itensFiltrados.length === 0 && (
                 <tr>
-                  <td colSpan={8} style={{ textAlign: 'center', padding: 32, color: 'var(--text3)' }}>
+                  <td colSpan={7} style={{ textAlign: 'center', padding: 32, color: 'var(--text3)' }}>
                     <div style={{ fontSize: 24, marginBottom: 6 }}>🔍</div>
                     Nenhum lote corresponde aos filtros aplicados.
                     <div style={{ fontSize: 11, marginTop: 4 }}>
@@ -598,7 +614,6 @@ export default function QualidadeFilaReconciliacaoScreen() {
                   <td className="mono" style={{ color: 'var(--verde)', fontWeight: 800 }}>{item.lotePA}</td>
                   <td style={{ fontSize: 12 }}>{item.produto}</td>
                   <td><PrioridadePcpFlag nivel={item.prioridadePcp} motivo={item.motivoPrioridade} /></td>
-                  <td className="mono"><strong>{item.processo}</strong></td>
                   <td><StatusReconcPill status={item.statusReconciliacao} /></td>
                   <td className="mono" style={{ fontSize: 11, color: 'var(--text3)' }}>{item.dataAtualizacao}</td>
                   <td style={{ textAlign: 'center' }} onClick={(e) => e.stopPropagation()}>
@@ -765,7 +780,7 @@ export default function QualidadeFilaReconciliacaoScreen() {
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <label className="lbl">
                 Lote <span style={{ color: 'var(--per)' }}>*</span>{' '}
-                <span style={{ fontSize: 9, color: 'var(--text3)' }}>— Lote PA · WO · código</span>
+                <span style={{ fontSize: 9, color: 'var(--text3)' }}>— Lote PA</span>
               </label>
               <input
                 className="inp"

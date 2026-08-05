@@ -65,6 +65,12 @@
                           Devolvido no detail do evento "confirm".
      open               - "false" inicia oculto
      onConfirm          - (opcional) string JS executada ao confirmar (event, detail)
+     onValidate         - (opcional) validação SÍNCRONA ao clicar em "Confirmar".
+                          Recebe o MESMO detail do confirm e DEVE retornar
+                          { valid:true|false, message } (ou true/false).
+                            valid=true  -> o popup fecha normalmente (segue o confirm).
+                            valid=false -> o popup CONTINUA aberto e exibe "message".
+                          Em JS use .onValidate (função) ou o atributo onvalidate (string).
 
    ── Eventos (CustomEvent, bubbles)
      "confirm"    -> detail { checklistId, checklistCode, verifiedBy, dateTime,
@@ -72,6 +78,7 @@
                      isManualValue: true = usuário digitou o Valor · false = veio do setter
                      da ação (ctx.setValor) ou é o valor inicial.
                      status: com limites, é automático (OK/Fora); sem limites, é o checkbox.
+                     Só dispara se a validação (onValidate) passar.
      "row-action" -> detail = ctx (index, row, value, check, observacao,
                      setValor, setCheck, setObservacao) — clique no botão da linha.
                      Também disponível externamente: el.setValor(i, v) / el.setCheck(i, bool).
@@ -79,7 +86,7 @@
 
    ── API estática
      GranadoChecklistPopup.show({ title, subtitle, headerInformation, data,
-                                  verifiedBy, dateTime, confirmText, onConfirm })
+                                  verifiedBy, dateTime, confirmText, onConfirm, onValidate })
 
    ── Exemplo
    <script src="[AprisoScripts]/WebComponents/granado-checklist-popup.js"></script>
@@ -135,8 +142,10 @@ if (!customElements.get('granado-checklist-popup')) {
       if (opts.checklistCode != null) el.setAttribute('checklist-code', String(opts.checklistCode));
       if (opts.closeOnBackdrop != null) el.setAttribute('close-on-backdrop', opts.closeOnBackdrop ? 'true' : 'false');
       if (opts.onConfirm != null && typeof opts.onConfirm !== 'function') el.setAttribute('onConfirm', String(opts.onConfirm));
+      if (opts.onValidate != null && typeof opts.onValidate !== 'function') el.setAttribute('onValidate', String(opts.onValidate));
       el._autoRemove = true;
       if (typeof opts.onConfirm === 'function') el._onConfirmFn = opts.onConfirm;
+      if (typeof opts.onValidate === 'function') el._onValidateFn = opts.onValidate;
       document.body.appendChild(el);
       if (opts.headerInformation != null) el.headerInformation = opts.headerInformation;  // mantém objeto/array
       if (opts.data != null) el.data = opts.data;                                          // mantém funções de acao
@@ -186,6 +195,11 @@ if (!customElements.get('granado-checklist-popup')) {
     set checklistId(v) { if (v == null) this.removeAttribute('checklist-id'); else this.setAttribute('checklist-id', String(v)); }
     get checklistCode() { return this.getAttribute('checklist-code'); }
     set checklistCode(v) { if (v == null) this.removeAttribute('checklist-code'); else this.setAttribute('checklist-code', String(v)); }
+    // Handler de validação (JS). Recebe o mesmo detail do confirm; deve retornar
+    // { valid:true|false, message } (ou true/false). false mantém o popup aberto.
+    get onValidate() { return this._onValidateFn || null; }
+    set onValidate(fn) { this._onValidateFn = (typeof fn === 'function') ? fn : null; }
+
     // Fechar ao clicar fora? Default: false (não fecha). Só fecha com "true".
     _closeOnBackdrop() { return this.getAttribute('close-on-backdrop') === 'true'; }
     get closeOnBackdrop() { return this._closeOnBackdrop(); }
@@ -363,6 +377,8 @@ if (!customElements.get('granado-checklist-popup')) {
               `<div><label style="display:block;font:900 9px/1.4 ${FONT};letter-spacing:.1em;text-transform:uppercase;color:${TEXT3};margin-bottom:5px">Verificado por <span style="font-weight:600;color:${TEXT3};letter-spacing:0;text-transform:none">🔒</span></label><input data-role="verifiedBy" type="text" value="${this._esc(verifiedBy)}" readonly tabindex="-1" aria-readonly="true" title="Definido pelo sistema" style="${inpBase};font-family:${MONO};background:${SURFACE2};color:${TEXT2};cursor:not-allowed"></div>` +
               `<div><label style="display:block;font:900 9px/1.4 ${FONT};letter-spacing:.1em;text-transform:uppercase;color:${TEXT3};margin-bottom:5px">Data / Hora <span style="font-weight:600;color:${TEXT3};letter-spacing:0;text-transform:none">🔒 automático</span></label><input data-role="dateTime" type="text" value="${this._esc(dateTime)}" readonly tabindex="-1" aria-readonly="true" title="Preenchido automaticamente" style="${inpBase};font-family:${MONO};background:${SURFACE2};color:${TEXT2};cursor:not-allowed"></div>` +
             `</div>` +
+            // Mensagem de erro da validação (onValidate) — oculta por padrão.
+            `<div data-role="validate-error" style="display:none;margin-top:14px;padding:9px 12px;border:1px solid rgba(140,26,26,.35);background:rgba(140,26,26,.08);color:#8C1A1A;border-radius:8px;font:600 12px/1.45 ${FONT}"></div>` +
             // Botões
             `<div style="display:flex;gap:10px;justify-content:flex-end;padding-top:16px;margin-top:16px;border-top:1px solid ${BORDER}">` +
               `<button type="button" data-role="cancel" style="font:600 13px/1.4 ${FONT};padding:9px 18px;border:1px solid ${BORDER};border-radius:8px;background:transparent;color:${TEXT2};cursor:pointer">Cancelar</button>` +
@@ -510,11 +526,61 @@ if (!customElements.get('granado-checklist-popup')) {
         dateTime: val('[data-role="dateTime"]'),
         rows: rows
       };
+
+      // onValidate (opcional): recebe o MESMO detail do confirm e decide se pode
+      // fechar. Deve retornar { valid:true|false, message } (ou true/false).
+      // Se inválido, mantém o popup ABERTO e exibe a mensagem de erro.
+      const v = this._runValidate(detail, ev);
+      if (v.ran) {
+        if (!v.valid) { this._showValidationError(v.message); return; }
+        this._clearValidationError();
+      }
+
       this.dispatchEvent(new CustomEvent('confirm', { bubbles: true, composed: true, detail: detail }));
       if (typeof this._onConfirmFn === 'function') this._onConfirmFn(detail, ev);
       const h = this.getAttribute('onconfirm');
       if (h) new Function('event', 'detail', h).call(this, ev, detail);
       this.close();
+    }
+
+    // ── Validação (onValidate) ──
+    _runValidate(detail, ev) {
+      const hasFn = typeof this._onValidateFn === 'function';
+      const attr = this.getAttribute('onvalidate');
+      if (!hasFn && !attr) return { ran: false };
+      let res;
+      try {
+        if (hasFn) res = this._onValidateFn(detail, ev);
+        else res = new Function('event', 'detail', attr).call(this, ev, detail);
+      } catch (e) {
+        return { ran: true, valid: false, message: 'Erro na validação: ' + (e && e.message ? e.message : e) };
+      }
+      const n = this._normalizeValidation(res);
+      return { ran: true, valid: n.valid, message: n.message };
+    }
+
+    // Aceita: true/false | [bool, msg] | { valid|ok|success, message|msg|mensagem }.
+    // undefined/null (implementou mas não retornou) -> considera válido (não trava).
+    _normalizeValidation(res) {
+      if (res === true) return { valid: true, message: '' };
+      if (res === false) return { valid: false, message: '' };
+      if (Array.isArray(res)) return { valid: !!res[0], message: res[1] || '' };
+      if (res && typeof res === 'object') {
+        const valid = (res.valid != null) ? res.valid : ((res.ok != null) ? res.ok : res.success);
+        return { valid: !!valid, message: res.message || res.msg || res.mensagem || '' };
+      }
+      return { valid: true, message: '' };
+    }
+
+    _showValidationError(msg) {
+      const el = this.querySelector('[data-role="validate-error"]');
+      if (!el) return;
+      el.textContent = msg || 'Não foi possível confirmar. Verifique os dados do checklist.';
+      el.style.display = 'block';
+    }
+    _clearValidationError() {
+      const el = this.querySelector('[data-role="validate-error"]');
+      if (el) { el.style.display = 'none'; el.textContent = ''; }
     }
   }
 

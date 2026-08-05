@@ -49,6 +49,7 @@
   <script src="./granado-table-popup.js"></script>
   <script src="./granado-timeline-item.js"></script>
   <script src="./granado-timeline.js"></script>
+  <script src="./granado-empty-popup.js"></script>
 
   <style>
     html,
@@ -316,6 +317,7 @@
       <a class="gd-link" href="#granado-box-popup">granado-box-popup</a>
       <a class="gd-link" href="#granado-table-popup">granado-table-popup</a>
       <a class="gd-link" href="#granado-timeline">granado-timeline</a>
+      <a class="gd-link" href="#granado-empty-popup">granado-empty-popup</a>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -9969,6 +9971,67 @@ pop.open();</pre>
 <span class="tk-tag">&lt;/script&gt;</span></pre>
         </div>
 
+        <h2 class="gd-h2">Validação antes de fechar (<code>onValidate</code>)</h2>
+        <p class="gd-lead">
+          O <code>onValidate</code> roda <strong>ao clicar em "Confirmar"</strong>, recebe o
+          <strong>mesmo <code>detail</code></strong> do <code>confirm</code> e decide se o popup pode fechar.
+          Retorne <code>{ valid:false, message }</code> para <strong>manter o popup aberto</strong> e exibir
+          o erro; <code>{ valid:true }</code> deixa seguir normalmente. No exemplo, o confirmar é bloqueado
+          enquanto houver linhas <strong>sem Valor</strong> — preencha as duas e confirme.
+        </p>
+        <div class="gd-split">
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button type="button" onclick="docCklValidate()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1F7A3D;border-radius:7px;background:#1F7A3D;color:#fff;cursor:pointer">✔ Checklist com validação</button>
+          <span id="doc-ckl-vld-status" style="font-size:12px;color:#8A9E8E"></span>
+        </div>
+        <script>
+          function docCklValidate() {
+            GranadoChecklistPopup.show({
+              title: '✔ Liberação de Linha', subtitle: 'Linha 03 · Envase',
+              checklistId: '100000009', checklistCode: 'CHECKLIST_LIBERACAO',
+              headerInformation: 'Preencha o Valor de todas as linhas para liberar.',
+              data: [
+                { id: 'pres', caracteristica: 'Pressão da linha (bar)', valor: '', observacao: '' },
+                { id: 'temp', caracteristica: 'Temperatura do produto (°C)', valor: '', observacao: '' }
+              ],
+              verifiedBy: 'A. Costa · Mat. 00233',
+              // onValidate: bloqueia o confirmar enquanto houver Valor vazio.
+              onValidate: function (d) {
+                var faltando = d.rows.filter(function (r) { return !r.valor || !String(r.valor).trim(); }).length;
+                if (faltando) return { valid: false, message: '⚠ Preencha o Valor de todas as linhas (' + faltando + ' em falta).' };
+                return { valid: true };
+              },
+              onConfirm: function (d) {
+                var s = document.getElementById('doc-ckl-vld-status');
+                if (s) s.textContent = '✅ Validado e confirmado (veja o console)';
+                console.log('confirm →', d); console.table(d.rows);
+              }
+            });
+          }
+        </script>
+        <pre class="gd-code"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoChecklistPopup.<span class="tk-attr">show</span>({
+    title: <span class="tk-str">'✔ Liberação de Linha'</span>,
+    checklistId: <span class="tk-str">'100000009'</span>, checklistCode: <span class="tk-str">'CHECKLIST_LIBERACAO'</span>,
+    data: [
+      { id: <span class="tk-str">'pres'</span>, caracteristica: <span class="tk-str">'Pressão da linha (bar)'</span>, valor: <span class="tk-str">''</span> },
+      { id: <span class="tk-str">'temp'</span>, caracteristica: <span class="tk-str">'Temperatura do produto (°C)'</span>, valor: <span class="tk-str">''</span> }
+    ],
+
+    <span class="tk-comment">// Roda ao clicar em Confirmar. Recebe o MESMO detail do confirm.</span>
+    <span class="tk-comment">// { valid:false, message } -> mantém o popup aberto e mostra a mensagem.</span>
+    <span class="tk-comment">// { valid:true }           -> fecha e segue para o onConfirm.</span>
+    onValidate: <span class="tk-keyword">function</span> (d) {
+      <span class="tk-keyword">var</span> faltando = d.rows.filter(<span class="tk-keyword">function</span> (r) { <span class="tk-keyword">return</span> !r.valor; }).length;
+      <span class="tk-keyword">if</span> (faltando) <span class="tk-keyword">return</span> { valid: <span class="tk-keyword">false</span>, message: <span class="tk-str">'Preencha o Valor de todas as linhas ('</span> + faltando + <span class="tk-str">' em falta).'</span> };
+      <span class="tk-keyword">return</span> { valid: <span class="tk-keyword">true</span> };
+    },
+
+    onConfirm: <span class="tk-keyword">function</span> (d) { console.log(d.rows); }   <span class="tk-comment">// só chega aqui se onValidate passar</span>
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
         <h2 class="gd-h2">Uso — declarativo (HTML)</h2>
         <p class="gd-lead">
           Também dá para deixar o popup no HTML e passar <code>header-information</code> e <code>data</code>
@@ -10038,6 +10101,7 @@ pop.open();</pre>
             <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> permite <strong>fechar ao clicar fora</strong> (backdrop). Por padrão (default <code>false</code>) <strong>não fecha</strong> ao clicar fora. Em JS: <code>.closeOnBackdrop</code>. O ✕ e o botão Cancelar sempre fecham.</td></tr>
             <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code>.</td></tr>
             <tr><td class="col-name">onConfirm</td><td class="col-type">string (JS)</td><td class="col-desc">Handler inline ao confirmar. Recebe <code>event</code> e <code>detail</code>.</td></tr>
+            <tr><td class="col-name">onValidate</td><td class="col-type">função / string (JS)</td><td class="col-desc"><strong>Validação síncrona</strong> ao clicar em <em>Confirmar</em>. Recebe o <strong>mesmo <code>detail</code></strong> do <code>confirm</code> (<code>checklistId</code>, <code>checklistCode</code>, <code>verifiedBy</code>, <code>dateTime</code>, <code>rows[]</code>) e <strong>deve retornar</strong> <code>{ valid: true|false, message }</code> (ou <code>true</code>/<code>false</code>). <code>valid:true</code> → o popup fecha normalmente (segue o <code>confirm</code>); <code>valid:false</code> → o popup <strong>continua aberto</strong> e exibe a <code>message</code>. Em JS use a propriedade <code>.onValidate</code> (função); como atributo é string JS que <code>return</code> o objeto.</td></tr>
           </tbody>
         </table>
 
@@ -10087,7 +10151,7 @@ pop.open();</pre>
             <tr><th style="width:130px">Evento</th><th style="width:230px">detail</th><th>Quando</th></tr>
           </thead>
           <tbody>
-            <tr><td class="col-name">confirm</td><td class="col-type">{ checklistId, checklistCode, verifiedBy, dateTime, rows[] }</td><td class="col-desc">Clique em Confirmar. Inclui <code>checklistId</code>/<code>checklistCode</code> (ecos dos parâmetros). Cada linha em <code>rows</code>: <code>{ id, caracteristica, valor, isManualValue, status, observacao }</code>. Com limites, <code>status</code> é automático; sem limites, é o checkbox.</td></tr>
+            <tr><td class="col-name">confirm</td><td class="col-type">{ checklistId, checklistCode, verifiedBy, dateTime, rows[] }</td><td class="col-desc">Clique em Confirmar. Inclui <code>checklistId</code>/<code>checklistCode</code> (ecos dos parâmetros). Cada linha em <code>rows</code>: <code>{ id, caracteristica, valor, isManualValue, status, observacao }</code>. Com limites, <code>status</code> é automático; sem limites, é o checkbox. <strong>Só dispara se <code>onValidate</code> retornar <code>valid:true</code></strong> (ou se não houver <code>onValidate</code>).</td></tr>
             <tr><td class="col-name">row-action</td><td class="col-type">ctx</td><td class="col-desc">Clique no botão de ação da linha (mesmo <code>ctx</code> do <code>onClick</code>).</td></tr>
           </tbody>
         </table>
@@ -10933,6 +10997,135 @@ pop.open();</pre>
           <li><strong>Ordem dos scripts:</strong> inclua <code>granado-timeline-item.js</code> <em>antes</em> do <code>granado-timeline.js</code>.</li>
           <li><strong>Conteúdo:</strong> o corpo expansível é qualquer HTML dentro do <code>&lt;granado-timeline-item&gt;</code> (Light DOM) — preservado entre re-renders.</li>
           <li><strong>Sem numeração automática:</strong> se quiser um "Etapa X/Y", passe você mesmo no <code>eyebrow</code> do item. O container ainda expõe <code>data-order</code>/<code>data-total</code> (usados no <code>detail</code> do evento).</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-empty-popup
+           ============================================================ -->
+      <section id="granado-empty-popup" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-empty-popup&gt;</code></h1>
+        <p class="gd-lead">
+          Popup <strong>"casca" genérico</strong>: serve de moldura (backdrop + card + ✕) para
+          <strong>qualquer HTML</strong>. Você passa o conteúdo e ele monta dentro do card — inclusive
+          outros web components (ex.: <code>granado-table</code>, <code>granado-gallery</code>).
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-empty-popup.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — API estática</h2>
+        <p class="gd-lead">
+          Forma recomendada: <code>GranadoEmptyPopup.show({ content })</code> — cria, injeta no
+          <code>&lt;body&gt;</code>, abre e devolve o elemento (auto-remove ao fechar). O
+          <code>content</code> é uma string de HTML montada no corpo.
+        </p>
+        <div class="gd-split">
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button type="button" onclick="docEmptyBasic()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1C5C31;border-radius:7px;background:#1C5C31;color:#fff;cursor:pointer">📄 Abrir popup (HTML)</button>
+          <button type="button" onclick="docEmptyBackdrop()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1C5C31;border-radius:7px;background:#fff;color:#1C5C31;cursor:pointer">Fecha ao clicar fora</button>
+        </div>
+        <script>
+          function docEmptyBasic() {
+            GranadoEmptyPopup.show({
+              title: 'Detalhes da Ordem',
+              subtitle: 'OP-2026-0416 · Loção Rosa 200ml',
+              width: '560px',
+              content:
+                '<p style="margin:0 0 12px;font-size:13px;color:#4B5563">Qualquer <strong>HTML</strong> ' +
+                'pode ser montado aqui — inclusive outros web components.</p>' +
+                '<ul style="margin:0 0 14px;padding-left:18px;font-size:13px;color:#103E20;line-height:1.7">' +
+                '<li>Produto: Loção Hidratante Rosa 200ml</li><li>Quantidade: 2.000 un</li>' +
+                '<li>Status: Em pesagem</li></ul>' +
+                '<div style="text-align:right"><button data-close ' +
+                'style="font:700 13px/1.4 \'Poppins\',Arial,sans-serif;padding:8px 16px;border:1px solid #1C5C31;border-radius:7px;background:#1C5C31;color:#fff;cursor:pointer">OK, entendi</button></div>'
+            });
+          }
+          function docEmptyBackdrop() {
+            GranadoEmptyPopup.show({
+              title: 'Fecha ao clicar fora',
+              content: '<p style="margin:0;font-size:13px;color:#4B5563">Clique fora do card (ou Esc / ✕) para fechar.</p>',
+              closeOnBackdrop: true
+            });
+          }
+        </script>
+        <pre class="gd-code"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoEmptyPopup.<span class="tk-attr">show</span>({
+    title: <span class="tk-str">'Detalhes da Ordem'</span>,
+    subtitle: <span class="tk-str">'OP-2026-0416 · Loção Rosa 200ml'</span>,
+    width: <span class="tk-str">'560px'</span>,
+    closeOnBackdrop: <span class="tk-keyword">true</span>,          <span class="tk-comment">// default: false (não fecha ao clicar fora)</span>
+    content: <span class="tk-str">'&lt;p&gt;Qualquer &lt;strong&gt;HTML&lt;/strong&gt; aqui…&lt;/p&gt;'</span> +
+             <span class="tk-str">'&lt;granado-table id="t"&gt;&lt;/granado-table&gt;'</span> +
+             <span class="tk-comment">/* botão que fecha o popup: basta o atributo data-close */</span>
+             <span class="tk-str">'&lt;button data-close&gt;Ok, entendi&lt;/button&gt;'</span>,
+    onClose: <span class="tk-keyword">function</span> () { console.log(<span class="tk-str">'fechou'</span>); }
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">Uso — declarativo (filhos)</h2>
+        <p class="gd-lead">
+          Também dá para deixar o popup no HTML com o conteúdo <strong>como filhos</strong> — eles são
+          movidos para dentro do card. Inicie oculto com <code>open="false"</code> e exiba com
+          <code>el.open()</code>.
+        </p>
+        <div class="gd-split">
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button type="button" onclick="document.getElementById('doc-empty-decl').open()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#9A7520;color:#fff;cursor:pointer">🧩 Abrir (filhos)</button>
+          <granado-empty-popup id="doc-empty-decl" open="false" title="Conteúdo declarativo" width="480px" close-on-backdrop="true">
+            <p style="margin:0 0 10px;font-size:13px;color:#4B5563">Este bloco estava <strong>dentro</strong> do
+              <code>&lt;granado-empty-popup&gt;</code> no HTML e foi montado no card.</p>
+            <granado-simple-card title="Card embutido" subtitle="Web components também funcionam aqui" color="#1A4A8C"></granado-simple-card>
+          </granado-empty-popup>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-empty-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"p"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Conteúdo declarativo"</span> <span class="tk-attr">width</span>=<span class="tk-str">"480px"</span> <span class="tk-attr">close-on-backdrop</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span>
+  <span class="tk-tag">&lt;p&gt;</span>Este bloco vai para dentro do card.<span class="tk-tag">&lt;/p&gt;</span>
+  <span class="tk-tag">&lt;granado-simple-card</span> <span class="tk-attr">title</span>=<span class="tk-str">"Card embutido"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span><span class="tk-tag">&gt;&lt;/granado-simple-card&gt;</span>
+<span class="tk-tag">&lt;/granado-empty-popup&gt;</span>
+
+<span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-str">"document.getElementById('p').open()"</span><span class="tk-tag">&gt;</span>Abrir<span class="tk-tag">&lt;/button&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">API</h2>
+        <h3 class="gd-h3">Atributos / propriedades</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:160px">Nome</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">content</td><td class="col-type">string (HTML) / JS</td><td class="col-desc">HTML montado no corpo do card. Em JS use a propriedade <code>.content</code> (re-renderiza). Sobrepõe os filhos declarativos.</td></tr>
+            <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-desc">Título no topo do card (opcional).</td></tr>
+            <tr><td class="col-name">subtitle</td><td class="col-type">string</td><td class="col-desc">Subtítulo, abaixo do título (opcional).</td></tr>
+            <tr><td class="col-name">width</td><td class="col-type">CSS length</td><td class="col-desc">Largura máxima do card. Default <code>"520px"</code>.</td></tr>
+            <tr><td class="col-name">color</td><td class="col-type">CSS color</td><td class="col-desc">Cor do detalhe (borda superior de 4px). Default <code>#1C5C31</code>.</td></tr>
+            <tr><td class="col-name">show-close</td><td class="col-type">boolean</td><td class="col-desc"><code>"false"</code> esconde o ✕. Default: mostra.</td></tr>
+            <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> fecha ao clicar fora (backdrop). Default: <strong>não</strong> fecha. O ✕ e a tecla <strong>Esc</strong> sempre fecham. Em JS: <code>.closeOnBackdrop</code> não existe — use o atributo.</td></tr>
+            <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code> / <code>close()</code>.</td></tr>
+            <tr><td class="col-name">onClose</td><td class="col-type">função / string (JS)</td><td class="col-desc">Executado ao fechar. Em JS use <code>.onClose</code> (função) ou o atributo <code>onclose</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Métodos / evento</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:200px">Membro</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">GranadoEmptyPopup.show(opts)</td><td class="col-desc">Estático. Aceita <code>{ title, subtitle, content, width, color, closeOnBackdrop, showClose, onClose }</code>. Cria, abre e devolve o elemento (auto-remove ao fechar).</td></tr>
+            <tr><td class="col-name">el.open() / el.close()</td><td class="col-desc">Abre / fecha o popup.</td></tr>
+            <tr><td class="col-name">el.content = '…'</td><td class="col-desc">Troca o HTML do corpo e re-renderiza.</td></tr>
+            <tr><td class="col-name"><code>[data-close]</code> no conteúdo</td><td class="col-desc">Qualquer elemento do seu HTML com o atributo <code>data-close</code> fecha o popup ao ser clicado (ex.: <code>&lt;button data-close&gt;Fechar&lt;/button&gt;</code>).</td></tr>
+            <tr><td class="col-name">evento <code>close</code></td><td class="col-desc">Disparado ao fechar (✕, Esc, backdrop ou <code>close()</code>). Bubbles.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Fechar por um botão do conteúdo:</strong> dê o atributo <code>data-close</code> a qualquer elemento (ex.: <code>&lt;button data-close&gt;Fechar&lt;/button&gt;</code>) — ele fecha o popup ao clicar. Alternativa em JS: <code>this.closest('granado-empty-popup').close()</code>.</li>
+          <li><strong>4 formas de conteúdo:</strong> <code>show({content})</code>, propriedade <code>.content</code>, atributo <code>content</code> ou <strong>filhos declarativos</strong> (movidos para o card).</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
         </ul>
       </section>
