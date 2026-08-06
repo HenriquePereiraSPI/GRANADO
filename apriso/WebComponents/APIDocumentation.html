@@ -353,6 +353,7 @@
           <a class="gd-link" href="#GRD_API_MoveMPCage">GRD_API_MoveMPCage</a>
           <a class="gd-link" href="#GRD_API_CloseWeightOrder">GRD_API_CloseWeightOrder</a>
           <a class="gd-link" href="#GRD_API_GetReturnStockLabelsInformation">GRD_API_GetReturnStockLabelsInformation</a>
+          <a class="gd-link" href="#GRD_API_BeginScaleReadings">GRD_API_BeginScaleReadings</a>
         </div>
       </div>
 
@@ -2027,6 +2028,72 @@
           <li><strong>Quantidades como string:</strong> os valores vêm com casas decimais fixas
             (string); converta para número antes de calcular.</li>
         </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_BeginScaleReadings
+           ============================================================ -->
+      <section id="GRD_API_BeginScaleReadings">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_BeginScaleReadings</code></h1>
+        <p class="gd-lead">
+          <strong>Inicia a coleta dos eventos de pesagem</strong> das balanças informadas — dispara o
+          início da leitura para uma ou mais balanças (por <code>ResourceName</code>) e devolve a lista das
+          que entraram em coleta.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_BeginScaleReadings</span>
+        </div>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> [ <span class="tk-str">"100000001"</span><span class="tk-punc">,</span> <span class="tk-str">"100000004"</span><span class="tk-punc">,</span> <span class="tk-str">"100000006"</span> ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:150px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">ResourceName</td>
+              <td class="col-type">array&lt;string&gt;</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Lista de <code>ResourceName</code> das balanças para iniciar a coleta de eventos de pesagem. Aceita uma ou mais.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"..."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Data"</span><span class="tk-punc">:</span> [ <span class="tk-str">"100000001"</span><span class="tk-punc">,</span> <span class="tk-str">"100000004"</span><span class="tk-punc">,</span> <span class="tk-str">"100000006"</span> ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se a coleta foi iniciada com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">Data</td><td class="col-type">array&lt;string&gt;</td><td class="col-desc">Lista dos <code>ResourceName</code> das balanças que entraram em coleta.</td></tr>
+          </tbody>
+        </table>
       </section>
 
       <!-- ============================================================

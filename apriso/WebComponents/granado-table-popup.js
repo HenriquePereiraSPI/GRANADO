@@ -17,20 +17,27 @@
      close-on-backdrop - "true" fecha ao clicar fora (default: NÃO fecha)
 
      Opções da tabela (repassadas ao <granado-table> se informadas):
-       color, onrender, onclickevent, ondoubleclickevent,
+       color, gross-border-color, title-color, soft-border-color,
+       onrender, onrenderrow, onclickevent, ondoubleclickevent,
        isenablepagination, pagesize, tablelayout, isenableexportcsv,
        isenableexportpdf, exportfilename, tabletitle, rowaltcolor,
-       rowheight, isenablefilter, isenablesort
+       childrowcolor, rowheight, isenablefilter, isenablesort
      (veja a doc do <granado-table> para o significado de cada uma.)
+
+     onRenderRow: além do atributo (string JS), aceita FUNÇÃO via propriedade
+       (popup.onRenderRow = (row, rowIndex) => ...) ou opção onRenderRow no
+       show(). É repassada ao <granado-table> interno — mesmo comportamento
+       (cor da linha + pulse de alerta).
 
    ── API estática
      GranadoTablePopup.show({
        title, subtitle, columns, rows, confirmText, closeOnBackdrop,
        // opções da tabela (camelCase):
-       color, onRender, onClickEvent, onDoubleClickEvent,
+       color, grossBorderColor, titleColor, softBorderColor,
+       onRender, onRenderRow, onClickEvent, onDoubleClickEvent,
        isEnablePagination, pageSize, tableLayout, isEnableExportCsv,
        isEnableExportPdf, exportFilename, tableTitle, rowAltColor,
-       rowHeight, isEnableFilter, isEnableSort
+       childRowColor, rowHeight, isEnableFilter, isEnableSort
      })
 
    ── Exemplo
@@ -68,14 +75,16 @@ if (!customElements.get('granado-table-popup')) {
 
   // Atributos repassados 1:1 ao <granado-table> (exceto columns/rows,
   // tratados à parte pelos getters .columns / .rows).
-  const TABLE_ATTRS = ['color', 'onrender', 'onclickevent', 'ondoubleclickevent', 'isenablepagination', 'pagesize', 'tablelayout', 'isenableexportcsv', 'isenableexportpdf', 'exportfilename', 'tabletitle', 'rowaltcolor', 'rowheight', 'isenablefilter', 'isenablesort'];
+  const TABLE_ATTRS = ['color', 'gross-border-color', 'title-color', 'soft-border-color', 'onrender', 'onrenderrow', 'onclickevent', 'ondoubleclickevent', 'isenablepagination', 'pagesize', 'tablelayout', 'isenableexportcsv', 'isenableexportpdf', 'exportfilename', 'tabletitle', 'rowaltcolor', 'childrowcolor', 'rowheight', 'isenablefilter', 'isenablesort'];
 
   // Mapa das opções camelCase (show) -> atributo kebab da tabela.
+  // Obs.: onRenderRow é tratado à parte (pode ser função) — não entra aqui.
   const OPT_TO_ATTR = {
-    color: 'color', onRender: 'onrender', onClickEvent: 'onclickevent', onDoubleClickEvent: 'ondoubleclickevent',
+    color: 'color', grossBorderColor: 'gross-border-color', titleColor: 'title-color', softBorderColor: 'soft-border-color',
+    onRender: 'onrender', onClickEvent: 'onclickevent', onDoubleClickEvent: 'ondoubleclickevent',
     isEnablePagination: 'isenablepagination', pageSize: 'pagesize', tableLayout: 'tablelayout',
     isEnableExportCsv: 'isenableexportcsv', isEnableExportPdf: 'isenableexportpdf', exportFilename: 'exportfilename',
-    tableTitle: 'tabletitle', rowAltColor: 'rowaltcolor', rowHeight: 'rowheight',
+    tableTitle: 'tabletitle', rowAltColor: 'rowaltcolor', childRowColor: 'childrowcolor', rowHeight: 'rowheight',
     isEnableFilter: 'isenablefilter', isEnableSort: 'isenablesort'
   };
 
@@ -96,6 +105,8 @@ if (!customElements.get('granado-table-popup')) {
       if (opts.closeOnBackdrop != null) el.setAttribute('close-on-backdrop', opts.closeOnBackdrop ? 'true' : 'false');
       // opções da tabela (camelCase -> atributo)
       Object.keys(OPT_TO_ATTR).forEach((k) => { if (opts[k] != null) el.setAttribute(OPT_TO_ATTR[k], String(opts[k])); });
+      // onRenderRow pode ser função (propriedade) ou string (atributo).
+      if (opts.onRenderRow != null) el.onRenderRow = opts.onRenderRow;
       el._autoRemove = true;
       document.body.appendChild(el);
       if (opts.columns != null) el.columns = opts.columns;   // mantém o array
@@ -146,6 +157,19 @@ if (!customElements.get('granado-table-popup')) {
     get closeOnBackdrop() { return this.getAttribute('close-on-backdrop') === 'true'; }
     set closeOnBackdrop(v) { this.setAttribute('close-on-backdrop', v ? 'true' : 'false'); }
 
+    // onRenderRow: função (row, rowIndex) => cor | { color, animate, animateColor },
+    // ou string JS (vai como atributo onrenderrow). Repassado ao <granado-table>.
+    get onRenderRow() { return this._onRenderRowFn || null; }
+    set onRenderRow(v) {
+      if (typeof v === 'function') { this._onRenderRowFn = v; }
+      else {
+        this._onRenderRowFn = null;
+        if (v != null) this.setAttribute('onrenderrow', String(v));
+        else this.removeAttribute('onrenderrow');
+      }
+      if (this.isConnected) this._render();
+    }
+
     open() { this.removeAttribute('open'); this.style.display = ''; if (this.isConnected) this._render(); }
     close() { this.style.display = 'none'; if (this._autoRemove) this.remove(); }
 
@@ -194,6 +218,8 @@ if (!customElements.get('granado-table-popup')) {
       const t = document.createElement('granado-table');
       // opções repassadas (atributos definidos no popup)
       TABLE_ATTRS.forEach((a) => { const v = this.getAttribute(a); if (v != null) t.setAttribute(a, v); });
+      // onRenderRow como propriedade função (tem prioridade sobre o atributo)
+      if (this._onRenderRowFn) t.onRenderRow = this._onRenderRowFn;
       // columns/rows sempre via atributo JSON (aceita array ou string)
       t.setAttribute('columns', JSON.stringify(this.columns || []));
       t.setAttribute('rows', JSON.stringify(this.rows || []));

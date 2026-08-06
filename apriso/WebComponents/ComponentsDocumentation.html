@@ -51,6 +51,7 @@
   <script src="./granado-timeline.js"></script>
   <script src="./granado-empty-popup.js"></script>
   <script src="./granado-button-save-page.js"></script>
+  <script src="./granado-filter.js"></script>
 
   <style>
     html,
@@ -320,6 +321,7 @@
       <a class="gd-link" href="#granado-timeline">granado-timeline</a>
       <a class="gd-link" href="#granado-empty-popup">granado-empty-popup</a>
       <a class="gd-link" href="#granado-button-save-page">granado-button-save-page</a>
+      <a class="gd-link" href="#granado-filter">granado-filter</a>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -1223,31 +1225,44 @@
           objetos) — as keys das colunas devem bater com as keys dos objetos de linha. Setup
           via JS evita a dor de cabeça de escapar JSON inline no HTML.
         </p>
+        <div class="gd-split">
         <div class="gd-demo">
           <granado-table id="dt-basic"></granado-table>
         </div>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">id</span>=<span class="tk-str">"tbl"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
 
 <span class="tk-tag">&lt;script&gt;</span>
-  <span class="tk-comment">// Defina as colunas (key + label, no mínimo)</span>
-  const columns = [
-    { key: 'cod',    label: 'Código',     mono: true, width: '100px' },
-    { key: 'mat',    label: 'Material',   width: '180px' },
-    { key: 'pesado', label: 'Pesado (kg)', mono: true, align: 'right' },
-    { key: 'status', label: 'Status' }
+  <span class="tk-comment">// Colunas (key + label, no mínimo)</span>
+  <span class="tk-kw">const</span> columns = [
+    { key: <span class="tk-str">'cod'</span>,     label: <span class="tk-str">'Código'</span>,      mono: <span class="tk-keyword">true</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'mat'</span>,     label: <span class="tk-str">'Material'</span>,    width: <span class="tk-str">'170px'</span> },
+    { key: <span class="tk-str">'pesado'</span>,  label: <span class="tk-str">'Pesado (kg)'</span>, mono: <span class="tk-keyword">true</span>, align: <span class="tk-str">'right'</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'balanca'</span>, label: <span class="tk-str">'Balança'</span>,     width: <span class="tk-str">'85px'</span> },
+    { key: <span class="tk-str">'status'</span>,  label: <span class="tk-str">'Status'</span>,      width: <span class="tk-str">'110px'</span> }
   ];
 
   <span class="tk-comment">// Cada linha é um objeto com as keys das colunas</span>
-  const rows = [
-    { cod: 'MP-01001', mat: 'Glicerina USP', pesado: '44983,21', status: 'OK' },
-    { cod: 'MP-01002', mat: 'Fenoxietanol',  pesado: '3028,50',  status: 'Desvio' },
-    { cod: 'MP-01003', mat: 'Ácido Cítrico', pesado: '12450,00', status: 'OK' }
+  <span class="tk-kw">const</span> rows = [
+    { cod: <span class="tk-str">'MP-01001'</span>, mat: <span class="tk-str">'Glicerina USP'</span>,      pesado: <span class="tk-str">'44983,21'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01002'</span>, mat: <span class="tk-str">'Fenoxietanol'</span>,       pesado: <span class="tk-str">'3028,50'</span>,  balanca: <span class="tk-str">'B-02'</span>, status: <span class="tk-str">'Desvio'</span> },
+    { cod: <span class="tk-str">'MP-01003'</span>, mat: <span class="tk-str">'Ácido Cítrico'</span>,      pesado: <span class="tk-str">'12450,00'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'Pendente'</span> },
+    { cod: <span class="tk-str">'MP-01004'</span>, mat: <span class="tk-str">'Lauril Sulfato'</span>,     pesado: <span class="tk-str">'8721,64'</span>,  balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'Aprov.'</span> },
+    { cod: <span class="tk-str">'MP-01005'</span>, mat: <span class="tk-str">'Cera de Abelha'</span>,     pesado: <span class="tk-str">'2100,00'</span>,  balanca: <span class="tk-str">'B-02'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01006'</span>, mat: <span class="tk-str">'Óleo de Amêndoa'</span>,    pesado: <span class="tk-str">'15890,33'</span>, balanca: <span class="tk-str">'B-04'</span>, status: <span class="tk-str">'Desvio'</span>, <span class="tk-attr">_bg</span>: <span class="tk-str">'#FFE5E0'</span> },
+    { cod: <span class="tk-str">'MP-01007'</span>, mat: <span class="tk-str">'Manteiga de Karité'</span>, pesado: <span class="tk-str">'4567,89'</span>,  balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01008'</span>, mat: <span class="tk-str">'Vitamina E'</span>,         pesado: <span class="tk-str">'320,15'</span>,   balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'Aprov.'</span> }
   ];
 
-  const tbl = document.getElementById('tbl');
-  tbl.setAttribute('columns', JSON.stringify(columns));
-  tbl.setAttribute('rows', JSON.stringify(rows));
+  <span class="tk-kw">const</span> tbl = document.getElementById(<span class="tk-str">'tbl'</span>);
+  tbl.setAttribute(<span class="tk-str">'columns'</span>, JSON.stringify(columns));
+  tbl.setAttribute(<span class="tk-str">'rows'</span>, JSON.stringify(rows));
 <span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+        <p class="gd-lead" style="font-size:12px;color:#8A9E8E;margin-top:2px">
+          Cada exemplo abaixo é <strong>auto-contido</strong>: o snippet reproduz por inteiro
+          o código que gera a tabela ao lado (as mesmas <code>columns</code> e <code>rows</code>
+          do <em>Uso básico</em>).
+        </p>
 
         <!-- ===== Configuração de colunas ===== -->
         <h2 class="gd-h2">Configuração de colunas</h2>
@@ -1330,21 +1345,51 @@
           <code>row</code> (objeto da linha) e <code>rowIndex</code> (índice global). O retorno
           é tratado como <strong>HTML</strong> — útil para badges, botões, ícones.
         </p>
+        <div class="gd-split">
         <div class="gd-demo">
           <granado-table id="dt-render"></granado-table>
         </div>
-        <pre class="gd-code">tbl.setAttribute('onrender', <span class="tk-str">`
-  if (col.key === 'status') {
-    var bg = row.status === 'OK'      ? '#1C7A38'
-           : row.status === 'Desvio'  ? '#9A5A00'
-           : row.status === 'Aprov.'  ? '#1A4A8C'
-           : '#6B6B6B';
-    return '&lt;span style="display:inline-block;font-size:9px;font-weight:900;'
-         + 'text-transform:uppercase;padding:3px 8px;border-radius:4px;'
-         + 'background:' + bg + ';color:#fff"&gt;' + cell + '&lt;/span&gt;';
-  }
-  return cell;  // demais colunas: valor cru
-`</span>);</pre>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">id</span>=<span class="tk-str">"tbl"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">const</span> columns = [
+    { key: <span class="tk-str">'cod'</span>,     label: <span class="tk-str">'Código'</span>,      mono: <span class="tk-keyword">true</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'mat'</span>,     label: <span class="tk-str">'Material'</span>,    width: <span class="tk-str">'170px'</span> },
+    { key: <span class="tk-str">'pesado'</span>,  label: <span class="tk-str">'Pesado (kg)'</span>, mono: <span class="tk-keyword">true</span>, align: <span class="tk-str">'right'</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'balanca'</span>, label: <span class="tk-str">'Balança'</span>,     width: <span class="tk-str">'85px'</span> },
+    { key: <span class="tk-str">'status'</span>,  label: <span class="tk-str">'Status'</span>,      width: <span class="tk-str">'110px'</span> }
+  ];
+  <span class="tk-kw">const</span> rows = [
+    { cod: <span class="tk-str">'MP-01001'</span>, mat: <span class="tk-str">'Glicerina USP'</span>,      pesado: <span class="tk-str">'44983,21'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01002'</span>, mat: <span class="tk-str">'Fenoxietanol'</span>,       pesado: <span class="tk-str">'3028,50'</span>,  balanca: <span class="tk-str">'B-02'</span>, status: <span class="tk-str">'Desvio'</span> },
+    { cod: <span class="tk-str">'MP-01003'</span>, mat: <span class="tk-str">'Ácido Cítrico'</span>,      pesado: <span class="tk-str">'12450,00'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'Pendente'</span> },
+    { cod: <span class="tk-str">'MP-01004'</span>, mat: <span class="tk-str">'Lauril Sulfato'</span>,     pesado: <span class="tk-str">'8721,64'</span>,  balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'Aprov.'</span> },
+    { cod: <span class="tk-str">'MP-01005'</span>, mat: <span class="tk-str">'Cera de Abelha'</span>,     pesado: <span class="tk-str">'2100,00'</span>,  balanca: <span class="tk-str">'B-02'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01006'</span>, mat: <span class="tk-str">'Óleo de Amêndoa'</span>,    pesado: <span class="tk-str">'15890,33'</span>, balanca: <span class="tk-str">'B-04'</span>, status: <span class="tk-str">'Desvio'</span>, <span class="tk-attr">_bg</span>: <span class="tk-str">'#FFE5E0'</span> },
+    { cod: <span class="tk-str">'MP-01007'</span>, mat: <span class="tk-str">'Manteiga de Karité'</span>, pesado: <span class="tk-str">'4567,89'</span>,  balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01008'</span>, mat: <span class="tk-str">'Vitamina E'</span>,         pesado: <span class="tk-str">'320,15'</span>,   balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'Aprov.'</span> }
+  ];
+
+  <span class="tk-comment">// onrender roda por célula; o retorno é tratado como HTML</span>
+  <span class="tk-kw">const</span> renderStatusBadge = <span class="tk-str">`
+    if (col.key === 'status') {
+      var bg = row.status === 'OK'      ? '#1C7A38'
+             : row.status === 'Desvio'  ? '#9A5A00'
+             : row.status === 'Aprov.'  ? '#1A4A8C'
+             : '#6B6B6B';
+      return '&lt;span style="display:inline-block;font-size:9px;font-weight:900;'
+           + 'text-transform:uppercase;padding:3px 8px;border-radius:4px;'
+           + 'background:' + bg + ';color:#fff"&gt;' + cell + '&lt;/span&gt;';
+    }
+    return cell;
+  `</span>;
+
+  <span class="tk-kw">const</span> tbl = document.getElementById(<span class="tk-str">'tbl'</span>);
+  tbl.setAttribute(<span class="tk-str">'columns'</span>, JSON.stringify(columns));
+  tbl.setAttribute(<span class="tk-str">'rows'</span>, JSON.stringify(rows));
+  tbl.setAttribute(<span class="tk-str">'onrender'</span>, renderStatusBadge);
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
 
         <!-- ===== Paginação ===== -->
         <h2 class="gd-h2">Paginação</h2>
@@ -1354,12 +1399,53 @@
           <em>Anterior / Próxima</em> e o range visível. Filtros e ordenação são aplicados
           <strong>antes</strong> da paginação.
         </p>
+        <div class="gd-split">
         <div class="gd-demo">
           <granado-table id="dt-paged" isenablepagination="true" pagesize="5"></granado-table>
         </div>
-        <pre class="gd-code"><span class="tk-tag">&lt;granado-table</span>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- 8 linhas com pagesize 5 → 2 páginas --&gt;</span>
+<span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">id</span>=<span class="tk-str">"tbl"</span>
     <span class="tk-attr">isenablepagination</span>=<span class="tk-str">"true"</span>
-    <span class="tk-attr">pagesize</span>=<span class="tk-str">"5"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span></pre>
+    <span class="tk-attr">pagesize</span>=<span class="tk-str">"5"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">const</span> columns = [
+    { key: <span class="tk-str">'cod'</span>,     label: <span class="tk-str">'Código'</span>,      mono: <span class="tk-keyword">true</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'mat'</span>,     label: <span class="tk-str">'Material'</span>,    width: <span class="tk-str">'170px'</span> },
+    { key: <span class="tk-str">'pesado'</span>,  label: <span class="tk-str">'Pesado (kg)'</span>, mono: <span class="tk-keyword">true</span>, align: <span class="tk-str">'right'</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'balanca'</span>, label: <span class="tk-str">'Balança'</span>,     width: <span class="tk-str">'85px'</span> },
+    { key: <span class="tk-str">'status'</span>,  label: <span class="tk-str">'Status'</span>,      width: <span class="tk-str">'110px'</span> }
+  ];
+  <span class="tk-kw">const</span> rows = [
+    { cod: <span class="tk-str">'MP-01001'</span>, mat: <span class="tk-str">'Glicerina USP'</span>,      pesado: <span class="tk-str">'44983,21'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01002'</span>, mat: <span class="tk-str">'Fenoxietanol'</span>,       pesado: <span class="tk-str">'3028,50'</span>,  balanca: <span class="tk-str">'B-02'</span>, status: <span class="tk-str">'Desvio'</span> },
+    { cod: <span class="tk-str">'MP-01003'</span>, mat: <span class="tk-str">'Ácido Cítrico'</span>,      pesado: <span class="tk-str">'12450,00'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'Pendente'</span> },
+    { cod: <span class="tk-str">'MP-01004'</span>, mat: <span class="tk-str">'Lauril Sulfato'</span>,     pesado: <span class="tk-str">'8721,64'</span>,  balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'Aprov.'</span> },
+    { cod: <span class="tk-str">'MP-01005'</span>, mat: <span class="tk-str">'Cera de Abelha'</span>,     pesado: <span class="tk-str">'2100,00'</span>,  balanca: <span class="tk-str">'B-02'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01006'</span>, mat: <span class="tk-str">'Óleo de Amêndoa'</span>,    pesado: <span class="tk-str">'15890,33'</span>, balanca: <span class="tk-str">'B-04'</span>, status: <span class="tk-str">'Desvio'</span>, <span class="tk-attr">_bg</span>: <span class="tk-str">'#FFE5E0'</span> },
+    { cod: <span class="tk-str">'MP-01007'</span>, mat: <span class="tk-str">'Manteiga de Karité'</span>, pesado: <span class="tk-str">'4567,89'</span>,  balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01008'</span>, mat: <span class="tk-str">'Vitamina E'</span>,         pesado: <span class="tk-str">'320,15'</span>,   balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'Aprov.'</span> }
+  ];
+
+  <span class="tk-kw">const</span> renderStatusBadge = <span class="tk-str">`
+    if (col.key === 'status') {
+      var bg = row.status === 'OK'      ? '#1C7A38'
+             : row.status === 'Desvio'  ? '#9A5A00'
+             : row.status === 'Aprov.'  ? '#1A4A8C'
+             : '#6B6B6B';
+      return '&lt;span style="display:inline-block;font-size:9px;font-weight:900;'
+           + 'text-transform:uppercase;padding:3px 8px;border-radius:4px;'
+           + 'background:' + bg + ';color:#fff"&gt;' + cell + '&lt;/span&gt;';
+    }
+    return cell;
+  `</span>;
+
+  <span class="tk-kw">const</span> tbl = document.getElementById(<span class="tk-str">'tbl'</span>);
+  tbl.setAttribute(<span class="tk-str">'columns'</span>, JSON.stringify(columns));
+  tbl.setAttribute(<span class="tk-str">'rows'</span>, JSON.stringify(rows));
+  tbl.setAttribute(<span class="tk-str">'onrender'</span>, renderStatusBadge);
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
 
         <!-- ===== Filtros e ordenação ===== -->
         <h2 class="gd-h2">Filtros e ordenação</h2>
@@ -1372,19 +1458,62 @@
           atributos. Para desligar por coluna, use <code>filterable: false</code> /
           <code>sortable: false</code> no objeto coluna.
         </p>
+        <div class="gd-split">
         <div class="gd-demo">
           <granado-table id="dt-filtersort"
             tabletitle="Pesagens · filtro + ordenação ativos"
             isenablepagination="true" pagesize="5"></granado-table>
         </div>
-        <pre class="gd-code"><span class="tk-comment">&lt;!-- Padrão: filtros e ordenação ativos --&gt;</span>
-<span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">tabletitle</span>=<span class="tk-str">"Pesagens"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Padrão: filtros e ordenação já vêm ligados --&gt;</span>
+<span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">id</span>=<span class="tk-str">"tbl"</span>
+    <span class="tk-attr">tabletitle</span>=<span class="tk-str">"Pesagens · filtro + ordenação ativos"</span>
+    <span class="tk-attr">isenablepagination</span>=<span class="tk-str">"true"</span>
+    <span class="tk-attr">pagesize</span>=<span class="tk-str">"5"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">const</span> columns = [
+    { key: <span class="tk-str">'cod'</span>,     label: <span class="tk-str">'Código'</span>,      mono: <span class="tk-keyword">true</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'mat'</span>,     label: <span class="tk-str">'Material'</span>,    width: <span class="tk-str">'170px'</span> },
+    { key: <span class="tk-str">'pesado'</span>,  label: <span class="tk-str">'Pesado (kg)'</span>, mono: <span class="tk-keyword">true</span>, align: <span class="tk-str">'right'</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'balanca'</span>, label: <span class="tk-str">'Balança'</span>,     width: <span class="tk-str">'85px'</span> },
+    { key: <span class="tk-str">'status'</span>,  label: <span class="tk-str">'Status'</span>,      width: <span class="tk-str">'110px'</span> }
+  ];
+  <span class="tk-kw">const</span> rows = [
+    { cod: <span class="tk-str">'MP-01001'</span>, mat: <span class="tk-str">'Glicerina USP'</span>,      pesado: <span class="tk-str">'44983,21'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01002'</span>, mat: <span class="tk-str">'Fenoxietanol'</span>,       pesado: <span class="tk-str">'3028,50'</span>,  balanca: <span class="tk-str">'B-02'</span>, status: <span class="tk-str">'Desvio'</span> },
+    { cod: <span class="tk-str">'MP-01003'</span>, mat: <span class="tk-str">'Ácido Cítrico'</span>,      pesado: <span class="tk-str">'12450,00'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'Pendente'</span> },
+    { cod: <span class="tk-str">'MP-01004'</span>, mat: <span class="tk-str">'Lauril Sulfato'</span>,     pesado: <span class="tk-str">'8721,64'</span>,  balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'Aprov.'</span> },
+    { cod: <span class="tk-str">'MP-01005'</span>, mat: <span class="tk-str">'Cera de Abelha'</span>,     pesado: <span class="tk-str">'2100,00'</span>,  balanca: <span class="tk-str">'B-02'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01006'</span>, mat: <span class="tk-str">'Óleo de Amêndoa'</span>,    pesado: <span class="tk-str">'15890,33'</span>, balanca: <span class="tk-str">'B-04'</span>, status: <span class="tk-str">'Desvio'</span>, <span class="tk-attr">_bg</span>: <span class="tk-str">'#FFE5E0'</span> },
+    { cod: <span class="tk-str">'MP-01007'</span>, mat: <span class="tk-str">'Manteiga de Karité'</span>, pesado: <span class="tk-str">'4567,89'</span>,  balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01008'</span>, mat: <span class="tk-str">'Vitamina E'</span>,         pesado: <span class="tk-str">'320,15'</span>,   balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'Aprov.'</span> }
+  ];
+
+  <span class="tk-kw">const</span> renderStatusBadge = <span class="tk-str">`
+    if (col.key === 'status') {
+      var bg = row.status === 'OK'      ? '#1C7A38'
+             : row.status === 'Desvio'  ? '#9A5A00'
+             : row.status === 'Aprov.'  ? '#1A4A8C'
+             : '#6B6B6B';
+      return '&lt;span style="display:inline-block;font-size:9px;font-weight:900;'
+           + 'text-transform:uppercase;padding:3px 8px;border-radius:4px;'
+           + 'background:' + bg + ';color:#fff"&gt;' + cell + '&lt;/span&gt;';
+    }
+    return cell;
+  `</span>;
+
+  <span class="tk-kw">const</span> tbl = document.getElementById(<span class="tk-str">'tbl'</span>);
+  tbl.setAttribute(<span class="tk-str">'columns'</span>, JSON.stringify(columns));
+  tbl.setAttribute(<span class="tk-str">'rows'</span>, JSON.stringify(rows));
+  tbl.setAttribute(<span class="tk-str">'onrender'</span>, renderStatusBadge);
+<span class="tk-tag">&lt;/script&gt;</span>
 
 <span class="tk-comment">&lt;!-- Desabilitar filtros/ordenação globalmente --&gt;</span>
 <span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">isenablefilter</span>=<span class="tk-str">"false"</span> <span class="tk-attr">isenablesort</span>=<span class="tk-str">"false"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
 
-<span class="tk-comment">// Desabilitar por coluna (ex.: coluna de ações)</span>
-{ key: 'acao', label: 'Ação', filterable: false, sortable: false }</pre>
+<span class="tk-comment">// Desabilitar por coluna (no objeto da coluna)</span>
+{ key: <span class="tk-str">'acao'</span>, label: <span class="tk-str">'Ação'</span>, filterable: <span class="tk-keyword">false</span>, sortable: <span class="tk-keyword">false</span> }</pre>
+        </div>
 
         <!-- ===== Eventos de clique ===== -->
         <h2 class="gd-h2">Eventos de clique</h2>
@@ -1395,14 +1524,42 @@
           paginado) e <code>event</code>. Quando ambos coexistem, o single-click é adiado
           ~250ms para não disparar junto com o duplo.
         </p>
+        <div class="gd-split">
         <div class="gd-demo">
           <granado-table id="dt-events" tabletitle="Clique único = log · duplo = alerta"></granado-table>
         </div>
-        <pre class="gd-code">tbl.setAttribute('onclickevent',
-  <span class="tk-str">"console.log('selecionou', row.cod);"</span>);
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">id</span>=<span class="tk-str">"tbl"</span> <span class="tk-attr">tabletitle</span>=<span class="tk-str">"Clique único = log · duplo = alerta"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
 
-tbl.setAttribute('ondoubleclickevent',
-  <span class="tk-str">"alert('Abrir detalhes de ' + row.cod);"</span>);</pre>
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">const</span> columns = [
+    { key: <span class="tk-str">'cod'</span>,     label: <span class="tk-str">'Código'</span>,      mono: <span class="tk-keyword">true</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'mat'</span>,     label: <span class="tk-str">'Material'</span>,    width: <span class="tk-str">'170px'</span> },
+    { key: <span class="tk-str">'pesado'</span>,  label: <span class="tk-str">'Pesado (kg)'</span>, mono: <span class="tk-keyword">true</span>, align: <span class="tk-str">'right'</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'balanca'</span>, label: <span class="tk-str">'Balança'</span>,     width: <span class="tk-str">'85px'</span> },
+    { key: <span class="tk-str">'status'</span>,  label: <span class="tk-str">'Status'</span>,      width: <span class="tk-str">'110px'</span> }
+  ];
+  <span class="tk-kw">const</span> rows = [
+    { cod: <span class="tk-str">'MP-01001'</span>, mat: <span class="tk-str">'Glicerina USP'</span>,      pesado: <span class="tk-str">'44983,21'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01002'</span>, mat: <span class="tk-str">'Fenoxietanol'</span>,       pesado: <span class="tk-str">'3028,50'</span>,  balanca: <span class="tk-str">'B-02'</span>, status: <span class="tk-str">'Desvio'</span> },
+    { cod: <span class="tk-str">'MP-01003'</span>, mat: <span class="tk-str">'Ácido Cítrico'</span>,      pesado: <span class="tk-str">'12450,00'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'Pendente'</span> },
+    { cod: <span class="tk-str">'MP-01004'</span>, mat: <span class="tk-str">'Lauril Sulfato'</span>,     pesado: <span class="tk-str">'8721,64'</span>,  balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'Aprov.'</span> },
+    { cod: <span class="tk-str">'MP-01005'</span>, mat: <span class="tk-str">'Cera de Abelha'</span>,     pesado: <span class="tk-str">'2100,00'</span>,  balanca: <span class="tk-str">'B-02'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01006'</span>, mat: <span class="tk-str">'Óleo de Amêndoa'</span>,    pesado: <span class="tk-str">'15890,33'</span>, balanca: <span class="tk-str">'B-04'</span>, status: <span class="tk-str">'Desvio'</span>, <span class="tk-attr">_bg</span>: <span class="tk-str">'#FFE5E0'</span> },
+    { cod: <span class="tk-str">'MP-01007'</span>, mat: <span class="tk-str">'Manteiga de Karité'</span>, pesado: <span class="tk-str">'4567,89'</span>,  balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01008'</span>, mat: <span class="tk-str">'Vitamina E'</span>,         pesado: <span class="tk-str">'320,15'</span>,   balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'Aprov.'</span> }
+  ];
+
+  <span class="tk-kw">const</span> tbl = document.getElementById(<span class="tk-str">'tbl'</span>);
+  tbl.setAttribute(<span class="tk-str">'columns'</span>, JSON.stringify(columns));
+  tbl.setAttribute(<span class="tk-str">'rows'</span>, JSON.stringify(rows));
+
+  <span class="tk-comment">// rowIndex é o índice GLOBAL na lista original (não o paginado)</span>
+  tbl.setAttribute(<span class="tk-str">'onclickevent'</span>,
+    <span class="tk-str">"console.log('linha selecionada', row.cod);"</span>);
+  tbl.setAttribute(<span class="tk-str">'ondoubleclickevent'</span>,
+    <span class="tk-str">"alert('Abrir detalhes de ' + row.cod);"</span>);
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
 
         <!-- ===== Exportação ===== -->
         <h2 class="gd-h2">Exportação CSV / PDF</h2>
@@ -1416,22 +1573,62 @@ tbl.setAttribute('ondoubleclickevent',
           Para <strong>remover uma coluna</strong> do CSV/PDF, use <code>allowExport: false</code> no
           objeto da coluna. Use <code>exportfilename</code> para fixar o nome base do arquivo.
         </p>
+        <div class="gd-split">
         <div class="gd-demo">
           <granado-table id="dt-export"
             tabletitle="Exportação habilitada"
             exportfilename="pesagens_turno_A"></granado-table>
         </div>
-        <pre class="gd-code"><span class="tk-tag">&lt;granado-table</span>
-    <span class="tk-attr">tabletitle</span>=<span class="tk-str">"Pesagens · turno A"</span>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">id</span>=<span class="tk-str">"tbl"</span>
+    <span class="tk-attr">tabletitle</span>=<span class="tk-str">"Exportação habilitada"</span>
     <span class="tk-attr">exportfilename</span>=<span class="tk-str">"pesagens_turno_A"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
 
-<span class="tk-comment">// Coluna que NÃO entra no CSV/PDF (ex.: coluna de ações):</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">const</span> columns = [
+    { key: <span class="tk-str">'cod'</span>,     label: <span class="tk-str">'Código'</span>,      mono: <span class="tk-keyword">true</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'mat'</span>,     label: <span class="tk-str">'Material'</span>,    width: <span class="tk-str">'170px'</span> },
+    { key: <span class="tk-str">'pesado'</span>,  label: <span class="tk-str">'Pesado (kg)'</span>, mono: <span class="tk-keyword">true</span>, align: <span class="tk-str">'right'</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'balanca'</span>, label: <span class="tk-str">'Balança'</span>,     width: <span class="tk-str">'85px'</span> },
+    { key: <span class="tk-str">'status'</span>,  label: <span class="tk-str">'Status'</span>,      width: <span class="tk-str">'110px'</span> }
+  ];
+  <span class="tk-kw">const</span> rows = [
+    { cod: <span class="tk-str">'MP-01001'</span>, mat: <span class="tk-str">'Glicerina USP'</span>,      pesado: <span class="tk-str">'44983,21'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01002'</span>, mat: <span class="tk-str">'Fenoxietanol'</span>,       pesado: <span class="tk-str">'3028,50'</span>,  balanca: <span class="tk-str">'B-02'</span>, status: <span class="tk-str">'Desvio'</span> },
+    { cod: <span class="tk-str">'MP-01003'</span>, mat: <span class="tk-str">'Ácido Cítrico'</span>,      pesado: <span class="tk-str">'12450,00'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'Pendente'</span> },
+    { cod: <span class="tk-str">'MP-01004'</span>, mat: <span class="tk-str">'Lauril Sulfato'</span>,     pesado: <span class="tk-str">'8721,64'</span>,  balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'Aprov.'</span> },
+    { cod: <span class="tk-str">'MP-01005'</span>, mat: <span class="tk-str">'Cera de Abelha'</span>,     pesado: <span class="tk-str">'2100,00'</span>,  balanca: <span class="tk-str">'B-02'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01006'</span>, mat: <span class="tk-str">'Óleo de Amêndoa'</span>,    pesado: <span class="tk-str">'15890,33'</span>, balanca: <span class="tk-str">'B-04'</span>, status: <span class="tk-str">'Desvio'</span>, <span class="tk-attr">_bg</span>: <span class="tk-str">'#FFE5E0'</span> },
+    { cod: <span class="tk-str">'MP-01007'</span>, mat: <span class="tk-str">'Manteiga de Karité'</span>, pesado: <span class="tk-str">'4567,89'</span>,  balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01008'</span>, mat: <span class="tk-str">'Vitamina E'</span>,         pesado: <span class="tk-str">'320,15'</span>,   balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'Aprov.'</span> }
+  ];
+
+  <span class="tk-kw">const</span> renderStatusBadge = <span class="tk-str">`
+    if (col.key === 'status') {
+      var bg = row.status === 'OK'      ? '#1C7A38'
+             : row.status === 'Desvio'  ? '#9A5A00'
+             : row.status === 'Aprov.'  ? '#1A4A8C'
+             : '#6B6B6B';
+      return '&lt;span style="display:inline-block;font-size:9px;font-weight:900;'
+           + 'text-transform:uppercase;padding:3px 8px;border-radius:4px;'
+           + 'background:' + bg + ';color:#fff"&gt;' + cell + '&lt;/span&gt;';
+    }
+    return cell;
+  `</span>;
+
+  <span class="tk-kw">const</span> tbl = document.getElementById(<span class="tk-str">'tbl'</span>);
+  tbl.setAttribute(<span class="tk-str">'columns'</span>, JSON.stringify(columns));
+  tbl.setAttribute(<span class="tk-str">'rows'</span>, JSON.stringify(rows));
+  tbl.setAttribute(<span class="tk-str">'onrender'</span>, renderStatusBadge);
+<span class="tk-tag">&lt;/script&gt;</span>
+
+<span class="tk-comment">// Para tirar uma coluna do CSV/PDF (ex.: ações), use allowExport: false</span>
 { key: <span class="tk-str">'acao'</span>, label: <span class="tk-str">'Ações'</span>, allowExport: <span class="tk-keyword">false</span> }
 
 <span class="tk-comment">&lt;!-- Para esconder os botões: --&gt;</span>
 <span class="tk-tag">&lt;granado-table</span>
     <span class="tk-attr">isenableexportcsv</span>=<span class="tk-str">"false"</span>
     <span class="tk-attr">isenableexportpdf</span>=<span class="tk-str">"false"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span></pre>
+        </div>
 
         <!-- ===== Visual customizado ===== -->
         <h2 class="gd-h2">Visual customizado</h2>
@@ -1442,6 +1639,7 @@ tbl.setAttribute('ondoubleclickevent',
           das células; <code>tablelayout="fixed"</code> força os widths estritos
           (conteúdo trunca em vez de empurrar a coluna).
         </p>
+        <div class="gd-split">
         <div class="gd-demo">
           <granado-table id="dt-visual"
             color="#1A4A8C"
@@ -1449,17 +1647,56 @@ tbl.setAttribute('ondoubleclickevent',
             rowaltcolor="#E8F1FB"
             rowheight="10px"></granado-table>
         </div>
-        <pre class="gd-code"><span class="tk-tag">&lt;granado-table</span>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">id</span>=<span class="tk-str">"tbl"</span>
     <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span>
     <span class="tk-attr">tabletitle</span>=<span class="tk-str">"Linha 03 · turno B"</span>
     <span class="tk-attr">rowaltcolor</span>=<span class="tk-str">"#E8F1FB"</span>
     <span class="tk-attr">rowheight</span>=<span class="tk-str">"10px"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">const</span> columns = [
+    { key: <span class="tk-str">'cod'</span>,     label: <span class="tk-str">'Código'</span>,      mono: <span class="tk-keyword">true</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'mat'</span>,     label: <span class="tk-str">'Material'</span>,    width: <span class="tk-str">'170px'</span> },
+    { key: <span class="tk-str">'pesado'</span>,  label: <span class="tk-str">'Pesado (kg)'</span>, mono: <span class="tk-keyword">true</span>, align: <span class="tk-str">'right'</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'balanca'</span>, label: <span class="tk-str">'Balança'</span>,     width: <span class="tk-str">'85px'</span> },
+    { key: <span class="tk-str">'status'</span>,  label: <span class="tk-str">'Status'</span>,      width: <span class="tk-str">'110px'</span> }
+  ];
+  <span class="tk-kw">const</span> rows = [
+    { cod: <span class="tk-str">'MP-01001'</span>, mat: <span class="tk-str">'Glicerina USP'</span>,      pesado: <span class="tk-str">'44983,21'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01002'</span>, mat: <span class="tk-str">'Fenoxietanol'</span>,       pesado: <span class="tk-str">'3028,50'</span>,  balanca: <span class="tk-str">'B-02'</span>, status: <span class="tk-str">'Desvio'</span> },
+    { cod: <span class="tk-str">'MP-01003'</span>, mat: <span class="tk-str">'Ácido Cítrico'</span>,      pesado: <span class="tk-str">'12450,00'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'Pendente'</span> },
+    { cod: <span class="tk-str">'MP-01004'</span>, mat: <span class="tk-str">'Lauril Sulfato'</span>,     pesado: <span class="tk-str">'8721,64'</span>,  balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'Aprov.'</span> },
+    { cod: <span class="tk-str">'MP-01005'</span>, mat: <span class="tk-str">'Cera de Abelha'</span>,     pesado: <span class="tk-str">'2100,00'</span>,  balanca: <span class="tk-str">'B-02'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01006'</span>, mat: <span class="tk-str">'Óleo de Amêndoa'</span>,    pesado: <span class="tk-str">'15890,33'</span>, balanca: <span class="tk-str">'B-04'</span>, status: <span class="tk-str">'Desvio'</span>, <span class="tk-attr">_bg</span>: <span class="tk-str">'#FFE5E0'</span> },
+    { cod: <span class="tk-str">'MP-01007'</span>, mat: <span class="tk-str">'Manteiga de Karité'</span>, pesado: <span class="tk-str">'4567,89'</span>,  balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01008'</span>, mat: <span class="tk-str">'Vitamina E'</span>,         pesado: <span class="tk-str">'320,15'</span>,   balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'Aprov.'</span> }
+  ];
+
+  <span class="tk-kw">const</span> renderStatusBadge = <span class="tk-str">`
+    if (col.key === 'status') {
+      var bg = row.status === 'OK'      ? '#1C7A38'
+             : row.status === 'Desvio'  ? '#9A5A00'
+             : row.status === 'Aprov.'  ? '#1A4A8C'
+             : '#6B6B6B';
+      return '&lt;span style="display:inline-block;font-size:9px;font-weight:900;'
+           + 'text-transform:uppercase;padding:3px 8px;border-radius:4px;'
+           + 'background:' + bg + ';color:#fff"&gt;' + cell + '&lt;/span&gt;';
+    }
+    return cell;
+  `</span>;
+
+  <span class="tk-kw">const</span> tbl = document.getElementById(<span class="tk-str">'tbl'</span>);
+  tbl.setAttribute(<span class="tk-str">'columns'</span>, JSON.stringify(columns));
+  tbl.setAttribute(<span class="tk-str">'rows'</span>, JSON.stringify(rows));
+  tbl.setAttribute(<span class="tk-str">'onrender'</span>, renderStatusBadge);
+<span class="tk-tag">&lt;/script&gt;</span>
 
 <span class="tk-comment">&lt;!-- Sem zebra --&gt;</span>
 <span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">rowaltcolor</span>=<span class="tk-str">"none"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
 
 <span class="tk-comment">&lt;!-- Layout fixo (widths estritos) --&gt;</span>
 <span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">tablelayout</span>=<span class="tk-str">"fixed"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span></pre>
+        </div>
 
         <p class="gd-lead">
           Linhas individuais podem sobrescrever a cor de fundo via uma chave especial
@@ -1479,31 +1716,115 @@ tbl.setAttribute('ondoubleclickevent',
           Filhos ficam <strong>fora</strong> de ordenação, filtro, paginação e export.
           <em>Clique numa OP para ver as MPs.</em>
         </p>
+        <div class="gd-split">
         <div class="gd-demo">
           <granado-table id="dt-children" tabletitle="Ordens · clique para ver as MPs" childrowcolor="#EEF4FC"></granado-table>
         </div>
-        <pre class="gd-code"><span class="tk-kw">const</span> rows = [
-  { cod: <span class="tk-str">'OP-0416'</span>, mat: <span class="tk-str">'Loção Rosa 200ml'</span>, pesado: <span class="tk-str">'599,87'</span>, status: <span class="tk-str">'OK'</span>,
-    <span class="tk-comment">// children -> a linha vira expansível</span>
-    children: [
-      { cod: <span class="tk-str">'MP-01001'</span>, mat: <span class="tk-str">'Glicerina USP'</span>, pesado: <span class="tk-str">'44,98'</span>, status: <span class="tk-str">'OK'</span> },
-      { cod: <span class="tk-str">'MP-01002'</span>, mat: <span class="tk-str">'Fenoxietanol'</span>,  pesado: <span class="tk-str">'3,03'</span>,  status: <span class="tk-str">'Desvio'</span> },
-      { cod: <span class="tk-str">'MP-01003'</span>, mat: <span class="tk-str">'Ácido Cítrico'</span>, pesado: <span class="tk-str">'12,45'</span>, status: <span class="tk-str">'OK'</span> }
-    ] },
-  { cod: <span class="tk-str">'OP-0414'</span>, mat: <span class="tk-str">'Creme Hidratante 150g'</span>, pesado: <span class="tk-str">'312,40'</span>, status: <span class="tk-str">'OK'</span>,
-    children: [
-      { cod: <span class="tk-str">'MP-02001'</span>, mat: <span class="tk-str">'Base Aquosa'</span>, pesado: <span class="tk-str">'30,00'</span>, status: <span class="tk-str">'OK'</span> },
-      { cod: <span class="tk-str">'MP-02002'</span>, mat: <span class="tk-str">'Conservante'</span>, pesado: <span class="tk-str">'0,90'</span>,  status: <span class="tk-str">'OK'</span> }
-    ] }
-];
-tbl.setAttribute(<span class="tk-str">'rows'</span>, JSON.stringify(rows));
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">id</span>=<span class="tk-str">"tbl"</span>
+    <span class="tk-attr">tabletitle</span>=<span class="tk-str">"Ordens · clique para ver as MPs"</span>
+    <span class="tk-attr">childrowcolor</span>=<span class="tk-str">"#EEF4FC"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
 
-<span class="tk-comment">// cor de fundo das linhas-filhas (azul bem delicado)</span>
-tbl.setAttribute(<span class="tk-str">'childrowcolor'</span>, <span class="tk-str">'#EEF4FC'</span>);
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">const</span> columns = [
+    { key: <span class="tk-str">'cod'</span>,     label: <span class="tk-str">'Código'</span>,      mono: <span class="tk-keyword">true</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'mat'</span>,     label: <span class="tk-str">'Material'</span>,    width: <span class="tk-str">'170px'</span> },
+    { key: <span class="tk-str">'pesado'</span>,  label: <span class="tk-str">'Pesado (kg)'</span>, mono: <span class="tk-keyword">true</span>, align: <span class="tk-str">'right'</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'balanca'</span>, label: <span class="tk-str">'Balança'</span>,     width: <span class="tk-str">'85px'</span> },
+    { key: <span class="tk-str">'status'</span>,  label: <span class="tk-str">'Status'</span>,      width: <span class="tk-str">'110px'</span> }
+  ];
 
-<span class="tk-comment">// no clique, o filho vem com rowIndex = -1</span>
-tbl.setAttribute(<span class="tk-str">'onclickevent'</span>,
-  <span class="tk-str">"console.log(rowIndex === -1 ? 'MP (filho): ' + row.cod : 'OP: ' + row.cod)"</span>);</pre>
+  <span class="tk-comment">// rows com "children" (mesmas keys) → a linha vira expansível</span>
+  <span class="tk-kw">const</span> rows = [
+    { cod: <span class="tk-str">'OP-0416'</span>, mat: <span class="tk-str">'Loção Rosa 200ml'</span>, pesado: <span class="tk-str">'599,87'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span>,
+      children: [
+        { cod: <span class="tk-str">'MP-01001'</span>, mat: <span class="tk-str">'Glicerina USP'</span>, pesado: <span class="tk-str">'44,98'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+        { cod: <span class="tk-str">'MP-01002'</span>, mat: <span class="tk-str">'Fenoxietanol'</span>,  pesado: <span class="tk-str">'3,03'</span>,  balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'Desvio'</span> },
+        { cod: <span class="tk-str">'MP-01003'</span>, mat: <span class="tk-str">'Ácido Cítrico'</span>, pesado: <span class="tk-str">'12,45'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> }
+      ] },
+    { cod: <span class="tk-str">'OP-0414'</span>, mat: <span class="tk-str">'Creme Hidratante 150g'</span>, pesado: <span class="tk-str">'312,40'</span>, balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'OK'</span>,
+      children: [
+        { cod: <span class="tk-str">'MP-02001'</span>, mat: <span class="tk-str">'Base Aquosa'</span>, pesado: <span class="tk-str">'30,00'</span>, balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'OK'</span> },
+        { cod: <span class="tk-str">'MP-02002'</span>, mat: <span class="tk-str">'Conservante'</span>, pesado: <span class="tk-str">'0,90'</span>,  balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'OK'</span> }
+      ] }
+  ];
+
+  <span class="tk-kw">const</span> renderStatusBadge = <span class="tk-str">`
+    if (col.key === 'status') {
+      var bg = row.status === 'OK'      ? '#1C7A38'
+             : row.status === 'Desvio'  ? '#9A5A00'
+             : row.status === 'Aprov.'  ? '#1A4A8C'
+             : '#6B6B6B';
+      return '&lt;span style="display:inline-block;font-size:9px;font-weight:900;'
+           + 'text-transform:uppercase;padding:3px 8px;border-radius:4px;'
+           + 'background:' + bg + ';color:#fff"&gt;' + cell + '&lt;/span&gt;';
+    }
+    return cell;
+  `</span>;
+
+  <span class="tk-kw">const</span> tbl = document.getElementById(<span class="tk-str">'tbl'</span>);
+  tbl.setAttribute(<span class="tk-str">'columns'</span>, JSON.stringify(columns));
+  tbl.setAttribute(<span class="tk-str">'rows'</span>, JSON.stringify(rows));
+  tbl.setAttribute(<span class="tk-str">'onrender'</span>, renderStatusBadge);
+
+  <span class="tk-comment">// no clique, o filho vem com rowIndex = -1</span>
+  tbl.setAttribute(<span class="tk-str">'onclickevent'</span>,
+    <span class="tk-str">"console.log(rowIndex === -1 ? 'MP (filho): ' + row.cod : 'OP: ' + row.cod)"</span>);
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
+        <!-- ===== Cor da linha dinâmica (onRenderRow) ===== -->
+        <h2 class="gd-h2">Cor da linha dinâmica (onRenderRow)</h2>
+        <p class="gd-lead">
+          <code>onRenderRow</code> roda <strong>por linha</strong> (recebe <code>row</code> e
+          <code>rowIndex</code>) e decide a <strong>cor de fundo</strong> e se a linha
+          <strong>pulsa</strong>. Retorne <code>""</code> (sem cor → cai em <code>_bg</code>/zebra),
+          uma cor (<code>"#RRGGBB"</code>) ou um objeto
+          <code>{ color, animate, animateColor }</code>. Com <code>animate: true</code>, a linha
+          ganha o <em>pulse</em> de alerta (anel de <code>box-shadow</code> que expande — a mesma
+          animação do <code>&lt;granado-submenu-pesagem&gt;</code>), na cor <code>animateColor</code>.
+          Precedência da cor: <code>onRenderRow</code> → <code>_bg</code> → zebra.
+        </p>
+        <div class="gd-split">
+        <div class="gd-demo">
+          <granado-table id="dt-rowcolor" tabletitle="Desvio pulsa · Pendente amarelo"></granado-table>
+        </div>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">id</span>=<span class="tk-str">"tbl"</span> <span class="tk-attr">tabletitle</span>=<span class="tk-str">"Desvio pulsa · Pendente amarelo"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">const</span> columns = [
+    { key: <span class="tk-str">'cod'</span>,     label: <span class="tk-str">'Código'</span>,      mono: <span class="tk-keyword">true</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'mat'</span>,     label: <span class="tk-str">'Material'</span>,    width: <span class="tk-str">'170px'</span> },
+    { key: <span class="tk-str">'pesado'</span>,  label: <span class="tk-str">'Pesado (kg)'</span>, mono: <span class="tk-keyword">true</span>, align: <span class="tk-str">'right'</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'balanca'</span>, label: <span class="tk-str">'Balança'</span>,     width: <span class="tk-str">'85px'</span> },
+    { key: <span class="tk-str">'status'</span>,  label: <span class="tk-str">'Status'</span>,      width: <span class="tk-str">'110px'</span> }
+  ];
+  <span class="tk-kw">const</span> rows = [
+    { cod: <span class="tk-str">'MP-01001'</span>, mat: <span class="tk-str">'Glicerina USP'</span>,      pesado: <span class="tk-str">'44983,21'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01002'</span>, mat: <span class="tk-str">'Fenoxietanol'</span>,       pesado: <span class="tk-str">'3028,50'</span>,  balanca: <span class="tk-str">'B-02'</span>, status: <span class="tk-str">'Desvio'</span> },
+    { cod: <span class="tk-str">'MP-01003'</span>, mat: <span class="tk-str">'Ácido Cítrico'</span>,      pesado: <span class="tk-str">'12450,00'</span>, balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'Pendente'</span> },
+    { cod: <span class="tk-str">'MP-01004'</span>, mat: <span class="tk-str">'Lauril Sulfato'</span>,     pesado: <span class="tk-str">'8721,64'</span>,  balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'Aprov.'</span> },
+    { cod: <span class="tk-str">'MP-01005'</span>, mat: <span class="tk-str">'Cera de Abelha'</span>,     pesado: <span class="tk-str">'2100,00'</span>,  balanca: <span class="tk-str">'B-02'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01006'</span>, mat: <span class="tk-str">'Óleo de Amêndoa'</span>,    pesado: <span class="tk-str">'15890,33'</span>, balanca: <span class="tk-str">'B-04'</span>, status: <span class="tk-str">'Desvio'</span> },
+    { cod: <span class="tk-str">'MP-01007'</span>, mat: <span class="tk-str">'Manteiga de Karité'</span>, pesado: <span class="tk-str">'4567,89'</span>,  balanca: <span class="tk-str">'B-01'</span>, status: <span class="tk-str">'OK'</span> },
+    { cod: <span class="tk-str">'MP-01008'</span>, mat: <span class="tk-str">'Vitamina E'</span>,         pesado: <span class="tk-str">'320,15'</span>,   balanca: <span class="tk-str">'B-03'</span>, status: <span class="tk-str">'Pendente'</span> }
+  ];
+
+  <span class="tk-kw">const</span> tbl = document.getElementById(<span class="tk-str">'tbl'</span>);
+  tbl.setAttribute(<span class="tk-str">'columns'</span>, JSON.stringify(columns));
+  tbl.setAttribute(<span class="tk-str">'rows'</span>, JSON.stringify(rows));
+
+  <span class="tk-comment">// cor por linha + pulse nos desvios (anel de alerta vermelho)</span>
+  tbl.onRenderRow = <span class="tk-kw">function</span> (row, rowIndex) {
+    <span class="tk-kw">if</span> (row.status === <span class="tk-str">'Desvio'</span>)   <span class="tk-kw">return</span> { color: <span class="tk-str">'#FFE5E0'</span>, animate: <span class="tk-keyword">true</span>, animateColor: <span class="tk-str">'#8C1A1A'</span> };
+    <span class="tk-kw">if</span> (row.status === <span class="tk-str">'Pendente'</span>) <span class="tk-kw">return</span> <span class="tk-str">'#FFF6D8'</span>;   <span class="tk-comment">// só cor, sem pulse</span>
+    <span class="tk-kw">return</span> <span class="tk-str">''</span>;   <span class="tk-comment">// demais: sem cor</span>
+  };
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+        <p class="gd-lead" style="font-size:12px;color:#8A9E8E;margin-top:2px">
+          Via atributo (JS em string) é equivalente:
+          <code>onrenderrow="return row.status === 'Desvio' ? {color:'#FFE5E0', animate:true} : ''"</code>.
+        </p>
 
         <!-- ===== API ===== -->
         <h2 class="gd-h2">API</h2>
@@ -1535,7 +1856,25 @@ tbl.setAttribute(<span class="tk-str">'onclickevent'</span>,
               <td class="col-name">color</td>
               <td class="col-type">string (cor CSS)</td>
               <td class="col-default">"#1C5C31"</td>
-              <td class="col-desc">Cor da faixa lateral esquerda do card.</td>
+              <td class="col-desc">Cor <strong>global</strong> de destaque (faixa lateral, filtros, ordenação, título, botões de export, paginação, chevron). Serve de <em>fallback</em> para as cores individuais abaixo.</td>
+            </tr>
+            <tr>
+              <td class="col-name">gross-border-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default"><em>color</em></td>
+              <td class="col-desc">Cor <strong>só</strong> da faixa lateral grossa (4px, esquerda). Se não setada, usa <code>color</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">title-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#8A9E8E"</td>
+              <td class="col-desc">Cor <strong>só</strong> do título (<code>tabletitle</code>). O título usa o estilo <em>eyebrow</em> dos cards (9px, 900, uppercase, letter-spacing .2em).</td>
+            </tr>
+            <tr>
+              <td class="col-name">soft-border-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">"#E5DDC8"</td>
+              <td class="col-desc">Cor das bordas finas (contorno do card, separadores de header/células/rodapé).</td>
             </tr>
             <tr>
               <td class="col-name">tabletitle</td>
@@ -1548,6 +1887,12 @@ tbl.setAttribute(<span class="tk-str">'onclickevent'</span>,
               <td class="col-type">string (JS)</td>
               <td class="col-default">—</td>
               <td class="col-desc">Código JS executado por célula. Variáveis: <code>cell</code>, <code>col</code>, <code>row</code>, <code>rowIndex</code>. Retorne string HTML.</td>
+            </tr>
+            <tr>
+              <td class="col-name">onrenderrow / <em>onRenderRow</em></td>
+              <td class="col-type">string (JS) / função</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Decide a <strong>cor da linha</strong> e se ela <strong>pulsa</strong>. Variáveis: <code>row</code>, <code>rowIndex</code>. Retorne <code>""</code> (sem cor), uma cor (<code>"#RRGGBB"</code>) ou <code>{ color, animate, animateColor }</code> — <code>animate:true</code> liga o pulse de alerta (anel de box-shadow, igual ao <code>&lt;granado-submenu-pesagem&gt;</code>). Precedência: <code>onrenderrow</code> → <code>_bg</code> → zebra.</td>
             </tr>
             <tr>
               <td class="col-name">onclickevent</td>
@@ -1671,42 +2016,31 @@ tbl.setAttribute(<span class="tk-str">'onclickevent'</span>,
         </ul>
       </section>
 
-      <!-- ===== JS de configuração dos demos da granado-table ===== -->
+      <!-- ===== JS de configuração dos demos da granado-table =====
+           Espelha EXATAMENTE os snippets: mesmo columns, mesmo rows (8 linhas),
+           mesmo renderStatusBadge — cada demo só muda os atributos daquela seção. -->
       <script>
         (function () {
-          // Dataset compacto compartilhado pelos demos
-          const rows = [
-            { cod: 'MP-01001', mat: 'Glicerina USP',         pesado: '44983,21', balanca: 'B-01', status: 'OK' },
-            { cod: 'MP-01002', mat: 'Fenoxietanol',          pesado: '3028,50',  balanca: 'B-02', status: 'Desvio' },
-            { cod: 'MP-01003', mat: 'Ácido Cítrico',         pesado: '12450,00', balanca: 'B-01', status: 'Pendente' },
-            { cod: 'MP-01004', mat: 'Lauril Sulfato',        pesado: '8721,64',  balanca: 'B-03', status: 'Aprov.' },
-            { cod: 'MP-01005', mat: 'Cera de Abelha',        pesado: '2100,00',  balanca: 'B-02', status: 'OK' },
-            { cod: 'MP-01006', mat: 'Óleo de Amêndoa',       pesado: '15890,33', balanca: 'B-04', status: 'Desvio', _bg: '#FFE5E0' },
-            { cod: 'MP-01007', mat: 'Manteiga de Karité',    pesado: '4567,89',  balanca: 'B-01', status: 'OK' },
-            { cod: 'MP-01008', mat: 'Vitamina E',            pesado: '320,15',   balanca: 'B-03', status: 'Aprov.' },
-            { cod: 'MP-01009', mat: 'Extrato de Camomila',   pesado: '985,42',   balanca: 'B-02', status: 'Pendente' },
-            { cod: 'MP-01010', mat: 'Mentol Cristal',        pesado: '1240,00',  balanca: 'B-04', status: 'OK' },
-            { cod: 'MP-01011', mat: 'Ácido Salicílico',      pesado: '670,80',   balanca: 'B-01', status: 'Desvio' },
-            { cod: 'MP-01012', mat: 'Ureia',                 pesado: '5430,25',  balanca: 'B-03', status: 'OK' }
-          ];
-
-          // Colunas: variantes por demo
-          const colsBasic = [
-            { key: 'cod',    label: 'Código',      mono: true, width: '110px' },
-            { key: 'mat',    label: 'Material',    width: '180px' },
-            { key: 'pesado', label: 'Pesado (kg)', mono: true, align: 'right', width: '110px' },
-            { key: 'status', label: 'Status',      width: '110px' }
-          ];
-
-          const colsFull = [
+          // === columns / rows compartilhados (= snippet do "Uso básico") ===
+          const columns = [
             { key: 'cod',     label: 'Código',      mono: true, width: '110px' },
             { key: 'mat',     label: 'Material',    width: '170px' },
             { key: 'pesado',  label: 'Pesado (kg)', mono: true, align: 'right', width: '110px' },
             { key: 'balanca', label: 'Balança',     width: '85px' },
             { key: 'status',  label: 'Status',      width: '110px' }
           ];
+          const rows = [
+            { cod: 'MP-01001', mat: 'Glicerina USP',      pesado: '44983,21', balanca: 'B-01', status: 'OK' },
+            { cod: 'MP-01002', mat: 'Fenoxietanol',       pesado: '3028,50',  balanca: 'B-02', status: 'Desvio' },
+            { cod: 'MP-01003', mat: 'Ácido Cítrico',      pesado: '12450,00', balanca: 'B-01', status: 'Pendente' },
+            { cod: 'MP-01004', mat: 'Lauril Sulfato',     pesado: '8721,64',  balanca: 'B-03', status: 'Aprov.' },
+            { cod: 'MP-01005', mat: 'Cera de Abelha',     pesado: '2100,00',  balanca: 'B-02', status: 'OK' },
+            { cod: 'MP-01006', mat: 'Óleo de Amêndoa',    pesado: '15890,33', balanca: 'B-04', status: 'Desvio', _bg: '#FFE5E0' },
+            { cod: 'MP-01007', mat: 'Manteiga de Karité', pesado: '4567,89',  balanca: 'B-01', status: 'OK' },
+            { cod: 'MP-01008', mat: 'Vitamina E',         pesado: '320,15',   balanca: 'B-03', status: 'Aprov.' }
+          ];
 
-          // Onrender de status (badge colorido)
+          // === renderStatusBadge (= snippet "Renderização customizada") ===
           const renderStatusBadge = `
             if (col.key === 'status') {
               var bg = row.status === 'OK'      ? '#1C7A38'
@@ -1718,46 +2052,66 @@ tbl.setAttribute(<span class="tk-str">'onclickevent'</span>,
             return cell;
           `;
 
-          function setup(id, cols, opts) {
-            const t = document.getElementById(id);
-            if (!t) return;
-            t.setAttribute('columns', JSON.stringify(cols));
-            t.setAttribute('rows', JSON.stringify(opts && opts.rows ? opts.rows : rows.slice(0, opts && opts.limit ? opts.limit : rows.length)));
-            if (opts && opts.onrender)   t.setAttribute('onrender', opts.onrender);
-            if (opts && opts.onclick)    t.setAttribute('onclickevent', opts.onclick);
-            if (opts && opts.ondblclick) t.setAttribute('ondoubleclickevent', opts.ondblclick);
-          }
-
-          // Dataset em árvore (linhas com children) para o demo expansível
+          // === rows com children (= snippet "Linhas com filhos") ===
           const rowsTree = [
-            { cod: 'OP-0416', mat: 'Loção Rosa 200ml', pesado: '599,87', status: 'OK', children: [
-              { cod: 'MP-01001', mat: 'Glicerina USP',  pesado: '44,98', status: 'OK' },
-              { cod: 'MP-01002', mat: 'Fenoxietanol',   pesado: '3,03',  status: 'Desvio' },
-              { cod: 'MP-01003', mat: 'Ácido Cítrico',  pesado: '12,45', status: 'OK' }
+            { cod: 'OP-0416', mat: 'Loção Rosa 200ml', pesado: '599,87', balanca: 'B-01', status: 'OK', children: [
+              { cod: 'MP-01001', mat: 'Glicerina USP',  pesado: '44,98', balanca: 'B-01', status: 'OK' },
+              { cod: 'MP-01002', mat: 'Fenoxietanol',   pesado: '3,03',  balanca: 'B-01', status: 'Desvio' },
+              { cod: 'MP-01003', mat: 'Ácido Cítrico',  pesado: '12,45', balanca: 'B-01', status: 'OK' }
             ] },
-            { cod: 'OP-0414', mat: 'Creme Hidratante 150g', pesado: '312,40', status: 'OK', children: [
-              { cod: 'MP-02001', mat: 'Base Aquosa',    pesado: '30,00', status: 'OK' },
-              { cod: 'MP-02002', mat: 'Conservante',    pesado: '0,90',  status: 'OK' }
+            { cod: 'OP-0414', mat: 'Creme Hidratante 150g', pesado: '312,40', balanca: 'B-03', status: 'OK', children: [
+              { cod: 'MP-02001', mat: 'Base Aquosa',    pesado: '30,00', balanca: 'B-03', status: 'OK' },
+              { cod: 'MP-02002', mat: 'Conservante',    pesado: '0,90',  balanca: 'B-03', status: 'OK' }
             ] }
           ];
 
-          // Demos
-          setup('dt-basic',      colsBasic, { rows: rows.slice(0, 4) });
-          setup('dt-children',   colsBasic, {
-            rows: rowsTree,
-            onrender: renderStatusBadge,
-            onclick: "console.log(rowIndex === -1 ? 'MP (filho): ' + row.cod : 'OP: ' + row.cod);"
-          });
-          setup('dt-render',     colsFull,  { rows: rows.slice(0, 6), onrender: renderStatusBadge });
-          setup('dt-paged',      colsFull,  { onrender: renderStatusBadge });
-          setup('dt-filtersort', colsFull,  { onrender: renderStatusBadge });
-          setup('dt-events',     colsFull,  {
-            onrender:   renderStatusBadge,
+          function apply(id, opts) {
+            const t = document.getElementById(id);
+            if (!t) return;
+            opts = opts || {};
+            t.setAttribute('columns', JSON.stringify(columns));
+            t.setAttribute('rows', JSON.stringify(opts.rows || rows));
+            if (opts.onrender)   t.setAttribute('onrender', renderStatusBadge);
+            if (opts.onclick)    t.setAttribute('onclickevent', opts.onclick);
+            if (opts.ondblclick) t.setAttribute('ondoubleclickevent', opts.ondblclick);
+          }
+
+          // Cada demo = os mesmos dados + só os atributos da sua seção (no HTML).
+          apply('dt-basic');
+          apply('dt-render',     { onrender: true });
+          apply('dt-paged',      { onrender: true });
+          apply('dt-filtersort', { onrender: true });
+          apply('dt-events',     {
             onclick:    "console.log('linha selecionada', row.cod);",
             ondblclick: "alert('Abrir detalhes de ' + row.cod);"
           });
-          setup('dt-export',     colsFull,  { onrender: renderStatusBadge });
-          setup('dt-visual',     colsFull,  { rows: rows.slice(0, 6), onrender: renderStatusBadge });
+          apply('dt-export',     { onrender: true });
+          apply('dt-visual',     { onrender: true });
+          apply('dt-children',   {
+            rows: rowsTree,
+            onrender: true,
+            onclick: "console.log(rowIndex === -1 ? 'MP (filho): ' + row.cod : 'OP: ' + row.cod);"
+          });
+
+          // onRenderRow: cor por linha + pulse (anel de alerta) nos desvios.
+          // rows próprias (sem _bg) = exatamente o snippet ao lado.
+          const rowsColor = [
+            { cod: 'MP-01001', mat: 'Glicerina USP',      pesado: '44983,21', balanca: 'B-01', status: 'OK' },
+            { cod: 'MP-01002', mat: 'Fenoxietanol',       pesado: '3028,50',  balanca: 'B-02', status: 'Desvio' },
+            { cod: 'MP-01003', mat: 'Ácido Cítrico',      pesado: '12450,00', balanca: 'B-01', status: 'Pendente' },
+            { cod: 'MP-01004', mat: 'Lauril Sulfato',     pesado: '8721,64',  balanca: 'B-03', status: 'Aprov.' },
+            { cod: 'MP-01005', mat: 'Cera de Abelha',     pesado: '2100,00',  balanca: 'B-02', status: 'OK' },
+            { cod: 'MP-01006', mat: 'Óleo de Amêndoa',    pesado: '15890,33', balanca: 'B-04', status: 'Desvio' },
+            { cod: 'MP-01007', mat: 'Manteiga de Karité', pesado: '4567,89',  balanca: 'B-01', status: 'OK' },
+            { cod: 'MP-01008', mat: 'Vitamina E',         pesado: '320,15',   balanca: 'B-03', status: 'Pendente' }
+          ];
+          apply('dt-rowcolor', { rows: rowsColor });
+          const rc = document.getElementById('dt-rowcolor');
+          if (rc) rc.onRenderRow = function (row) {
+            if (row.status === 'Desvio')   return { color: '#FFE5E0', animate: true, animateColor: '#8C1A1A' };
+            if (row.status === 'Pendente') return '#FFF6D8';
+            return '';
+          };
         })();
       </script>
 
@@ -10929,6 +11283,8 @@ pop.open();</pre>
             <tr><td class="col-name">isenablesort / <em>isEnableSort</em></td><td class="col-type">boolean</td><td class="col-desc">Ordenação por coluna.</td></tr>
             <tr><td class="col-name">isenableexportcsv / isenableexportpdf</td><td class="col-type">boolean</td><td class="col-desc">Botões de exportar CSV / PDF.</td></tr>
             <tr><td class="col-name">onrender / onclickevent / ondoubleclickevent</td><td class="col-type">string (JS)</td><td class="col-desc">Render por célula / clique / duplo-clique na linha.</td></tr>
+            <tr><td class="col-name">onrenderrow / <em>onRenderRow</em></td><td class="col-type">string (JS) / função</td><td class="col-desc">Cor da linha + pulse de alerta. Aceita <strong>função</strong> via propriedade (<code>popup.onRenderRow = fn</code>) ou opção <code>onRenderRow</code> no <code>show()</code>. Repassado ao <a class="gd-link" href="#granado-table">granado-table</a>.</td></tr>
+            <tr><td class="col-name">gross-border-color · title-color · soft-border-color · childrowcolor</td><td class="col-type">string (cor)</td><td class="col-desc">Faixa grossa · título · bordas finas · cor das linhas-filhas (veja <a class="gd-link" href="#granado-table">granado-table</a>).</td></tr>
             <tr><td class="col-name">tablelayout · exportfilename · tabletitle · rowaltcolor · rowheight</td><td class="col-type">—</td><td class="col-desc">Demais opções do <a class="gd-link" href="#granado-table">granado-table</a> (mesmo comportamento).</td></tr>
           </tbody>
         </table>
@@ -11309,6 +11665,130 @@ pop.open();</pre>
           <li><strong>PDF = impressão:</strong> não gera o PDF "no navegador" via lib; usa o <em>Print → Salvar como PDF</em> do sistema (confiável e sem dependências).</li>
           <li><strong>HTML da página inteira:</strong> salva o <code>outerHTML</code> atual (inclui o estado dinâmico). CSS/JS externos referenciados por <code>&lt;link&gt;</code>/<code>&lt;script&gt;</code> continuam apontando para a origem — ao abrir o arquivo fora do servidor, esses recursos podem não resolver.</li>
           <li><strong>Dica p/ PDF limpo:</strong> aponte <code>target</code> para o container do relatório para não imprimir menus/cabeçalhos do app.</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-filter
+           ============================================================ -->
+      <section id="granado-filter" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-filter&gt;</code></h1>
+        <p class="gd-lead">
+          Filtro <strong>responsivo</strong>. No <strong>desktop</strong> (acima do <code>breakpoint</code>,
+          default 768px) renderiza os campos <strong>inline</strong>, numa caixa de filtros. No
+          <strong>mobile</strong> (abaixo do breakpoint) vira um <strong>ícone de funil</strong> que, ao
+          clicar, abre um <strong>bottom-sheet</strong> (painel deslizante de baixo) com os mesmos campos.
+          Você passa o <strong>HTML</strong> dos filtros uma única vez (como filhos ou via <code>content</code>)
+          e o componente troca sozinho ao cruzar o breakpoint.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-filter.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — filtros como filhos</h2>
+        <p class="gd-lead">
+          Passe os campos de filtro <strong>como filhos</strong> — eles são movidos para dentro do painel.
+          Os campos filtram <strong>ao vivo</strong> (o botão <em>Aplicar</em> apenas fecha e dispara o evento
+          <code>apply</code>). Nesta janela (desktop) os campos aparecem <strong>inline</strong>; reduza a
+          largura para <strong>≤ 768px</strong> para ver o funil + bottom-sheet.
+        </p>
+        <div class="gd-split">
+        <div class="gd-demo">
+          <style>
+            #doc-flt-funnel { display:none; }
+            @media (min-width:769px){ #doc-filter { margin-top:12px; } }
+            @media (max-width:768px){ #doc-flt-funnel { display:inline-flex!important; } }
+          </style>
+          <div style="max-width:560px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+              <div style="font:700 15px/1.2 'Poppins',sans-serif;color:#103E20">Histórico Recente</div>
+              <button id="doc-flt-funnel" type="button" title="Filtros" aria-label="Filtros"
+                onclick="document.getElementById('doc-filter').open()"
+                style="align-items:center;justify-content:center;flex-shrink:0;width:34px;height:34px;border:1px solid #E5DDC8;border-radius:8px;background:#FDFAF1;color:#1C5C31;cursor:pointer">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+              </button>
+            </div>
+            <granado-filter id="doc-filter" no-trigger title="Filtros" onapply="var s=document.getElementById('doc-filter-status');if(s)s.textContent='✓ filtros aplicados'">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px">
+                <granado-input label="Operador" placeholder="Nome ou matrícula"></granado-input>
+                <granado-dropdown label="Status" placeholder="Todos"
+                  options='[{"value":"ok","label":"Concluído"},{"value":"alerta","label":"Concluído c/ alerta"}]'></granado-dropdown>
+                <granado-input label="Data (início)" type="date"></granado-input>
+              </div>
+            </granado-filter>
+            <div id="doc-filter-status" style="font-size:12px;color:#8A9E8E;margin-top:8px"></div>
+          </div>
+        </div>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Funil só no mobile; no desktop os campos ficam inline --&gt;</span>
+<span class="tk-tag">&lt;style&gt;</span>
+  #doc-flt-funnel { display:none; }
+  @media (min-width:769px){ #doc-filter { margin-top:12px; } }
+  @media (max-width:768px){ #doc-flt-funnel { display:inline-flex!important; } }
+<span class="tk-tag">&lt;/style&gt;</span>
+
+<span class="tk-tag">&lt;div</span> <span class="tk-attr">style</span>=<span class="tk-str">"display:flex;align-items:center;justify-content:space-between;gap:10px"</span><span class="tk-tag">&gt;</span>
+  <span class="tk-tag">&lt;div&gt;</span>Histórico Recente<span class="tk-tag">&lt;/div&gt;</span>
+  <span class="tk-tag">&lt;button</span> <span class="tk-attr">id</span>=<span class="tk-str">"doc-flt-funnel"</span> <span class="tk-attr">onclick</span>=<span class="tk-str">"document.getElementById('doc-filter').open()"</span><span class="tk-tag">&gt;</span>⧨<span class="tk-tag">&lt;/button&gt;</span>
+<span class="tk-tag">&lt;/div&gt;</span>
+
+<span class="tk-tag">&lt;granado-filter</span> <span class="tk-attr">id</span>=<span class="tk-str">"doc-filter"</span> <span class="tk-attr">no-trigger</span> <span class="tk-attr">title</span>=<span class="tk-str">"Filtros"</span> <span class="tk-attr">onapply</span>=<span class="tk-str">"…aplicar…"</span><span class="tk-tag">&gt;</span>
+  <span class="tk-tag">&lt;div</span> <span class="tk-attr">style</span>=<span class="tk-str">"display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px"</span><span class="tk-tag">&gt;</span>
+    <span class="tk-tag">&lt;granado-input</span> <span class="tk-attr">label</span>=<span class="tk-str">"Operador"</span> <span class="tk-attr">placeholder</span>=<span class="tk-str">"Nome ou matrícula"</span><span class="tk-tag">&gt;&lt;/granado-input&gt;</span>
+    <span class="tk-tag">&lt;granado-dropdown</span> <span class="tk-attr">label</span>=<span class="tk-str">"Status"</span> <span class="tk-attr">placeholder</span>=<span class="tk-str">"Todos"</span>
+      <span class="tk-attr">options</span>=<span class="tk-str">'[{"value":"ok","label":"Concluído"},{"value":"alerta","label":"Concluído c/ alerta"}]'</span><span class="tk-tag">&gt;&lt;/granado-dropdown&gt;</span>
+    <span class="tk-tag">&lt;granado-input</span> <span class="tk-attr">label</span>=<span class="tk-str">"Data (início)"</span> <span class="tk-attr">type</span>=<span class="tk-str">"date"</span><span class="tk-tag">&gt;&lt;/granado-input&gt;</span>
+  <span class="tk-tag">&lt;/div&gt;</span>
+<span class="tk-tag">&lt;/granado-filter&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">Uso — via <code>content</code> (string) + JS</h2>
+        <p class="gd-lead">Também dá para passar o HTML por string (propriedade <code>.content</code>) e controlar por JS.</p>
+        <pre class="gd-code"><span class="tk-tag">&lt;granado-filter</span> <span class="tk-attr">id</span>=<span class="tk-str">"f"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Filtros"</span> <span class="tk-attr">label</span>=<span class="tk-str">"Filtros"</span><span class="tk-tag">&gt;&lt;/granado-filter&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">var</span> f = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'f'</span>);
+  f.content = <span class="tk-str">'&lt;div style="display:grid;gap:10px"&gt;…campos…&lt;/div&gt;'</span>;
+  f.<span class="tk-attr">addEventListener</span>(<span class="tk-str">'apply'</span>, filtrar);   <span class="tk-comment">// ou onApply = filtrar</span>
+  <span class="tk-comment">// f.open() / f.close() / f.toggle()</span>
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">API</h2>
+        <h3 class="gd-h3">Atributos / propriedades</h3>
+        <table class="gd-api">
+          <thead><tr><th style="width:160px">Nome</th><th style="width:150px">Tipo</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-desc">Título do painel (e do gatilho). Default <code>"Filtros"</code>.</td></tr>
+            <tr><td class="col-name">label</td><td class="col-type">string</td><td class="col-desc">Texto ao lado do ícone no gatilho. Sem ele, o gatilho é só o ícone (34×34).</td></tr>
+            <tr><td class="col-name">content</td><td class="col-type">string (HTML) / JS</td><td class="col-desc">HTML do corpo do painel. Em JS: <code>.content</code>. Sobrepõe os filhos declarativos.</td></tr>
+            <tr><td class="col-name">apply-text</td><td class="col-type">string</td><td class="col-desc">Texto do botão de aplicar. Default <code>"Aplicar filtros"</code>. Vazio ou <code>"false"</code> esconde o botão.</td></tr>
+            <tr><td class="col-name">color</td><td class="col-type">CSS color</td><td class="col-desc">Cor de destaque (funil + botão aplicar + cabeçalho inline). Default <code>#1C5C31</code>.</td></tr>
+            <tr><td class="col-name">breakpoint</td><td class="col-type">CSS length</td><td class="col-desc">Largura máxima do modo <strong>mobile</strong> (funil + sheet). Acima disso, filtros <strong>inline</strong>. Default <code>"768px"</code>.</td></tr>
+            <tr><td class="col-name">no-trigger</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> não renderiza o funil embutido no mobile — você abre o sheet por um gatilho <strong>externo</strong> (ex.: um funil no cabeçalho da tela) chamando <code>el.open()</code>. No desktop segue inline.</td></tr>
+            <tr><td class="col-name">width</td><td class="col-type">CSS length</td><td class="col-desc">Largura máxima do <strong>bottom-sheet</strong> (mobile). Default <code>"640px"</code> (centralizado; ocupa a largura toda em telas pequenas).</td></tr>
+            <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-desc"><code>"false"</code> não fecha ao clicar fora. Default: fecha. O ✕, o <em>Aplicar</em> e a tecla <strong>Esc</strong> sempre fecham.</td></tr>
+            <tr><td class="col-name">open</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> inicia aberto. Use <code>open()</code>/<code>close()</code>/<code>toggle()</code>.</td></tr>
+            <tr><td class="col-name">onApply / onClose</td><td class="col-type">função / string (JS)</td><td class="col-desc">Executados ao aplicar / fechar. Em JS use <code>.onApply</code>/<code>.onClose</code>, ou os atributos <code>onapply</code>/<code>onclose</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Métodos / eventos</h3>
+        <table class="gd-api">
+          <thead><tr><th style="width:190px">Membro</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">el.open() / close() / toggle()</td><td class="col-desc">Abre / fecha / alterna o painel.</td></tr>
+            <tr><td class="col-name">evento <code>open</code></td><td class="col-desc">Painel aberto.</td></tr>
+            <tr><td class="col-name">evento <code>apply</code></td><td class="col-desc">Clique em <em>Aplicar</em> (o painel fecha em seguida).</td></tr>
+            <tr><td class="col-name">evento <code>close</code></td><td class="col-desc">Painel fechado (✕, Esc, backdrop, aplicar ou <code>close()</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Responsivo:</strong> os mesmos campos servem desktop (inline) e mobile (funil + sheet) — sem duplicar DOM nem ids. Alterna sozinho no <code>breakpoint</code>.</li>
+          <li><strong>Filtro ao vivo:</strong> ligue os campos ao seu filtro (<code>onchange</code>/<code>oninput</code>); o <em>Aplicar</em> (só no sheet) serve para fechar (e dispara <code>apply</code>).</li>
+          <li><strong>Bottom-sheet:</strong> desliza de baixo, com backdrop e <code>max-height:85vh</code> (rola quando há muitos campos), limitado por <code>width</code>.</li>
+          <li><strong>Funil no cabeçalho (mobile):</strong> para deixar o funil na mesma linha de um título, use <code>no-trigger</code> e coloque um botão de funil externo (visível só no mobile) chamando <code>el.open()</code>.</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
         </ul>
       </section>

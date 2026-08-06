@@ -36,9 +36,31 @@
                            filho dispara onclickevent com a linha-filha e
                            rowIndex = -1. Filhos nao entram em ordenacao, filtro,
                            paginacao nem export.
-     color               - cor da faixa lateral (default: #1C5C31)
+     color               - cor "global" de destaque (default: #1C5C31). Usada
+                           na faixa lateral, filtros, ordenacao, titulo, botoes
+                           de export, paginacao e chevron dos children. Serve de
+                           fallback para as cores individuais abaixo.
+     gross-border-color  - cor SO da faixa lateral grossa (4px, esquerda).
+                           Default: valor de "color".
+     title-color         - cor SO do titulo da tabela (tabletitle). O titulo usa
+                           o mesmo estilo "eyebrow" dos cards (9px, 900, uppercase,
+                           letter-spacing .2em). Default: "#8A9E8E".
+     soft-border-color   - cor das bordas finas da tabela (contorno do card,
+                           separadores de header/celulas/rodape).
+                           Default: "#E5DDC8".
      onrender            - JS por celula. Variaveis: cell, col, row, rowIndex.
                            Retorne string com o HTML da celula.
+     onrenderrow         - JS por LINHA (decide a cor de fundo e se "pulsa").
+                           Variaveis: row, rowIndex. Retorne:
+                             - "" / null           -> sem cor (cai em _bg/zebra)
+                             - "#RRGGBB" (string)  -> cor de fundo da linha
+                             - { color, animate, animateColor } -> cor + pulse
+                               animate:true liga a animacao de alerta (anel de
+                               box-shadow que expande, igual ao granado-submenu-
+                               pesagem); animateColor define a cor do anel
+                               (default: a propria color, ou #8C1A1A).
+                           Precedencia da cor: onrenderrow -> _bg -> zebra.
+                           Em JS use a propriedade .onRenderRow = (row, i) => (...).
      onclickevent        - JS ao clicar (single-click) na linha.
                            Variaveis: row, rowIndex, event. Opcional.
      ondoubleclickevent  - JS ao dar duplo-clique na linha.
@@ -110,7 +132,7 @@
 if (!customElements.get('granado-table')) {
   class GranadoTable extends HTMLElement {
     static get observedAttributes() {
-      return ['columns', 'rows', 'color', 'onrender', 'onclickevent', 'ondoubleclickevent', 'isenablepagination', 'pagesize', 'tablelayout', 'isenableexportcsv', 'isenableexportpdf', 'exportfilename', 'tabletitle', 'rowaltcolor', 'childrowcolor', 'rowheight', 'isenablefilter', 'isenablesort'];
+      return ['columns', 'rows', 'color', 'gross-border-color', 'title-color', 'soft-border-color', 'onrender', 'onrenderrow', 'onclickevent', 'ondoubleclickevent', 'isenablepagination', 'pagesize', 'tablelayout', 'isenableexportcsv', 'isenableexportpdf', 'exportfilename', 'tabletitle', 'rowaltcolor', 'childrowcolor', 'rowheight', 'isenablefilter', 'isenablesort'];
     }
 
     constructor() {
@@ -141,7 +163,23 @@ if (!customElements.get('granado-table')) {
       allRows.forEach((r, idx) => { if (r && typeof r === 'object') r.__i = idx; });
       const hasChildrenAny = allRows.some(r => r && Array.isArray(r.children) && r.children.length > 0);
       const color = this.getAttribute('color') || '#1C5C31';
+      // Overrides individuais: caem para "color" (ou bege padrao) se nao setados.
+      const grossBorderColor = this.getAttribute('gross-border-color') || color;
+      const titleColor = this.getAttribute('title-color') || '#8A9E8E';
+      const softBorderColor = this.getAttribute('soft-border-color') || '#E5DDC8';
       const onRender = new Function('cell', 'col', 'row', 'rowIndex', this.getAttribute('onrender') || 'return cell;');
+      // onRenderRow: decide cor da linha + se pulsa. Propriedade tem prioridade
+      // sobre o atributo (permite passar uma função no setup em JS).
+      const onRenderRowAttr = this.getAttribute('onrenderrow');
+      const onRenderRow = this._onRenderRowFn
+        || (onRenderRowAttr ? new Function('row', 'rowIndex', onRenderRowAttr) : null);
+      const rowStyleFor = (row, idx) => {
+        if (!onRenderRow) return null;
+        let res;
+        try { res = onRenderRow.call(this, row, idx); }
+        catch (e) { console.error('[granado-table] onrenderrow error:', e); res = null; }
+        return this._normalizeRowStyle(res);
+      };
       const onClickAttr = this.getAttribute('onclickevent');
       const onDblClickAttr = this.getAttribute('ondoubleclickevent');
       const hasClick = !!onClickAttr;
@@ -166,8 +204,8 @@ if (!customElements.get('granado-table')) {
       const pageRows = isPaginated ? sortedRows.slice(pageStart, pageStart + pageSize) : sortedRows;
 
       const rowHeight = this.getAttribute('rowheight') || '4px';
-      const TH_BASE = 'font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E;padding:7px 12px;border-bottom:1px solid #E5DDC8;background:#F4EED9';
-      const TD_BASE = `padding:${rowHeight} 12px;vertical-align:middle;border-bottom:1px solid #E5DDC8`;
+      const TH_BASE = `font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8A9E8E;padding:7px 12px;border-bottom:1px solid ${softBorderColor};background:#F4EED9`;
+      const TD_BASE = `padding:${rowHeight} 12px;vertical-align:middle;border-bottom:1px solid ${softBorderColor}`;
       const MONO = ";font-family:Arial,'DejaVu Sans',Helvetica,sans-serif";
 
       const colgroup = columns.some(c => c.width)
@@ -199,13 +237,21 @@ if (!customElements.get('granado-table')) {
         const globalIdx = pageStart + i;
         const hasCh = Array.isArray(row.children) && row.children.length > 0;
         const expanded = hasCh && this._expanded.has(row.__i);
-        const altBg = row._bg || (rowAltColor && i % 2 === 1 ? rowAltColor : '');
-        let html = this._rowTrHtml(row, ctx, { globalIdx, hasChildren: hasCh, expanded, altBg });
+        const rs = rowStyleFor(row, globalIdx);
+        const altBg = (rs && rs.color) || row._bg || (rowAltColor && i % 2 === 1 ? rowAltColor : '');
+        let html = this._rowTrHtml(row, ctx, {
+          globalIdx, hasChildren: hasCh, expanded, altBg,
+          anim: !!(rs && rs.animate), animColor: rs && rs.animateColor,
+        });
         // Linhas-filhas renderizadas logo abaixo da linha-pai, quando expandida.
         if (expanded) {
-          html += row.children.map((ch, ci) => this._rowTrHtml(ch || {}, ctx, {
-            globalIdx, isChild: true, parentI: row.__i, childIdx: ci, childClickable: hasClick
-          })).join('');
+          html += row.children.map((ch, ci) => {
+            const crs = rowStyleFor(ch || {}, -1);
+            return this._rowTrHtml(ch || {}, ctx, {
+              globalIdx, isChild: true, parentI: row.__i, childIdx: ci, childClickable: hasClick,
+              childBgOverride: crs && crs.color, anim: !!(crs && crs.animate), animColor: crs && crs.animateColor,
+            });
+          }).join('');
         }
         return html;
       }).join('');
@@ -220,7 +266,7 @@ if (!customElements.get('granado-table')) {
       const headerHtml = (tableTitleAttr || isFilterEnabled) ? `
                   <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px">
                     ${tableTitleAttr
-          ? `<h2 style="margin:0;font-size:14px;font-weight:700;letter-spacing:.04em;color:${color};font-family:inherit">${tableTitleAttr}</h2>`
+          ? `<h2 style="margin:0;font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:${titleColor};font-family:inherit">${tableTitleAttr}</h2>`
           : '<div></div>'}
                     ${isFilterEnabled ? this._renderGlobalFilter() : ''}
                   </div>` : '';
@@ -233,6 +279,7 @@ if (!customElements.get('granado-table')) {
         pageStart,
         pageRowCount: pageRows.length,
         color,
+        softBorder: softBorderColor,
       }) : '';
 
       const filterPopup = this._openFilter ? this._renderFilterPopup() : '';
@@ -242,7 +289,7 @@ if (!customElements.get('granado-table')) {
                   display: block;
                   position: relative;
                   background: #FDFAF1;
-                  border: 1px solid #E5DDC8;
+                  border: 1px solid ${softBorderColor};
                   border-radius: 8px;
                   padding: 18px;
                   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
@@ -252,7 +299,7 @@ if (!customElements.get('granado-table')) {
                       position: absolute;
                       top: 0; left: 0;
                       width: 4px; height: 100%;
-                      background: ${color};
+                      background: ${grossBorderColor};
                       border-radius: 8px 0 0 8px;
                   "></span>
 
@@ -278,6 +325,46 @@ if (!customElements.get('granado-table')) {
       }
       if (isSortEnabled) this._wireSortHeaders();
       if (this._openFilter) this._wireFilterPopup();
+      this._wireRowAnimations();
+    }
+
+    // onRenderRow (propriedade JS): função (row, rowIndex) => cor | { color, animate, animateColor }.
+    get onRenderRow() { return this._onRenderRowFn || null; }
+    set onRenderRow(fn) { this._onRenderRowFn = (typeof fn === 'function') ? fn : null; if (this.isConnected) this.render(); }
+
+    // Normaliza o retorno do onRenderRow para { color, animate, animateColor }.
+    _normalizeRowStyle(res) {
+      if (!res) return null;
+      if (typeof res === 'string') return { color: res, animate: false, animateColor: res };
+      if (typeof res === 'object') {
+        const color = res.color || res.bg || '';
+        const animate = !!(res.animate || res.pulse || res.animated);
+        const animateColor = res.animateColor || res.pulseColor || color || '#8C1A1A';
+        return { color, animate, animateColor };
+      }
+      return null;
+    }
+
+    // Aplica o pulse (anel de box-shadow que expande) nas linhas com data-anim,
+    // via Web Animations API — mesma keyframe/timing do granado-submenu-pesagem.
+    _wireRowAnimations() {
+      this.querySelectorAll('tbody tr[data-anim="1"]').forEach(tr => {
+        if (!tr.animate) return;
+        const c = this._hexToRgb(tr.getAttribute('data-anim-color') || '#8C1A1A');
+        tr.animate(
+          [
+            { boxShadow: `0 0 0 0 rgba(${c.r},${c.g},${c.b},0.55)` },
+            { boxShadow: `0 0 0 7px rgba(${c.r},${c.g},${c.b},0)` },
+          ],
+          { duration: 1200, iterations: Infinity, easing: 'ease-in-out' }
+        );
+      });
+    }
+
+    _hexToRgb(hex) {
+      const m = /^#?([0-9a-f]{6})$/i.exec(String(hex || '').trim());
+      if (m) { const n = parseInt(m[1], 16); return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 }; }
+      return { r: 140, g: 26, b: 26 };
     }
 
     _renderExportButtons(isCsv, isPdf, color) {
@@ -429,7 +516,7 @@ if (!customElements.get('granado-table')) {
       w.document.close();
     }
 
-    _renderFooter({ isPaginated, isCsv, isPdf, currentPage, totalPages, totalRows, pageStart, pageRowCount, color }) {
+    _renderFooter({ isPaginated, isCsv, isPdf, currentPage, totalPages, totalRows, pageStart, pageRowCount, color, softBorder }) {
       const exportsHtml = (isCsv || isPdf) ? this._renderExportButtons(isCsv, isPdf, color) : '';
 
       let infoHtml = '';
@@ -481,7 +568,7 @@ if (!customElements.get('granado-table')) {
           gap:12px;
           margin-top:14px;
           padding-top:12px;
-          border-top:1px solid #E5DDC8;
+          border-top:1px solid ${softBorder};
           font-size:11px;
           color:#5A6B5E;
         ">
@@ -529,7 +616,7 @@ if (!customElements.get('granado-table')) {
         return `<td style="${style}">${html}</td>`;
       }).join('');
 
-      const bgColor = isChild ? (ctx.childBg || '') : (opts.altBg || '');
+      const bgColor = isChild ? (opts.childBgOverride || ctx.childBg || '') : (opts.altBg || '');
       const trBg = bgColor ? `;background:${bgColor}` : '';
       const clickable = isChild
         ? !!opts.childClickable
@@ -540,7 +627,10 @@ if (!customElements.get('granado-table')) {
       const idAttrs = isChild
         ? `data-child="1" data-parent="${opts.parentI}" data-cidx="${opts.childIdx}"`
         : `data-row="${opts.globalIdx}" data-hi="${row.__i}"`;
-      return `<tr style="${trCursor}${trBg}" ${idAttrs} data-bg="${bgColor}" onmouseover="${hoverIn}" onmouseout="${hoverOut}">${tds}</tr>`;
+      // Anel de alerta (pulse): posiciona a linha e marca p/ animar pós-render.
+      const animAttrs = opts.anim ? ` data-anim="1" data-anim-color="${opts.animColor || '#8C1A1A'}"` : '';
+      const animPos = opts.anim ? ';position:relative' : '';
+      return `<tr style="${trCursor}${trBg}${animPos}" ${idAttrs}${animAttrs} data-bg="${bgColor}" onmouseover="${hoverIn}" onmouseout="${hoverOut}">${tds}</tr>`;
     }
 
     _toggleExpand(hi) {

@@ -49,6 +49,9 @@
   <script src="./granado-table-popup.js"></script>
   <script src="./granado-timeline-item.js"></script>
   <script src="./granado-timeline.js"></script>
+  <script src="./granado-empty-popup.js"></script>
+  <script src="./granado-button-save-page.js"></script>
+  <script src="./granado-filter.js"></script>
 </head>
 
 <body style="margin:0;padding:24px;background:#F4EED9;font-family:'Lato','DejaVu Sans',Arial,sans-serif;color:#103E20">
@@ -2005,6 +2008,56 @@
           </granado-table>
         </granado-timeline-item>
       </granado-timeline>
+    </div>
+  </section>
+
+  <!-- ========== granado-filter ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-filter&gt;
+    </h2>
+    <style>
+      /* Desktop: campos inline abaixo do título. Mobile (≤768px): funil externo → bottom-sheet. */
+      #ex-flt-funnel { display:none; }
+      @media (min-width:769px){ #ex-filter { margin-top:12px; } }
+      @media (max-width:768px){ #ex-flt-funnel { display:inline-flex!important; } }
+    </style>
+    <div style="max-width:640px;border:1px solid #E5DDC8;border-radius:10px;background:#FDFAF1;padding:16px 18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div style="font:700 15px/1.2 'Poppins',sans-serif;color:#103E20">Histórico Recente</div>
+
+        <!-- Funil visível só no mobile; abre o granado-filter (no-trigger) por fora -->
+        <button id="ex-flt-funnel" type="button" title="Filtros" aria-label="Filtros"
+          onclick="document.getElementById('ex-filter').open()"
+          style="align-items:center;justify-content:center;flex-shrink:0;width:34px;height:34px;border:1px solid #E5DDC8;border-radius:8px;background:#FDFAF1;color:#1C5C31;cursor:pointer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+        </button>
+      </div>
+
+      <!-- Inline no desktop / bottom-sheet no mobile (mesmos campos, sem duplicar) -->
+      <granado-filter id="ex-filter" no-trigger title="Filtros"
+        onapply="document.getElementById('ex-filter-status').textContent='✓ filtros aplicados'">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+          <granado-input label="Operador" placeholder="Nome ou matrícula"></granado-input>
+          <granado-dropdown label="Status" placeholder="Todos"
+            options='[{"value":"ok","label":"Concluído"},{"value":"alerta","label":"Concluído c/ alerta"}]'></granado-dropdown>
+          <granado-input label="Data (início)" type="date"></granado-input>
+          <granado-input label="Data (fim)" type="date"></granado-input>
+        </div>
+      </granado-filter>
+      <div id="ex-filter-status" style="font-size:11px;color:#8A9E8E;margin-top:8px">Campos inline no desktop; no mobile, toque no funil.</div>
+    </div>
+
+    <!-- Variante: gatilho com rótulo ao lado do ícone -->
+    <div style="margin-top:12px">
+      <granado-filter title="Filtros do Relatório" label="Filtros" color="#9A7520">
+        <div style="display:grid;gap:12px">
+          <granado-input label="Buscar" placeholder="Código / material…" icon="search"></granado-input>
+          <granado-checkbox label="Apenas com desvio"></granado-checkbox>
+          <granado-checkbox label="Aprovados nas últimas 24h" checked="true"></granado-checkbox>
+        </div>
+      </granado-filter>
     </div>
   </section>
 </body>
