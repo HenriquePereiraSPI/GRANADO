@@ -2047,6 +2047,61 @@
       </granado-filter>
     </div>
   </section>
+
+  <!-- ========== granado-empty-popup ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-empty-popup&gt;
+    </h2>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button type="button" onclick="emptyDemoBasic()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1C5C31;border-radius:7px;background:#1C5C31;color:#fff;cursor:pointer">📄 Abrir popup (API estática)</button>
+      <button type="button" onclick="document.getElementById('ex-empty-decl').open()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#9A7520;color:#fff;cursor:pointer">🧩 Abrir (conteúdo declarativo)</button>
+    </div>
+
+    <!-- Popup declarativo: conteúdo como filhos; inicia oculto e abre pelo botão -->
+    <granado-empty-popup id="ex-empty-decl" open="false" title="Conteúdo declarativo" width="480px" close-on-backdrop="true">
+      <p style="margin:0 0 10px;font-size:13px;color:#4B5563">Este bloco estava <strong>dentro</strong> do
+        <code>&lt;granado-empty-popup&gt;</code> no HTML e foi montado no card.</p>
+      <granado-simple-card title="Card embutido" subtitle="Web components também funcionam aqui" color="#1A4A8C"></granado-simple-card>
+    </granado-empty-popup>
+
+    <script>
+      function emptyDemoBasic() {
+        GranadoEmptyPopup.show({
+          title: 'Detalhes da Ordem',
+          subtitle: 'OP-2026-0416 · Loção Rosa 200ml',
+          width: '560px',
+          content:
+            '<p style="margin:0 0 12px;font-size:13px;color:#4B5563">Qualquer <strong>HTML</strong> ' +
+            'pode ser montado aqui — inclusive outros web components.</p>' +
+            '<ul style="margin:0 0 14px;padding-left:18px;font-size:13px;color:#103E20;line-height:1.7">' +
+            '<li>Produto: Loção Hidratante Rosa 200ml</li><li>Quantidade: 2.000 un</li>' +
+            '<li>Status: Em pesagem</li></ul>' +
+            '<div style="text-align:right"><button data-close ' +
+            'style="font:700 13px/1.4 \'Poppins\',Arial,sans-serif;padding:8px 16px;border:1px solid #1C5C31;border-radius:7px;background:#1C5C31;color:#fff;cursor:pointer">OK, entendi</button></div>'
+        });
+      }
+    </script>
+  </section>
+
+  <!-- ========== granado-button-save-page ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-button-save-page&gt;
+    </h2>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+      <!-- both (default): clique abre menu PDF/HTML -->
+      <granado-button-save-page label="Salvar esta página" filename="componentes-granado"></granado-button-save-page>
+      <!-- Só PDF (executa direto no clique) -->
+      <granado-button-save-page format="pdf" label="Só PDF" filename="componentes-granado"></granado-button-save-page>
+      <!-- Só HTML, com cor customizada -->
+      <granado-button-save-page format="html" color="#9A7520" label="Só HTML" filename="componentes-granado"></granado-button-save-page>
+    </div>
+  </section>
 </body>
 
 </html>
