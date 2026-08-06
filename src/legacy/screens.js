@@ -2172,7 +2172,14 @@ export const SCREENS = {
       <div class="card cv mb14" style="border-left:4px solid var(--ouro)">
         <div class="card-title">Checklist</div>
 
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+        <style>@media (max-width:768px){
+          #ckl-cards-grid{grid-template-columns:1fr 1fr !important;gap:8px !important}
+          #ckl-cards-grid > div{padding:12px 10px !important}
+          #ckl-cards-grid > div > div:nth-child(1){font-size:24px !important;margin-bottom:6px !important}
+          #ckl-cards-grid > div > div:nth-child(2){font-size:11.5px !important;line-height:1.2 !important}
+          #ckl-cards-grid > div > div:nth-child(3){font-size:10px !important;margin-top:8px !important}
+        }</style>
+        <div id="ckl-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
 
           <!-- Card 1: Verificação Diária de Balança (POP-EMB-0041) -->
           <div onclick="cklAbrirSala('balanca')" style="cursor:pointer;border:1px solid var(--border);border-top:3px solid var(--verde);border-radius:10px;background:var(--surface);box-shadow:var(--sh);padding:16px 18px;transition:transform .15s ease,box-shadow .15s ease" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--sh2)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--sh)'">
@@ -2314,15 +2321,56 @@ export const SCREENS = {
 
       <!-- ═══════════ HISTÓRICO RECENTE ═══════════ -->
       <div class="card cv">
-        <div class="card-title">Histórico Recente</div>
+        <style>
+          /* WEB: filtros inline (caixa abaixo do título). MOBILE (<=768px):
+             funil no título abre um bottom-sheet manual com os MESMOS campos. */
+          #cklh-funnel-btn { display:none; }
+          #cklh-flt-backdrop { display:none; }
+          #cklh-flt-sheethead { display:none; }
+          #cklh-flt-apply { display:none; }
+          #cklh-filtros { margin-bottom:12px; padding:14px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; }
+          #cklh-flt-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; align-items:end; }
+          #cklh-flt-grid .sel, #cklh-flt-grid .inp { font-size:12px; padding:6px 8px; }
+          @media (max-width:768px){
+            #cklh-funnel-btn { display:inline-flex!important; }
+            /* caixa vira bottom-sheet deslizante */
+            #cklh-filtros {
+              position:fixed; left:0; right:0; bottom:0; margin:0; z-index:99999;
+              max-width:640px; margin-left:auto; margin-right:auto;
+              max-height:85vh; overflow-y:auto;
+              background:var(--surface); border:1px solid var(--border); border-bottom:none;
+              border-radius:16px 16px 0 0; box-shadow:0 -10px 34px rgba(15,51,25,.28);
+              transform:translateY(100%); transition:transform .22s ease;
+            }
+            #cklh-filtros.open { transform:translateY(0); }
+            #cklh-flt-backdrop.open { display:block; position:fixed; inset:0; background:rgba(15,51,25,.5); z-index:99998; }
+            #cklh-flt-sheethead { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+            #cklh-flt-grid { grid-template-columns:1fr; }
+            #cklh-flt-grid .sel, #cklh-flt-grid .inp { font-size:16px; padding:8px 10px; }
+            #cklh-flt-apply { display:block; width:100%; margin-top:14px; }
+          }
+        </style>
+        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <span>Histórico Recente</span>
+          <!-- Funil visível só no mobile; abre o bottom-sheet. -->
+          <button id="cklh-funnel-btn" type="button" onclick="cklhToggleFiltros(true)" aria-label="Filtros" title="Filtros" style="align-items:center;justify-content:center;flex-shrink:0;width:34px;height:34px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:#1C5C31;cursor:pointer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+          </button>
+        </div>
 
-        <!-- Filtros: Sala › Checklist › Operador › Status › Data Início/Fim (checklists são por Sala, não por Ordem) -->
-        <div style="margin-bottom:10px;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px">
-          <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:12px">🔍 Filtros</div>
-          <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 14px;align-items:end">
+        <div id="cklh-flt-backdrop" onclick="cklhToggleFiltros(false)"></div>
+        <div id="cklh-filtros">
+          <!-- Cabeçalho do sheet (só no mobile) -->
+          <div id="cklh-flt-sheethead">
+            <span style="display:flex;align-items:center;gap:8px;font:700 15px/1.3 'Poppins',sans-serif;color:var(--text)">
+              <span style="color:#1C5C31;display:flex"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span>Filtros
+            </span>
+            <button type="button" onclick="cklhToggleFiltros(false)" aria-label="Fechar" style="flex-shrink:0;background:transparent;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font:13px/1 'Poppins',sans-serif;color:var(--text2)">✕</button>
+          </div>
+          <div id="cklh-flt-grid">
             <div style="display:flex;flex-direction:column">
               <label class="lbl">Recurso</label>
-              <select class="sel" id="cklh-flt-recurso" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
+              <select class="sel" id="cklh-flt-recurso" onchange="cklhFiltrar()">
                 <option value="">Todos</option>
                 <optgroup label="Salas">
                   <option value="Sala A">Sala A</option>
@@ -2339,7 +2387,7 @@ export const SCREENS = {
             </div>
             <div style="display:flex;flex-direction:column">
               <label class="lbl">Checklist</label>
-              <select class="sel" id="cklh-flt-checklist" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
+              <select class="sel" id="cklh-flt-checklist" onchange="cklhFiltrar()">
                 <option value="">Todos</option>
                 <option value="balancas">⚖️ Verificação de Balança (POP-EMB-0041)</option>
                 <option value="temp-umid">🌡️ Temperatura e Umidade (POP-ALM-0007)</option>
@@ -2348,11 +2396,11 @@ export const SCREENS = {
             </div>
             <div style="display:flex;flex-direction:column">
               <label class="lbl">Operador</label>
-              <input class="inp" id="cklh-flt-operador" placeholder="Nome ou matrícula" oninput="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
+              <input class="inp" id="cklh-flt-operador" placeholder="Nome ou matrícula" oninput="cklhFiltrar()">
             </div>
             <div style="display:flex;flex-direction:column">
               <label class="lbl">Status</label>
-              <select class="sel" id="cklh-flt-status" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px">
+              <select class="sel" id="cklh-flt-status" onchange="cklhFiltrar()">
                 <option value="">Todos</option>
                 <option value="ok">✓ Concluído</option>
                 <option value="alerta">⚠ Concluído c/ alerta</option>
@@ -2360,20 +2408,20 @@ export const SCREENS = {
             </div>
             <div style="display:flex;flex-direction:column">
               <label class="lbl">Data (início)</label>
-              <input class="inp" id="cklh-flt-data-ini" type="date" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px;font-family:var(--font-m)">
+              <input class="inp" id="cklh-flt-data-ini" type="date" onchange="cklhFiltrar()" style="font-family:var(--font-m)">
             </div>
             <div style="display:flex;flex-direction:column">
               <label class="lbl">Data (fim)</label>
-              <input class="inp" id="cklh-flt-data-fim" type="date" onchange="cklhFiltrar()" style="font-size:11px;padding:6px 8px;font-family:var(--font-m)">
-            </div>
-            <div style="display:flex;gap:8px;justify-content:flex-end;align-items:flex-end">
-              <button class="btn btn-sm btn-v" onclick="cklhFiltrar()" style="font-size:11px;flex:1">🔍 Buscar</button>
-              <button class="btn btn-sm btn-ghost" onclick="cklhLimparFiltros()" style="font-size:11px;flex:1" title="Limpar todos os filtros">✕ Limpar</button>
+              <input class="inp" id="cklh-flt-data-fim" type="date" onchange="cklhFiltrar()" style="font-family:var(--font-m)">
             </div>
           </div>
+          <!-- Aplicar (só no mobile) fecha o sheet -->
+          <button id="cklh-flt-apply" class="btn btn-md btn-primary" type="button" onclick="cklhToggleFiltros(false)">Aplicar filtros</button>
         </div>
+
         <div id="cklh-resultado" style="font-size:10px;color:var(--text3);margin-bottom:8px;font-family:var(--font-m)">3 de 3 registros</div>
 
+        <div id="cklh-tabela-wrap" style="overflow-x:auto">
         <table class="tbl" id="tbl-cklh" style="font-size:11px">
           <thead><tr><th>Data</th><th>Recurso</th><th>Checklist</th><th>Operador</th><th>Status</th><th style="text-align:center">Detalhes</th></tr></thead>
           <tbody>
@@ -2382,8 +2430,23 @@ export const SCREENS = {
             <tr data-data="2026-07-01" data-recurso="Manômetro 822050" data-checklist="pressao" data-operador="a. pereira 203" data-status="alerta" style="opacity:.9"><td class="mono" style="font-size:11px">01/07/2026 08:02</td><td class="mono" style="font-size:10px">Manômetro 822050</td><td>📊 Pressão <span style="font-size:9px;color:var(--text3)">· POP-ENG-0007</span></td><td>A. Pereira (203)</td><td><span class="bdg bdg-alr">⚠ Concluído c/ alerta</span></td><td style="text-align:center"><button class="btn btn-sm btn-ghost" style="font-size:10px">🔎 Detalhes</button></td></tr>
           </tbody>
         </table>
+        </div>
+
+        <!-- Mobile: histórico como galeria de cards (toque = Detalhes) -->
+        <style>#cklh-gallery{display:none}@media (max-width:768px){#cklh-tabela-wrap{display:none!important}#cklh-gallery{display:block!important}}</style>
+        <granado-gallery id="cklh-gallery" enable-scroll="true" scroll-height="60vh"></granado-gallery>
 
         <script>
+        // Abre/fecha o bottom-sheet de filtros (mobile). Inline no desktop.
+        function cklhToggleFiltros(open) {
+          var f = document.getElementById('cklh-filtros');
+          var b = document.getElementById('cklh-flt-backdrop');
+          if (!f || !b) return;
+          if (open == null) open = !f.classList.contains('open');
+          f.classList.toggle('open', open);
+          b.classList.toggle('open', open);
+        }
+
         // Filtra a tabela do Histórico Recente usando os atributos data-* das linhas.
         function cklhFiltrar() {
           var fRec   = (document.getElementById('cklh-flt-recurso').value || '').trim();
@@ -2415,16 +2478,34 @@ export const SCREENS = {
           var lbl = vis + ' de ' + rows.length + ' registro(s)';
           if (temFiltro) lbl += ' — filtros aplicados';
           document.getElementById('cklh-resultado').textContent = lbl;
+          cklhSyncGallery();
         }
-        function cklhLimparFiltros() {
-          ['cklh-flt-operador','cklh-flt-data-ini','cklh-flt-data-fim'].forEach(function(id){
-            var el = document.getElementById(id); if (el) el.value = '';
+        // Mobile: espelha o histórico (linhas VISÍVEIS, respeitando o filtro) numa galeria.
+        function cklhSyncGallery() {
+          var g = document.getElementById('cklh-gallery');
+          var tb = document.querySelector('#tbl-cklh tbody');
+          if (!g || !tb) return;
+          var items = [];
+          Array.prototype.forEach.call(tb.rows, function (r) {
+            if (r.style.display === 'none') return;   // respeita o filtro
+            var c = r.cells; if (!c || c.length < 6) return;
+            var st = r.getAttribute('data-status') || '';
+            items.push({
+              title: c[1].textContent.trim(),                                   // Recurso
+              subtitle: c[2].textContent.trim(),                                // Checklist (+ POP)
+              data: '🗓 ' + c[0].textContent.trim() + ' · 👤 ' + c[3].textContent.trim(),
+              status: c[4].textContent.trim(),
+              statusColor: st === 'alerta' ? '#9A5A00' : '#1C7A38',
+              metadata: { row: r }
+            });
           });
-          document.getElementById('cklh-flt-recurso').value = '';
-          document.getElementById('cklh-flt-checklist').value = '';
-          document.getElementById('cklh-flt-status').value = '';
-          cklhFiltrar();
+          g.data = items;
+          g.onItemClick = function (d) {
+            var mm = d.metadata || {};
+            if (mm.row) { var b = mm.row.querySelector('td:last-child button'); if (b) b.click(); }
+          };
         }
+        cklhSyncGallery();
         </script>
       </div>
 

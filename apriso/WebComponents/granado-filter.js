@@ -1,11 +1,8 @@
 /* ============================================================
    <granado-filter>
-   Filtro RESPONSIVO:
-     - DESKTOP (> breakpoint): renderiza os campos INLINE, numa caixa de
-       filtros (como um painel normal na página).
-     - MOBILE (<= breakpoint): vira um ÍCONE DE FUNIL que, ao clicar, abre
-       um BOTTOM-SHEET (painel deslizante de baixo) com os mesmos campos.
-   Alterna sozinho ao cruzar o breakpoint (default 768px).
+   Gatilho de filtros: um ÍCONE DE FUNIL que, ao clicar, abre um
+   BOTTOM-SHEET (painel deslizante de baixo) com os campos de filtro.
+   Comportamento IDÊNTICO em web e mobile — sempre abre o popup.
 
    ── Conteúdo (formas, nesta prioridade)
      1. propriedade JS  el.content = '<div>…</div>'
@@ -20,9 +17,7 @@
      apply-text   - texto do botão de aplicar (default "Aplicar filtros").
                     Vazio / "false" esconde o botão.
      color        - cor de destaque (ícone + botão aplicar). Default "#1C5C31".
-     breakpoint   - largura máxima do "mobile" (CSS). Default "768px".
-                    Acima disso, os filtros ficam inline (desktop).
-     width        - largura máxima do painel no mobile (CSS). Default "640px"
+     width        - largura máxima do painel (CSS). Default "640px"
                     (centralizado; ocupa a largura toda em telas pequenas).
      close-on-backdrop - "false" NÃO fecha ao clicar fora. Default: fecha.
      open         - "true" já inicia aberto.
@@ -58,12 +53,10 @@
 /* __granado_guard__ */
 if (!customElements.get('granado-filter')) {
   const SURFACE = '#FDFAF1';
-  const SURFACE2 = '#F4EED9';
   const BORDER = '#E5DDC8';
   const VERDE = '#1C5C31';
   const TEXT = '#103E20';
   const TEXT2 = '#5A6B5E';
-  const TEXT3 = '#8A9E8E';
   const OVERLAY_BG = 'rgba(15,51,25,.5)';
   const FONT = "'Poppins','DejaVu Sans',Arial,sans-serif";
 
@@ -71,7 +64,7 @@ if (!customElements.get('granado-filter')) {
 
   class GranadoFilter extends HTMLElement {
     static get observedAttributes() {
-      return ['title', 'label', 'apply-text', 'content', 'color', 'width', 'breakpoint', 'no-trigger', 'close-on-backdrop', 'open'];
+      return ['title', 'label', 'apply-text', 'content', 'color', 'width', 'close-on-backdrop', 'open'];
     }
 
     connectedCallback() {
@@ -79,42 +72,18 @@ if (!customElements.get('granado-filter')) {
       if (!this._observer) {
         this._observer = new MutationObserver(() => { if (this._writing) return; this._relocateStray(); });
       }
-      this._setupMql();
       this._render();
       this._observer.observe(this, { childList: true });
-      if (this.getAttribute('open') === 'true' && this._isMobile()) this.open();
+      if (this.getAttribute('open') === 'true') this.open();
     }
     disconnectedCallback() {
       this._removeEsc();
-      this._teardownMql();
       if (this._observer) this._observer.disconnect();
     }
     attributeChangedCallback(name) {
       if (!this.isConnected) return;
       if (name === 'open') { (this.getAttribute('open') === 'true') ? this.open() : this.close(); return; }
-      if (name === 'breakpoint') { this._setupMql(); }
       this._render();
-    }
-
-    // Media query "mobile" — alterna entre inline (desktop) e bottom-sheet.
-    _setupMql() {
-      this._teardownMql();
-      const bp = this.getAttribute('breakpoint') || '768px';
-      this._mql = window.matchMedia('(max-width:' + bp + ')');
-      this._mqlHandler = () => { if (this.isConnected) this._render(); };
-      if (this._mql.addEventListener) this._mql.addEventListener('change', this._mqlHandler);
-      else if (this._mql.addListener) this._mql.addListener(this._mqlHandler);   // Safari antigo
-    }
-    _teardownMql() {
-      if (this._mql && this._mqlHandler) {
-        if (this._mql.removeEventListener) this._mql.removeEventListener('change', this._mqlHandler);
-        else if (this._mql.removeListener) this._mql.removeListener(this._mqlHandler);
-      }
-    }
-    _isMobile() {
-      if (this._mql) return this._mql.matches;
-      const bp = this.getAttribute('breakpoint') || '768px';
-      return window.matchMedia('(max-width:' + bp + ')').matches;
     }
 
     // ------------------------------------------------------------
@@ -203,27 +172,9 @@ if (!customElements.get('granado-filter')) {
           applyHtml +
         `</div>`;
 
-      // Desktop: caixa de filtros inline (sem funil/sheet).
-      const inline =
-        `<div data-role="inline" style="padding:14px 16px;background:${SURFACE2};border:1px solid ${BORDER};border-radius:8px">` +
-          `<div style="display:flex;align-items:center;gap:8px;font:900 9px/1.4 ${FONT};letter-spacing:.12em;text-transform:uppercase;color:${TEXT3};margin-bottom:12px"><span style="color:${color};display:flex">${FUNNEL}</span>${this._esc(title)}</div>` +
-          `<div data-role="body" style="font:13px/1.5 ${FONT};color:${TEXT}"></div>` +
-        `</div>`;
-
-      // Atributo booleano: presente (mesmo vazio) = true, salvo no-trigger="false".
-      const noTrigger = this.hasAttribute('no-trigger') && this.getAttribute('no-trigger') !== 'false';
-
       this._writing = true;
-      if (this._isMobile()) {
-        // no-trigger: gatilho externo (ex.: um funil no cabeçalho da tela) chama .open().
-        this.style.display = noTrigger ? 'block' : 'inline-flex';
-        this.innerHTML = (noTrigger ? '' : trigger) + backdrop + sheet;
-      } else {
-        this.style.display = 'block';
-        this.innerHTML = inline;
-        this._isOpen = false;
-        this._removeEsc();
-      }
+      this.style.display = 'inline-flex';
+      this.innerHTML = trigger + backdrop + sheet;
       this._writing = false;
 
       // Popula o corpo do painel.
