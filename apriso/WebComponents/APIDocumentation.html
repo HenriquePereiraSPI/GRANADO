@@ -3281,7 +3281,11 @@
         <h2 class="gd-h2">Inputs</h2>
         <p class="gd-lead">Corpo da requisição (JSON):</p>
         <pre class="gd-code">{
-  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"4874454|-1"</span>
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"154897"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"123456"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"CompletedWeight"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-01-01"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"EndDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-12-20"</span>
 }</pre>
 
         <h3 class="gd-h3">Campos de entrada</h3>
@@ -3300,9 +3304,45 @@
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
               <td class="col-desc">
-                Número da ordem (WIP Order). Aceita o formato <code>"WipOrderNo|WipOrderType"</code>
-                (separado por <code>|</code>); use <code>"-1"</code> na 2ª parte para não filtrar por tipo
-                (ex.: <code>"4874454|-1"</code>).
+                Número da ordem (WIP Order) a filtrar (ex.: <code>"154897"</code>).
+                Use <code>"-1"</code> para trazer <strong>todas</strong> as ordens.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">ProductNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">
+                Número/código do produto resultante a filtrar (ex.: <code>"123456"</code>).
+                Use <code>"-1"</code> para <strong>todos</strong> os produtos.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">Status</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">
+                Status da ordem a filtrar (ex.: <code>"New"</code>, <code>"Started"</code>,
+                <code>"Completed"</code>, <code>"CompletedWeight"</code>, <code>"Cancelled"</code>).
+                Use <code>"-1"</code> para <strong>todos</strong> os status.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">StartDate</td>
+              <td class="col-type">string (data)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">
+                Data inicial do período de filtro, no formato <code>"AAAA-MM-DD"</code>
+                (ex.: <code>"2026-01-01"</code>).
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">EndDate</td>
+              <td class="col-type">string (data)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">
+                Data final do período de filtro, no formato <code>"AAAA-MM-DD"</code>
+                (ex.: <code>"2026-12-20"</code>).
               </td>
             </tr>
           </tbody>
