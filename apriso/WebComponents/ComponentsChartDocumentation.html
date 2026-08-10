@@ -31,11 +31,16 @@
     .gd-h2 { font-size:18px; font-weight:700; color:#103E20; margin:34px 0 8px; border-top:1px solid #E5DDC8; padding-top:22px }
     .gd-h3 { font-size:14px; font-weight:700; color:#103E20; margin:22px 0 8px }
     .gd-lead { font-size:14px; color:#5A6B5E; line-height:1.6; margin:0 0 8px }
-    .gd-demo { background:#FDFAF1; border:1px solid #D6CDA4; border-radius:8px; padding:18px 20px; margin:10px 0 12px }
-    .gd-split { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:18px; align-items:start; margin:10px 0 12px }
-    @media (max-width:900px){ .gd-split { grid-template-columns:1fr } }
-    .gd-split .gd-demo { margin:0 }
-    .gd-split .gd-code { max-height:340px }
+    .gd-demo { position:relative; background:#FDFAF1; border:1px solid #D6CDA4; border-radius:8px; padding:46px 20px 18px; margin:10px 0 12px }
+    .gd-codebtn { position:absolute; top:12px; right:14px; z-index:2; display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; padding:0; border:1px solid #D6CDA4; border-radius:7px; background:#FDFAF1; color:#1C5C31; cursor:pointer }
+    .gd-codebtn:hover { background:#F4EED9 }
+    .gd-snip { display:none }
+    #gd-snip-modal { display:none; position:fixed; inset:0; z-index:100000; background:rgba(15,51,25,.55); padding:40px 16px; overflow:auto; box-sizing:border-box }
+    #gd-snip-modal.open { display:flex; align-items:flex-start; justify-content:center }
+    .gd-snip-box { width:100%; max-width:860px; background:#1F2937; border-radius:10px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.4) }
+    .gd-snip-head { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:#111827; color:#E5E7EB; font-family:'DM Mono','DejaVu Mono',Consolas,monospace; font-size:12px }
+    .gd-snip-x { background:transparent; border:1px solid #374151; color:#E5E7EB; border-radius:6px; padding:4px 10px; cursor:pointer; font-size:12px }
+    #gd-snip-modal #gd-snip-body pre { margin:0; border-radius:0; max-height:72vh; overflow:auto }
   </style>
 </head>
 
@@ -74,18 +79,22 @@
         <!-- Uso via script -->
         <h2 class="gd-h2">Uso — via script (recomendado)</h2>
         <p class="gd-lead">Defina <code>xField</code>, <code>yFields</code> e <code>data</code> por propriedade (aceita objetos/funções).</p>
-        <div class="gd-split">
-          <div class="gd-demo"><granado-chart-bar id="d-basic" title="Vendas por mês" show-values="true"></granado-chart-bar></div>
-          <pre class="gd-code"><span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">id</span>=<span class="tk-str">"c"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Vendas por mês"</span> <span class="tk-attr">show-values</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-chart-bar&gt;</span>
-<span class="tk-tag">&lt;script&gt;</span>
-  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'c'</span>);
-  c.xField  = <span class="tk-str">'month'</span>;
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-bar id="d-basic" title="Vendas por mês" show-values="true"></granado-chart-bar>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-bar.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">id</span>=<span class="tk-str">"d-basic"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Vendas por mês"</span> <span class="tk-attr">show-values</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-bar</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'d-basic'</span>);
+  c.xField = <span class="tk-str">'month'</span>;
   c.yFields = [{ field: <span class="tk-str">'sales'</span>, label: <span class="tk-str">'Vendas'</span> }];
-  c.data    = [
-    { month: <span class="tk-str">'Jan'</span>, sales: <span class="tk-num">120</span> }, { month: <span class="tk-str">'Fev'</span>, sales: <span class="tk-num">180</span> },
-    { month: <span class="tk-str">'Mar'</span>, sales: <span class="tk-num">150</span> }, { month: <span class="tk-str">'Abr'</span>, sales: <span class="tk-num">220</span> }
+  c.data = [
+    { month: <span class="tk-str">'Jan'</span>, sales: <span class="tk-num">120</span> }, { month: <span class="tk-str">'Fev'</span>, sales: <span class="tk-num">180</span> }, { month: <span class="tk-str">'Mar'</span>, sales: <span class="tk-num">150</span> },
+    { month: <span class="tk-str">'Abr'</span>, sales: <span class="tk-num">220</span> }, { month: <span class="tk-str">'Mai'</span>, sales: <span class="tk-num">200</span> }, { month: <span class="tk-str">'Jun'</span>, sales: <span class="tk-num">260</span> }
   ];
-<span class="tk-tag">&lt;/script&gt;</span></pre>
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
         <!-- Uso declarativo -->
@@ -94,18 +103,19 @@
           <code>data</code> e <code>y-fields</code> também aceitam <strong>JSON por atributo</strong>
           (aspas simples). Útil quando nenhuma série usa funções (<code>formatter</code>/<code>tooltipFormatter</code>).
         </p>
-        <div class="gd-split">
-          <div class="gd-demo">
-            <granado-chart-bar id="d-html" type="grouped" title="Vendas x Meta"
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-bar id="d-html" type="grouped" title="Vendas x Meta"
               x-field="month"
               y-fields='[{"field":"sales","label":"Vendas"},{"field":"target","label":"Meta"}]'
               data='[{"month":"Jan","sales":120,"target":150},{"month":"Fev","sales":180,"target":160},{"month":"Mar","sales":150,"target":170}]'></granado-chart-bar>
-          </div>
-          <pre class="gd-code"><span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">type</span>=<span class="tk-str">"grouped"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Vendas x Meta"</span>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-bar.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">id</span>=<span class="tk-str">"d-html"</span> <span class="tk-attr">type</span>=<span class="tk-str">"grouped"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Vendas x Meta"</span>
   <span class="tk-attr">x-field</span>=<span class="tk-str">"month"</span>
   <span class="tk-attr">y-fields</span>=<span class="tk-str">'[{"field":"sales","label":"Vendas"},{"field":"target","label":"Meta"}]'</span>
-  <span class="tk-attr">data</span>=<span class="tk-str">'[{"month":"Jan","sales":120,"target":150},
-         {"month":"Fev","sales":180,"target":160}]'</span><span class="tk-tag">&gt;&lt;/granado-chart-bar&gt;</span></pre>
+  <span class="tk-attr">data</span>=<span class="tk-str">'[{"month":"Jan","sales":120,"target":150},{"month":"Fev","sales":180,"target":160},{"month":"Mar","sales":150,"target":170}]'</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-bar</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
         <!-- Tipos -->
@@ -125,32 +135,128 @@
             <tr><td class="col-name">target</td><td class="col-desc">Barra flutuante de <em>faixa</em>: usa 2 campos [min, max].</td></tr>
           </tbody>
         </table>
-        <div class="gd-split">
-          <div class="gd-demo"><granado-chart-bar id="d-simple" type="simple" title="simple"></granado-chart-bar></div>
-          <div class="gd-demo"><granado-chart-bar id="d-grouped" type="grouped" title="grouped"></granado-chart-bar></div>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-bar id="d-simple" type="simple" title="simple"></granado-chart-bar>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-bar.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">id</span>=<span class="tk-str">"d-simple"</span> <span class="tk-attr">type</span>=<span class="tk-str">"simple"</span> <span class="tk-attr">title</span>=<span class="tk-str">"simple"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-bar</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'d-simple'</span>);
+  c.xField = <span class="tk-str">'month'</span>;
+  c.yFields = [{ field: <span class="tk-str">'sales'</span>, label: <span class="tk-str">'Vendas'</span> }];
+  c.data = [
+    { month: <span class="tk-str">'Jan'</span>, sales: <span class="tk-num">120</span> }, { month: <span class="tk-str">'Fev'</span>, sales: <span class="tk-num">180</span> }, { month: <span class="tk-str">'Mar'</span>, sales: <span class="tk-num">150</span> },
+    { month: <span class="tk-str">'Abr'</span>, sales: <span class="tk-num">220</span> }, { month: <span class="tk-str">'Mai'</span>, sales: <span class="tk-num">200</span> }, { month: <span class="tk-str">'Jun'</span>, sales: <span class="tk-num">260</span> }
+  ];
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
-        <div class="gd-split">
-          <div class="gd-demo"><granado-chart-bar id="d-stacked" type="stacked" title="stacked"></granado-chart-bar></div>
-          <div class="gd-demo"><granado-chart-bar id="d-stacked100" type="stacked100" title="stacked100"></granado-chart-bar></div>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-bar id="d-grouped" type="grouped" title="grouped"></granado-chart-bar>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-bar.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">id</span>=<span class="tk-str">"d-grouped"</span> <span class="tk-attr">type</span>=<span class="tk-str">"grouped"</span> <span class="tk-attr">title</span>=<span class="tk-str">"grouped"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-bar</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'d-grouped'</span>);
+  c.xField = <span class="tk-str">'month'</span>;
+  c.yFields = [{ field: <span class="tk-str">'sales'</span>, label: <span class="tk-str">'Vendas'</span> }, { field: <span class="tk-str">'target'</span>, label: <span class="tk-str">'Meta'</span> }];
+  c.data = [
+    { month: <span class="tk-str">'Jan'</span>, sales: <span class="tk-num">120</span>, target: <span class="tk-num">150</span> }, { month: <span class="tk-str">'Fev'</span>, sales: <span class="tk-num">180</span>, target: <span class="tk-num">160</span> },
+    { month: <span class="tk-str">'Mar'</span>, sales: <span class="tk-num">150</span>, target: <span class="tk-num">170</span> }, { month: <span class="tk-str">'Abr'</span>, sales: <span class="tk-num">220</span>, target: <span class="tk-num">190</span> }
+  ];
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
-        <div class="gd-split">
-          <div class="gd-demo"><granado-chart-bar id="d-target" type="target" orientation="horizontal" title="target (faixa mín→máx)" show-values="true"></granado-chart-bar></div>
-          <pre class="gd-code"><span class="tk-comment">// target usa 2 campos: [min, max]</span>
-c.type    = <span class="tk-str">'target'</span>;
-c.xField  = <span class="tk-str">'employee'</span>;
-c.yFields = [{ field: <span class="tk-str">'min'</span> }, { field: <span class="tk-str">'max'</span>, label: <span class="tk-str">'Faixa'</span> }];
-c.data    = [
-  { employee: <span class="tk-str">'João'</span>,  min: <span class="tk-num">4000</span>, max: <span class="tk-num">7000</span> },
-  { employee: <span class="tk-str">'Maria'</span>, min: <span class="tk-num">5000</span>, max: <span class="tk-num">8500</span> }
-];</pre>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-bar id="d-stacked" type="stacked" title="stacked"></granado-chart-bar>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-bar.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">id</span>=<span class="tk-str">"d-stacked"</span> <span class="tk-attr">type</span>=<span class="tk-str">"stacked"</span> <span class="tk-attr">title</span>=<span class="tk-str">"stacked"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-bar</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'d-stacked'</span>);
+  c.xField = <span class="tk-str">'month'</span>;
+  c.yFields = [{ field: <span class="tk-str">'a'</span>, label: <span class="tk-str">'Linha A'</span> }, { field: <span class="tk-str">'b'</span>, label: <span class="tk-str">'Linha B'</span> }, { field: <span class="tk-str">'c'</span>, label: <span class="tk-str">'Linha C'</span> }];
+  c.data = [
+    { month: <span class="tk-str">'Jan'</span>, a: <span class="tk-num">40</span>, b: <span class="tk-num">30</span>, c: <span class="tk-num">20</span> }, { month: <span class="tk-str">'Fev'</span>, a: <span class="tk-num">50</span>, b: <span class="tk-num">40</span>, c: <span class="tk-num">30</span> },
+    { month: <span class="tk-str">'Mar'</span>, a: <span class="tk-num">35</span>, b: <span class="tk-num">45</span>, c: <span class="tk-num">25</span> }, { month: <span class="tk-str">'Abr'</span>, a: <span class="tk-num">60</span>, b: <span class="tk-num">35</span>, c: <span class="tk-num">40</span> }
+  ];
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
+        </div>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-bar id="d-stacked100" type="stacked100" title="stacked100"></granado-chart-bar>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-bar.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">id</span>=<span class="tk-str">"d-stacked100"</span> <span class="tk-attr">type</span>=<span class="tk-str">"stacked100"</span> <span class="tk-attr">title</span>=<span class="tk-str">"stacked100"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-bar</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'d-stacked100'</span>);
+  c.xField = <span class="tk-str">'month'</span>;
+  c.yFields = [{ field: <span class="tk-str">'a'</span>, label: <span class="tk-str">'Linha A'</span> }, { field: <span class="tk-str">'b'</span>, label: <span class="tk-str">'Linha B'</span> }, { field: <span class="tk-str">'c'</span>, label: <span class="tk-str">'Linha C'</span> }];
+  c.data = [
+    { month: <span class="tk-str">'Jan'</span>, a: <span class="tk-num">40</span>, b: <span class="tk-num">30</span>, c: <span class="tk-num">20</span> }, { month: <span class="tk-str">'Fev'</span>, a: <span class="tk-num">50</span>, b: <span class="tk-num">40</span>, c: <span class="tk-num">30</span> },
+    { month: <span class="tk-str">'Mar'</span>, a: <span class="tk-num">35</span>, b: <span class="tk-num">45</span>, c: <span class="tk-num">25</span> }, { month: <span class="tk-str">'Abr'</span>, a: <span class="tk-num">60</span>, b: <span class="tk-num">35</span>, c: <span class="tk-num">40</span> }
+  ];
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
+        </div>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-bar id="d-target" type="target" orientation="horizontal" title="target (faixa mín→máx)" show-values="true"></granado-chart-bar>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-bar.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">id</span>=<span class="tk-str">"d-target"</span> <span class="tk-attr">type</span>=<span class="tk-str">"target"</span> <span class="tk-attr">orientation</span>=<span class="tk-str">"horizontal"</span> <span class="tk-attr">title</span>=<span class="tk-str">"target (faixa mín→máx)"</span> <span class="tk-attr">show-values</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-bar</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'d-target'</span>);
+  c.xField = <span class="tk-str">'employee'</span>;
+  c.yFields = [{ field: <span class="tk-str">'min'</span> }, { field: <span class="tk-str">'max'</span>, label: <span class="tk-str">'Faixa (R$)'</span> }];
+  c.data = [
+    { employee: <span class="tk-str">'João'</span>, min: <span class="tk-num">4000</span>, max: <span class="tk-num">7000</span> },
+    { employee: <span class="tk-str">'Maria'</span>, min: <span class="tk-num">5000</span>, max: <span class="tk-num">8500</span> },
+    { employee: <span class="tk-str">'Ana'</span>, min: <span class="tk-num">3500</span>, max: <span class="tk-num">6200</span> }
+  ];
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
         <!-- Orientação -->
         <h2 class="gd-h2">Orientação — <code>orientation</code></h2>
         <p class="gd-lead"><code>vertical</code> (default) ou <code>horizontal</code>.</p>
-        <div class="gd-split">
-          <div class="gd-demo"><granado-chart-bar id="d-vert" title='vertical'></granado-chart-bar></div>
-          <div class="gd-demo"><granado-chart-bar id="d-horiz" orientation="horizontal" title='horizontal' show-grid="false" show-values="true"></granado-chart-bar></div>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-bar id="d-vert" title='vertical'></granado-chart-bar>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-bar.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">id</span>=<span class="tk-str">"d-vert"</span> <span class="tk-attr">title</span>=<span class="tk-str">'vertical'</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-bar</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'d-vert'</span>);
+  c.xField = <span class="tk-str">'month'</span>;
+  c.yFields = [{ field: <span class="tk-str">'sales'</span>, label: <span class="tk-str">'Vendas'</span> }];
+  c.data = [
+    { month: <span class="tk-str">'Jan'</span>, sales: <span class="tk-num">120</span> }, { month: <span class="tk-str">'Fev'</span>, sales: <span class="tk-num">180</span> }, { month: <span class="tk-str">'Mar'</span>, sales: <span class="tk-num">150</span> },
+    { month: <span class="tk-str">'Abr'</span>, sales: <span class="tk-num">220</span> }, { month: <span class="tk-str">'Mai'</span>, sales: <span class="tk-num">200</span> }, { month: <span class="tk-str">'Jun'</span>, sales: <span class="tk-num">260</span> }
+  ];
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
+        </div>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-bar id="d-horiz" orientation="horizontal" title='horizontal' show-grid="false" show-values="true"></granado-chart-bar>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-bar.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">id</span>=<span class="tk-str">"d-horiz"</span> <span class="tk-attr">orientation</span>=<span class="tk-str">"horizontal"</span> <span class="tk-attr">title</span>=<span class="tk-str">'horizontal'</span> <span class="tk-attr">show-grid</span>=<span class="tk-str">"false"</span> <span class="tk-attr">show-values</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-bar</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'d-horiz'</span>);
+  c.xField = <span class="tk-str">'produto'</span>;
+  c.yFields = [{ field: <span class="tk-str">'qtd'</span>, label: <span class="tk-str">'Unidades'</span> }];
+  c.data = [
+    { produto: <span class="tk-str">'Loção 200ml'</span>, qtd: <span class="tk-num">320</span> }, { produto: <span class="tk-str">'Creme 150g'</span>, qtd: <span class="tk-num">260</span> }, { produto: <span class="tk-str">'Sabonete 90g'</span>, qtd: <span class="tk-num">480</span> }
+  ];
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
         <!-- x2Field -->
@@ -161,16 +267,24 @@ c.data    = [
           combinação <code>(xField, x2Field, valor)</code>. O valor plotado é <code>yFields[0].field</code>.
           Equivale a passar várias <code>yFields</code> (formato largo).
         </p>
-        <div class="gd-split">
-          <div class="gd-demo"><granado-chart-bar id="d-x2" type="grouped" title="Vendas por trimestre e região"></granado-chart-bar></div>
-          <pre class="gd-code">c.xField  = <span class="tk-str">'quarter'</span>;
-c.x2Field = <span class="tk-str">'region'</span>;            <span class="tk-comment">// uma série por região</span>
-c.yFields = [{ field: <span class="tk-str">'sales'</span> }];  <span class="tk-comment">// valor do pivot</span>
-c.data    = [
-  { quarter: <span class="tk-str">'Q1'</span>, region: <span class="tk-str">'Sul'</span>,   sales: <span class="tk-num">120</span> },
-  { quarter: <span class="tk-str">'Q1'</span>, region: <span class="tk-str">'Norte'</span>, sales: <span class="tk-num">90</span>  },
-  { quarter: <span class="tk-str">'Q2'</span>, region: <span class="tk-str">'Sul'</span>,   sales: <span class="tk-num">150</span> }
-];</pre>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-bar id="d-x2" type="grouped" title="Vendas por trimestre e região"></granado-chart-bar>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-bar.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">id</span>=<span class="tk-str">"d-x2"</span> <span class="tk-attr">type</span>=<span class="tk-str">"grouped"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Vendas por trimestre e região"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-bar</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'d-x2'</span>);
+  c.xField = <span class="tk-str">'quarter'</span>;
+  c.x2Field = <span class="tk-str">'region'</span>;
+  c.yFields = [{ field: <span class="tk-str">'sales'</span> }];
+  c.data = [
+    { quarter: <span class="tk-str">'Q1'</span>, region: <span class="tk-str">'Sul'</span>, sales: <span class="tk-num">120</span> }, { quarter: <span class="tk-str">'Q1'</span>, region: <span class="tk-str">'Norte'</span>, sales: <span class="tk-num">90</span> },
+    { quarter: <span class="tk-str">'Q2'</span>, region: <span class="tk-str">'Sul'</span>, sales: <span class="tk-num">150</span> }, { quarter: <span class="tk-str">'Q2'</span>, region: <span class="tk-str">'Norte'</span>, sales: <span class="tk-num">110</span> },
+    { quarter: <span class="tk-str">'Q3'</span>, region: <span class="tk-str">'Sul'</span>, sales: <span class="tk-num">170</span> }, { quarter: <span class="tk-str">'Q3'</span>, region: <span class="tk-str">'Norte'</span>, sales: <span class="tk-num">140</span> }
+  ];
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
         <!-- overallTarget -->
@@ -180,18 +294,23 @@ c.data    = [
           atravessando o gráfico (horizontal nas barras verticais; vertical nas horizontais). A meta
           entra no domínio do eixo, então a linha sempre aparece.
         </p>
-        <div class="gd-split">
-          <div class="gd-demo"><granado-chart-bar id="d-ot" title="Vendas (meta 200)" show-values="true"></granado-chart-bar></div>
-          <pre class="gd-code"><span class="tk-comment">// número simples</span>
-c.overallTarget = <span class="tk-num">200</span>;
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-bar id="d-ot" title="Vendas (meta 200)" show-values="true"></granado-chart-bar>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-bar.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
 
-<span class="tk-comment">// objeto</span>
-c.overallTarget = { value: <span class="tk-num">200</span>, label: <span class="tk-str">'Meta 200'</span>,
-                    color: <span class="tk-str">'#8C1A1A'</span>, dashed: <span class="tk-key">true</span>, showValue: <span class="tk-key">true</span> };
-
-<span class="tk-comment">// várias linhas</span>
-c.overallTarget = [{ value: <span class="tk-num">200</span>, label: <span class="tk-str">'Meta'</span> },
-                   { value: <span class="tk-num">260</span>, color: <span class="tk-str">'#1A4A8C'</span> }];</pre>
+<span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">id</span>=<span class="tk-str">"d-ot"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Vendas (meta 200)"</span> <span class="tk-attr">show-values</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-bar</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'d-ot'</span>);
+  c.xField = <span class="tk-str">'month'</span>;
+  c.yFields = [{ field: <span class="tk-str">'sales'</span>, label: <span class="tk-str">'Vendas'</span> }];
+  c.overallTarget = { value: <span class="tk-num">200</span>, label: <span class="tk-str">'Meta 200'</span> };
+  c.data = [
+    { month: <span class="tk-str">'Jan'</span>, sales: <span class="tk-num">120</span> }, { month: <span class="tk-str">'Fev'</span>, sales: <span class="tk-num">180</span> }, { month: <span class="tk-str">'Mar'</span>, sales: <span class="tk-num">150</span> },
+    { month: <span class="tk-str">'Abr'</span>, sales: <span class="tk-num">220</span> }, { month: <span class="tk-str">'Mai'</span>, sales: <span class="tk-num">200</span> }, { month: <span class="tk-str">'Jun'</span>, sales: <span class="tk-num">260</span> }
+  ];
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
         <!-- barRole -->
@@ -205,13 +324,26 @@ c.overallTarget = [{ value: <span class="tk-num">200</span>, label: <span class=
             <tr><td class="col-name">line</td><td class="col-desc">Marcador de linha na ponta do valor (ex.: meta/alvo).</td></tr>
           </tbody>
         </table>
-        <div class="gd-split">
-          <div class="gd-demo"><granado-chart-bar id="d-role" type="grouped" title="Vendas + Meta (line) + Limite (dashed)"></granado-chart-bar></div>
-          <pre class="gd-code">c.yFields = [
-  { field: <span class="tk-str">'sales'</span>,  label: <span class="tk-str">'Vendas'</span> },                        <span class="tk-comment">// default</span>
-  { field: <span class="tk-str">'target'</span>, label: <span class="tk-str">'Meta'</span>,   barRole: <span class="tk-str">'line'</span>   },
-  { field: <span class="tk-str">'limite'</span>, label: <span class="tk-str">'Limite'</span>, barRole: <span class="tk-str">'dashed'</span> }
-];</pre>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-bar id="d-role" type="grouped" title="Vendas + Meta (line) + Limite (dashed)"></granado-chart-bar>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-bar.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">id</span>=<span class="tk-str">"d-role"</span> <span class="tk-attr">type</span>=<span class="tk-str">"grouped"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Vendas + Meta (line) + Limite (dashed)"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-bar</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'d-role'</span>);
+  c.xField = <span class="tk-str">'month'</span>;
+  c.yFields = [
+    { field: <span class="tk-str">'sales'</span>, label: <span class="tk-str">'Vendas'</span> },
+    { field: <span class="tk-str">'target'</span>, label: <span class="tk-str">'Meta'</span>, barRole: <span class="tk-str">'line'</span>, color: <span class="tk-str">'#8C1A1A'</span> },
+    { field: <span class="tk-str">'limite'</span>, label: <span class="tk-str">'Limite'</span>, barRole: <span class="tk-str">'dashed'</span>, color: <span class="tk-str">'#1A4A8C'</span> }
+  ];
+  c.data = [
+    { month: <span class="tk-str">'Jan'</span>, sales: <span class="tk-num">120</span>, target: <span class="tk-num">150</span>, limite: <span class="tk-num">180</span> }, { month: <span class="tk-str">'Fev'</span>, sales: <span class="tk-num">180</span>, target: <span class="tk-num">160</span>, limite: <span class="tk-num">190</span> },
+    { month: <span class="tk-str">'Mar'</span>, sales: <span class="tk-num">150</span>, target: <span class="tk-num">170</span>, limite: <span class="tk-num">200</span> }, { month: <span class="tk-str">'Abr'</span>, sales: <span class="tk-num">220</span>, target: <span class="tk-num">190</span>, limite: <span class="tk-num">210</span> }
+  ];
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
         <!-- Exportação -->
@@ -221,15 +353,26 @@ c.overallTarget = [{ value: <span class="tk-num">200</span>, label: <span class=
           (dados em tabela). Oculte com <code>show-export="false"</code>; posicione com
           <code>export-position</code>. Também há métodos JS.
         </p>
-        <div class="gd-split">
-          <div class="gd-demo"><granado-chart-bar id="d-exp" type="grouped" title="Exportação" export-position="bottom-left"></granado-chart-bar></div>
-          <pre class="gd-code"><span class="tk-comment">// métodos</span>
-c.exportPNG(<span class="tk-str">'vendas'</span>);      <span class="tk-comment">// ou c.exportPNG('vendas', 3) p/ 3x</span>
-c.exportCSV(<span class="tk-str">'vendas'</span>);
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-bar id="d-exp" type="grouped" title="Exportação" export-position="bottom-left"></granado-chart-bar>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-bar.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
 
-<span class="tk-comment">// posição dos botões</span>
-<span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">export-position</span>=<span class="tk-str">"bottom-left"</span> ...<span class="tk-tag">&gt;</span>
-<span class="tk-comment">// top-right (default) | top-left | bottom-right | bottom-left</span></pre>
+<span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">id</span>=<span class="tk-str">"d-exp"</span> <span class="tk-attr">type</span>=<span class="tk-str">"grouped"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Exportação"</span> <span class="tk-attr">export-position</span>=<span class="tk-str">"bottom-left"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-bar</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'d-exp'</span>);
+  c.xField = <span class="tk-str">'month'</span>;
+  c.yFields = [{ field: <span class="tk-str">'sales'</span>, label: <span class="tk-str">'Vendas'</span> }, { field: <span class="tk-str">'target'</span>, label: <span class="tk-str">'Meta'</span> }];
+  c.data = [
+    { month: <span class="tk-str">'Jan'</span>, sales: <span class="tk-num">120</span>, target: <span class="tk-num">150</span> }, { month: <span class="tk-str">'Fev'</span>, sales: <span class="tk-num">180</span>, target: <span class="tk-num">160</span> },
+    { month: <span class="tk-str">'Mar'</span>, sales: <span class="tk-num">150</span>, target: <span class="tk-num">170</span> }, { month: <span class="tk-str">'Abr'</span>, sales: <span class="tk-num">220</span>, target: <span class="tk-num">190</span> }
+  ];
+
+  <span class="tk-comment">// exportar por código:</span>
+  <span class="tk-comment">// c.exportPNG('vendas');   // ou c.exportPNG('vendas', 3) p/ 3x</span>
+  <span class="tk-comment">// c.exportCSV('vendas');</span>
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
         <!-- Clique & seleção -->
@@ -239,18 +382,32 @@ c.exportCSV(<span class="tk-str">'vendas'</span>);
           clicar de novo na mesma barra <strong>volta tudo ao normal</strong> (toggle). O evento
           <code>bar-click</code> devolve os valores da barra e de toda a categoria. Clique nas barras abaixo:
         </p>
-        <div class="gd-split">
-          <div class="gd-demo">
-            <granado-chart-bar id="d-click" type="grouped" title="Clique numa barra"></granado-chart-bar>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-bar id="d-click" type="grouped" title="Clique numa barra"></granado-chart-bar>
             <div id="d-click-out" style="margin-top:8px;font:12px/1.5 'DM Mono','DejaVu Mono',Consolas,monospace;color:#5A6B5E">— clique numa barra —</div>
-          </div>
-          <pre class="gd-code">c.addEventListener(<span class="tk-str">'bar-click'</span>, <span class="tk-key">function</span> (ev) {
-  <span class="tk-key">var</span> d = ev.detail;
-  <span class="tk-comment">// { index, category, series, field, value, color,</span>
-  <span class="tk-comment">//   categoryValues, selected }  (min/max em 'target')</span>
-  console.log(d.category, d.series, d.value, d.categoryValues);
-  <span class="tk-key">if</span> (d.selected) { <span class="tk-comment">/* barra ficou destacada */</span> }
-});</pre>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-bar.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">id</span>=<span class="tk-str">"d-click"</span> <span class="tk-attr">type</span>=<span class="tk-str">"grouped"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Clique numa barra"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-bar</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;div</span> <span class="tk-attr">id</span>=<span class="tk-str">"d-click-out"</span><span class="tk-tag">&gt;</span>— clique numa barra —<span class="tk-tag">&lt;/div</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'d-click'</span>);
+  c.xField = <span class="tk-str">'month'</span>;
+  c.yFields = [{ field: <span class="tk-str">'sales'</span>, label: <span class="tk-str">'Vendas'</span> }, { field: <span class="tk-str">'target'</span>, label: <span class="tk-str">'Meta'</span> }];
+  c.data = [
+    { month: <span class="tk-str">'Jan'</span>, sales: <span class="tk-num">120</span>, target: <span class="tk-num">150</span> }, { month: <span class="tk-str">'Fev'</span>, sales: <span class="tk-num">180</span>, target: <span class="tk-num">160</span> },
+    { month: <span class="tk-str">'Mar'</span>, sales: <span class="tk-num">150</span>, target: <span class="tk-num">170</span> }, { month: <span class="tk-str">'Abr'</span>, sales: <span class="tk-num">220</span>, target: <span class="tk-num">190</span> }
+  ];
+  c.addEventListener(<span class="tk-str">'bar-click'</span>, <span class="tk-key">function</span> (ev) {
+    <span class="tk-key">var</span> d = ev.detail;
+    <span class="tk-key">var</span> out = document.getElementById(<span class="tk-str">'d-click-out'</span>);
+    <span class="tk-key">if</span> (!out) <span class="tk-key">return</span>;
+    <span class="tk-key">if</span> (!d.selected) { out.textContent = <span class="tk-str">'— seleção removida —'</span>; <span class="tk-key">return</span>; }
+    out.textContent = <span class="tk-str">'▶ '</span> + d.category + <span class="tk-str">' · '</span> + d.series + <span class="tk-str">' = '</span> + d.value +
+      <span class="tk-str">'  |  categoria: '</span> + JSON.stringify(d.categoryValues);
+  });
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
         <!-- API: props -->
@@ -333,18 +490,22 @@ c.exportCSV(<span class="tk-str">'vendas'</span>);
         <pre class="gd-code"><span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-line.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
 
         <h2 class="gd-h2">Uso — via script</h2>
-        <div class="gd-split">
-          <div class="gd-demo"><granado-chart-line id="ld-basic" title="Vendas por mês" show-values="true"></granado-chart-line></div>
-          <pre class="gd-code"><span class="tk-tag">&lt;granado-chart-line</span> <span class="tk-attr">id</span>=<span class="tk-str">"c"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Vendas por mês"</span> <span class="tk-attr">show-values</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-chart-line&gt;</span>
-<span class="tk-tag">&lt;script&gt;</span>
-  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'c'</span>);
-  c.xField  = <span class="tk-str">'month'</span>;
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-line id="ld-basic" title="Vendas por mês" show-values="true"></granado-chart-line>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-line.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-line</span> <span class="tk-attr">id</span>=<span class="tk-str">"ld-basic"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Vendas por mês"</span> <span class="tk-attr">show-values</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-line</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'ld-basic'</span>);
+  c.xField = <span class="tk-str">'month'</span>;
   c.yFields = [{ field: <span class="tk-str">'sales'</span>, label: <span class="tk-str">'Vendas'</span> }];
-  c.data    = [
-    { month: <span class="tk-str">'Jan'</span>, sales: <span class="tk-num">120</span> }, { month: <span class="tk-str">'Fev'</span>, sales: <span class="tk-num">180</span> },
-    { month: <span class="tk-str">'Mar'</span>, sales: <span class="tk-num">150</span> }, { month: <span class="tk-str">'Abr'</span>, sales: <span class="tk-num">220</span> }
+  c.data = [
+    { month: <span class="tk-str">'Jan'</span>, sales: <span class="tk-num">120</span> }, { month: <span class="tk-str">'Fev'</span>, sales: <span class="tk-num">180</span> }, { month: <span class="tk-str">'Mar'</span>, sales: <span class="tk-num">150</span> },
+    { month: <span class="tk-str">'Abr'</span>, sales: <span class="tk-num">220</span> }, { month: <span class="tk-str">'Mai'</span>, sales: <span class="tk-num">200</span> }, { month: <span class="tk-str">'Jun'</span>, sales: <span class="tk-num">260</span> }
   ];
-<span class="tk-tag">&lt;/script&gt;</span></pre>
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
         <h2 class="gd-h2">Tipos — <code>type</code></h2>
@@ -357,30 +518,86 @@ c.exportCSV(<span class="tk-str">'vendas'</span>);
             <tr><td class="col-name">stacked100</td><td class="col-desc">Áreas empilhadas normalizadas a 100%.</td></tr>
           </tbody>
         </table>
-        <div class="gd-split">
-          <div class="gd-demo"><granado-chart-line id="ld-area" type="area" title="area"></granado-chart-line></div>
-          <div class="gd-demo"><granado-chart-line id="ld-stacked" type="stacked" title="stacked"></granado-chart-line></div>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-line id="ld-area" type="area" title="area"></granado-chart-line>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-line.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-line</span> <span class="tk-attr">id</span>=<span class="tk-str">"ld-area"</span> <span class="tk-attr">type</span>=<span class="tk-str">"area"</span> <span class="tk-attr">title</span>=<span class="tk-str">"area"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-line</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'ld-area'</span>);
+  c.type = <span class="tk-str">'area'</span>;
+  c.xField = <span class="tk-str">'month'</span>;
+  c.yFields = [{ field: <span class="tk-str">'sales'</span>, label: <span class="tk-str">'Volume'</span> }];
+  c.data = [
+    { month: <span class="tk-str">'Jan'</span>, sales: <span class="tk-num">120</span> }, { month: <span class="tk-str">'Fev'</span>, sales: <span class="tk-num">180</span> }, { month: <span class="tk-str">'Mar'</span>, sales: <span class="tk-num">150</span> },
+    { month: <span class="tk-str">'Abr'</span>, sales: <span class="tk-num">220</span> }, { month: <span class="tk-str">'Mai'</span>, sales: <span class="tk-num">200</span> }, { month: <span class="tk-str">'Jun'</span>, sales: <span class="tk-num">260</span> }
+  ];
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
+        </div>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-line id="ld-stacked" type="stacked" title="stacked"></granado-chart-line>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-line.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-line</span> <span class="tk-attr">id</span>=<span class="tk-str">"ld-stacked"</span> <span class="tk-attr">type</span>=<span class="tk-str">"stacked"</span> <span class="tk-attr">title</span>=<span class="tk-str">"stacked"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-line</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'ld-stacked'</span>);
+  c.type = <span class="tk-str">'stacked'</span>;
+  c.xField = <span class="tk-str">'month'</span>;
+  c.yFields = [{ field: <span class="tk-str">'a'</span>, label: <span class="tk-str">'Linha A'</span> }, { field: <span class="tk-str">'b'</span>, label: <span class="tk-str">'Linha B'</span> }, { field: <span class="tk-str">'c'</span>, label: <span class="tk-str">'Linha C'</span> }];
+  c.data = [
+    { month: <span class="tk-str">'Jan'</span>, a: <span class="tk-num">40</span>, b: <span class="tk-num">30</span>, c: <span class="tk-num">20</span> }, { month: <span class="tk-str">'Fev'</span>, a: <span class="tk-num">50</span>, b: <span class="tk-num">40</span>, c: <span class="tk-num">30</span> },
+    { month: <span class="tk-str">'Mar'</span>, a: <span class="tk-num">35</span>, b: <span class="tk-num">45</span>, c: <span class="tk-num">25</span> }, { month: <span class="tk-str">'Abr'</span>, a: <span class="tk-num">60</span>, b: <span class="tk-num">35</span>, c: <span class="tk-num">40</span> }
+  ];
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
         <h2 class="gd-h2">Curva, tracejado, pontos — props de série</h2>
-        <div class="gd-split">
-          <div class="gd-demo"><granado-chart-line id="ld-multi" title="Vendas x Meta (curva)"></granado-chart-line></div>
-          <pre class="gd-code">c.yFields = [
-  { field: <span class="tk-str">'sales'</span>,  label: <span class="tk-str">'Vendas'</span>, smooth: <span class="tk-key">true</span> },              <span class="tk-comment">// curva</span>
-  { field: <span class="tk-str">'target'</span>, label: <span class="tk-str">'Meta'</span>,   smooth: <span class="tk-key">true</span>, dashed: <span class="tk-key">true</span>, <span class="tk-comment">// tracejada</span>
-    showDots: <span class="tk-key">false</span> }                                     <span class="tk-comment">// sem pontos</span>
-];</pre>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-line id="ld-multi" title="Vendas x Meta (curva)"></granado-chart-line>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-line.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-line</span> <span class="tk-attr">id</span>=<span class="tk-str">"ld-multi"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Vendas x Meta (curva)"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-line</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'ld-multi'</span>);
+  c.xField = <span class="tk-str">'month'</span>;
+  c.yFields = [
+    { field: <span class="tk-str">'sales'</span>, label: <span class="tk-str">'Vendas'</span>, smooth: <span class="tk-key">true</span> },
+    { field: <span class="tk-str">'target'</span>, label: <span class="tk-str">'Meta'</span>, smooth: <span class="tk-key">true</span>, dashed: <span class="tk-key">true</span>, showDots: <span class="tk-key">false</span> }
+  ];
+  c.data = [
+    { month: <span class="tk-str">'Jan'</span>, sales: <span class="tk-num">120</span>, target: <span class="tk-num">150</span> }, { month: <span class="tk-str">'Fev'</span>, sales: <span class="tk-num">180</span>, target: <span class="tk-num">160</span> },
+    { month: <span class="tk-str">'Mar'</span>, sales: <span class="tk-num">150</span>, target: <span class="tk-num">170</span> }, { month: <span class="tk-str">'Abr'</span>, sales: <span class="tk-num">220</span>, target: <span class="tk-num">190</span> }
+  ];
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
         <h2 class="gd-h2">Clique &amp; seleção — <code>point-click</code></h2>
         <p class="gd-lead">Clicar num ponto <strong>destaca a série</strong> e esmaece as demais (toggle); o evento devolve os valores.</p>
-        <div class="gd-split">
-          <div class="gd-demo"><granado-chart-line id="ld-click" title="Clique num ponto"></granado-chart-line></div>
-          <pre class="gd-code">c.addEventListener(<span class="tk-str">'point-click'</span>, <span class="tk-key">function</span> (ev) {
-  <span class="tk-comment">// { index, category, series, field, value, color,</span>
-  <span class="tk-comment">//   categoryValues, selected }</span>
-  console.log(ev.detail);
-});</pre>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-line id="ld-click" title="Clique num ponto"></granado-chart-line>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-line.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-line</span> <span class="tk-attr">id</span>=<span class="tk-str">"ld-click"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Clique num ponto"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-line</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'ld-click'</span>);
+  c.xField = <span class="tk-str">'month'</span>;
+  c.yFields = [{ field: <span class="tk-str">'sales'</span>, label: <span class="tk-str">'Vendas'</span> }, { field: <span class="tk-str">'target'</span>, label: <span class="tk-str">'Meta'</span> }];
+  c.data = [
+    { month: <span class="tk-str">'Jan'</span>, sales: <span class="tk-num">120</span>, target: <span class="tk-num">150</span> }, { month: <span class="tk-str">'Fev'</span>, sales: <span class="tk-num">180</span>, target: <span class="tk-num">160</span> },
+    { month: <span class="tk-str">'Mar'</span>, sales: <span class="tk-num">150</span>, target: <span class="tk-num">170</span> }, { month: <span class="tk-str">'Abr'</span>, sales: <span class="tk-num">220</span>, target: <span class="tk-num">190</span> }
+  ];
+  c.addEventListener(<span class="tk-str">'point-click'</span>, <span class="tk-key">function</span> (ev) {
+    console.log(<span class="tk-str">'[point-click]'</span>, ev.detail);
+  });
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
         <h2 class="gd-h2">API</h2>
@@ -431,18 +648,22 @@ c.exportCSV(<span class="tk-str">'vendas'</span>);
 
         <h2 class="gd-h2">Uso — via script</h2>
         <p class="gd-lead">A pizza tem <strong>um</strong> valor por rótulo: use <code>x-field</code> (rótulo) + <code>value-field</code> (valor).</p>
-        <div class="gd-split">
-          <div class="gd-demo"><granado-chart-pie id="pd-pie" title="Pesagens por sala" show-values="true"></granado-chart-pie></div>
-          <pre class="gd-code"><span class="tk-tag">&lt;granado-chart-pie</span> <span class="tk-attr">id</span>=<span class="tk-str">"c"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Pesagens por sala"</span> <span class="tk-attr">show-values</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-chart-pie&gt;</span>
-<span class="tk-tag">&lt;script&gt;</span>
-  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'c'</span>);
-  c.xField     = <span class="tk-str">'sala'</span>;
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-pie id="pd-pie" title="Pesagens por sala" show-values="true"></granado-chart-pie>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-pie.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-pie</span> <span class="tk-attr">id</span>=<span class="tk-str">"pd-pie"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Pesagens por sala"</span> <span class="tk-attr">show-values</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-pie</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'pd-pie'</span>);
+  c.xField = <span class="tk-str">'sala'</span>;
   c.valueField = <span class="tk-str">'total'</span>;
   c.data = [
     { sala: <span class="tk-str">'Sala A'</span>, total: <span class="tk-num">120</span> }, { sala: <span class="tk-str">'Sala B'</span>, total: <span class="tk-num">80</span> },
     { sala: <span class="tk-str">'Sala C'</span>, total: <span class="tk-num">60</span> }, { sala: <span class="tk-str">'Sala D'</span>, total: <span class="tk-num">40</span> }
   ];
-<span class="tk-tag">&lt;/script&gt;</span></pre>
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
         <h2 class="gd-h2">Tipos — <code>type</code></h2>
@@ -454,27 +675,69 @@ c.exportCSV(<span class="tk-str">'vendas'</span>);
             <tr><td class="col-name">semi</td><td class="col-desc">Semicírculo (gauge). Aceita <code>center-label</code>.</td></tr>
           </tbody>
         </table>
-        <div class="gd-split">
-          <div class="gd-demo"><granado-chart-pie id="pd-donut" type="donut" title="Donut" center-label="300 kg" show-values="true"></granado-chart-pie></div>
-          <div class="gd-demo"><granado-chart-pie id="pd-semi" type="semi" title="Semi (gauge)" center-label="85%" show-values="true"></granado-chart-pie></div>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-pie id="pd-donut" type="donut" title="Donut" center-label="300 kg" show-values="true"></granado-chart-pie>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-pie.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-pie</span> <span class="tk-attr">id</span>=<span class="tk-str">"pd-donut"</span> <span class="tk-attr">type</span>=<span class="tk-str">"donut"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Donut"</span> <span class="tk-attr">center-label</span>=<span class="tk-str">"300 kg"</span> <span class="tk-attr">show-values</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-pie</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'pd-donut'</span>);
+  c.type = <span class="tk-str">'donut'</span>;
+  c.xField = <span class="tk-str">'mp'</span>;
+  c.valueField = <span class="tk-str">'kg'</span>;
+  c.data = [
+    { mp: <span class="tk-str">'Água'</span>, kg: <span class="tk-num">150</span> }, { mp: <span class="tk-str">'Álcool'</span>, kg: <span class="tk-num">90</span> },
+    { mp: <span class="tk-str">'Essência'</span>, kg: <span class="tk-num">40</span> }, { mp: <span class="tk-str">'Glicerina'</span>, kg: <span class="tk-num">20</span> }
+  ];
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
+        </div>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-pie id="pd-semi" type="semi" title="Semi (gauge)" center-label="85%" show-values="true"></granado-chart-pie>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-pie.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-pie</span> <span class="tk-attr">id</span>=<span class="tk-str">"pd-semi"</span> <span class="tk-attr">type</span>=<span class="tk-str">"semi"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Semi (gauge)"</span> <span class="tk-attr">center-label</span>=<span class="tk-str">"85%"</span> <span class="tk-attr">show-values</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-pie</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'pd-semi'</span>);
+  c.type = <span class="tk-str">'semi'</span>;
+  c.xField = <span class="tk-str">'estado'</span>;
+  c.valueField = <span class="tk-str">'min'</span>;
+  c.data = [
+    { estado: <span class="tk-str">'Operando'</span>, min: <span class="tk-num">425</span>, color: <span class="tk-str">'#1F7A3D'</span> },
+    { estado: <span class="tk-str">'Parado'</span>, min: <span class="tk-num">75</span>, color: <span class="tk-str">'#B5342F'</span> }
+  ];
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
         <h2 class="gd-h2">Cores por fatia + clique</h2>
         <p class="gd-lead">Cada item de <code>data</code> pode ter <code>color</code>. Clicar numa fatia destaca (toggle) e emite <code>slice-click</code>. A legenda também é clicável.</p>
-        <div class="gd-split">
-          <div class="gd-demo"><granado-chart-pie id="pd-click" type="donut" title="Clique numa fatia" show-values="true"></granado-chart-pie></div>
-          <pre class="gd-code">c.xField = <span class="tk-str">'status'</span>; c.valueField = <span class="tk-str">'qtd'</span>;
-c.data = [
-  { status: <span class="tk-str">'OK'</span>,     qtd: <span class="tk-num">320</span>, color: <span class="tk-str">'#1F7A3D'</span> },
-  { status: <span class="tk-str">'Alerta'</span>, qtd: <span class="tk-num">60</span>,  color: <span class="tk-str">'#9A7520'</span> },
-  { status: <span class="tk-str">'Fora'</span>,   qtd: <span class="tk-num">40</span>,  color: <span class="tk-str">'#B5342F'</span> }
-];
-c.tooltipFormatter = <span class="tk-key">function</span> (ctx) {
-  <span class="tk-key">return</span> <span class="tk-str">'&lt;b&gt;'</span> + ctx.label + <span class="tk-str">'&lt;/b&gt;&lt;br&gt;'</span> + ctx.value + <span class="tk-str">' un · '</span> + ctx.percent.toFixed(<span class="tk-num">0</span>) + <span class="tk-str">'%'</span>;
-};
-c.addEventListener(<span class="tk-str">'slice-click'</span>, <span class="tk-key">function</span> (ev) {
-  console.log(ev.detail);  <span class="tk-comment">// { index, label, value, percent, color, selected }</span>
-});</pre>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-pie id="pd-click" type="donut" title="Clique numa fatia" show-values="true"></granado-chart-pie>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-chart-pie.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;granado-chart-pie</span> <span class="tk-attr">id</span>=<span class="tk-str">"pd-click"</span> <span class="tk-attr">type</span>=<span class="tk-str">"donut"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Clique numa fatia"</span> <span class="tk-attr">show-values</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-chart-pie</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'pd-click'</span>);
+  c.type = <span class="tk-str">'donut'</span>;
+  c.xField = <span class="tk-str">'status'</span>;
+  c.valueField = <span class="tk-str">'qtd'</span>;
+  c.data = [
+    { status: <span class="tk-str">'OK'</span>, qtd: <span class="tk-num">320</span>, color: <span class="tk-str">'#1F7A3D'</span> },
+    { status: <span class="tk-str">'Alerta'</span>, qtd: <span class="tk-num">60</span>, color: <span class="tk-str">'#9A7520'</span> },
+    { status: <span class="tk-str">'Fora'</span>, qtd: <span class="tk-num">40</span>, color: <span class="tk-str">'#B5342F'</span> }
+  ];
+  c.tooltipFormatter = <span class="tk-key">function</span> (ctx) {
+    <span class="tk-key">return</span> <span class="tk-str">'&lt;b&gt;'</span> + ctx.label + <span class="tk-str">'&lt;/b&gt;&lt;br&gt;'</span> + ctx.value + <span class="tk-str">' un · '</span> + ctx.percent.toFixed(<span class="tk-num">0</span>) + <span class="tk-str">'%'</span>;
+  };
+  c.addEventListener(<span class="tk-str">'slice-click'</span>, <span class="tk-key">function</span> (ev) {
+    console.log(<span class="tk-str">'[slice-click]'</span>, ev.detail);
+  });
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
         <h2 class="gd-h2">API</h2>
@@ -506,6 +769,17 @@ c.addEventListener(<span class="tk-str">'slice-click'</span>, <span class="tk-ke
     </main>
   </div>
 
+  <div id="gd-snip-modal" onclick="if(event.target===this)gdCloseSnip()">
+    <div class="gd-snip-box">
+      <div class="gd-snip-head"><span>Código do exemplo</span><button type="button" class="gd-snip-x" onclick="gdCloseSnip()">✕ Fechar</button></div>
+      <div id="gd-snip-body"></div>
+    </div>
+  </div>
+  <script>
+    function gdOpenSnip(btn){var d=btn.closest(".gd-demo");if(!d)return;var s=d.querySelector(".gd-snip");var m=document.getElementById("gd-snip-modal");var b=document.getElementById("gd-snip-body");if(!s||!m||!b)return;b.innerHTML='<pre class="gd-code">'+s.innerHTML+'</pre>';m.classList.add("open");}
+    function gdCloseSnip(){var m=document.getElementById("gd-snip-modal");if(m)m.classList.remove("open");}
+    document.addEventListener("keydown",function(e){if(e.key==="Escape")gdCloseSnip();});
+  </script>
   <script>
     var VENDAS = [
       { month: 'Jan', sales: 120 }, { month: 'Fev', sales: 180 }, { month: 'Mar', sales: 150 },

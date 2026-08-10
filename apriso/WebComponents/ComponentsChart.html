@@ -19,10 +19,20 @@
   <p style="font-size:12px;color:#5A6B5E;margin:0 0 18px">Exemplos visuais dos gráficos — gráfico à esquerda, snippet que o gerou à direita.</p>
 
   <style>
-    .card { background:#FDFAF1;border:1px solid #D6CDA4;border-radius:12px;padding:18px 20px;margin-bottom:22px }
-    .card h2 { font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#6B7280;margin:0 0 14px }
+    .card { position:relative;background:#FDFAF1;border:1px solid #D6CDA4;border-radius:12px;padding:18px 20px;margin-bottom:22px }
+    .card h2 { font-size:10px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#6B7280;margin:0 0 14px;padding-right:44px }
     /* corpo: gráfico à esquerda, snippet à direita */
-    .body { display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:stretch }
+    .body { display:block }
+    .body pre.code { display:none }
+    /* Ícone de código no canto + popup com o snippet */
+    .card-codebtn { position:absolute;top:12px;right:14px;z-index:2;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border:1px solid #D6CDA4;border-radius:7px;background:#FDFAF1;color:#1C5C31;cursor:pointer }
+    .card-codebtn:hover { background:#F4EED9 }
+    #gd-snip-modal { display:none;position:fixed;inset:0;z-index:100000;background:rgba(15,51,25,.55);padding:40px 16px;overflow:auto;box-sizing:border-box }
+    #gd-snip-modal.open { display:flex;align-items:flex-start;justify-content:center }
+    .gd-snip-box { width:100%;max-width:860px;background:#0F3319;border-radius:10px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4) }
+    .gd-snip-head { display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#0A2412;color:#EAF1EA;font:12px/1.4 'DejaVu Sans Mono','Consolas',monospace }
+    .gd-snip-x { background:transparent;border:1px solid #2C5A3A;color:#EAF1EA;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px }
+    #gd-snip-modal #gd-snip-body pre.code { margin:0;border-radius:0;max-height:74vh }
     .body > granado-chart-bar, .body > granado-chart-line, .body > granado-chart-pie { min-width:0;align-self:center }
     @media (max-width:900px){ .body { grid-template-columns:1fr } }
     pre.code { background:#0F3319;color:#EAF1EA;border-radius:8px;padding:12px 14px;margin:0;
@@ -47,10 +57,14 @@
 
   <!-- 1 — Simples -->
   <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
     <h2>type="simple" · uma série · valores + tooltip</h2>
     <div class="body">
       <granado-chart-bar id="c-simple" title="Vendas por mês" show-values="true"></granado-chart-bar>
-      <pre class="code">&lt;granado-chart-bar id="c" title="Vendas por mês" show-values="true"&gt;&lt;/granado-chart-bar&gt;
+      <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-bar.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-bar id="c" title="Vendas por mês" show-values="true"&gt;&lt;/granado-chart-bar&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.xField = 'month';
@@ -65,10 +79,14 @@
 
   <!-- 2 — Agrupado (formato largo: várias yFields) + export -->
   <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
     <h2>type="grouped" · múltiplas séries (yFields) · show-export</h2>
     <div class="body">
       <granado-chart-bar id="c-grouped" title="Vendas x Meta por mês" show-export="true"></granado-chart-bar>
-      <pre class="code">&lt;granado-chart-bar id="c" type="grouped" title="Vendas x Meta por mês" show-export="true"&gt;&lt;/granado-chart-bar&gt;
+      <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-bar.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-bar id="c" type="grouped" title="Vendas x Meta por mês" show-export="true"&gt;&lt;/granado-chart-bar&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.xField = 'month';
@@ -86,10 +104,14 @@
 
   <!-- 3 — Empilhado -->
   <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
     <h2>type="stacked"</h2>
     <div class="body">
       <granado-chart-bar id="c-stacked" title="Composição por mês"></granado-chart-bar>
-      <pre class="code">&lt;granado-chart-bar id="c" type="stacked" title="Composição por mês"&gt;&lt;/granado-chart-bar&gt;
+      <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-bar.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-bar id="c" type="stacked" title="Composição por mês"&gt;&lt;/granado-chart-bar&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.xField = 'month';
@@ -108,10 +130,14 @@
 
   <!-- 4 — Empilhado 100% -->
   <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
     <h2>type="stacked100"</h2>
     <div class="body">
       <granado-chart-bar id="c-stacked100" title="Participação (%) por mês"></granado-chart-bar>
-      <pre class="code">&lt;granado-chart-bar id="c" type="stacked100" title="Participação (%) por mês"&gt;&lt;/granado-chart-bar&gt;
+      <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-bar.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-bar id="c" type="stacked100" title="Participação (%) por mês"&gt;&lt;/granado-chart-bar&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.xField = 'month';
@@ -130,10 +156,14 @@
 
   <!-- 5 — Target (faixa min→max) -->
   <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
     <h2>type="target" · faixa min→max (horizontal)</h2>
     <div class="body">
       <granado-chart-bar id="c-target" title="Faixa salarial por cargo" orientation="horizontal" show-values="true"></granado-chart-bar>
-      <pre class="code">&lt;granado-chart-bar id="c" type="target" title="Faixa salarial por cargo"
+      <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-bar.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-bar id="c" type="target" title="Faixa salarial por cargo"
     orientation="horizontal" show-values="true"&gt;&lt;/granado-chart-bar&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
@@ -150,10 +180,14 @@
 
   <!-- 6 — x2-field (formato longo) -->
   <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
     <h2>x2-field="region" · segundo agrupador (formato longo)</h2>
     <div class="body">
       <granado-chart-bar id="c-group" type="grouped" title="Vendas por trimestre e região"></granado-chart-bar>
-      <pre class="code">&lt;granado-chart-bar id="c" type="grouped" title="Vendas por trimestre e região"&gt;&lt;/granado-chart-bar&gt;
+      <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-bar.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-bar id="c" type="grouped" title="Vendas por trimestre e região"&gt;&lt;/granado-chart-bar&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.xField = 'quarter';
@@ -170,10 +204,14 @@
 
   <!-- 7 — Horizontal simples -->
   <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
     <h2>orientation="horizontal" · sem grade</h2>
     <div class="body">
       <granado-chart-bar id="c-horiz" title="Top produtos" orientation="horizontal" show-grid="false" show-values="true"></granado-chart-bar>
-      <pre class="code">&lt;granado-chart-bar id="c" title="Top produtos" orientation="horizontal"
+      <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-bar.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-bar id="c" title="Top produtos" orientation="horizontal"
     show-grid="false" show-values="true"&gt;&lt;/granado-chart-bar&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
@@ -189,10 +227,14 @@
 
   <!-- 8 — Cores/estilos por série -->
   <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
     <h2>cores/opacidade/borderRadius por série</h2>
     <div class="body">
       <granado-chart-bar id="c-styled" type="grouped" title="Estilo customizado"></granado-chart-bar>
-      <pre class="code">&lt;granado-chart-bar id="c" type="grouped" title="Estilo customizado"&gt;&lt;/granado-chart-bar&gt;
+      <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-bar.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-bar id="c" type="grouped" title="Estilo customizado"&gt;&lt;/granado-chart-bar&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.xField = 'month';
@@ -210,10 +252,14 @@
 
   <!-- 9 — barRole por série (meta como linha / tracejado) -->
   <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
     <h2>barRole · vendas (barra) + meta ("line") + limite ("dashed")</h2>
     <div class="body">
       <granado-chart-bar id="c-role" type="grouped" title="Vendas x Meta x Limite"></granado-chart-bar>
-      <pre class="code">&lt;granado-chart-bar id="c" type="grouped" title="Vendas x Meta x Limite"&gt;&lt;/granado-chart-bar&gt;
+      <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-bar.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-bar id="c" type="grouped" title="Vendas x Meta x Limite"&gt;&lt;/granado-chart-bar&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.xField = 'month';
@@ -234,10 +280,14 @@
 
   <!-- 10 — overallTarget (meta única, linha horizontal) -->
   <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
     <h2>overallTarget · meta única (linha horizontal entre as barras)</h2>
     <div class="body">
       <granado-chart-bar id="c-target-line" title="Vendas por mês (meta 200)" show-values="true"></granado-chart-bar>
-      <pre class="code">&lt;granado-chart-bar id="c" title="Vendas por mês (meta 200)" show-values="true"&gt;&lt;/granado-chart-bar&gt;
+      <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-bar.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-bar id="c" title="Vendas por mês (meta 200)" show-values="true"&gt;&lt;/granado-chart-bar&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.xField = 'month';
@@ -253,10 +303,14 @@
 
   <!-- 11 — bar-click + várias props de yField -->
   <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
     <h2>bar-click (log no console) + props de yField (color · formatter · tooltipFormatter · borderRadius · opacity · barWidth · sort)</h2>
     <div class="body">
       <granado-chart-bar id="c-click" type="grouped" title="Clique numa barra (veja o console)" show-values="true"></granado-chart-bar>
-      <pre class="code">&lt;granado-chart-bar id="c" type="grouped" title="Clique numa barra" show-values="true"&gt;&lt;/granado-chart-bar&gt;
+      <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-bar.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-bar id="c" type="grouped" title="Clique numa barra" show-values="true"&gt;&lt;/granado-chart-bar&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.xField = 'month';
@@ -297,10 +351,14 @@
 
     <!-- L1 — Linha simples -->
     <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
       <h2>type="line" · uma série · pontos + tooltip</h2>
       <div class="body">
         <granado-chart-line id="l-simple" title="Vendas por mês" show-values="true"></granado-chart-line>
-        <pre class="code">&lt;granado-chart-line id="c" title="Vendas por mês" show-values="true"&gt;&lt;/granado-chart-line&gt;
+        <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-line.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-line id="c" title="Vendas por mês" show-values="true"&gt;&lt;/granado-chart-line&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.xField = 'month';
@@ -315,10 +373,14 @@
 
     <!-- L2 — Multi-séries + smooth -->
     <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
       <h2>múltiplas séries · smooth (curva)</h2>
       <div class="body">
         <granado-chart-line id="l-multi" title="Vendas x Meta (curva)"></granado-chart-line>
-        <pre class="code">&lt;granado-chart-line id="c" title="Vendas x Meta (curva)"&gt;&lt;/granado-chart-line&gt;
+        <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-line.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-line id="c" title="Vendas x Meta (curva)"&gt;&lt;/granado-chart-line&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.xField = 'month';
@@ -336,10 +398,14 @@
 
     <!-- L3 — Área -->
     <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
       <h2>type="area" · área preenchida</h2>
       <div class="body">
         <granado-chart-line id="l-area" type="area" title="Volume por mês"></granado-chart-line>
-        <pre class="code">&lt;granado-chart-line id="c" type="area" title="Volume por mês"&gt;&lt;/granado-chart-line&gt;
+        <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-line.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-line id="c" type="area" title="Volume por mês"&gt;&lt;/granado-chart-line&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.xField = 'month';
@@ -354,10 +420,14 @@
 
     <!-- L4 — Área empilhada -->
     <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
       <h2>type="stacked" · área empilhada</h2>
       <div class="body">
         <granado-chart-line id="l-stacked" type="stacked" title="Composição por mês"></granado-chart-line>
-        <pre class="code">&lt;granado-chart-line id="c" type="stacked" title="Composição por mês"&gt;&lt;/granado-chart-line&gt;
+        <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-line.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-line id="c" type="stacked" title="Composição por mês"&gt;&lt;/granado-chart-line&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.type   = 'stacked';   <span class="cmt">// ou 'stacked100'</span>
@@ -377,10 +447,14 @@
 
     <!-- L5 — x2Field + overallTarget -->
     <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
       <h2>x2-field (formato longo) + overallTarget</h2>
       <div class="body">
         <granado-chart-line id="l-x2" title="Vendas por trimestre e região (meta 140)"></granado-chart-line>
-        <pre class="code">&lt;granado-chart-line id="c" title="Vendas por trimestre e região (meta 140)"&gt;&lt;/granado-chart-line&gt;
+        <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-line.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-line id="c" title="Vendas por trimestre e região (meta 140)"&gt;&lt;/granado-chart-line&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.xField  = 'quarter';
@@ -398,10 +472,14 @@
 
     <!-- L6 — point-click (log no console) + props -->
     <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
       <h2>point-click (log no console) + props de yField (color · lineWidth · dashed · showDots · formatter · tooltipFormatter)</h2>
       <div class="body">
         <granado-chart-line id="l-click" title="Clique num ponto (veja o console)" show-values="true"></granado-chart-line>
-        <pre class="code">&lt;granado-chart-line id="c" title="Clique num ponto" show-values="true"&gt;&lt;/granado-chart-line&gt;
+        <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-line.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-line id="c" title="Clique num ponto" show-values="true"&gt;&lt;/granado-chart-line&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.xField = 'month';
@@ -436,10 +514,14 @@
 
     <!-- P1 — Pizza -->
     <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
       <h2>type="pie" · rótulos de % + tooltip</h2>
       <div class="body">
         <granado-chart-pie id="p-pie" title="Pesagens por sala" show-values="true"></granado-chart-pie>
-        <pre class="code">&lt;granado-chart-pie id="c" title="Pesagens por sala" show-values="true"&gt;&lt;/granado-chart-pie&gt;
+        <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-pie.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-pie id="c" title="Pesagens por sala" show-values="true"&gt;&lt;/granado-chart-pie&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.xField = 'sala';
@@ -454,10 +536,14 @@
 
     <!-- P2 — Donut + rótulo central -->
     <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
       <h2>type="donut" · center-label</h2>
       <div class="body">
         <granado-chart-pie id="p-donut" type="donut" title="Participação por MP" center-label="300 kg" show-values="true"></granado-chart-pie>
-        <pre class="code">&lt;granado-chart-pie id="c" type="donut" title="Participação por MP"
+        <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-pie.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-pie id="c" type="donut" title="Participação por MP"
     center-label="300 kg" show-values="true"&gt;&lt;/granado-chart-pie&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
@@ -473,10 +559,14 @@
 
     <!-- P3 — Semicírculo -->
     <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
       <h2>type="semi" · semicírculo (gauge)</h2>
       <div class="body">
         <granado-chart-pie id="p-semi" type="semi" title="Disponibilidade" center-label="85%" show-values="true"></granado-chart-pie>
-        <pre class="code">&lt;granado-chart-pie id="c" type="semi" title="Disponibilidade"
+        <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-pie.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-pie id="c" type="semi" title="Disponibilidade"
     center-label="85%" show-values="true"&gt;&lt;/granado-chart-pie&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
@@ -492,10 +582,14 @@
 
     <!-- P4 — Cores por item + slice-click (log no console) -->
     <div class="card">
+      <button class="card-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
       <h2>cores por item + slice-click (log no console) + formatter/tooltipFormatter</h2>
       <div class="body">
         <granado-chart-pie id="p-click" type="donut" title="Clique numa fatia (veja o console)" show-values="true"></granado-chart-pie>
-        <pre class="code">&lt;granado-chart-pie id="c" type="donut" title="Clique numa fatia" show-values="true"&gt;&lt;/granado-chart-pie&gt;
+        <pre class="code"><span class="cmt">&lt;!-- Import (no &lt;head&gt;) --&gt;</span>
+&lt;script src="[AprisoScripts]/WebComponents/granado-chart-pie.js"&gt;&lt;/script&gt;
+
+&lt;granado-chart-pie id="c" type="donut" title="Clique numa fatia" show-values="true"&gt;&lt;/granado-chart-pie&gt;
 &lt;script&gt;
   var c = document.getElementById('c');
   c.xField = 'status';
@@ -520,6 +614,17 @@
 
   </div><!-- /panel-pie -->
 
+  <div id="gd-snip-modal" onclick="if(event.target===this)gdCloseSnip()">
+    <div class="gd-snip-box">
+      <div class="gd-snip-head"><span>Código do exemplo</span><button type="button" class="gd-snip-x" onclick="gdCloseSnip()">✕ Fechar</button></div>
+      <div id="gd-snip-body"></div>
+    </div>
+  </div>
+  <script>
+    function gdOpenSnip(btn){var d=btn.closest(".card");if(!d)return;var s=d.querySelector("pre.code");var m=document.getElementById("gd-snip-modal");var b=document.getElementById("gd-snip-body");if(!s||!m||!b)return;b.innerHTML='<pre class="code">'+s.innerHTML+'</pre>';m.classList.add("open");}
+    function gdCloseSnip(){var m=document.getElementById("gd-snip-modal");if(m)m.classList.remove("open");}
+    document.addEventListener("keydown",function(e){if(e.key==="Escape")gdCloseSnip();});
+  </script>
   <script>
     function showTab(name) {
       ['bar', 'line', 'pie'].forEach(function (t) {
