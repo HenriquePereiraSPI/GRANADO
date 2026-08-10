@@ -1,6 +1,8 @@
 import { useLocation } from 'react-router-dom';
 import { BREADCRUMBS, ALIASES } from '../lib/nav-config.js';
-import { useModal } from './ModalProvider.jsx';
+
+// Nome abreviado do usuário logado (placeholder — trocar quando houver auth real).
+const USER_NAME = 'K. Lima';
 
 export default function Topbar({ onToggleSidebar, sidebarCollapsed }) {
   const { pathname } = useLocation();
@@ -8,8 +10,6 @@ export default function Topbar({ onToggleSidebar, sidebarCollapsed }) {
   const resolved = ALIASES[id] || id;
   const crumb = BREADCRUMBS[resolved] || 'MES Apriso';
   const parts = crumb.split(' › ');
-
-  const { openModal } = useModal();
 
   return (
     <div className="topbar">
@@ -34,18 +34,21 @@ export default function Topbar({ onToggleSidebar, sidebarCollapsed }) {
         )}
       </div>
       <div className="topbar-right">
-        <div className="tb-pill ok" style={{ fontFamily: 'var(--font-b)' }}>● Sistema Online</div>
-        {/* "OP Ativa: ..." removida do topbar — informação já aparece no header
-            de cada sub-tela da Pesagem (evita duplicação). */}
-        <button
-          className="tb-btn-andon"
-          onClick={() => openModal('modal-andon')}
-          title="Cadeia de Ajuda Autonoma — ERU 4.1.22"
-        >
-          🚨 Pedir Ajuda
+        <button className="tb-icon" type="button" title="Notificações" aria-label="Notificações">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+          <span className="tb-icon-dot" />
         </button>
-        <button className="tb-btn" onClick={() => openModal('modal-tractian')}>
-          + Solicitação Serviço
+        <button className="tb-user" type="button" title="Usuário" aria-label="Usuário">
+          <span className="tb-user-avatar">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </span>
+          <span className="tb-user-name">{USER_NAME}</span>
         </button>
         {/* Badge Granado — visível apenas no mobile (via CSS) */}
         <span className="tb-logo-mobile"><span className="tb-logo-mark">G</span>GRANADO</span>

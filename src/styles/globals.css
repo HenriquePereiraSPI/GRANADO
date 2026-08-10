@@ -105,11 +105,15 @@ body { font-family:var(--font-b); background:var(--bg); color:var(--text); displ
   }
   .main { width: 100%; }
 
-  /* Topbar compacto: só menu (hambúrguer) + navegação + ícone Granado */
+  /* Topbar compacto: menu + navegação + ícones (notificação/usuário) + Granado */
   .topbar { padding: 0 12px; gap: 8px; }
   .topbar-right .tb-pill,
   .topbar-right .tb-btn-andon,
+  .topbar-right .tb-icon,
   .topbar-right .tb-btn { display: none; }
+  /* No mobile mostra só o usuário (avatar), à direita do badge Granado */
+  .topbar-right .tb-user { padding: 0; border: none; background: transparent; order: 1; }
+  .topbar-right .tb-user-name { display: none; }
   .tb-logo-mobile {
     display: inline-flex;
     align-items: center;
@@ -310,6 +314,41 @@ body { font-family:var(--font-b); background:var(--bg); color:var(--text); displ
   0%   { box-shadow:0 0 0 0 rgba(140,26,26,.45); }
   70%  { box-shadow:0 0 0 8px rgba(140,26,26,0); }
   100% { box-shadow:0 0 0 0 rgba(140,26,26,0); }
+}
+
+/* Ícones do topo (usuário / notificação) */
+.tb-icon {
+  position:relative;
+  display:inline-flex; align-items:center; justify-content:center;
+  width:36px; height:36px; padding:0;
+  border:1px solid var(--border); border-radius:50%;
+  background:var(--surface2); color:var(--text2);
+  cursor:pointer; transition:background .15s, color .15s, border-color .15s;
+}
+.tb-icon:hover { background:var(--surface); color:var(--verde); border-color:var(--verde-meio); }
+.tb-icon-dot {
+  position:absolute; top:5px; right:5px;
+  width:8px; height:8px; border-radius:50%;
+  background:var(--per); border:1.5px solid var(--surface2);
+}
+
+/* Usuário: avatar circular + nome abreviado ao lado */
+.tb-user {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:3px 12px 3px 3px;
+  border:1px solid var(--border); border-radius:20px;
+  background:var(--surface2); cursor:pointer;
+  transition:background .15s, border-color .15s;
+}
+.tb-user:hover { background:var(--surface); border-color:var(--verde-meio); }
+.tb-user-avatar {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:30px; height:30px; border-radius:50%;
+  background:var(--verde); color:#FDFAF1; flex-shrink:0;
+}
+.tb-user-name {
+  font-family:var(--font-b); font-size:12px; font-weight:700;
+  color:var(--text2); white-space:nowrap;
 }
 
 /* Nível Andon — cores do select */

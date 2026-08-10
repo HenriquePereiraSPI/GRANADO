@@ -1456,19 +1456,22 @@
         <h2 class="gd-h2">Inputs</h2>
         <p class="gd-lead">Corpo da requisição (JSON):</p>
         <pre class="gd-code">{
-  <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"ResourceIDScale"</span><span class="tk-punc">:</span> <span class="tk-str">"100000082"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"ScaleName"</span><span class="tk-punc">:</span> <span class="tk-str">"TOLEDO 003"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"00000100"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"2877757"</span><span class="tk-punc">,</span>
   <span class="tk-key">"TareWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
   <span class="tk-key">"GrossWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"NetWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"150.00"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"NetWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"10"</span><span class="tk-punc">,</span>
   <span class="tk-key">"UOMCode"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA1"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"10501555"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"CageNo"</span><span class="tk-punc">:</span> <span class="tk-str">"G000010"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000001"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"IsManualWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"WeightDurationInSeconds"</span><span class="tk-punc">:</span> <span class="tk-str">"42"</span>
+  <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1 - SALA1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"00005804"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ScaleName"</span><span class="tk-punc">:</span> <span class="tk-str">"TOLEDO SA1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ResourceIDScale"</span><span class="tk-punc">:</span> <span class="tk-str">"877567657"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"CageNo"</span><span class="tk-punc">:</span> <span class="tk-str">"00000080"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"IsManualWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>   <span class="tk-comment">// "1" manual · "0" balança</span>
+  <span class="tk-key">"WeightDurationInSeconds"</span><span class="tk-punc">:</span> <span class="tk-str">"25"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"LabelNoOrigin"</span><span class="tk-punc">:</span> <span class="tk-str">"L0808080"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"LabelNoOriginQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"1000"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Mode"</span><span class="tk-punc">:</span> <span class="tk-str">"WEIGH"</span>   <span class="tk-comment">// "PICK" (separação) ou "WEIGH" (pesagem)</span>
 }</pre>
 
         <h3 class="gd-h3">Campos de entrada</h3>
@@ -1483,22 +1486,16 @@
           </thead>
           <tbody>
             <tr>
+              <td class="col-name">WipOrderNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Número da ordem (WIP Order) à qual o apontamento se vincula.</td>
+            </tr>
+            <tr>
               <td class="col-name">WeighLineID</td>
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
               <td class="col-desc">ID da linha de pesagem (item da ordem) que está sendo apontada.</td>
-            </tr>
-            <tr>
-              <td class="col-name">ResourceIDScale</td>
-              <td class="col-type">string</td>
-              <td class="col-req">Sim</td>
-              <td class="col-desc">ID do recurso da balança utilizada na pesagem.</td>
-            </tr>
-            <tr>
-              <td class="col-name">ScaleName</td>
-              <td class="col-type">string</td>
-              <td class="col-req">Sim</td>
-              <td class="col-desc">Nome da balança utilizada na pesagem (ex.: <code>"TOLEDO 003"</code>).</td>
             </tr>
             <tr>
               <td class="col-name">TareWeight</td>
@@ -1528,25 +1525,31 @@
               <td class="col-name">Workcenter</td>
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
-              <td class="col-desc">Centro de trabalho/sala onde a pesagem foi realizada (ex.: <code>"MD1_SALA1"</code>).</td>
+              <td class="col-desc">Centro de trabalho/sala onde a pesagem foi realizada (ex.: <code>"MD1 - SALA1"</code>).</td>
             </tr>
             <tr>
               <td class="col-name">WorkcenterResourceName</td>
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
-              <td class="col-desc">Nome/ID do recurso do centro de trabalho onde a pesagem foi realizada (ex.: <code>"10501555"</code>).</td>
+              <td class="col-desc">Nome/ID do recurso do centro de trabalho onde a pesagem foi realizada (ex.: <code>"00005804"</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">ScaleName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Nome da balança utilizada na pesagem (ex.: <code>"TOLEDO SA1"</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">ResourceIDScale</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ID do recurso da balança utilizada na pesagem (ex.: <code>"877567657"</code>).</td>
             </tr>
             <tr>
               <td class="col-name">CageNo</td>
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
               <td class="col-desc">Número da gaiola que recebe a pesagem (ver <code>GRD_API_CreateCage</code>).</td>
-            </tr>
-            <tr>
-              <td class="col-name">WipOrderNo</td>
-              <td class="col-type">string</td>
-              <td class="col-req">Sim</td>
-              <td class="col-desc">Número da ordem (WIP Order) à qual o apontamento se vincula.</td>
             </tr>
             <tr>
               <td class="col-name">IsManualWeight</td>
@@ -1559,6 +1562,24 @@
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
               <td class="col-desc">Duração da pesagem, em segundos (tempo gasto para realizar o apontamento).</td>
+            </tr>
+            <tr>
+              <td class="col-name">LabelNoOrigin</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Número da etiqueta de <strong>origem</strong> (etiqueta-mãe) de onde o material é retirado. Usado no modo <code>"PICK"</code> (separação).</td>
+            </tr>
+            <tr>
+              <td class="col-name">LabelNoOriginQuantity</td>
+              <td class="col-type">string (número)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Quantidade disponível na etiqueta de origem (<code>LabelNoOrigin</code>). Usado no modo <code>"PICK"</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Mode</td>
+              <td class="col-type">string (enum)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Modo do apontamento: <code>"PICK"</code> = separação (retira de uma etiqueta de origem, sem pesar) · <code>"WEIGH"</code> = pesagem (peso lido/apontado na balança).</td>
             </tr>
           </tbody>
         </table>
@@ -3001,21 +3022,18 @@
   ]<span class="tk-punc">,</span>
   <span class="tk-key">"WeighHeader"</span><span class="tk-punc">:</span> { <span class="tk-key">"WeighHeaderID"</span><span class="tk-punc">:</span> <span class="tk-str">"101397"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"New"</span> }<span class="tk-punc">,</span>
   <span class="tk-key">"WeighLine"</span><span class="tk-punc">:</span> [
-    { <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"107382"</span><span class="tk-punc">,</span> <span class="tk-key">"Sequence"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"100023933"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"2968146"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductSKU"</span><span class="tk-punc">:</span> <span class="tk-str">"M10084"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"OLEO DE SOJA HIDROGENADO"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"1.800"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"UOM"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"New"</span><span class="tk-punc">,</span> <span class="tk-key">"OperationNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1.00"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0655125"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"QuantityToWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"1.800"</span><span class="tk-punc">,</span> <span class="tk-key">"QuantityToPick"</span><span class="tk-punc">:</span> <span class="tk-str">"0.000"</span><span class="tk-punc">,</span> <span class="tk-key">"EffectiveDate"</span><span class="tk-punc">:</span> <span class="tk-str">"6/2/2025 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"ExpirationDate"</span><span class="tk-punc">:</span> <span class="tk-str">"4/13/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"StockQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"1467.648"</span> }<span class="tk-punc">,</span>
-    { <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"107383"</span><span class="tk-punc">,</span> <span class="tk-key">"Sequence"</span><span class="tk-punc">:</span> <span class="tk-str">"2"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"100023933"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"2968146"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductSKU"</span><span class="tk-punc">:</span> <span class="tk-str">"M10084"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"OLEO DE SOJA HIDROGENADO"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"8.200"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"UOM"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"New"</span><span class="tk-punc">,</span> <span class="tk-key">"OperationNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1.00"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0801625"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"QuantityToWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"8.200"</span><span class="tk-punc">,</span> <span class="tk-key">"QuantityToPick"</span><span class="tk-punc">:</span> <span class="tk-str">"0.000"</span><span class="tk-punc">,</span> <span class="tk-key">"EffectiveDate"</span><span class="tk-punc">:</span> <span class="tk-str">"7/8/2025 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"ExpirationDate"</span><span class="tk-punc">:</span> <span class="tk-str">"6/30/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"StockQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"1467.648"</span> }<span class="tk-punc">,</span>
-    { <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"107384"</span><span class="tk-punc">,</span> <span class="tk-key">"Sequence"</span><span class="tk-punc">:</span> <span class="tk-str">"3"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"100019202"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"2551703"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductSKU"</span><span class="tk-punc">:</span> <span class="tk-str">"M9965"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"SOLVEN COCONUT WAX"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"79.000"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"UOM"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"New"</span><span class="tk-punc">,</span> <span class="tk-key">"OperationNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1.00"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0890325"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"QuantityToWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"4.000"</span><span class="tk-punc">,</span> <span class="tk-key">"QuantityToPick"</span><span class="tk-punc">:</span> <span class="tk-str">"75.000"</span><span class="tk-punc">,</span> <span class="tk-key">"EffectiveDate"</span><span class="tk-punc">:</span> <span class="tk-str">"7/23/2025 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"ExpirationDate"</span><span class="tk-punc">:</span> <span class="tk-str">"7/4/2028 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"StockQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"11721.320"</span> }<span class="tk-punc">,</span>
-    { <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"107385"</span><span class="tk-punc">,</span> <span class="tk-key">"Sequence"</span><span class="tk-punc">:</span> <span class="tk-str">"4"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"100023930"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"2967901"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductSKU"</span><span class="tk-punc">:</span> <span class="tk-str">"M10085"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"KAHLWAX 6607L MB"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"1.000"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"UOM"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"New"</span><span class="tk-punc">,</span> <span class="tk-key">"OperationNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1.00"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0557225"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"QuantityToWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"1.000"</span><span class="tk-punc">,</span> <span class="tk-key">"QuantityToPick"</span><span class="tk-punc">:</span> <span class="tk-str">"0.000"</span><span class="tk-punc">,</span> <span class="tk-key">"EffectiveDate"</span><span class="tk-punc">:</span> <span class="tk-str">"5/8/2025 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"ExpirationDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/22/2028 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"StockQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"285.918"</span> }<span class="tk-punc">,</span>
-    { <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"107386"</span><span class="tk-punc">,</span> <span class="tk-key">"Sequence"</span><span class="tk-punc">:</span> <span class="tk-str">"5"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"100026663"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"3267755"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductSKU"</span><span class="tk-punc">:</span> <span class="tk-str">"M10169"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"ESS PETIT PRMNDE E24135661/03"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"10.000"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"UOM"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"New"</span><span class="tk-punc">,</span> <span class="tk-key">"OperationNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1.00"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0465125"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"QuantityToWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"10.000"</span><span class="tk-punc">,</span> <span class="tk-key">"QuantityToPick"</span><span class="tk-punc">:</span> <span class="tk-str">"0.000"</span><span class="tk-punc">,</span> <span class="tk-key">"EffectiveDate"</span><span class="tk-punc">:</span> <span class="tk-str">"4/10/2025 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"ExpirationDate"</span><span class="tk-punc">:</span> <span class="tk-str">"4/8/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"StockQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"141.396"</span> }
+    { <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"107316"</span><span class="tk-punc">,</span> <span class="tk-key">"Sequence"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"100015855"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1364164"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductSKU"</span><span class="tk-punc">:</span> <span class="tk-str">"M9813"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"ESS. SILVER BUD"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"28.980"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"UOM"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"New"</span><span class="tk-punc">,</span> <span class="tk-key">"OperationNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1.00"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1063725"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"QuantityToWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"28.980"</span><span class="tk-punc">,</span> <span class="tk-key">"QuantityToPick"</span><span class="tk-punc">:</span> <span class="tk-str">"0.000"</span><span class="tk-punc">,</span> <span class="tk-key">"PickModeWeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighModeWeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"EffectiveDate"</span><span class="tk-punc">:</span> <span class="tk-str">"9/3/2025 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"ExpirationDate"</span><span class="tk-punc">:</span> <span class="tk-str">"3/14/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"StockQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"274.162"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"107317"</span><span class="tk-punc">,</span> <span class="tk-key">"Sequence"</span><span class="tk-punc">:</span> <span class="tk-str">"2"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"100003305"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"780633"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductSKU"</span><span class="tk-punc">:</span> <span class="tk-str">"M0242"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"TINOGARD Q"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0.175"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"UOM"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"New"</span><span class="tk-punc">,</span> <span class="tk-key">"OperationNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1.00"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1528624"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"QuantityToWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"0.175"</span><span class="tk-punc">,</span> <span class="tk-key">"QuantityToPick"</span><span class="tk-punc">:</span> <span class="tk-str">"0.000"</span><span class="tk-punc">,</span> <span class="tk-key">"PickModeWeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighModeWeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"EffectiveDate"</span><span class="tk-punc">:</span> <span class="tk-str">"12/6/2024 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"ExpirationDate"</span><span class="tk-punc">:</span> <span class="tk-str">"9/26/2025 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"StockQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"19.748"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"107318"</span><span class="tk-punc">,</span> <span class="tk-key">"Sequence"</span><span class="tk-punc">:</span> <span class="tk-str">"3"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"100013285"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1198629"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductSKU"</span><span class="tk-punc">:</span> <span class="tk-str">"M9717"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"UVSORB"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"1.225"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"UOM"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"New"</span><span class="tk-punc">,</span> <span class="tk-key">"OperationNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1.00"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0677625"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"QuantityToWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"1.225"</span><span class="tk-punc">,</span> <span class="tk-key">"QuantityToPick"</span><span class="tk-punc">:</span> <span class="tk-str">"0.000"</span><span class="tk-punc">,</span> <span class="tk-key">"PickModeWeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighModeWeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"EffectiveDate"</span><span class="tk-punc">:</span> <span class="tk-str">"6/6/2025 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"ExpirationDate"</span><span class="tk-punc">:</span> <span class="tk-str">"3/6/2027 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"StockQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"95.027"</span> }
   ]<span class="tk-punc">,</span>
   <span class="tk-key">"WeighLineDetail"</span><span class="tk-punc">:</span> [
     { <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"107376"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100332"</span><span class="tk-punc">,</span> <span class="tk-key">"Sequence"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"100019895"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"2608298"</span><span class="tk-punc">,</span>
@@ -3124,6 +3142,8 @@
             <tr><td class="col-name">LotNo</td><td class="col-type">string</td><td class="col-desc">Lote associado à linha.</td></tr>
             <tr><td class="col-name">QuantityToWeight</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade a <strong>pesar</strong> (na balança).</td></tr>
             <tr><td class="col-name">QuantityToPick</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade a <strong>separar/pegar</strong> (picking, sem pesagem).</td></tr>
+            <tr><td class="col-name">PickModeWeighedQuantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade já registrada no modo <strong>separação/picking</strong> (parte do <code>QuantityToPick</code> já atendida).</td></tr>
+            <tr><td class="col-name">WeighModeWeighedQuantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade já registrada no modo <strong>pesagem</strong> (parte do <code>QuantityToWeight</code> já pesada na balança).</td></tr>
             <tr><td class="col-name">EffectiveDate</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data de vigência inicial do produto/lote.</td></tr>
             <tr><td class="col-name">ExpirationDate</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data de validade/expiração do produto/lote.</td></tr>
             <tr><td class="col-name">StockQuantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade em estoque do produto/lote.</td></tr>

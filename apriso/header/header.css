@@ -253,6 +253,78 @@
     }
 }
 
+/* === Icones do topo (usuario / notificacao) === */
+.tb-icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid var(--grn-border);
+    border-radius: 50%;
+    background: var(--grn-surface2);
+    color: var(--grn-text2);
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+}
+
+.tb-icon:hover {
+    background: var(--grn-surface);
+    color: var(--grn-verde);
+    border-color: var(--grn-verde-meio);
+}
+
+.tb-icon-dot {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--grn-per);
+    border: 1.5px solid var(--grn-surface2);
+}
+
+/* Usuario: avatar circular + nome abreviado ao lado */
+.tb-user {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 12px 3px 3px;
+    border: 1px solid var(--grn-border);
+    border-radius: 20px;
+    background: var(--grn-surface2);
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+}
+
+.tb-user:hover {
+    background: var(--grn-surface);
+    border-color: var(--grn-verde-meio);
+}
+
+.tb-user-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--grn-verde);
+    color: #FDFAF1;
+    flex-shrink: 0;
+}
+
+.tb-user-name {
+    font-family: var(--grn-font-b);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--grn-text2);
+    white-space: nowrap;
+}
+
 /* === Mobile (decidido no load via .is-granado-mobile no <html>) ===
    Header compacto — só menu + navegação. */
 html.is-granado-mobile .topbar {
@@ -279,13 +351,34 @@ html.is-granado-mobile .tb-page {
     text-overflow: ellipsis;
 }
 
-/* Botões da direita saem no mobile para deixar o header limpo */
+/* No mobile mostra só o usuário (avatar), à direita do badge Granado */
 html.is-granado-mobile .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    order: 2;
+    margin-left: 4px;
+}
+
+/* Notificação sai no mobile */
+html.is-granado-mobile .tb-icon {
     display: none;
 }
 
-/* Badge Granado aparece no mobile, alinhado à direita */
+/* Usuário compacto no mobile: só o avatar circular (sem nome) */
+html.is-granado-mobile .tb-user {
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+html.is-granado-mobile .tb-user-name {
+    display: none;
+}
+
+/* Badge Granado vem primeiro, empurrado para a direita; o avatar fica ao lado */
 html.is-granado-mobile .tb-logo-mobile {
     display: inline-flex;
+    order: 1;
     margin-left: auto;
 }
