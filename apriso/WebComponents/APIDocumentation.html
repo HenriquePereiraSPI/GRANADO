@@ -4563,7 +4563,8 @@
         <p class="gd-lead">
           Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
           (<code>Success</code> / <code>Message</code>) acrescido de <code>Data</code> — cujo formato
-          <strong>depende de <code>Type</code></strong> (ver Outputs).
+          <strong>depende de <code>Type</code></strong> — e, no modo <code>DEFAULT</code>, também dos
+          blocos <code>Overall</code> e <code>Grouped</code> (ver Outputs).
         </p>
 
         <!-- ===== Inputs ===== -->
@@ -4651,30 +4652,41 @@
 
         <!-- ===== Outputs DEFAULT ===== -->
         <h2 class="gd-h2">Outputs — <code>Type = "DEFAULT"</code></h2>
-        <p class="gd-lead">Uma linha por <strong>pesagem</strong> (item/linha da ordem):</p>
+        <p class="gd-lead">
+          <code>Data</code> traz uma linha por <strong>pesagem</strong> (item/linha da ordem);
+          <code>Overall</code> resume a performance média do período; e <code>Grouped</code> agrega a
+          performance média <strong>por recurso do centro de trabalho</strong>:
+        </p>
         <pre class="gd-code">{
   <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
   <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Informações recuperadas com sucesso."</span><span class="tk-punc">,</span>
   <span class="tk-key">"Data"</span><span class="tk-punc">:</span> [
     {
-      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000012"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"100103"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100285"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"TESTE999"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"14.1500000000"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"TempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"10"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoTotalPesagemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"648655"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"107255"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100366"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"823218"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"14.0000000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"20"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoTotalPesagemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
       <span class="tk-key">"TempoPorPecaSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"60.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPorPecaMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
       <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"60.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPecaXQuantidadeMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"600.00"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"OK"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"UOMCode"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA2"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
-      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Kaic Lima"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/7/2026 2:29:15 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"Shift"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span>
+      <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"300.00"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"OK"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"UOMCode"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SEM_BALANCA"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000039"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"winke"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"8/10/2026 5:22:45 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"Shift"</span><span class="tk-punc">:</span> <span class="tk-str">"MANHA"</span>
     }<span class="tk-punc">,</span>
     {
-      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000012"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"100105"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100257"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"TESTE998"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"99.9900000000"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"TempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"650"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoTotalPesagemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"11"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"60.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"9.23"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"FORA"</span><span class="tk-punc">,</span> <span class="tk-key">"UOMCode"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD2_SALA1"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Eduardo Aguiar"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/6/2026 6:36:05 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"Shift"</span><span class="tk-punc">:</span> <span class="tk-str">"2"</span>
+      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"648655"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"107255"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100365"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"823218"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"14.0000000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"20"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoTotalPesagemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoPorPecaSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"60.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPorPecaMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"60.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPecaXQuantidadeMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"300.00"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"OK"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"UOMCode"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SEM_BALANCA"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000039"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"winke"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"8/10/2026 5:22:26 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"Shift"</span><span class="tk-punc">:</span> <span class="tk-str">"MANHA"</span>
     }
-    <span class="tk-comment">// … demais pesagens</span>
+  ]<span class="tk-punc">,</span>
+  <span class="tk-key">"Overall"</span><span class="tk-punc">:</span> { <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"2573.113392"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2027 12:00:00 AM"</span> }<span class="tk-punc">,</span>
+  <span class="tk-key">"Grouped"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"P_AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"6000.000000"</span><span class="tk-punc">,</span> <span class="tk-key">"P_StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"P_FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2027 12:00:00 AM"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000004"</span><span class="tk-punc">,</span> <span class="tk-key">"P_AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"88.095000"</span><span class="tk-punc">,</span> <span class="tk-key">"P_StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"P_FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2027 12:00:00 AM"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000039"</span><span class="tk-punc">,</span> <span class="tk-key">"P_AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"5008.695652"</span><span class="tk-punc">,</span> <span class="tk-key">"P_StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"P_FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2027 12:00:00 AM"</span> }
   ]
 }</pre>
 
@@ -4703,6 +4715,33 @@
             <tr><td class="col-name">CreatedBy</td><td class="col-type">string</td><td class="col-desc">Usuário que realizou a pesagem.</td></tr>
             <tr><td class="col-name">CreatedOn</td><td class="col-type">string (data)</td><td class="col-desc">Data/hora da pesagem.</td></tr>
             <tr><td class="col-name">Shift</td><td class="col-type">string</td><td class="col-desc">Turno em que a pesagem aconteceu.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de <code>Overall</code> (DEFAULT)</h3>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575">Resumo do período consultado (todas as pesagens do filtro).</p>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:240px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">AvgPerformancePct</td><td class="col-type">string (número)</td><td class="col-desc">Performance <strong>média</strong> (%) de todas as pesagens do período/filtro.</td></tr>
+            <tr><td class="col-name">StartDate</td><td class="col-type">string (data)</td><td class="col-desc">Início do período considerado (espelha o input <code>StartDate</code>).</td></tr>
+            <tr><td class="col-name">FinishDate</td><td class="col-type">string (data)</td><td class="col-desc">Fim do período considerado (espelha o input <code>EndDate</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada item de <code>Grouped</code> (DEFAULT)</h3>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575">Performance média <strong>agrupada por recurso do centro de trabalho</strong> (um item por <code>WorkcenterResourceName</code>).</p>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:240px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">WorkcenterResourceName</td><td class="col-type">string</td><td class="col-desc">Recurso do centro de trabalho do grupo. Pode vir <strong>vazio</strong> (<code>""</code>, sem recurso) ou <code>"STOPPED"</code> (recurso parado).</td></tr>
+            <tr><td class="col-name">P_AvgPerformancePct</td><td class="col-type">string (número)</td><td class="col-desc">Performance <strong>média</strong> (%) das pesagens desse recurso no período.</td></tr>
+            <tr><td class="col-name">P_StartDate</td><td class="col-type">string (data)</td><td class="col-desc">Início do período considerado (espelha o input <code>StartDate</code>).</td></tr>
+            <tr><td class="col-name">P_FinishDate</td><td class="col-type">string (data)</td><td class="col-desc">Fim do período considerado (espelha o input <code>EndDate</code>).</td></tr>
           </tbody>
         </table>
 
@@ -4758,6 +4797,9 @@
             <code>CreatedBy</code>, <code>WorkcenterResourceName</code> e <code>Shift</code> aceitam <code>"-1"</code> para não filtrar.</li>
           <li><strong>Relação com <a class="gd-link" href="#GRD_API_OEE_GetOrderWeightPerformance">GRD_API_OEE_GetOrderWeightPerformance</a>:</strong>
             aquela dá a performance por <em>ordem</em>; esta detalha por <em>matéria-prima/pesagem</em>.</li>
+          <li><strong><code>Overall</code> e <code>Grouped</code> (só no <code>DEFAULT</code>):</strong> além do detalhe por pesagem,
+            o retorno traz a média geral do período (<code>Overall</code>) e a média por recurso do centro de trabalho
+            (<code>Grouped</code>, um item por <code>WorkcenterResourceName</code> — inclui <code>""</code> e <code>"STOPPED"</code>).</li>
         </ul>
       </section>
 

@@ -22,6 +22,15 @@
                         value    -> "65" (com unit se setado)
                         fraction -> "65 / 100"
      unit           - sufixo do valor (apenas em "value" e "fraction").
+     valuewidth     - largura FIXA do valor quando ele fica AO LADO da barra
+                      (valueposition "left"/"right"). Default: calculada
+                      automaticamente pelo maior texto possivel, de modo que a
+                      barra NAO muda de tamanho conforme o texto ("0%" vs "100%").
+                      Aceita qualquer CSS length (ex.: "48px", "4ch").
+     abbreviate-above - numero. Quando o valor (formato "value"/"fraction") for
+                      >= a este limite, o texto e ABREVIADO (1.2k, 3.4M, 2B) e o
+                      valor completo aparece num TOOLTIP (title) ao passar o mouse.
+                      Ex.: abbreviate-above="1000" -> 44983 vira "45k".
      color          - cor base do preenchimento. Default: "#1C5C31".
                       O fill usa linear-gradient horizontal (90deg) de uma
                       versao mais escura na esquerda para uma mais clara
@@ -53,7 +62,7 @@
 if (!customElements.get('granado-progress-bar')) {
   class GranadoProgressBar extends HTMLElement {
     static get observedAttributes() {
-      return ['value', 'min', 'max', 'label', 'labelposition', 'valueposition', 'isshowlabel', 'isshowvalue', 'valueformat', 'unit', 'color', 'bgcolor', 'height', 'pulse'];
+      return ['value', 'min', 'max', 'label', 'labelposition', 'valueposition', 'isshowlabel', 'isshowvalue', 'valueformat', 'unit', 'color', 'bgcolor', 'height', 'pulse', 'valuewidth', 'abbreviate-above'];
     }
 
     connectedCallback() {
@@ -187,18 +196,55 @@ if (!customElements.get('granado-progress-bar')) {
       const label = this.getAttribute('label') || '';
       const format = this.getAttribute('valueformat') || 'percent';
       const unit = this.getAttribute('unit') || '';
+      const uSfx = unit ? ' ' + unit : '';
+
+      const abbrAbove = parseFloat(this.getAttribute('abbreviate-above'));
+      const hasAbbr = !isNaN(abbrAbove);
+      const doAbbr = (n) => hasAbbr && Math.abs(n) >= abbrAbove;
 
       if (labelEl) labelEl.textContent = label;
       if (valueEl) {
-        let valStr;
+        // dispStr = o que aparece; fullStr = valor por extenso (vai no tooltip).
+        let dispStr, fullStr;
         if (format === 'value') {
-          valStr = `${value}${unit ? ' ' + unit : ''}`;
+          fullStr = `${this._num(value)}${uSfx}`;
+          dispStr = `${doAbbr(value) ? this._abbr(value) : this._num(value)}${uSfx}`;
         } else if (format === 'fraction') {
-          valStr = `${value} / ${max}${unit ? ' ' + unit : ''}`;
+          fullStr = `${this._num(value)} / ${this._num(max)}${uSfx}`;
+          dispStr = `${doAbbr(value) ? this._abbr(value) : this._num(value)} / ${doAbbr(max) ? this._abbr(max) : this._num(max)}${uSfx}`;
         } else {
-          valStr = `${Math.round(pct)}%`;
+          dispStr = fullStr = `${Math.round(pct)}%`;
         }
-        valueEl.textContent = valStr;
+        valueEl.textContent = dispStr;
+
+        // Quando o valor fica AO LADO da barra (left/right) damos a ele uma largura
+        // FIXA — assim a barra (flex:1) nao muda de tamanho conforme o texto
+        // ("0%" vs "99%" vs "100%"). Em up/down a barra ja ocupa a linha toda.
+        const valuePos = this._normPos(this.getAttribute('valueposition') || 'up');
+        const beside = (valuePos === 'left' || valuePos === 'right');
+        if (beside) {
+          const vw = this.getAttribute('valuewidth');
+          valueEl.style.display = 'inline-block';
+          valueEl.style.textAlign = 'right';
+          valueEl.style.whiteSpace = 'nowrap';
+          valueEl.style.overflow = 'hidden';
+          valueEl.style.textOverflow = 'ellipsis';
+          valueEl.style.width = vw || this._reserveWidth(format, max, uSfx, hasAbbr, abbrAbove);
+        } else {
+          valueEl.style.display = '';
+          valueEl.style.textAlign = '';
+          valueEl.style.whiteSpace = '';
+          valueEl.style.overflow = '';
+          valueEl.style.textOverflow = '';
+          valueEl.style.width = '';
+        }
+
+        // Tooltip com o valor completo: quando abreviamos OU quando o texto nao
+        // coube na largura fixa (ficou com reticencia).
+        let tip = (dispStr !== fullStr) ? fullStr : '';
+        if (!tip && beside && valueEl.scrollWidth > valueEl.clientWidth + 1) tip = fullStr;
+        if (tip) valueEl.setAttribute('title', tip);
+        else valueEl.removeAttribute('title');
       }
 
       this._applyPulse(fill);
@@ -220,6 +266,47 @@ if (!customElements.get('granado-progress-bar')) {
           fill.style.opacity = '';
         }
       }
+    }
+
+    // Numero "limpo" como string (sem abreviar); tira zeros irrelevantes.
+    _num(n) {
+      if (typeof n !== 'number' || !isFinite(n)) return String(n);
+      return (Math.round(n * 10000) / 10000).toString();
+    }
+
+    // Abrevia numeros grandes: 1234 -> "1.2k", 2.5e6 -> "2.5M", 3e9 -> "3B".
+    _abbr(n) {
+      const a = Math.abs(n), s = n < 0 ? '-' : '';
+      const t = (x) => (Math.round(x * 10) / 10).toString();
+      if (a >= 1e9) return s + t(a / 1e9) + 'B';
+      if (a >= 1e6) return s + t(a / 1e6) + 'M';
+      if (a >= 1e3) return s + t(a / 1e3) + 'k';
+      return this._num(n);
+    }
+
+    // Largura fixa (em ch) reservada p/ o valor ao lado da barra, calculada pelo
+    // maior texto que ele pode exibir — mantem a barra estavel. overflow:hidden +
+    // ellipsis no _update garantem que a barra nunca se mexe mesmo se estourar.
+    _reserveWidth(format, max, uSfx, hasAbbr, abbrAbove) {
+      let widest;
+      if (format === 'percent') {
+        widest = '100%';
+      } else if (format === 'fraction') {
+        const mx = this._num(max);
+        widest = `${mx} / ${mx}${uSfx}`;
+      } else { // value
+        let numStr;
+        if (hasAbbr) {
+          // Abaixo do limite mostra cru (maior largura ~ limite-1); acima, abreviado.
+          const belowThresh = this._num(Math.max(0, Math.ceil(abbrAbove) - 1));
+          const abbrMax = this._abbr(max);
+          numStr = belowThresh.length >= abbrMax.length ? belowThresh : abbrMax;
+        } else {
+          numStr = this._num(max);
+        }
+        widest = `${numStr}${uSfx}`;
+      }
+      return `calc(${widest.length}ch + 0.6em)`;
     }
 
     _lighten(hex, amount) {

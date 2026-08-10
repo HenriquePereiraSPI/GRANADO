@@ -7544,6 +7544,43 @@ const html = all.map(name =&gt;
 <span class="tk-tag">&lt;/div&gt;</span></pre>
         </div>
 
+        <!-- ===== Barra fixa + abreviacao ===== -->
+        <h2 class="gd-h2">Valor ao lado: barra fixa + abreviação</h2>
+        <p class="gd-lead">
+          Quando o valor fica ao lado da barra (<code>valueposition="left"</code> ou
+          <code>"right"</code>), ele recebe uma <strong>largura fixa</strong> — assim a barra
+          <strong>não muda de tamanho</strong> conforme o texto (<code>"5%"</code> vs
+          <code>"100%"</code>). Repare que as duas primeiras barras <strong>terminam no mesmo
+          ponto</strong>. Com <code>abbreviate-above</code>, números grandes são
+          <strong>abreviados</strong> (<code>45k</code>, <code>1.3M</code>) e o valor completo
+          aparece num <strong>tooltip</strong> ao passar o mouse. Opcional:
+          <code>valuewidth</code> fixa a largura manualmente (ex.: <code>"56px"</code>).
+        </p>
+        <div class="gd-demo" style="display:flex;flex-direction:column;gap:16px;max-width:560px">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-progress-bar label="Início (5%)" value="5" valueposition="right"></granado-progress-bar>
+
+          <granado-progress-bar label="Fim (100%)" value="100" valueposition="right"></granado-progress-bar>
+
+          <granado-progress-bar label="Pesado" value="44983" max="50000"
+            valueformat="value" unit="kg" valueposition="right"
+            abbreviate-above="1000" color="#1C7A38"></granado-progress-bar>
+
+          <granado-progress-bar label="Produzidas" value="1250000" max="2000000"
+            valueformat="value" unit="un" valueposition="right"
+            abbreviate-above="1000" color="#1A4A8C"></granado-progress-bar>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;div</span> <span class="tk-attr">style</span>=<span class="tk-str">"display:flex;flex-direction:column;gap:16px;max-width:560px"</span><span class="tk-tag">&gt;</span>
+  <span class="tk-tag">&lt;granado-progress-bar</span> <span class="tk-attr">label</span>=<span class="tk-str">"Início (5%)"</span> <span class="tk-attr">value</span>=<span class="tk-str">"5"</span> <span class="tk-attr">valueposition</span>=<span class="tk-str">"right"</span><span class="tk-tag">&gt;&lt;/granado-progress-bar&gt;</span>
+  <span class="tk-tag">&lt;granado-progress-bar</span> <span class="tk-attr">label</span>=<span class="tk-str">"Fim (100%)"</span> <span class="tk-attr">value</span>=<span class="tk-str">"100"</span> <span class="tk-attr">valueposition</span>=<span class="tk-str">"right"</span><span class="tk-tag">&gt;&lt;/granado-progress-bar&gt;</span>
+  <span class="tk-tag">&lt;granado-progress-bar</span> <span class="tk-attr">label</span>=<span class="tk-str">"Pesado"</span> <span class="tk-attr">value</span>=<span class="tk-str">"44983"</span> <span class="tk-attr">max</span>=<span class="tk-str">"50000"</span>
+      <span class="tk-attr">valueformat</span>=<span class="tk-str">"value"</span> <span class="tk-attr">unit</span>=<span class="tk-str">"kg"</span> <span class="tk-attr">valueposition</span>=<span class="tk-str">"right"</span>
+      <span class="tk-attr">abbreviate-above</span>=<span class="tk-str">"1000"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1C7A38"</span><span class="tk-tag">&gt;&lt;/granado-progress-bar&gt;</span>
+  <span class="tk-tag">&lt;granado-progress-bar</span> <span class="tk-attr">label</span>=<span class="tk-str">"Produzidas"</span> <span class="tk-attr">value</span>=<span class="tk-str">"1250000"</span> <span class="tk-attr">max</span>=<span class="tk-str">"2000000"</span>
+      <span class="tk-attr">valueformat</span>=<span class="tk-str">"value"</span> <span class="tk-attr">unit</span>=<span class="tk-str">"un"</span> <span class="tk-attr">valueposition</span>=<span class="tk-str">"right"</span>
+      <span class="tk-attr">abbreviate-above</span>=<span class="tk-str">"1000"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span><span class="tk-tag">&gt;&lt;/granado-progress-bar&gt;</span>
+<span class="tk-tag">&lt;/div&gt;</span></pre>
+        </div>
+
         <!-- ===== Cores ===== -->
         <h2 class="gd-h2">Cor do preenchimento</h2>
         <p class="gd-lead">
@@ -7715,6 +7752,30 @@ pb.setAttribute(<span class="tk-str">'max'</span>, <span class="tk-str">'50000'<
               <td class="col-desc">
                 Sufixo do valor (apenas em <code>"value"</code> e <code>"fraction"</code>).
                 Ex.: <code>"kg"</code>, <code>"un"</code>, <code>"min"</code>.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">valuewidth</td>
+              <td class="col-type">string (CSS length)</td>
+              <td class="col-default">auto</td>
+              <td class="col-desc">
+                Largura <strong>fixa</strong> do valor quando ele fica <strong>ao lado</strong> da
+                barra (<code>valueposition="left"</code>/<code>"right"</code>) — evita que a barra
+                mude de tamanho conforme o texto (<code>"0%"</code> vs <code>"100%"</code>). Se
+                omitido, é calculada automaticamente pelo maior texto possível. Ex.:
+                <code>"56px"</code>, <code>"4ch"</code>.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">abbreviate-above</td>
+              <td class="col-type">number</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">
+                Nos formatos <code>"value"</code>/<code>"fraction"</code>, quando o valor for
+                <strong>&ge;</strong> a este limite ele é <strong>abreviado</strong>
+                (<code>1.2k</code>, <code>3.4M</code>, <code>2B</code>) e o valor completo aparece
+                num <strong>tooltip</strong> (<code>title</code>). Ex.:
+                <code>abbreviate-above="1000"</code> → <code>44983</code> vira <code>"45k"</code>.
               </td>
             </tr>
             <tr>
