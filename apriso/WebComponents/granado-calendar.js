@@ -86,6 +86,11 @@ if (!customElements.get('granado-calendar')) {
     // ------------------------------------------------------------
 
     render() {
+      // Custom element e display:inline por padrao — usa inline-block para aceitar
+      // width/height/margin no host (alinhado ao granado-dropdown). O usuario pode
+      // sobrepor passando style="display:block" no elemento.
+      this.style.display = this.style.display || 'inline-block';
+
       const lang = (this.getAttribute('lang') || 'pt-br').toLowerCase();
       const mode = this.getAttribute('mode') === 'datetime' ? 'datetime' : 'date';
       const color = this.getAttribute('color') || '#1C5C31';
