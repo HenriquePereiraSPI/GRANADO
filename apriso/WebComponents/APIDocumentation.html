@@ -390,6 +390,7 @@
           <a class="gd-link" href="#GRD_API_GetWipOrder">GRD_API_GetWipOrder</a>
           <a class="gd-link" href="#GRD_API_GetCage">GRD_API_GetCage</a>
           <a class="gd-link" href="#GRD_API_GetWipOrderSimplified">GRD_API_GetWipOrderSimplified</a>
+          <a class="gd-link" href="#GRD_API_GetAllWeighLineDetail">GRD_API_GetAllWeighLineDetail</a>
         </div>
       </div>
 
@@ -3448,6 +3449,143 @@
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong>Somente header:</strong> versão enxuta de <a class="gd-link" href="#GRD_API_GetWipOrder">GRD_API_GetWipOrder</a> — não traz componentes nem o bloco de pesagem.</li>
           <li><strong>Progresso:</strong> use <code>TotalItemsFormatted</code> para exibir direto (ex.: <code>"7/7"</code>) ou <code>OkItems</code>/<code>TotalItems</code> para cálculos.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetAllWeighLineDetail
+           ============================================================ -->
+      <section id="GRD_API_GetAllWeighLineDetail">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetAllWeighLineDetail</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera todas as informações de pesagem</strong> (detalhes de linha) de um período,
+          com filtros opcionais por ordem, produto e recurso do centro de trabalho. Devolve a lista
+          <code>WeighLineDetail</code> — uma entrada por pesagem/etiqueta (mesma estrutura do bloco
+          <code>WeighLineDetail</code> de <a class="gd-link" href="#GRD_API_GetWipOrder">GRD_API_GetWipOrder</a>).
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetAllWeighLineDetail</span>
+        </div>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"21321"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"5151"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"0000008510"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-01-01"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"EndDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-12-25"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:210px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">WipOrderNo</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">Número da ordem (WIP Order) a filtrar. Use <code>"-1"</code> para <strong>todas</strong> as ordens.</td></tr>
+            <tr><td class="col-name">ProductNo</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">Número/código do produto (MP) a filtrar. Use <code>"-1"</code> para <strong>todos</strong>.</td></tr>
+            <tr><td class="col-name">WorkcenterResourceName</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">ResourceName do centro de trabalho a filtrar. Use <code>"-1"</code> para <strong>todos</strong>.</td></tr>
+            <tr><td class="col-name">StartDate</td><td class="col-type">string (data)</td><td class="col-req">Sim</td><td class="col-desc">Início do período, no formato <code>"AAAA-MM-DD"</code> (ex.: <code>"2026-01-01"</code>).</td></tr>
+            <tr><td class="col-name">EndDate</td><td class="col-type">string (data)</td><td class="col-req">Sim</td><td class="col-desc">Fim do período, no formato <code>"AAAA-MM-DD"</code> (ex.: <code>"2026-12-25"</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">".."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WeighLineDetail"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"606814"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"107380"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100322"</span><span class="tk-punc">,</span> <span class="tk-key">"Sequence"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"100018881"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"2445492"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductSKU"</span><span class="tk-punc">:</span> <span class="tk-str">"M9938"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"ESS.BOIS EXTREM IFRA 49 223106"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"18.480"</span><span class="tk-punc">,</span> <span class="tk-key">"UOM"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"Started"</span><span class="tk-punc">,</span> <span class="tk-key">"OperationNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1.00"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1115125"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"DestinationCage"</span><span class="tk-punc">:</span> <span class="tk-str">"G000197"</span><span class="tk-punc">,</span> <span class="tk-key">"ResourceNameScale"</span><span class="tk-punc">:</span> <span class="tk-str">"100000007"</span><span class="tk-punc">,</span> <span class="tk-key">"Scale"</span><span class="tk-punc">:</span> <span class="tk-str">"S1_TOLEDO 2095/1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TareWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"0.015"</span><span class="tk-punc">,</span> <span class="tk-key">"GrossWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"10.000"</span><span class="tk-punc">,</span> <span class="tk-key">"NetWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"9.985"</span><span class="tk-punc">,</span> <span class="tk-key">"IsManualWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span><span class="tk-punc">,</span> <span class="tk-key">"WeightDurationInSeconds"</span><span class="tk-punc">:</span> <span class="tk-str">"134"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"LabelNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0000207"</span><span class="tk-punc">,</span> <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD2_SALA1"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000007"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"LabelNoOrigin"</span><span class="tk-punc">:</span> <span class="tk-str">"7363268"</span><span class="tk-punc">,</span> <span class="tk-key">"LabelNoOriginQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"6.350"</span><span class="tk-punc">,</span> <span class="tk-key">"Shift"</span><span class="tk-punc">:</span> <span class="tk-str">"MANHA"</span><span class="tk-punc">,</span> <span class="tk-key">"WeightActive"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/30/2026 2:18:34 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Kaic Lima"</span><span class="tk-punc">,</span> <span class="tk-key">"IntegratedDate"</span><span class="tk-punc">:</span> <span class="tk-str">"7/30/2026 11:18:36 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"StockReturnIntegratedDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/1900 12:00:00 AM"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"606814"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"107380"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100323"</span><span class="tk-punc">,</span> <span class="tk-key">"Sequence"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"100018881"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"2445492"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductSKU"</span><span class="tk-punc">:</span> <span class="tk-str">"M9938"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"ESS.BOIS EXTREM IFRA 49 223106"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"18.480"</span><span class="tk-punc">,</span> <span class="tk-key">"UOM"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span> <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"Started"</span><span class="tk-punc">,</span> <span class="tk-key">"OperationNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1.00"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1115125"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"DestinationCage"</span><span class="tk-punc">:</span> <span class="tk-str">"G000197"</span><span class="tk-punc">,</span> <span class="tk-key">"ResourceNameScale"</span><span class="tk-punc">:</span> <span class="tk-str">"100000004"</span><span class="tk-punc">,</span> <span class="tk-key">"Scale"</span><span class="tk-punc">:</span> <span class="tk-str">"S1_TOLEDO TI 400"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TareWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"0.050"</span><span class="tk-punc">,</span> <span class="tk-key">"GrossWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"5.000"</span><span class="tk-punc">,</span> <span class="tk-key">"NetWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"4.950"</span><span class="tk-punc">,</span> <span class="tk-key">"IsManualWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span><span class="tk-punc">,</span> <span class="tk-key">"WeightDurationInSeconds"</span><span class="tk-punc">:</span> <span class="tk-str">"14"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"LabelNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0000208"</span><span class="tk-punc">,</span> <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA1"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000004"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"LabelNoOrigin"</span><span class="tk-punc">:</span> <span class="tk-str">"7363268"</span><span class="tk-punc">,</span> <span class="tk-key">"LabelNoOriginQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"6.350"</span><span class="tk-punc">,</span> <span class="tk-key">"Shift"</span><span class="tk-punc">:</span> <span class="tk-str">"MANHA"</span><span class="tk-punc">,</span> <span class="tk-key">"WeightActive"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/30/2026 3:13:49 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"winke"</span><span class="tk-punc">,</span> <span class="tk-key">"IntegratedDate"</span><span class="tk-punc">:</span> <span class="tk-str">"7/30/2026 12:13:49 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"StockReturnIntegratedDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/1900 12:00:00 AM"</span>
+    }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída (envelope)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as informações foram recuperadas com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">WeighLineDetail</td><td class="col-type">array&lt;object&gt;</td><td class="col-desc">Detalhes de pesagem (por etiqueta/gaiola/balança) que atendem ao filtro. Campos abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada <code>WeighLineDetail</code></h3>
+        <table class="gd-api">
+          <thead><tr><th style="width:230px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">WipOrderNo</td><td class="col-type">string</td><td class="col-desc">Número da ordem (WIP Order) do detalhe.</td></tr>
+            <tr><td class="col-name">WeighLineID</td><td class="col-type">string</td><td class="col-desc">Linha de pesagem à qual o detalhe pertence.</td></tr>
+            <tr><td class="col-name">WeighLineDetailID</td><td class="col-type">string</td><td class="col-desc">Identificador do detalhe da pesagem.</td></tr>
+            <tr><td class="col-name">Sequence</td><td class="col-type">string (número)</td><td class="col-desc">Sequência do detalhe.</td></tr>
+            <tr><td class="col-name">ProductID</td><td class="col-type">string</td><td class="col-desc">ID do produto/MP.</td></tr>
+            <tr><td class="col-name">ProductNo</td><td class="col-type">string</td><td class="col-desc">Número/código do produto/MP.</td></tr>
+            <tr><td class="col-name">ProductSKU</td><td class="col-type">string</td><td class="col-desc">SKU do produto/MP (ex.: <code>"M9938"</code>).</td></tr>
+            <tr><td class="col-name">ProductDescription</td><td class="col-type">string</td><td class="col-desc">Descrição do produto/MP (ex.: <code>"ESS.BOIS EXTREM IFRA 49 223106"</code>).</td></tr>
+            <tr><td class="col-name">Quantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade da pesagem.</td></tr>
+            <tr><td class="col-name">UOM</td><td class="col-type">string</td><td class="col-desc">Unidade de medida (ex.: <code>"KG"</code>).</td></tr>
+            <tr><td class="col-name">Status</td><td class="col-type">string</td><td class="col-desc">Status do detalhe (ex.: <code>"Started"</code>).</td></tr>
+            <tr><td class="col-name">OperationNo</td><td class="col-type">string (número)</td><td class="col-desc">Operação.</td></tr>
+            <tr><td class="col-name">LotNo</td><td class="col-type">string</td><td class="col-desc">Lote pesado.</td></tr>
+            <tr><td class="col-name">DestinationCage</td><td class="col-type">string</td><td class="col-desc">Gaiola de destino da pesagem (ex.: <code>"G000197"</code>).</td></tr>
+            <tr><td class="col-name">ResourceNameScale</td><td class="col-type">string</td><td class="col-desc">ResourceName da balança usada.</td></tr>
+            <tr><td class="col-name">Scale</td><td class="col-type">string</td><td class="col-desc">Nome/descrição da balança (ex.: <code>"S1_TOLEDO 2095/1"</code>).</td></tr>
+            <tr><td class="col-name">TareWeight</td><td class="col-type">string (número)</td><td class="col-desc">Peso de tara.</td></tr>
+            <tr><td class="col-name">GrossWeight</td><td class="col-type">string (número)</td><td class="col-desc">Peso bruto.</td></tr>
+            <tr><td class="col-name">NetWeight</td><td class="col-type">string (número)</td><td class="col-desc">Peso líquido (bruto − tara).</td></tr>
+            <tr><td class="col-name">IsManualWeight</td><td class="col-type">string (bool)</td><td class="col-desc">Indica se o peso foi informado manualmente (<code>"True"</code> / <code>"False"</code>).</td></tr>
+            <tr><td class="col-name">WeightDurationInSeconds</td><td class="col-type">string (número)</td><td class="col-desc">Duração da pesagem em segundos.</td></tr>
+            <tr><td class="col-name">LabelNo</td><td class="col-type">string</td><td class="col-desc">Número da etiqueta gerada para a pesagem.</td></tr>
+            <tr><td class="col-name">Workcenter</td><td class="col-type">string</td><td class="col-desc">Centro de trabalho/sala (ex.: <code>"MD2_SALA1"</code>).</td></tr>
+            <tr><td class="col-name">WorkcenterResourceName</td><td class="col-type">string</td><td class="col-desc">ResourceName do workcenter.</td></tr>
+            <tr><td class="col-name">LabelNoOrigin</td><td class="col-type">string</td><td class="col-desc">Etiqueta de origem (lote/estoque consumido).</td></tr>
+            <tr><td class="col-name">LabelNoOriginQuantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade da etiqueta de origem.</td></tr>
+            <tr><td class="col-name">Shift</td><td class="col-type">string</td><td class="col-desc">Turno da pesagem (ex.: <code>"MANHA"</code>).</td></tr>
+            <tr><td class="col-name">WeightActive</td><td class="col-type">string (bool)</td><td class="col-desc">Indica se a pesagem está ativa (<code>"True"</code> / <code>"False"</code>).</td></tr>
+            <tr><td class="col-name">CreatedOn</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data/hora de criação do registro.</td></tr>
+            <tr><td class="col-name">CreatedBy</td><td class="col-type">string</td><td class="col-desc">Usuário que realizou a pesagem.</td></tr>
+            <tr><td class="col-name">IntegratedDate</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data/hora de integração do registro.</td></tr>
+            <tr><td class="col-name">StockReturnIntegratedDate</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data/hora de integração da devolução ao estoque. <code>"1/1/1900 …"</code> = sem devolução.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Filtros <code>-1</code>:</strong> <code>WipOrderNo</code>, <code>ProductNo</code> e <code>WorkcenterResourceName</code> aceitam <code>"-1"</code> para não filtrar; <code>StartDate</code>/<code>EndDate</code> delimitam o período.</li>
+          <li><strong>Relação com <a class="gd-link" href="#GRD_API_GetWipOrder">GRD_API_GetWipOrder</a>:</strong> aquela traz o <code>WeighLineDetail</code> de <strong>uma</strong> ordem; esta busca <strong>todas</strong> as pesagens do período/filtro.</li>
+          <li><strong>Datas "1/1/1900":</strong> valor sentinela para "não preenchido" (ex.: sem devolução ao estoque em <code>StockReturnIntegratedDate</code>).</li>
         </ul>
       </section>
 

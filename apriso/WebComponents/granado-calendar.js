@@ -103,8 +103,12 @@ if (!customElements.get('granado-calendar')) {
       const btnBg = this._open ? '#F5EFD9' : '#FDFAF1';
       const label = this.getAttribute('label') || '';
 
+      // O wrapper acompanha o display do host: block -> preenche a largura;
+      // inline-block (default) -> encolhe ao conteudo.
+      const wrapDisplay = this.style.display === 'block' ? 'block' : 'inline-block';
+
       this.innerHTML = `
-        <div style="position:relative;display:inline-block;font-family:'Poppins','DejaVu Sans',Arial,sans-serif">
+        <div style="position:relative;display:${wrapDisplay};font-family:'Poppins','DejaVu Sans',Arial,sans-serif">
           ${label ? `<label data-cal-label style="display:block;font-size:11px;font-weight:600;color:#103E20;margin-bottom:6px;font-family:inherit"></label>` : ''}
           <button data-cal-toggle type="button" style="
             display:inline-flex;
