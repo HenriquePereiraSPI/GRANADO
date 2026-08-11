@@ -4928,7 +4928,7 @@ export const SCREENS = {
         </div>
 
         <!-- Mobile: MPs com saldo como galeria de cards (toque = reentiquetear/detalhes) -->
-        <style>#devol-gallery{display:none}@media (max-width:768px){#devol-tabela-wrap{display:none!important}#devol-gallery{display:block!important}#devol-info-box,#devol-kpis,#devol-fluxo{display:none!important}}</style>
+        <style>#devol-gallery{display:none}@media (max-width:768px){#devol-tabela-wrap{display:none!important}#devol-gallery{display:block!important}#devol-info-box,#devol-kpis{display:none!important}}</style>
         <granado-gallery id="devol-gallery" enable-scroll="true" scroll-height="60vh"></granado-gallery>
         <script>
         (function () {
@@ -4973,36 +4973,6 @@ export const SCREENS = {
           }
         })();
         </script>
-      </div>
-
-      <!-- Fluxo de Reentiquetagem -->
-      <div class="card mb14" id="devol-fluxo">
-        <div class="card-title">Fluxo de Reentiquetagem</div>
-        <div style="display:flex;align-items:flex-start;gap:0;padding:8px 0">
-          <div style="text-align:center;flex:1">
-            <div style="width:48px;height:48px;border-radius:50%;background:var(--ok-p);border:2px solid var(--ok);display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 8px">1️⃣</div>
-            <div style="font-size:11px;font-weight:700;color:var(--text)">Cancelar Etiqueta Original</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:3px">Escanear e marcar como "Parcialmente usado"</div>
-          </div>
-          <div style="font-size:24px;color:var(--border2);align-self:center;padding:0 8px">›</div>
-          <div style="text-align:center;flex:1">
-            <div style="width:48px;height:48px;border-radius:50%;background:var(--ouro-dim);border:2px solid var(--ouro-claro);display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 8px">2️⃣</div>
-            <div style="font-size:11px;font-weight:700;color:var(--text)">Pesar Saldo Restante</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:3px">Confirmar quantidade real na balança</div>
-          </div>
-          <div style="font-size:24px;color:var(--border2);align-self:center;padding:0 8px">›</div>
-          <div style="text-align:center;flex:1">
-            <div style="width:48px;height:48px;border-radius:50%;background:var(--inf-p);border:2px solid var(--inf-b);display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 8px">3️⃣</div>
-            <div style="font-size:11px;font-weight:700;color:var(--text)">Gerar Nova Etiqueta</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:3px">Nova ETQ com saldo + ref. à etiqueta mãe</div>
-          </div>
-          <div style="font-size:24px;color:var(--border2);align-self:center;padding:0 8px">›</div>
-          <div style="text-align:center;flex:1">
-            <div style="width:48px;height:48px;border-radius:50%;background:var(--verde-pale);border:2px solid var(--verde);display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 8px">4️⃣</div>
-            <div style="font-size:11px;font-weight:700;color:var(--text)">Devolver ao Almoxarifado</div>
-            <div style="font-size:10px;color:var(--text3);margin-top:3px">Movimento de retorno registrado no JDE</div>
-          </div>
-        </div>
       </div>
     `,
   "pes-gaiola": `      <div class="page-header">

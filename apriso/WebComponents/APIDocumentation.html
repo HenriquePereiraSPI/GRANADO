@@ -1958,14 +1958,17 @@
         </div>
         <p class="gd-lead">
           Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
-          (<code>Success</code> / <code>Message</code>) acrescido de <code>ReturnStockLabelInfo</code>.
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>StockReturnLabels</code>.
         </p>
 
         <!-- ===== Inputs ===== -->
         <h2 class="gd-h2">Inputs</h2>
         <p class="gd-lead">Corpo da requisição (JSON):</p>
         <pre class="gd-code">{
-  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"548484"</span>
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1231321"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"123132132"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"LabelNoOrigin"</span><span class="tk-punc">:</span> <span class="tk-str">"1515151"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"PENDING"</span>
 }</pre>
 
         <h3 class="gd-h3">Campos de entrada</h3>
@@ -1979,33 +1982,31 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td class="col-name">WipOrderNo</td>
-              <td class="col-type">string</td>
-              <td class="col-req">Sim</td>
-              <td class="col-desc">Número da ordem (WIP) cuja devolução/reetiquetagem será consultada.</td>
-            </tr>
+            <tr><td class="col-name">WipOrderNo</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">Número da ordem (WIP) a filtrar. Use <code>"-1"</code> para <strong>todas</strong> as ordens.</td></tr>
+            <tr><td class="col-name">ProductNo</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">Código do material (produto) a filtrar. Use <code>"-1"</code> para <strong>todos</strong>.</td></tr>
+            <tr><td class="col-name">LabelNoOrigin</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">Etiqueta de origem a filtrar. Use <code>"-1"</code> para <strong>todas</strong>.</td></tr>
+            <tr><td class="col-name">Status</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">Status da devolução a filtrar: <code>"OK"</code>, <code>"PENDING"</code> ou <code>"-1"</code> para <strong>todos</strong>.</td></tr>
           </tbody>
         </table>
 
         <!-- ===== Outputs ===== -->
         <h2 class="gd-h2">Outputs</h2>
-        <p class="gd-lead">Envelope de resposta (JSON) — <code>ReturnStockLabelInfo</code> é a lista de etiquetas com saldo a devolver:</p>
+        <p class="gd-lead">Envelope de resposta (JSON) — <code>StockReturnLabels</code> é a lista de etiquetas com saldo a devolver:</p>
         <pre class="gd-code">{
   <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
-  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Informações recuperadas com sucesso."</span><span class="tk-punc">,</span>
-  <span class="tk-key">"ReturnStockLabelInfo"</span><span class="tk-punc">:</span> [
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"..."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"StockReturnLabels"</span><span class="tk-punc">:</span> [
     {
-      <span class="tk-key">"P_WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"783662"</span><span class="tk-punc">,</span> <span class="tk-key">"P_WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"105777"</span><span class="tk-punc">,</span> <span class="tk-key">"P_OriginalLabel"</span><span class="tk-punc">:</span> <span class="tk-str">"6381739"</span><span class="tk-punc">,</span> <span class="tk-key">"P_LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0641519"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"P_ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"100015229"</span><span class="tk-punc">,</span> <span class="tk-key">"P_ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1331872"</span><span class="tk-punc">,</span> <span class="tk-key">"P_SKUCode"</span><span class="tk-punc">:</span> <span class="tk-str">"M9796"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"P_TargetQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0.5760000000"</span><span class="tk-punc">,</span> <span class="tk-key">"P_WeighQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0.5760000000"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"P_OriginalLabelQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"38.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"P_DiffToReturn"</span><span class="tk-punc">:</span> <span class="tk-str">"37.4240000000"</span>
+      <span class="tk-key">"LabelNoOrigin"</span><span class="tk-punc">:</span> <span class="tk-str">"6618486"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000294"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"708316"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductSKU"</span><span class="tk-punc">:</span> <span class="tk-str">"M276"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ProductDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"ACIDO SALICILICO"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0177125"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"OriginalLabelQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"25.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"3.8800000000"</span><span class="tk-punc">,</span> <span class="tk-key">"DiffQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"21.1200000000"</span><span class="tk-punc">,</span> <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"PENDING"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"StockReturnIntegratedDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/1900 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"StockReturnUser"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"8/6/2026 8:51:13 PM"</span>
     }<span class="tk-punc">,</span>
     {
-      <span class="tk-key">"P_WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"783662"</span><span class="tk-punc">,</span> <span class="tk-key">"P_WeighLineID"</span><span class="tk-punc">:</span> <span class="tk-str">"105778"</span><span class="tk-punc">,</span> <span class="tk-key">"P_OriginalLabel"</span><span class="tk-punc">:</span> <span class="tk-str">"7410055"</span><span class="tk-punc">,</span> <span class="tk-key">"P_LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1033625"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"P_ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000320"</span><span class="tk-punc">,</span> <span class="tk-key">"P_ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"708594"</span><span class="tk-punc">,</span> <span class="tk-key">"P_SKUCode"</span><span class="tk-punc">:</span> <span class="tk-str">"M9260"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"P_TargetQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"200.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"P_WeighQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"10.0000000000"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"P_OriginalLabelQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0.5000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"P_DiffToReturn"</span><span class="tk-punc">:</span> <span class="tk-str">"-9.5000000000"</span>
+      <span class="tk-key">"LabelNoOrigin"</span><span class="tk-punc">:</span> <span class="tk-str">"6748393"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000599"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"711970"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductSKU"</span><span class="tk-punc">:</span> <span class="tk-str">"M26797"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ProductDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"DEHYQUART  A"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1442324"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"OriginalLabelQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0.2500000000"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"199.9870000000"</span><span class="tk-punc">,</span> <span class="tk-key">"DiffQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"-199.7370000000"</span><span class="tk-punc">,</span> <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"PENDING"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"StockReturnIntegratedDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/1900 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"StockReturnUser"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/29/2026 2:23:32 PM"</span>
     }
   ]
 }</pre>
@@ -2013,43 +2014,44 @@
         <h3 class="gd-h3">Campos de saída</h3>
         <table class="gd-api">
           <thead>
-            <tr><th style="width:170px">Campo</th><th style="width:160px">Tipo</th><th>Descrição</th></tr>
+            <tr><th style="width:200px">Campo</th><th style="width:160px">Tipo</th><th>Descrição</th></tr>
           </thead>
           <tbody>
             <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as informações foram recuperadas com sucesso.</td></tr>
             <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
-            <tr><td class="col-name">ReturnStockLabelInfo</td><td class="col-type">array&lt;etiqueta&gt;</td><td class="col-desc">Etiquetas com saldo a devolver. Campos de cada item abaixo.</td></tr>
+            <tr><td class="col-name">StockReturnLabels</td><td class="col-type">array&lt;etiqueta&gt;</td><td class="col-desc">Etiquetas com saldo a devolver. Campos de cada item abaixo.</td></tr>
           </tbody>
         </table>
 
-        <h3 class="gd-h3">Campos de cada etiqueta</h3>
+        <h3 class="gd-h3">Campos de cada <code>StockReturnLabels</code></h3>
         <table class="gd-api">
           <thead>
-            <tr><th style="width:210px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+            <tr><th style="width:230px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
           </thead>
           <tbody>
-            <tr><td class="col-name">P_WipOrderNo</td><td class="col-type">string</td><td class="col-desc">Número da ordem (WIP) da pesagem.</td></tr>
-            <tr><td class="col-name">P_WeighLineID</td><td class="col-type">string</td><td class="col-desc">Identificador da linha de pesagem.</td></tr>
-            <tr><td class="col-name">P_OriginalLabel</td><td class="col-type">string</td><td class="col-desc">Etiqueta original (lote) consumida na pesagem.</td></tr>
-            <tr><td class="col-name">P_LotNo</td><td class="col-type">string</td><td class="col-desc">Número do lote.</td></tr>
-            <tr><td class="col-name">P_ProductID</td><td class="col-type">string</td><td class="col-desc">Identificador interno do material.</td></tr>
-            <tr><td class="col-name">P_ProductNo</td><td class="col-type">string</td><td class="col-desc">Código do material (produto).</td></tr>
-            <tr><td class="col-name">P_SKUCode</td><td class="col-type">string</td><td class="col-desc">Código SKU do material.</td></tr>
-            <tr><td class="col-name">P_TargetQuantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade alvo (target) da pesagem.</td></tr>
-            <tr><td class="col-name">P_WeighQuantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade efetivamente pesada.</td></tr>
-            <tr><td class="col-name">P_OriginalLabelQuantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade da etiqueta original (saldo total consumido).</td></tr>
-            <tr><td class="col-name">P_DiffToReturn</td><td class="col-type">string (número)</td><td class="col-desc">Diferença a devolver ao estoque (saldo). Pode ser <strong>negativa</strong> quando houve consumo maior que o esperado.</td></tr>
+            <tr><td class="col-name">LabelNoOrigin</td><td class="col-type">string</td><td class="col-desc">Etiqueta de origem (lote) consumida na pesagem.</td></tr>
+            <tr><td class="col-name">ProductID</td><td class="col-type">string</td><td class="col-desc">Identificador interno do material.</td></tr>
+            <tr><td class="col-name">ProductNo</td><td class="col-type">string</td><td class="col-desc">Código do material (produto).</td></tr>
+            <tr><td class="col-name">ProductSKU</td><td class="col-type">string</td><td class="col-desc">Código SKU do material (ex.: <code>"M276"</code>).</td></tr>
+            <tr><td class="col-name">ProductDescription</td><td class="col-type">string</td><td class="col-desc">Descrição do material (ex.: <code>"ACIDO SALICILICO"</code>).</td></tr>
+            <tr><td class="col-name">LotNo</td><td class="col-type">string</td><td class="col-desc">Número do lote.</td></tr>
+            <tr><td class="col-name">OriginalLabelQuantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade da etiqueta de origem (saldo total).</td></tr>
+            <tr><td class="col-name">WeighedQuantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade efetivamente pesada.</td></tr>
+            <tr><td class="col-name">DiffQuantity</td><td class="col-type">string (número)</td><td class="col-desc">Diferença a devolver ao estoque (saldo). Pode ser <strong>negativa</strong> quando se pesou mais que o saldo da etiqueta.</td></tr>
+            <tr><td class="col-name">Status</td><td class="col-type">string</td><td class="col-desc">Status da devolução (ex.: <code>"OK"</code>, <code>"PENDING"</code>).</td></tr>
+            <tr><td class="col-name">StockReturnIntegratedDate</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data/hora de integração da devolução ao estoque. <code>"1/1/1900 …"</code> = ainda não devolvida.</td></tr>
+            <tr><td class="col-name">StockReturnUser</td><td class="col-type">string</td><td class="col-desc">Usuário que realizou a devolução (vazio quando pendente).</td></tr>
+            <tr><td class="col-name">CreatedOn</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data/hora de criação do registro.</td></tr>
           </tbody>
         </table>
 
         <h3 class="gd-h3">Notas</h3>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
-          <li><strong>Reetiquetagem:</strong> use <code>P_DiffToReturn</code> como a quantidade a
-            reetiquetar/devolver ao estoque para aquela <code>P_OriginalLabel</code>.</li>
-          <li><strong>Diferença negativa:</strong> <code>P_DiffToReturn &lt; 0</code> indica que se pesou
-            mais do que o saldo da etiqueta original — trate como exceção ao devolver.</li>
-          <li><strong>Quantidades como string:</strong> os valores vêm com casas decimais fixas
-            (string); converta para número antes de calcular.</li>
+          <li><strong>Reetiquetagem:</strong> use <code>DiffQuantity</code> como a quantidade a devolver ao estoque para aquela <code>LabelNoOrigin</code>.</li>
+          <li><strong>Diferença negativa:</strong> <code>DiffQuantity &lt; 0</code> indica que se pesou mais do que o saldo da etiqueta de origem — trate como exceção ao devolver.</li>
+          <li><strong>Pendente × devolvida:</strong> <code>Status = "PENDING"</code> (com <code>StockReturnIntegratedDate</code> em <code>"1/1/1900 …"</code> e <code>StockReturnUser</code> vazio) = ainda não devolvida ao estoque.</li>
+          <li><strong>Filtros <code>-1</code>:</strong> <code>WipOrderNo</code>, <code>ProductNo</code>, <code>LabelNoOrigin</code> e <code>Status</code> aceitam <code>"-1"</code> para não filtrar.</li>
+          <li><strong>Quantidades como string:</strong> os valores vêm com casas decimais fixas (string); converta para número antes de calcular.</li>
         </ul>
       </section>
 
