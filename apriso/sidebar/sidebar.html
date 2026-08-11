@@ -55,12 +55,21 @@
             </div>
             <div class="sb-sub-list">
                 <button type="button" class="sb-sub-item" data-flx-bind="Action" value="ACTION_ORDERSELECTION">Selecao
-                    de
-                    Ordem</button>
+                    de Ordem</button>
                 <button type="button" class="sb-sub-item" data-flx-bind="Action"
                     value="ACTION_CHECKLIST">Checklist</button>
-                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="TESTE_COCKPIT"> TESTE Cockpit de
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="ACTION_OEE_WEIGHING">OEE
                     Pesagem</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action"
+                    value="ACTION_PERFORMANCE_ORDER">Performance (Ordem)</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action"
+                    value="ACTION_PERFORMANCE_MATERIAL">Performance (MP)</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action"
+                    value="ACTION_PERFORMANCE_OPERATOR">Performance (Operador)</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action"
+                    value="ACTION_PERFORMANCE_MANAGEMENT">Performance (Gestao)</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action"
+                    value="ACTION_PES_TRACEABILITY">Rastreabilidade</button>
             </div>
         </div>
 
@@ -99,6 +108,8 @@
             </div>
             <div class="sb-sub-list">
                 <button type="button" class="sb-sub-item" data-flx-bind="Action" value="rel-oee">OEE Dashboard</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action"
+                    value="ACTION_REP_DOWNTIMEANDAVAILABILITY">Paradas e Disponibilidade</button>
             </div>
         </div>
 
@@ -143,11 +154,11 @@
                 window.AprisoContext = $Context;
             }
 
-            // Decisão mobile/web feita UMA vez no load (classe no <html>).
-            if (window.innerWidth <= 768) {
-                document.documentElement.classList.add('is-granado-mobile');
-            }
+            //if (window.innerWidth <= 768) {
+            //    document.documentElement.classList.add('is-granado-mobile');
+            //}
 
+            initResponsiveLayoutDash();
             initSidebarEvents();
 
         }

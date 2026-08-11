@@ -131,6 +131,22 @@ function initSidebarEvents() {
 
 }
 
-function testContext() {
-    console.log("CLICKED ON TEST CONTEXT", window.AprisoContext);
+function initResponsiveLayoutDash() {
+
+    var MOBILE_QUERY = "(max-width: 768px)";
+    var mq = window.matchMedia(MOBILE_QUERY);
+
+    updateResponsiveLayoutDash(mq.matches);
+
+    // dispara só ao cruzar o breakpoint
+    mq.addEventListener("change", function (e) {
+
+        updateResponsiveLayoutDash(e.matches);
+    });
+}
+
+function updateResponsiveLayoutDash(isMobile) {
+
+    document.documentElement.classList.toggle("is-granado-mobile", isMobile);
+
 }

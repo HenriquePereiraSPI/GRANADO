@@ -109,10 +109,11 @@ body { font-family:var(--font-b); background:var(--bg); color:var(--text); displ
   .topbar { padding: 0 12px; gap: 8px; }
   .topbar-right .tb-pill,
   .topbar-right .tb-btn-andon,
-  .topbar-right .tb-icon,
+  .topbar-right .tb-icon-wrap,
   .topbar-right .tb-btn { display: none; }
   /* No mobile mostra só o usuário (avatar), à direita do badge Granado */
-  .topbar-right .tb-user { padding: 0; border: none; background: transparent; order: 1; }
+  .topbar-right .tb-user-wrap { order: 1; }
+  .topbar-right .tb-user { padding: 0; border: none; background: transparent; }
   .topbar-right .tb-user-name { display: none; }
   .tb-logo-mobile {
     display: inline-flex;
@@ -318,11 +319,11 @@ body { font-family:var(--font-b); background:var(--bg); color:var(--text); displ
 
 /* Ícones do topo (usuário / notificação) */
 .tb-icon {
-  position:relative;
+  position:relative; box-sizing:border-box; margin:0; appearance:none; -webkit-appearance:none;
   display:inline-flex; align-items:center; justify-content:center;
   width:36px; height:36px; padding:0;
   border:1px solid var(--border); border-radius:50%;
-  background:var(--surface2); color:var(--text2);
+  background:var(--surface2); color:var(--text2); font-family:inherit; line-height:0;
   cursor:pointer; transition:background .15s, color .15s, border-color .15s;
 }
 .tb-icon:hover { background:var(--surface); color:var(--verde); border-color:var(--verde-meio); }
@@ -334,10 +335,11 @@ body { font-family:var(--font-b); background:var(--bg); color:var(--text); displ
 
 /* Usuário: avatar circular + nome abreviado ao lado */
 .tb-user {
+  box-sizing:border-box; margin:0; appearance:none; -webkit-appearance:none;
   display:inline-flex; align-items:center; gap:8px;
-  padding:3px 12px 3px 3px;
+  height:36px; padding:0 12px 0 3px;
   border:1px solid var(--border); border-radius:20px;
-  background:var(--surface2); cursor:pointer;
+  background:var(--surface2); font-family:inherit; line-height:1; cursor:pointer;
   transition:background .15s, border-color .15s;
 }
 .tb-user:hover { background:var(--surface); border-color:var(--verde-meio); }
@@ -347,9 +349,146 @@ body { font-family:var(--font-b); background:var(--bg); color:var(--text); displ
   background:var(--verde); color:#FDFAF1; flex-shrink:0;
 }
 .tb-user-name {
-  font-family:var(--font-b); font-size:12px; font-weight:700;
+  font-family:var(--font-b); font-size:12px; font-weight:700; line-height:1;
   color:var(--text2); white-space:nowrap;
 }
+
+/* Popup do usuário (Sair) */
+.tb-user-wrap { position:relative; display:inline-flex; }
+.tb-user-menu {
+  position:absolute; top:calc(100% + 6px); right:0; z-index:200;
+  min-width:150px; padding:5px;
+  background:var(--surface); border:1px solid var(--border); border-radius:8px;
+  box-shadow:0 8px 24px rgba(15,51,25,.16);
+}
+.tb-user-menu-item {
+  box-sizing:border-box; display:flex; align-items:center; gap:8px; width:100%;
+  padding:8px 10px; margin:0; border:none; border-radius:6px; background:transparent;
+  font-family:var(--font-b); font-size:13px; font-weight:600; color:var(--text);
+  text-align:left; cursor:pointer; transition:background .12s, color .12s;
+}
+.tb-user-menu-item:hover { background:var(--per-p); color:var(--per); }
+
+/* === Popup de notificações (estilo Outlook: lista + detalhe) — modal centralizado === */
+.tb-icon-wrap { position:relative; display:inline-flex; }
+/* Overlay genérico dos modais do topo (notificações / usuário) */
+.tb-modal-overlay {
+  position:fixed; inset:0; z-index:300;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px; box-sizing:border-box;
+  background:rgba(15,51,25,.35);
+}
+.tb-notif-menu {
+  width:720px; max-width:100%; height:480px; max-height:100%;
+  display:flex; flex-direction:column; overflow:hidden;
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  box-shadow:0 24px 60px rgba(0,0,0,.35);
+}
+.tb-notif-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:11px 16px; border-bottom:1px solid var(--border);
+  font-family:var(--font-b); font-size:13px; font-weight:800; color:var(--verde-esc);
+}
+.tb-notif-head-title { display:flex; align-items:baseline; gap:8px; }
+.tb-notif-count { font-size:11px; font-weight:700; color:var(--verde); }
+.tb-notif-close {
+  border:none; background:transparent; color:var(--text3);
+  font-size:15px; line-height:1; padding:3px 7px; border-radius:6px; cursor:pointer;
+  transition:background .12s, color .12s;
+}
+.tb-notif-close:hover { background:var(--surface2); color:var(--per); }
+.tb-notif-body { flex:1; display:flex; min-height:0; }
+
+/* Coluna esquerda — lista */
+.tb-notif-list {
+  width:250px; flex-shrink:0; border-right:1px solid var(--border);
+  overflow-y:auto; background:var(--surface2);
+}
+.tb-notif-item {
+  box-sizing:border-box; display:flex; align-items:flex-start; gap:8px; width:100%;
+  padding:10px 12px; margin:0; border:none; border-bottom:1px solid var(--border);
+  background:transparent; text-align:left; cursor:pointer; transition:background .12s;
+}
+.tb-notif-item:hover { background:var(--surface); }
+.tb-notif-item.active { background:var(--surface); box-shadow:inset 3px 0 0 var(--verde); }
+.tb-notif-dot {
+  width:8px; height:8px; margin-top:5px; border-radius:50%; flex-shrink:0;
+  background:var(--per); visibility:hidden;
+}
+.tb-notif-item.unread .tb-notif-dot { visibility:visible; }
+.tb-notif-item-main { min-width:0; flex:1; display:flex; flex-direction:column; gap:2px; }
+.tb-notif-item-row { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+.tb-notif-from {
+  font-family:var(--font-b); font-size:11px; color:var(--text2);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.tb-notif-time { font-size:10px; color:var(--text3); white-space:nowrap; flex-shrink:0; }
+.tb-notif-subject {
+  font-family:var(--font-b); font-size:12.5px; font-weight:600; color:var(--text);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.tb-notif-item.unread .tb-notif-subject { font-weight:800; }
+.tb-notif-preview {
+  font-size:11px; color:var(--text3);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+/* Coluna direita — detalhe */
+.tb-notif-detail { flex:1; min-width:0; padding:16px 18px; overflow-y:auto; }
+.tb-notif-detail-subject {
+  font-family:var(--font-b); font-size:15px; font-weight:800; color:var(--verde-esc);
+  margin-bottom:6px;
+}
+.tb-notif-detail-meta {
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  font-size:11px; color:var(--text3); padding-bottom:10px; margin-bottom:12px;
+  border-bottom:1px solid var(--border);
+}
+.tb-notif-detail-from { font-weight:700; color:var(--text2); }
+.tb-notif-detail-body { font-size:13px; line-height:1.6; color:var(--text); }
+.tb-notif-empty {
+  height:100%; display:flex; align-items:center; justify-content:center;
+  font-size:12px; color:var(--text3); text-align:center;
+}
+
+/* === Modal do usuário (informações + logout) === */
+.tb-user-modal {
+  position:relative; width:380px; max-width:100%;
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  box-shadow:0 24px 60px rgba(0,0,0,.35); overflow:hidden;
+}
+.tb-user-modal-close { position:absolute; top:10px; right:10px; z-index:1; }
+.tb-user-modal-head {
+  display:flex; align-items:center; gap:14px;
+  padding:22px 20px 16px; border-bottom:1px solid var(--border); background:var(--surface2);
+}
+.tb-user-modal-avatar {
+  width:56px; height:56px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--verde); color:#FDFAF1;
+}
+.tb-user-modal-name {
+  font-family:var(--font-b); font-size:16px; font-weight:800; color:var(--verde-esc);
+}
+.tb-user-modal-role { font-size:12px; color:var(--text2); margin-top:2px; }
+.tb-user-modal-info { padding:14px 20px; display:flex; flex-direction:column; gap:10px; }
+.tb-user-info-row {
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px; font-size:12.5px;
+}
+.tb-user-info-row span { color:var(--text3); flex-shrink:0; }
+.tb-user-info-row strong {
+  font-family:var(--font-b); font-weight:600; color:var(--text); text-align:right;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.tb-user-modal-foot { padding:14px 20px 18px; border-top:1px solid var(--border); }
+.tb-user-logout {
+  display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
+  padding:10px; border:1px solid var(--per-b); border-radius:8px;
+  background:var(--per-p); color:var(--per);
+  font-family:var(--font-b); font-size:13px; font-weight:700;
+  cursor:pointer; transition:background .12s, border-color .12s;
+}
+.tb-user-logout:hover { background:#F3C4C8; border-color:var(--per); }
 
 /* Nível Andon — cores do select */
 .andon-nivel-emergencia { border-color:var(--per)!important; background:var(--per-p)!important; color:var(--per)!important; }

@@ -253,39 +253,175 @@
     }
 }
 
-/* === Mobile (decidido no load via .is-granado-mobile no <html>) ===
-   Header compacto — só menu + navegação. */
-html.is-granado-mobile .topbar {
+/* === Ícones do topo (notificação / usuário) === */
+.tb-icon {
+    position: relative;
+    box-sizing: border-box;
+    margin: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid var(--grn-border);
+    border-radius: 50%;
+    background: var(--grn-surface2);
+    color: var(--grn-text2);
+    font-family: inherit;
+    line-height: 0;
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+}
+
+.tb-icon:hover {
+    background: var(--grn-surface);
+    color: var(--grn-verde);
+    border-color: var(--grn-verde-meio);
+}
+
+.tb-icon-dot {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--grn-per);
+    border: 1.5px solid var(--grn-surface2);
+}
+
+/* Usuário: avatar circular + nome abreviado ao lado */
+.tb-user {
+    box-sizing: border-box;
+    margin: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 12px 0 3px;
+    border: 1px solid var(--grn-border);
+    border-radius: 20px;
+    background: var(--grn-surface2);
+    font-family: inherit;
+    line-height: 1;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+}
+
+.tb-user:hover {
+    background: var(--grn-surface);
+    border-color: var(--grn-verde-meio);
+}
+
+.tb-user-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--grn-verde);
+    color: #FDFAF1;
+    flex-shrink: 0;
+}
+
+.tb-user-name {
+    font-family: var(--grn-font-b);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--grn-text2);
+    white-space: nowrap;
+}
+
+/* Popup do usuário (Sair) */
+.tb-user-wrap {
+    position: relative;
+    display: inline-flex;
+}
+
+.tb-user-menu {
+    display: none;
+    /* fixed (não absolute) para escapar do overflow/stacking dos containers
+       do Apriso — a posição (top/right) é calculada no JS ao abrir. */
+    position: fixed;
+    z-index: 99999;
+    min-width: 150px;
+    padding: 5px;
+    background: var(--grn-surface);
+    border: 1px solid var(--grn-border);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(15, 51, 25, .16);
+}
+
+.tb-user-menu.open {
+    display: block;
+}
+
+.tb-user-menu-item {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 10px;
+    margin: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    font-family: var(--grn-font-b);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--grn-verde-esc);
+    text-align: left;
+    cursor: pointer;
+    transition: background .12s, color .12s;
+}
+
+.tb-user-menu-item:hover {
+    background: #FADADD;
+    color: var(--grn-per);
+}
+
+/* ============================================================
+   Bloco MOBILE (#HEADER_MOBILE) — layout próprio.
+   A troca WEB/MOBILE é feita via JS (changeScreenListener),
+   não por media query nem pela classe .is-granado-mobile.
+   ============================================================ */
+.topbar-mobile {
     padding: 0 12px;
     gap: 8px;
 }
 
-html.is-granado-mobile .tb-hamburger {
+/* Hambúrguer e badge Granado existem só no bloco mobile */
+.topbar-mobile .tb-hamburger {
     display: flex;
 }
 
-html.is-granado-mobile .topbar-breadcrumb {
+.topbar-mobile .tb-logo-mobile {
+    display: inline-flex;
+}
+
+/* Título da tela: encolhe e ganha reticências quando não cabe */
+.topbar-mobile .topbar-breadcrumb {
     min-width: 0;
     overflow: hidden;
 }
 
-html.is-granado-mobile .tb-home__label {
-    display: none;
-}
-
-html.is-granado-mobile .tb-page {
+.topbar-mobile .tb-page {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* Botões da direita saem no mobile para deixar o header limpo */
-html.is-granado-mobile .topbar-right {
-    display: none;
-}
-
-/* Badge Granado aparece no mobile, alinhado à direita */
-html.is-granado-mobile .tb-logo-mobile {
-    display: inline-flex;
-    margin-left: auto;
+/* Usuário compacto no mobile: só o avatar (o nome nem vai no HTML) */
+.topbar-mobile .tb-user {
+    padding: 0;
+    border: none;
+    background: transparent;
 }
