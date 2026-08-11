@@ -391,6 +391,7 @@
           <a class="gd-link" href="#GRD_API_GetCage">GRD_API_GetCage</a>
           <a class="gd-link" href="#GRD_API_GetWipOrderSimplified">GRD_API_GetWipOrderSimplified</a>
           <a class="gd-link" href="#GRD_API_GetAllWeighLineDetail">GRD_API_GetAllWeighLineDetail</a>
+          <a class="gd-link" href="#GRD_API_GetDefaultWorkcenterPrinter">GRD_API_GetDefaultWorkcenterPrinter</a>
         </div>
       </div>
 
@@ -3586,6 +3587,88 @@
           <li><strong>Filtros <code>-1</code>:</strong> <code>WipOrderNo</code>, <code>ProductNo</code> e <code>WorkcenterResourceName</code> aceitam <code>"-1"</code> para não filtrar; <code>StartDate</code>/<code>EndDate</code> delimitam o período.</li>
           <li><strong>Relação com <a class="gd-link" href="#GRD_API_GetWipOrder">GRD_API_GetWipOrder</a>:</strong> aquela traz o <code>WeighLineDetail</code> de <strong>uma</strong> ordem; esta busca <strong>todas</strong> as pesagens do período/filtro.</li>
           <li><strong>Datas "1/1/1900":</strong> valor sentinela para "não preenchido" (ex.: sem devolução ao estoque em <code>StockReturnIntegratedDate</code>).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetDefaultWorkcenterPrinter
+           ============================================================ -->
+      <section id="GRD_API_GetDefaultWorkcenterPrinter">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetDefaultWorkcenterPrinter</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera a impressora padrão do workcenter</strong> — o mapeamento entre cada
+          centro de trabalho e a impressora usada por padrão. Devolve a lista
+          <code>DefaultWorkcenterPrinters</code>.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetDefaultWorkcenterPrinter</span>
+        </div>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"00550000"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:230px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">WorkcenterResourceName</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">ResourceName do centro de trabalho a filtrar. Use <code>"-1"</code> para <strong>todos</strong> os workcenters.</td></tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"..."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"DefaultWorkcenterPrinters"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"PrinterID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000000"</span><span class="tk-punc">,</span> <span class="tk-key">"PrinterName"</span><span class="tk-punc">:</span> <span class="tk-str">"PRINTER_MD1_SALA1"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000014"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkcenterName"</span><span class="tk-punc">:</span> <span class="tk-str">"MD2_SALA1"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"PrinterID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000004"</span><span class="tk-punc">,</span> <span class="tk-key">"PrinterName"</span><span class="tk-punc">:</span> <span class="tk-str">"PRINTER_TESTE2"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000028"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkcenterName"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA2"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"PrinterID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000005"</span><span class="tk-punc">,</span> <span class="tk-key">"PrinterName"</span><span class="tk-punc">:</span> <span class="tk-str">"PRINTER_MD1_SEM_BALANCA"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000039"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkcenterName"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SEM_BALANCA"</span> }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída (envelope)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:220px">Campo</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as informações foram recuperadas com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">DefaultWorkcenterPrinters</td><td class="col-type">array&lt;object&gt;</td><td class="col-desc">Impressora padrão por centro de trabalho. Campos abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada <code>DefaultWorkcenterPrinters</code></h3>
+        <table class="gd-api">
+          <thead><tr><th style="width:220px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">PrinterID</td><td class="col-type">string</td><td class="col-desc">Identificador da impressora.</td></tr>
+            <tr><td class="col-name">PrinterName</td><td class="col-type">string</td><td class="col-desc">Nome da impressora (ex.: <code>"PRINTER_MD1_SALA1"</code>).</td></tr>
+            <tr><td class="col-name">WorkcenterResourceName</td><td class="col-type">string</td><td class="col-desc">ResourceName do centro de trabalho.</td></tr>
+            <tr><td class="col-name">WorkcenterName</td><td class="col-type">string</td><td class="col-desc">Nome do centro de trabalho (ex.: <code>"MD2_SALA1"</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Filtro <code>-1</code>:</strong> <code>WorkcenterResourceName</code> aceita <code>"-1"</code> para trazer o mapeamento de <strong>todos</strong> os workcenters.</li>
+          <li><strong>Impressão:</strong> use o <code>PrinterName</code> retornado como destino em <a class="gd-link" href="#GRD_API_PrintLabel">GRD_API_PrintLabel</a>.</li>
         </ul>
       </section>
 

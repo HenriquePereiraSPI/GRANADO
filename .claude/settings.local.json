@@ -9,7 +9,8 @@
       "Bash(npm run *)",
       "Bash(grep -n '\"manut-paradas\": `\\\\|setTimeout\\(manutRender' src/legacy/screens.js)",
       "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('src/legacy/manifest.json','utf8'\\)\\);console.log\\('manifest OK'\\)\")",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(python add_defprinter.py)"
     ]
   }
 }
