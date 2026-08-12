@@ -349,11 +349,10 @@
       style="width:260px;flex-shrink:0;position:sticky;top:0;height:calc(100vh - 49px);overflow-y:auto;background:#F8F1D8;border-right:1px solid #D6CDA4;padding:18px 0 32px">
 
       <div class="gd-cat">
-        <button class="gd-cat-toggle" aria-expanded="true" onclick="gdToggleCat(this)">
+        <button class="gd-cat-toggle" aria-expanded="false" onclick="gdToggleCat(this)">
           <span class="gd-cat-chevron">&#9656;</span> _BestPractices
         </button>
-        <div class="gd-cat-items" style="display:block">
-          <div class="gd-subgroup">Conceitos</div>
+        <div class="gd-cat-items">
           <a class="gd-link" href="#best-context">$Context</a>
           <a class="gd-link" href="#best-responsividade">Responsividade</a>
           <a class="gd-link" href="#best-webcomponent">WebComponent</a>
@@ -430,6 +429,7 @@
           <a class="gd-link" href="#GRD_API_GetWipOrderSimplified">GRD_API_GetWipOrderSimplified</a>
           <a class="gd-link" href="#GRD_API_GetAllWeighLineDetail">GRD_API_GetAllWeighLineDetail</a>
           <a class="gd-link" href="#GRD_API_GetDefaultWorkcenterPrinter">GRD_API_GetDefaultWorkcenterPrinter</a>
+          <a class="gd-link" href="#GRD_API_GetCurrentUserInformation">GRD_API_GetCurrentUserInformation</a>
         </div>
       </div>
 
@@ -531,8 +531,8 @@
 
           <div class="gd-tabpanel" id="rt-html">
             <p class="gd-lead">
-              Na aba <strong>HTML</strong> vão os dois blocos do layout (<code>#HEADER_WEB</code> e
-              <code>#HEADER_MOBILE</code>) e, no fim, o <strong>script de inicialização</strong> que
+              Na aba <strong>HTML</strong> vão os dois blocos do layout (<strong>WEB</strong> e
+              <strong>MOBILE</strong>) e, no fim, o <strong>script de inicialização</strong> que
               chama <code>initResponsiveLayout()</code>:
             </p>
             <pre class="gd-code"><span class="tk-tag">&lt;main</span><span class="tk-tag">&gt;</span>
@@ -542,7 +542,7 @@
 <span class="tk-comment">&lt;!-- ========================== WEB ============================= --&gt;</span>
 <span class="tk-comment">&lt;!-- ============================================================ --&gt;</span>
 <span class="tk-comment">&lt;!-- ============================================================ --&gt;</span>
-<span class="tk-tag">&lt;div</span> <span class="tk-attr">id</span>=<span class="tk-str">"HEADER_WEB"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;div</span> <span class="tk-attr">id</span>=<span class="tk-str">"NOME_DA_SUA_PAGINA_WEB"</span><span class="tk-tag">&gt;</span>
   //ELEMENTOS DO LAYOUT WEB
 <span class="tk-tag">&lt;/div</span><span class="tk-tag">&gt;</span>
 
@@ -551,10 +551,27 @@
 <span class="tk-comment">&lt;!-- ========================== MOBILE ============================ --&gt;</span>
 <span class="tk-comment">&lt;!-- ============================================================ --&gt;</span>
 <span class="tk-comment">&lt;!-- ============================================================ --&gt;</span>
-<span class="tk-tag">&lt;div</span> <span class="tk-attr">id</span>=<span class="tk-str">"HEADER_MOBILE"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;div</span> <span class="tk-attr">id</span>=<span class="tk-str">"NOME_DA_SUA_PAGINA_MOBILE"</span><span class="tk-tag">&gt;</span>
   //ELEMENTOS DO LAYOUT MOBILE
 <span class="tk-tag">&lt;/div</span><span class="tk-tag">&gt;</span>
 <span class="tk-tag">&lt;/main</span><span class="tk-tag">&gt;</span></pre>
+
+            <p class="gd-lead" style="background:#FCEBBE;border:1px solid #D9B85A;border-left:6px solid #9A7520;border-radius:7px;padding:13px 16px;font-size:13px;box-shadow:0 2px 8px rgba(154,117,32,.18);margin-top:14px;color:#4A3A0E">
+              <strong style="color:#8A5A00;text-transform:uppercase;letter-spacing:.03em">⚠ Atenção</strong> · evite usar IDs com grande possibilidade de conflitarem com outras
+              partes do layout — por exemplo <code>HEADER_WEB</code> ou <code>SIDEBAR_WEB</code>. Prefira nomes
+              específicos da sua página.
+            </p>
+
+            <p class="gd-lead" style="background:#FCEBBE;border:1px solid #D9B85A;border-left:6px solid #9A7520;border-radius:7px;padding:13px 16px;font-size:13px;box-shadow:0 2px 8px rgba(154,117,32,.18);margin-top:10px;color:#4A3A0E">
+              <strong style="color:#8A5A00;text-transform:uppercase;letter-spacing:.03em">⚠ Atenção</strong> · não utilize o <strong>mesmo ID</strong> nos dois layouts (WEB e MOBILE) —
+              eles se conflitam. A ideia é que cada layout seja <strong>único</strong>.
+              <br><br>
+              <strong>Exemplo:</strong> dentro do layout MOBILE você tem um <code>&lt;span id="span-1"&gt;</code>;
+              se no layout WEB você também tiver um <code>&lt;span id="span-1"&gt;</code>, eles vão se conflitar.
+              Nesse caso, a melhor prática é concatenar com WEB ou MOBILE — por exemplo
+              <code>span-1-mobile</code> e <code>span-1-web</code>.
+            </p>
+
             <pre class="gd-code" style="margin-top:12px"><span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
 (<span class="tk-key">function</span> () {
     <span class="tk-key">function</span> init() {
@@ -595,8 +612,8 @@
 
 <span class="tk-key">function</span> updateResponsiveLayout(isMobile) {
 
-    document.getElementById(<span class="tk-str">"HEADER_WEB"</span>).style.display = isMobile ? <span class="tk-str">"none"</span> : <span class="tk-str">"block"</span>;
-    document.getElementById(<span class="tk-str">"HEADER_MOBILE"</span>).style.display = isMobile ? <span class="tk-str">"block"</span> : <span class="tk-str">"none"</span>;
+    document.getElementById(<span class="tk-str">"NOME_DA_SUA_PAGINA_WEB"</span>).style.display = isMobile ? <span class="tk-str">"none"</span> : <span class="tk-str">"block"</span>;
+    document.getElementById(<span class="tk-str">"NOME_DA_SUA_PAGINA_MOBILE"</span>).style.display = isMobile ? <span class="tk-str">"block"</span> : <span class="tk-str">"none"</span>;
 
 }</pre>
           </div>
@@ -4082,6 +4099,89 @@ poppins-700.woff2
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong>Filtro <code>-1</code>:</strong> <code>WorkcenterResourceName</code> aceita <code>"-1"</code> para trazer o mapeamento de <strong>todos</strong> os workcenters.</li>
           <li><strong>Impressão:</strong> use o <code>PrinterName</code> retornado como destino em <a class="gd-link" href="#GRD_API_PrintLabel">GRD_API_PrintLabel</a>.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetCurrentUserInformation
+           ============================================================ -->
+      <section id="GRD_API_GetCurrentUserInformation">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetCurrentUserInformation</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera as informações e as roles do usuário atual</strong> (obtido do contexto da
+          sessão do Apriso). Devolve o objeto <code>User</code> e a lista <code>UserRoles</code>.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetCurrentUserInformation</span>
+        </div>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">
+          Não recebe parâmetros — o usuário é resolvido pelo contexto da sessão. Corpo da requisição (JSON):
+        </p>
+        <pre class="gd-code">{}</pre>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">".."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"User"</span><span class="tk-punc">:</span> { <span class="tk-key">"EmployeeID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000003"</span><span class="tk-punc">,</span> <span class="tk-key">"EmployeeName"</span><span class="tk-punc">:</span> <span class="tk-str">"Teste"</span><span class="tk-punc">,</span> <span class="tk-key">"EmployeeNo"</span><span class="tk-punc">:</span> <span class="tk-str">"teste"</span><span class="tk-punc">,</span> <span class="tk-key">"ExployeeExternalLogin"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"Department"</span><span class="tk-punc">:</span> <span class="tk-str">""</span> }<span class="tk-punc">,</span>
+  <span class="tk-key">"UserRoles"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"RoleID"</span><span class="tk-punc">:</span> <span class="tk-str">"10230"</span><span class="tk-punc">,</span> <span class="tk-key">"RoleCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Account Administrator"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"RoleID"</span><span class="tk-punc">:</span> <span class="tk-str">"10231"</span><span class="tk-punc">,</span> <span class="tk-key">"RoleCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Approval Authority"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"RoleID"</span><span class="tk-punc">:</span> <span class="tk-str">"10232"</span><span class="tk-punc">,</span> <span class="tk-key">"RoleCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Audit Reviewer"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"RoleID"</span><span class="tk-punc">:</span> <span class="tk-str">"10220"</span><span class="tk-punc">,</span> <span class="tk-key">"RoleCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Background Processor"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"RoleID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000003"</span><span class="tk-punc">,</span> <span class="tk-key">"RoleCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Change Manager"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"RoleID"</span><span class="tk-punc">:</span> <span class="tk-str">"10210"</span><span class="tk-punc">,</span> <span class="tk-key">"RoleCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Cockpit User"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"RoleID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000004"</span><span class="tk-punc">,</span> <span class="tk-key">"RoleCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Cube Editor"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"RoleID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000020"</span><span class="tk-punc">,</span> <span class="tk-key">"RoleCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Cube View Designer"</span> }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída (envelope)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Campo</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as informações foram recuperadas com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">User</td><td class="col-type">object</td><td class="col-desc">Dados do usuário atual. Campos abaixo.</td></tr>
+            <tr><td class="col-name">UserRoles</td><td class="col-type">array&lt;object&gt;</td><td class="col-desc">Roles (perfis) atribuídas ao usuário. Campos abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de <code>User</code></h3>
+        <table class="gd-api">
+          <thead><tr><th style="width:220px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">EmployeeID</td><td class="col-type">string</td><td class="col-desc">Identificador interno do usuário.</td></tr>
+            <tr><td class="col-name">EmployeeName</td><td class="col-type">string</td><td class="col-desc">Nome do usuário.</td></tr>
+            <tr><td class="col-name">EmployeeNo</td><td class="col-type">string</td><td class="col-desc">Login/matrícula do usuário.</td></tr>
+            <tr><td class="col-name">ExployeeExternalLogin</td><td class="col-type">string</td><td class="col-desc">Login externo (SSO/AD) do usuário; vazio quando não houver.</td></tr>
+            <tr><td class="col-name">Department</td><td class="col-type">string</td><td class="col-desc">Departamento do usuário; vazio quando não preenchido.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada <code>UserRoles</code></h3>
+        <table class="gd-api">
+          <thead><tr><th style="width:220px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">RoleID</td><td class="col-type">string</td><td class="col-desc">Identificador da role.</td></tr>
+            <tr><td class="col-name">RoleCode</td><td class="col-type">string</td><td class="col-desc">Código/nome da role (ex.: <code>"Account Administrator"</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Contexto da sessão:</strong> não é preciso informar o usuário — a API usa o usuário autenticado no Apriso.</li>
+          <li><strong>Autorização:</strong> use <code>UserRoles[].RoleCode</code> para liberar/bloquear ações na tela conforme o perfil.</li>
         </ul>
       </section>
 
