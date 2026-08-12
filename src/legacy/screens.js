@@ -4887,10 +4887,11 @@ export const SCREENS = {
       <div class="card cv mb14">
         <div class="card-title">MPs com Saldo para Devolução</div>
         <div id="devol-tabela-wrap" style="overflow-x:auto">
-          <table class="tbl" id="tbl-devol-mp" style="min-width:600px">
-            <thead><tr><th>Material</th><th>Lote</th><th>Qtd. Original</th><th>Qtd. Pesada</th><th>Saldo Restante</th><th>Usuário</th><th>Status</th><th>Data Devolução</th><th>Ação</th></tr></thead>
+          <table class="tbl" id="tbl-devol-mp" style="min-width:700px">
+            <thead><tr><th>Etiqueta Original</th><th>Material</th><th>Lote</th><th>Qtd. Original</th><th>Qtd. Pesada</th><th>Saldo Restante</th><th>Usuário</th><th>Status</th><th>Data Devolução</th><th>Ação</th></tr></thead>
             <tbody>
               <tr>
+                <td class="mono" style="font-size:11px">ETQ-2026-0421</td>
                 <td style="font-size:12px">Fragância Rosa</td>
                 <td class="mono" style="font-size:11px">FRA-2026-04</td>
                 <td class="mono">5,000 kg</td>
@@ -4899,9 +4900,10 @@ export const SCREENS = {
                 <td class="mono" style="color:var(--text3)">—</td>
                 <td><span style="display:inline-block;padding:2px 9px;border-radius:9px;font:800 10px/1.4 var(--font-b);color:var(--alr);background:var(--alr-p);border:1px solid var(--alr-b)">PENDENTE</span></td>
                 <td class="mono" style="color:var(--text3)">—</td>
-                <td><button class="btn btn-sm btn-o" onclick="openModal('modal-reentiqueta')">🏷 Reentiquetear</button></td>
+                <td><button class="btn btn-sm btn-o" onclick="devolReentiquetar(this)">🏷 Reentiquetear</button></td>
               </tr>
               <tr>
+                <td class="mono" style="font-size:11px">ETQ-2026-0425</td>
                 <td style="font-size:12px">DMDM Hydantoin</td>
                 <td class="mono" style="font-size:11px">DMD-2026-01</td>
                 <td class="mono">1,000 kg</td>
@@ -4910,9 +4912,10 @@ export const SCREENS = {
                 <td class="mono" style="color:var(--text3)">—</td>
                 <td><span style="display:inline-block;padding:2px 9px;border-radius:9px;font:800 10px/1.4 var(--font-b);color:var(--alr);background:var(--alr-p);border:1px solid var(--alr-b)">PENDENTE</span></td>
                 <td class="mono" style="color:var(--text3)">—</td>
-                <td><button class="btn btn-sm btn-o" onclick="openModal('modal-reentiqueta')">🏷 Reentiquetear</button></td>
+                <td><button class="btn btn-sm btn-o" onclick="devolReentiquetar(this)">🏷 Reentiquetear</button></td>
               </tr>
               <tr>
+                <td class="mono" style="font-size:11px">ETQ-2026-0430</td>
                 <td style="font-size:12px">Corante Rosaline</td>
                 <td class="mono" style="font-size:11px">COR-2026-07</td>
                 <td class="mono">0,200 kg</td>
@@ -4938,22 +4941,23 @@ export const SCREENS = {
             if (!tb || !g) return;
             var items = [];
             Array.from(tb.rows).forEach(function (r) {
-              if (!r.cells || r.cells.length < 9) return;
-              var mat  = r.cells[0].textContent.trim();
-              var lote = r.cells[1].textContent.trim();
-              var orig = r.cells[2].textContent.trim();
-              var pes  = r.cells[3].textContent.trim();
-              var sal  = r.cells[4].textContent.trim();
-              var usr  = r.cells[5].textContent.trim();
-              var st   = r.cells[6].textContent.trim();
-              var dt   = r.cells[7].textContent.trim();
+              if (!r.cells || r.cells.length < 10) return;
+              var etq  = r.cells[0].textContent.trim();
+              var mat  = r.cells[1].textContent.trim();
+              var lote = r.cells[2].textContent.trim();
+              var orig = r.cells[3].textContent.trim();
+              var pes  = r.cells[4].textContent.trim();
+              var sal  = r.cells[5].textContent.trim();
+              var usr  = r.cells[6].textContent.trim();
+              var st   = r.cells[7].textContent.trim();
+              var dt   = r.cells[8].textContent.trim();
               var pend = st.toUpperCase().indexOf('PENDENTE') >= 0;
               var extra = '';
               if (usr && usr !== '—') extra += ' · 👤 ' + usr;
               if (dt && dt !== '—') extra += ' · 🗓 ' + dt;
               items.push({
                 title: '🧪 ' + mat,
-                subtitle: 'Lote ' + lote,
+                subtitle: '🏷 ' + etq + ' · Lote ' + lote,
                 data: '📦 Orig ' + orig + ' · ⚖️ Pesada ' + pes + ' · 🔁 Saldo ' + sal + extra,
                 status: st,
                 statusColor: pend ? '#9A5A00' : '#1C7A38',
@@ -4970,6 +4974,275 @@ export const SCREENS = {
           var _tb = document.querySelector('#tbl-devol-mp tbody');
           if (_tb && window.MutationObserver) {
             new MutationObserver(devolSyncGallery).observe(_tb, { childList: true, subtree: true });
+          }
+
+          // Reentiquetar: mostra um loading, executa a "devolução" e após 2s marca a linha como OK.
+          window.devolReentiquetar = function (btn) {
+            var row = btn.closest('tr');
+            if (!row || btn.disabled) return;
+            btn.disabled = true;
+
+            if (!document.getElementById('devol-spin-kf')) {
+              var kf = document.createElement('style');
+              kf.id = 'devol-spin-kf';
+              kf.textContent = '@keyframes devol-spin{to{transform:rotate(360deg)}}';
+              document.head.appendChild(kf);
+            }
+
+            var ov = document.createElement('div');
+            ov.style.cssText = 'position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;background:rgba(15,51,25,.45)';
+            ov.innerHTML =
+              '<div style="background:var(--surface,#FDFAF1);border:1px solid var(--border,#D6CDA4);border-radius:12px;padding:26px 30px;max-width:340px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.35)">' +
+                '<div style="width:42px;height:42px;border:4px solid var(--border,#E5DDC8);border-top-color:var(--verde,#1C5C31);border-radius:50%;animation:devol-spin .8s linear infinite"></div>' +
+                '<div style="font:700 14px/1.4 Poppins,sans-serif;color:var(--verde-esc,#103E20)">Executando devolução…</div>' +
+                '<div style="font-size:12px;color:var(--text2,#5A6B5E)">Gerando nova etiqueta de saldo e registrando o retorno no JDE.</div>' +
+              '</div>';
+            document.body.appendChild(ov);
+
+            setTimeout(function () {
+              ov.remove();
+              var c = row.cells;
+              // Status -> OK
+              c[7].innerHTML = '<span style="display:inline-block;padding:2px 9px;border-radius:9px;font:800 10px/1.4 var(--font-b);color:var(--ok);background:var(--ok-p);border:1px solid var(--ok-b)">OK</span>';
+              // Usuário + Data da devolução
+              var n = new Date();
+              var p = function (x) { return (x < 10 ? '0' : '') + x; };
+              c[6].removeAttribute('class');
+              c[6].setAttribute('style', 'font-size:11px');
+              c[6].textContent = 'K. Lima · 00482';
+              c[8].setAttribute('style', 'color:var(--text2)');
+              c[8].textContent = p(n.getDate()) + '/' + p(n.getMonth() + 1) + '/' + n.getFullYear() + ' ' + p(n.getHours()) + ':' + p(n.getMinutes());
+              // Ação concluída → botão de Detalhes
+              c[9].innerHTML = '<button class="btn btn-sm btn-ghost" onclick="devolDetalhes(this)">🔍 Detalhes</button>';
+            }, 2000);
+          };
+
+          // Detalhes da devolução concluída (lê os dados da própria linha).
+          window.devolDetalhes = function (btn) {
+            var row = btn.closest('tr');
+            if (!row) return;
+            var c = row.cells;
+            alert('📄 Detalhes da devolução\\n\\n' +
+              'Etiqueta original: ' + c[0].textContent.trim() + '\\n' +
+              'Material: ' + c[1].textContent.trim() + ' · Lote ' + c[2].textContent.trim() + '\\n' +
+              'Saldo devolvido: ' + c[5].textContent.trim() + '\\n' +
+              'Nova etiqueta de saldo gerada (ref. ' + c[0].textContent.trim() + ')\\n' +
+              'Devolvido por: ' + c[6].textContent.trim() + '\\n' +
+              'Data: ' + c[8].textContent.trim() + '\\n' +
+              'Movimento de retorno registrado no JDE.');
+          };
+        })();
+        </script>
+      </div>
+    `,
+  "pes-devolucao": `      <div class="page-header">
+        <div><div class="ph-eyebrow">Almoxarifado · Reentiquetagem</div><div class="ph-title">Devolução de MP ao Estoque</div></div>
+      </div>
+
+      <div class="abox warn mb14"><span class="ai">⚠</span><div>MPs com saldo restante após pesagem devem ser <strong>reentiquetadas e devolvidas ao almoxarifado</strong>.</div></div>
+
+      <!-- Filtros -->
+      <div class="card cv mb14">
+        <div class="card-title">Filtros</div>
+        <div class="form-row" style="flex-wrap:wrap;gap:12px;align-items:flex-end">
+          <div class="fg" style="min-width:150px"><label class="lbl">Ordem</label><input class="inp" id="dg-f-ordem" placeholder="Nº da ordem" oninput="devolGeralFiltrar()"></div>
+          <div class="fg" style="min-width:180px"><label class="lbl">Material</label><input class="inp" id="dg-f-material" placeholder="Nome do material" oninput="devolGeralFiltrar()"></div>
+          <div class="fg" style="min-width:160px"><label class="lbl">Etiqueta</label><input class="inp" id="dg-f-etiqueta" placeholder="Etiqueta original" oninput="devolGeralFiltrar()"></div>
+          <div class="fg" style="min-width:130px"><label class="lbl">Status</label><select class="sel" id="dg-f-status" onchange="devolGeralFiltrar()"><option value="TODOS">Todos</option><option value="OK">OK</option><option value="PENDENTE">Pendente</option></select></div>
+          <button class="btn btn-sm btn-ghost" onclick="devolGeralLimpar()" style="margin-bottom:2px">Limpar</button>
+        </div>
+      </div>
+
+      <div class="card cv mb14">
+        <div class="card-title">MPs com Saldo para Devolução</div>
+        <div id="devol-geral-wrap" style="overflow-x:auto">
+          <table class="tbl" id="tbl-devol-geral" style="min-width:760px">
+            <thead><tr><th>Etiqueta Original</th><th>Material</th><th>Lote</th><th>Qtd. Original</th><th>Qtd. Pesada</th><th>Saldo Restante</th><th>Usuário</th><th>Status</th><th>Data Devolução</th><th>Ação</th></tr></thead>
+            <tbody>
+              <tr data-ordem="OP-2026-0416">
+                <td class="mono" style="font-size:11px">ETQ-2026-0421</td>
+                <td style="font-size:12px">Fragância Rosa</td>
+                <td class="mono" style="font-size:11px">FRA-2026-04</td>
+                <td class="mono">5,000 kg</td>
+                <td class="mono" style="color:var(--verde)">4,502 kg</td>
+                <td class="mono" style="color:var(--alr);font-weight:700">0,498 kg</td>
+                <td class="mono" style="color:var(--text3)">—</td>
+                <td><span style="display:inline-block;padding:2px 9px;border-radius:9px;font:800 10px/1.4 var(--font-b);color:var(--alr);background:var(--alr-p);border:1px solid var(--alr-b)">PENDENTE</span></td>
+                <td class="mono" style="color:var(--text3)">—</td>
+                <td><button class="btn btn-sm btn-o" onclick="devolGeralReentiquetar(this)">🏷 Reentiquetear</button></td>
+              </tr>
+              <tr data-ordem="OP-2026-0416">
+                <td class="mono" style="font-size:11px">ETQ-2026-0425</td>
+                <td style="font-size:12px">DMDM Hydantoin</td>
+                <td class="mono" style="font-size:11px">DMD-2026-01</td>
+                <td class="mono">1,000 kg</td>
+                <td class="mono" style="color:var(--verde)">0,600 kg</td>
+                <td class="mono" style="color:var(--alr);font-weight:700">0,400 kg</td>
+                <td class="mono" style="color:var(--text3)">—</td>
+                <td><span style="display:inline-block;padding:2px 9px;border-radius:9px;font:800 10px/1.4 var(--font-b);color:var(--alr);background:var(--alr-p);border:1px solid var(--alr-b)">PENDENTE</span></td>
+                <td class="mono" style="color:var(--text3)">—</td>
+                <td><button class="btn btn-sm btn-o" onclick="devolGeralReentiquetar(this)">🏷 Reentiquetear</button></td>
+              </tr>
+              <tr data-ordem="OP-2026-0414">
+                <td class="mono" style="font-size:11px">ETQ-2026-0388</td>
+                <td style="font-size:12px">Creme Base</td>
+                <td class="mono" style="font-size:11px">CRB-2026-02</td>
+                <td class="mono">12,000 kg</td>
+                <td class="mono" style="color:var(--verde)">11,300 kg</td>
+                <td class="mono" style="color:var(--verde);font-weight:700">0,700 kg</td>
+                <td style="font-size:11px">K. Souza · 00377</td>
+                <td><span style="display:inline-block;padding:2px 9px;border-radius:9px;font:800 10px/1.4 var(--font-b);color:var(--ok);background:var(--ok-p);border:1px solid var(--ok-b)">OK</span></td>
+                <td class="mono" style="color:var(--text2)">03/05/2026 14:20</td>
+                <td><button class="btn btn-sm btn-ghost" onclick="devolGeralDetalhes(this)">🔍 Detalhes</button></td>
+              </tr>
+              <tr data-ordem="OP-2026-0410">
+                <td class="mono" style="font-size:11px">ETQ-2026-0355</td>
+                <td style="font-size:12px">Corante Rosaline</td>
+                <td class="mono" style="font-size:11px">COR-2026-07</td>
+                <td class="mono">0,200 kg</td>
+                <td class="mono" style="color:var(--verde)">0,150 kg</td>
+                <td class="mono" style="color:var(--verde);font-weight:700">0,050 kg</td>
+                <td style="font-size:11px">J. Santos · 00412</td>
+                <td><span style="display:inline-block;padding:2px 9px;border-radius:9px;font:800 10px/1.4 var(--font-b);color:var(--ok);background:var(--ok-p);border:1px solid var(--ok-b)">OK</span></td>
+                <td class="mono" style="color:var(--text2)">05/05/2026 09:12</td>
+                <td><button class="btn btn-sm btn-ghost" onclick="devolGeralDetalhes(this)">🔍 Detalhes</button></td>
+              </tr>
+              <tr data-ordem="OP-2026-0409">
+                <td class="mono" style="font-size:11px">ETQ-2026-0349</td>
+                <td style="font-size:12px">Álcool Cetílico</td>
+                <td class="mono" style="font-size:11px">ACT-2026-05</td>
+                <td class="mono">8,000 kg</td>
+                <td class="mono" style="color:var(--verde)">7,940 kg</td>
+                <td class="mono" style="color:var(--verde);font-weight:700">0,060 kg</td>
+                <td style="font-size:11px">M. Lima · 00298</td>
+                <td><span style="display:inline-block;padding:2px 9px;border-radius:9px;font:800 10px/1.4 var(--font-b);color:var(--ok);background:var(--ok-p);border:1px solid var(--ok-b)">OK</span></td>
+                <td class="mono" style="color:var(--text2)">02/05/2026 11:05</td>
+                <td><button class="btn btn-sm btn-ghost" onclick="devolGeralDetalhes(this)">🔍 Detalhes</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <style>#devol-geral-gallery{display:none}@media (max-width:768px){#devol-geral-wrap{display:none!important}#devol-geral-gallery{display:block!important}}</style>
+        <granado-gallery id="devol-geral-gallery" enable-scroll="true" scroll-height="60vh"></granado-gallery>
+        <script>
+        (function () {
+          // Filtro (Ordem, Material, Etiqueta, Status).
+          window.devolGeralFiltrar = function () {
+            var val = function (id) { var e = document.getElementById(id); return e ? (e.value || '').trim() : ''; };
+            var fo = val('dg-f-ordem').toLowerCase();
+            var fm = val('dg-f-material').toLowerCase();
+            var fe = val('dg-f-etiqueta').toLowerCase();
+            var se = document.getElementById('dg-f-status');
+            var fs = se ? se.value : 'TODOS';
+            Array.from(document.querySelectorAll('#tbl-devol-geral tbody tr')).forEach(function (r) {
+              if (!r.cells || r.cells.length < 10) return;
+              var ok =
+                (!fo || (r.getAttribute('data-ordem') || '').toLowerCase().indexOf(fo) >= 0) &&
+                (!fm || r.cells[1].textContent.toLowerCase().indexOf(fm) >= 0) &&
+                (!fe || r.cells[0].textContent.toLowerCase().indexOf(fe) >= 0) &&
+                (fs === 'TODOS' || r.cells[7].textContent.toUpperCase().indexOf(fs) >= 0);
+              r.style.display = ok ? '' : 'none';
+            });
+            if (window.devolGeralSyncGallery) window.devolGeralSyncGallery();
+          };
+
+          window.devolGeralLimpar = function () {
+            ['dg-f-ordem', 'dg-f-material', 'dg-f-etiqueta'].forEach(function (id) { var e = document.getElementById(id); if (e) e.value = ''; });
+            var s = document.getElementById('dg-f-status'); if (s) s.value = 'TODOS';
+            window.devolGeralFiltrar();
+          };
+
+          // Reentiquetar: loading 2s -> status OK -> botão Detalhes.
+          window.devolGeralReentiquetar = function (btn) {
+            var row = btn.closest('tr');
+            if (!row || btn.disabled) return;
+            btn.disabled = true;
+            if (!document.getElementById('devol-spin-kf')) {
+              var kf = document.createElement('style'); kf.id = 'devol-spin-kf';
+              kf.textContent = '@keyframes devol-spin{to{transform:rotate(360deg)}}';
+              document.head.appendChild(kf);
+            }
+            var ov = document.createElement('div');
+            ov.style.cssText = 'position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;background:rgba(15,51,25,.45)';
+            ov.innerHTML =
+              '<div style="background:var(--surface,#FDFAF1);border:1px solid var(--border,#D6CDA4);border-radius:12px;padding:26px 30px;max-width:340px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.35)">' +
+                '<div style="width:42px;height:42px;border:4px solid var(--border,#E5DDC8);border-top-color:var(--verde,#1C5C31);border-radius:50%;animation:devol-spin .8s linear infinite"></div>' +
+                '<div style="font:700 14px/1.4 Poppins,sans-serif;color:var(--verde-esc,#103E20)">Executando devolução…</div>' +
+                '<div style="font-size:12px;color:var(--text2,#5A6B5E)">Gerando nova etiqueta de saldo e registrando o retorno no JDE.</div>' +
+              '</div>';
+            document.body.appendChild(ov);
+            setTimeout(function () {
+              ov.remove();
+              var c = row.cells;
+              var n = new Date();
+              var p = function (x) { return (x < 10 ? '0' : '') + x; };
+              c[7].innerHTML = '<span style="display:inline-block;padding:2px 9px;border-radius:9px;font:800 10px/1.4 var(--font-b);color:var(--ok);background:var(--ok-p);border:1px solid var(--ok-b)">OK</span>';
+              c[6].removeAttribute('class');
+              c[6].setAttribute('style', 'font-size:11px');
+              c[6].textContent = 'K. Lima · 00482';
+              c[8].setAttribute('style', 'color:var(--text2)');
+              c[8].textContent = p(n.getDate()) + '/' + p(n.getMonth() + 1) + '/' + n.getFullYear() + ' ' + p(n.getHours()) + ':' + p(n.getMinutes());
+              c[9].innerHTML = '<button class="btn btn-sm btn-ghost" onclick="devolGeralDetalhes(this)">🔍 Detalhes</button>';
+            }, 2000);
+          };
+
+          window.devolGeralDetalhes = function (btn) {
+            var row = btn.closest('tr');
+            if (!row) return;
+            var c = row.cells;
+            alert('📄 Detalhes da devolução\\n\\n' +
+              'Ordem: ' + (row.getAttribute('data-ordem') || '—') + '\\n' +
+              'Etiqueta original: ' + c[0].textContent.trim() + '\\n' +
+              'Material: ' + c[1].textContent.trim() + ' · Lote ' + c[2].textContent.trim() + '\\n' +
+              'Saldo devolvido: ' + c[5].textContent.trim() + '\\n' +
+              'Nova etiqueta de saldo gerada (ref. ' + c[0].textContent.trim() + ')\\n' +
+              'Devolvido por: ' + c[6].textContent.trim() + '\\n' +
+              'Data: ' + c[8].textContent.trim() + '\\n' +
+              'Movimento de retorno registrado no JDE.');
+          };
+
+          // Galeria mobile (respeita o filtro).
+          window.devolGeralSyncGallery = function () {
+            var tb = document.querySelector('#tbl-devol-geral tbody');
+            var gal = document.getElementById('devol-geral-gallery');
+            if (!tb || !gal) return;
+            var items = [];
+            Array.from(tb.rows).forEach(function (r) {
+              if (!r.cells || r.cells.length < 10 || r.style.display === 'none') return;
+              var ord = r.getAttribute('data-ordem') || '';
+              var etq = r.cells[0].textContent.trim();
+              var mat = r.cells[1].textContent.trim();
+              var orig = r.cells[3].textContent.trim();
+              var pes = r.cells[4].textContent.trim();
+              var sal = r.cells[5].textContent.trim();
+              var usr = r.cells[6].textContent.trim();
+              var st = r.cells[7].textContent.trim();
+              var dt = r.cells[8].textContent.trim();
+              var pend = st.toUpperCase().indexOf('PENDENTE') >= 0;
+              var extra = '';
+              if (usr && usr !== '—') extra += ' · 👤 ' + usr;
+              if (dt && dt !== '—') extra += ' · 🗓 ' + dt;
+              items.push({
+                title: '🧪 ' + mat,
+                subtitle: '🏷 ' + etq + ' · ' + ord,
+                data: '📦 Orig ' + orig + ' · ⚖️ Pesada ' + pes + ' · 🔁 Saldo ' + sal + extra,
+                status: st,
+                statusColor: pend ? '#9A5A00' : '#1C7A38',
+                metadata: { row: r }
+              });
+            });
+            gal.data = items;
+            gal.onItemClick = function (d) {
+              var mm = d.metadata || {};
+              if (mm.row) { var b = mm.row.querySelector('td:last-child button'); if (b) b.click(); }
+            };
+          };
+
+          window.devolGeralSyncGallery();
+          var _tb = document.querySelector('#tbl-devol-geral tbody');
+          if (_tb && window.MutationObserver) {
+            new MutationObserver(window.devolGeralSyncGallery).observe(_tb, { childList: true, subtree: true });
           }
         })();
         </script>
