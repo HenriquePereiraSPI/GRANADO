@@ -122,6 +122,31 @@
       padding: 8px 12px 4px 30px;
     }
 
+    /* Abas de código (HTML / JAVASCRIPT). Blindado c/ !important pois o
+       CSS global do Apriso sobrescreve estilos de <button>. */
+    .gd-tabwrap { margin: 10px 0 12px; }
+    .gd-tabs { display: flex; gap: 4px; border-bottom: 1px solid #D6CDA4; margin-bottom: 12px; }
+    .gd-tab {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      width: auto !important;
+      margin: 0 !important;
+      background: none !important;
+      border: none !important;
+      border-bottom: 2px solid transparent !important;
+      padding: 8px 16px !important;
+      cursor: pointer;
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      color: #8A9E8E;
+      transition: color .12s, border-color .12s;
+    }
+    .gd-tab:hover { color: #1C5C31; }
+    .gd-tab.active { color: #1C5C31 !important; border-bottom-color: #1C5C31 !important; }
+
     /* Code block */
     .gd-code {
       margin: 0;
@@ -324,6 +349,19 @@
       style="width:260px;flex-shrink:0;position:sticky;top:0;height:calc(100vh - 49px);overflow-y:auto;background:#F8F1D8;border-right:1px solid #D6CDA4;padding:18px 0 32px">
 
       <div class="gd-cat">
+        <button class="gd-cat-toggle" aria-expanded="true" onclick="gdToggleCat(this)">
+          <span class="gd-cat-chevron">&#9656;</span> _BestPractices
+        </button>
+        <div class="gd-cat-items" style="display:block">
+          <div class="gd-subgroup">Conceitos</div>
+          <a class="gd-link" href="#best-context">$Context</a>
+          <a class="gd-link" href="#best-responsividade">Responsividade</a>
+          <a class="gd-link" href="#best-webcomponent">WebComponent</a>
+          <a class="gd-link" href="#best-fonts">Fonts</a>
+        </div>
+      </div>
+
+      <div class="gd-cat">
         <button class="gd-cat-toggle" aria-expanded="false" onclick="gdToggleCat(this)">
           <span class="gd-cat-chevron">▸</span> Checklist
         </button>
@@ -431,6 +469,378 @@
           A documentação abaixo descreve, por API, os campos de entrada, os de saída e exemplos
           prontos para teste.
         </p>
+      </section>
+
+      <!-- ============================================================
+           _BestPractices / $Context
+           ============================================================ -->
+      <section id="best-context">
+        <h1 class="gd-h1" style="margin-top:24px"><code>$Context</code></h1>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575">
+          <strong>_BestPractices</strong> &middot; padrões e boas práticas de uso do Apriso.
+        </p>
+        <p class="gd-lead">
+          Para utilizar o <code>$Context</code>, o Apriso injeta essa variável dentro da aba
+          <strong>HTML</strong>, e podemos pegá-la e injetá-la dentro de uma variável da página para
+          conseguirmos utilizá-la na aba <strong>JavaScript</strong>:
+        </p>
+        <pre class="gd-code"><span class="tk-tag">&lt;main</span><span class="tk-tag">&gt;</span>
+  <span class="tk-tag">&lt;h1</span><span class="tk-tag">&gt;</span> <span class="tk-tag">&lt;/h1</span><span class="tk-tag">&gt;</span>
+  <span class="tk-tag">&lt;span</span><span class="tk-tag">&gt;</span> <span class="tk-tag">&lt;/span</span><span class="tk-tag">&gt;</span>
+  ...
+<span class="tk-tag">&lt;/main</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+(<span class="tk-key">function</span> () {
+    <span class="tk-key">function</span> init() {
+        <span class="tk-key">if</span> (typeof $Context !== <span class="tk-str">'undefined'</span>) {
+            window.AprisoContext = $Context;
+        }
+
+        <span class="tk-comment">//funções que irão ser executadas ao carregar a pagina</span>
+          initializeEvents();
+          initializeStatics();
+    }
+
+    <span class="tk-key">if</span> (document.readyState === <span class="tk-str">'loading'</span>) {
+        document.addEventListener(<span class="tk-str">'DOMContentLoaded'</span>, init);
+    } <span class="tk-key">else</span> {
+        init();
+    }
+})();
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
+      </section>
+
+      <!-- ============================================================
+           _BestPractices / Responsividade
+           ============================================================ -->
+      <section id="best-responsividade">
+        <h1 class="gd-h1" style="margin-top:24px">Responsividade</h1>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575">
+          <strong>_BestPractices</strong> &middot; padrões e boas práticas de uso do Apriso.
+        </p>
+        <p class="gd-lead">
+          Por padrão, sempre que houver necessidade de criar uma página responsiva, dividimos o
+          layout entre <strong>WEB</strong> e <strong>MOBILE</strong>. Veja o que vai em cada aba do Apriso:
+        </p>
+
+        <div class="gd-tabwrap">
+          <div class="gd-tabs">
+            <button type="button" class="gd-tab active" onclick="gdTab(this,'rt-html')">HTML</button>
+            <button type="button" class="gd-tab" onclick="gdTab(this,'rt-js')">JAVASCRIPT</button>
+          </div>
+
+          <div class="gd-tabpanel" id="rt-html">
+            <p class="gd-lead">
+              Na aba <strong>HTML</strong> vão os dois blocos do layout (<code>#HEADER_WEB</code> e
+              <code>#HEADER_MOBILE</code>) e, no fim, o <strong>script de inicialização</strong> que
+              chama <code>initResponsiveLayout()</code>:
+            </p>
+            <pre class="gd-code"><span class="tk-tag">&lt;main</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-comment">&lt;!-- ============================================================ --&gt;</span>
+<span class="tk-comment">&lt;!-- ============================================================ --&gt;</span>
+<span class="tk-comment">&lt;!-- ========================== WEB ============================= --&gt;</span>
+<span class="tk-comment">&lt;!-- ============================================================ --&gt;</span>
+<span class="tk-comment">&lt;!-- ============================================================ --&gt;</span>
+<span class="tk-tag">&lt;div</span> <span class="tk-attr">id</span>=<span class="tk-str">"HEADER_WEB"</span><span class="tk-tag">&gt;</span>
+  //ELEMENTOS DO LAYOUT WEB
+<span class="tk-tag">&lt;/div</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-comment">&lt;!-- ============================================================ --&gt;</span>
+<span class="tk-comment">&lt;!-- ============================================================ --&gt;</span>
+<span class="tk-comment">&lt;!-- ========================== MOBILE ============================ --&gt;</span>
+<span class="tk-comment">&lt;!-- ============================================================ --&gt;</span>
+<span class="tk-comment">&lt;!-- ============================================================ --&gt;</span>
+<span class="tk-tag">&lt;div</span> <span class="tk-attr">id</span>=<span class="tk-str">"HEADER_MOBILE"</span><span class="tk-tag">&gt;</span>
+  //ELEMENTOS DO LAYOUT MOBILE
+<span class="tk-tag">&lt;/div</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/main</span><span class="tk-tag">&gt;</span></pre>
+            <pre class="gd-code" style="margin-top:12px"><span class="tk-tag">&lt;script</span><span class="tk-tag">&gt;</span>
+(<span class="tk-key">function</span> () {
+    <span class="tk-key">function</span> init() {
+        <span class="tk-key">if</span> (typeof $Context !== <span class="tk-str">'undefined'</span>) {
+            window.AprisoContext = $Context;
+        }
+
+        initResponsiveLayout();
+    }
+
+    <span class="tk-key">if</span> (document.readyState === <span class="tk-str">'loading'</span>) {
+        document.addEventListener(<span class="tk-str">'DOMContentLoaded'</span>, init);
+    } <span class="tk-key">else</span> {
+        init();
+    }
+})();
+<span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
+          </div>
+
+          <div class="gd-tabpanel" id="rt-js" style="display:none">
+            <p class="gd-lead">
+              Na aba <strong>JavaScript</strong> ficam as funções que alternam os blocos conforme o
+              breakpoint (só disparam ao cruzar os 768px):
+            </p>
+            <pre class="gd-code"><span class="tk-key">function</span> initResponsiveLayout() {
+
+    <span class="tk-key">var</span> MOBILE_QUERY = <span class="tk-str">"(max-width: 768px)"</span>;
+    <span class="tk-key">var</span> mq = window.matchMedia(MOBILE_QUERY);
+
+    updateResponsiveLayout(mq.matches);
+
+    <span class="tk-comment">// dispara só ao cruzar o breakpoint</span>
+    mq.addEventListener(<span class="tk-str">"change"</span>, <span class="tk-key">function</span> (e) {
+
+        updateResponsiveLayout(e.matches);
+    });
+}
+
+<span class="tk-key">function</span> updateResponsiveLayout(isMobile) {
+
+    document.getElementById(<span class="tk-str">"HEADER_WEB"</span>).style.display = isMobile ? <span class="tk-str">"none"</span> : <span class="tk-str">"block"</span>;
+    document.getElementById(<span class="tk-str">"HEADER_MOBILE"</span>).style.display = isMobile ? <span class="tk-str">"block"</span> : <span class="tk-str">"none"</span>;
+
+}</pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           _BestPractices / WebComponent
+           ============================================================ -->
+      <section id="best-webcomponent">
+        <h1 class="gd-h1" style="margin-top:24px">WebComponent</h1>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575">
+          <strong>_BestPractices</strong> &middot; padrões e boas práticas de uso do Apriso.
+        </p>
+        <p class="gd-lead">
+          Como <strong>criar</strong>, <strong>instalar</strong> e <strong>usar</strong> um web component
+          do Spi seguindo os padrões do projeto.
+        </p>
+
+        <div class="gd-tabwrap">
+          <div class="gd-tabs">
+            <button type="button" class="gd-tab active" onclick="gdTab(this,'wc-criacao')">Criação</button>
+            <button type="button" class="gd-tab" onclick="gdTab(this,'wc-instalacao')">Instalação</button>
+            <button type="button" class="gd-tab" onclick="gdTab(this,'wc-utilizacao')">Utilização</button>
+          </div>
+
+          <div class="gd-tabpanel" id="wc-criacao">
+            <h3 class="gd-h3">Arquitetura</h3>
+            <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+              <li><strong>Light DOM</strong> — sem Shadow DOM; o componente escreve em <code>this.innerHTML</code>.</li>
+              <li><strong>Zero stylesheet injetado</strong> — toda estilização é <strong>inline</strong> (<code>style="..."</code>). Pseudo-classes (<code>:hover</code>, foco) via <strong>JS</strong>, não CSS.</li>
+              <li><strong>Sem <code>var(--x)</code> dentro do componente</strong> — cores/medidas <strong>hardcoded</strong> como default; para customizar, exponha um <strong>atributo</strong> (ex.: <code>color="#1C5C31"</code>) e o usuário pode passar <code>var(--x)</code> por ele.</li>
+              <li>Guarda de registro no topo: <code>if (!customElements.get('spi-&lt;nome&gt;')) { ... }</code>.</li>
+            </ul>
+
+            <h3 class="gd-h3">Estrutura do arquivo</h3>
+            <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+              <li>Comentário-cabeçalho documentando: descrição, <strong>Atributos</strong> (todos opcionais, com default), <strong>Propriedades JS</strong>, <strong>Eventos</strong>, <strong>Métodos</strong> e um <strong>Exemplo</strong> (com a linha de import).</li>
+              <li><code>class SpiXxx extends HTMLElement</code> com <code>static get observedAttributes()</code>, <code>connectedCallback</code>, <code>disconnectedCallback</code>, <code>attributeChangedCallback</code>, um <code>_render()</code>/<code>_build()</code> e helpers (<code>_esc</code>...).</li>
+              <li>Constantes no topo: paleta + <code>const FONT = "'Poppins','DejaVu Sans',Arial,sans-serif"</code>.</li>
+              <li>No final: <code>customElements.define('spi-&lt;nome&gt;', SpiXxx)</code> e <code>window.SpiXxx = SpiXxx</code>.</li>
+            </ul>
+
+            <h3 class="gd-h3">API / dados</h3>
+            <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+              <li>Props JS com <strong>getter/setter</strong> refletindo nos atributos; <strong>lazy-props</strong> no <code>connectedCallback</code> (captura valores setados antes do upgrade).</li>
+              <li>Dados <strong>complexos</strong> por propriedade (<code>el.data = [...]</code>) ou atributo como <strong>JSON string</strong> (<code>setAttribute('data', JSON.stringify(...))</code>). Selecione internos por <code>data-role="..."</code>.</li>
+              <li>Eventos: <code>this.dispatchEvent(new CustomEvent('nome', { bubbles: true, composed: true, detail }))</code>.</li>
+            </ul>
+
+            <h3 class="gd-h3">Estilo</h3>
+            <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+              <li><strong>Tipografia:</strong> Poppins para texto; <strong>Arial</strong> para números/códigos; tabelas e conteúdo misto em Arial.</li>
+              <li><strong>Campos</strong> (input/text/dropdown/calendar) compartilham <code>font-size:13px; line-height:1.4; padding:8px 12px; border:1px</code> — altura igual por construção (sem <code>height:100%</code>).</li>
+              <li><strong>Botões/ícones:</strong> <code>box-sizing:border-box; margin:0; appearance:none; font-family:inherit</code> + <code>line-height</code> explícito — o CSS global do Apriso sobrescreve <code>&lt;button&gt;</code>.</li>
+            </ul>
+
+            <h3 class="gd-h3">Host display &amp; popups</h3>
+            <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+              <li><strong>Display do host</strong> sobreponível: <code>this.style.display = this.style.display || 'inline-block'</code> (widget inline) ou <code>'block'</code> (seção). Elementos internos acompanham o display do host quando fizer sentido.</li>
+              <li><strong>Popups/dropdowns:</strong> <code>position:fixed</code> (não <code>absolute</code>) com posição calculada no JS (<code>getBoundingClientRect</code>), p/ escapar do <code>overflow</code>/stacking dos containers do Apriso.</li>
+            </ul>
+
+            <h3 class="gd-h3">Responsividade &amp; entrega</h3>
+            <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+              <li>Se for responsivo: divida em blocos <code>_WEB</code> / <code>_MOBILE</code> alternados por JS num breakpoint (<code>matchMedia("(max-width: 768px)")</code>) — ver <a class="gd-link" href="#best-responsividade">Responsividade</a>.</li>
+              <li>Entregue um exemplo de uso com pelo menos <strong>1 caso com JSON hardcoded direto no atributo</strong> (não só via <code>setAttribute</code>).</li>
+            </ul>
+
+            <h3 class="gd-h3">Esqueleto</h3>
+            <pre class="gd-code"><span class="tk-comment">/* __spi_guard__ */</span>
+<span class="tk-key">if</span> (!customElements.get(<span class="tk-str">'spi-exemplo'</span>)) {
+  const SURFACE = <span class="tk-str">'#FDFAF1'</span>;
+  const BORDER  = <span class="tk-str">'#D6CDA4'</span>;
+  const VERDE   = <span class="tk-str">'#1C5C31'</span>;
+  const FONT    = <span class="tk-str">"'Poppins','DejaVu Sans',Arial,sans-serif"</span>;
+
+  class SpiExemplo extends HTMLElement {
+    static get observedAttributes() { <span class="tk-key">return</span> [<span class="tk-str">'label'</span>, <span class="tk-str">'color'</span>]; }
+
+    connectedCallback() {
+      <span class="tk-comment">// host inline por padrão (sobreponível pelo usuário)</span>
+      this.style.display = this.style.display || <span class="tk-str">'inline-block'</span>;
+      this._render();
+    }
+    attributeChangedCallback() {
+      <span class="tk-key">if</span> (this.isConnected) this._render();
+    }
+
+    <span class="tk-comment">// Propriedade JS refletida no atributo</span>
+    get color() { <span class="tk-key">return</span> this.getAttribute(<span class="tk-str">'color'</span>) || VERDE; }
+    set color(v) { this.setAttribute(<span class="tk-str">'color'</span>, v); }
+
+    _esc(s) {
+      <span class="tk-key">return</span> (s == <span class="tk-key">null</span> ? <span class="tk-str">''</span> : String(s)).replace(/&amp;/g, <span class="tk-str">'&amp;amp;'</span>).replace(/&lt;/g, <span class="tk-str">'&amp;lt;'</span>).replace(/&gt;/g, <span class="tk-str">'&amp;gt;'</span>);
+    }
+
+    _render() {
+      const label = this.getAttribute(<span class="tk-str">'label'</span>) || <span class="tk-str">''</span>;
+      const color = this.color;
+      this.innerHTML =
+        <span class="tk-str">'&lt;span style="display:inline-flex;align-items:center;gap:8px;'</span> +
+        <span class="tk-str">'border:1px solid '</span> + BORDER + <span class="tk-str">';border-radius:8px;padding:8px 12px;background:'</span> + SURFACE + <span class="tk-str">';'</span> +
+        <span class="tk-str">'font:13px/1.4 '</span> + FONT + <span class="tk-str">';color:'</span> + color + <span class="tk-str">'"&gt;'</span> + this._esc(label) + <span class="tk-str">'&lt;/span&gt;'</span>;
+    }
+  }
+
+  customElements.define(<span class="tk-str">'spi-exemplo'</span>, SpiExemplo);
+  window.SpiExemplo = SpiExemplo;
+}</pre>
+          </div>
+
+          <div class="gd-tabpanel" id="wc-instalacao" style="display:none">
+            <p class="gd-lead">
+              Cada WebComponent criado deve ser transferido para a pasta abaixo no
+              <strong>servidor do Apriso</strong>:
+            </p>
+            <pre class="gd-code">C:\Program Files\Dassault Systemes\DELMIA Apriso 2025\WebSite\Portal\Scripts\WebComponents</pre>
+          </div>
+
+          <div class="gd-tabpanel" id="wc-utilizacao" style="display:none">
+            <p class="gd-lead">
+              Para utilizar um WebComponent na página, basta importá-lo no topo da página, desta forma:
+            </p>
+            <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-toggle.js"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;main</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;div</span> <span class="tk-attr">style</span>=<span class="tk-str">"display:flex;gap:24px;flex-wrap:wrap;align-items:center"</span><span class="tk-tag">&gt;</span>
+  <span class="tk-tag">&lt;granado-toggle</span> <span class="tk-attr">label</span>=<span class="tk-str">"Modo escuro"</span> <span class="tk-attr">checked</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-toggle</span><span class="tk-tag">&gt;</span>
+  <span class="tk-tag">&lt;granado-toggle</span> <span class="tk-attr">label</span>=<span class="tk-str">"Salvar rascunhos automaticamente"</span><span class="tk-tag">&gt;</span><span class="tk-tag">&lt;/granado-toggle</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/div</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/main</span><span class="tk-tag">&gt;</span></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           _BestPractices / Fonts
+           ============================================================ -->
+      <section id="best-fonts">
+        <h1 class="gd-h1" style="margin-top:24px">Fonts</h1>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575">
+          <strong>_BestPractices</strong> &middot; padrões e boas práticas de uso do Apriso.
+        </p>
+        <p class="gd-lead">
+          Como <strong>mapear</strong>, <strong>instalar</strong> e <strong>usar</strong> as fontes do projeto.
+        </p>
+
+        <div class="gd-tabwrap">
+          <div class="gd-tabs">
+            <button type="button" class="gd-tab active" onclick="gdTab(this,'f-criacao')">Criação</button>
+            <button type="button" class="gd-tab" onclick="gdTab(this,'f-instalacao')">Instalação</button>
+            <button type="button" class="gd-tab" onclick="gdTab(this,'f-utilizacao')">Utilização</button>
+          </div>
+
+          <div class="gd-tabpanel" id="f-criacao">
+            <p class="gd-lead">
+              Crie um arquivo chamado <code>spi-fonts.css</code> e, dentro dele, faça o
+              <strong>mapeamento das fontes</strong> que serão usadas no projeto. Exemplo:
+            </p>
+            <pre class="gd-code"><span class="tk-comment">/* ============================================================
+   Poppins — sans-serif (body / texto geral) — fonte atual
+   ============================================================ */</span>
+
+<span class="tk-key">@font-face</span> {
+  <span class="tk-attr">font-family</span>: <span class="tk-str">'Poppins'</span>;
+  <span class="tk-attr">font-style</span>: normal;
+  <span class="tk-attr">font-weight</span>: <span class="tk-num">300</span>;
+  <span class="tk-attr">font-display</span>: swap;
+  <span class="tk-attr">src</span>: url(<span class="tk-str">'./poppins-300.woff2'</span>) format(<span class="tk-str">'woff2'</span>);
+}
+
+<span class="tk-key">@font-face</span> {
+  <span class="tk-attr">font-family</span>: <span class="tk-str">'Poppins'</span>;
+  <span class="tk-attr">font-style</span>: normal;
+  <span class="tk-attr">font-weight</span>: <span class="tk-num">400</span>;
+  <span class="tk-attr">font-display</span>: swap;
+  <span class="tk-attr">src</span>: url(<span class="tk-str">'./poppins-regular.woff2'</span>) format(<span class="tk-str">'woff2'</span>);
+}
+
+<span class="tk-key">@font-face</span> {
+  <span class="tk-attr">font-family</span>: <span class="tk-str">'Poppins'</span>;
+  <span class="tk-attr">font-style</span>: italic;
+  <span class="tk-attr">font-weight</span>: <span class="tk-num">400</span>;
+  <span class="tk-attr">font-display</span>: swap;
+  <span class="tk-attr">src</span>: url(<span class="tk-str">'./poppins-italic.woff2'</span>) format(<span class="tk-str">'woff2'</span>);
+}
+
+<span class="tk-key">@font-face</span> {
+  <span class="tk-attr">font-family</span>: <span class="tk-str">'Poppins'</span>;
+  <span class="tk-attr">font-style</span>: normal;
+  <span class="tk-attr">font-weight</span>: <span class="tk-num">500</span>;
+  <span class="tk-attr">font-display</span>: swap;
+  <span class="tk-attr">src</span>: url(<span class="tk-str">'./poppins-500.woff2'</span>) format(<span class="tk-str">'woff2'</span>);
+}
+
+<span class="tk-key">@font-face</span> {
+  <span class="tk-attr">font-family</span>: <span class="tk-str">'Poppins'</span>;
+  <span class="tk-attr">font-style</span>: normal;
+  <span class="tk-attr">font-weight</span>: <span class="tk-num">600</span>;
+  <span class="tk-attr">font-display</span>: swap;
+  <span class="tk-attr">src</span>: url(<span class="tk-str">'./poppins-600.woff2'</span>) format(<span class="tk-str">'woff2'</span>);
+}
+
+<span class="tk-key">@font-face</span> {
+  <span class="tk-attr">font-family</span>: <span class="tk-str">'Poppins'</span>;
+  <span class="tk-attr">font-style</span>: normal;
+  <span class="tk-attr">font-weight</span>: <span class="tk-num">700</span>;
+  <span class="tk-attr">font-display</span>: swap;
+  <span class="tk-attr">src</span>: url(<span class="tk-str">'./poppins-700.woff2'</span>) format(<span class="tk-str">'woff2'</span>);
+}</pre>
+
+            <p class="gd-lead" style="margin-top:16px">
+              Na <strong>mesma pasta</strong> desse CSS, coloque os arquivos das fontes que estão sendo
+              mapeadas, por exemplo:
+            </p>
+            <pre class="gd-code">poppins-300.woff2
+poppins-500.woff2
+poppins-700.woff2
+...</pre>
+          </div>
+
+          <div class="gd-tabpanel" id="f-instalacao" style="display:none">
+            <p class="gd-lead">
+              Coloque os arquivos de fonte e o <code>spi-fonts.css</code> dentro da pasta abaixo no
+              <strong>servidor do Apriso</strong>:
+            </p>
+            <pre class="gd-code">C:\Program Files\Dassault Systemes\DELMIA Apriso 2025\WebSite\Portal\Scripts\FontsGranado</pre>
+          </div>
+
+          <div class="gd-tabpanel" id="f-utilizacao" style="display:none">
+            <p class="gd-lead">
+              Para utilizar as fontes na página, basta importar o CSS no topo da página, desta forma:
+            </p>
+            <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o CSS no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;link</span> <span class="tk-attr">rel</span>=<span class="tk-str">"stylesheet"</span> <span class="tk-attr">type</span>=<span class="tk-str">"text/css"</span> <span class="tk-attr">href</span>=<span class="tk-str">"[AprisoScripts]/FontsGranado/spi-fonts.css"</span><span class="tk-tag">&gt;</span>
+
+<span class="tk-tag">&lt;main</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;h1</span> <span class="tk-attr">style</span>=<span class="tk-str">"font-family:'Poppins';font-weight:700"</span><span class="tk-tag">&gt;</span>Título em Poppins<span class="tk-tag">&lt;/h1</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;p</span> <span class="tk-attr">style</span>=<span class="tk-str">"font-family:'Poppins';font-weight:400"</span><span class="tk-tag">&gt;</span>Texto usando a fonte mapeada.<span class="tk-tag">&lt;/p</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/main</span><span class="tk-tag">&gt;</span></pre>
+          </div>
+        </div>
       </section>
 
       <!-- ============================================================
@@ -5149,6 +5559,19 @@
 
   <script>
     // Expande/colapsa uma categoria da sidebar.
+    // Alterna as abas de código (ex.: HTML / JAVASCRIPT) dentro de um .gd-tabwrap.
+    function gdTab(btn, panelId) {
+      var wrap = btn.closest('.gd-tabwrap');
+      if (!wrap) return;
+      var tabs = wrap.querySelectorAll('.gd-tab');
+      for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+      btn.classList.add('active');
+      var panels = wrap.querySelectorAll('.gd-tabpanel');
+      for (var j = 0; j < panels.length; j++) panels[j].style.display = 'none';
+      var target = document.getElementById(panelId);
+      if (target) target.style.display = 'block';
+    }
+
     function gdToggleCat(btn) {
       var aberto = btn.getAttribute('aria-expanded') === 'true';
       btn.setAttribute('aria-expanded', String(!aberto));
