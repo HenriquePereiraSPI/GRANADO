@@ -1276,6 +1276,21 @@
         text="Aviso sem icone — texto ocupa toda a largura da caixa.">
       </granado-information>
 
+      <!-- items: pares Rotulo -> Valor (JSON inline no atributo) -->
+      <granado-information
+        items='{"Material":"Aqua (Água Purificada)","Lote":"AGUA-2026-03","Quantidade Alvo":"412,500 kg","Etiqueta Origem":"ETQ-MP-AGUA-2026-0341"}'>
+      </granado-information>
+
+      <!-- items + border-style tracejada + variante -->
+      <granado-information variant="ok" border-style="dashed"
+        items='{"Material":"Fenoxietanol","Lote":"FEN-2026-03","Quantidade Alvo":"3,000 kg","Etiqueta Origem":"ETQ-MP-FEN-2026-0088"}'>
+      </granado-information>
+
+      <!-- border-style tracejada com texto -->
+      <granado-information variant="info" border-style="dashed"
+        text="Borda tracejada (border-style=&quot;dashed&quot;) — mesmo estilo do toggle Peso Manual.">
+      </granado-information>
+
     </div>
   </section>
 

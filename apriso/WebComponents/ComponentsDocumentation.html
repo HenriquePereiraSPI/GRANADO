@@ -9758,6 +9758,51 @@ GranadoPreloader.hide();</pre>
 <span class="tk-tag">&lt;/div&gt;</span></pre>
         </div>
 
+        <!-- ===== Itens (Rótulo → Valor) ===== -->
+        <h2 class="gd-h2">Itens (objeto Rótulo → Valor)</h2>
+        <p class="gd-lead">
+          Em vez de <code>text</code>, passe <code>items</code> — um <strong>objeto</strong>
+          <code>{ "Rótulo": "Valor" }</code> (ou um array) — e a caixa vira um
+          <strong>informativo em linha</strong>: cada rótulo aparece pequeno em maiúsculas
+          e o valor em destaque na cor da variante. Ideal para resumir o item em andamento
+          (ex.: <em>Material · Lote · Quantidade Alvo · Etiqueta Origem</em>). Como atributo
+          HTML, envie o JSON entre <strong>aspas simples</strong>. A ordem das chaves é
+          preservada; em telas estreitas os pares quebram para a linha seguinte.
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-information
+            items='{"Material":"Aqua (Água Purificada)","Lote":"AGUA-2026-03","Quantidade Alvo":"412,500 kg","Etiqueta Origem":"ETQ-MP-AGUA-2026-0341"}'>
+          </granado-information>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-information</span>
+    <span class="tk-attr">items</span>=<span class="tk-str">'{"Material":"Aqua (Água Purificada)","Lote":"AGUA-2026-03","Quantidade Alvo":"412,500 kg","Etiqueta Origem":"ETQ-MP-AGUA-2026-0341"}'</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-information&gt;</span></pre>
+        </div>
+
+        <!-- ===== Estilo da borda ===== -->
+        <h2 class="gd-h2">Estilo da borda</h2>
+        <p class="gd-lead">
+          <code>border-style</code> aceita qualquer valor CSS de borda —
+          <code>solid</code> (default), <code>dashed</code>, <code>dotted</code>,
+          <code>double</code>, <code>none</code>. Use <code>dashed</code> para o mesmo
+          tracejado dos <em>toggles</em> (ex.: "Peso Manual"). Combina com <code>variant</code>,
+          <code>text</code> e <code>items</code>.
+        </p>
+        <div class="gd-demo" style="display:flex;flex-direction:column;gap:10px">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-information border-style="dashed"
+            text="Borda tracejada (<strong>border-style=&quot;dashed&quot;</strong>) — mesmo estilo do toggle Peso Manual.">
+          </granado-information>
+          <granado-information variant="ok" border-style="dashed"
+            items='{"Material":"Fenoxietanol","Lote":"FEN-2026-03","Quantidade Alvo":"3,000 kg","Etiqueta Origem":"ETQ-MP-FEN-2026-0088"}'>
+          </granado-information>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-information</span> <span class="tk-attr">border-style</span>=<span class="tk-str">"dashed"</span>
+    <span class="tk-attr">text</span>=<span class="tk-str">"Borda tracejada — mesmo estilo do toggle Peso Manual."</span><span class="tk-tag">&gt;&lt;/granado-information&gt;</span>
+
+<span class="tk-tag">&lt;granado-information</span> <span class="tk-attr">variant</span>=<span class="tk-str">"ok"</span> <span class="tk-attr">border-style</span>=<span class="tk-str">"dashed"</span>
+    <span class="tk-attr">items</span>=<span class="tk-str">'{"Material":"Fenoxietanol","Lote":"FEN-2026-03","Quantidade Alvo":"3,000 kg","Etiqueta Origem":"ETQ-MP-FEN-2026-0088"}'</span><span class="tk-tag">&gt;&lt;/granado-information&gt;</span></pre>
+        </div>
+
         <!-- ===== Via JS ===== -->
         <h2 class="gd-h2">Via JavaScript</h2>
         <p class="gd-lead">
@@ -9819,6 +9864,28 @@ GranadoPreloader.hide();</pre>
                 <code>✓</code> / <code>✕</code>. Use <code>icon=""</code> para ocultar.
               </td>
             </tr>
+            <tr>
+              <td class="col-name">border-style</td>
+              <td class="col-type">string (CSS border-style)</td>
+              <td class="col-default">"solid"</td>
+              <td class="col-desc">
+                Estilo da borda da caixa: <code>solid</code>, <code>dashed</code>,
+                <code>dotted</code>, <code>double</code>, <code>none</code>… A cor da borda
+                continua vindo da variante.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">items</td>
+              <td class="col-type">objeto/array (JSON)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">
+                Pares <strong>Rótulo → Valor</strong> renderizados em linha. Objeto
+                <code>{ "Material": "Aqua", "Lote": "AGUA-2026-03" }</code> ou array
+                <code>[{ "label": "…", "value": "…" }]</code>. Como atributo HTML, envie o
+                JSON (aspas simples). Se houver <code>text</code> <em>e</em> <code>items</code>,
+                o texto aparece em cima. Rótulos/valores são <strong>escapados</strong>.
+              </td>
+            </tr>
           </tbody>
         </table>
 
@@ -9847,6 +9914,20 @@ GranadoPreloader.hide();</pre>
               <td class="col-type">string</td>
               <td class="col-desc">Lê/seta o atributo <code>icon</code>.</td>
             </tr>
+            <tr>
+              <td class="col-name">borderStyle</td>
+              <td class="col-type">string</td>
+              <td class="col-desc">Lê/seta o atributo <code>border-style</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">items</td>
+              <td class="col-type">objeto/array</td>
+              <td class="col-desc">
+                Lê/seta o atributo <code>items</code>. O getter devolve o objeto/array já
+                parseado (ou <code>null</code>); o setter aceita objeto/array (serializado
+                para JSON) ou string JSON.
+              </td>
+            </tr>
           </tbody>
         </table>
 
@@ -9863,6 +9944,10 @@ GranadoPreloader.hide();</pre>
             conteúdo não confiável.</li>
           <li><strong>Multilinha:</strong> em textos longos o ícone permanece alinhado ao
             topo (o container usa <code>align-items:flex-start</code>).</li>
+          <li><strong>Valores longos (items):</strong> os pares quebram para a linha
+            seguinte quando não cabem, e um valor muito grande (inclusive sem espaços)
+            <strong>quebra dentro da própria célula</strong> (<code>overflow-wrap</code> +
+            <code>word-break</code>), sem estourar a caixa. O rótulo nunca quebra.</li>
         </ul>
       </section>
 
