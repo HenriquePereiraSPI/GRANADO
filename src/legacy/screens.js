@@ -2995,8 +2995,25 @@ export const SCREENS = {
             var p = document.getElementById('pes-panel-' + i);
             if (p) p.style.display = (i === n) ? 'block' : 'none';
           }
-          // Ao entrar no step 4: validar balanças contra o alvo da MP + ajustar
-          // a visibilidade grid(desktop)/galeria(mobile).
+          // Ao entrar no step 4/5: popular o informativo do material em andamento
+          // (dentro do card, usando o prefixo pes-s{n}-). No step 4 também valida
+          // balanças contra o alvo da MP + ajusta grid(desktop)/galeria(mobile).
+          if (n === 4 || n === 5) {
+            var nmEl = document.getElementById('pes-mp-sel-nome');
+            var infoEl = document.getElementById('pes-mp-sel-info');
+            var alvoEl2 = document.getElementById('pes-mp-sel-alvo');
+            var scanEl = document.getElementById('pes-scan-inp');
+            var loteTxt = '—';
+            if (infoEl && infoEl.textContent.indexOf('Lote:') !== -1) {
+              loteTxt = infoEl.textContent.split('Lote:')[1].trim();
+            }
+            var etqTxt = (scanEl && scanEl.value.trim()) ? scanEl.value.trim() : '—';
+            var pfx = 'pes-s' + n + '-';
+            var mEl = document.getElementById(pfx + 'material'); if (mEl) mEl.textContent = nmEl ? nmEl.textContent : '—';
+            var lEl = document.getElementById(pfx + 'lote'); if (lEl) lEl.textContent = loteTxt;
+            var qEl = document.getElementById(pfx + 'qtd'); if (qEl) qEl.textContent = alvoEl2 ? alvoEl2.textContent : '—';
+            var eEl = document.getElementById(pfx + 'etq'); if (eEl) eEl.textContent = etqTxt;
+          }
           if (n === 4) {
             setTimeout(function(){
               if (typeof pesValidarBalancas === 'function') pesValidarBalancas();
@@ -4258,6 +4275,14 @@ export const SCREENS = {
           <!-- ── PAINEL 4: Seleção de Balança ── -->
           <div id="pes-panel-4">
             <div class="card cv mb14" style="border:2px solid var(--ouro)">
+              <!-- Informativo do material em andamento (populado ao entrar no Step 4) -->
+              <div class="abox info mb14" style="border:1px dashed var(--border2)"><span class="ai">ℹ</span><div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 22px">
+                <span style="font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Material <span id="pes-s4-material" style="font-size:12px;font-weight:700;color:var(--text);text-transform:none;letter-spacing:0;margin-left:5px">—</span></span>
+                <span style="font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Lote <span id="pes-s4-lote" class="mono" style="font-size:12px;font-weight:700;color:var(--text);text-transform:none;letter-spacing:0;margin-left:5px">—</span></span>
+                <span style="font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Quantidade Alvo <span id="pes-s4-qtd" class="mono" style="font-size:12px;font-weight:700;color:var(--verde-esc);text-transform:none;letter-spacing:0;margin-left:5px">—</span></span>
+                <span style="font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Etiqueta Origem <span id="pes-s4-etq" class="mono" style="font-size:12px;font-weight:700;color:var(--text);text-transform:none;letter-spacing:0;margin-left:5px">—</span></span>
+              </div></div>
+
               <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px">
                 <div class="card-title" style="margin-bottom:0">④ Selecionar Balança para Pesagem</div>
                 <label onclick="pesToggleManual()" title="Peso Manual" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;white-space:nowrap;flex-shrink:0;padding:6px 12px;border:1px dashed var(--border2);border-radius:6px;background:var(--surface2)">
@@ -4265,6 +4290,7 @@ export const SCREENS = {
                   <span id="pes-pm-switch" style="position:relative;display:inline-block;width:40px;height:22px;border-radius:11px;background:var(--border2);transition:background .15s"><span id="pes-pm-knob" style="position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:left .15s"></span></span>
                 </label>
               </div>
+
               <style>
                 /* Mobile: mostra só a 1ª frase do informativo de balança. */
                 @media (max-width: 768px) { .pes-bal-info-extra { display: none !important; } }
@@ -4461,19 +4487,15 @@ export const SCREENS = {
           </div>
           <div id="pes-panel-5">
             <div class="card cv mb14" style="border:2px solid var(--verde)">
+              <!-- Informativo do material em andamento (populado ao entrar no Step 5) -->
+              <div class="abox info mb14" style="border:1px dashed var(--border2)"><span class="ai">ℹ</span><div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 22px">
+                <span style="font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Material <span id="pes-s5-material" style="font-size:12px;font-weight:700;color:var(--text);text-transform:none;letter-spacing:0;margin-left:5px">—</span></span>
+                <span style="font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Lote <span id="pes-s5-lote" class="mono" style="font-size:12px;font-weight:700;color:var(--text);text-transform:none;letter-spacing:0;margin-left:5px">—</span></span>
+                <span style="font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Quantidade Alvo <span id="pes-s5-qtd" class="mono" style="font-size:12px;font-weight:700;color:var(--verde-esc);text-transform:none;letter-spacing:0;margin-left:5px">—</span></span>
+                <span style="font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Etiqueta Origem <span id="pes-s5-etq" class="mono" style="font-size:12px;font-weight:700;color:var(--text);text-transform:none;letter-spacing:0;margin-left:5px">—</span></span>
+              </div></div>
+
               <div class="card-title">⑤ Pesagem em Andamento — Aqua (Água Purificada)</div>
-              <div id="pes-s5-mp-info" style="display:flex;gap:16px;margin-bottom:16px">
-                <div style="flex:1">
-                  <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Material</div>
-                  <div style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--verde-esc)">Aqua (Água Purificada)</div>
-                  <div style="font-family:var(--font-m);font-size:11px;color:var(--text3)">MP-0001 · Lote: AGUA-2026-03 · Val: 12/2026</div>
-                </div>
-                <div style="text-align:right">
-                  <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:2px">Alvo</div>
-                  <div style="font-family:var(--font-m);font-size:28px;font-weight:700;color:var(--verde)">412,500 <span style="font-size:14px;font-weight:400">kg</span></div>
-                  <div style="font-size:11px;color:var(--text3)">Variância máx: ±0,5% → permitido [410,44 – 414,56] kg</div>
-                </div>
-              </div>
               <!-- Display da balança (switch Peso Manual foi movido para o Step 4 — Selecionar Balança) -->
               <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px">
                 <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3)">Leitura em Tempo Real — <span style="font-family:var(--font-m);color:var(--verde)" id="pes-bal-nome-live">BAL-01</span></div>
