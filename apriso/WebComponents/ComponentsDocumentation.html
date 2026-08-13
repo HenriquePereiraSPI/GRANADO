@@ -9495,6 +9495,53 @@ GranadoPreloader.hide();</pre>
 <span class="tk-tag">&lt;/granado-page-title&gt;</span></pre>
         </div>
 
+        <!-- ===== Controles no meta (HTML interativo) ===== -->
+        <h2 class="gd-h2">Controles no meta (2 dropdowns + botão com <code>onclick</code>)</h2>
+        <p class="gd-lead">
+          Como <code>custom-text</code> é renderizado como <strong>HTML</strong>, dá para
+          colocar <strong>controles interativos</strong> à direita do cabeçalho — por
+          exemplo dois <code>&lt;select&gt;</code> e um <code>&lt;button&gt;</code> com evento
+          de clique. Regra prática: o atributo externo usa <strong>aspas duplas</strong> e
+          os atributos internos (ids, styles, <code>onclick</code>) usam
+          <strong>aspas simples</strong>; o <code>onclick</code> chama uma função global.
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-page-title
+            subtitle="Pesagem · MF5"
+            main-title="Cockpit de Pesagem"
+            custom-text="<div style='display:flex;align-items:center;gap:8px;justify-content:flex-end;flex-wrap:wrap'><select id='gd-pt-sala' style='font-size:11px;padding:5px 8px;border:1px solid #C9C7BE;border-radius:6px;color:#33413A;background:#fff'><option>Sala A</option><option>Sala B</option><option>Sala C</option></select><select id='gd-pt-bal' style='font-size:11px;padding:5px 8px;border:1px solid #C9C7BE;border-radius:6px;color:#33413A;background:#fff'><option>BAL-01</option><option>BAL-02</option><option>BAL-03</option></select><button type='button' onclick='gdPageTitleDemoAplicar()' style='font-size:11px;font-weight:700;padding:5px 12px;border:1px solid #1C5C31;border-radius:6px;background:#1C5C31;color:#fff;cursor:pointer'>Aplicar</button><span id='gd-pt-res' style='font-size:11px;font-weight:700;color:#1C5C31'></span></div>">
+          </granado-page-title>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-page-title</span>
+    <span class="tk-attr">subtitle</span>=<span class="tk-str">"Pesagem · MF5"</span>
+    <span class="tk-attr">main-title</span>=<span class="tk-str">"Cockpit de Pesagem"</span>
+    <span class="tk-attr">custom-text</span>=<span class="tk-str">"
+      &lt;div style='display:flex;align-items:center;gap:8px'&gt;
+        &lt;select id='gd-pt-sala'&gt;&lt;option&gt;Sala A&lt;/option&gt;&lt;option&gt;Sala B&lt;/option&gt;&lt;option&gt;Sala C&lt;/option&gt;&lt;/select&gt;
+        &lt;select id='gd-pt-bal'&gt;&lt;option&gt;BAL-01&lt;/option&gt;&lt;option&gt;BAL-02&lt;/option&gt;&lt;option&gt;BAL-03&lt;/option&gt;&lt;/select&gt;
+        &lt;button type='button' onclick='gdPageTitleDemoAplicar()'&gt;Aplicar&lt;/button&gt;
+        &lt;span id='gd-pt-res'&gt;&lt;/span&gt;
+      &lt;/div&gt;"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-page-title&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-key">function</span> gdPageTitleDemoAplicar () {
+    <span class="tk-key">var</span> sala = <span class="tk-attr">document</span>.getElementById(<span class="tk-str">'gd-pt-sala'</span>).value;
+    <span class="tk-key">var</span> bal  = <span class="tk-attr">document</span>.getElementById(<span class="tk-str">'gd-pt-bal'</span>).value;
+    <span class="tk-attr">document</span>.getElementById(<span class="tk-str">'gd-pt-res'</span>).textContent = <span class="tk-str">'✓ '</span> + sala + <span class="tk-str">' · '</span> + bal;
+  }
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+        <script>
+          function gdPageTitleDemoAplicar () {
+            var sala = document.getElementById('gd-pt-sala');
+            var bal = document.getElementById('gd-pt-bal');
+            var res = document.getElementById('gd-pt-res');
+            if (!sala || !bal || !res) return;
+            res.textContent = '✓ ' + sala.value + ' · ' + bal.value;
+          }
+        </script>
+
         <!-- ===== Só o título ===== -->
         <h2 class="gd-h2">Só o título</h2>
         <p class="gd-lead">
