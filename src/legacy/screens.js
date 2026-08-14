@@ -7493,16 +7493,50 @@ export const SCREENS = {
         nav('pes-cockpit' + qs, null, null);
       }
       </script>
-        <!-- ── Barra de Filtros (linha única) ── -->
-        <div class="card cv mb14" style="padding:10px 14px;overflow:visible">
-          <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
+        <!-- Estilos do filtro: inline no desktop; bottom-sheet deslizante no mobile (padrão da tela de Checklist) -->
+        <style>
+          #po-funnel-btn { display:none; }
+          #po-flt-backdrop { display:none; }
+          #po-flt-sheethead { display:none; }
+          @media (max-width:768px){
+            #po-funnel-btn { display:inline-flex!important; }
+            #po-filtros {
+              position:fixed; left:0; right:0; bottom:0; margin:0!important; z-index:99999;
+              max-width:640px; margin-left:auto; margin-right:auto;
+              max-height:85vh; overflow-y:auto; border-bottom:none;
+              border-radius:16px 16px 0 0; box-shadow:0 -10px 34px rgba(15,51,25,.28);
+              transform:translateY(100%); transition:transform .22s ease;
+            }
+            #po-filtros.open { transform:translateY(0); }
+            #po-flt-backdrop.open { display:block; position:fixed; inset:0; background:rgba(15,51,25,.5); z-index:99998; }
+            #po-flt-sheethead { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+            #po-flt-grid { flex-direction:column; align-items:stretch; gap:12px; }
+            /* reseta o flex-basis/min-width dos campos (layout do desktop) — cada campo ocupa a largura total */
+            #po-flt-grid > div { flex:none!important; min-width:0!important; width:100%; }
+            #po-flt-grid .inp, #po-flt-grid .sel, #po-flt-status-btn { font-size:16px!important; width:100%; box-sizing:border-box; }
+            #po-flt-actions { width:100%; flex-direction:row; }
+            #po-flt-actions .btn { flex:1; }
+          }
+        </style>
+        <!-- Backdrop do bottom-sheet (mobile) -->
+        <div id="po-flt-backdrop" onclick="poToggleFiltros(false)"></div>
+        <!-- ── Barra de Filtros (inline no desktop; bottom-sheet no mobile) ── -->
+        <div class="card cv mb14" id="po-filtros" style="padding:10px 14px;overflow:visible">
+          <!-- Cabeçalho do sheet (só no mobile) -->
+          <div id="po-flt-sheethead">
+            <span style="display:flex;align-items:center;gap:8px;font:700 15px/1.3 'Poppins',sans-serif;color:var(--text)">
+              <span style="color:#1C5C31;display:flex"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span>Filtros
+            </span>
+            <button type="button" onclick="poToggleFiltros(false)" aria-label="Fechar" style="flex-shrink:0;background:transparent;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font:13px/1 'Poppins',sans-serif;color:var(--text2)">✕</button>
+          </div>
+          <div id="po-flt-grid" style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
             <div style="display:flex;flex-direction:column;flex:1 1 140px;min-width:130px">
               <label class="lbl">Núm. da Ordem</label>
-              <input class="inp" id="po-flt-num" placeholder="Ex.: OP-2026-0416" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+              <input class="inp" id="po-flt-num" placeholder="Ex.: OP-2026-0416" oninput="pesAplicarFiltros()" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
             </div>
             <div style="display:flex;flex-direction:column;flex:1.4 1 160px;min-width:150px">
               <label class="lbl">Produto / Fórmula</label>
-              <input class="inp" id="po-flt-prod" placeholder="Buscar produto..." style="font-size:12px;padding:7px 10px">
+              <input class="inp" id="po-flt-prod" placeholder="Buscar produto..." oninput="pesAplicarFiltros()" style="font-size:12px;padding:7px 10px">
             </div>
             <div style="display:flex;flex-direction:column;flex:1.3 1 180px;min-width:170px;position:relative">
               <label class="lbl">Status</label>
@@ -7537,21 +7571,28 @@ export const SCREENS = {
             </div>
             <div style="display:flex;flex-direction:column;flex:1 1 130px;min-width:120px">
               <label class="lbl">Data Prev. (de)</label>
-              <input class="inp" id="po-flt-data-ini" type="date" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+              <input class="inp" id="po-flt-data-ini" type="date" onchange="pesAplicarFiltros()" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
             </div>
             <div style="display:flex;flex-direction:column;flex:1 1 130px;min-width:120px">
               <label class="lbl">Data Prev. (até)</label>
-              <input class="inp" id="po-flt-data-fim" type="date" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
+              <input class="inp" id="po-flt-data-fim" type="date" onchange="pesAplicarFiltros()" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
             </div>
-            <div style="display:flex;gap:6px;align-items:flex-end">
-              <button class="btn btn-md btn-v" onclick="pesAplicarFiltros()" style="white-space:nowrap">🔍 Filtrar</button>
-              <button class="btn btn-md btn-ghost" onclick="pesLimparFiltros()" title="Limpar filtros">✕</button>
+            <div id="po-flt-actions" style="display:flex;gap:6px;align-items:flex-end">
+              <button class="btn btn-md btn-v" onclick="pesAplicarFiltros();poToggleFiltros(false)" style="white-space:nowrap">🔍 Filtrar</button>
             </div>
           </div>
           <div id="po-flt-result" style="font-size:10px;color:var(--text3);margin-top:8px;font-family:var(--font-m)"></div>
         </div>
 
-        <div class="card-title">Fila de Pesagem — Prioridade</div>
+        <!-- Card da fila: envolve título + tabela + galeria (igual ao card do Histórico no Checklist) -->
+        <div class="card cv">
+        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <span>Fila de Pesagem — Prioridade</span>
+          <!-- Funil visível só no mobile; abre o bottom-sheet de filtros. -->
+          <button id="po-funnel-btn" type="button" onclick="poToggleFiltros(true)" aria-label="Filtros" title="Filtros" style="align-items:center;justify-content:center;flex-shrink:0;width:34px;height:34px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:#1C5C31;cursor:pointer">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+          </button>
+        </div>
         <div class="abox info mb14 po-fila-info"><span class="ai">ℹ</span><div>Esta fila mostra ordens em diferentes estágios — desde pagamento de MPs até liberação para fabricação. Linhas vermelhas piscando indicam ordens aguardando liberação para fabricação.</div></div>
         <div id="po-tabela-wrap" style="overflow-x:auto">
         <table class="tbl" id="po-tabela" style="min-width:1180px">
@@ -7708,39 +7749,51 @@ export const SCREENS = {
         </table>
         </div><!-- /overflow-x:auto -->
 
-        <!-- Versão MOBILE: galeria vertical das ordens (granado-gallery) -->
-        <granado-gallery id="po-gallery"></granado-gallery>
+        <!-- Versão MOBILE: galeria vertical das ordens (granado-gallery) — espelha a tabela filtrada (padrão da tela de Checklist) -->
+        <granado-gallery id="po-gallery" enable-scroll="true" scroll-height="60vh"></granado-gallery>
         <script>
-          (function () {
+          // Reflete as linhas VISÍVEIS da tabela (respeitando o filtro) na galeria mobile.
+          function poSyncGallery() {
             var g = document.getElementById('po-gallery');
-            if (!g) return;
-            // Cores por status (mesma ideia dos badges NOVO / PESANDO / DETALHES)
-            var C = { novo: '#1F7A3D', pesando: '#1A4A8C', detalhes: '#8A8575' };
-            g.data = [
-              { title: 'OP-2026-0414', subtitle: 'Creme Hidratante 150g', data: '🗓 17/05/2026',
-                status: 'PESANDO', statusColor: C.pesando, metadata: { op: 'OP-2026-0414', action: 'continuar' } },
-              { title: 'OP-2026-0416', subtitle: 'Loção Hidratante Rosa 200ml', data: '🗓 18/05/2026',
-                status: 'NOVO', statusColor: C.novo, metadata: { op: 'OP-2026-0416', action: 'inicio' } },
-              { title: 'OP-2026-0413', subtitle: 'Sabonete Phebo Glicerinado 90g', data: '🗓 14/05/2026',
-                status: 'DETALHES', statusColor: C.detalhes, metadata: { op: 'OP-2026-0413', action: 'checkout' } },
-              { title: 'OP-2026-0412', subtitle: 'Sabonete Glicerinado Mel 90g', data: '🗓 13/05/2026',
-                status: 'DETALHES', statusColor: C.detalhes, metadata: { op: 'OP-2026-0412', action: 'detalhes' } },
-              { title: 'OP-2026-0411', subtitle: 'Sabonete Phebo Lavanda 90g', data: '🗓 —',
-                status: 'DETALHES', statusColor: C.detalhes, metadata: { op: 'OP-2026-0411', action: 'detalhes' } },
-              { title: 'OP-2026-0410', subtitle: 'Loção Hidratante Camomila 200ml', data: '🗓 —',
-                status: 'DETALHES', statusColor: C.detalhes, metadata: { op: 'OP-2026-0410', action: 'detalhes' } }
-            ];
-            g.onItemClick = function (d, ev) {
-              var m = d.metadata || {};
-              if (m.action === 'continuar' || m.action === 'inicio') {
-                if (typeof pesIrCockpit === 'function') pesIrCockpit(ev, m.action, m.op);
-              } else {
-                if (typeof PES_OP_SEL !== 'undefined') { try { PES_OP_SEL = m.op; } catch (e) {} }
-                if (typeof nav === 'function') nav('pes-checkout?op=' + m.op, null, null);
-              }
+            var tb = document.querySelector('#po-tabela tbody');
+            if (!g || !tb) return;
+            function corStatus(txt) {
+              var t = (txt || '').toLowerCase();
+              if (t.indexOf('pesando') !== -1) return '#1A4A8C';
+              if (t.indexOf('pronta') !== -1) return '#1F7A3D';
+              if (t.indexOf('finalizada') !== -1) return '#1C7A38';
+              if (t.indexOf('aguardando') !== -1) return '#8C1A1A';
+              if (t.indexOf('hold') !== -1) return '#9A5A00';
+              if (t.indexOf('cancelada') !== -1) return '#8C1A1A';
+              return '#8A8575';
+            }
+            var items = [];
+            Array.prototype.forEach.call(tb.rows, function (r) {
+              if (r.style.display === 'none') return;   // respeita o filtro
+              var c = r.cells; if (!c || c.length < 6) return;
+              // Produto: 1ª linha da célula (antes do <br> com a fórmula).
+              var prod = ((c[1].firstChild && c[1].firstChild.textContent) || c[1].textContent || '').trim();
+              // Status: só o badge (ignora textos extras como "32 dias em hold").
+              var bdg = c[4].querySelector('.bdg');
+              var st = ((bdg ? bdg.textContent : c[4].textContent) || '').trim();
+              items.push({
+                title: c[0].textContent.trim(),
+                subtitle: prod,
+                data: '🗓 ' + c[5].textContent.trim(),
+                status: st,
+                statusColor: corStatus(st),
+                metadata: { row: r }
+              });
+            });
+            g.data = items;
+            g.onItemClick = function (d) {
+              var mm = d.metadata || {};
+              if (mm.row) { var b = mm.row.querySelector('td:last-child button'); if (b) b.click(); }
             };
-          })();
+          }
+          poSyncGallery();
         </script>
+        </div><!-- /card da fila -->
 
         <!-- Animação para linhas piscando -->
         <style>
@@ -7752,6 +7805,15 @@ export const SCREENS = {
 
         <!-- Scripts dos filtros — STATUS = dropdown multi-seleção (padrão: todos marcados) -->
         <script>
+        // Abre/fecha o bottom-sheet de filtros (mobile). Inline no desktop.
+        function poToggleFiltros(open) {
+          var f = document.getElementById('po-filtros');
+          var b = document.getElementById('po-flt-backdrop');
+          if (!f || !b) return;
+          if (open == null) open = !f.classList.contains('open');
+          f.classList.toggle('open', open);
+          b.classList.toggle('open', open);
+        }
         function poToggleStatusDropdown(ev) {
           if (ev) ev.stopPropagation();
           var dd = document.getElementById('po-flt-status-dd');
@@ -7848,6 +7910,7 @@ export const SCREENS = {
           else if (fStatusArr.length === 0) label += ' · nenhum status selecionado';
           document.getElementById('po-flt-result').textContent = label;
           poAtualizarLabelStatus();
+          if (typeof poSyncGallery === 'function') poSyncGallery();   // mantém a galeria mobile em sincronia com o filtro
         }
         function pesLimparFiltros() {
           ['po-flt-num','po-flt-prod','po-flt-data-ini','po-flt-data-fim'].forEach(function(id){

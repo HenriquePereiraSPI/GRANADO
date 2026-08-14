@@ -36,6 +36,11 @@
      O botão "Aplicar" apenas fecha o painel (e dispara "apply", caso queira
      re-filtrar no fechamento).
 
+     Dropdowns/calendários com muitas opções: o painel ZERA o próprio
+     transform após abrir, para não recortar popups position:fixed dos
+     campos internos (ex.: <granado-dropdown>). Assim as opções aparecem
+     por cima do painel, como um <select> nativo, sem serem cortadas.
+
    ── Exemplo
    <script src="[AprisoScripts]/WebComponents/granado-filter.js"></script>
 
@@ -100,11 +105,20 @@ if (!customElements.get('granado-filter')) {
     open() {
       const bd = this._el('backdrop'), sh = this._el('sheet');
       if (!bd || !sh) return;
+      clearTimeout(this._txTimer);
       bd.style.display = 'block';
       sh.style.display = 'block';
+      sh.style.transform = 'translateY(100%)';
       // força reflow p/ animar o slide
       void sh.offsetHeight;
       sh.style.transform = 'translateY(0)';
+      // Depois do slide, ZERA o transform do painel. Um ancestral com transform
+      // (mesmo translateY(0)) vira "containing block" de descendentes
+      // position:fixed — os popups de <granado-dropdown>/<granado-calendar>
+      // passariam a ser posicionados relativo ao painel e RECORTADOS pelo seu
+      // overflow-y:auto. Sem transform, esses popups voltam a escapar do painel
+      // (comportamento de um <select> nativo) e não são mais cortados.
+      this._txTimer = setTimeout(() => { if (this._isOpen) sh.style.transform = 'none'; }, 240);
       this._isOpen = true;
       this._addEsc();
       this.dispatchEvent(new CustomEvent('open', { bubbles: true, composed: true }));
@@ -112,6 +126,11 @@ if (!customElements.get('granado-filter')) {
     close() {
       const bd = this._el('backdrop'), sh = this._el('sheet');
       if (!bd || !sh) { this._isOpen = false; return; }
+      clearTimeout(this._txTimer);
+      // Reaplica o transform (estava 'none' enquanto aberto) e força reflow para
+      // que a saída volte a animar do 0 até translateY(100%).
+      sh.style.transform = 'translateY(0)';
+      void sh.offsetHeight;
       sh.style.transform = 'translateY(100%)';
       bd.style.display = 'none';
       const hide = () => { sh.style.display = 'none'; };

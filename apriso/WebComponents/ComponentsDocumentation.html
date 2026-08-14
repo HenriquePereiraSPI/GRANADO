@@ -12505,6 +12505,45 @@ GranadoQuantityPopup.<span class="tk-attr">show</span>({ type: <span class="tk-s
 <span class="tk-tag">&lt;div</span> <span class="tk-attr">id</span>=<span class="tk-str">"doc-filter-status"</span><span class="tk-tag">&gt;&lt;/div&gt;</span></pre>
         </div>
 
+        <h2 class="gd-h2">Dropdown com muitas opções (não é cortado pelo painel)</h2>
+        <p class="gd-lead">
+          Um <code>granado-dropdown</code> com uma lista <strong>longa</strong> dentro do filtro.
+          O painel <strong>zera o próprio <code>transform</code></strong> depois de abrir, então o
+          popup do dropdown (que usa <code>position:fixed</code>) <strong>escapa por cima do
+          painel</strong> — como um <code>&lt;select&gt;</code> nativo — em vez de ser recortado pelo
+          scroll do bottom-sheet. Abra o funil e clique em <strong>Matéria-Prima</strong>.
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          </button>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;max-width:460px">
+            <div style="font:700 15px/1.2 'Poppins',sans-serif;color:#103E20">Fila de Pesagem</div>
+            <granado-filter title="Filtros da Fila">
+              <div style="display:grid;gap:12px">
+                <granado-input label="Núm. da Ordem" placeholder="Ex.: OP-2026-0416"></granado-input>
+                <granado-dropdown label="Matéria-Prima" placeholder="Selecionar MP..." searchable="true"
+                  options='["Aqua (Água Purificada)","Glicerina Bidestilada","Fenoxietanol","TEA 99%","Conservante BHT","Corante Rosaline","Óleo de Rosa Mosqueta","Manteiga de Karité","Extrato de Camomila","Vitamina E (Tocoferol)","Ácido Esteárico","Álcool Cetílico","Propilenoglicol","EDTA Dissódico","Trietanolamina","Óleo Mineral","Lanolina","Parafina Líquida","Essência Lavanda","Essência Rosa"]'></granado-dropdown>
+                <granado-dropdown label="Status" multi="true" placeholder="Todos"
+                  options='[{"value":"pronta","label":"Pronta para Pesagem"},{"value":"pesando","label":"Pesando"},{"value":"finalizada","label":"Finalizada"},{"value":"aguardando-fab","label":"Aguardando Fabricação"},{"value":"hold","label":"Hold"},{"value":"cancelada","label":"Cancelada"}]'></granado-dropdown>
+              </div>
+            </granado-filter>
+          </div>
+          <div style="font-size:12px;color:#8A9E8E;margin-top:8px">A lista de MPs (20 itens, com busca) abre por cima do painel, sem corte.</div>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-filter</span> <span class="tk-attr">title</span>=<span class="tk-str">"Filtros da Fila"</span><span class="tk-tag">&gt;</span>
+  <span class="tk-tag">&lt;div</span> <span class="tk-attr">style</span>=<span class="tk-str">"display:grid;gap:12px"</span><span class="tk-tag">&gt;</span>
+    <span class="tk-tag">&lt;granado-input</span> <span class="tk-attr">label</span>=<span class="tk-str">"Núm. da Ordem"</span> <span class="tk-attr">placeholder</span>=<span class="tk-str">"Ex.: OP-2026-0416"</span><span class="tk-tag">&gt;&lt;/granado-input&gt;</span>
+
+    <span class="tk-comment">&lt;!-- lista longa + busca: o popup escapa por cima do painel --&gt;</span>
+    <span class="tk-tag">&lt;granado-dropdown</span> <span class="tk-attr">label</span>=<span class="tk-str">"Matéria-Prima"</span> <span class="tk-attr">placeholder</span>=<span class="tk-str">"Selecionar MP..."</span> <span class="tk-attr">searchable</span>=<span class="tk-str">"true"</span>
+      <span class="tk-attr">options</span>=<span class="tk-str">'["Aqua (Água Purificada)","Glicerina Bidestilada", … , "Essência Rosa"]'</span><span class="tk-tag">&gt;&lt;/granado-dropdown&gt;</span>
+
+    <span class="tk-tag">&lt;granado-dropdown</span> <span class="tk-attr">label</span>=<span class="tk-str">"Status"</span> <span class="tk-attr">multi</span>=<span class="tk-str">"true"</span> <span class="tk-attr">placeholder</span>=<span class="tk-str">"Todos"</span>
+      <span class="tk-attr">options</span>=<span class="tk-str">'[{"value":"pronta","label":"Pronta para Pesagem"}, … ]'</span><span class="tk-tag">&gt;&lt;/granado-dropdown&gt;</span>
+  <span class="tk-tag">&lt;/div&gt;</span>
+<span class="tk-tag">&lt;/granado-filter&gt;</span></pre>
+        </div>
+
         <h2 class="gd-h2">Uso — via <code>content</code> (string) + JS</h2>
         <p class="gd-lead">Também dá para passar o HTML por string (propriedade <code>.content</code>) e controlar por JS.</p>
         <pre class="gd-code"><span class="tk-tag">&lt;granado-filter</span> <span class="tk-attr">id</span>=<span class="tk-str">"f"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Filtros"</span> <span class="tk-attr">label</span>=<span class="tk-str">"Filtros"</span><span class="tk-tag">&gt;&lt;/granado-filter&gt;</span>
@@ -12548,6 +12587,7 @@ GranadoQuantityPopup.<span class="tk-attr">show</span>({ type: <span class="tk-s
           <li><strong>Sempre popup:</strong> comportamento idêntico em web e mobile — o funil abre o bottom-sheet nos dois. Não há modo inline.</li>
           <li><strong>Filtro ao vivo:</strong> ligue os campos ao seu filtro (<code>onchange</code>/<code>oninput</code>); o <em>Aplicar</em> serve só para fechar (e dispara <code>apply</code>).</li>
           <li><strong>Bottom-sheet:</strong> desliza de baixo, com backdrop e <code>max-height:85vh</code> (rola quando há muitos campos), limitado por <code>width</code>.</li>
+          <li><strong>Dropdowns/calendários não são cortados:</strong> após a animação de abertura o painel zera o próprio <code>transform</code> (um transform ≠ <code>none</code> viraria <em>containing block</em> de descendentes <code>position:fixed</code>, recortando-os pelo scroll). Assim os popups de <code>&lt;granado-dropdown&gt;</code>/<code>&lt;granado-calendar&gt;</code> aparecem por cima do painel, como um <code>&lt;select&gt;</code> nativo.</li>
           <li><strong>Gatilho externo:</strong> se quiser abrir por outro botão, é só chamar <code>el.open()</code> — o funil embutido continua funcionando.</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
         </ul>

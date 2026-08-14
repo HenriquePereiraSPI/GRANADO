@@ -2061,6 +2061,20 @@
         </div>
       </granado-filter>
     </div>
+
+    <!-- Variante: dropdown com MUITAS opções — o popup escapa por cima do painel (não é cortado) -->
+    <div style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;max-width:460px">
+      <div style="font:700 15px/1.2 'Poppins',sans-serif;color:#103E20">Fila de Pesagem</div>
+      <granado-filter title="Filtros da Fila">
+        <div style="display:grid;gap:12px">
+          <granado-input label="Núm. da Ordem" placeholder="Ex.: OP-2026-0416"></granado-input>
+          <granado-dropdown label="Matéria-Prima" placeholder="Selecionar MP..." searchable="true"
+            options='["Aqua (Água Purificada)","Glicerina Bidestilada","Fenoxietanol","TEA 99%","Conservante BHT","Corante Rosaline","Óleo de Rosa Mosqueta","Manteiga de Karité","Extrato de Camomila","Vitamina E (Tocoferol)","Ácido Esteárico","Álcool Cetílico","Propilenoglicol","EDTA Dissódico","Trietanolamina","Óleo Mineral","Lanolina","Parafina Líquida","Essência Lavanda","Essência Rosa"]'></granado-dropdown>
+          <granado-dropdown label="Status" multi="true" placeholder="Todos"
+            options='[{"value":"pronta","label":"Pronta para Pesagem"},{"value":"pesando","label":"Pesando"},{"value":"finalizada","label":"Finalizada"},{"value":"aguardando-fab","label":"Aguardando Fabricação"},{"value":"hold","label":"Hold"},{"value":"cancelada","label":"Cancelada"}]'></granado-dropdown>
+        </div>
+      </granado-filter>
+    </div>
   </section>
 
   <!-- ========== granado-empty-popup ========== -->
