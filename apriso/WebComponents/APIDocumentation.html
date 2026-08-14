@@ -419,6 +419,7 @@
           <a class="gd-link" href="#GRD_API_GetAllPrinters">GRD_API_GetAllPrinters</a>
           <a class="gd-link" href="#GRD_API_PrintLabel">GRD_API_PrintLabel</a>
           <a class="gd-link" href="#GRD_API_GetLabel">GRD_API_GetLabel</a>
+          <a class="gd-link" href="#GRD_API_GetJDELabels">GRD_API_GetJDELabels</a>
           <a class="gd-link" href="#GRD_API_GetScales">GRD_API_GetScales</a>
           <a class="gd-link" href="#GRD_API_GetReasonCode">GRD_API_GetReasonCode</a>
           <a class="gd-link" href="#GRD_API_GetUsers">GRD_API_GetUsers</a>
@@ -4605,6 +4606,124 @@ poppins-700.woff2
             como string vazia.</li>
           <li><strong>Datas "1/1/1900":</strong> representam datas não preenchidas
             (<code>ProductionDate</code> / <code>ExpirationDate</code>).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetJDELabels
+           ============================================================ -->
+      <section id="GRD_API_GetJDELabels">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetJDELabels</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera as etiquetas do JDE a partir de um código de barras escaneado</strong>.
+          Devolve os dados da etiqueta em <code>Label</code> e as <strong>localizações</strong> onde o
+          par Produto/Lote está disponível em <code>LabelLocations</code>.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetJDELabels</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>Label</code> e
+          <code>LabelLocations</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Barcode"</span><span class="tk-punc">:</span> <span class="tk-str">"#V|M602B|Z4858|45381"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">Barcode</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">
+                Código de barras escaneado da etiqueta, no formato
+                <code>#LabelType|ProductNo|LotNo|LabelNo</code>. Ex.:
+                <code>"#V|M602B|Z4858|45381"</code> → <code>LabelType=V</code>,
+                <code>ProductNo=M602B</code>, <code>LotNo=Z4858</code>, <code>LabelNo=45381</code>.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Etiquetas recuperadas com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Label"</span><span class="tk-punc">:</span> {
+    <span class="tk-key">"LabelNo"</span><span class="tk-punc">:</span> <span class="tk-str">"45381"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"M602B"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"Z4858"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"25"</span><span class="tk-punc">,</span> <span class="tk-key">"LabelType"</span><span class="tk-punc">:</span> <span class="tk-str">"V"</span>
+  }<span class="tk-punc">,</span>
+  <span class="tk-key">"LabelLocations"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"M602B"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"Z4858"</span><span class="tk-punc">,</span> <span class="tk-key">"Location"</span><span class="tk-punc">:</span> <span class="tk-str">"PESAGEM"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"M602B"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"Z4858"</span><span class="tk-punc">,</span> <span class="tk-key">"Location"</span><span class="tk-punc">:</span> <span class="tk-str">"PESAGEM"</span> }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída (envelope)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as etiquetas foram recuperadas com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">Label</td><td class="col-type">object</td><td class="col-desc">Dados da etiqueta escaneada. Campos abaixo.</td></tr>
+            <tr><td class="col-name">LabelLocations</td><td class="col-type">array&lt;object&gt;</td><td class="col-desc">Localizações onde o par Produto/Lote está disponível. Campos abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de <code>Label</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:180px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">LabelNo</td><td class="col-type">string</td><td class="col-desc">Número da etiqueta.</td></tr>
+            <tr><td class="col-name">ProductNo</td><td class="col-type">string</td><td class="col-desc">Código do produto/material.</td></tr>
+            <tr><td class="col-name">LotNo</td><td class="col-type">string</td><td class="col-desc">Lote vinculado à etiqueta.</td></tr>
+            <tr><td class="col-name">Quantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade da etiqueta.</td></tr>
+            <tr><td class="col-name">LabelType</td><td class="col-type">string</td><td class="col-desc">Tipo da etiqueta (ex.: <code>"V"</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada <code>LabelLocations</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:180px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">ProductNo</td><td class="col-type">string</td><td class="col-desc">Código do produto/material.</td></tr>
+            <tr><td class="col-name">LotNo</td><td class="col-type">string</td><td class="col-desc">Lote vinculado.</td></tr>
+            <tr><td class="col-name">Location</td><td class="col-type">string</td><td class="col-desc">Localização onde o Produto/Lote está disponível (ex.: <code>"PESAGEM"</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Formato do <code>Barcode</code>:</strong> faça o split por <code>|</code> —
+            o 1º segmento (após o <code>#</code>) é o <code>LabelType</code>, seguido de
+            <code>ProductNo</code>, <code>LotNo</code> e <code>LabelNo</code>.</li>
+          <li><strong><code>LabelLocations</code>:</strong> pode trazer o mesmo Produto/Lote em
+            mais de uma localização (uma linha por ocorrência).</li>
         </ul>
       </section>
 
