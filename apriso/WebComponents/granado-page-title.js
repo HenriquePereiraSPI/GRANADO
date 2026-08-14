@@ -23,11 +23,15 @@
                    Aceita HTML (ex.: <br>, <span style="color:...">),
                    no mesmo formato do ".screen-meta" das telas.
                    Tambem aceito como "customtext".
+     title-size  - tamanho do titulo principal (qualquer unidade CSS).
+                   Default "26px". Util p/ um cabecalho mais compacto
+                   (ex.: title-size="20px" no mobile). Tambem "titlesize".
 
    Propriedades JS:
      elemento.subtitle    -> ler/setar subtitle
      elemento.mainTitle   -> ler/setar o titulo principal
      elemento.customText  -> ler/setar custom-text (HTML)
+     elemento.titleSize   -> ler/setar title-size
 
    Exemplo:
 
@@ -49,13 +53,13 @@
 if (!customElements.get('granado-page-title')) {
   class GranadoPageTitle extends HTMLElement {
     static get observedAttributes() {
-      return ['title', 'main-title', 'subtitle', 'custom-text', 'customtext'];
+      return ['title', 'main-title', 'subtitle', 'custom-text', 'customtext', 'title-size', 'titlesize'];
     }
 
     connectedCallback() {
       // lazy-props: se alguma propriedade foi setada antes do upgrade,
       // reaplica para passar pelos getters/setters.
-      ['subtitle', 'mainTitle', 'customText'].forEach((p) => {
+      ['subtitle', 'mainTitle', 'customText', 'titleSize'].forEach((p) => {
         if (Object.prototype.hasOwnProperty.call(this, p)) {
           const v = this[p];
           delete this[p];
@@ -85,12 +89,19 @@ if (!customElements.get('granado-page-title')) {
     }
     set customText(v) { this.setAttribute('custom-text', String(v == null ? '' : v)); }
 
+    get titleSize() {
+      return this.getAttribute('title-size') || this.getAttribute('titlesize') || '26px';
+    }
+    set titleSize(v) { this.setAttribute('title-size', String(v == null ? '' : v)); }
+
     // ------------------------------------------------------------
     // Render
     // ------------------------------------------------------------
     _render() {
       const title = this.getAttribute('main-title') || this.getAttribute('title') || '';
       const subtitle = this.getAttribute('subtitle') || '';
+      // Tamanho do titulo (default 26px) — permite um cabecalho mais compacto.
+      const titleSize = this.getAttribute('title-size') || this.getAttribute('titlesize') || '26px';
       // custom-text e renderizado como HTML (igual ao .screen-meta das telas).
       const customText =
         this.getAttribute('custom-text') || this.getAttribute('customtext') || '';
@@ -100,7 +111,7 @@ if (!customElements.get('granado-page-title')) {
         : '';
 
       const titleHtml = title
-        ? `<div style="font-family:'Poppins','DejaVu Sans',Arial,sans-serif;font-size:26px;font-weight:700;color:#0F3319;line-height:1">${this._escape(title)}</div>`
+        ? `<div style="font-family:'Poppins','DejaVu Sans',Arial,sans-serif;font-size:${titleSize};font-weight:700;color:#0F3319;line-height:1.05">${this._escape(title)}</div>`
         : '';
 
       const metaHtml = customText

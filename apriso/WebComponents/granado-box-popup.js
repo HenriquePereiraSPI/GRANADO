@@ -23,6 +23,12 @@
                                        Sem ele, usa o verde padrão. Aceita hex,
                                        rgb() ou var(--x).
                         metadata     - qualquer valor extra (volta no confirm)
+                        disabled     - (bool, default false) card já vem
+                                       DESABILITADO, sem permitir seleção.
+                        selected     - (bool, default false) card já vem
+                                       SELECIONADO. Se mais de um item tiver
+                                       selected:true, vale só o 1º (itens
+                                       disabled são ignorados na pré-seleção).
                         equipamentos - equipamentos ligados ao card. Se houver,
                                        aparece um dropdown listando SÓ eles
                                        (o próprio card não entra na lista).
@@ -149,6 +155,7 @@ if (!customElements.get('granado-box-popup')) {
         ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
     }
     _has(v) { return v != null && String(v) !== ''; }
+    _bool(v) { return v === true || String(v) === 'true'; }
     _equipsOf(item) {
       const e = (item && (item.equipamentos || item.equipments)) || [];
       return Array.isArray(e) ? e : [];
@@ -196,8 +203,23 @@ if (!customElements.get('granado-box-popup')) {
         `</div>`;
 
       this._bind();
-      // Re-aplica seleção se ainda válida (ex.: re-render por mudança de atributo)
-      if (this._selIdx != null && items[this._selIdx]) this._selectCard(this._selIdx);
+      // Seleção: se ainda não houve escolha, pré-seleciona o 1º item com
+      // selected:true (ignorando os disabled). Caso já haja seleção, re-aplica.
+      if (this._selIdx == null) {
+        const def = this._defaultSelectedIdx(items);
+        if (def != null) this._selectCard(def);
+      } else if (items[this._selIdx]) {
+        this._selectCard(this._selIdx);
+      }
+    }
+
+    // 1º item com selected:true que NÃO esteja disabled (disabled impede seleção).
+    _defaultSelectedIdx(items) {
+      for (let i = 0; i < items.length; i++) {
+        const it = items[i] || {};
+        if (this._bool(it.selected) && !this._bool(it.disabled)) return i;
+      }
+      return null;
     }
 
     _card(it, i) {
@@ -215,12 +237,19 @@ if (!customElements.get('granado-box-popup')) {
       const status = this._has(it.status)
         ? `<div style="margin-top:6px"><span style="display:inline-block;padding:2px 8px;border-radius:9px;font:800 9px/1.4 ${FONT};${badgeStyle}">${this._esc(it.status)}</span></div>`
         : '';
-      return `<div data-role="box-card" data-idx="${i}" style="cursor:pointer;border:2px solid ${BORDER};border-radius:10px;padding:14px 10px;background:${SURFACE2};text-align:center;transition:all .18s">${icon}${title}${subtitle}${status}</div>`;
+      // disabled: card esmaecido e sem interação (pointer-events:none impede o clique).
+      const disabled = this._bool(it.disabled);
+      const cardStyle = disabled
+        ? `opacity:.45;filter:grayscale(.35);cursor:not-allowed;pointer-events:none`
+        : `cursor:pointer`;
+      return `<div data-role="box-card" data-idx="${i}"${disabled ? ' data-disabled="1" aria-disabled="true"' : ''} style="${cardStyle};border:2px solid ${BORDER};border-radius:10px;padding:14px 10px;background:${SURFACE2};text-align:center;transition:all .18s">${icon}${title}${subtitle}${status}</div>`;
     }
 
     _selectCard(idx) {
-      this._selIdx = idx;
       const items = this.data || [];
+      // Card desabilitado não pode ser selecionado.
+      if (this._bool((items[idx] || {}).disabled)) return;
+      this._selIdx = idx;
       // Realce dos cards
       this.querySelectorAll('[data-role="box-card"]').forEach((el) => {
         const on = parseInt(el.getAttribute('data-idx'), 10) === idx;

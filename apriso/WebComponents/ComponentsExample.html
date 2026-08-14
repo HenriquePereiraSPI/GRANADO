@@ -1898,10 +1898,35 @@
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
       <button type="button" onclick="boxDemoSalas()"
         style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#9A7520;color:#fff;cursor:pointer">🧪 Escolha a Sala (com equipamentos)</button>
+      <button type="button" onclick="boxDemoEstados()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#fff;color:#9A7520;cursor:pointer">🚦 disabled + selected (pré-seleção)</button>
       <span id="box-status" style="font-size:12px;color:#8A9E8E"></span>
     </div>
 
     <script>
+      // disabled: card já vem bloqueado (sem clique). selected: já vem escolhido
+      // (se houver mais de um selected:true, vale só o 1º; disabled é ignorado).
+      function boxDemoEstados() {
+        GranadoBoxPopup.show({
+          subtitle: 'ESCOLHA A SALA',
+          confirmText: '✓ Confirmar',
+          data: [
+            { id: 'A', icon: '🅰️', title: 'Sala A', subtitle: '4 balanças', status: 'Em manutenção',
+              statusColor: '#8C1A1A', disabled: true },
+            { id: 'B', icon: '🅱️', title: 'Sala B', subtitle: '3 balanças', status: 'Disponível',
+              selected: true, metadata: { setor: 'MP' },
+              equipamentos: [ { id: 'BAL-05', descricao: 'Toledo 05' }, { id: 'BAL-06', descricao: 'Toledo 06' }, { id: 'BAL-07', descricao: 'Toledo 07' } ] },
+            { id: 'C', icon: '🇨', title: 'Sala C', subtitle: '2 balanças', status: 'Disponível' },
+            { id: 'D', icon: '🇩', title: 'Sala D', subtitle: '0 balanças', status: 'Indisponível',
+              statusColor: '#8C1A1A', disabled: true }
+          ],
+          onConfirm: function (d) {
+            var s = document.getElementById('box-status');
+            if (s) s.textContent = '✅ Selecionado: ' + (d.title || d.id);
+          }
+        });
+      }
+
       function boxDemoSalas() {
         GranadoBoxPopup.show({
           subtitle: 'ESCOLHA A SALA',

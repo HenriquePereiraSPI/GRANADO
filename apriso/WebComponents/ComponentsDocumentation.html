@@ -11898,6 +11898,52 @@ GranadoQuantityPopup.<span class="tk-attr">show</span>({ type: <span class="tk-s
   });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
 
+        <h2 class="gd-h2">Estados do card — <code>disabled</code> e <code>selected</code></h2>
+        <p class="gd-lead">
+          <code>disabled: true</code> deixa o card <strong>bloqueado</strong> (esmaecido e sem clique).
+          <code>selected: true</code> já traz o card <strong>pré-selecionado</strong> ao abrir (habilita o
+          Confirmar). Se mais de um item tiver <code>selected: true</code>, vale só o <strong>1º</strong> —
+          e cards <code>disabled</code> são ignorados na pré-seleção. No exemplo, <strong>Sala B</strong> já
+          abre selecionada e — por ter <code>equipamentos</code> — o <strong>dropdown já aparece aberto
+          embaixo</strong>; <strong>A</strong> e <strong>D</strong> vêm bloqueadas.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <button type="button" onclick="docBoxEstados()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#9A7520;color:#fff;cursor:pointer">🚦 disabled + selected</button>
+          <span id="doc-box-est-status" style="font-size:12px;color:#8A9E8E"></span>
+        </div>
+        <script>
+          function docBoxEstados() {
+            GranadoBoxPopup.show({
+              subtitle: 'ESCOLHA A SALA',
+              confirmText: '✓ Confirmar',
+              data: [
+                { id: 'A', icon: '🅰️', title: 'Sala A', subtitle: '4 balanças', status: 'Em manutenção', statusColor: '#8C1A1A', disabled: true },
+                { id: 'B', icon: '🅱️', title: 'Sala B', subtitle: '3 balanças', status: 'Disponível', selected: true, metadata: { setor: 'MP' },
+                  equipamentos: [ { id: 'BAL-05', descricao: 'Toledo 05' }, { id: 'BAL-06', descricao: 'Toledo 06' }, { id: 'BAL-07', descricao: 'Toledo 07' } ] },
+                { id: 'C', icon: '🇨', title: 'Sala C', subtitle: '2 balanças', status: 'Disponível' },
+                { id: 'D', icon: '🇩', title: 'Sala D', subtitle: '0 balanças', status: 'Indisponível', statusColor: '#8C1A1A', disabled: true }
+              ],
+              onConfirm: function (d) {
+                var s = document.getElementById('doc-box-est-status');
+                if (s) s.textContent = '✅ ' + (d.title || d.id);
+              }
+            });
+          }
+        </script>
+        <pre class="gd-code gd-snip"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoBoxPopup.<span class="tk-attr">show</span>({
+    subtitle: <span class="tk-str">'ESCOLHA A SALA'</span>,
+    data: [
+      { id: <span class="tk-str">'A'</span>, title: <span class="tk-str">'Sala A'</span>, status: <span class="tk-str">'Em manutenção'</span>, <span class="tk-attr">disabled</span>: <span class="tk-keyword">true</span> },   <span class="tk-comment">// bloqueada</span>
+      { id: <span class="tk-str">'B'</span>, title: <span class="tk-str">'Sala B'</span>, status: <span class="tk-str">'Disponível'</span>, <span class="tk-attr">selected</span>: <span class="tk-keyword">true</span>,      <span class="tk-comment">// já vem selecionada + dropdown aberto</span>
+        equipamentos: [ { id: <span class="tk-str">'BAL-05'</span>, descricao: <span class="tk-str">'Toledo 05'</span> }, { id: <span class="tk-str">'BAL-06'</span>, descricao: <span class="tk-str">'Toledo 06'</span> } ] },
+      { id: <span class="tk-str">'C'</span>, title: <span class="tk-str">'Sala C'</span>, status: <span class="tk-str">'Disponível'</span> },
+      { id: <span class="tk-str">'D'</span>, title: <span class="tk-str">'Sala D'</span>, status: <span class="tk-str">'Indisponível'</span>, <span class="tk-attr">disabled</span>: <span class="tk-keyword">true</span> }
+    ]
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
         <h2 class="gd-h2">API</h2>
 
         <h3 class="gd-h3">Atributos / propriedades</h3>
@@ -11922,6 +11968,8 @@ GranadoQuantityPopup.<span class="tk-attr">show</span>({ type: <span class="tk-s
             <tr><td class="col-name">data[].status</td><td class="col-type">string</td><td class="col-desc">Texto do badge do card (opcional).</td></tr>
             <tr><td class="col-name">data[].statusColor</td><td class="col-type">string</td><td class="col-desc">Cor do badge de status (texto + borda). Sem ele, usa o verde padrão. Aceita <code>hex</code>, <code>rgb()</code> ou <code>var(--x)</code> (opcional).</td></tr>
             <tr><td class="col-name">data[].metadata</td><td class="col-type">any</td><td class="col-desc">Valor extra — não exibido, devolvido no confirm (opcional).</td></tr>
+            <tr><td class="col-name">data[].disabled</td><td class="col-type">boolean</td><td class="col-desc">Default <code>false</code>. <code>true</code> deixa o card <strong>bloqueado</strong> (esmaecido, sem clique/seleção).</td></tr>
+            <tr><td class="col-name">data[].selected</td><td class="col-type">boolean</td><td class="col-desc">Default <code>false</code>. <code>true</code> já traz o card <strong>pré-selecionado</strong> ao abrir. Se houver mais de um, vale só o <strong>1º</strong> (itens <code>disabled</code> são ignorados).</td></tr>
             <tr><td class="col-name">data[].equipamentos</td><td class="col-type">array&lt;{id, descricao}&gt;</td><td class="col-desc">Equipamentos ligados ao card. Se houver, aparece um <strong>dropdown</strong> listando <strong>apenas os equipamentos</strong> (o próprio card não entra na lista). Opcional.</td></tr>
           </tbody>
         </table>
@@ -11940,6 +11988,7 @@ GranadoQuantityPopup.<span class="tk-attr">show</span>({ type: <span class="tk-s
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong>Dropdown condicional:</strong> só aparece quando o card selecionado tem <code>equipamentos</code>, e lista <strong>apenas os equipamentos</strong> (o próprio card não entra). Card sem equipamentos → confirma direto nele (<code>equipamento = null</code>).</li>
           <li><strong>metadata:</strong> use para carregar o contexto (ex.: setor/box) e recuperá-lo no confirm sem estado externo.</li>
+          <li><strong>disabled / selected:</strong> <code>disabled</code> bloqueia o card (sem clique); <code>selected</code> pré-seleciona ao abrir (só o 1º vale, e <code>disabled</code> nunca é pré-selecionado).</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
         </ul>
       </section>
