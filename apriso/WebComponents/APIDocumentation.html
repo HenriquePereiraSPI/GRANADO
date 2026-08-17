@@ -1077,13 +1077,15 @@ poppins-700.woff2
         <p class="gd-lead">Lista de verificações (recurso + checklist + período):</p>
         <pre class="gd-code">[
   {
-    <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"BALANCA_A"</span><span class="tk-punc">,</span>
-    <span class="tk-key">"CheckListCode"</span><span class="tk-punc">:</span> <span class="tk-str">"CHECKLIST_BALANCA_A"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"10000000014 (SENSOR_D)"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"ResourceNameWorkcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000020 (SALA1)"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"CheckListCode"</span><span class="tk-punc">:</span> <span class="tk-str">"CHECKLIST_TEMP"</span><span class="tk-punc">,</span>
     <span class="tk-key">"Period"</span><span class="tk-punc">:</span> <span class="tk-str">"DAY | WEEK | MONTH"</span>
   }<span class="tk-punc">,</span>
   {
-    <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"BALANCA_B"</span><span class="tk-punc">,</span>
-    <span class="tk-key">"CheckListCode"</span><span class="tk-punc">:</span> <span class="tk-str">"CHECKLIST_BALANCA_B"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"10000000015 (SENSOR_E)"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"ResourceNameWorkcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000020 (SALA1)"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"CheckListCode"</span><span class="tk-punc">:</span> <span class="tk-str">"CHECKLIST_TEMP"</span><span class="tk-punc">,</span>
     <span class="tk-key">"Period"</span><span class="tk-punc">:</span> <span class="tk-str">"DAY | WEEK | MONTH"</span>
   }
 ]</pre>
@@ -1104,7 +1106,13 @@ poppins-700.woff2
               <td class="col-name">ResourceName</td>
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
-              <td class="col-desc">Nome do recurso (equipamento) a verificar.</td>
+              <td class="col-desc">Nome do recurso (equipamento) a verificar. Ex.: <code>"10000000014 (SENSOR_D)"</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">ResourceNameWorkcenter</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Nome do workcenter/sala do recurso. Ex.: <code>"1000000020 (SALA1)"</code>.</td>
             </tr>
             <tr>
               <td class="col-name">CheckListCode</td>
