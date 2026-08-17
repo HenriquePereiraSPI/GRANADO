@@ -7498,8 +7498,12 @@ export const SCREENS = {
           #po-funnel-btn { display:none; }
           #po-flt-backdrop { display:none; }
           #po-flt-sheethead { display:none; }
+          #po-mobile-search { display:none; }
           @media (max-width:768px){
             #po-funnel-btn { display:inline-flex!important; }
+            /* Busca rápida por ordem + botão de busca avançada (só no mobile) */
+            #po-mobile-search { display:flex!important; align-items:center; gap:6px; flex:1 1 auto; min-width:0; }
+            .po-fila-titletext { display:none!important; }
             #po-filtros {
               position:fixed; left:0; right:0; bottom:0; margin:0!important; z-index:99999;
               max-width:640px; margin-left:auto; margin-right:auto;
@@ -7587,11 +7591,19 @@ export const SCREENS = {
         <!-- Card da fila: envolve título + tabela + galeria (igual ao card do Histórico no Checklist) -->
         <div class="card cv">
         <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-          <span>Fila de Pesagem — Prioridade</span>
-          <!-- Funil visível só no mobile; abre o bottom-sheet de filtros. -->
-          <button id="po-funnel-btn" type="button" onclick="poToggleFiltros(true)" aria-label="Filtros" title="Filtros" style="align-items:center;justify-content:center;flex-shrink:0;width:34px;height:34px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:#1C5C31;cursor:pointer">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
-          </button>
+          <span class="po-fila-titletext">Fila de Pesagem — Prioridade</span>
+          <!-- Mobile: busca rápida por ordem + botão Buscar + botão de busca avançada -->
+          <div id="po-mobile-search">
+            <input id="po-quick-ordem" type="text" inputmode="text" placeholder="Buscar ordem…" oninput="poQuickOrdem(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();poQuickOrdem(this.value);}"
+              style="flex:1 1 auto;min-width:0;box-sizing:border-box;font-size:16px;font-family:var(--font-m);padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text)">
+            <button type="button" onclick="poQuickOrdem(document.getElementById('po-quick-ordem').value)" aria-label="Buscar" title="Buscar" style="display:inline-flex;align-items:center;justify-content:center;gap:5px;flex-shrink:0;height:38px;padding:0 12px;border:1px solid var(--verde-esc);border-radius:8px;background:var(--verde);color:#fff;cursor:pointer;font-family:var(--font-b);font-size:13px;font-weight:700">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="20.5" y1="20.5" x2="16.5" y2="16.5"></line></svg>
+              Buscar
+            </button>
+            <button id="po-funnel-btn" type="button" onclick="poToggleFiltros(true)" aria-label="Busca avançada" title="Busca avançada" style="align-items:center;justify-content:center;flex-shrink:0;width:38px;height:38px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:#1C5C31;cursor:pointer">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+            </button>
+          </div>
         </div>
         <div class="abox info mb14 po-fila-info"><span class="ai">ℹ</span><div>Esta fila mostra ordens em diferentes estágios — desde pagamento de MPs até liberação para fabricação. Linhas vermelhas piscando indicam ordens aguardando liberação para fabricação.</div></div>
         <div id="po-tabela-wrap" style="overflow-x:auto">
@@ -7813,6 +7825,14 @@ export const SCREENS = {
           if (open == null) open = !f.classList.contains('open');
           f.classList.toggle('open', open);
           b.classList.toggle('open', open);
+        }
+
+        // Busca rápida por ordem (mobile): espelha no campo "Núm. da Ordem" do
+        // painel e re-aplica os filtros (mantém tabela + galeria em sincronia).
+        function poQuickOrdem(v) {
+          var n = document.getElementById('po-flt-num');
+          if (n) n.value = v;
+          if (typeof pesAplicarFiltros === 'function') pesAplicarFiltros();
         }
         function poToggleStatusDropdown(ev) {
           if (ev) ev.stopPropagation();
