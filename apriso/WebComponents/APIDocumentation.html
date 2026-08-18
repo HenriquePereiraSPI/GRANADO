@@ -2312,7 +2312,8 @@ poppins-700.woff2
         <h2 class="gd-h2">Inputs</h2>
         <p class="gd-lead">Corpo da requisição (JSON):</p>
         <pre class="gd-code">{
-  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"100000050"</span>
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"100000050"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"IsPartial"</span><span class="tk-punc">:</span> <span class="tk-str">"1|0"</span>
 }</pre>
 
         <h3 class="gd-h3">Campos de entrada</h3>
@@ -2331,6 +2332,12 @@ poppins-700.woff2
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
               <td class="col-desc">Número da ordem (WIP) a ser finalizada.</td>
+            </tr>
+            <tr>
+              <td class="col-name">IsPartial</td>
+              <td class="col-type">string ("1" | "0")</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc"><code>"1"</code> = fechamento <strong>parcial</strong> da ordem · <code>"0"</code> = fechamento <strong>total</strong>.</td>
             </tr>
           </tbody>
         </table>
@@ -5545,9 +5552,9 @@ poppins-700.woff2
   ]<span class="tk-punc">,</span>
   <span class="tk-key">"Overall"</span><span class="tk-punc">:</span> { <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"2573.113392"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2027 12:00:00 AM"</span> }<span class="tk-punc">,</span>
   <span class="tk-key">"Grouped"</span><span class="tk-punc">:</span> [
-    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"P_AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"6000.000000"</span><span class="tk-punc">,</span> <span class="tk-key">"P_StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"P_FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2027 12:00:00 AM"</span> }<span class="tk-punc">,</span>
-    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000004"</span><span class="tk-punc">,</span> <span class="tk-key">"P_AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"88.095000"</span><span class="tk-punc">,</span> <span class="tk-key">"P_StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"P_FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2027 12:00:00 AM"</span> }<span class="tk-punc">,</span>
-    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000039"</span><span class="tk-punc">,</span> <span class="tk-key">"P_AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"5008.695652"</span><span class="tk-punc">,</span> <span class="tk-key">"P_StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"P_FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2027 12:00:00 AM"</span> }
+    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"6000.000000"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2027 12:00:00 AM"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000004"</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"88.095000"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2027 12:00:00 AM"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000039"</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"5008.695652"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2027 12:00:00 AM"</span> }
   ]
 }</pre>
 
@@ -5600,9 +5607,9 @@ poppins-700.woff2
           </thead>
           <tbody>
             <tr><td class="col-name">WorkcenterResourceName</td><td class="col-type">string</td><td class="col-desc">Recurso do centro de trabalho do grupo. Pode vir <strong>vazio</strong> (<code>""</code>, sem recurso) ou <code>"STOPPED"</code> (recurso parado).</td></tr>
-            <tr><td class="col-name">P_AvgPerformancePct</td><td class="col-type">string (número)</td><td class="col-desc">Performance <strong>média</strong> (%) das pesagens desse recurso no período.</td></tr>
-            <tr><td class="col-name">P_StartDate</td><td class="col-type">string (data)</td><td class="col-desc">Início do período considerado (espelha o input <code>StartDate</code>).</td></tr>
-            <tr><td class="col-name">P_FinishDate</td><td class="col-type">string (data)</td><td class="col-desc">Fim do período considerado (espelha o input <code>EndDate</code>).</td></tr>
+            <tr><td class="col-name">AvgPerformancePct</td><td class="col-type">string (número)</td><td class="col-desc">Performance <strong>média</strong> (%) das pesagens desse recurso no período.</td></tr>
+            <tr><td class="col-name">StartDate</td><td class="col-type">string (data)</td><td class="col-desc">Início do período considerado (espelha o input <code>StartDate</code>).</td></tr>
+            <tr><td class="col-name">FinishDate</td><td class="col-type">string (data)</td><td class="col-desc">Fim do período considerado (espelha o input <code>EndDate</code>).</td></tr>
           </tbody>
         </table>
 

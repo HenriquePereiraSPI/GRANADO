@@ -51,6 +51,9 @@
                                (isFilled=true). Default: "#1C5C31".
      desactiveconnectorcolor - cor da linha apos um step nao preenchido.
                                Default: "#D6CDA4".
+     connectorwidth          - largura (comprimento) do "tracinho" entre os
+                               steps. Valor CSS (ex.: "36px", "10px", "0.6rem").
+                               Default: "36px". Use valores curtos p/ mobile.
 
      onstepclickevent        - codigo JS executado em qualquer click de
                                step interativo. Variaveis: key, step,
@@ -89,6 +92,7 @@ if (!customElements.get('granado-stepper')) {
         'activeiconcolor', 'desactiveiconcolor',
         'activetextcolor', 'desactivetextcolor',
         'activeconnectorcolor', 'desactiveconnectorcolor',
+        'connectorwidth',
         'currentstepcolor',
         'onstepclickevent'
       ];
@@ -149,6 +153,7 @@ if (!customElements.get('granado-stepper')) {
       const desactiveTextColor   = this.getAttribute('desactivetextcolor');  // optional
       const activeConnectorColor    = this.getAttribute('activeconnectorcolor')    || '#1C5C31';
       const desactiveConnectorColor = this.getAttribute('desactiveconnectorcolor') || '#D6CDA4';
+      const connectorWidth          = this.getAttribute('connectorwidth')          || '36px';
 
       this.style.display = this.style.display || 'flex';
       this.style.alignItems = 'center';
@@ -242,7 +247,7 @@ if (!customElements.get('granado-stepper')) {
         if (i < steps.length - 1) {
           const lineColor = filled ? activeConnectorColor : desactiveConnectorColor;
           const lineMb = subtitleStr ? 'margin-bottom:18px;' : '';
-          html += `<div style="width:36px;height:2px;background:${lineColor};margin:0 4px;${lineMb}flex-shrink:0"></div>`;
+          html += `<div style="width:${connectorWidth};height:2px;background:${lineColor};margin:0 4px;${lineMb}flex-shrink:0"></div>`;
         }
         html += '</div>';
       });

@@ -8006,6 +8006,33 @@ document.getElementById(<span class="tk-str">'stp-rounded'</span>).steps = baseS
 document.getElementById(<span class="tk-str">'stp-square'</span>).steps  = baseShape(<span class="tk-str">'square'</span>);</pre>
         </div>
 
+        <!-- ===== connectorwidth (mobile) ===== -->
+        <h2 class="gd-h2">Conector curto (mobile)</h2>
+        <p class="gd-lead">
+          <code>connectorwidth</code> encurta o "tracinho" entre os steps (default <code>36px</code>).
+          Com 5 steps num celular, um valor curto como <code>"10px"</code> deixa o stepper compacto,
+          cabendo na largura da tela sem (ou com bem menos) scroll horizontal. A moldura abaixo simula
+          ~340px de largura.
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <div style="max-width:340px;border:1px dashed #D6CDA4;border-radius:10px;padding:8px 10px">
+            <granado-stepper id="dt-stp-mobile" connectorwidth="10px"></granado-stepper>
+          </div>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- tracinho curto (10px) — 5 steps cabem no mobile --&gt;</span>
+<span class="tk-tag">&lt;granado-stepper</span> <span class="tk-attr">id</span>=<span class="tk-str">"stp"</span> <span class="tk-attr">connectorwidth</span>=<span class="tk-str">"10px"</span><span class="tk-tag">&gt;&lt;/granado-stepper&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  document.getElementById(<span class="tk-str">'stp'</span>).steps = [
+    { key: <span class="tk-str">'mp'</span>,  title: <span class="tk-str">'✓'</span>, subtitle: <span class="tk-str">'MP'</span>,        isFilled: <span class="tk-keyword">true</span>,  onClickEvent: <span class="tk-str">"console.log('mp')"</span> },
+    { key: <span class="tk-str">'ini'</span>, title: <span class="tk-str">'✓'</span>, subtitle: <span class="tk-str">'Iniciar'</span>,   isFilled: <span class="tk-keyword">true</span>,  onClickEvent: <span class="tk-str">"console.log('ini')"</span> },
+    { key: <span class="tk-str">'bal'</span>, title: <span class="tk-str">'3'</span>, subtitle: <span class="tk-str">'Balança'</span>,   isFilled: <span class="tk-keyword">true</span>,  isCurrent: <span class="tk-keyword">true</span>, onClickEvent: <span class="tk-str">"alert('atual')"</span> },
+    { key: <span class="tk-str">'pes'</span>, title: <span class="tk-str">'4'</span>, subtitle: <span class="tk-str">'Pesagem'</span>,   isFilled: <span class="tk-keyword">false</span> },
+    { key: <span class="tk-str">'cfm'</span>, title: <span class="tk-str">'5'</span>, subtitle: <span class="tk-str">'Confirmar'</span>, isFilled: <span class="tk-keyword">false</span> }
+  ];
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
         <!-- ===== Override por step ===== -->
         <h2 class="gd-h2">Override de cor por step</h2>
         <p class="gd-lead">
@@ -8120,6 +8147,12 @@ stp.addEventListener(<span class="tk-str">'stepclick'</span>, e =&gt; {
               <td class="col-type">string (cor CSS)</td>
               <td class="col-default">"#D6CDA4"</td>
               <td class="col-desc">Cor da linha após um step com <code>isFilled: false</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">connectorwidth</td>
+              <td class="col-type">string (CSS length)</td>
+              <td class="col-default">"36px"</td>
+              <td class="col-desc">Largura (comprimento) do "tracinho" entre os steps. Aceita qualquer unidade CSS (ex.: <code>"10px"</code>, <code>"0.6rem"</code>). Use valores curtos para caber mais steps no <strong>mobile</strong>.</td>
             </tr>
             <tr>
               <td class="col-name">onstepclickevent</td>
@@ -8375,6 +8408,16 @@ stp.addEventListener(<span class="tk-str">'stepclick'</span>, e =&gt; {
             { key: 'b', title: '!', subtitle: 'Falha',    isFilled: true,  iconColor: '#8C1A1A', onClickEvent: "alert('revisar erro')" },
             { key: 'c', title: '3', subtitle: 'Atual',    isFilled: true,  isCurrent: true, onClickEvent: "alert('atual')" },
             { key: 'd', title: '4', subtitle: 'Pendente', isFilled: false }
+          ];
+
+          // Demo 8: conector curto (mobile) — 5 steps
+          const mob = document.getElementById('dt-stp-mobile');
+          if (mob) mob.steps = [
+            { key: 'mp',  title: '✓', subtitle: 'MP',        isFilled: true,  onClickEvent: "console.log('mp')" },
+            { key: 'ini', title: '✓', subtitle: 'Iniciar',   isFilled: true,  onClickEvent: "console.log('ini')" },
+            { key: 'bal', title: '3', subtitle: 'Balança',   isFilled: true,  isCurrent: true, onClickEvent: "alert('atual')" },
+            { key: 'pes', title: '4', subtitle: 'Pesagem',   isFilled: false },
+            { key: 'cfm', title: '5', subtitle: 'Confirmar', isFilled: false }
           ];
         })();
       </script>
