@@ -3312,6 +3312,83 @@ dd.value = <span class="tk-str">'OK,DEV,PEN'</span>;</pre>
 <span class="tk-tag">&lt;/div&gt;</span></pre>
         </div>
 
+        <!-- ===== Máscara de número decimal ===== -->
+        <h2 class="gd-h2">Máscara de número decimal (moeda / quantidade)</h2>
+        <p class="gd-lead">
+          O atributo <code>mask</code> é um <strong>template fixo</strong> (bom para CPF, CNPJ,
+          telefone). Números decimais têm <strong>comprimento variável</strong>, então a máscara é
+          feita no <code>oninputevent</code>, formatando <strong>da direita para a esquerda</strong>
+          (os últimos dígitos são sempre as casas decimais) e inserindo o separador de milhar. Passe
+          o nº de casas: <code>2</code> para moeda, <code>3</code> para peso (kg). <strong>Aceita
+          negativos</strong> — aperte <code>-</code> (menos) a qualquer momento para <strong>alternar o
+          sinal</strong>. Para o <strong>backend</strong>, use
+          <code>gdDecimalToUS()</code> — converte o formato pt-BR (<code>-1.234,56</code>) para o
+          <strong>padrão americano</strong> (<code>-1234.56</code>, ponto decimal, sem milhar).
+        </p>
+        <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <div style="flex:1;min-width:220px">
+            <granado-input
+              label="Valor (R$) — aceita negativo" placeholder="0,00"
+              oninputevent="gdMaskDecimal(event, 2); document.getElementById('gd-us-1').textContent = gdDecimalToUS(event.target.value)">
+            </granado-input>
+            <div style="font:12px/1.6 'Poppins',sans-serif;color:#8A8575;margin-top:6px">backend (US): <code id="gd-us-1">0.00</code></div>
+          </div>
+
+          <div style="flex:1;min-width:220px">
+            <granado-input
+              label="Quantidade (kg) — aceita negativo" placeholder="0,000"
+              oninputevent="gdMaskDecimal(event, 3); document.getElementById('gd-us-2').textContent = gdDecimalToUS(event.target.value)">
+            </granado-input>
+            <div style="font:12px/1.6 'Poppins',sans-serif;color:#8A8575;margin-top:6px">backend (US): <code id="gd-us-2">0.000</code></div>
+          </div>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-input</span> <span class="tk-attr">label</span>=<span class="tk-str">"Valor (R$)"</span> <span class="tk-attr">placeholder</span>=<span class="tk-str">"0,00"</span>
+    <span class="tk-attr">oninputevent</span>=<span class="tk-str">"gdMaskDecimal(event, 2)"</span><span class="tk-tag">&gt;&lt;/granado-input&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-comment">// Máscara: formata da direita p/ esquerda; '-' alterna o sinal.</span>
+  <span class="tk-kw">function</span> gdMaskDecimal(e, casas) {
+    casas = casas || <span class="tk-num">2</span>;
+    <span class="tk-kw">var</span> f = e.target;
+    <span class="tk-kw">var</span> neg = (f.value.match(<span class="tk-str">/-/g</span>) || []).length % <span class="tk-num">2</span> === <span class="tk-num">1</span>;   <span class="tk-comment">// '-' alterna o sinal</span>
+    <span class="tk-kw">var</span> d = f.value.replace(<span class="tk-str">/\D/g</span>, <span class="tk-str">''</span>).replace(<span class="tk-str">/^0+(?=\d)/</span>, <span class="tk-str">''</span>);
+    <span class="tk-kw">while</span> (d.length &lt;= casas) d = <span class="tk-str">'0'</span> + d;
+    <span class="tk-kw">var</span> dec = d.slice(-casas);
+    <span class="tk-kw">var</span> intp = d.slice(<span class="tk-num">0</span>, -casas).replace(<span class="tk-str">/\B(?=(\d{3})+(?!\d))/g</span>, <span class="tk-str">'.'</span>);
+    f.value = (neg ? <span class="tk-str">'-'</span> : <span class="tk-str">''</span>) + intp + <span class="tk-str">','</span> + dec;
+    <span class="tk-kw">try</span> { f.setSelectionRange(f.value.length, f.value.length); } <span class="tk-kw">catch</span> (_) {}
+  }
+
+  <span class="tk-comment">// Para o backend: pt-BR ("-1.234,56") -> US ("-1234.56").</span>
+  <span class="tk-kw">function</span> gdDecimalToUS(str) {
+    <span class="tk-kw">var</span> neg = <span class="tk-str">/^\s*-/</span>.test(str);
+    <span class="tk-kw">var</span> us = String(str).replace(<span class="tk-str">/[.\s-]/g</span>, <span class="tk-str">''</span>).replace(<span class="tk-str">','</span>, <span class="tk-str">'.'</span>);
+    <span class="tk-kw">return</span> (neg ? <span class="tk-str">'-'</span> : <span class="tk-str">''</span>) + us;   <span class="tk-comment">// use parseFloat(...) se precisar de Number</span>
+  }
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+        <script>
+          // Máscara: formata da direita p/ esquerda; aceita '-' no início.
+          function gdMaskDecimal(e, casas) {
+            casas = casas || 2;
+            var f = e.target;
+            var neg = ((f.value.match(/-/g) || []).length % 2) === 1;   // '-' alterna o sinal
+            var d = f.value.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+            while (d.length <= casas) d = '0' + d;
+            var dec = d.slice(-casas);
+            var intp = d.slice(0, -casas).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            f.value = (neg ? '-' : '') + intp + ',' + dec;
+            try { f.setSelectionRange(f.value.length, f.value.length); } catch (_) {}
+          }
+
+          // Para o backend: pt-BR ("-1.234,56") -> US ("-1234.56").
+          function gdDecimalToUS(str) {
+            var neg = /^\s*-/.test(str);
+            var us = String(str).replace(/[.\s-]/g, '').replace(',', '.');
+            return (neg ? '-' : '') + us;
+          }
+        </script>
+
         <!-- ===== Textarea ===== -->
         <h2 class="gd-h2">Textarea (multilinha)</h2>
         <p class="gd-lead">
