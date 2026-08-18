@@ -5270,6 +5270,326 @@ export const SCREENS = {
         </script>
       </div>
     `,
+  "pes-mov-gaiola": `      <div class="page-header">
+        <div><div class="ph-eyebrow">Pesagem · MF5</div><div class="ph-title">Movimentação de Gaiola</div></div>
+      </div>
+
+      <style>
+        @keyframes movgaio-spin{to{transform:rotate(360deg)}}
+        .mov-tipo-btn:hover{border-color:var(--verde)!important;background:var(--ok-p)!important}
+        .mov-loc-card:hover{border-color:var(--verde)!important}
+        /* Itens: tabela no desktop, galeria vertical no mobile */
+        #mov-itens-gallery{display:none}
+        @media (max-width:768px){ #mov-itens-wrap{display:none!important} #mov-itens-gallery{display:block!important} }
+      </style>
+
+      <!-- ── Stepper (3 passos) ── -->
+      <div id="mov-stepper" style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:22px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 20px;overflow-x:auto"></div>
+
+      <!-- ── Passo 1: Escolher Gaiola ── -->
+      <div id="mov-panel-1">
+        <div class="card cv mb14" style="border:2px solid var(--verde)">
+          <div class="card-title">① Escanear Gaiola</div>
+          <div class="abox inf mb14"><span class="ai">🔖</span><div>Escaneie o código da gaiola. O sistema valida se ela existe e carrega o conteúdo.</div></div>
+          <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+            <div class="fg" style="flex:1;min-width:220px">
+              <label class="lbl">Código da Gaiola</label>
+              <div style="position:relative">
+                <input class="inp" id="mov-scan-inp" inputmode="none" placeholder="Ex.: G-001" style="width:100%;box-sizing:border-box;font-size:16px;font-family:var(--font-m);letter-spacing:.06em;padding-right:44px" onkeydown="if(event.key==='Enter'){event.preventDefault();movValidar();}" autofocus>
+                <button type="button" title="Digitar manualmente (abre o teclado)" onclick="movTeclado('mov-scan-inp')" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:1px solid var(--ouro-claro);border-radius:6px;cursor:pointer;font-size:14px;line-height:1;padding:4px 9px">⌨️</button>
+              </div>
+            </div>
+            <button class="btn btn-md btn-v" onclick="movValidar()">🔍 Validar</button>
+          </div>
+          <div style="font-size:10px;color:var(--text3);margin-top:8px">Exemplos: <code style="background:var(--bg2);padding:1px 6px;border-radius:3px;font-family:var(--font-m);color:var(--verde-esc)">G-001</code> (Pesagem) · <code style="background:var(--bg2);padding:1px 6px;border-radius:3px;font-family:var(--font-m);color:var(--verde-esc)">G-002</code> (Corredor) · <code style="background:var(--bg2);padding:1px 6px;border-radius:3px;font-family:var(--font-m);color:var(--verde-esc)">G-003</code> (Fabricação)</div>
+          <div id="mov-scan-result"></div>
+        </div>
+      </div>
+
+      <!-- ── Passo 2: Escolher Destino (montado via JS) ── -->
+      <div id="mov-panel-2" style="display:none"></div>
+
+      <!-- ── Passo 3: Movimentação (montado via JS) ── -->
+      <div id="mov-panel-3" style="display:none"></div>
+
+      <script>
+      var MOV_STEP = 1;
+      var MOV_GAIOLA = null;
+      var MOV_DEST_TIPO = null;
+      var MOV_LOCAL = null;
+
+      var MOV_STEPS = [ {n:1,lbl:'Escolher Gaiola'}, {n:2,lbl:'Escolher Destino'}, {n:3,lbl:'Movimentação'} ];
+
+      // Gaiolas mockadas — cada uma com localização atual + itens (LabelNo/ProductNo/LotNo/Quantity).
+      var MOV_GAIOLAS = {
+        'G-001': { codigo:'G-001', op:'OP-2026-0416', produto:'Loção Hidratante Rosa 200ml', peso:'440,500 kg', local:'Pesagem · Box 3', localTipo:'pesagem', itens:[
+          {LabelNo:'45381', ProductNo:'M602B', LotNo:'Z4858',        Quantity:'25,000'},
+          {LabelNo:'45382', ProductNo:'A1002', LotNo:'AGUA-2026-03', Quantity:'412,500'},
+          {LabelNo:'45383', ProductNo:'F2256', LotNo:'FEN-2026-03',  Quantity:'3,000'} ] },
+        'G-002': { codigo:'G-002', op:'OP-2026-0414', produto:'Creme Hidratante 150g', peso:'13,100 kg', local:'Corredor A', localTipo:'corredor', itens:[
+          {LabelNo:'44120', ProductNo:'CRB602', LotNo:'CRB-2026-02', Quantity:'11,300'},
+          {LabelNo:'44121', ProductNo:'TEA993', LotNo:'TEA-2026-07', Quantity:'1,800'} ] },
+        'G-003': { codigo:'G-003', op:'OP-2026-0413', produto:'Sabonete Phebo Glicerinado 90g', peso:'8,000 kg', local:'Fabricação B', localTipo:'fabricacao', itens:[
+          {LabelNo:'43980', ProductNo:'GLI110', LotNo:'GLI-2026-01', Quantity:'8,000'} ] }
+      };
+
+      var MOV_TIPO_META = {
+        pesagem:    { label:'Pesagem',    ico:'⚖️' },
+        corredor:   { label:'Corredor',   ico:'🛒' },
+        fabricacao: { label:'Fabricação', ico:'🏭' }
+      };
+
+      // Locais existentes por tipo de destino.
+      var MOV_LOCAIS = {
+        pesagem:    ['Pesagem · Box 1','Pesagem · Box 2','Pesagem · Box 3'],
+        corredor:   ['Corredor A','Corredor B','Corredor C','Corredor D'],
+        fabricacao: ['Fabricação A','Fabricação B','Fabricação C']
+      };
+
+      // Destinos possíveis conforme o local atual da gaiola.
+      function movDestinosDisponiveis(localTipo) {
+        if (localTipo === 'pesagem')    return ['corredor','fabricacao'];
+        if (localTipo === 'corredor')   return ['pesagem','fabricacao'];
+        if (localTipo === 'fabricacao') return ['pesagem','corredor'];
+        return ['corredor','fabricacao'];
+      }
+
+      function movTeclado(id) {
+        var i = document.getElementById(id); if (!i) return;
+        if (i.getAttribute('inputmode') === 'text') { i.setAttribute('inputmode','none'); i.blur(); }
+        else { i.setAttribute('inputmode','text'); i.focus(); }
+      }
+
+      // Linha "Rótulo: valor" do header estilo "view".
+      function movRow(lbl, val, mono) {
+        return '<div style="font-size:12px;line-height:1.5"><span style="color:var(--text3);font-weight:600">' + lbl +
+          ':</span> <strong' + (mono ? ' class="mono"' : '') + ' style="color:var(--text);font-weight:700;margin-left:4px">' + val + '</strong></div>';
+      }
+
+      function movRenderStepper() {
+        var s = document.getElementById('mov-stepper'); if (!s) return;
+        var html = '';
+        MOV_STEPS.forEach(function (st, i) {
+          var display = i + 1;
+          var done = st.n < MOV_STEP, active = st.n === MOV_STEP;
+          var circBg = done ? 'var(--verde)' : active ? 'var(--ouro)' : 'var(--border2)';
+          var circTxt = done ? '#fff' : active ? 'var(--verde-esc)' : 'var(--text3)';
+          var lblC = active ? 'var(--verde-esc)' : done ? 'var(--verde)' : 'var(--text3)';
+          var fw = active ? '900' : '400';
+          html += '<div style="display:flex;align-items:center;gap:0;flex-shrink:0">';
+          html +=   '<div style="display:flex;flex-direction:column;align-items:center;gap:4px">';
+          html +=     '<div style="width:32px;height:32px;border-radius:50%;background:' + circBg + ';display:flex;align-items:center;justify-content:center;font-size:' + (done ? '14px' : '13px') + ';color:' + circTxt + ';font-weight:700;border:2px solid ' + (active ? 'var(--ouro)' : done ? 'var(--verde)' : 'var(--border)') + '">' + (done ? '✓' : display) + '</div>';
+          html +=     '<div style="font-size:9px;font-weight:' + fw + ';letter-spacing:.07em;text-transform:uppercase;color:' + lblC + ';white-space:nowrap">' + st.lbl + '</div>';
+          html +=   '</div>';
+          if (i < MOV_STEPS.length - 1) {
+            html += '<div style="width:48px;height:2px;background:' + (done ? 'var(--verde)' : 'var(--border)') + ';margin:0 6px;margin-bottom:16px;flex-shrink:0"></div>';
+          }
+          html += '</div>';
+        });
+        s.innerHTML = html;
+      }
+
+      function movSetStep(n) {
+        MOV_STEP = n;
+        movRenderStepper();
+        for (var i = 1; i <= 3; i++) {
+          var p = document.getElementById('mov-panel-' + i);
+          if (p) p.style.display = (i === n) ? 'block' : 'none';
+        }
+        if (n === 2) movRenderStep2();
+        if (n === 3) movRenderStep3();
+        var st = document.getElementById('mov-stepper'); if (st) st.scrollIntoView({ behavior:'smooth', block:'nearest' });
+      }
+
+      // ── Passo 1: validar/escanear ──
+      function movValidar() {
+        var inp = document.getElementById('mov-scan-inp');
+        var v = inp ? (inp.value || '').trim().toUpperCase() : '';
+        if (!v) { alert('⚠ Escaneie ou digite o código da gaiola.'); return; }
+        var res = document.getElementById('mov-scan-result');
+        res.innerHTML =
+          '<div style="background:var(--inf-p);border:1px solid var(--inf-b);border-radius:7px;padding:12px 16px;margin-top:10px;display:flex;gap:12px;align-items:center">' +
+            '<div style="width:20px;height:20px;border:3px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:movgaio-spin .8s linear infinite;flex-shrink:0"></div>' +
+            '<div style="font-size:12px;font-weight:700;color:var(--inf)">Validando a gaiola ' + v + '...</div>' +
+          '</div>';
+        setTimeout(function () {
+          var g = MOV_GAIOLAS[v];
+          if (!g) {
+            res.innerHTML =
+              '<div style="background:var(--per-p);border:1px solid var(--per-b);border-radius:7px;padding:12px 16px;margin-top:10px;display:flex;gap:10px;align-items:center">' +
+                '<span style="font-size:18px">⛔</span>' +
+                '<div style="font-size:12px;font-weight:700;color:var(--per)">Gaiola <strong class="mono">' + v + '</strong> não encontrada. Confira o código e tente novamente.</div>' +
+              '</div>';
+            return;
+          }
+          MOV_GAIOLA = g; MOV_DEST_TIPO = null;
+          res.innerHTML = '<div class="abox ok" style="margin-top:10px"><span class="ai">✅</span><div>Gaiola <strong class="mono">' + g.codigo + '</strong> validada.</div></div>';
+          movSetStep(2);
+        }, 900);
+      }
+
+      // ── Passo 2: header + itens + escolha do TIPO de destino ──
+      function movRenderStep2() {
+        var g = MOV_GAIOLA; if (!g) return;
+        var rows = '';
+        g.itens.forEach(function (it) {
+          rows +=
+            '<tr>' +
+              '<td class="mono" style="font-size:11px;font-weight:700;color:var(--verde)">' + it.LabelNo + '</td>' +
+              '<td class="mono" style="font-size:11px">' + it.ProductNo + '</td>' +
+              '<td class="mono" style="font-size:11px">' + it.LotNo + '</td>' +
+              '<td class="mono" style="text-align:right">' + it.Quantity + '</td>' +
+            '</tr>';
+        });
+        var dests = movDestinosDisponiveis(g.localTipo);
+        var btns = '';
+        dests.forEach(function (t) {
+          var m = MOV_TIPO_META[t];
+          var nLoc = (MOV_LOCAIS[t] || []).length;
+          btns +=
+            '<div class="mov-tipo-btn" data-tipo="' + t + '" onclick="movSelTipo(this)" style="cursor:pointer;flex:1 1 130px;border:2px dashed var(--verde);border-radius:var(--r);padding:18px 12px;background:var(--verde-dim);text-align:center;transition:all .18s">' +
+              '<div style="font-size:26px;margin-bottom:5px">' + m.ico + '</div>' +
+              '<div style="font-size:13px;font-weight:900;color:var(--verde-esc)">' + m.label + '</div>' +
+              '<div style="font-family:var(--font-m);font-size:10px;color:var(--text3);margin-top:3px">' + nLoc + ' locais</div>' +
+            '</div>';
+        });
+        var localMeta = MOV_TIPO_META[g.localTipo] ? MOV_TIPO_META[g.localTipo].label : g.localTipo;
+        var html =
+          // ── Card do conteúdo da gaiola (em cima) ──
+          '<div class="card cv mb14">' +
+            '<div class="card-title">② Conteúdo da Gaiola</div>' +
+            // Header estilo "view" (cadastro MES) — box de cor destacada (dourado suave)
+            '<div style="background:var(--ouro-dim);border:1px solid var(--ouro-claro);border-radius:8px;padding:13px 15px;margin-bottom:16px">' +
+              '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+                '<span style="font-size:15px">📦</span>' +
+                '<div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro)">Dados da Gaiola · MES (view)</div>' +
+              '</div>' +
+              '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:7px 24px">' +
+                movRow('Gaiola', g.codigo, true) +
+                movRow('Ordem', g.op, true) +
+                movRow('Produto', g.produto, false) +
+                movRow('Local atual', g.local, false) +
+                movRow('Tipo de local', localMeta, false) +
+                movRow('Qtd. de itens', String(g.itens.length), true) +
+                movRow('Peso total', g.peso, true) +
+              '</div>' +
+            '</div>' +
+            // Itens da gaiola — tabela (desktop) / galeria vertical (mobile)
+            '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">📋 Itens da Gaiola (' + g.itens.length + ')</div>' +
+            '<div id="mov-itens-wrap" style="overflow-x:auto">' +
+              '<table class="tbl" style="min-width:420px"><thead><tr><th>LabelNo</th><th>ProductNo</th><th>LotNo</th><th style="text-align:right">Quantity</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+            '</div>' +
+            '<granado-gallery id="mov-itens-gallery" type="view-only" enable-scroll="true" scroll-height="50vh"></granado-gallery>' +
+          '</div>' +
+          // ── Card do destino (embaixo) ──
+          '<div class="card cv mb14">' +
+            '<div class="card-title">➡️ Destino</div>' +
+            '<div style="display:flex;gap:12px;flex-wrap:wrap">' + btns + '</div>' +
+          '</div>';
+        document.getElementById('mov-panel-2').innerHTML = html;
+        // Galeria vertical dos itens (mobile) — espelha a tabela.
+        var gal = document.getElementById('mov-itens-gallery');
+        if (gal) {
+          gal.data = g.itens.map(function (it) {
+            return {
+              title: '🏷 ' + it.LabelNo,
+              subtitle: 'MP ' + it.ProductNo + ' · Lote ' + it.LotNo,
+              data: 'Quantidade: ' + it.Quantity
+            };
+          });
+        }
+      }
+
+      function movSelTipo(el) { MOV_DEST_TIPO = el.getAttribute('data-tipo'); movSetStep(3); }
+
+      // ── Passo 3: escolher o local + Confirmar ──
+      function movRenderStep3() {
+        var g = MOV_GAIOLA, t = MOV_DEST_TIPO; if (!g || !t) return;
+        var m = MOV_TIPO_META[t];
+        MOV_LOCAL = null;
+        var cards = '';
+        (MOV_LOCAIS[t] || []).forEach(function (nome) {
+          cards +=
+            '<div class="mov-loc-card" data-loc="' + nome + '" onclick="movSelLocal(this)" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:16px 10px;background:var(--surface2);text-align:center;transition:all .15s">' +
+              '<div style="font-size:24px;margin-bottom:4px">' + m.ico + '</div>' +
+              '<div style="font-size:12px;font-weight:800;color:var(--text)">' + nome + '</div>' +
+            '</div>';
+        });
+        var html =
+          '<div class="card cv mb14" style="border:2px solid var(--verde)">' +
+            '<div class="card-title">③ Local de Destino — ' + m.label + '</div>' +
+            '<div class="abox inf mb14"><span class="ai">' + m.ico + '</span><div>Movendo a gaiola <strong class="mono">' + g.codigo + '</strong> (de <strong>' + g.local + '</strong>) para <strong>' + m.label + '</strong>. Toque no local e confirme:</div></div>' +
+            '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px">' + cards + '</div>' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">' +
+              '<button class="btn btn-md btn-ghost" onclick="movSetStep(2)">‹ Voltar</button>' +
+              '<button class="btn btn-md btn-v" id="mov-btn-confirmar" onclick="movConfirmar()" disabled style="opacity:.5;cursor:not-allowed">✓ Confirmar Movimentação</button>' +
+            '</div>' +
+          '</div>';
+        document.getElementById('mov-panel-3').innerHTML = html;
+      }
+
+      // Seleciona o local (realça + habilita Confirmar).
+      function movSelLocal(el) {
+        MOV_LOCAL = el.getAttribute('data-loc');
+        var cards = document.querySelectorAll('#mov-panel-3 .mov-loc-card');
+        Array.prototype.forEach.call(cards, function (c) {
+          var on = c === el;
+          c.style.border = on ? '2px solid var(--verde)' : '2px solid var(--border)';
+          c.style.background = on ? 'var(--verde-dim)' : 'var(--surface2)';
+          if (on) c.setAttribute('data-sel', '1'); else c.removeAttribute('data-sel');
+        });
+        var btn = document.getElementById('mov-btn-confirmar');
+        if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
+      }
+
+      // Confirmar: popup de loading -> conclui -> toast -> volta ao passo 1.
+      function movConfirmar() {
+        var g = MOV_GAIOLA; if (!g || !MOV_LOCAL) { alert('⚠ Selecione o local de destino.'); return; }
+        var para = MOV_LOCAL, tipo = MOV_DEST_TIPO;
+        var ov = document.createElement('div');
+        ov.id = 'mov-loading-popup';
+        ov.style.cssText = 'position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)';
+        ov.innerHTML =
+          '<div style="background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--ouro);border-radius:12px;padding:28px 32px;box-shadow:0 18px 50px rgba(15,51,25,.3);display:flex;flex-direction:column;align-items:center;gap:16px;max-width:320px;text-align:center">' +
+            '<div style="width:36px;height:36px;border:4px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:movgaio-spin .8s linear infinite"></div>' +
+            '<div style="font-size:13px;font-weight:700;color:var(--verde-esc)">Realizando movimentação, aguarde...</div>' +
+          '</div>';
+        document.body.appendChild(ov);
+        setTimeout(function () {
+          g.local = para; g.localTipo = tipo;
+          var p = document.getElementById('mov-loading-popup'); if (p && p.parentNode) p.parentNode.removeChild(p);
+          movToast('✅ Gaiola ' + g.codigo + ' movida para ' + para);
+          movReset();
+        }, 2000);
+      }
+
+      // Toast simples (aparece embaixo, some sozinho).
+      function movToast(msg) {
+        var t = document.createElement('div');
+        t.style.cssText = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(14px);z-index:100000;background:var(--verde-esc);color:#fff;font:700 13px/1.4 var(--font-b);padding:12px 20px;border-radius:10px;box-shadow:0 12px 34px rgba(15,51,25,.35);opacity:0;transition:opacity .25s ease,transform .25s ease;max-width:90vw';
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(function () { t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; }, 10);
+        setTimeout(function () {
+          t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(14px)';
+          setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 320);
+        }, 3200);
+      }
+
+      // Reinicia o fluxo (volta ao passo 1).
+      function movReset() {
+        MOV_GAIOLA = null; MOV_DEST_TIPO = null; MOV_LOCAL = null;
+        var inp = document.getElementById('mov-scan-inp'); if (inp) { inp.value = ''; inp.setAttribute('inputmode','none'); }
+        var sr = document.getElementById('mov-scan-result'); if (sr) sr.innerHTML = '';
+        document.getElementById('mov-panel-2').innerHTML = '';
+        document.getElementById('mov-panel-3').innerHTML = '';
+        movSetStep(1);
+      }
+
+      // Init.
+      movSetStep(1);
+      </script>
+    `,
   "pes-gaiola": `      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · Box 3 · MF5</div><div class="ph-title">Gestão de Gaiola — Containers de MPs</div></div>
       </div>

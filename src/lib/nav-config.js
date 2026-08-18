@@ -20,6 +20,7 @@ export const MODULES = [
       { id: 'pes-ordens',          label: 'Selecao de Ordem' },
       { id: 'pes-checklist-turno', label: '🧪 Checklist' },
       { id: 'pes-devolucao',       label: '↩️ Devolução ao Estoque' },
+      { id: 'pes-mov-gaiola',      label: '🚚 Movimentação Gaiola' },
       { id: 'pes-oee',             label: '📊 OEE Pesagem' },
       { id: 'pes-perf-ordem',      label: '📑 Performance (Ordem)' },
       { id: 'pes-perf-mp',         label: '⚗️ Performance (MP)' },
