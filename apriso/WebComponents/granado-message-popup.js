@@ -7,8 +7,9 @@
    fecha o popup.
 
    ── Atributos
-     title        - título do popup
-     message      - mensagem (texto)
+     title        - título do popup (texto puro)
+     message      - mensagem. Renderizada como HTML (igual ao <granado-information>):
+                    aceita <strong>, <br>, <span style="color:..."> etc.
      type         - "info" (default) | "information" | "success" | "error" | "warning"
      button-text  - texto do botão (opcional, default "OK") — o botão apenas fecha
      close-on-backdrop - "true" permite fechar ao clicar fora (backdrop). Default:
@@ -180,7 +181,7 @@ if (!customElements.get('granado-message-popup')) {
       const callout = message
         ? `<div style="border-radius:8px;padding:12px 15px;display:flex;gap:10px;align-items:flex-start;font:13px/1.55 ${FONT};background:${p.bg};border:1px solid ${p.border};color:${p.text};margin-bottom:18px">` +
             `<span style="font-size:18px;flex-shrink:0;line-height:1.2">${p.icon}</span>` +
-            `<div style="flex:1;min-width:0">${this._esc(message)}</div>` +
+            `<div style="flex:1;min-width:0">${message}</div>` +
           `</div>`
         : '<div style="margin-bottom:18px"></div>';
 

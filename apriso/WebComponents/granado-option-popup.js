@@ -6,8 +6,9 @@
    próprio clique.
 
    ── Atributos
-     title        - título do popup
-     message      - mensagem (texto)
+     title        - título do popup (texto puro)
+     message      - mensagem. Renderizada como HTML (igual ao <granado-information>):
+                    aceita <strong>, <br>, <span style="color:..."> etc.
      type         - "info" (default) | "information" | "success" | "error" | "warning"
      buttons      - JSON com a lista de botões (1 a 3). Em JS prefira a
                     propriedade .buttons (array). Cada item:
@@ -215,7 +216,7 @@ if (!customElements.get('granado-option-popup')) {
       const callout = message
         ? `<div style="border-radius:8px;padding:12px 15px;display:flex;gap:10px;align-items:flex-start;font:13px/1.55 ${FONT};background:${p.bg};border:1px solid ${p.border};color:${p.text};margin-bottom:18px">` +
             `<span style="font-size:18px;flex-shrink:0;line-height:1.2">${p.icon}</span>` +
-            `<div style="flex:1;min-width:0">${this._esc(message)}</div>` +
+            `<div style="flex:1;min-width:0">${message}</div>` +
           `</div>`
         : '<div style="margin-bottom:18px"></div>';
 
