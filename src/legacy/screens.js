@@ -5610,8 +5610,6 @@ export const SCREENS = {
 
       <style>
         @keyframes movgaio-spin{to{transform:rotate(360deg)}}
-        .mov-tipo-btn:hover{border-color:var(--verde)!important;background:var(--ok-p)!important}
-        .mov-loc-card:hover{border-color:var(--verde)!important}
         /* Itens: tabela no desktop, galeria vertical no mobile */
         #mov-itens-gallery{display:none}
         @media (max-width:768px){ #mov-itens-wrap{display:none!important} #mov-itens-gallery{display:block!important} }
@@ -5640,8 +5638,22 @@ export const SCREENS = {
         </div>
       </div>
 
-      <!-- ── Passo 2: Escolher Destino (montado via JS) ── -->
-      <div id="mov-panel-2" style="display:none"></div>
+      <!-- ── Passo 2: Conteúdo da gaiola (JS) + Escanear Destino (estático) ── -->
+      <div id="mov-panel-2" style="display:none">
+        <div id="mov-step2-content"></div>
+        <!-- Card tracejado (input Destino) — fora do card sólido -->
+        <div class="mb14" style="border:2px dashed var(--verde);background:var(--verde-dim);border-radius:8px;padding:16px 18px">
+          <label class="lbl">Destino</label>
+          <div style="position:relative">
+            <input class="inp" id="mov-dest-inp" inputmode="none" placeholder="Ex.: LOC1" style="width:100%;box-sizing:border-box;font-size:16px;font-family:var(--font-m);letter-spacing:.06em;padding-right:44px;background:var(--surface)" onkeydown="if(event.key==='Enter'){event.preventDefault();movValidarDestino();}">
+            <button type="button" title="Digitar manualmente (abre o teclado)" onclick="movTeclado('mov-dest-inp')" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:1px solid var(--ouro-claro);border-radius:6px;cursor:pointer;font-size:14px;line-height:1;padding:4px 9px">⌨️</button>
+          </div>
+        </div>
+        <div id="mov-dest-result"></div>
+        <div style="display:flex;margin-top:14px">
+          <button class="btn btn-md btn-v" style="flex:1" onclick="movValidarDestino()">Validar</button>
+        </div>
+      </div>
 
       <!-- ── Passo 3: Movimentação (montado via JS) ── -->
       <div id="mov-panel-3" style="display:none"></div>
@@ -5649,10 +5661,9 @@ export const SCREENS = {
       <script>
       var MOV_STEP = 1;
       var MOV_GAIOLA = null;
-      var MOV_DEST_TIPO = null;
-      var MOV_LOCAL = null;
+      var MOV_DEST = null;
 
-      var MOV_STEPS = [ {n:1,lbl:'Escolher Gaiola'}, {n:2,lbl:'Escolher Destino'}, {n:3,lbl:'Movimentação'} ];
+      var MOV_STEPS = [ {n:1,lbl:'Escolher Gaiola'}, {n:2,lbl:'Escanear Destino'}, {n:3,lbl:'Confirmar'} ];
 
       // Gaiolas mockadas — cada uma com localização atual + itens (LabelNo/ProductNo/LotNo/Quantity).
       var MOV_GAIOLAS = {
@@ -5673,20 +5684,14 @@ export const SCREENS = {
         fabricacao: { label:'Fabricação', ico:'🏭' }
       };
 
-      // Locais existentes por tipo de destino.
-      var MOV_LOCAIS = {
-        pesagem:    ['Pesagem · Box 1','Pesagem · Box 2','Pesagem · Box 3'],
-        corredor:   ['Corredor A','Corredor B','Corredor C','Corredor D'],
-        fabricacao: ['Fabricação A','Fabricação B','Fabricação C']
+      // Locais de destino escaneáveis (código -> nome/tipo).
+      var MOV_DESTINOS = {
+        'LOC1': { codigo:'LOC1', nome:'Corredor A', tipo:'corredor' },
+        'LOC2': { codigo:'LOC2', nome:'Fabricação B', tipo:'fabricacao' },
+        'LOC3': { codigo:'LOC3', nome:'Pesagem · Box 1', tipo:'pesagem' },
+        'LOC4': { codigo:'LOC4', nome:'Corredor B', tipo:'corredor' },
+        'LOC5': { codigo:'LOC5', nome:'Fabricação A', tipo:'fabricacao' }
       };
-
-      // Destinos possíveis conforme o local atual da gaiola.
-      function movDestinosDisponiveis(localTipo) {
-        if (localTipo === 'pesagem')    return ['corredor','fabricacao'];
-        if (localTipo === 'corredor')   return ['pesagem','fabricacao'];
-        if (localTipo === 'fabricacao') return ['pesagem','corredor'];
-        return ['corredor','fabricacao'];
-      }
 
       function movTeclado(id) {
         var i = document.getElementById(id); if (!i) return;
@@ -5756,7 +5761,7 @@ export const SCREENS = {
               '</div>';
             return;
           }
-          MOV_GAIOLA = g; MOV_DEST_TIPO = null;
+          MOV_GAIOLA = g; MOV_DEST = null;
           res.innerHTML = '<div class="abox ok" style="margin-top:10px"><span class="ai">✅</span><div>Gaiola <strong class="mono">' + g.codigo + '</strong> validada.</div></div>';
           movSetStep(2);
         }, 900);
@@ -5775,23 +5780,11 @@ export const SCREENS = {
               '<td class="mono" style="text-align:right">' + it.Quantity + '</td>' +
             '</tr>';
         });
-        var dests = movDestinosDisponiveis(g.localTipo);
-        var btns = '';
-        dests.forEach(function (t) {
-          var m = MOV_TIPO_META[t];
-          var nLoc = (MOV_LOCAIS[t] || []).length;
-          btns +=
-            '<div class="mov-tipo-btn" data-tipo="' + t + '" onclick="movSelTipo(this)" style="cursor:pointer;flex:1 1 130px;border:2px dashed var(--verde);border-radius:var(--r);padding:18px 12px;background:var(--verde-dim);text-align:center;transition:all .18s">' +
-              '<div style="font-size:26px;margin-bottom:5px">' + m.ico + '</div>' +
-              '<div style="font-size:13px;font-weight:900;color:var(--verde-esc)">' + m.label + '</div>' +
-              '<div style="font-family:var(--font-m);font-size:10px;color:var(--text3);margin-top:3px">' + nLoc + ' locais</div>' +
-            '</div>';
-        });
         var localMeta = MOV_TIPO_META[g.localTipo] ? MOV_TIPO_META[g.localTipo].label : g.localTipo;
         var html =
           // ── Card do conteúdo da gaiola (em cima) ──
           '<div class="card cv mb14">' +
-            '<div class="card-title">② Conteúdo da Gaiola</div>' +
+            '<div class="card-title">📦 Conteúdo da Gaiola</div>' +
             // Header estilo "view" (cadastro MES) — box de cor destacada (dourado suave)
             '<div style="background:var(--ouro-dim);border:1px solid var(--ouro-claro);border-radius:8px;padding:13px 15px;margin-bottom:16px">' +
               '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
@@ -5814,13 +5807,11 @@ export const SCREENS = {
               '<table class="tbl" style="min-width:420px"><thead><tr><th>LabelNo</th><th>ProductNo</th><th>LotNo</th><th style="text-align:right">Quantity</th></tr></thead><tbody>' + rows + '</tbody></table>' +
             '</div>' +
             '<granado-gallery id="mov-itens-gallery" type="view-only" enable-scroll="true" scroll-height="50vh"></granado-gallery>' +
-          '</div>' +
-          // ── Card do destino (embaixo) ──
-          '<div class="card cv mb14">' +
-            '<div class="card-title">➡️ Destino</div>' +
-            '<div style="display:flex;gap:12px;flex-wrap:wrap">' + btns + '</div>' +
           '</div>';
-        document.getElementById('mov-panel-2').innerHTML = html;
+        document.getElementById('mov-step2-content').innerHTML = html;
+        // Reinicia o campo de destino ao (re)entrar no passo 2.
+        var di = document.getElementById('mov-dest-inp'); if (di) { di.value = ''; di.setAttribute('inputmode','none'); }
+        var dr = document.getElementById('mov-dest-result'); if (dr) dr.innerHTML = '';
         // Galeria vertical dos itens (mobile) — espelha a tabela.
         var gal = document.getElementById('mov-itens-gallery');
         if (gal) {
@@ -5834,52 +5825,79 @@ export const SCREENS = {
         }
       }
 
-      function movSelTipo(el) { MOV_DEST_TIPO = el.getAttribute('data-tipo'); movSetStep(3); }
+      // ── Passo 2: validar/escanear o destino ──
+      function movValidarDestino() {
+        var g = MOV_GAIOLA; if (!g) return;
+        var inp = document.getElementById('mov-dest-inp');
+        var v = inp ? (inp.value || '').trim().toUpperCase() : '';
+        if (!v) { alert('⚠ Escaneie ou digite o código do destino.'); return; }
+        var res = document.getElementById('mov-dest-result');
+        res.innerHTML =
+          '<div style="background:var(--inf-p);border:1px solid var(--inf-b);border-radius:7px;padding:12px 16px;margin-top:10px;display:flex;gap:12px;align-items:center">' +
+            '<div style="width:20px;height:20px;border:3px solid var(--inf-b);border-top-color:var(--inf);border-radius:50%;animation:movgaio-spin .8s linear infinite;flex-shrink:0"></div>' +
+            '<div style="font-size:12px;font-weight:700;color:var(--inf)">Validando o destino ' + v + '...</div>' +
+          '</div>';
+        setTimeout(function () {
+          var d = MOV_DESTINOS[v];
+          if (!d) {
+            res.innerHTML =
+              '<div style="background:var(--per-p);border:1px solid var(--per-b);border-radius:7px;padding:12px 16px;margin-top:10px;display:flex;gap:10px;align-items:center">' +
+                '<span style="font-size:18px">⛔</span>' +
+                '<div style="font-size:12px;font-weight:700;color:var(--per)">Destino <strong class="mono">' + v + '</strong> não encontrado. Confira o código e tente novamente.</div>' +
+              '</div>';
+            return;
+          }
+          if (d.nome === g.local) {
+            res.innerHTML =
+              '<div style="background:var(--alr-p);border:1px solid var(--alr-b);border-radius:7px;padding:12px 16px;margin-top:10px;display:flex;gap:10px;align-items:center">' +
+                '<span style="font-size:18px">⚠</span>' +
+                '<div style="font-size:12px;font-weight:700;color:var(--alr)">A gaiola já está em <strong>' + d.nome + '</strong>. Escaneie um destino diferente.</div>' +
+              '</div>';
+            return;
+          }
+          MOV_DEST = d;
+          res.innerHTML = '<div class="abox ok" style="margin-top:10px"><span class="ai">✅</span><div>Destino <strong class="mono">' + d.codigo + '</strong> — ' + d.nome + ' validado.</div></div>';
+          movSetStep(3);
+        }, 900);
+      }
 
-      // ── Passo 3: escolher o local + Confirmar ──
+      // Box "header" (estilo view) para Origem/Destino no passo 3.
+      function movHeaderBox(titulo, ico, cor, bg, bd, linhas) {
+        return '<div style="background:' + bg + ';border:1px solid ' + bd + ';border-radius:8px;padding:13px 15px">' +
+          '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+            '<span style="font-size:15px">' + ico + '</span>' +
+            '<div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:' + cor + '">' + titulo + '</div>' +
+          '</div>' +
+          '<div style="display:grid;gap:6px">' + linhas + '</div>' +
+        '</div>';
+      }
+
+      // ── Passo 3: headers Origem/Destino + Confirmar ──
       function movRenderStep3() {
-        var g = MOV_GAIOLA, t = MOV_DEST_TIPO; if (!g || !t) return;
-        var m = MOV_TIPO_META[t];
-        MOV_LOCAL = null;
-        var cards = '';
-        (MOV_LOCAIS[t] || []).forEach(function (nome) {
-          cards +=
-            '<div class="mov-loc-card" data-loc="' + nome + '" onclick="movSelLocal(this)" style="cursor:pointer;border:2px solid var(--border);border-radius:var(--r);padding:16px 10px;background:var(--surface2);text-align:center;transition:all .15s">' +
-              '<div style="font-size:24px;margin-bottom:4px">' + m.ico + '</div>' +
-              '<div style="font-size:12px;font-weight:800;color:var(--text)">' + nome + '</div>' +
-            '</div>';
-        });
+        var g = MOV_GAIOLA, d = MOV_DEST; if (!g || !d) return;
+        var oMeta = MOV_TIPO_META[g.localTipo] || { label: g.localTipo, ico: '📍' };
+        var dMeta = MOV_TIPO_META[d.tipo] || { label: d.tipo, ico: '📍' };
+        var origem = movHeaderBox('Origem', oMeta.ico, 'var(--ouro)', 'var(--ouro-dim)', 'var(--ouro-claro)',
+          movRow('Gaiola', g.codigo, true) + movRow('Local atual', g.local, false) + movRow('Tipo de local', oMeta.label, false));
+        var destino = movHeaderBox('Destino', dMeta.ico, 'var(--verde-esc)', 'var(--verde-dim)', 'var(--ok-b)',
+          movRow('Código', d.codigo, true) + movRow('Local', d.nome, false) + movRow('Tipo de local', dMeta.label, false));
         var html =
           '<div class="card cv mb14" style="border:2px solid var(--verde)">' +
-            '<div class="card-title">③ Local de Destino — ' + m.label + '</div>' +
-            '<div class="abox inf mb14"><span class="ai">' + m.ico + '</span><div>Movendo a gaiola <strong class="mono">' + g.codigo + '</strong> (de <strong>' + g.local + '</strong>) para <strong>' + m.label + '</strong>. Toque no local e confirme:</div></div>' +
-            '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px">' + cards + '</div>' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">' +
+            '<div class="card-title">③ Confirmar Movimentação</div>' +
+            '<div class="abox inf mb14"><span class="ai">🚚</span><div>Confira a origem e o destino da gaiola <strong class="mono">' + g.codigo + '</strong> e confirme a movimentação.</div></div>' +
+            '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;align-items:stretch;margin-bottom:16px">' + origem + destino + '</div>' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:14px;border-top:1px solid var(--border)">' +
               '<button class="btn btn-md btn-ghost" onclick="movSetStep(2)">‹ Voltar</button>' +
-              '<button class="btn btn-md btn-v" id="mov-btn-confirmar" onclick="movConfirmar()" disabled style="opacity:.5;cursor:not-allowed">✓ Confirmar Movimentação</button>' +
+              '<button class="btn btn-md btn-v" onclick="movConfirmar()">✓ Confirmar Movimentação</button>' +
             '</div>' +
           '</div>';
         document.getElementById('mov-panel-3').innerHTML = html;
       }
 
-      // Seleciona o local (realça + habilita Confirmar).
-      function movSelLocal(el) {
-        MOV_LOCAL = el.getAttribute('data-loc');
-        var cards = document.querySelectorAll('#mov-panel-3 .mov-loc-card');
-        Array.prototype.forEach.call(cards, function (c) {
-          var on = c === el;
-          c.style.border = on ? '2px solid var(--verde)' : '2px solid var(--border)';
-          c.style.background = on ? 'var(--verde-dim)' : 'var(--surface2)';
-          if (on) c.setAttribute('data-sel', '1'); else c.removeAttribute('data-sel');
-        });
-        var btn = document.getElementById('mov-btn-confirmar');
-        if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
-      }
-
       // Confirmar: popup de loading -> conclui -> toast -> volta ao passo 1.
       function movConfirmar() {
-        var g = MOV_GAIOLA; if (!g || !MOV_LOCAL) { alert('⚠ Selecione o local de destino.'); return; }
-        var para = MOV_LOCAL, tipo = MOV_DEST_TIPO;
+        var g = MOV_GAIOLA, d = MOV_DEST; if (!g || !d) { alert('⚠ Destino não definido.'); return; }
+        var para = d.nome, tipo = d.tipo;
         var ov = document.createElement('div');
         ov.id = 'mov-loading-popup';
         ov.style.cssText = 'position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)';
@@ -5912,10 +5930,12 @@ export const SCREENS = {
 
       // Reinicia o fluxo (volta ao passo 1).
       function movReset() {
-        MOV_GAIOLA = null; MOV_DEST_TIPO = null; MOV_LOCAL = null;
+        MOV_GAIOLA = null; MOV_DEST = null;
         var inp = document.getElementById('mov-scan-inp'); if (inp) { inp.value = ''; inp.setAttribute('inputmode','none'); }
         var sr = document.getElementById('mov-scan-result'); if (sr) sr.innerHTML = '';
-        document.getElementById('mov-panel-2').innerHTML = '';
+        var di = document.getElementById('mov-dest-inp'); if (di) { di.value = ''; di.setAttribute('inputmode','none'); }
+        var dr = document.getElementById('mov-dest-result'); if (dr) dr.innerHTML = '';
+        var c = document.getElementById('mov-step2-content'); if (c) c.innerHTML = '';
         document.getElementById('mov-panel-3').innerHTML = '';
         movSetStep(1);
       }
@@ -6559,7 +6579,7 @@ export const SCREENS = {
                 <option value="perda">CANCELAR PESAGEM</option>
               </select>
               <div id="mps-perda-aviso" style="display:none;margin-top:8px;padding:8px 12px;background:var(--per-p);border:1px solid var(--per-b);border-radius:6px;font-size:11px;color:var(--per);line-height:1.4">
-                <strong>⚠ Perda — atenção:</strong> ao confirmar, o status da MP <strong id="mps-perda-mp-nome">selecionada</strong> será alterado para <span class="bdg bdg-per" style="font-size:9px">⛔ Cancelado</span> e a linha será marcada como cancelada na tabela de pesagens.
+                <strong>⚠ Atenção:</strong> ao confirmar, o status da MP <strong id="mps-perda-mp-nome">selecionada</strong> será alterado para <span class="bdg bdg-per" style="font-size:9px">⛔ Cancelado</span> e a movimentação de estoque será revertida
               </div>
             </div>
             <div id="mps-desvio-num-wrap" style="margin-bottom:12px;display:none">
@@ -6567,13 +6587,21 @@ export const SCREENS = {
               <input class="inp" id="mps-desvio-num" placeholder="Ex: DEV-2026-0041" style="font-family:var(--font-m)">
               <span style="font-size:10px;color:var(--text3);margin-top:3px;display:block">Obrigatório quando o Tipo de solicitação é <strong>Desvio</strong>.</span>
             </div>
-            <div style="margin-bottom:16px">
+            <!-- AJUSTE: quantidade a ajustar -->
+            <div id="mps-ajuste-qtd-wrap" style="margin-bottom:16px;display:none">
+              <label class="lbl">Quantidade a ajustar</label>
+              <div style="display:flex;align-items:center;gap:8px">
+                <input class="inp" id="mps-ajuste-qtd" inputmode="decimal" placeholder="0,000" style="font-family:var(--font-m);max-width:200px">
+                <span style="font-size:12px;color:var(--text3)">kg</span>
+              </div>
+            </div>
+            <div id="mps-desvio-justif-wrap" style="margin-bottom:16px;display:none">
               <label class="lbl">Justificativa / Observação</label>
               <textarea class="txta" id="mps-desvio-justif" placeholder="Descreva a causa e ação tomada..."></textarea>
             </div>
-            <div style="display:flex;gap:10px">
-              <button class="btn btn-md btn-v" style="flex:1" onclick="mpsSalvarDesvio()">📨 Ajuste MP</button>
-              <button class="btn btn-md btn-ghost" onclick="document.getElementById('modal-mps-desvio').style.display='none'">Cancelar</button>
+            <div id="mps-desvio-btns" style="display:none;gap:10px">
+              <button class="btn btn-md btn-v" style="flex:1" onclick="mpsSalvarDesvio()">CONFIRMAR</button>
+              <button class="btn btn-md btn-ghost" onclick="document.getElementById('modal-mps-desvio').style.display='none'">CANCELAR</button>
             </div>
           </div>
 
@@ -6598,14 +6626,16 @@ export const SCREENS = {
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Balança</span><div style="font-family:var(--font-m);font-size:12px;margin-top:2px">' + d.bal + '</div></div>' +
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Operador</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + opLabel + '</div></div>' +
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Sala · Box</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + salaLabel + '</div></div>';
-        // Se a MP estiver com desvio, pré-seleciona o tipo "Desvio".
+        // Sempre abre sem tipo selecionado -> campos e botões ocultos até escolher.
         var tipoEl = document.getElementById('mps-desvio-tipo');
-        if (tipoEl) tipoEl.value = (d.status === 'desv') ? 'desvio' : '';
+        if (tipoEl) tipoEl.value = '';
         var numEl = document.getElementById('mps-desvio-num');
         if (numEl) numEl.value = '';
         var justEl = document.getElementById('mps-desvio-justif');
         if (justEl) justEl.value = '';
-        mpsToggleNumDesvio(); // mostra/esconde "Número do desvio" conforme tipo
+        var qtdEl = document.getElementById('mps-ajuste-qtd');
+        if (qtdEl) qtdEl.value = '';
+        mpsToggleNumDesvio(); // mostra/esconde campos e botões conforme o tipo
         document.getElementById('modal-mps-desvio').style.display = 'flex';
       }
 
@@ -6621,9 +6651,16 @@ export const SCREENS = {
         var wrapNum = document.getElementById('mps-desvio-num-wrap');
         var avisoPerda = document.getElementById('mps-perda-aviso');
         var perdaNome = document.getElementById('mps-perda-mp-nome');
+        var qtdWrap = document.getElementById('mps-ajuste-qtd-wrap');
+        var justWrap = document.getElementById('mps-desvio-justif-wrap');
+        var btns = document.getElementById('mps-desvio-btns');
         if (!tipoEl) return;
-        if (wrapNum)    wrapNum.style.display    = (tipoEl.value === 'desvio') ? 'block' : 'none';
-        if (avisoPerda) avisoPerda.style.display = (tipoEl.value === 'perda')  ? 'block' : 'none';
+        var tipo = tipoEl.value;
+        if (wrapNum)    wrapNum.style.display    = (tipo === 'desvio') ? 'block' : 'none';
+        if (avisoPerda) avisoPerda.style.display = (tipo === 'perda')  ? 'block' : 'none';
+        if (qtdWrap)    qtdWrap.style.display    = (tipo === 'ajuste') ? 'block' : 'none';
+        if (justWrap)   justWrap.style.display   = tipo ? 'block' : 'none';
+        if (btns)       btns.style.display       = tipo ? 'flex' : 'none';
         if (perdaNome)  perdaNome.textContent = (_mpsSel && _mpsSel.mat) ? ('"' + _mpsSel.mat + ' #' + (_mpsSel.n||'') + '"') : 'selecionada';
       }
 
@@ -6690,12 +6727,18 @@ export const SCREENS = {
         var tipoLabel = tipoSel.options[tipoSel.selectedIndex] ? tipoSel.options[tipoSel.selectedIndex].text : tipo;
         var numEl = document.getElementById('mps-desvio-num');
         var num = (numEl.value || '').trim();
-        var just = (document.getElementById('mps-desvio-justif').value || '').trim();
+        var justEl = document.getElementById('mps-desvio-justif');
+        var just = justEl ? (justEl.value || '').trim() : '';
+        var qtdEl = document.getElementById('mps-ajuste-qtd');
+        var qtd = qtdEl ? (qtdEl.value || '').trim() : '';
         if (!tipo) { alert('⚠ Selecione o tipo de solicitação.'); return; }
         if (tipo === 'desvio' && !num) { alert('⚠ Para o tipo Desvio, o "Número do desvio" é obrigatório.'); numEl.focus(); return; }
-        if (!just) { alert('⚠ Preencha a justificativa.'); return; }
+        if (tipo === 'ajuste') {
+          var qn = parseFloat(qtd.replace(',', '.'));
+          if (!qtd || isNaN(qn) || qn <= 0) { alert('⚠ Informe a quantidade a ajustar (kg).'); if (qtdEl) qtdEl.focus(); return; }
+        }
 
-        // Confirmação adicional para Perda (ação destrutiva visualmente)
+        // Confirmação adicional para Cancelar Pesagem (ação destrutiva visualmente)
         if (tipo === 'perda') {
           var okPerda = confirm(
             '⛔ Confirmar registro de PERDA?\\n\\n' +
@@ -6717,12 +6760,13 @@ export const SCREENS = {
         }
 
         alert(
-          (tipo === 'perda' ? '⛔ Perda registrada · MP CANCELADA' : '📨 Solicitação de MP enviada ao Almoxarifado') + '!\\n\\n' +
+          (tipo === 'perda' ? '⛔ Pesagem CANCELADA' : '📨 Ajuste de MP registrado') + '!\\n\\n' +
           'Protocolo: ' + protocolo + '\\n' +
           'MP: ' + (_mpsSel.mat || '—') + '\\n' +
           'Tipo: ' + tipoLabel +
+          (tipo === 'ajuste' ? '\\nQuantidade ajustada: ' + qtd + ' kg' : '') +
           (tipo === 'desvio' ? '\\nNº Desvio: ' + num : '') +
-          '\\n\\nJustificativa: ' + just +
+          (just ? '\\n\\nJustificativa: ' + just : '') +
           (tipo === 'perda'
             ? '\\n\\nLinha marcada como CANCELADA na tabela. Notificação: Líder de Pesagem + Qualidade.'
             : '\\n\\nNotificação enviada a: Almoxarifado MF5 + Líder de Pesagem.')

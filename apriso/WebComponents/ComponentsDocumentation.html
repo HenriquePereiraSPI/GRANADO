@@ -35,6 +35,8 @@
   <script src="./granado-stepper.js"></script>
   <script src="./granado-submenu-pesagem.js"></script>
   <script src="./granado-preloader.js"></script>
+  <script src="./granado-popup-loading.js"></script>
+  <script src="./granado-loading.js"></script>
   <script src="./granado-page-title.js"></script>
   <script src="./granado-information.js"></script>
   <script src="./granado-tree.js"></script>
@@ -301,6 +303,8 @@
       <a class="gd-link" href="#granado-stepper">granado-stepper</a>
       <a class="gd-link" href="#granado-submenu-pesagem">granado-submenu-pesagem</a>
       <a class="gd-link" href="#granado-preloader">granado-preloader</a>
+      <a class="gd-link" href="#granado-popup-loading">granado-popup-loading</a>
+      <a class="gd-link" href="#granado-loading">granado-loading</a>
       <a class="gd-link" href="#granado-page-title">granado-page-title</a>
       <a class="gd-link" href="#granado-information">granado-information</a>
       <a class="gd-link" href="#granado-tree">granado-tree</a>
@@ -9554,6 +9558,359 @@ GranadoPreloader.hide();</pre>
           <li><strong>Casamento com requisições:</strong> sempre prefira
             <code>try/finally</code> com <code>hide()</code> no <code>finally</code>
             para garantir que o overlay não fique travado em caso de erro.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-popup-loading
+           ============================================================ -->
+      <section id="granado-popup-loading" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-popup-loading&gt;</code></h1>
+        <p class="gd-lead">
+          Popup (modal) de loading em formato de <strong>card centralizado</strong>. Diferente do
+          <strong>granado-preloader</strong> (overlay fullscreen minimalista), este mostra um
+          <strong>título</strong>, um <strong>subtítulo</strong> e um loader animado escolhido via
+          <code>loading-type</code> (<code>spinner</code>, <code>dots</code>, <code>bars</code>,
+          <code>pulse</code>, <code>ring</code>, <code>brand</code>). Não tem botão de fechar — é um
+          estado de "aguarde"; some via <code>hide()</code>/<code>close()</code> quando a operação termina.
+          Usa-se via API estática (singleton no <code>document.body</code>), trava o scroll enquanto visível
+          e todas as animações são feitas via <strong>Web Animations API</strong> (sem injetar <code>@keyframes</code>).
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-popup-loading.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <!-- ===== Uso recomendado ===== -->
+        <h2 class="gd-h2">Uso recomendado · API estática</h2>
+        <p class="gd-lead">
+          <code>GranadoPopupLoading.show({...})</code> aceita <code>title</code>, <code>subtitle</code>,
+          <code>loadingType</code> e <code>color</code>. Passar apenas uma string usa-a como título.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-button label="Mostrar (completo)" icon="refresh"
+            onclickevent="GranadoPopupLoading.show({ title:'Salvando...', subtitle:'Enviando dados ao servidor', loadingType:'spinner' }); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2500)">
+          </granado-button>
+
+          <granado-button label="Só título" variant="secondary"
+            onclickevent="GranadoPopupLoading.show('Salvando pesagem...'); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2500)">
+          </granado-button>
+
+          <granado-button label="Fechar agora" variant="ghost" icon="x"
+            onclickevent="GranadoPopupLoading.hide()">
+          </granado-button>
+          <pre class="gd-code gd-snip"><span class="tk-comment">// Completo</span>
+GranadoPopupLoading.show({
+  title: <span class="tk-str">'Salvando...'</span>,
+  subtitle: <span class="tk-str">'Enviando dados ao servidor'</span>,
+  loadingType: <span class="tk-str">'spinner'</span>
+});
+
+<span class="tk-comment">// Só o título</span>
+GranadoPopupLoading.show(<span class="tk-str">'Salvando pesagem...'</span>);
+
+<span class="tk-comment">// Fechar</span>
+GranadoPopupLoading.hide();</pre>
+        </div>
+
+        <!-- ===== Variants de loader ===== -->
+        <h2 class="gd-h2">Variants de loader (<code>loading-type</code>)</h2>
+        <p class="gd-lead">
+          O atributo <code>loading-type</code> escolhe o estilo do loader animado (default
+          <code>spinner</code>). Todos usam <code>color</code> como cor do traço/preenchimento e
+          da borda superior do card.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-button label="spinner"
+            onclickevent="GranadoPopupLoading.show({ title:'Salvando...', subtitle:'Enviando dados', loadingType:'spinner' }); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2500)">
+          </granado-button>
+          <granado-button label="dots" variant="secondary" color="#1A4A8C"
+            onclickevent="GranadoPopupLoading.show({ title:'Processando...', subtitle:'Isso pode levar alguns segundos', loadingType:'dots', color:'#1A4A8C' }); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2500)">
+          </granado-button>
+          <granado-button label="bars" variant="secondary" color="#9A5A00"
+            onclickevent="GranadoPopupLoading.show({ title:'Sincronizando...', subtitle:'Integrando com o JDE', loadingType:'bars', color:'#9A5A00' }); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2500)">
+          </granado-button>
+          <granado-button label="pulse" variant="secondary" color="#8C1A1A"
+            onclickevent="GranadoPopupLoading.show({ title:'Conectando...', subtitle:'Aguardando a balança', loadingType:'pulse', color:'#8C1A1A' }); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2500)">
+          </granado-button>
+          <granado-button label="ring" variant="secondary" color="#C8A85A"
+            onclickevent="GranadoPopupLoading.show({ title:'Aguarde...', subtitle:'Validando a etiqueta', loadingType:'ring', color:'#C8A85A' }); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2500)">
+          </granado-button>
+          <granado-button label="brand (Granado)" variant="secondary"
+            onclickevent="GranadoPopupLoading.show({ title:'Aguarde...', subtitle:'Carregando o módulo', loadingType:'brand' }); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2500)">
+          </granado-button>
+          <pre class="gd-code gd-snip">GranadoPopupLoading.show({ title: <span class="tk-str">'Salvando...'</span>,     loadingType: <span class="tk-str">'spinner'</span> });
+GranadoPopupLoading.show({ title: <span class="tk-str">'Processando...'</span>,  loadingType: <span class="tk-str">'dots'</span>,  color: <span class="tk-str">'#1A4A8C'</span> });
+GranadoPopupLoading.show({ title: <span class="tk-str">'Sincronizando...'</span>, loadingType: <span class="tk-str">'bars'</span>,  color: <span class="tk-str">'#9A5A00'</span> });
+GranadoPopupLoading.show({ title: <span class="tk-str">'Conectando...'</span>,   loadingType: <span class="tk-str">'pulse'</span>, color: <span class="tk-str">'#8C1A1A'</span> });
+GranadoPopupLoading.show({ title: <span class="tk-str">'Aguarde...'</span>,      loadingType: <span class="tk-str">'ring'</span>,  color: <span class="tk-str">'#C8A85A'</span> });
+GranadoPopupLoading.show({ title: <span class="tk-str">'Aguarde...'</span>,      loadingType: <span class="tk-str">'brand'</span> });</pre>
+        </div>
+
+        <!-- ===== Texto dinâmico ===== -->
+        <h2 class="gd-h2">Título / subtítulo dinâmico</h2>
+        <p class="gd-lead">
+          <code>setTitle()</code> e <code>setSubtitle()</code> atualizam apenas o texto, sem fechar/reabrir
+          o popup (a animação do loader não reseta). Útil para operações de múltiplas etapas.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-button label="Loading em 3 etapas" variant="secondary" color="#1A4A8C"
+            onclickevent="GranadoPopupLoading.show({ title:'Etapa 1...', subtitle:'Preparando', loadingType:'spinner', color:'#1A4A8C' }); setTimeout(function(){ GranadoPopupLoading.setTitle('Etapa 2...'); GranadoPopupLoading.setSubtitle('Gravando'); }, 900); setTimeout(function(){ GranadoPopupLoading.setTitle('Concluindo...'); GranadoPopupLoading.setSubtitle('Quase lá'); }, 1800); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2800)">
+          </granado-button>
+          <pre class="gd-code gd-snip">GranadoPopupLoading.show({ title: <span class="tk-str">'Etapa 1...'</span>, subtitle: <span class="tk-str">'Preparando'</span> });
+setTimeout(<span class="tk-key">() =&gt;</span> { GranadoPopupLoading.setTitle(<span class="tk-str">'Etapa 2...'</span>); GranadoPopupLoading.setSubtitle(<span class="tk-str">'Gravando'</span>); }, 900);
+setTimeout(<span class="tk-key">() =&gt;</span> { GranadoPopupLoading.setTitle(<span class="tk-str">'Concluindo...'</span>); GranadoPopupLoading.setSubtitle(<span class="tk-str">'Quase lá'</span>); }, 1800);
+setTimeout(<span class="tk-key">() =&gt;</span> GranadoPopupLoading.hide(), 2800);</pre>
+        </div>
+
+        <!-- ===== Atributos ===== -->
+        <h2 class="gd-h2">Atributos</h2>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Atributo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:160px">Default</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">title</td>
+              <td class="col-type">string</td>
+              <td class="col-type">"Aguarde..."</td>
+              <td class="col-desc">Título do card (linha principal, em destaque na cor <code>color</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">subtitle</td>
+              <td class="col-type">string</td>
+              <td class="col-type">"" (oculto)</td>
+              <td class="col-desc">Subtítulo (linha secundária, menor e cinza). Se vazio, não é renderizado.</td>
+            </tr>
+            <tr>
+              <td class="col-name">loading-type</td>
+              <td class="col-type">string</td>
+              <td class="col-type">"spinner"</td>
+              <td class="col-desc">Estilo do loader: <code>spinner</code>, <code>dots</code>, <code>bars</code>, <code>pulse</code>, <code>ring</code>, <code>brand</code>. Em JS: <code>el.loadingType</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">open</td>
+              <td class="col-type">"true" | "false"</td>
+              <td class="col-type">visível</td>
+              <td class="col-desc"><code>"false"</code> inicia oculto (uso declarativo). Controle via <code>open()</code>/<code>close()</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-type">"#1C5C31"</td>
+              <td class="col-desc">Cor do loader + borda superior do card + título. Aceita <code>var(--x)</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">backgroundcolor</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-type">"rgba(15,51,25,.55)"</td>
+              <td class="col-desc">Cor do overlay atrás do card.</td>
+            </tr>
+            <tr>
+              <td class="col-name">blur</td>
+              <td class="col-type">"true" | "false"</td>
+              <td class="col-type">"true"</td>
+              <td class="col-desc"><code>"false"</code> desativa o <code>backdrop-filter: blur</code> do overlay.</td>
+            </tr>
+            <tr>
+              <td class="col-name">zindex</td>
+              <td class="col-type">number</td>
+              <td class="col-type">"99999"</td>
+              <td class="col-desc">z-index do overlay.</td>
+            </tr>
+            <tr>
+              <td class="col-name">close-on-backdrop</td>
+              <td class="col-type">"true" | "false"</td>
+              <td class="col-type">"false"</td>
+              <td class="col-desc">Se <code>"true"</code>, clicar fora do card fecha o popup. Por padrão <strong>não</strong> fecha.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== API ===== -->
+        <h2 class="gd-h2">API · Métodos estáticos</h2>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:250px">Método</th>
+              <th style="width:210px">Argumentos</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">GranadoPopupLoading.show</td>
+              <td class="col-type">string | object</td>
+              <td class="col-desc">Cria (se necessário) e exibe o singleton. String → título. Objeto aceita <code>title</code>, <code>subtitle</code>, <code>loadingType</code>, <code>color</code>, <code>backgroundcolor</code>, <code>blur</code>, <code>zindex</code>, <code>closeOnBackdrop</code>. Retorna o elemento.</td>
+            </tr>
+            <tr>
+              <td class="col-name">GranadoPopupLoading.hide</td>
+              <td class="col-type">()</td>
+              <td class="col-desc">Esconde o popup, para a animação e restaura o <code>overflow</code> do <code>&lt;body&gt;</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">GranadoPopupLoading.setTitle</td>
+              <td class="col-type">(text)</td>
+              <td class="col-desc">Atualiza o título sem recriar o popup (animação não reseta).</td>
+            </tr>
+            <tr>
+              <td class="col-name">GranadoPopupLoading.setSubtitle</td>
+              <td class="col-type">(text)</td>
+              <td class="col-desc">Atualiza o subtítulo sem recriar o popup.</td>
+            </tr>
+            <tr>
+              <td class="col-name">GranadoPopupLoading.setLoadingType</td>
+              <td class="col-type">(type)</td>
+              <td class="col-desc">Troca o loader em runtime (re-renderiza o card).</td>
+            </tr>
+            <tr>
+              <td class="col-name">GranadoPopupLoading.isVisible</td>
+              <td class="col-type">()</td>
+              <td class="col-desc">Retorna <code>true</code> se o popup está visível.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Singleton:</strong> a primeira chamada a <code>show()</code> cria a instância no <code>document.body</code>; as seguintes reaproveitam o mesmo elemento.</li>
+          <li><strong>Sem botão de fechar:</strong> é um estado de espera — sempre chame <code>hide()</code> ao terminar (idealmente em <code>try/finally</code>, como no <strong>granado-preloader</strong>).</li>
+          <li><strong>Animação:</strong> usa <code>element.animate()</code> (Web Animations API), sem injetar <code>@keyframes</code> — o componente é self-contained (Light DOM, estilos inline).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-loading
+           ============================================================ -->
+      <section id="granado-loading" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-loading&gt;</code></h1>
+        <p class="gd-lead">
+          Indicador de loading <strong>inline</strong> — fica no fluxo normal da página (dentro de cards,
+          botões, células de tabela, ao lado de um texto). Mostra apenas o <strong>loader animado</strong>
+          (escolhido via <code>loading-type</code>) e, opcionalmente, um <strong>texto</strong>.
+          Para bloquear a tela inteira use <strong>granado-preloader</strong>; para um card modal
+          centralizado use <strong>granado-popup-loading</strong>. Animações via
+          <strong>Web Animations API</strong> (sem <code>@keyframes</code>), Light DOM e estilos inline.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-loading.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <!-- ===== Uso ===== -->
+        <h2 class="gd-h2">Uso · declarativo</h2>
+        <p class="gd-lead">
+          É um elemento normal — coloque no HTML onde quiser. Sem <code>text</code>, mostra só o loader.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:26px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-loading loading-type="spinner" text="Carregando..."></granado-loading>
+          <granado-loading loading-type="dots" size="16" color="#1C5C31"></granado-loading>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-loading</span> <span class="tk-attr">loading-type</span>=<span class="tk-str">"spinner"</span> <span class="tk-attr">text</span>=<span class="tk-str">"Carregando..."</span><span class="tk-tag">&gt;&lt;/granado-loading&gt;</span>
+
+<span class="tk-comment">&lt;!-- só o loader, menor --&gt;</span>
+<span class="tk-tag">&lt;granado-loading</span> <span class="tk-attr">loading-type</span>=<span class="tk-str">"dots"</span> <span class="tk-attr">size</span>=<span class="tk-str">"16"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#1C5C31"</span><span class="tk-tag">&gt;&lt;/granado-loading&gt;</span></pre>
+        </div>
+
+        <!-- ===== Variants ===== -->
+        <h2 class="gd-h2">Variants de loader (<code>loading-type</code>)</h2>
+        <div class="gd-demo" style="display:flex;gap:26px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-loading loading-type="spinner" text="spinner"></granado-loading>
+          <granado-loading loading-type="dots" text="dots" color="#1A4A8C"></granado-loading>
+          <granado-loading loading-type="bars" text="bars" color="#9A5A00"></granado-loading>
+          <granado-loading loading-type="pulse" text="pulse" color="#8C1A1A"></granado-loading>
+          <granado-loading loading-type="ring" text="ring" color="#C8A85A"></granado-loading>
+          <granado-loading loading-type="brand" text="brand"></granado-loading>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-loading</span> <span class="tk-attr">loading-type</span>=<span class="tk-str">"spinner"</span> <span class="tk-attr">text</span>=<span class="tk-str">"spinner"</span><span class="tk-tag">&gt;&lt;/granado-loading&gt;</span>
+<span class="tk-tag">&lt;granado-loading</span> <span class="tk-attr">loading-type</span>=<span class="tk-str">"dots"</span>  <span class="tk-attr">text</span>=<span class="tk-str">"dots"</span>  <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span><span class="tk-tag">&gt;&lt;/granado-loading&gt;</span>
+<span class="tk-tag">&lt;granado-loading</span> <span class="tk-attr">loading-type</span>=<span class="tk-str">"bars"</span>  <span class="tk-attr">text</span>=<span class="tk-str">"bars"</span>  <span class="tk-attr">color</span>=<span class="tk-str">"#9A5A00"</span><span class="tk-tag">&gt;&lt;/granado-loading&gt;</span>
+<span class="tk-tag">&lt;granado-loading</span> <span class="tk-attr">loading-type</span>=<span class="tk-str">"pulse"</span> <span class="tk-attr">text</span>=<span class="tk-str">"pulse"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#8C1A1A"</span><span class="tk-tag">&gt;&lt;/granado-loading&gt;</span>
+<span class="tk-tag">&lt;granado-loading</span> <span class="tk-attr">loading-type</span>=<span class="tk-str">"ring"</span>  <span class="tk-attr">text</span>=<span class="tk-str">"ring"</span>  <span class="tk-attr">color</span>=<span class="tk-str">"#C8A85A"</span><span class="tk-tag">&gt;&lt;/granado-loading&gt;</span>
+<span class="tk-tag">&lt;granado-loading</span> <span class="tk-attr">loading-type</span>=<span class="tk-str">"brand"</span> <span class="tk-attr">text</span>=<span class="tk-str">"brand"</span><span class="tk-tag">&gt;&lt;/granado-loading&gt;</span></pre>
+        </div>
+
+        <!-- ===== Tamanho e direção ===== -->
+        <h2 class="gd-h2">Tamanho e direção</h2>
+        <p class="gd-lead">
+          <code>size</code> (px) escala o loader (e o texto) proporcionalmente. <code>direction="column"</code>
+          coloca o texto embaixo do loader.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:26px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-loading loading-type="spinner" size="18"></granado-loading>
+          <granado-loading loading-type="spinner" size="28"></granado-loading>
+          <granado-loading loading-type="dots" size="52"></granado-loading>
+          <granado-loading loading-type="ring" text="Salvando" direction="column"></granado-loading>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-loading</span> <span class="tk-attr">loading-type</span>=<span class="tk-str">"spinner"</span> <span class="tk-attr">size</span>=<span class="tk-str">"18"</span><span class="tk-tag">&gt;&lt;/granado-loading&gt;</span>
+<span class="tk-tag">&lt;granado-loading</span> <span class="tk-attr">loading-type</span>=<span class="tk-str">"dots"</span> <span class="tk-attr">size</span>=<span class="tk-str">"52"</span><span class="tk-tag">&gt;&lt;/granado-loading&gt;</span>
+<span class="tk-tag">&lt;granado-loading</span> <span class="tk-attr">loading-type</span>=<span class="tk-str">"ring"</span> <span class="tk-attr">text</span>=<span class="tk-str">"Salvando"</span> <span class="tk-attr">direction</span>=<span class="tk-str">"column"</span><span class="tk-tag">&gt;&lt;/granado-loading&gt;</span></pre>
+        </div>
+
+        <!-- ===== Atributos ===== -->
+        <h2 class="gd-h2">Atributos</h2>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:160px">Atributo</th>
+              <th style="width:150px">Tipo</th>
+              <th style="width:130px">Default</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">loading-type</td>
+              <td class="col-type">string</td>
+              <td class="col-type">"spinner"</td>
+              <td class="col-desc"><code>spinner</code>, <code>dots</code>, <code>bars</code>, <code>pulse</code>, <code>ring</code>, <code>brand</code>. Em JS: <code>el.loadingType</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">text</td>
+              <td class="col-type">string</td>
+              <td class="col-type">"" (oculto)</td>
+              <td class="col-desc">Texto ao lado do loader. Se vazio, mostra só o loader.</td>
+            </tr>
+            <tr>
+              <td class="col-name">color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-type">"#1C5C31"</td>
+              <td class="col-desc">Cor do loader. Aceita <code>var(--x)</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">textcolor</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-type">"#5A6B5E"</td>
+              <td class="col-desc">Cor do texto.</td>
+            </tr>
+            <tr>
+              <td class="col-name">size</td>
+              <td class="col-type">number (px)</td>
+              <td class="col-type">"40"</td>
+              <td class="col-desc">Tamanho do loader; o texto e os sub-elementos escalam junto.</td>
+            </tr>
+            <tr>
+              <td class="col-name">direction</td>
+              <td class="col-type">"row" | "column"</td>
+              <td class="col-type">"row"</td>
+              <td class="col-desc"><code>row</code>: loader + texto lado a lado. <code>column</code>: texto embaixo do loader.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Inline:</strong> renderiza como <code>inline-flex</code> — funciona no meio de um texto, dentro de um botão, célula de tabela, etc.</li>
+          <li><strong>Propriedades JS:</strong> <code>el.text</code>, <code>el.loadingType</code>, <code>el.color</code>, <code>el.size</code> (reagem em runtime).</li>
+          <li><strong>Animação:</strong> via <code>element.animate()</code> (Web Animations API), sem injetar <code>@keyframes</code>.</li>
         </ul>
       </section>
 

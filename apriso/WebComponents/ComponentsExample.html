@@ -35,6 +35,8 @@
   <script src="./granado-stepper.js"></script>
   <script src="./granado-submenu-pesagem.js"></script>
   <script src="./granado-preloader.js"></script>
+  <script src="./granado-popup-loading.js"></script>
+  <script src="./granado-loading.js"></script>
   <script src="./granado-page-title.js"></script>
   <script src="./granado-information.js"></script>
   <script src="./granado-tree.js"></script>
@@ -1197,6 +1199,104 @@
       <granado-button label="Fechar agora" variant="ghost" icon="x"
         onclickevent="GranadoPreloader.hide()">
       </granado-button>
+    </div>
+  </section>
+
+  <!-- ========== granado-popup-loading ========== -->
+  <section style="margin-top:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-popup-loading&gt;
+    </h2>
+    <p style="font-size:11px;color:#5A6B5E;margin:0 0 10px">
+      Popup (card) de loading centralizado com <strong>title</strong>, <strong>subtitle</strong> e um loader
+      animado (<strong>loading-type</strong>). API tipica: <code
+        style="background:#F5EFD9;padding:2px 5px;border-radius:3px;font-size:11px">GranadoPopupLoading.show({ title, subtitle, loadingType })</code>.
+    </p>
+
+    <!-- Variants de loader -->
+    <p style="font-size:11px;color:#5A6B5E;margin:14px 0 6px"><strong>loading-type:</strong> spinner (default), dots, bars, pulse, ring e brand.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <granado-button label="spinner"
+        onclickevent="GranadoPopupLoading.show({ title:'Salvando...', subtitle:'Enviando dados ao servidor', loadingType:'spinner' }); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2500)">
+      </granado-button>
+
+      <granado-button label="dots" variant="secondary" color="#1A4A8C"
+        onclickevent="GranadoPopupLoading.show({ title:'Processando...', subtitle:'Isso pode levar alguns segundos', loadingType:'dots', color:'#1A4A8C' }); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2500)">
+      </granado-button>
+
+      <granado-button label="bars" variant="secondary" color="#9A5A00"
+        onclickevent="GranadoPopupLoading.show({ title:'Sincronizando...', subtitle:'Integrando com o JDE', loadingType:'bars', color:'#9A5A00' }); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2500)">
+      </granado-button>
+
+      <granado-button label="pulse" variant="secondary" color="#8C1A1A"
+        onclickevent="GranadoPopupLoading.show({ title:'Conectando...', subtitle:'Aguardando a balanca', loadingType:'pulse', color:'#8C1A1A' }); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2500)">
+      </granado-button>
+
+      <granado-button label="ring" variant="secondary" color="#C8A85A"
+        onclickevent="GranadoPopupLoading.show({ title:'Aguarde...', subtitle:'Validando a etiqueta', loadingType:'ring', color:'#C8A85A' }); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2500)">
+      </granado-button>
+
+      <granado-button label="brand (Granado)" variant="secondary"
+        onclickevent="GranadoPopupLoading.show({ title:'Aguarde...', subtitle:'Carregando o modulo', loadingType:'brand' }); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2500)">
+      </granado-button>
+    </div>
+
+    <!-- Casos de uso adicionais -->
+    <p style="font-size:11px;color:#5A6B5E;margin:18px 0 6px"><strong>Casos de uso:</strong> so titulo, texto dinamico e fechar manual.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <granado-button label="So titulo" variant="ghost"
+        onclickevent="GranadoPopupLoading.show('Salvando pesagem...'); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2500)">
+      </granado-button>
+
+      <granado-button label="Texto dinamico" variant="ghost"
+        onclickevent="GranadoPopupLoading.show({ title:'Etapa 1...', subtitle:'Preparando', loadingType:'spinner' }); setTimeout(function(){ GranadoPopupLoading.setTitle('Etapa 2...'); GranadoPopupLoading.setSubtitle('Gravando'); }, 900); setTimeout(function(){ GranadoPopupLoading.setTitle('Concluindo...'); GranadoPopupLoading.setSubtitle('Quase la'); }, 1800); setTimeout(function(){ GranadoPopupLoading.hide(); }, 2800)">
+      </granado-button>
+
+      <granado-button label="Fechar agora" variant="ghost" icon="x"
+        onclickevent="GranadoPopupLoading.hide()">
+      </granado-button>
+    </div>
+  </section>
+
+  <!-- ========== granado-loading ========== -->
+  <section style="margin-top:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-loading&gt;
+    </h2>
+    <p style="font-size:11px;color:#5A6B5E;margin:0 0 10px">
+      Loader <strong>inline</strong> (no fluxo da pagina) — so o loader animado + um texto opcional.
+      Atributos: <strong>loading-type</strong>, <strong>text</strong>, <strong>color</strong>,
+      <strong>size</strong>, <strong>direction</strong>.
+    </p>
+
+    <!-- Variants -->
+    <p style="font-size:11px;color:#5A6B5E;margin:14px 0 6px"><strong>loading-type</strong> (com texto):</p>
+    <div style="display:flex;gap:26px;flex-wrap:wrap;align-items:center;padding:14px 16px;background:#FFFFFF;border:1px solid #E5DDC8;border-radius:8px">
+      <granado-loading loading-type="spinner" text="Carregando..."></granado-loading>
+      <granado-loading loading-type="dots" text="Processando..." color="#1A4A8C"></granado-loading>
+      <granado-loading loading-type="bars" text="Sincronizando..." color="#9A5A00"></granado-loading>
+      <granado-loading loading-type="pulse" text="Conectando..." color="#8C1A1A"></granado-loading>
+      <granado-loading loading-type="ring" text="Aguarde..." color="#C8A85A"></granado-loading>
+      <granado-loading loading-type="brand" text="Granado"></granado-loading>
+    </div>
+
+    <!-- Sem texto / tamanhos / vertical -->
+    <p style="font-size:11px;color:#5A6B5E;margin:18px 0 6px"><strong>Sem texto, tamanhos (size) e direction="column":</strong></p>
+    <div style="display:flex;gap:26px;flex-wrap:wrap;align-items:center;padding:14px 16px;background:#FFFFFF;border:1px solid #E5DDC8;border-radius:8px">
+      <granado-loading loading-type="spinner" size="18"></granado-loading>
+      <granado-loading loading-type="spinner" size="28"></granado-loading>
+      <granado-loading loading-type="dots" size="52"></granado-loading>
+      <granado-loading loading-type="ring" text="Salvando" direction="column"></granado-loading>
+      <granado-loading loading-type="brand" text="Aguarde" direction="column"></granado-loading>
+    </div>
+
+    <!-- Inline dentro de texto/botao -->
+    <p style="font-size:11px;color:#5A6B5E;margin:18px 0 6px"><strong>Inline no meio do conteudo:</strong></p>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;padding:14px 16px;background:#FFFFFF;border:1px solid #E5DDC8;border-radius:8px">
+      <span style="font-size:13px;color:#103E20;display:inline-flex;align-items:center;gap:8px">Buscando ordens <granado-loading loading-type="dots" size="16" color="#1C5C31"></granado-loading></span>
+      <button style="display:inline-flex;align-items:center;gap:8px;font:600 13px 'Poppins',Arial,sans-serif;padding:8px 16px;border:1px solid #1C5C31;border-radius:8px;background:#1C5C31;color:#fff;cursor:default"><granado-loading loading-type="spinner" size="16" color="#fff"></granado-loading> Salvando...</button>
     </div>
   </section>
 
