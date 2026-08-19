@@ -2813,7 +2813,7 @@ export const SCREENS = {
         <div><div class="ph-eyebrow">Pesagem · MF5 · Sala A (Box 3)</div><div class="ph-title">Checkout — Validação Final da Ordem</div></div>
       </div>
       <style>@media (max-width:768px){
-        #checkout-ok-box,#checkout-lock-box,#checkout-kpi-var{display:none!important}
+        #checkout-lock-box{display:none!important}
         #checkout-kpis{grid-template-columns:1fr 1fr!important;gap:8px!important;width:100%}
         #checkout-kpis .card{padding:10px 8px!important}
         #checkout-kpis .kpi-l{font-size:10px}
@@ -2821,19 +2821,16 @@ export const SCREENS = {
         #checkout-kpis .card>div:nth-child(2) span{font-size:12px!important}
         #checkout-kpis .card>div:nth-child(3){font-size:9px}
       }</style>
-      <div class="abox ok mb14" id="checkout-ok-box"><span class="ai">✅</span><div><strong>Todas as 12 MPs pesadas com sucesso.</strong> Revise o resumo abaixo e confirme a liberação para a fabricação.</div></div>
 
       <!-- Aviso de bloqueio por sala de pesagem -->
       <div class="abox warn mb14" id="checkout-lock-box" style="border-top-width:3px;border-top-style:solid;border-top-color:var(--alr)">
         <span class="ai">🔒</span>
         <div>
-          <strong>Regra de bloqueio da Sala A:</strong> enquanto esta ordem não for liberada para a fabricação (botão abaixo),
-          a <strong>Sala A (Box 3)</strong> permanece travada — você não consegue iniciar nova OP nesta sala de pesagem.
-          <span style="color:var(--text3);font-size:11px">As demais salas (Sala B, Sala C, Sem Balança) seguem operando normalmente com outros operadores.</span>
+          Ordem só pode ser liberada para fabricação quando todos os itens da pesagem forem concluídos.
         </div>
       </div>
       <!-- KPIs topo — Validação Final -->
-      <div class="g3 mb14" id="checkout-kpis">
+      <div class="g2 mb14" id="checkout-kpis">
         <div class="card cv" style="text-align:center;padding:14px">
           <div class="kpi-l">Total MPs</div>
           <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--verde)">12<span style="font-size:16px;color:var(--text3)">/12</span></div>
@@ -2843,10 +2840,6 @@ export const SCREENS = {
           <div class="kpi-l">Total Pesado × Alvo</div>
           <div style="font-family:var(--font-m);font-size:28px;font-weight:700;color:var(--ok)">599,87 <span style="font-size:16px;color:var(--text3)">/ 600,00 kg</span></div>
           <div style="font-size:10px;color:var(--text3)">Pesado / Alvo</div>
-        </div>
-        <div class="card" id="checkout-kpi-var" style="text-align:center;padding:14px">
-          <div class="kpi-l">Variação Total</div>
-          <div style="font-family:var(--font-m);font-size:36px;font-weight:700;color:var(--ok)">–0,02<span style="font-size:16px">%</span></div>
         </div>
       </div>
 
@@ -4998,10 +4991,158 @@ export const SCREENS = {
             new MutationObserver(devolSyncGallery).observe(_tb, { childList: true, subtree: true });
           }
 
-          // Reentiquetar: mostra um loading, executa a "devolução" e após 2s marca a linha como OK.
+          // Reentiquetar: abre 1º o formulário (item + balança + quantidade).
           window.devolReentiquetar = function (btn) {
             var row = btn.closest('tr');
             if (!row || btn.disabled) return;
+            window.devolForm(row, btn);
+          };
+
+          // ── Popup 1: formulário (header do item + balança + quantidade) ──
+          window.devolForm = function (row, btn) {
+            var c = row.cells;
+            var etq = c[0].textContent.trim(), mat = c[1].textContent.trim(), lote = c[2].textContent.trim(), saldo = c[5].textContent.trim();
+            var saldoNum = saldo.replace(/kg/i, '').trim();
+            var BALS = [
+              { id: 'BAL-01', cap: '600 kg', div: '0,01 kg', sug: true },
+              { id: 'BAL-02', cap: '100 kg', div: '0,5 kg', sug: false },
+              { id: 'BAL-03', cap: '5 kg', div: '0,01 kg', sug: false }
+            ];
+            function kv(l, v) { return '<div style="font-size:11px"><span style="color:var(--text3,#8A8575);font-weight:600">' + l + ':</span> <strong style="color:var(--verde-esc,#103E20)">' + v + '</strong></div>'; }
+            function balCard(b) {
+              var on = b.sug;
+              return '<div class="devol-bal-card" data-bal="' + b.id + '" style="cursor:pointer;flex:1 1 140px;min-width:120px;border:2px solid ' + (on ? 'var(--verde,#1C5C31)' : 'var(--border,#D6CDA4)') + ';border-radius:9px;padding:12px 10px;background:' + (on ? 'var(--verde-dim,#E4F0E8)' : 'var(--surface2,#F4EED9)') + ';text-align:center;transition:all .15s">' +
+                '<div style="font-size:28px;line-height:1">⚖️</div>' +
+                '<div style="font-family:var(--font-m,monospace);font-size:13px;font-weight:800;color:var(--verde,#1C5C31);margin-top:4px">' + b.id + '</div>' +
+                '<div style="font-size:9px;color:var(--text3,#8A8575);margin-top:2px">Cap ' + b.cap + ' · d ' + b.div + '</div>' +
+                (b.sug ? '<div style="margin-top:6px;font:900 8px/1.2 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--verde,#1C5C31)">⭐ Sugerida</div>' : '<div style="height:15px"></div>') +
+              '</div>';
+            }
+            var ov = document.createElement('div');
+            ov.style.cssText = 'position:fixed;inset:0;z-index:100000;display:flex;align-items:flex-start;justify-content:center;padding:36px 16px;overflow-y:auto;background:rgba(15,51,25,.45)';
+            var box = document.createElement('div');
+            box.style.cssText = 'background:var(--surface,#FDFAF1);border:1px solid var(--border,#D6CDA4);border-top:4px solid var(--ouro,#9A7520);border-radius:12px;padding:22px 24px;max-width:560px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);margin:auto';
+            box.innerHTML =
+              '<div style="display:flex;align-items:center;gap:9px;margin-bottom:4px"><span style="font-size:20px">🏷</span><div style="font:800 17px/1.2 Poppins,sans-serif;color:var(--verde-esc,#103E20)">Reentiquetar Material</div></div>' +
+              '<div style="background:var(--ouro-dim,#F1E4BC);border:1px solid var(--ouro-claro,#E3CE94);border-radius:8px;padding:12px 14px;margin:12px 0 18px;display:flex;flex-wrap:wrap;gap:7px 22px">' +
+                kv('Material', mat) + kv('Lote', lote) + kv('Etiqueta', etq) + kv('Saldo a devolver', saldo) +
+              '</div>' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px">' +
+                '<label style="font:900 9px/1.4 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--text3,#8A8575)">Balança</label>' +
+                '<label id="devol-mode-toggle" style="display:inline-flex;align-items:center;gap:7px;cursor:pointer;user-select:none">' +
+                  '<span style="font:800 10px/1 Poppins,sans-serif;color:var(--text2,#5A6B5E)">Peso manual</span>' +
+                  '<span id="devol-sw-track" style="position:relative;display:inline-block;width:40px;height:22px;border-radius:11px;background:var(--border2,#D6CDA4);transition:background .15s"><span id="devol-sw-knob" style="position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:left .15s"></span></span>' +
+                '</label>' +
+              '</div>' +
+              '<div id="devol-bal-grid" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px">' + BALS.map(balCard).join('') + '</div>' +
+              '<div id="devol-qtd-wrap" style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;border-radius:8px">' +
+                '<div style="flex:1;min-width:170px">' +
+                  '<label style="display:block;font:900 9px/1.4 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--text3,#8A8575);margin-bottom:6px">Quantidade Pesada</label>' +
+                  '<div style="display:flex;align-items:center;gap:8px">' +
+                    '<input id="devol-qtd-inp" inputmode="decimal" value="0,000" placeholder="0,000" style="flex:1;min-width:0;box-sizing:border-box;font:800 16px/1.2 var(--font-m,monospace);padding:10px 12px;border:1px solid var(--border,#D6CDA4);border-radius:8px;background:var(--surface2,#F4EED9);color:var(--verde-esc,#103E20)">' +
+                    '<button id="devol-puxar" type="button" title="Ler peso da balança" style="flex-shrink:0;width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--verde,#1C5C31);border-radius:8px;background:var(--verde-dim,#E4F0E8);color:var(--verde,#1C5C31);cursor:pointer;font-size:16px;transition:filter .15s">📡</button>' +
+                    '<span style="font-size:12px;color:var(--text3,#8A8575)">kg</span>' +
+                  '</div>' +
+                '</div>' +
+                '<div id="devol-tara-col" style="flex:1;min-width:120px;display:none">' +
+                  '<label style="display:block;font:900 9px/1.4 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--text3,#8A8575);margin-bottom:6px">Tara</label>' +
+                  '<div style="display:flex;align-items:center;gap:8px">' +
+                    '<input id="devol-tara-inp" inputmode="decimal" value="0,000" placeholder="0,000" style="flex:1;min-width:0;box-sizing:border-box;font:800 16px/1.2 var(--font-m,monospace);padding:10px 12px;border:1px solid var(--border,#D6CDA4);border-radius:8px;background:#fff;color:var(--verde-esc,#103E20)">' +
+                    '<span style="font-size:12px;color:var(--text3,#8A8575)">kg</span>' +
+                  '</div>' +
+                '</div>' +
+                '<div id="devol-liq-col" style="flex:1;min-width:120px;display:none">' +
+                  '<label style="display:block;font:900 9px/1.4 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--verde-esc,#103E20);margin-bottom:6px">Peso Líquido</label>' +
+                  '<div id="devol-liq-disp" style="font:800 16px/1.2 var(--font-m,monospace);padding:11px 12px;background:var(--verde-dim,#E4F0E8);border:1px solid var(--ok-b,#9FCBA9);border-radius:8px;color:var(--verde-esc,#103E20);text-align:center">— kg</div>' +
+                '</div>' +
+              '</div>' +
+              '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border,#D6CDA4)">' +
+                '<button id="devol-cancelar" type="button" style="font:600 13px/1.4 Poppins,sans-serif;padding:9px 18px;border:1px solid var(--border,#D6CDA4);border-radius:8px;background:transparent;color:var(--text2,#5A6B5E);cursor:pointer">Cancelar</button>' +
+                '<button id="devol-concluir" type="button" style="font:800 13px/1.4 Poppins,sans-serif;padding:9px 22px;border:1px solid var(--verde-esc,#103E20);border-radius:8px;background:var(--verde,#1C5C31);color:#fff;cursor:pointer">✓ Concluir</button>' +
+              '</div>';
+            ov.appendChild(box);
+            document.body.appendChild(ov);
+
+            var state = { bal: 'BAL-01', mode: 'balanca' };
+            var inp = box.querySelector('#devol-qtd-inp');
+            var puxarBtn = box.querySelector('#devol-puxar');
+            var swTrack = box.querySelector('#devol-sw-track'), swKnob = box.querySelector('#devol-sw-knob');
+            var balGrid = box.querySelector('#devol-bal-grid');
+            var qtdWrap = box.querySelector('#devol-qtd-wrap');
+            var taraCol = box.querySelector('#devol-tara-col'), liqCol = box.querySelector('#devol-liq-col');
+            var taraInp = box.querySelector('#devol-tara-inp'), liqDisp = box.querySelector('#devol-liq-disp');
+            function recalcLiq() {
+              var b = parseFloat((inp.value || '').trim().replace(',', '.'));
+              var t = parseFloat((taraInp.value || '').trim().replace(',', '.'));
+              if (isNaN(b) || isNaN(t)) { liqDisp.textContent = '— kg'; liqDisp.style.color = 'var(--verde-esc,#103E20)'; return; }
+              var liq = b - t;
+              if (liq < 0) { liqDisp.textContent = '⚠ neg.'; liqDisp.style.color = 'var(--per,#B23B3B)'; return; }
+              liqDisp.style.color = 'var(--verde-esc,#103E20)';
+              liqDisp.textContent = liq.toFixed(3).replace('.', ',') + ' kg';
+            }
+            function applyMode() {
+              var balOn = state.mode === 'balanca';
+              swTrack.style.background = balOn ? 'var(--border2,#D6CDA4)' : 'var(--verde,#1C5C31)';
+              swKnob.style.left = balOn ? '2px' : '20px';
+              puxarBtn.style.display = balOn ? 'inline-flex' : 'none';
+              inp.readOnly = balOn;
+              inp.style.background = balOn ? 'var(--surface2,#F4EED9)' : '#fff';
+              balGrid.style.opacity = balOn ? '1' : '.45';
+              balGrid.style.pointerEvents = balOn ? '' : 'none';
+              taraCol.style.display = balOn ? 'none' : '';
+              liqCol.style.display = balOn ? 'none' : '';
+              qtdWrap.style.padding = balOn ? '0' : '16px 18px';
+              qtdWrap.style.border = balOn ? '0' : '2px dashed var(--ouro,#9A7520)';
+              qtdWrap.style.background = balOn ? 'transparent' : 'var(--ouro-dim,#F1E4BC)';
+              if (!balOn) { recalcLiq(); try { inp.focus(); } catch (e) {} }
+            }
+            Array.prototype.forEach.call(box.querySelectorAll('.devol-bal-card'), function (card) {
+              card.addEventListener('click', function () {
+                state.bal = card.getAttribute('data-bal');
+                Array.prototype.forEach.call(box.querySelectorAll('.devol-bal-card'), function (cc) {
+                  var on = cc === card;
+                  cc.style.border = on ? '2px solid var(--verde,#1C5C31)' : '2px solid var(--border,#D6CDA4)';
+                  cc.style.background = on ? 'var(--verde-dim,#E4F0E8)' : 'var(--surface2,#F4EED9)';
+                });
+              });
+            });
+            box.querySelector('#devol-mode-toggle').addEventListener('click', function () {
+              state.mode = state.mode === 'balanca' ? 'manual' : 'balanca';
+              applyMode();
+            });
+            inp.addEventListener('input', recalcLiq);
+            taraInp.addEventListener('input', recalcLiq);
+            applyMode();
+            // Botão de leitura: puxa (randomiza) o peso da balança selecionada.
+            box.querySelector('#devol-puxar').addEventListener('click', function () {
+              var pb = box.querySelector('#devol-puxar');
+              if (pb.disabled) return;
+              pb.disabled = true; pb.innerHTML = '⏳';
+              setTimeout(function () {
+                var base = parseFloat((saldoNum || '0').replace(',', '.')) || 0;
+                var val = base > 0 ? base * (0.96 + Math.random() * 0.08) : (Math.random() * 5 + 0.1);
+                inp.value = val.toFixed(3).replace('.', ',');
+                pb.disabled = false; pb.innerHTML = '📡';
+              }, 400);
+            });
+            box.querySelector('#devol-cancelar').addEventListener('click', function () { ov.remove(); });
+            ov.addEventListener('click', function (e) { if (e.target === ov) ov.remove(); });
+            box.querySelector('#devol-concluir').addEventListener('click', function () {
+              if (state.mode === 'balanca' && !state.bal) { alert('⚠ Selecione a balança.'); return; }
+              if (!(inp.value || '').trim()) { alert('⚠ Informe a quantidade pesada.'); return; }
+              if (state.mode === 'manual') {
+                var vB = parseFloat((inp.value || '').replace(',', '.'));
+                var vT = parseFloat((taraInp.value || '').replace(',', '.'));
+                if (isNaN(vT)) { alert('⚠ Informe a Tara (kg).'); try { taraInp.focus(); } catch (e) {} return; }
+                if (isNaN(vB) || (vB - vT) <= 0) { alert('⚠ Peso líquido inválido — verifique Quantidade Pesada e Tara.'); return; }
+              }
+              ov.remove();
+              window.devolExecutar(row, btn);
+            });
+          };
+
+          // ── Popup 2 (loading) + Popup 3 (escolha do destino) ──
+          window.devolExecutar = function (row, btn) {
             btn.disabled = true;
 
             if (!document.getElementById('devol-spin-kf')) {
@@ -5023,19 +5164,40 @@ export const SCREENS = {
 
             setTimeout(function () {
               ov.remove();
-              var c = row.cells;
-              // Status -> OK
-              c[7].innerHTML = '<span style="display:inline-block;padding:2px 9px;border-radius:9px;font:800 10px/1.4 var(--font-b);color:var(--ok);background:var(--ok-p);border:1px solid var(--ok-b)">OK</span>';
-              // Usuário + Data da devolução
-              var n = new Date();
-              var p = function (x) { return (x < 10 ? '0' : '') + x; };
-              c[6].removeAttribute('class');
-              c[6].setAttribute('style', 'font-size:11px');
-              c[6].textContent = 'K. Lima · 00482';
-              c[8].setAttribute('style', 'color:var(--text2)');
-              c[8].textContent = p(n.getDate()) + '/' + p(n.getMonth() + 1) + '/' + n.getFullYear() + ' ' + p(n.getHours()) + ':' + p(n.getMinutes());
-              // Ação concluída → botão de Detalhes
-              c[9].innerHTML = '<button class="btn btn-sm btn-ghost" onclick="devolDetalhes(this)">🔍 Detalhes</button>';
+              // Popup com as 2 opções de destino do material reentiquetado.
+              var ov2 = document.createElement('div');
+              ov2.style.cssText = 'position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(15,51,25,.45)';
+              var box = document.createElement('div');
+              box.style.cssText = 'background:var(--surface,#FDFAF1);border:1px solid var(--border,#D6CDA4);border-top:4px solid var(--ouro,#9A7520);border-radius:12px;padding:24px 26px;max-width:410px;width:94%;box-shadow:0 20px 60px rgba(0,0,0,.35)';
+              box.innerHTML =
+                '<div style="display:flex;align-items:center;gap:9px;margin-bottom:6px"><span style="font-size:22px">🚚</span><div style="font:800 17px/1.2 Poppins,sans-serif;color:var(--verde-esc,#103E20)">Movimentação</div></div>' +
+                '<div style="font-size:12px;color:var(--text2,#5A6B5E);margin-bottom:16px">Escolha o destino do material:</div>' +
+                '<div style="display:flex;flex-direction:column;gap:10px">' +
+                  '<button data-op="pesagem" type="button" style="display:flex;align-items:center;gap:12px;text-align:left;padding:14px 16px;border:1px solid var(--border,#D6CDA4);border-radius:9px;background:var(--surface,#FDFAF1);cursor:pointer;font:600 13px/1.3 Poppins,sans-serif;color:var(--text2,#5A6B5E);transition:filter .15s"><span style="font-size:20px">⚖️</span>Manter Material na Pesagem</button>' +
+                  '<button data-op="almox" type="button" style="display:flex;align-items:center;gap:12px;text-align:left;padding:14px 16px;border:1px solid var(--verde-esc,#103E20);border-radius:9px;background:var(--verde,#1C5C31);cursor:pointer;font:800 13px/1.3 Poppins,sans-serif;color:#fff;box-shadow:0 4px 14px rgba(28,92,49,.28);transition:filter .15s"><span style="font-size:20px">📦</span>Movimentar Material para Almoxarifado</button>' +
+                '</div>';
+              ov2.appendChild(box);
+              document.body.appendChild(ov2);
+              var finalize = function (op) {
+                ov2.remove();
+                var c = row.cells;
+                c[7].innerHTML = '<span style="display:inline-block;padding:2px 9px;border-radius:9px;font:800 10px/1.4 var(--font-b);color:var(--ok);background:var(--ok-p);border:1px solid var(--ok-b)">OK</span>';
+                var n = new Date();
+                var p = function (x) { return (x < 10 ? '0' : '') + x; };
+                c[6].removeAttribute('class');
+                c[6].setAttribute('style', 'font-size:11px');
+                c[6].textContent = 'K. Lima · 00482';
+                c[8].setAttribute('style', 'color:var(--text2)');
+                c[8].textContent = p(n.getDate()) + '/' + p(n.getMonth() + 1) + '/' + n.getFullYear() + ' ' + p(n.getHours()) + ':' + p(n.getMinutes());
+                c[9].innerHTML = '<button class="btn btn-sm btn-ghost" onclick="devolDetalhes(this)">🔍 Detalhes</button>';
+                row.setAttribute('data-destino', op === 'almox' ? 'Almoxarifado' : 'Pesagem');
+              };
+              Array.prototype.forEach.call(box.querySelectorAll('[data-op]'), function (b) {
+                b.addEventListener('mouseenter', function () { b.style.filter = 'brightness(.94)'; });
+                b.addEventListener('mouseleave', function () { b.style.filter = ''; });
+                b.addEventListener('click', function () { finalize(b.getAttribute('data-op')); });
+              });
+              ov2.addEventListener('click', function (e) { if (e.target === ov2) { ov2.remove(); btn.disabled = false; } });
             }, 2000);
           };
 
@@ -5175,10 +5337,158 @@ export const SCREENS = {
             window.devolGeralFiltrar();
           };
 
-          // Reentiquetar: loading 2s -> status OK -> botão Detalhes.
+          // Reentiquetar: abre 1º o formulário (item + balança + quantidade).
           window.devolGeralReentiquetar = function (btn) {
             var row = btn.closest('tr');
             if (!row || btn.disabled) return;
+            window.devolGeralForm(row, btn);
+          };
+
+          // ── Popup 1: formulário (header do item + balança + quantidade) ──
+          window.devolGeralForm = function (row, btn) {
+            var c = row.cells;
+            var etq = c[0].textContent.trim(), mat = c[1].textContent.trim(), lote = c[2].textContent.trim(), saldo = c[5].textContent.trim();
+            var saldoNum = saldo.replace(/kg/i, '').trim();
+            var BALS = [
+              { id: 'BAL-01', cap: '600 kg', div: '0,01 kg', sug: true },
+              { id: 'BAL-02', cap: '100 kg', div: '0,5 kg', sug: false },
+              { id: 'BAL-03', cap: '5 kg', div: '0,01 kg', sug: false }
+            ];
+            function kv(l, v) { return '<div style="font-size:11px"><span style="color:var(--text3,#8A8575);font-weight:600">' + l + ':</span> <strong style="color:var(--verde-esc,#103E20)">' + v + '</strong></div>'; }
+            function balCard(b) {
+              var on = b.sug;
+              return '<div class="devol-bal-card" data-bal="' + b.id + '" style="cursor:pointer;flex:1 1 140px;min-width:120px;border:2px solid ' + (on ? 'var(--verde,#1C5C31)' : 'var(--border,#D6CDA4)') + ';border-radius:9px;padding:12px 10px;background:' + (on ? 'var(--verde-dim,#E4F0E8)' : 'var(--surface2,#F4EED9)') + ';text-align:center;transition:all .15s">' +
+                '<div style="font-size:28px;line-height:1">⚖️</div>' +
+                '<div style="font-family:var(--font-m,monospace);font-size:13px;font-weight:800;color:var(--verde,#1C5C31);margin-top:4px">' + b.id + '</div>' +
+                '<div style="font-size:9px;color:var(--text3,#8A8575);margin-top:2px">Cap ' + b.cap + ' · d ' + b.div + '</div>' +
+                (b.sug ? '<div style="margin-top:6px;font:900 8px/1.2 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--verde,#1C5C31)">⭐ Sugerida</div>' : '<div style="height:15px"></div>') +
+              '</div>';
+            }
+            var ov = document.createElement('div');
+            ov.style.cssText = 'position:fixed;inset:0;z-index:100000;display:flex;align-items:flex-start;justify-content:center;padding:36px 16px;overflow-y:auto;background:rgba(15,51,25,.45)';
+            var box = document.createElement('div');
+            box.style.cssText = 'background:var(--surface,#FDFAF1);border:1px solid var(--border,#D6CDA4);border-top:4px solid var(--ouro,#9A7520);border-radius:12px;padding:22px 24px;max-width:560px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);margin:auto';
+            box.innerHTML =
+              '<div style="display:flex;align-items:center;gap:9px;margin-bottom:4px"><span style="font-size:20px">🏷</span><div style="font:800 17px/1.2 Poppins,sans-serif;color:var(--verde-esc,#103E20)">Reentiquetar Material</div></div>' +
+              '<div style="background:var(--ouro-dim,#F1E4BC);border:1px solid var(--ouro-claro,#E3CE94);border-radius:8px;padding:12px 14px;margin:12px 0 18px;display:flex;flex-wrap:wrap;gap:7px 22px">' +
+                kv('Material', mat) + kv('Lote', lote) + kv('Etiqueta', etq) + kv('Saldo a devolver', saldo) +
+              '</div>' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px">' +
+                '<label style="font:900 9px/1.4 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--text3,#8A8575)">Balança</label>' +
+                '<label id="devol-mode-toggle" style="display:inline-flex;align-items:center;gap:7px;cursor:pointer;user-select:none">' +
+                  '<span style="font:800 10px/1 Poppins,sans-serif;color:var(--text2,#5A6B5E)">Peso manual</span>' +
+                  '<span id="devol-sw-track" style="position:relative;display:inline-block;width:40px;height:22px;border-radius:11px;background:var(--border2,#D6CDA4);transition:background .15s"><span id="devol-sw-knob" style="position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:left .15s"></span></span>' +
+                '</label>' +
+              '</div>' +
+              '<div id="devol-bal-grid" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px">' + BALS.map(balCard).join('') + '</div>' +
+              '<div id="devol-qtd-wrap" style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;border-radius:8px">' +
+                '<div style="flex:1;min-width:170px">' +
+                  '<label style="display:block;font:900 9px/1.4 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--text3,#8A8575);margin-bottom:6px">Quantidade Pesada</label>' +
+                  '<div style="display:flex;align-items:center;gap:8px">' +
+                    '<input id="devol-qtd-inp" inputmode="decimal" value="0,000" placeholder="0,000" style="flex:1;min-width:0;box-sizing:border-box;font:800 16px/1.2 var(--font-m,monospace);padding:10px 12px;border:1px solid var(--border,#D6CDA4);border-radius:8px;background:var(--surface2,#F4EED9);color:var(--verde-esc,#103E20)">' +
+                    '<button id="devol-puxar" type="button" title="Ler peso da balança" style="flex-shrink:0;width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--verde,#1C5C31);border-radius:8px;background:var(--verde-dim,#E4F0E8);color:var(--verde,#1C5C31);cursor:pointer;font-size:16px;transition:filter .15s">📡</button>' +
+                    '<span style="font-size:12px;color:var(--text3,#8A8575)">kg</span>' +
+                  '</div>' +
+                '</div>' +
+                '<div id="devol-tara-col" style="flex:1;min-width:120px;display:none">' +
+                  '<label style="display:block;font:900 9px/1.4 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--text3,#8A8575);margin-bottom:6px">Tara</label>' +
+                  '<div style="display:flex;align-items:center;gap:8px">' +
+                    '<input id="devol-tara-inp" inputmode="decimal" value="0,000" placeholder="0,000" style="flex:1;min-width:0;box-sizing:border-box;font:800 16px/1.2 var(--font-m,monospace);padding:10px 12px;border:1px solid var(--border,#D6CDA4);border-radius:8px;background:#fff;color:var(--verde-esc,#103E20)">' +
+                    '<span style="font-size:12px;color:var(--text3,#8A8575)">kg</span>' +
+                  '</div>' +
+                '</div>' +
+                '<div id="devol-liq-col" style="flex:1;min-width:120px;display:none">' +
+                  '<label style="display:block;font:900 9px/1.4 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--verde-esc,#103E20);margin-bottom:6px">Peso Líquido</label>' +
+                  '<div id="devol-liq-disp" style="font:800 16px/1.2 var(--font-m,monospace);padding:11px 12px;background:var(--verde-dim,#E4F0E8);border:1px solid var(--ok-b,#9FCBA9);border-radius:8px;color:var(--verde-esc,#103E20);text-align:center">— kg</div>' +
+                '</div>' +
+              '</div>' +
+              '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border,#D6CDA4)">' +
+                '<button id="devol-cancelar" type="button" style="font:600 13px/1.4 Poppins,sans-serif;padding:9px 18px;border:1px solid var(--border,#D6CDA4);border-radius:8px;background:transparent;color:var(--text2,#5A6B5E);cursor:pointer">Cancelar</button>' +
+                '<button id="devol-concluir" type="button" style="font:800 13px/1.4 Poppins,sans-serif;padding:9px 22px;border:1px solid var(--verde-esc,#103E20);border-radius:8px;background:var(--verde,#1C5C31);color:#fff;cursor:pointer">✓ Concluir</button>' +
+              '</div>';
+            ov.appendChild(box);
+            document.body.appendChild(ov);
+
+            var state = { bal: 'BAL-01', mode: 'balanca' };
+            var inp = box.querySelector('#devol-qtd-inp');
+            var puxarBtn = box.querySelector('#devol-puxar');
+            var swTrack = box.querySelector('#devol-sw-track'), swKnob = box.querySelector('#devol-sw-knob');
+            var balGrid = box.querySelector('#devol-bal-grid');
+            var qtdWrap = box.querySelector('#devol-qtd-wrap');
+            var taraCol = box.querySelector('#devol-tara-col'), liqCol = box.querySelector('#devol-liq-col');
+            var taraInp = box.querySelector('#devol-tara-inp'), liqDisp = box.querySelector('#devol-liq-disp');
+            function recalcLiq() {
+              var b = parseFloat((inp.value || '').trim().replace(',', '.'));
+              var t = parseFloat((taraInp.value || '').trim().replace(',', '.'));
+              if (isNaN(b) || isNaN(t)) { liqDisp.textContent = '— kg'; liqDisp.style.color = 'var(--verde-esc,#103E20)'; return; }
+              var liq = b - t;
+              if (liq < 0) { liqDisp.textContent = '⚠ neg.'; liqDisp.style.color = 'var(--per,#B23B3B)'; return; }
+              liqDisp.style.color = 'var(--verde-esc,#103E20)';
+              liqDisp.textContent = liq.toFixed(3).replace('.', ',') + ' kg';
+            }
+            function applyMode() {
+              var balOn = state.mode === 'balanca';
+              swTrack.style.background = balOn ? 'var(--border2,#D6CDA4)' : 'var(--verde,#1C5C31)';
+              swKnob.style.left = balOn ? '2px' : '20px';
+              puxarBtn.style.display = balOn ? 'inline-flex' : 'none';
+              inp.readOnly = balOn;
+              inp.style.background = balOn ? 'var(--surface2,#F4EED9)' : '#fff';
+              balGrid.style.opacity = balOn ? '1' : '.45';
+              balGrid.style.pointerEvents = balOn ? '' : 'none';
+              taraCol.style.display = balOn ? 'none' : '';
+              liqCol.style.display = balOn ? 'none' : '';
+              qtdWrap.style.padding = balOn ? '0' : '16px 18px';
+              qtdWrap.style.border = balOn ? '0' : '2px dashed var(--ouro,#9A7520)';
+              qtdWrap.style.background = balOn ? 'transparent' : 'var(--ouro-dim,#F1E4BC)';
+              if (!balOn) { recalcLiq(); try { inp.focus(); } catch (e) {} }
+            }
+            Array.prototype.forEach.call(box.querySelectorAll('.devol-bal-card'), function (card) {
+              card.addEventListener('click', function () {
+                state.bal = card.getAttribute('data-bal');
+                Array.prototype.forEach.call(box.querySelectorAll('.devol-bal-card'), function (cc) {
+                  var on = cc === card;
+                  cc.style.border = on ? '2px solid var(--verde,#1C5C31)' : '2px solid var(--border,#D6CDA4)';
+                  cc.style.background = on ? 'var(--verde-dim,#E4F0E8)' : 'var(--surface2,#F4EED9)';
+                });
+              });
+            });
+            box.querySelector('#devol-mode-toggle').addEventListener('click', function () {
+              state.mode = state.mode === 'balanca' ? 'manual' : 'balanca';
+              applyMode();
+            });
+            inp.addEventListener('input', recalcLiq);
+            taraInp.addEventListener('input', recalcLiq);
+            applyMode();
+            // Botão de leitura: puxa (randomiza) o peso da balança selecionada.
+            box.querySelector('#devol-puxar').addEventListener('click', function () {
+              var pb = box.querySelector('#devol-puxar');
+              if (pb.disabled) return;
+              pb.disabled = true; pb.innerHTML = '⏳';
+              setTimeout(function () {
+                var base = parseFloat((saldoNum || '0').replace(',', '.')) || 0;
+                var val = base > 0 ? base * (0.96 + Math.random() * 0.08) : (Math.random() * 5 + 0.1);
+                inp.value = val.toFixed(3).replace('.', ',');
+                pb.disabled = false; pb.innerHTML = '📡';
+              }, 400);
+            });
+            box.querySelector('#devol-cancelar').addEventListener('click', function () { ov.remove(); });
+            ov.addEventListener('click', function (e) { if (e.target === ov) ov.remove(); });
+            box.querySelector('#devol-concluir').addEventListener('click', function () {
+              if (state.mode === 'balanca' && !state.bal) { alert('⚠ Selecione a balança.'); return; }
+              if (!(inp.value || '').trim()) { alert('⚠ Informe a quantidade pesada.'); return; }
+              if (state.mode === 'manual') {
+                var vB = parseFloat((inp.value || '').replace(',', '.'));
+                var vT = parseFloat((taraInp.value || '').replace(',', '.'));
+                if (isNaN(vT)) { alert('⚠ Informe a Tara (kg).'); try { taraInp.focus(); } catch (e) {} return; }
+                if (isNaN(vB) || (vB - vT) <= 0) { alert('⚠ Peso líquido inválido — verifique Quantidade Pesada e Tara.'); return; }
+              }
+              ov.remove();
+              window.devolGeralExecutar(row, btn);
+            });
+          };
+
+          // ── Popup 2 (loading) + Popup 3 (escolha do destino) ──
+          window.devolGeralExecutar = function (row, btn) {
             btn.disabled = true;
             if (!document.getElementById('devol-spin-kf')) {
               var kf = document.createElement('style'); kf.id = 'devol-spin-kf';
@@ -5196,16 +5506,40 @@ export const SCREENS = {
             document.body.appendChild(ov);
             setTimeout(function () {
               ov.remove();
-              var c = row.cells;
-              var n = new Date();
-              var p = function (x) { return (x < 10 ? '0' : '') + x; };
-              c[7].innerHTML = '<span style="display:inline-block;padding:2px 9px;border-radius:9px;font:800 10px/1.4 var(--font-b);color:var(--ok);background:var(--ok-p);border:1px solid var(--ok-b)">OK</span>';
-              c[6].removeAttribute('class');
-              c[6].setAttribute('style', 'font-size:11px');
-              c[6].textContent = 'K. Lima · 00482';
-              c[8].setAttribute('style', 'color:var(--text2)');
-              c[8].textContent = p(n.getDate()) + '/' + p(n.getMonth() + 1) + '/' + n.getFullYear() + ' ' + p(n.getHours()) + ':' + p(n.getMinutes());
-              c[9].innerHTML = '<button class="btn btn-sm btn-ghost" onclick="devolGeralDetalhes(this)">🔍 Detalhes</button>';
+              // Popup com as 2 opções de destino do material reentiquetado.
+              var ov2 = document.createElement('div');
+              ov2.style.cssText = 'position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(15,51,25,.45)';
+              var box = document.createElement('div');
+              box.style.cssText = 'background:var(--surface,#FDFAF1);border:1px solid var(--border,#D6CDA4);border-top:4px solid var(--ouro,#9A7520);border-radius:12px;padding:24px 26px;max-width:410px;width:94%;box-shadow:0 20px 60px rgba(0,0,0,.35)';
+              box.innerHTML =
+                '<div style="display:flex;align-items:center;gap:9px;margin-bottom:6px"><span style="font-size:22px">🚚</span><div style="font:800 17px/1.2 Poppins,sans-serif;color:var(--verde-esc,#103E20)">Movimentação</div></div>' +
+                '<div style="font-size:12px;color:var(--text2,#5A6B5E);margin-bottom:16px">Escolha o destino do material:</div>' +
+                '<div style="display:flex;flex-direction:column;gap:10px">' +
+                  '<button data-op="pesagem" type="button" style="display:flex;align-items:center;gap:12px;text-align:left;padding:14px 16px;border:1px solid var(--border,#D6CDA4);border-radius:9px;background:var(--surface,#FDFAF1);cursor:pointer;font:600 13px/1.3 Poppins,sans-serif;color:var(--text2,#5A6B5E);transition:filter .15s"><span style="font-size:20px">⚖️</span>Manter Material na Pesagem</button>' +
+                  '<button data-op="almox" type="button" style="display:flex;align-items:center;gap:12px;text-align:left;padding:14px 16px;border:1px solid var(--verde-esc,#103E20);border-radius:9px;background:var(--verde,#1C5C31);cursor:pointer;font:800 13px/1.3 Poppins,sans-serif;color:#fff;box-shadow:0 4px 14px rgba(28,92,49,.28);transition:filter .15s"><span style="font-size:20px">📦</span>Movimentar Material para Almoxarifado</button>' +
+                '</div>';
+              ov2.appendChild(box);
+              document.body.appendChild(ov2);
+              var finalize = function (op) {
+                ov2.remove();
+                var c = row.cells;
+                var n = new Date();
+                var p = function (x) { return (x < 10 ? '0' : '') + x; };
+                c[7].innerHTML = '<span style="display:inline-block;padding:2px 9px;border-radius:9px;font:800 10px/1.4 var(--font-b);color:var(--ok);background:var(--ok-p);border:1px solid var(--ok-b)">OK</span>';
+                c[6].removeAttribute('class');
+                c[6].setAttribute('style', 'font-size:11px');
+                c[6].textContent = 'K. Lima · 00482';
+                c[8].setAttribute('style', 'color:var(--text2)');
+                c[8].textContent = p(n.getDate()) + '/' + p(n.getMonth() + 1) + '/' + n.getFullYear() + ' ' + p(n.getHours()) + ':' + p(n.getMinutes());
+                c[9].innerHTML = '<button class="btn btn-sm btn-ghost" onclick="devolGeralDetalhes(this)">🔍 Detalhes</button>';
+                row.setAttribute('data-destino', op === 'almox' ? 'Almoxarifado' : 'Pesagem');
+              };
+              Array.prototype.forEach.call(box.querySelectorAll('[data-op]'), function (b) {
+                b.addEventListener('mouseenter', function () { b.style.filter = 'brightness(.94)'; });
+                b.addEventListener('mouseleave', function () { b.style.filter = ''; });
+                b.addEventListener('click', function () { finalize(b.getAttribute('data-op')); });
+              });
+              ov2.addEventListener('click', function (e) { if (e.target === ov2) { ov2.remove(); btn.disabled = false; } });
             }, 2000);
           };
 
@@ -6210,22 +6544,19 @@ export const SCREENS = {
           </div>
 
           <!-- Info da MP selecionada -->
-          <div id="mps-popup-info" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:18px;font-size:11px;color:var(--text2);display:grid;grid-template-columns:1fr 1fr;gap:6px"></div>
-
-          <!-- Abas de ação -->
-          <div style="display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:18px;flex-wrap:wrap" id="mps-popup-tabs">
-            <button onclick="mpsPoupupAba('desvio')" id="mps-tab-desvio" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--verde);border-bottom:3px solid var(--verde);margin-bottom:-2px">📦 Ajuste MP</button>
-            <button onclick="mpsPoupupAba('reimprimir')" id="mps-tab-reimprimir" style="padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--text3);border-bottom:3px solid transparent;margin-bottom:-2px">🖨️ Reimprimir</button>
+          <div style="position:relative;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:18px">
+            <button title="Reimprimir etiqueta" style="position:absolute;top:10px;right:12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 12px;cursor:pointer;font-size:11px;font-weight:700;color:var(--verde);display:inline-flex;align-items:center;gap:5px;z-index:1">🖨️ Reimprimir</button>
+            <div id="mps-popup-info" style="font-size:11px;color:var(--text2);display:grid;grid-template-columns:1fr 1fr;gap:6px"></div>
           </div>
 
-          <!-- Aba: Solicitar MP -->
+          <!-- Ação: Ajuste MP -->
           <div id="mps-aba-desvio">
             <div style="margin-bottom:12px">
               <label class="lbl">Tipo de solicitação</label>
               <select class="sel" id="mps-desvio-tipo" onchange="mpsToggleNumDesvio()">
                 <option value="">Selecione o tipo...</option>
-                <option value="ajuste">Ajuste</option>
-                <option value="perda">Perda (cancela a MP)</option>
+                <option value="ajuste">AJUSTE</option>
+                <option value="perda">CANCELAR PESAGEM</option>
               </select>
               <div id="mps-perda-aviso" style="display:none;margin-top:8px;padding:8px 12px;background:var(--per-p);border:1px solid var(--per-b);border-radius:6px;font-size:11px;color:var(--per);line-height:1.4">
                 <strong>⚠ Perda — atenção:</strong> ao confirmar, o status da MP <strong id="mps-perda-mp-nome">selecionada</strong> será alterado para <span class="bdg bdg-per" style="font-size:9px">⛔ Cancelado</span> e a linha será marcada como cancelada na tabela de pesagens.
@@ -6246,27 +6577,6 @@ export const SCREENS = {
             </div>
           </div>
 
-          <!-- Aba: Reimprimir Etiqueta -->
-          <div id="mps-aba-reimprimir">
-            <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Pré-visualização da etiqueta</div>
-            <div id="reimp-zpl" style="margin-bottom:16px"></div>
-            <div style="margin-bottom:14px">
-              <label class="lbl">Impressora</label>
-              <select class="sel" id="reimp-impressora">
-                <option value="PRN-BOX3 · Zebra ZD420 (Box Pesagem)">🖨️ PRN-BOX3 · Zebra ZD420 (Box Pesagem)</option>
-                <option value="PRN-BOX1 · Zebra ZT411 (Sala A)">🖨️ PRN-BOX1 · Zebra ZT411 (Sala A)</option>
-                <option value="PRN-BOX2 · Zebra ZT230 (Sala B)">🖨️ PRN-BOX2 · Zebra ZT230 (Sala B)</option>
-                <option value="PRN-MF5 · Zebra ZT610 (Corredor MF5)">🖨️ PRN-MF5 · Zebra ZT610 (Corredor MF5)</option>
-                <option value="PRN-LAB · Zebra GK420t (Laboratório)">🖨️ PRN-LAB · Zebra GK420t (Laboratório)</option>
-              </select>
-            </div>
-            <div style="display:flex;gap:10px">
-              <button class="btn btn-md btn-v" style="flex:1" onclick="mpsReimprimir()">🖨️ Reimprimir Etiqueta</button>
-              <button class="btn btn-md btn-ghost" onclick="document.getElementById('modal-mps-desvio').style.display='none'">Cancelar</button>
-            </div>
-          </div>
-
-          <!-- Aba "Solicitar Mais MP" REMOVIDA — funcionalidade unificada na aba "Solicitar MP" (mps-aba-desvio). -->
 
         </div>
       </div>
@@ -6288,9 +6598,7 @@ export const SCREENS = {
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Balança</span><div style="font-family:var(--font-m);font-size:12px;margin-top:2px">' + d.bal + '</div></div>' +
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Operador</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + opLabel + '</div></div>' +
           '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Sala · Box</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + salaLabel + '</div></div>';
-        // Sempre abre na aba "Solicitar MP" (a antiga "Solicitar Mais MP" foi unificada aqui).
         // Se a MP estiver com desvio, pré-seleciona o tipo "Desvio".
-        mpsPoupupAba('desvio');
         var tipoEl = document.getElementById('mps-desvio-tipo');
         if (tipoEl) tipoEl.value = (d.status === 'desv') ? 'desvio' : '';
         var numEl = document.getElementById('mps-desvio-num');
@@ -6303,58 +6611,6 @@ export const SCREENS = {
 
       function pesAbrirNovaPS() {
         pesAbrirDesvio({n:'—',mat:'Nova Pesagem',lote:'—',alvo:'—',pesado:'—',desv:'—',op:'',mat_op:'',sala:'',hr:'',bal:'',etq:'',status:'novo'});
-      }
-
-      function mpsPoupupAba(aba) {
-        document.getElementById('mps-aba-desvio').style.display    = aba==='desvio'     ? 'block' : 'none';
-        document.getElementById('mps-aba-reimprimir').style.display= aba==='reimprimir' ? 'block' : 'none';
-        // (aba "solicitar" foi removida — funcionalidade unificada em "desvio" = Solicitar MP)
-        ['desvio','reimprimir'].forEach(function(t){
-          var tab = document.getElementById('mps-tab-'+t);
-          if (tab) {
-            tab.style.color = aba===t ? 'var(--verde)' : 'var(--text3)';
-            tab.style.borderBottomColor = aba===t ? 'var(--verde)' : 'transparent';
-          }
-        });
-        // Renderiza o preview da etiqueta (estilo granado-zpl) na aba reimprimir
-        if (aba === 'reimprimir') { mpsRenderReimpZpl(); }
-      }
-
-      // Pré-visualização da etiqueta de pesagem (mesma ideia do granado-zpl).
-      function mpsRenderReimpZpl() {
-        var alvo = document.getElementById('reimp-zpl'); if (!alvo) return;
-        var d = _mpsSel || {};
-        var INK = '#111';
-        var fld = function(l, v, big) {
-          return '<div><div style="font-size:8px;font-weight:700;letter-spacing:.04em;color:' + INK + '">' + l + '</div>' +
-            '<div style="font-family:var(--font-m);font-size:' + (big ? '13px' : '11px') + ';font-weight:700;color:' + INK + '">' + (v || '—') + '</div></div>';
-        };
-        var code = String(d.etq || '');
-        var bars = '';
-        for (var i = 0; i < code.length; i++) {
-          var c = code.charCodeAt(i), w = (c % 3) + 1, g = ((c >> 2) % 2) + 1;
-          bars += '<span style="display:inline-block;width:' + w + 'px;height:100%;background:' + INK + '"></span>' +
-                  '<span style="display:inline-block;width:' + g + 'px;height:100%;background:#fff"></span>';
-        }
-        alvo.innerHTML =
-          '<div style="max-width:420px;background:#fff;border:1px solid #999;border-radius:4px;padding:8px;box-shadow:0 1px 4px rgba(0,0,0,.12)">' +
-            '<div style="border:2px solid ' + INK + '">' +
-              '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 10px">' +
-                '<div style="font-size:16px;font-weight:800;color:' + INK + '">PESAGEM DE MATERIAL</div>' +
-                '<div style="text-align:right"><div style="font-size:8px;font-weight:700;color:' + INK + '">No ETIQUETA</div><div style="font-family:var(--font-m);font-size:12px;font-weight:700;color:' + INK + '">' + (d.etq || '—') + '</div></div>' +
-              '</div>' +
-              '<div style="border-top:2px solid ' + INK + ';padding:8px 10px">' + fld('MATERIA PRIMA', d.mat, true) + '</div>' +
-              '<div style="border-top:2px solid ' + INK + ';display:flex">' +
-                '<div style="flex:1;border-right:2px solid ' + INK + ';padding:8px 10px">' + fld('LOTE', d.lote) + '</div>' +
-                '<div style="flex:1;border-right:2px solid ' + INK + ';padding:8px 10px">' + fld('BALANCA', d.bal) + '</div>' +
-                '<div style="flex:1.4;padding:8px 10px">' + fld('OPERADOR', d.op) + '</div>' +
-              '</div>' +
-              '<div style="border-top:2px solid ' + INK + ';display:flex;align-items:stretch">' +
-                '<div style="flex:1;padding:8px 10px;min-width:0"><div style="display:flex;align-items:flex-end;height:46px;overflow:hidden">' + bars + '</div><div style="font-family:var(--font-m);font-size:10px;color:' + INK + ';margin-top:2px">' + (d.etq || '') + '</div></div>' +
-                '<div style="flex:0 0 42%;background:' + INK + ';color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 8px"><div style="font-size:10px;font-weight:700;letter-spacing:.06em">PESO LIQUIDO</div><div style="font-size:26px;font-weight:800;line-height:1.1;margin-top:2px">' + (d.pesado || '—') + ' kg</div></div>' +
-              '</div>' +
-            '</div>' +
-          '</div>';
       }
 
       // Mostra/esconde campos auxiliares conforme o Tipo de solicitação:
@@ -6398,13 +6654,6 @@ export const SCREENS = {
         [3,4,5,6,7].forEach(function(idx){
           if (tr.cells[idx]) tr.cells[idx].style.textDecoration = 'line-through';
         });
-      }
-
-      function mpsReimprimir() {
-        var impEl = document.getElementById('reimp-impressora');
-        var impressora = impEl ? impEl.value : 'PRN-BOX3 · Zebra ZD420';
-        document.getElementById('modal-mps-desvio').style.display = 'none';
-        alert('🖨️ Reimpressão solicitada!\\nEtiqueta: ' + (_mpsSel.etq||'—') + '\\nMP: ' + (_mpsSel.mat||'—') + '\\nImpressora: ' + impressora + ' · Status: Enviado.');
       }
 
       // Reprocessa a integração da pesagem com o JDE.
