@@ -11606,6 +11606,52 @@ GranadoQuantityPopup.<span class="tk-attr">show</span>({ type: <span class="tk-s
   });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
 
+        <h2 class="gd-h2">Exemplo — só o Check (sem Valor)</h2>
+        <p class="gd-lead">
+          Com <code>showValue: false</code> (ou o atributo <code>show-value="false"</code>) a coluna
+          <strong>Valor</strong> some e o checklist fica só com <strong>Característica + Check</strong> —
+          ideal para verificações do tipo "feito / não feito". As colunas Observação e Ação continuam
+          opcionais; eventuais limites são ignorados (cada linha usa o checkbox).
+        </p>
+        <script>
+          function docCklSoCheck() {
+            GranadoChecklistPopup.show({
+              title: '✅ Checklist de Liberação de Sala',
+              subtitle: 'Sala A · MD1',
+              showValue: false,   // oculta a coluna Valor
+              data: [
+                { id: 'a', caracteristica: 'Área limpa e organizada', status: true },
+                { id: 'b', caracteristica: 'EPIs disponíveis e em uso', status: null },
+                { id: 'c', caracteristica: 'Documentação da ordem conferida', status: null, observacao: '' }
+              ],
+              verifiedBy: 'J. Santos · Mat. 00412',
+              onConfirm: function (d) {
+                console.table(d.rows);   // cada linha: { id, caracteristica, status, observacao } — valor vem vazio
+              }
+            });
+          }
+        </script>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <button type="button" onclick="docCklSoCheck()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1F7A3D;border-radius:7px;background:#1F7A3D;color:#fff;cursor:pointer">✅ Checklist só com check</button>
+        </div>
+        <pre class="gd-code gd-snip"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoChecklistPopup.<span class="tk-attr">show</span>({
+    title: <span class="tk-str">'✅ Checklist de Liberação de Sala'</span>,
+    subtitle: <span class="tk-str">'Sala A · MD1'</span>,
+    showValue: <span class="tk-keyword">false</span>,   <span class="tk-comment">// oculta a coluna Valor</span>
+    data: [
+      { id: <span class="tk-str">'a'</span>, caracteristica: <span class="tk-str">'Área limpa e organizada'</span>, status: <span class="tk-keyword">true</span> },
+      { id: <span class="tk-str">'b'</span>, caracteristica: <span class="tk-str">'EPIs disponíveis e em uso'</span>, status: <span class="tk-keyword">null</span> },
+      { id: <span class="tk-str">'c'</span>, caracteristica: <span class="tk-str">'Documentação da ordem conferida'</span>, status: <span class="tk-keyword">null</span>, observacao: <span class="tk-str">''</span> }
+    ],
+    verifiedBy: <span class="tk-str">'J. Santos · Mat. 00412'</span>,
+    onConfirm: <span class="tk-keyword">function</span> (d) {
+      console.table(d.rows);   <span class="tk-comment">// cada linha: { id, caracteristica, status, observacao } — valor vem vazio</span>
+    }
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
         <h2 class="gd-h2">Uso</h2>
         <p class="gd-lead">
           Forma recomendada (API estática). O botão <strong>Confirmar</strong> emite o evento
@@ -11844,6 +11890,7 @@ GranadoQuantityPopup.<span class="tk-attr">show</span>({ type: <span class="tk-s
             <tr><td class="col-name">checklist-id</td><td class="col-type">string / number</td><td class="col-desc">Identificador do checklist (em JS: <code>.checklistId</code>). Devolvido no <code>detail</code> do evento <code>confirm</code>.</td></tr>
             <tr><td class="col-name">checklist-code</td><td class="col-type">string</td><td class="col-desc">Código do checklist (em JS: <code>.checklistCode</code>). Devolvido no <code>detail</code> do evento <code>confirm</code>.</td></tr>
             <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> permite <strong>fechar ao clicar fora</strong> (backdrop). Por padrão (default <code>false</code>) <strong>não fecha</strong> ao clicar fora. Em JS: <code>.closeOnBackdrop</code>. O ✕ e o botão Cancelar sempre fecham.</td></tr>
+            <tr><td class="col-name">show-value</td><td class="col-type">boolean</td><td class="col-desc"><code>"false"</code> <strong>oculta a coluna Valor</strong> — checklist só com <strong>Característica + Check</strong> (Observação/Ação seguem opcionais). Default <code>true</code>. Em JS: <code>.showValue</code>. Sem a coluna, os limites são ignorados no render (cada linha usa o checkbox).</td></tr>
             <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code>.</td></tr>
             <tr><td class="col-name">onConfirm</td><td class="col-type">string (JS)</td><td class="col-desc">Handler inline ao confirmar. Recebe <code>event</code> e <code>detail</code>.</td></tr>
             <tr><td class="col-name">onValidate</td><td class="col-type">função / string (JS)</td><td class="col-desc"><strong>Validação síncrona</strong> ao clicar em <em>Confirmar</em>. Recebe o <strong>mesmo <code>detail</code></strong> do <code>confirm</code> (<code>checklistId</code>, <code>checklistCode</code>, <code>verifiedBy</code>, <code>dateTime</code>, <code>rows[]</code>) e <strong>deve retornar</strong> <code>{ valid: true|false, message }</code> (ou <code>true</code>/<code>false</code>). <code>valid:true</code> → o popup fecha normalmente (segue o <code>confirm</code>); <code>valid:false</code> → o popup <strong>continua aberto</strong> e exibe a <code>message</code>. Em JS use a propriedade <code>.onValidate</code> (função); como atributo é string JS que <code>return</code> o objeto.</td></tr>

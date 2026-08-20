@@ -56,6 +56,11 @@
                           Sem valor, é preenchido automaticamente com a data/hora
                           atual ("dd/mm/aaaa hh:mm"). Informe p/ fixar outro valor.
      confirm-text       - texto do botão confirmar (default "Confirmar")
+     show-value         - "false" oculta a coluna "Valor" — checklist SÓ com o Check
+                          (Característica + Check [+ Observação/Ação se houver]).
+                          Default: "true" (mostra o Valor). Em JS use .showValue.
+                          Com a coluna oculta, os limites (limiteInferior/Superior) são
+                          ignorados no render do Check — cada linha usa o checkbox marcável.
      close-on-backdrop  - "true" permite fechar o popup ao clicar fora (backdrop).
                           Default: NÃO fecha ao clicar fora. Em JS use .closeOnBackdrop.
                           (O ✕ e o botão Cancelar sempre fecham.)
@@ -125,7 +130,7 @@ if (!customElements.get('granado-checklist-popup')) {
   const MONO = "'Arial',Helvetica,sans-serif";   // números/códigos e tabelas (--font-m)
 
   class GranadoChecklistPopup extends HTMLElement {
-    static get observedAttributes() { return ['title', 'subtitle', 'header-information', 'data', 'verified-by', 'date-time', 'confirm-text', 'checklist-id', 'checklist-code', 'close-on-backdrop', 'open']; }
+    static get observedAttributes() { return ['title', 'subtitle', 'header-information', 'data', 'verified-by', 'date-time', 'confirm-text', 'checklist-id', 'checklist-code', 'close-on-backdrop', 'show-value', 'open']; }
 
     // ------------------------------------------------------------
     // API estática
@@ -138,6 +143,7 @@ if (!customElements.get('granado-checklist-popup')) {
       if (opts.verifiedBy != null) el.setAttribute('verified-by', String(opts.verifiedBy));
       if (opts.dateTime != null) el.setAttribute('date-time', String(opts.dateTime));
       if (opts.confirmText != null) el.setAttribute('confirm-text', String(opts.confirmText));
+      if (opts.showValue != null) el.setAttribute('show-value', opts.showValue ? 'true' : 'false');
       if (opts.checklistId != null) el.setAttribute('checklist-id', String(opts.checklistId));
       if (opts.checklistCode != null) el.setAttribute('checklist-code', String(opts.checklistCode));
       if (opts.closeOnBackdrop != null) el.setAttribute('close-on-backdrop', opts.closeOnBackdrop ? 'true' : 'false');
@@ -199,6 +205,10 @@ if (!customElements.get('granado-checklist-popup')) {
     // { valid:true|false, message } (ou true/false). false mantém o popup aberto.
     get onValidate() { return this._onValidateFn || null; }
     set onValidate(fn) { this._onValidateFn = (typeof fn === 'function') ? fn : null; }
+
+    // Mostra a coluna "Valor"? Default: true. "false" -> checklist só com o Check.
+    get showValue() { return this.getAttribute('show-value') !== 'false'; }
+    set showValue(v) { this.setAttribute('show-value', v ? 'true' : 'false'); }
 
     // Fechar ao clicar fora? Default: false (não fecha). Só fecha com "true".
     _closeOnBackdrop() { return this.getAttribute('close-on-backdrop') === 'true'; }
@@ -305,11 +315,12 @@ if (!customElements.get('granado-checklist-popup')) {
       const verifiedBy = this.getAttribute('verified-by') || '';
       const dateTime = this.getAttribute('date-time') || this._nowStr();   // preenchimento automático
       const confirmText = this.getAttribute('confirm-text') || 'Confirmar';
+      const showValue = this.getAttribute('show-value') !== 'false';    // coluna "Valor" (default: mostra)
       const rows = (this.data || []).map((r) => this._normRow(r));
       this._normRows = rows;
       const hasAcao = rows.some((r) => r.acao);
       const hasObservacao = rows.some((r) => r.observacao != null);   // coluna opcional
-      const colCount = 3 + (hasObservacao ? 1 : 0) + (hasAcao ? 1 : 0);
+      const colCount = 2 + (showValue ? 1 : 0) + (hasObservacao ? 1 : 0) + (hasAcao ? 1 : 0);
 
       // ── Bloco de informações do cabeçalho ──
       const hi = this.headerInformation;
@@ -332,11 +343,13 @@ if (!customElements.get('granado-checklist-popup')) {
         const acaoCell = hasAcao
           ? `<td style="text-align:center;border-bottom:1px solid ${BORDER};padding:11px 12px;vertical-align:middle">` + (r.acao ? `<button type="button" data-role="rowbtn" data-idx="${i}"${r.acao.title ? ` title="${this._esc(r.acao.title)}"` : ''} style="position:relative;overflow:hidden;font:700 14px/1.1 ${FONT};padding:6px 12px;border:1px solid ${VERDE};border-radius:6px;background:${VERDE};color:#fff;cursor:pointer;white-space:nowrap;transition:transform .1s ease,background .15s ease">${this._esc(r.acao.text)}</button>` : '') + `</td>`
           : '';
+        const valorCell = showValue ? `<td style="border-bottom:1px solid ${BORDER};padding:11px 12px;vertical-align:middle;width:150px">${leituraCell}</td>` : '';
+        const autoStatus = r.hasLimits && showValue;   // sem coluna Valor, o Check vira checkbox
         return `<tr>` +
-          `<td style="border-bottom:1px solid ${BORDER};padding:11px 12px;vertical-align:middle;font-weight:700;color:${TEXT}">${r.caracteristica != null ? r.caracteristica : ''}${this._limitsLabel(r)}</td>` +
-          `<td style="border-bottom:1px solid ${BORDER};padding:11px 12px;vertical-align:middle;width:150px">${leituraCell}</td>` +
+          `<td style="border-bottom:1px solid ${BORDER};padding:11px 12px;vertical-align:middle;font-weight:700;color:${TEXT}">${r.caracteristica != null ? r.caracteristica : ''}${showValue ? this._limitsLabel(r) : ''}</td>` +
+          valorCell +
           `<td style="border-bottom:1px solid ${BORDER};padding:11px 12px;vertical-align:middle;text-align:center;width:90px">` +
-            (r.hasLimits
+            (autoStatus
               ? `<span data-role="status" data-idx="${i}" title="Automático (limites informados)">${this._statusBadge(this._okOf(r.valor, r))}</span>`
               : this._checkBox(i, r.status)) +
           `</td>` +
@@ -364,7 +377,7 @@ if (!customElements.get('granado-checklist-popup')) {
               `<table style="width:100%;border-collapse:collapse;font-size:12px;font-family:${MONO}">` +
                 `<thead><tr>` +
                   `<th style="${th}">Característica</th>` +
-                  `<th style="${th};text-align:center">Valor</th>` +
+                  (showValue ? `<th style="${th};text-align:center">Valor</th>` : '') +
                   `<th style="${th};text-align:center">Check</th>` +
                   (hasObservacao ? `<th style="${th};text-align:center">Observação</th>` : '') +
                   (hasAcao ? `<th style="${th};text-align:center">Ação</th>` : '') +
@@ -501,10 +514,11 @@ if (!customElements.get('granado-checklist-popup')) {
 
     _confirm(ev) {
       const val = (sel) => { const e = this.querySelector(sel); return e ? e.value : ''; };
+      const showValue = this.getAttribute('show-value') !== 'false';
       const rows = (this._normRows || []).map((r, i) => {
         const obsEl = this._inputEl('obs', i);
         let status;
-        if (r.hasLimits) {
+        if (r.hasLimits && showValue) {
           status = this._isOk(i);   // limites informados -> automático (não editável)
         } else {
           const chk = this.querySelector('[data-role="check"][data-idx="' + i + '"]');
@@ -513,8 +527,8 @@ if (!customElements.get('granado-checklist-popup')) {
         return {
           id: r.id,
           caracteristica: r.caracteristica,
-          valor: val('[data-role="leitura"][data-idx="' + i + '"]'),
-          isManualValue: this._getManual(i),
+          valor: showValue ? val('[data-role="leitura"][data-idx="' + i + '"]') : (r.valor != null ? r.valor : ''),
+          isManualValue: showValue ? this._getManual(i) : false,
           status: status,
           observacao: obsEl ? obsEl.value : r.observacao
         };
