@@ -5225,10 +5225,44 @@ export const SCREENS = {
 
       <div class="abox warn mb14"><span class="ai">⚠</span><div>MPs com saldo restante após pesagem devem ser <strong>reentiquetadas e devolvidas ao almoxarifado</strong>.</div></div>
 
-      <!-- Filtros -->
-      <div class="card cv mb14">
-        <div class="card-title">Filtros</div>
-        <div class="form-row" style="flex-wrap:wrap;gap:12px;align-items:flex-end">
+      <!-- Estilos do filtro: inline no desktop; bottom-sheet no mobile (padrão da tela Seleção de Ordem) -->
+      <style>
+        #dg-funnel-btn { display:none; }
+        #dg-flt-backdrop { display:none; }
+        #dg-flt-sheethead { display:none; }
+        #dg-mobile-search { display:none; }
+        @media (max-width:768px){
+          #dg-funnel-btn { display:inline-flex!important; }
+          #dg-mobile-search { display:flex!important; align-items:center; gap:6px; flex:1 1 auto; min-width:0; }
+          .dg-filtros-desktop-title { display:none!important; }
+          .dg-list-titletext { display:none!important; }
+          #dg-filtros {
+            position:fixed; left:0; right:0; bottom:0; margin:0!important; z-index:99999;
+            max-width:640px; margin-left:auto; margin-right:auto;
+            max-height:85vh; overflow-y:auto; border-bottom:none;
+            border-radius:16px 16px 0 0; box-shadow:0 -10px 34px rgba(15,51,25,.28);
+            transform:translateY(100%); transition:transform .22s ease;
+          }
+          #dg-filtros.open { transform:translateY(0); }
+          #dg-flt-backdrop.open { display:block; position:fixed; inset:0; background:rgba(15,51,25,.5); z-index:99998; }
+          #dg-flt-sheethead { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+          #dg-flt-grid { flex-direction:column; align-items:stretch; gap:12px; }
+          #dg-flt-grid > .fg { min-width:0!important; width:100%; }
+          #dg-flt-grid .inp, #dg-flt-grid .sel { font-size:16px!important; width:100%; box-sizing:border-box; }
+        }
+      </style>
+      <div id="dg-flt-backdrop" onclick="devolGeralToggleFiltros(false)"></div>
+
+      <!-- Filtros (inline no desktop; bottom-sheet no mobile) -->
+      <div class="card cv mb14" id="dg-filtros">
+        <div id="dg-flt-sheethead">
+          <span style="display:flex;align-items:center;gap:8px;font:700 15px/1.3 'Poppins',sans-serif;color:var(--text)">
+            <span style="color:#1C5C31;display:flex"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span>Filtros
+          </span>
+          <button type="button" onclick="devolGeralToggleFiltros(false)" aria-label="Fechar" style="flex-shrink:0;background:transparent;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font:13px/1 'Poppins',sans-serif;color:var(--text2)">✕</button>
+        </div>
+        <div class="card-title dg-filtros-desktop-title">Filtros</div>
+        <div class="form-row" id="dg-flt-grid" style="flex-wrap:wrap;gap:12px;align-items:flex-end">
           <div class="fg" style="min-width:150px"><label class="lbl">Ordem</label><input class="inp" id="dg-f-ordem" placeholder="Nº da ordem" oninput="devolGeralFiltrar()"></div>
           <div class="fg" style="min-width:180px"><label class="lbl">Material</label><input class="inp" id="dg-f-material" placeholder="Nome do material" oninput="devolGeralFiltrar()"></div>
           <div class="fg" style="min-width:160px"><label class="lbl">Etiqueta</label><input class="inp" id="dg-f-etiqueta" placeholder="Etiqueta original" oninput="devolGeralFiltrar()"></div>
@@ -5238,7 +5272,21 @@ export const SCREENS = {
       </div>
 
       <div class="card cv mb14">
-        <div class="card-title">MPs com Saldo para Devolução</div>
+        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <span class="dg-list-titletext">MPs com Saldo para Devolução</span>
+          <!-- Mobile: busca rápida por Ordem + Etiqueta + botão de filtro avançado -->
+          <div id="dg-mobile-search">
+            <input id="dg-quick-ordem" type="text" inputmode="text" placeholder="Ordem…" oninput="devolGeralQuick()" style="flex:1 1 0;min-width:0;box-sizing:border-box;font-size:16px;font-family:var(--font-m);padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text)">
+            <input id="dg-quick-etiqueta" type="text" inputmode="text" placeholder="Etiqueta…" oninput="devolGeralQuick()" style="flex:1 1 0;min-width:0;box-sizing:border-box;font-size:16px;font-family:var(--font-m);padding:7px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text)">
+            <button type="button" onclick="devolGeralQuick()" aria-label="Buscar" title="Buscar" style="display:inline-flex;align-items:center;justify-content:center;gap:5px;flex-shrink:0;height:38px;padding:0 12px;border:1px solid var(--verde-esc);border-radius:8px;background:var(--verde);color:#fff;cursor:pointer;font-family:var(--font-b);font-size:13px;font-weight:700">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="20.5" y1="20.5" x2="16.5" y2="16.5"></line></svg>
+              Buscar
+            </button>
+            <button id="dg-funnel-btn" type="button" onclick="devolGeralToggleFiltros(true)" aria-label="Filtro avançado" title="Filtro avançado" style="align-items:center;justify-content:center;flex-shrink:0;width:38px;height:38px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:#1C5C31;cursor:pointer">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+            </button>
+          </div>
+        </div>
         <div id="devol-geral-wrap" style="overflow-x:auto">
           <table class="tbl" id="tbl-devol-geral" style="min-width:760px">
             <thead><tr><th>Etiqueta Original</th><th>Material</th><th>Lote</th><th>Qtd. Original</th><th>Qtd. Pesada</th><th>Saldo Restante</th><th>Usuário</th><th>Status</th><th>Data Devolução</th><th>Ação</th></tr></thead>
@@ -5332,8 +5380,29 @@ export const SCREENS = {
           };
 
           window.devolGeralLimpar = function () {
-            ['dg-f-ordem', 'dg-f-material', 'dg-f-etiqueta'].forEach(function (id) { var e = document.getElementById(id); if (e) e.value = ''; });
+            ['dg-f-ordem', 'dg-f-material', 'dg-f-etiqueta', 'dg-quick-ordem', 'dg-quick-etiqueta'].forEach(function (id) { var e = document.getElementById(id); if (e) e.value = ''; });
             var s = document.getElementById('dg-f-status'); if (s) s.value = 'TODOS';
+            window.devolGeralFiltrar();
+          };
+
+          // Abre/fecha o bottom-sheet de filtros (mobile). Inline no desktop.
+          window.devolGeralToggleFiltros = function (open) {
+            var f = document.getElementById('dg-filtros');
+            var b = document.getElementById('dg-flt-backdrop');
+            if (!f || !b) return;
+            if (open == null) open = !f.classList.contains('open');
+            f.classList.toggle('open', open);
+            b.classList.toggle('open', open);
+          };
+
+          // Busca rápida (mobile): espelha Ordem/Etiqueta no painel e re-aplica os filtros.
+          window.devolGeralQuick = function () {
+            var qo = document.getElementById('dg-quick-ordem');
+            var qe = document.getElementById('dg-quick-etiqueta');
+            var fo = document.getElementById('dg-f-ordem');
+            var fe = document.getElementById('dg-f-etiqueta');
+            if (fo && qo) fo.value = qo.value;
+            if (fe && qe) fe.value = qe.value;
             window.devolGeralFiltrar();
           };
 
@@ -5349,19 +5418,35 @@ export const SCREENS = {
             var c = row.cells;
             var etq = c[0].textContent.trim(), mat = c[1].textContent.trim(), lote = c[2].textContent.trim(), saldo = c[5].textContent.trim();
             var saldoNum = saldo.replace(/kg/i, '').trim();
-            var BALS = [
-              { id: 'BAL-01', cap: '600 kg', div: '0,01 kg', sug: true },
-              { id: 'BAL-02', cap: '100 kg', div: '0,5 kg', sug: false },
-              { id: 'BAL-03', cap: '5 kg', div: '0,01 kg', sug: false }
+            // Fora da ordem: escolhe a SALA e, dentro dela, a BALANÇA (drill-down).
+            var SALAS = [
+              { id: 'SALA-A', nome: 'Sala A', bals: [
+                { id: 'BAL-01', cap: '600 kg', div: '0,01 kg', sug: true },
+                { id: 'BAL-02', cap: '100 kg', div: '0,5 kg' }
+              ] },
+              { id: 'SALA-B', nome: 'Sala B', bals: [
+                { id: 'BAL-03', cap: '5 kg', div: '0,01 kg' },
+                { id: 'BAL-04', cap: '600 kg', div: '0,01 kg' }
+              ] },
+              { id: 'SALA-C', nome: 'Sala C', bals: [
+                { id: 'BAL-05', cap: '30 kg', div: '0,001 kg' }
+              ] }
             ];
             function kv(l, v) { return '<div style="font-size:11px"><span style="color:var(--text3,#8A8575);font-weight:600">' + l + ':</span> <strong style="color:var(--verde-esc,#103E20)">' + v + '</strong></div>'; }
+            function salaCard(s) {
+              return '<div class="devol-sala-card" data-sala="' + s.id + '" style="cursor:pointer;flex:0 0 auto;width:96px;border:2px solid var(--border,#D6CDA4);border-radius:8px;padding:9px 6px;background:var(--surface2,#F4EED9);text-align:center;transition:all .15s">' +
+                '<div style="font-size:20px;line-height:1">🏭</div>' +
+                '<div style="font:800 11px/1.15 Poppins,sans-serif;color:var(--verde-esc,#103E20);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + s.nome + '</div>' +
+                '<div style="font-family:var(--font-m,monospace);font-size:8px;color:var(--text3,#8A8575);margin-top:2px">' + s.bals.length + ' bal ›</div>' +
+              '</div>';
+            }
             function balCard(b) {
-              var on = b.sug;
-              return '<div class="devol-bal-card" data-bal="' + b.id + '" style="cursor:pointer;flex:1 1 140px;min-width:120px;border:2px solid ' + (on ? 'var(--verde,#1C5C31)' : 'var(--border,#D6CDA4)') + ';border-radius:9px;padding:12px 10px;background:' + (on ? 'var(--verde-dim,#E4F0E8)' : 'var(--surface2,#F4EED9)') + ';text-align:center;transition:all .15s">' +
-                '<div style="font-size:28px;line-height:1">⚖️</div>' +
-                '<div style="font-family:var(--font-m,monospace);font-size:13px;font-weight:800;color:var(--verde,#1C5C31);margin-top:4px">' + b.id + '</div>' +
-                '<div style="font-size:9px;color:var(--text3,#8A8575);margin-top:2px">Cap ' + b.cap + ' · d ' + b.div + '</div>' +
-                (b.sug ? '<div style="margin-top:6px;font:900 8px/1.2 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--verde,#1C5C31)">⭐ Sugerida</div>' : '<div style="height:15px"></div>') +
+              var on = state.bal === b.id;
+              return '<div class="devol-bal-card" data-bal="' + b.id + '" style="cursor:pointer;flex:0 0 auto;width:96px;border:2px solid ' + (on ? 'var(--verde,#1C5C31)' : 'var(--border,#D6CDA4)') + ';border-radius:8px;padding:9px 6px;background:' + (on ? 'var(--verde-dim,#E4F0E8)' : 'var(--surface2,#F4EED9)') + ';text-align:center;transition:all .15s">' +
+                '<div style="font-size:20px;line-height:1">⚖️</div>' +
+                '<div style="font-family:var(--font-m,monospace);font-size:11px;font-weight:800;color:var(--verde,#1C5C31);margin-top:3px">' + b.id + '</div>' +
+                '<div style="font-size:8px;color:var(--text3,#8A8575);margin-top:1px;white-space:nowrap">Cap ' + b.cap + '</div>' +
+                (b.sug ? '<div style="margin-top:3px;font:900 8px/1.1 Poppins,sans-serif;color:var(--verde,#1C5C31)">⭐</div>' : '<div style="height:12px"></div>') +
               '</div>';
             }
             var ov = document.createElement('div');
@@ -5374,13 +5459,13 @@ export const SCREENS = {
                 kv('Material', mat) + kv('Lote', lote) + kv('Etiqueta', etq) + kv('Saldo a devolver', saldo) +
               '</div>' +
               '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px">' +
-                '<label style="font:900 9px/1.4 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--text3,#8A8575)">Balança</label>' +
+                '<label id="devol-bal-label" style="font:900 9px/1.4 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--text3,#8A8575)">Sala</label>' +
                 '<label id="devol-mode-toggle" style="display:inline-flex;align-items:center;gap:7px;cursor:pointer;user-select:none">' +
                   '<span style="font:800 10px/1 Poppins,sans-serif;color:var(--text2,#5A6B5E)">Peso manual</span>' +
                   '<span id="devol-sw-track" style="position:relative;display:inline-block;width:40px;height:22px;border-radius:11px;background:var(--border2,#D6CDA4);transition:background .15s"><span id="devol-sw-knob" style="position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:left .15s"></span></span>' +
                 '</label>' +
               '</div>' +
-              '<div id="devol-bal-grid" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px">' + BALS.map(balCard).join('') + '</div>' +
+              '<div id="devol-bal-grid" style="margin-bottom:18px"></div>' +
               '<div id="devol-qtd-wrap" style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;border-radius:8px">' +
                 '<div style="flex:1;min-width:170px">' +
                   '<label style="display:block;font:900 9px/1.4 Poppins,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--text3,#8A8575);margin-bottom:6px">Quantidade Pesada</label>' +
@@ -5409,11 +5494,13 @@ export const SCREENS = {
             ov.appendChild(box);
             document.body.appendChild(ov);
 
-            var state = { bal: 'BAL-01', mode: 'balanca' };
+            var state = { bal: null, mode: 'balanca' };
+            var drill = { view: 'salas', sala: null };
             var inp = box.querySelector('#devol-qtd-inp');
             var puxarBtn = box.querySelector('#devol-puxar');
             var swTrack = box.querySelector('#devol-sw-track'), swKnob = box.querySelector('#devol-sw-knob');
             var balGrid = box.querySelector('#devol-bal-grid');
+            var balLabel = box.querySelector('#devol-bal-label');
             var qtdWrap = box.querySelector('#devol-qtd-wrap');
             var taraCol = box.querySelector('#devol-tara-col'), liqCol = box.querySelector('#devol-liq-col');
             var taraInp = box.querySelector('#devol-tara-inp'), liqDisp = box.querySelector('#devol-liq-disp');
@@ -5442,16 +5529,44 @@ export const SCREENS = {
               qtdWrap.style.background = balOn ? 'transparent' : 'var(--ouro-dim,#F1E4BC)';
               if (!balOn) { recalcLiq(); try { inp.focus(); } catch (e) {} }
             }
-            Array.prototype.forEach.call(box.querySelectorAll('.devol-bal-card'), function (card) {
-              card.addEventListener('click', function () {
-                state.bal = card.getAttribute('data-bal');
-                Array.prototype.forEach.call(box.querySelectorAll('.devol-bal-card'), function (cc) {
-                  var on = cc === card;
-                  cc.style.border = on ? '2px solid var(--verde,#1C5C31)' : '2px solid var(--border,#D6CDA4)';
-                  cc.style.background = on ? 'var(--verde-dim,#E4F0E8)' : 'var(--surface2,#F4EED9)';
+            // Drill-down: Sala -> Balança (com voltar na mesma área).
+            function renderDrill() {
+              if (balLabel) balLabel.textContent = drill.view === 'bals' ? 'Balança' : 'Sala';
+              var html = '';
+              if (drill.view === 'bals') {
+                var sala = null;
+                for (var i = 0; i < SALAS.length; i++) { if (SALAS[i].id === drill.sala) { sala = SALAS[i]; break; } }
+                if (!sala) { drill.view = 'salas'; renderDrill(); return; }
+                html =
+                  '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+                    '<button type="button" class="devol-drill-back" style="display:inline-flex;align-items:center;gap:4px;font:700 12px/1 Poppins,sans-serif;padding:6px 11px;border:1px solid var(--border,#D6CDA4);border-radius:8px;background:var(--surface2,#F4EED9);color:var(--verde-esc,#103E20);cursor:pointer">‹ Voltar</button>' +
+                    '<span style="font:800 12px/1.2 Poppins,sans-serif;color:var(--verde-esc,#103E20)">🏭 ' + sala.nome + '</span>' +
+                  '</div>' +
+                  '<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch">' + sala.bals.map(balCard).join('') + '</div>';
+              } else {
+                html = '<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch">' + SALAS.map(salaCard).join('') + '</div>';
+              }
+              balGrid.innerHTML = html;
+              if (drill.view === 'bals') {
+                var back = balGrid.querySelector('.devol-drill-back');
+                if (back) back.addEventListener('click', function () { drill.view = 'salas'; drill.sala = null; renderDrill(); });
+                Array.prototype.forEach.call(balGrid.querySelectorAll('.devol-bal-card'), function (card) {
+                  card.addEventListener('click', function () {
+                    state.bal = card.getAttribute('data-bal');
+                    Array.prototype.forEach.call(balGrid.querySelectorAll('.devol-bal-card'), function (cc) {
+                      var on = cc === card;
+                      cc.style.border = on ? '2px solid var(--verde,#1C5C31)' : '2px solid var(--border,#D6CDA4)';
+                      cc.style.background = on ? 'var(--verde-dim,#E4F0E8)' : 'var(--surface2,#F4EED9)';
+                    });
+                  });
                 });
-              });
-            });
+              } else {
+                Array.prototype.forEach.call(balGrid.querySelectorAll('.devol-sala-card'), function (card) {
+                  card.addEventListener('click', function () { drill.sala = card.getAttribute('data-sala'); drill.view = 'bals'; renderDrill(); });
+                });
+              }
+            }
+            renderDrill();
             box.querySelector('#devol-mode-toggle').addEventListener('click', function () {
               state.mode = state.mode === 'balanca' ? 'manual' : 'balanca';
               applyMode();
@@ -5474,7 +5589,7 @@ export const SCREENS = {
             box.querySelector('#devol-cancelar').addEventListener('click', function () { ov.remove(); });
             ov.addEventListener('click', function (e) { if (e.target === ov) ov.remove(); });
             box.querySelector('#devol-concluir').addEventListener('click', function () {
-              if (state.mode === 'balanca' && !state.bal) { alert('⚠ Selecione a balança.'); return; }
+              if (state.mode === 'balanca' && !state.bal) { alert('⚠ Selecione a sala e a balança.'); return; }
               if (!(inp.value || '').trim()) { alert('⚠ Informe a quantidade pesada.'); return; }
               if (state.mode === 'manual') {
                 var vB = parseFloat((inp.value || '').replace(',', '.'));
