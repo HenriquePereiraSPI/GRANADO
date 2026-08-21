@@ -2822,11 +2822,11 @@ export const SCREENS = {
         #checkout-kpis .card>div:nth-child(3){font-size:9px}
       }</style>
 
-      <!-- Aviso de bloqueio por sala de pesagem -->
-      <div class="abox warn mb14" id="checkout-lock-box" style="border-top-width:3px;border-top-style:solid;border-top-color:var(--alr)">
-        <span class="ai">🔒</span>
+      <!-- Info: visão geral das MPs pesadas na ordem -->
+      <div class="abox info mb14" id="checkout-lock-box">
+        <span class="ai" style="display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--inf);color:var(--inf);font:800 12px/1 'Poppins',sans-serif">i</span>
         <div>
-          Ordem só pode ser liberada para fabricação quando todos os itens da pesagem forem concluídos.
+          Visão geral das MP pesadas na ordem.
         </div>
       </div>
       <!-- KPIs topo — Validação Final -->
@@ -2959,21 +2959,28 @@ export const SCREENS = {
           var s = document.getElementById('pes-stepper');
           if (!s) return;
           var html = '';
+          // Modo Sem Balança: o passo ATIVO troca de dourado p/ verde claro (diferencia do normal).
+          var sb = (window.PES_SALA_SEL === 'SB');
+          var actC = sb ? 'var(--verde-claro)' : 'var(--ouro)';
+          // Passos pendentes (desativados): no Sem Balança viram "verde desativado".
+          var pendBg = sb ? 'var(--verde-dim)' : 'var(--border2)';
+          var pendTxt = sb ? 'var(--verde-claro)' : 'var(--text3)';
+          var pendBd = sb ? 'var(--verde-pale)' : 'var(--border)';
           PES_STEPS_DATA.forEach(function(st, i) {
             var display = i + 1; // número exibido (1..6) independente do panel ID interno (st.n)
             var done = st.n < PES_STEP;
             var active = st.n === PES_STEP;
-            var circBg = done ? 'var(--verde)' : active ? 'var(--ouro)' : 'var(--border2)';
-            var circTxt = done ? '#fff' : active ? 'var(--verde-esc)' : 'var(--text3)';
-            var lblC = active ? 'var(--verde-esc)' : done ? 'var(--verde)' : 'var(--text3)';
+            var circBg = done ? 'var(--verde)' : active ? actC : pendBg;
+            var circTxt = done ? '#fff' : active ? (sb ? '#fff' : 'var(--verde-esc)') : pendTxt;
+            var lblC = active ? 'var(--verde-esc)' : done ? 'var(--verde)' : pendTxt;
             var fw = active ? '900' : '400';
             html += '<div style="display:flex;align-items:center;gap:0;flex-shrink:0">';
             html += '<div style="display:flex;flex-direction:column;align-items:center;gap:4px">';
-            html += '<div style="width:32px;height:32px;border-radius:50%;background:' + circBg + ';display:flex;align-items:center;justify-content:center;font-size:' + (done ? '14px' : '13px') + ';color:' + circTxt + ';font-weight:700;border:2px solid ' + (active ? 'var(--ouro)' : done ? 'var(--verde)' : 'var(--border)') + '">' + (done ? '✓' : display) + '</div>';
+            html += '<div style="width:32px;height:32px;border-radius:50%;background:' + circBg + ';display:flex;align-items:center;justify-content:center;font-size:' + (done ? '14px' : '13px') + ';color:' + circTxt + ';font-weight:700;border:2px solid ' + (active ? actC : done ? 'var(--verde)' : pendBd) + '">' + (done ? '✓' : display) + '</div>';
             html += '<div style="font-size:9px;font-weight:' + fw + ';letter-spacing:.07em;text-transform:uppercase;color:' + lblC + ';white-space:nowrap">' + st.lbl + '</div>';
             html += '</div>';
             if (i < PES_STEPS_DATA.length - 1) {
-              html += '<div style="width:36px;height:2px;background:' + (done ? 'var(--verde)' : 'var(--border)') + ';margin:0 4px;margin-bottom:16px;flex-shrink:0"></div>';
+              html += '<div style="width:36px;height:2px;background:' + (done ? 'var(--verde)' : pendBd) + ';margin:0 4px;margin-bottom:16px;flex-shrink:0"></div>';
             }
             html += '</div>';
           });
@@ -6061,6 +6068,9 @@ export const SCREENS = {
     `,
   "pes-gaiola": `      <div class="page-header">
         <div><div class="ph-eyebrow">Pesagem · Box 3 · MF5</div><div class="ph-title">Gestão de Gaiola — Containers de MPs</div></div>
+        <div class="ph-actions" style="display:flex;gap:8px">
+          <button class="btn btn-sm btn-v" onclick="gaioAdicionarNova()" title="Adicionar uma nova gaiola a esta OP">➕ Adicionar nova Gaiola</button>
+        </div>
       </div>
 
       <div class="abox info mb14" id="gaiola-info-box"><span class="ai">ℹ</span><div>A <strong>Gaiola</strong> é o container físico que agrupa as MPs pesadas de uma ordem para transporte até o reator. Cada gaiola recebe uma <strong>etiqueta mãe</strong> com rastreabilidade das etiquetas filhas (MPs individuais).</div></div>
@@ -6071,13 +6081,16 @@ export const SCREENS = {
         <div class="form-row">
           <div class="fg" style="max-width:320px">
             <label class="lbl">ID da Gaiola <span style="font-size:9px;color:var(--text3);font-weight:400;margin-left:4px">(gaiolas desta OP)</span></label>
-            <select class="sel" id="pgaio-sel" onchange="gaioRenderTabela()" style="font-family:var(--font-m);color:var(--verde);font-weight:700">
-              <option value="GAI-2026-0089" selected>GAI-2026-0089</option>
-              <option value="GAI-2026-0090">GAI-2026-0090</option>
-              <option value="GAI-2026-0091">GAI-2026-0091</option>
-              <option value="GAI-2026-0087">GAI-2026-0087</option>
-              <option value="GAI-2026-0088">GAI-2026-0088</option>
-            </select>
+            <div style="display:flex;align-items:center;gap:8px">
+              <select class="sel" id="pgaio-sel" onchange="gaioRenderTabela()" style="flex:1;min-width:0;font-family:var(--font-m);color:var(--verde);font-weight:700">
+                <option value="GAI-2026-0089" selected>GAI-2026-0089</option>
+                <option value="GAI-2026-0090">GAI-2026-0090</option>
+                <option value="GAI-2026-0091">GAI-2026-0091</option>
+                <option value="GAI-2026-0087">GAI-2026-0087</option>
+                <option value="GAI-2026-0088">GAI-2026-0088</option>
+              </select>
+              <button type="button" title="Reimprimir etiqueta da gaiola" aria-label="Reimprimir etiqueta da gaiola" style="flex-shrink:0;width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--ouro-claro);border-radius:8px;background:var(--surface);color:var(--verde);cursor:pointer;font-size:16px;line-height:1">🖨️</button>
+            </div>
             <div style="font-size:10px;color:var(--text3);margin-top:4px">
               5 gaiolas vinculadas à <strong>OP-2026-0416</strong> · enquanto a OP não for enviada à Fabricação, as MPs podem ser movidas entre quaisquer gaiolas desta lista.
             </div>
@@ -6312,6 +6325,27 @@ export const SCREENS = {
       function gaioSelId() { var s = document.getElementById('pgaio-sel'); return s ? s.value : ''; }
       function gaioParseKg(q) { var n = parseFloat(String(q).split(' ')[0].split('.').join('').replace(',', '.')); return isNaN(n) ? 0 : n; }
       function gaioFmtKg(n) { return n.toFixed(3).replace('.', ','); }
+
+      // Adiciona uma nova gaiola (vazia) a esta OP: gera o próximo ID sequencial,
+      // registra no modelo, insere no dropdown, seleciona e re-renderiza.
+      function gaioAdicionarNova() {
+        var sel = document.getElementById('pgaio-sel');
+        if (!sel) return;
+        var max = 0, ano = '2026';
+        Object.keys(GAIO_MPS).forEach(function (k) {
+          var m = /GAI-(\\d{4})-(\\d+)/.exec(k);
+          if (m) { ano = m[1]; var n = parseInt(m[2], 10); if (n > max) max = n; }
+        });
+        var seq = String(max + 1);
+        while (seq.length < 4) seq = '0' + seq;
+        var novo = 'GAI-' + ano + '-' + seq;
+        GAIO_MPS[novo] = [];
+        var opt = document.createElement('option');
+        opt.value = novo; opt.textContent = novo;
+        sel.appendChild(opt);
+        sel.value = novo;
+        gaioRenderTabela();
+      }
 
       // Move a MP (por etiqueta) de uma gaiola para outra no modelo de dados.
       function gaioMoverNoModelo(origem, dest, etq) {

@@ -68,7 +68,7 @@ if (!customElements.get('granado-message-popup')) {
   }
 
   class GranadoMessagePopup extends HTMLElement {
-    static get observedAttributes() { return ['title', 'message', 'type', 'button-text', 'open', 'auto-destruct-after-seconds', 'close-on-backdrop']; }
+    static get observedAttributes() { return ['title', 'message', 'type', 'button-text', 'open', 'auto-destruct-after-seconds', 'close-on-backdrop', 'mobile-breakpoint']; }
 
     // ------------------------------------------------------------
     // API estática
@@ -102,16 +102,18 @@ if (!customElements.get('granado-message-popup')) {
         if (Object.prototype.hasOwnProperty.call(this, p)) { const v = this[p]; delete this[p]; this[p] = v; }
       });
       if (this.getAttribute('open') === 'false') this.style.display = 'none';
+      this._setupMedia();
       this._render();
       if (this.getAttribute('open') !== 'false') this._startAutoDestruct();
     }
-    disconnectedCallback() { this._stopAutoDestruct(); }
+    disconnectedCallback() { this._stopAutoDestruct(); this._teardownMedia(); }
     attributeChangedCallback(name) {
       if (name === 'open') {
         const hidden = this.getAttribute('open') === 'false';
         this.style.display = hidden ? 'none' : '';
         if (hidden) this._stopAutoDestruct();
       }
+      if (name === 'mobile-breakpoint' && this.isConnected) this._setupMedia();
       if (this.isConnected) this._render();
       if (name === 'auto-destruct-after-seconds' && this.isConnected && this.getAttribute('open') !== 'false') {
         this._remaining = null;
@@ -171,11 +173,41 @@ if (!customElements.get('granado-message-popup')) {
         ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
     }
 
+    // Responsivo: no mobile o botão fica maior (touch), no padrão do granado-zpl-popup.
+    _isMobile() {
+      const bp = parseInt(this.getAttribute('mobile-breakpoint'), 10) || 768;
+      try { return window.matchMedia('(max-width:' + bp + 'px)').matches; } catch (e) { return false; }
+    }
+    _setupMedia() {
+      this._teardownMedia();
+      const bp = parseInt(this.getAttribute('mobile-breakpoint'), 10) || 768;
+      try {
+        const mql = window.matchMedia('(max-width:' + bp + 'px)');
+        const self = this;
+        const handler = function () { if (self.isConnected) self._render(); };
+        if (mql.addEventListener) mql.addEventListener('change', handler);
+        else if (mql.addListener) mql.addListener(handler);
+        this._mql = mql; this._mqlHandler = handler;
+      } catch (e) {}
+    }
+    _teardownMedia() {
+      if (this._mql && this._mqlHandler) {
+        if (this._mql.removeEventListener) this._mql.removeEventListener('change', this._mqlHandler);
+        else if (this._mql.removeListener) this._mql.removeListener(this._mqlHandler);
+      }
+      this._mql = null; this._mqlHandler = null;
+    }
+
     _render() {
       const p = PALETTE[normType(this.type)];
       const title = this.getAttribute('title') || '';
       const message = this.getAttribute('message') || '';
       const btn = this.getAttribute('button-text') || 'OK';
+      const mobile = this._isMobile();
+      // Botão: no mobile fica maior (12px 16px, radius 9px, 14px) e ocupa a largura.
+      const okStyle = mobile
+        ? `font:700 14px/1.4 ${FONT};padding:12px 16px;border:1px solid ${p.text};border-radius:9px;background:${p.text};color:#fff;cursor:pointer;width:100%`
+        : `font:700 13px/1.4 ${FONT};padding:9px 24px;border:1px solid ${p.text};border-radius:8px;background:${p.text};color:#fff;cursor:pointer;min-width:120px`;
 
       // Callout no estilo "abox": ícone + texto, com fundo tinto, borda e cor do tipo.
       const callout = message
@@ -197,7 +229,7 @@ if (!customElements.get('granado-message-popup')) {
             (title ? `<div style="display:flex;align-items:center;gap:9px;margin-bottom:14px${secs ? ';padding-right:104px' : ''}"><span style="font-size:22px;flex-shrink:0;line-height:1">${p.icon}</span><span style="font-size:19px;font-weight:800;color:${p.text}">${this._esc(title)}</span></div>` : '') +
             callout +
             `<div style="display:flex;justify-content:flex-end">` +
-              `<button type="button" data-role="ok" style="font:700 13px/1.4 ${FONT};padding:9px 24px;border:1px solid ${p.text};border-radius:8px;background:${p.text};color:#fff;cursor:pointer;min-width:120px">${this._esc(btn)}</button>` +
+              `<button type="button" data-role="ok" style="${okStyle}">${this._esc(btn)}</button>` +
             `</div>` +
           `</div>` +
         `</div>`;

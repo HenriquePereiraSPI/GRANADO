@@ -97,6 +97,10 @@ function SubNavbar({ op, idAtual, navigate }) {
     return () => window.removeEventListener('pes-sala-status', handler);
   }, []);
 
+  // Modo Sem Balança (definido na escolha da sala em pes-ordens): tinta o submenu
+  // com um verde claro p/ diferenciar da pesagem normal (dourado).
+  const semBalanca = typeof window !== 'undefined' && window.PES_SALA_SEL === 'SB';
+
   return (
     <div
       className={paradaSala ? 'pes-submenu-parado' : undefined}
@@ -107,8 +111,8 @@ function SubNavbar({ op, idAtual, navigate }) {
         flexWrap: 'wrap',
         padding: '8px 14px',
         margin: '0 0 10px',
-        background: 'var(--ouro-dim)',
-        border: '1px solid var(--ouro-claro)',
+        background: semBalanca ? 'var(--verde-pale)' : 'var(--ouro-dim)',
+        border: semBalanca ? '1px solid var(--verde-claro)' : '1px solid var(--ouro-claro)',
         borderRadius: 7,
         boxShadow: 'var(--sh)',
       }}
@@ -149,6 +153,27 @@ function SubNavbar({ op, idAtual, navigate }) {
         </span>
         <span className="mono" style={{ fontWeight: 800, color: 'var(--verde)' }}>{op}</span>
       </div>
+
+      {semBalanca && (
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 5,
+            padding: '4px 12px',
+            background: 'var(--verde-claro)',
+            border: '1px solid var(--verde)',
+            borderRadius: 999,
+            color: '#FDFAF1',
+            fontSize: 10,
+            fontWeight: 800,
+            letterSpacing: '.03em',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          📦 Almoxarifado
+        </span>
+      )}
 
       {paradaSala && (
         <span className="pes-sala-parada-badge" title="A sala está parada — registre a retomada em Paradas">

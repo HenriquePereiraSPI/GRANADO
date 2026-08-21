@@ -84,7 +84,7 @@ if (!customElements.get('granado-option-popup')) {
   }
 
   class GranadoOptionPopup extends HTMLElement {
-    static get observedAttributes() { return ['title', 'message', 'type', 'buttons', 'open', 'auto-destruct-after-seconds', 'close-on-backdrop']; }
+    static get observedAttributes() { return ['title', 'message', 'type', 'buttons', 'open', 'auto-destruct-after-seconds', 'close-on-backdrop', 'mobile-breakpoint']; }
 
     // ------------------------------------------------------------
     // API estática
@@ -113,10 +113,11 @@ if (!customElements.get('granado-option-popup')) {
         if (Object.prototype.hasOwnProperty.call(this, p)) { const v = this[p]; delete this[p]; this[p] = v; }
       });
       if (this.getAttribute('open') === 'false') this.style.display = 'none';
+      this._setupMedia();
       this._render();
       if (this.getAttribute('open') !== 'false') this._startAutoDestruct();
     }
-    disconnectedCallback() { this._stopAutoDestruct(); }
+    disconnectedCallback() { this._stopAutoDestruct(); this._teardownMedia(); }
     attributeChangedCallback(name) {
       if (name === 'buttons') this._buttonsArr = null;
       if (name === 'open') {
@@ -124,6 +125,7 @@ if (!customElements.get('granado-option-popup')) {
         this.style.display = hidden ? 'none' : '';
         if (hidden) this._stopAutoDestruct();
       }
+      if (name === 'mobile-breakpoint' && this.isConnected) this._setupMedia();
       if (this.isConnected) this._render();
       if (name === 'auto-destruct-after-seconds' && this.isConnected && this.getAttribute('open') !== 'false') {
         this._remaining = null;
@@ -206,12 +208,42 @@ if (!customElements.get('granado-option-popup')) {
       }));
     }
 
+    // Responsivo: no mobile os botões ficam maiores (touch), no padrão do granado-zpl-popup.
+    _isMobile() {
+      const bp = parseInt(this.getAttribute('mobile-breakpoint'), 10) || 768;
+      try { return window.matchMedia('(max-width:' + bp + 'px)').matches; } catch (e) { return false; }
+    }
+    _setupMedia() {
+      this._teardownMedia();
+      const bp = parseInt(this.getAttribute('mobile-breakpoint'), 10) || 768;
+      try {
+        const mql = window.matchMedia('(max-width:' + bp + 'px)');
+        const self = this;
+        const handler = function () { if (self.isConnected) self._render(); };
+        if (mql.addEventListener) mql.addEventListener('change', handler);
+        else if (mql.addListener) mql.addListener(handler);
+        this._mql = mql; this._mqlHandler = handler;
+      } catch (e) {}
+    }
+    _teardownMedia() {
+      if (this._mql && this._mqlHandler) {
+        if (this._mql.removeEventListener) this._mql.removeEventListener('change', this._mqlHandler);
+        else if (this._mql.removeListener) this._mql.removeListener(this._mqlHandler);
+      }
+      this._mql = null; this._mqlHandler = null;
+    }
+
     _render() {
       const p = PALETTE[normType(this.type)];
       const title = this.getAttribute('title') || '';
       const message = this.getAttribute('message') || '';
       const btns = this._normButtons(this.buttons);
       this._renderBtns = btns;
+      const mobile = this._isMobile();
+      // Botões: no mobile maiores (12px 16px, radius 9px, 14px); no desktop, o padrão.
+      const btnBase = mobile
+        ? `flex:1;font:700 14px/1.4 ${FONT};padding:12px 16px;border-radius:9px;cursor:pointer;white-space:nowrap`
+        : `flex:1;font:700 13px/1.4 ${FONT};padding:9px 16px;border-radius:8px;cursor:pointer;white-space:nowrap`;
 
       const callout = message
         ? `<div style="border-radius:8px;padding:12px 15px;display:flex;gap:10px;align-items:flex-start;font:13px/1.55 ${FONT};background:${p.bg};border:1px solid ${p.border};color:${p.text};margin-bottom:18px">` +
@@ -225,7 +257,7 @@ if (!customElements.get('granado-option-popup')) {
         const style = (b.variant === 'ghost')
           ? `border:1px solid ${b.color || BORDER};background:transparent;color:${b.color || GHOST_TXT}`
           : `border:1px solid ${bc};background:${bc};color:#fff`;
-        return `<button type="button" data-role="opt" data-index="${i}" style="flex:1;font:700 13px/1.4 ${FONT};padding:9px 16px;border-radius:8px;cursor:pointer;white-space:nowrap;${style}">${this._esc(b.text)}</button>`;
+        return `<button type="button" data-role="opt" data-index="${i}" style="${btnBase};${style}">${this._esc(b.text)}</button>`;
       }).join('');
 
       const secs = this._autoSeconds();
