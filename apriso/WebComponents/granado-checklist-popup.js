@@ -454,22 +454,14 @@ if (!customElements.get('granado-checklist-popup')) {
       if (verifiedBy) metaParts.push('👤 ' + this._esc(verifiedBy));
       if (dateTime) metaParts.push('🕒 ' + this._esc(dateTime));
       const metaLine = metaParts.length ? `<div style="font:600 11px/1.45 ${FONT};color:${TEXT3};margin-top:5px">${metaParts.join(' · ')}</div>` : '';
-      const confirmText = this.getAttribute('confirm-text') || 'Concluir';
       const showValue = this.getAttribute('show-value') !== 'false';
       const rows = (this.data || []).map((r) => this._normRow(r));
       this._normRows = rows;
       this._step = 0;   // wizard: sempre começa no 1º item
       const hasObservacao = rows.some((r) => r.observacao != null);
 
-      // ── Bloco de informações do cabeçalho ──
-      const hi = this.headerInformation;
-      let headerHtml = '';
-      if (Array.isArray(hi) && hi.length) {
-        const items = hi.map((x) => `<div><span style="color:${TEXT3}">${this._esc(x.label)}:</span> <span style="font-weight:700;color:${TEXT}">${this._esc(x.value)}</span></div>`).join('');
-        headerHtml = `<div style="margin-top:14px;background:${SURFACE2};border:1px solid ${BORDER};border-left:4px solid ${VERDE};border-radius:8px;padding:12px 14px"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px 14px;font-size:12px">${items}</div></div>`;
-      } else if (typeof hi === 'string' && hi) {
-        headerHtml = `<div style="margin-top:14px;background:${SURFACE2};border:1px solid ${BORDER};border-left:4px solid ${VERDE};border-radius:8px;padding:12px 14px;font-size:12px;color:${TEXT2};line-height:1.5">${hi}</div>`;
-      }
+      // ── Informações do cabeçalho (mobile): "information" colapsável (barra + painel sobreposto) ──
+      const headerHtml = this._miniHeaderInfo(this.headerInformation);
 
       const lbl = `display:block;font:900 9px/1.4 ${FONT};letter-spacing:.1em;text-transform:uppercase;color:${TEXT3};margin-bottom:5px`;
       const inpBase = `box-sizing:border-box;width:100%;font:15px/1.4 ${MONO};padding:10px 12px;border:1px solid ${BORDER};border-radius:8px;background:#fff;color:${TEXT}`;
@@ -542,6 +534,34 @@ if (!customElements.get('granado-checklist-popup')) {
       if (next) next.textContent = (step >= n - 1) ? (this.getAttribute('confirm-text') || 'Concluir') : 'Próximo ›';
     }
 
+    // Informações do cabeçalho no MOBILE: barra "information" (uma linha, ícone "i")
+    // que expande um painel SOBREPOSTO (não empurra os cards) com botão "Fechar".
+    _miniHeaderInfo(hi) {
+      let content = '';
+      if (Array.isArray(hi) && hi.length) {
+        const items = hi.map((x) => `<div><span style="color:${TEXT3}">${this._esc(x.label)}:</span> <span style="font-weight:700;color:${TEXT}">${this._esc(x.value)}</span></div>`).join('');
+        content = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px 14px;font-size:12px;color:${TEXT}">${items}</div>`;
+      } else if (typeof hi === 'string' && hi) {
+        content = `<div style="font-size:12px;color:${TEXT2};line-height:1.5">${hi}</div>`;
+      } else {
+        return '';
+      }
+      const IBG = '#D8E8F8', IBD = '#90B8E0', IFG = '#1A4A8C';
+      return `<div data-role="hi-wrap" style="position:relative;margin-top:12px;z-index:6">` +
+        `<div data-role="hi-bar" style="cursor:pointer;border-radius:8px;padding:9px 13px;display:flex;gap:10px;align-items:center;background:${IBG};border:1px solid ${IBD};color:${IFG}">` +
+          `<span style="flex-shrink:0;width:20px;height:20px;border-radius:50%;border:1.5px solid ${IFG};color:${IFG};display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1">ℹ</span>` +
+          `<span style="flex:1;min-width:0;font:700 12px/1.3 ${FONT}">Informações</span>` +
+          `<span data-role="hi-chevron" style="flex-shrink:0;font-size:11px;transition:transform .15s ease">▾</span>` +
+        `</div>` +
+        `<div data-role="hi-panel" style="display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:60;background:${IBG};border:1px solid ${IBD};border-radius:8px;padding:12px 14px;box-shadow:0 14px 34px rgba(15,51,25,.28);max-height:60vh;overflow-y:auto">` +
+          content +
+          `<div style="display:flex;justify-content:flex-end;margin-top:12px">` +
+            `<button type="button" data-role="hi-close" style="font:700 12px/1.2 ${FONT};padding:8px 18px;border:1px solid ${IBD};border-radius:7px;background:#fff;color:${IFG};cursor:pointer">Fechar</button>` +
+          `</div>` +
+        `</div>` +
+      `</div>`;
+    }
+
     // ── Helpers para ler/atualizar uma linha (usados pelo botão de ação) ──
     _inputEl(role, i) { return this.querySelector('[data-role="' + role + '"][data-idx="' + i + '"]'); }
     _getInput(role, i) { const e = this._inputEl(role, i); return e ? e.value : ''; }
@@ -600,6 +620,18 @@ if (!customElements.get('granado-checklist-popup')) {
         if ((self._step || 0) >= n - 1) self._confirm(ev);
         else { self._step++; self._wizUpdate(); }
       });
+
+      // Header info colapsável (mobile): abre/fecha o painel sobreposto.
+      const hiBar = this.querySelector('[data-role="hi-bar"]');
+      const hiPanel = this.querySelector('[data-role="hi-panel"]');
+      const hiClose = this.querySelector('[data-role="hi-close"]');
+      const hiChevron = this.querySelector('[data-role="hi-chevron"]');
+      const setHi = function (open) {
+        if (hiPanel) hiPanel.style.display = open ? 'block' : 'none';
+        if (hiChevron) hiChevron.style.transform = open ? 'rotate(180deg)' : '';
+      };
+      if (hiBar) hiBar.addEventListener('click', function () { setHi(!(hiPanel && hiPanel.style.display === 'block')); });
+      if (hiClose) hiClose.addEventListener('click', function (e) { e.stopPropagation(); setHi(false); });
 
       // Campo "Valor": digitação manual marca a origem (isManualValue = true).
       this.querySelectorAll('[data-role="leitura"]').forEach(function (el) {

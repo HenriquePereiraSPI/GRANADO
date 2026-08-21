@@ -336,8 +336,7 @@ if (!customElements.get('granado-zpl-popup')) {
               `</div>` +
               `<button type="button" data-role="x" title="Cancelar" style="background:none;border:1px solid ${BORDER};border-radius:6px;padding:6px 11px;cursor:pointer;font-size:14px;color:${TEXT2};line-height:1;flex-shrink:0">✕</button>` +
             `</div>` +
-            // Resumo simplificado da etiqueta
-            `<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:${TEXT3};margin-bottom:8px">Resumo da etiqueta</div>` +
+            // Resumo simplificado da etiqueta (sem rótulo, p/ ganhar espaço)
             `<div style="margin-bottom:16px">${mini}</div>` +
             // Impressora (em cima) + Cópias (embaixo) — empilhados
             `<div style="margin-bottom:12px"><label style="${lbl}">Impressora</label><select data-role="printer" style="${sel}">${options}</select></div>` +
@@ -357,13 +356,15 @@ if (!customElements.get('granado-zpl-popup')) {
     _renderMiniPreview(type, d) {
       const f = (l, v) => `<div style="display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px dashed #C9C4B4"><span style="font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:${INK};flex-shrink:0">${this._esc(l)}</span><span style="font-size:12px;font-weight:700;color:${INK};text-align:right;word-break:break-word;min-width:0">${this._esc(v) || '—'}</span></div>`;
       const header = `<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding-bottom:8px;border-bottom:2px solid ${INK}"><div style="font-size:15px;font-weight:800;color:${INK};line-height:1.15">${this._esc(d.titulo) || '—'}</div><div style="text-align:right;flex-shrink:0"><div style="font-size:8px;font-weight:700;color:${INK}">Nº ETIQUETA</div><div style="font-family:${MONO};font-size:12px;font-weight:800;color:${INK}">${this._esc(d.noEtiqueta) || '—'}</div></div></div>`;
+      // Destaque fino: rótulo + valor na MESMA linha (flex).
+      const hl = (label, value) => `<div style="margin-top:10px;background:${INK};color:#fff;border-radius:6px;padding:7px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px"><span style="font-size:10px;font-weight:700;letter-spacing:.08em;flex-shrink:0">${label}</span><span style="font-size:18px;font-weight:800;line-height:1.1;text-align:right;word-break:break-word;min-width:0">${value}</span></div>`;
       let body, highlight;
       if (type === 'pesagem-gaiola') {
         body = f('Granel', d.granelResultante) + f('Lote', d.lote) + f('Usuário', d.usuario);
-        highlight = `<div style="margin-top:10px;background:${INK};color:#fff;border-radius:6px;padding:10px;text-align:center"><div style="font-size:10px;font-weight:700;letter-spacing:.08em">GAIOLA</div><div style="font-size:28px;font-weight:800;line-height:1.1">${this._esc(d.gaiola) || '—'}</div></div>`;
+        highlight = hl('GAIOLA', this._esc(d.gaiola) || '—');
       } else {
         body = f('Granel', d.granelResultante) + f('Matéria-prima', d.materiaPrima) + f('Lote MP', d.loteMP) + f('Validade', d.validade);
-        highlight = `<div style="margin-top:10px;background:${INK};color:#fff;border-radius:6px;padding:10px;text-align:center"><div style="font-size:10px;font-weight:700;letter-spacing:.08em">PESO LÍQUIDO</div><div style="font-size:30px;font-weight:800;line-height:1.1">${this._esc(d.pesoLiquido) || '—'}</div></div>`;
+        highlight = hl('PESO LÍQUIDO', this._esc(d.pesoLiquido) || '—');
       }
       return `<div style="background:#fff;border:2px solid ${INK};border-radius:8px;padding:12px 14px;box-sizing:border-box">${header}${body}${highlight}</div>`;
     }
