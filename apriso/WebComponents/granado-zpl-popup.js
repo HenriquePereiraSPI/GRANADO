@@ -36,6 +36,8 @@
      data   - JSON com os campos (em JS prefira a propriedade .data)
      close-on-backdrop - "true" permite fechar ao clicar fora (backdrop). Default:
               NÃO fecha ao clicar fora. Em JS use .closeOnBackdrop.
+     mobile-breakpoint - largura (px) para trocar p/ o layout MOBILE (resumo
+              simplificado da etiqueta + impressora/cópias empilhados). Default 768.
      open   - "false" inicia oculto (default visível)
 
    ── Propriedades / métodos JS
@@ -97,7 +99,7 @@ if (!customElements.get('granado-zpl-popup')) {
   const VERMELHO = '#8C1A1A';
 
   class GranadoZplPopup extends HTMLElement {
-    static get observedAttributes() { return ['type', 'data', 'open', 'close-on-backdrop']; }
+    static get observedAttributes() { return ['type', 'data', 'open', 'close-on-backdrop', 'mobile-breakpoint']; }
 
     connectedCallback() {
       ['type', 'data'].forEach((p) => {
@@ -108,12 +110,16 @@ if (!customElements.get('granado-zpl-popup')) {
         }
       });
       if (this.getAttribute('open') === 'false') this.style.display = 'none';
+      this._setupMedia();
       this._render();
     }
+
+    disconnectedCallback() { this._teardownMedia(); }
 
     attributeChangedCallback(name) {
       if (name === 'data') this._dataObj = null;
       if (name === 'open') this.style.display = (this.getAttribute('open') === 'false') ? 'none' : '';
+      if (name === 'mobile-breakpoint' && this.isConnected) this._setupMedia();
       if (this.isConnected) this._render();
     }
 
@@ -190,9 +196,41 @@ if (!customElements.get('granado-zpl-popup')) {
     }
 
     // ------------------------------------------------------------
-    // Render
+    // Render (responsivo: WEB = etiqueta completa · MOBILE = resumo)
     // ------------------------------------------------------------
+    _isMobile() {
+      const bp = parseInt(this.getAttribute('mobile-breakpoint'), 10) || 768;
+      try { return window.matchMedia('(max-width:' + bp + 'px)').matches; } catch (e) { return false; }
+    }
     _render() {
+      if (this._isMobile()) this._renderMobile();
+      else this._renderWeb();
+    }
+    // Re-renderiza ao cruzar o breakpoint (web <-> mobile).
+    _setupMedia() {
+      this._teardownMedia();
+      const bp = parseInt(this.getAttribute('mobile-breakpoint'), 10) || 768;
+      try {
+        const mql = window.matchMedia('(max-width:' + bp + 'px)');
+        const self = this;
+        const handler = function () { if (self.isConnected) self._render(); };
+        if (mql.addEventListener) mql.addEventListener('change', handler);
+        else if (mql.addListener) mql.addListener(handler);
+        this._mql = mql; this._mqlHandler = handler;
+      } catch (e) {}
+    }
+    _teardownMedia() {
+      if (this._mql && this._mqlHandler) {
+        if (this._mql.removeEventListener) this._mql.removeEventListener('change', this._mqlHandler);
+        else if (this._mql.removeListener) this._mql.removeListener(this._mqlHandler);
+      }
+      this._mql = null; this._mqlHandler = null;
+    }
+
+    // ============================================================
+    // LAYOUT WEB (etiqueta completa)
+    // ============================================================
+    _renderWeb() {
       const type = this.type;
       const d = this.data || {};
 
@@ -261,6 +299,73 @@ if (!customElements.get('granado-zpl-popup')) {
         `</div>`;
 
       this._bind();
+    }
+
+    // ============================================================
+    // LAYOUT MOBILE (resumo simplificado + impressora/cópias empilhados)
+    // ============================================================
+    _renderMobile() {
+      const type = this.type;
+      const d = this.data || {};
+      const subtitulo = d.etiqueta || (d.noEtiqueta ? 'Etiqueta Nº ' + d.noEtiqueta : 'Etiqueta');
+      const mini = (type === 'pesagem' || type === 'pesagem-gaiola')
+        ? this._renderMiniPreview(type, d)
+        : `<div style="font-family:${MONO};font-size:12px;color:${VERMELHO};padding:12px">tipo "${this._esc(type)}" não suportado.</div>`;
+
+      const printers = this._normPrinters(d.impressoras);
+      const selId = d.impressora && typeof d.impressora === 'object' ? d.impressora.id : d.impressora;
+      const options = printers.map((p) => {
+        const id = this._esc(p.id), desc = this._esc(p.descricao);
+        const isSel = selId != null && String(selId) === String(p.id) ? ' selected' : '';
+        return `<option value="${id}"${isSel}>🖨️ ${desc}</option>`;
+      }).join('');
+      const copiasSel = Math.min(4, Math.max(1, parseInt(d.copias, 10) || 1));
+      const copiasOptions = [1, 2, 3, 4].map((n) => `<option value="${n}"${n === copiasSel ? ' selected' : ''}>${n}</option>`).join('');
+
+      const lbl = `display:block;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:${TEXT3};margin-bottom:5px`;
+      const sel = `width:100%;box-sizing:border-box;font:16px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:11px 12px;border:1px solid ${BORDER};border-radius:8px;background:#fff;color:#1A1A1A`;
+
+      this.innerHTML =
+        `<div data-role="overlay" style="position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:20px 10px;backdrop-filter:blur(3px);overflow-y:auto;box-sizing:border-box">` +
+          `<div data-role="box" style="background:${SURFACE};border:1px solid ${BORDER};border-top:4px solid ${OURO};border-radius:12px;padding:18px 16px;max-width:440px;width:100%;box-shadow:0 18px 50px rgba(15,51,25,.30);margin:auto;box-sizing:border-box;font:14px/1.5 'Poppins',system-ui,Arial,sans-serif;color:#1A1A1A">` +
+            // Cabeçalho
+            `<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px">` +
+              `<div>` +
+                `<div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:${OURO}">🖨️ Reimprimir Etiqueta</div>` +
+                `<div style="font-size:17px;font-weight:700;color:${VERDE_ESC};margin-top:2px">${this._esc(subtitulo)}</div>` +
+              `</div>` +
+              `<button type="button" data-role="x" title="Cancelar" style="background:none;border:1px solid ${BORDER};border-radius:6px;padding:6px 11px;cursor:pointer;font-size:14px;color:${TEXT2};line-height:1;flex-shrink:0">✕</button>` +
+            `</div>` +
+            // Resumo simplificado da etiqueta
+            `<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:${TEXT3};margin-bottom:8px">Resumo da etiqueta</div>` +
+            `<div style="margin-bottom:16px">${mini}</div>` +
+            // Impressora (em cima) + Cópias (embaixo) — empilhados
+            `<div style="margin-bottom:12px"><label style="${lbl}">Impressora</label><select data-role="printer" style="${sel}">${options}</select></div>` +
+            `<div style="margin-bottom:18px"><label style="${lbl}">Cópias</label><select data-role="copies" style="${sel}">${copiasOptions}</select></div>` +
+            // Botões
+            `<div style="display:flex;gap:10px">` +
+              `<button type="button" data-role="cancel" style="flex:1;font:600 14px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:12px 16px;border:1px solid ${BORDER};border-radius:9px;background:transparent;color:${TEXT2};cursor:pointer">Cancelar</button>` +
+              `<button type="button" data-role="print" style="flex:1.4;font:700 14px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:12px 16px;border:1px solid ${VERDE};border-radius:9px;background:${VERDE};color:#fff;cursor:pointer">🖨️ Reimprimir</button>` +
+            `</div>` +
+          `</div>` +
+        `</div>`;
+
+      this._bind();
+    }
+
+    // Resumo simplificado da etiqueta (mobile): poucos campos + destaque + barcode pequeno.
+    _renderMiniPreview(type, d) {
+      const f = (l, v) => `<div style="display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px dashed #C9C4B4"><span style="font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:${INK};flex-shrink:0">${this._esc(l)}</span><span style="font-size:12px;font-weight:700;color:${INK};text-align:right;word-break:break-word;min-width:0">${this._esc(v) || '—'}</span></div>`;
+      const header = `<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding-bottom:8px;border-bottom:2px solid ${INK}"><div style="font-size:15px;font-weight:800;color:${INK};line-height:1.15">${this._esc(d.titulo) || '—'}</div><div style="text-align:right;flex-shrink:0"><div style="font-size:8px;font-weight:700;color:${INK}">Nº ETIQUETA</div><div style="font-family:${MONO};font-size:12px;font-weight:800;color:${INK}">${this._esc(d.noEtiqueta) || '—'}</div></div></div>`;
+      let body, highlight;
+      if (type === 'pesagem-gaiola') {
+        body = f('Granel', d.granelResultante) + f('Lote', d.lote) + f('Usuário', d.usuario);
+        highlight = `<div style="margin-top:10px;background:${INK};color:#fff;border-radius:6px;padding:10px;text-align:center"><div style="font-size:10px;font-weight:700;letter-spacing:.08em">GAIOLA</div><div style="font-size:28px;font-weight:800;line-height:1.1">${this._esc(d.gaiola) || '—'}</div></div>`;
+      } else {
+        body = f('Granel', d.granelResultante) + f('Matéria-prima', d.materiaPrima) + f('Lote MP', d.loteMP) + f('Validade', d.validade);
+        highlight = `<div style="margin-top:10px;background:${INK};color:#fff;border-radius:6px;padding:10px;text-align:center"><div style="font-size:10px;font-weight:700;letter-spacing:.08em">PESO LÍQUIDO</div><div style="font-size:30px;font-weight:800;line-height:1.1">${this._esc(d.pesoLiquido) || '—'}</div></div>`;
+      }
+      return `<div style="background:#fff;border:2px solid ${INK};border-radius:8px;padding:12px 14px;box-sizing:border-box">${header}${body}${highlight}</div>`;
     }
 
     _bind() {
