@@ -130,7 +130,7 @@ if (!customElements.get('granado-checklist-popup')) {
   const MONO = "'Arial',Helvetica,sans-serif";   // números/códigos e tabelas (--font-m)
 
   class GranadoChecklistPopup extends HTMLElement {
-    static get observedAttributes() { return ['title', 'subtitle', 'header-information', 'data', 'verified-by', 'date-time', 'confirm-text', 'checklist-id', 'checklist-code', 'close-on-backdrop', 'show-value', 'open']; }
+    static get observedAttributes() { return ['title', 'subtitle', 'header-information', 'data', 'verified-by', 'date-time', 'confirm-text', 'checklist-id', 'checklist-code', 'close-on-backdrop', 'show-value', 'mobile-breakpoint', 'open']; }
 
     // ------------------------------------------------------------
     // API estática
@@ -167,12 +167,15 @@ if (!customElements.get('granado-checklist-popup')) {
         if (Object.prototype.hasOwnProperty.call(this, p)) { const v = this[p]; delete this[p]; this[p] = v; }
       });
       if (this.getAttribute('open') === 'false') this.style.display = 'none';
+      this._setupMedia();
       this._render();
     }
+    disconnectedCallback() { this._teardownMedia(); }
     attributeChangedCallback(name) {
       if (name === 'data') this._dataArr = null;
       if (name === 'header-information') this._headerInfo = null;
       if (name === 'open') this.style.display = (this.getAttribute('open') === 'false') ? 'none' : '';
+      if (name === 'mobile-breakpoint' && this.isConnected) this._setupMedia();
       if (this.isConnected) this._render();
     }
 
@@ -304,12 +307,47 @@ if (!customElements.get('granado-checklist-popup')) {
     }
 
     // Checkbox interativo (o usuário clica para alternar true/false).
-    _checkBox(i, st) {
+    // size (opcional) aumenta o alvo de toque no layout mobile.
+    _checkBox(i, st, size) {
       const on = st === true;
-      return `<button type="button" data-role="check" data-idx="${i}" data-checked="${on}" aria-pressed="${on}" title="Marcar / desmarcar" style="width:26px;height:26px;padding:0;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border:2px solid ${on ? OK.txt : BORDER2};background:${on ? OK.txt : SURFACE};color:#fff;font:900 15px/1 ${FONT};transition:all .12s ease">${on ? '✓' : ''}</button>`;
+      const s = size || 26, rad = size ? 8 : 6, fs = size ? 19 : 15;
+      return `<button type="button" data-role="check" data-idx="${i}" data-checked="${on}" aria-pressed="${on}" title="Marcar / desmarcar" style="width:${s}px;height:${s}px;flex-shrink:0;padding:0;border-radius:${rad}px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border:2px solid ${on ? OK.txt : BORDER2};background:${on ? OK.txt : SURFACE};color:#fff;font:900 ${fs}px/1 ${FONT};transition:all .12s ease">${on ? '✓' : ''}</button>`;
     }
 
+    // Escolhe o layout conforme a largura (WEB = tabela · MOBILE = wizard).
+    _isMobile() {
+      const bp = parseInt(this.getAttribute('mobile-breakpoint'), 10) || 768;
+      try { return window.matchMedia('(max-width:' + bp + 'px)').matches; } catch (e) { return false; }
+    }
     _render() {
+      if (this._isMobile()) this._renderMobile();
+      else this._renderWeb();
+    }
+    // Re-renderiza automaticamente ao cruzar o breakpoint (web <-> mobile).
+    _setupMedia() {
+      this._teardownMedia();
+      const bp = parseInt(this.getAttribute('mobile-breakpoint'), 10) || 768;
+      try {
+        const mql = window.matchMedia('(max-width:' + bp + 'px)');
+        const self = this;
+        const handler = function () { if (self.isConnected) self._render(); };
+        if (mql.addEventListener) mql.addEventListener('change', handler);
+        else if (mql.addListener) mql.addListener(handler);
+        this._mql = mql; this._mqlHandler = handler;
+      } catch (e) {}
+    }
+    _teardownMedia() {
+      if (this._mql && this._mqlHandler) {
+        if (this._mql.removeEventListener) this._mql.removeEventListener('change', this._mqlHandler);
+        else if (this._mql.removeListener) this._mql.removeListener(this._mqlHandler);
+      }
+      this._mql = null; this._mqlHandler = null;
+    }
+
+    // ============================================================
+    // LAYOUT WEB (tabela)
+    // ============================================================
+    _renderWeb() {
       const title = this.getAttribute('title') || '';
       const subtitle = this.getAttribute('subtitle') || '';
       const verifiedBy = this.getAttribute('verified-by') || '';
@@ -403,6 +441,107 @@ if (!customElements.get('granado-checklist-popup')) {
       this._bind();
     }
 
+    // ============================================================
+    // LAYOUT MOBILE (wizard: um item por vez + progresso)
+    // ============================================================
+    _renderMobile() {
+      const title = this.getAttribute('title') || '';
+      const subtitle = this.getAttribute('subtitle') || '';
+      const verifiedBy = this.getAttribute('verified-by') || '';
+      const dateTime = this.getAttribute('date-time') || this._nowStr();
+      this._dateTimeStr = dateTime;   // guarda p/ o confirm (não há input no mobile)
+      const metaParts = [];
+      if (verifiedBy) metaParts.push('👤 ' + this._esc(verifiedBy));
+      if (dateTime) metaParts.push('🕒 ' + this._esc(dateTime));
+      const metaLine = metaParts.length ? `<div style="font:600 11px/1.45 ${FONT};color:${TEXT3};margin-top:5px">${metaParts.join(' · ')}</div>` : '';
+      const confirmText = this.getAttribute('confirm-text') || 'Concluir';
+      const showValue = this.getAttribute('show-value') !== 'false';
+      const rows = (this.data || []).map((r) => this._normRow(r));
+      this._normRows = rows;
+      this._step = 0;   // wizard: sempre começa no 1º item
+      const hasObservacao = rows.some((r) => r.observacao != null);
+
+      // ── Bloco de informações do cabeçalho ──
+      const hi = this.headerInformation;
+      let headerHtml = '';
+      if (Array.isArray(hi) && hi.length) {
+        const items = hi.map((x) => `<div><span style="color:${TEXT3}">${this._esc(x.label)}:</span> <span style="font-weight:700;color:${TEXT}">${this._esc(x.value)}</span></div>`).join('');
+        headerHtml = `<div style="margin-top:14px;background:${SURFACE2};border:1px solid ${BORDER};border-left:4px solid ${VERDE};border-radius:8px;padding:12px 14px"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px 14px;font-size:12px">${items}</div></div>`;
+      } else if (typeof hi === 'string' && hi) {
+        headerHtml = `<div style="margin-top:14px;background:${SURFACE2};border:1px solid ${BORDER};border-left:4px solid ${VERDE};border-radius:8px;padding:12px 14px;font-size:12px;color:${TEXT2};line-height:1.5">${hi}</div>`;
+      }
+
+      const lbl = `display:block;font:900 9px/1.4 ${FONT};letter-spacing:.1em;text-transform:uppercase;color:${TEXT3};margin-bottom:5px`;
+      const inpBase = `box-sizing:border-box;width:100%;font:15px/1.4 ${MONO};padding:10px 12px;border:1px solid ${BORDER};border-radius:8px;background:#fff;color:${TEXT}`;
+
+      // ── Cards (um por item, só o atual visível) ──
+      const cards = rows.length ? rows.map((r, i) => {
+        const valInit = r.hasLimits ? this._sanitizeDecimal(r.valor != null ? r.valor : '') : (r.valor != null ? r.valor : '');
+        const leitura = `<input data-role="leitura" data-idx="${i}" data-manual="false"${r.hasLimits ? ' data-decimal="true" inputmode="decimal"' : ''} type="text" value="${this._esc(valInit)}" style="${inpBase}">`;
+        const autoStatus = r.hasLimits && showValue;
+        const valorBlock = showValue ? `<div style="margin-top:12px"><span style="${lbl}">Valor</span>${leitura}</div>` : '';
+        const checkControl = autoStatus
+          ? `<span data-role="status" data-idx="${i}" title="Automático (limites informados)">${this._statusBadge(this._okOf(r.valor, r))}</span>`
+          : this._checkBox(i, r.status, 34);
+        const checkBlock = `<div style="margin-top:12px"><span style="${lbl}">${autoStatus ? 'Status' : 'Check'}</span><div style="box-sizing:border-box;width:100%;min-height:44px;padding:4px 12px;border:1px dashed ${BORDER};border-radius:8px;background:#fff;display:flex;align-items:center">${checkControl}</div></div>`;
+        const obsBlock = (hasObservacao && r.observacao != null) ? `<div style="margin-top:12px"><span style="${lbl}">Observação</span><input data-role="obs" data-idx="${i}" type="text" value="${this._esc(r.observacao)}" style="${inpBase}"></div>` : '';
+        const acaoBlock = r.acao ? `<div style="margin-top:12px"><button type="button" data-role="rowbtn" data-ghost="true" data-idx="${i}"${r.acao.title ? ` title="${this._esc(r.acao.title)}"` : ''} style="position:relative;overflow:hidden;width:100%;box-sizing:border-box;font:700 13px/1.1 ${FONT};padding:10px 14px;border:1px solid ${BORDER2};border-radius:8px;background:transparent;color:${TEXT2};cursor:pointer;transition:transform .1s ease,border-color .15s ease,color .15s ease">${this._esc(r.acao.text)}</button></div>` : '';
+        const cardInner = `<div style="border:1px solid ${BORDER};border-radius:10px;padding:14px;background:${SURFACE}">` +
+          `<div style="font-weight:800;color:${TEXT};font-size:14px;line-height:1.35">${r.caracteristica != null ? r.caracteristica : ''}${showValue ? this._limitsLabel(r) : ''}</div>` +
+          valorBlock + checkBlock + obsBlock + acaoBlock +
+        `</div>`;
+        return `<div data-role="wiz-item" data-idx="${i}" style="display:${i === 0 ? 'block' : 'none'}">${cardInner}</div>`;
+      }).join('') : `<div style="border:1px dashed ${BORDER};border-radius:10px;padding:18px;text-align:center;color:${TEXT3};font-size:13px">Nenhum item para verificar.</div>`;
+
+      this.innerHTML =
+        `<div data-role="overlay" style="position:fixed;inset:0;background:${OVERLAY_BG};z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:20px 10px;backdrop-filter:blur(3px);overflow-y:auto;box-sizing:border-box">` +
+          `<div data-role="box" style="background:${SURFACE};border:1px solid ${BORDER};border-top:4px solid ${VERDE};border-radius:14px;padding:18px 16px;max-width:480px;width:100%;box-shadow:0 18px 50px rgba(15,51,25,.30);box-sizing:border-box;font:14px/1.5 ${FONT};color:${TEXT};margin:auto">` +
+            // Cabeçalho + meta (verificado por / data)
+            `<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">` +
+              `<div>` +
+                (title ? `<div style="font-size:18px;font-weight:800;color:${VERDE_ESC};line-height:1.25">${title}</div>` : '') +
+                (subtitle ? `<div style="font-size:12px;color:${TEXT2};margin-top:2px">${subtitle}</div>` : '') +
+                metaLine +
+              `</div>` +
+              `<button type="button" data-role="x" title="Cancelar" style="background:none;border:1px solid ${BORDER};border-radius:6px;padding:6px 11px;cursor:pointer;font-size:14px;color:${TEXT2};line-height:1;flex-shrink:0">✕</button>` +
+            `</div>` +
+            headerHtml +
+            // Subheader: progresso "X / N" + barra
+            `<div style="margin-top:16px;text-align:center;font:900 13px/1 ${FONT};letter-spacing:.04em;color:${VERDE_ESC}"><span data-role="wiz-progress">${rows.length ? 1 : 0}</span> / ${rows.length}</div>` +
+            `<div style="margin-top:8px;height:6px;border-radius:99px;background:${SURFACE2};overflow:hidden"><div data-role="wiz-bar" style="height:100%;width:${rows.length ? (100 / rows.length) : 0}%;background:${VERDE};transition:width .2s ease"></div></div>` +
+            // Item atual
+            `<div data-role="wiz-body" style="margin-top:14px;max-height:48vh;overflow-y:auto;-webkit-overflow-scrolling:touch">${cards}</div>` +
+            // Erro de validação (onValidate)
+            `<div data-role="validate-error" style="display:none;margin-top:14px;padding:9px 12px;border:1px solid rgba(140,26,26,.35);background:rgba(140,26,26,.08);color:#8C1A1A;border-radius:8px;font:600 12px/1.45 ${FONT}"></div>` +
+            // Navegação: Anterior + Próximo (→ Concluir no último)
+            `<div style="display:flex;gap:10px;padding-top:16px;margin-top:16px;border-top:1px solid ${BORDER}">` +
+              `<button type="button" data-role="wiz-prev" style="flex:1;font:600 14px/1.4 ${FONT};padding:12px 16px;border:1px solid ${BORDER};border-radius:9px;background:transparent;color:${TEXT2};cursor:pointer">‹ Anterior</button>` +
+              `<button type="button" data-role="wiz-next" style="flex:1.4;font:700 14px/1.4 ${FONT};padding:12px 16px;border:1px solid ${VERDE};border-radius:9px;background:${VERDE};color:#fff;cursor:pointer">Próximo ›</button>` +
+            `</div>` +
+          `</div>` +
+        `</div>`;
+
+      this._bind();
+    }
+
+    // Wizard: mostra só o item atual, atualiza progresso/barra e o rótulo do botão.
+    _wizUpdate() {
+      const n = (this._normRows || []).length;
+      let step = this._step || 0;
+      if (step < 0) step = 0;
+      if (n && step > n - 1) step = n - 1;
+      this._step = step;
+      this.querySelectorAll('[data-role="wiz-item"]').forEach((el) => {
+        el.style.display = (parseInt(el.getAttribute('data-idx'), 10) === step) ? 'block' : 'none';
+      });
+      const prog = this.querySelector('[data-role="wiz-progress"]'); if (prog) prog.textContent = String(n ? step + 1 : 0);
+      const bar = this.querySelector('[data-role="wiz-bar"]'); if (bar) bar.style.width = (n ? ((step + 1) / n * 100) : 0) + '%';
+      const prev = this.querySelector('[data-role="wiz-prev"]');
+      if (prev) { const dis = step <= 0; prev.disabled = dis; prev.style.opacity = dis ? '.4' : '1'; prev.style.cursor = dis ? 'not-allowed' : 'pointer'; }
+      const next = this.querySelector('[data-role="wiz-next"]');
+      if (next) next.textContent = (step >= n - 1) ? (this.getAttribute('confirm-text') || 'Concluir') : 'Próximo ›';
+    }
+
     // ── Helpers para ler/atualizar uma linha (usados pelo botão de ação) ──
     _inputEl(role, i) { return this.querySelector('[data-role="' + role + '"][data-idx="' + i + '"]'); }
     _getInput(role, i) { const e = this._inputEl(role, i); return e ? e.value : ''; }
@@ -452,6 +591,16 @@ if (!customElements.get('granado-checklist-popup')) {
       if (overlay && box) overlay.addEventListener('mousedown', function (e) { if (e.target === overlay && self._closeOnBackdrop()) self.close(); });
       if (confirm) confirm.addEventListener('click', function (ev) { self._confirm(ev); });
 
+      // Wizard (mobile): Anterior / Próximo (→ Concluir no último item).
+      const wizPrev = this.querySelector('[data-role="wiz-prev"]');
+      const wizNext = this.querySelector('[data-role="wiz-next"]');
+      if (wizPrev) wizPrev.addEventListener('click', function () { if ((self._step || 0) > 0) { self._step--; self._wizUpdate(); } });
+      if (wizNext) wizNext.addEventListener('click', function (ev) {
+        const n = (self._normRows || []).length;
+        if ((self._step || 0) >= n - 1) self._confirm(ev);
+        else { self._step++; self._wizUpdate(); }
+      });
+
       // Campo "Valor": digitação manual marca a origem (isManualValue = true).
       this.querySelectorAll('[data-role="leitura"]').forEach(function (el) {
         el.addEventListener('input', function () {
@@ -486,7 +635,13 @@ if (!customElements.get('granado-checklist-popup')) {
         const release = function () { b.style.transform = ''; };
         b.addEventListener('mousedown', press);
         b.addEventListener('mouseup', release);
-        b.addEventListener('mouseleave', release);
+        if (b.getAttribute('data-ghost') === 'true') {
+          // Botão de ação no mobile (estilo ghost): hover fica verde (igual .btn-ghost).
+          b.addEventListener('mouseenter', function () { b.style.borderColor = VERDE; b.style.color = VERDE; });
+          b.addEventListener('mouseleave', function () { b.style.borderColor = BORDER2; b.style.color = TEXT2; b.style.transform = ''; });
+        } else {
+          b.addEventListener('mouseleave', release);
+        }
         b.addEventListener('touchstart', press, { passive: true });
         b.addEventListener('touchend', release);
         b.addEventListener('click', function (ev) {
@@ -510,6 +665,8 @@ if (!customElements.get('granado-checklist-popup')) {
           else if (row.acao && typeof row.acao.onClick === 'string') new Function('ctx', 'event', 'row', 'index', row.acao.onClick).call(self, ctx, ev, row, idx);
         });
       });
+
+      if (self.querySelector('[data-role="wiz-next"]')) self._wizUpdate();   // estado inicial do wizard (mobile)
     }
 
     _confirm(ev) {
@@ -533,11 +690,13 @@ if (!customElements.get('granado-checklist-popup')) {
           observacao: obsEl ? obsEl.value : r.observacao
         };
       });
+      const vbEl = this.querySelector('[data-role="verifiedBy"]');
+      const dtEl = this.querySelector('[data-role="dateTime"]');
       const detail = {
         checklistId: this.getAttribute('checklist-id'),
         checklistCode: this.getAttribute('checklist-code'),
-        verifiedBy: val('[data-role="verifiedBy"]'),
-        dateTime: val('[data-role="dateTime"]'),
+        verifiedBy: vbEl ? vbEl.value : (this.getAttribute('verified-by') || ''),
+        dateTime: dtEl ? dtEl.value : (this._dateTimeStr || this.getAttribute('date-time') || this._nowStr()),
         rows: rows
       };
 
