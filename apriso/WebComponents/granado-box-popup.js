@@ -88,7 +88,7 @@ if (!customElements.get('granado-box-popup')) {
   const SCROLL_THUMB = 'rgba(191,177,114,.55)';   // polegar do scroll (ouro discreto)
 
   class GranadoBoxPopup extends HTMLElement {
-    static get observedAttributes() { return ['title', 'subtitle', 'data', 'confirm-text', 'equip-label', 'close-on-backdrop', 'open']; }
+    static get observedAttributes() { return ['title', 'subtitle', 'data', 'confirm-text', 'equip-label', 'close-on-backdrop', 'mobile-breakpoint', 'open']; }
 
     // ------------------------------------------------------------
     // API estática
@@ -116,11 +116,14 @@ if (!customElements.get('granado-box-popup')) {
     connectedCallback() {
       if (Object.prototype.hasOwnProperty.call(this, 'data')) { const v = this.data; delete this.data; this.data = v; }
       if (this.getAttribute('open') === 'false') this.style.display = 'none';
+      this._setupMedia();
       this._render();
     }
+    disconnectedCallback() { this._teardownMedia(); }
     attributeChangedCallback(name) {
       if (name === 'data') this._dataArr = null;
       if (name === 'open') this.style.display = (this.getAttribute('open') === 'false') ? 'none' : '';
+      if (name === 'mobile-breakpoint' && this.isConnected) this._setupMedia();
       if (this.isConnected) this._render();
     }
 
@@ -162,19 +165,50 @@ if (!customElements.get('granado-box-popup')) {
     }
     _equipDesc(e) { return (e && (e.descricao || e.desc || e['descrição'])) || (e && e.id) || ''; }
 
+    // Layout responsivo: WEB = grid de cards · MOBILE = faixa de quadradinhos com scroll horizontal.
+    _isMobile() {
+      const bp = parseInt(this.getAttribute('mobile-breakpoint'), 10) || 768;
+      try { return window.matchMedia('(max-width:' + bp + 'px)').matches; } catch (e) { return false; }
+    }
+    _setupMedia() {
+      this._teardownMedia();
+      const bp = parseInt(this.getAttribute('mobile-breakpoint'), 10) || 768;
+      try {
+        const mql = window.matchMedia('(max-width:' + bp + 'px)');
+        const self = this;
+        const handler = function () { if (self.isConnected) self._render(); };
+        if (mql.addEventListener) mql.addEventListener('change', handler);
+        else if (mql.addListener) mql.addListener(handler);
+        this._mql = mql; this._mqlHandler = handler;
+      } catch (e) {}
+    }
+    _teardownMedia() {
+      if (this._mql && this._mqlHandler) {
+        if (this._mql.removeEventListener) this._mql.removeEventListener('change', this._mqlHandler);
+        else if (this._mql.removeListener) this._mql.removeListener(this._mqlHandler);
+      }
+      this._mql = null; this._mqlHandler = null;
+    }
+
     _render() {
       const title = this.getAttribute('title') || '';
       const subtitle = this.getAttribute('subtitle') || '';
       const confirmText = this.getAttribute('confirm-text') || 'Confirmar';
       const equipLabel = this.getAttribute('equip-label') || 'Equipamentos';
       const items = this.data || [];
+      const mobile = this._isMobile();
 
       const cards = items.length
-        ? items.map((it, i) => this._card(it || {}, i)).join('')
+        ? items.map((it, i) => this._card(it || {}, i, mobile)).join('')
         : `<div style="grid-column:1/-1;border:1px dashed ${BORDER};border-radius:10px;padding:24px 16px;text-align:center;color:${TEXT3};font:12px/1.5 ${FONT}">Nenhuma opção para exibir.</div>`;
 
+      // WEB: grid que quebra em linhas · MOBILE: faixa horizontal com scroll (quadradinhos pequenos).
+      const gridStyle = mobile
+        ? `display:flex;gap:8px;overflow-x:auto;padding:2px 0 8px;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:${SCROLL_THUMB} transparent`
+        : `display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;max-height:46vh;overflow-y:auto;padding:2px 6px 2px 2px;scrollbar-width:thin;scrollbar-color:${SCROLL_THUMB} transparent`;
+
       const lbl = `font:900 9px/1.4 ${FONT};letter-spacing:.1em;text-transform:uppercase;color:${TEXT3};margin-bottom:5px;display:block`;
-      const selStyle = `box-sizing:border-box;width:100%;font:12px/1.4 ${FONT};padding:8px 10px;border:1px solid ${BORDER};border-radius:6px;background:#fff;color:${TEXT}`;
+      const selStyle = `box-sizing:border-box;width:100%;font:${mobile ? '16px' : '12px'}/1.4 ${FONT};padding:${mobile ? '11px 12px' : '8px 10px'};border:1px solid ${BORDER};border-radius:6px;background:#fff;color:${TEXT}`;
 
       this.innerHTML =
         `<div data-role="overlay" style="position:fixed;inset:0;background:${OVERLAY_BG};z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto;box-sizing:border-box">` +
@@ -187,8 +221,8 @@ if (!customElements.get('granado-box-popup')) {
               `</div>` +
               `<button type="button" data-role="x" title="Cancelar" style="background:none;border:1px solid ${BORDER};border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:${TEXT2};line-height:1;flex-shrink:0">✕</button>` +
             `</div>` +
-            // Grid de cards — rola (scroll fino) quando há muitas salas
-            `<div data-role="grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;max-height:46vh;overflow-y:auto;padding:2px 6px 2px 2px;scrollbar-width:thin;scrollbar-color:${SCROLL_THUMB} transparent">${cards}</div>` +
+            // Cards — grid no web · faixa com scroll horizontal no mobile
+            `<div data-role="grid" style="${gridStyle}">${cards}</div>` +
             // Dropdown de equipamentos (aparece ao selecionar um card com equipamentos)
             `<div data-role="equip-wrap" style="display:none;margin-top:16px">` +
               `<label style="${lbl}">${this._esc(equipLabel)}</label>` +
@@ -222,26 +256,35 @@ if (!customElements.get('granado-box-popup')) {
       return null;
     }
 
-    _card(it, i) {
-      const icon = this._has(it.icon) ? `<div style="font-size:26px;margin-bottom:4px">${this._esc(it.icon)}</div>` : '';
-      const title = this._has(it.title)
-        ? `<div style="font-size:13px;font-weight:900;color:${TEXT};margin-bottom:2px">${this._esc(it.title)}</div>`
-        : `<div style="font-size:13px;font-weight:900;color:${TEXT};margin-bottom:2px">${this._esc(it.id)}</div>`;
-      const subtitle = this._has(it.subtitle) ? `<div style="font-family:${MONO};font-size:10px;color:${TEXT3}">${this._esc(it.subtitle)}</div>` : '';
-      // statusColor (opcional): troca a cor do badge. Se informado, usa a cor no
-      // texto + borda e fundo transparente; sem ele, mantém a paleta verde padrão.
+    _card(it, i, mobile) {
+      // statusColor (opcional): troca a cor do badge (texto + borda, fundo transparente).
       const sc = this._has(it.statusColor) ? this._esc(it.statusColor) : null;
       const badgeStyle = sc
         ? `color:${sc};background:transparent;border:1px solid ${sc}`
         : `color:${STATUS.txt};background:${STATUS.bg};border:1px solid ${STATUS.bd}`;
-      const status = this._has(it.status)
-        ? `<div style="margin-top:6px"><span style="display:inline-block;padding:2px 8px;border-radius:9px;font:800 9px/1.4 ${FONT};${badgeStyle}">${this._esc(it.status)}</span></div>`
-        : '';
+      const t = this._has(it.title) ? it.title : it.id;
       // disabled: card esmaecido e sem interação (pointer-events:none impede o clique).
       const disabled = this._bool(it.disabled);
       const cardStyle = disabled
         ? `opacity:.45;filter:grayscale(.35);cursor:not-allowed;pointer-events:none`
         : `cursor:pointer`;
+
+      if (mobile) {
+        // Quadradinho pequeno — fica numa faixa com scroll horizontal.
+        const icon = this._has(it.icon) ? `<div style="font-size:22px;line-height:1">${this._esc(it.icon)}</div>` : '';
+        const title = `<div style="font:900 11px/1.15 ${FONT};color:${TEXT};margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">${this._esc(t)}</div>`;
+        const subtitle = this._has(it.subtitle) ? `<div style="font-family:${MONO};font-size:8px;color:${TEXT3};margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">${this._esc(it.subtitle)}</div>` : '';
+        const status = this._has(it.status) ? `<div style="margin-top:4px"><span style="display:inline-block;padding:1px 6px;border-radius:8px;font:800 8px/1.3 ${FONT};${badgeStyle}">${this._esc(it.status)}</span></div>` : '';
+        return `<div data-role="box-card" data-idx="${i}"${disabled ? ' data-disabled="1" aria-disabled="true"' : ''} style="${cardStyle};flex:0 0 auto;width:88px;box-sizing:border-box;border:2px solid ${BORDER};border-radius:10px;padding:10px 6px;background:${SURFACE2};text-align:center;transition:all .18s">${icon}${title}${subtitle}${status}</div>`;
+      }
+
+      // ── WEB (grid) ──
+      const icon = this._has(it.icon) ? `<div style="font-size:26px;margin-bottom:4px">${this._esc(it.icon)}</div>` : '';
+      const title = `<div style="font-size:13px;font-weight:900;color:${TEXT};margin-bottom:2px">${this._esc(t)}</div>`;
+      const subtitle = this._has(it.subtitle) ? `<div style="font-family:${MONO};font-size:10px;color:${TEXT3}">${this._esc(it.subtitle)}</div>` : '';
+      const status = this._has(it.status)
+        ? `<div style="margin-top:6px"><span style="display:inline-block;padding:2px 8px;border-radius:9px;font:800 9px/1.4 ${FONT};${badgeStyle}">${this._esc(it.status)}</span></div>`
+        : '';
       return `<div data-role="box-card" data-idx="${i}"${disabled ? ' data-disabled="1" aria-disabled="true"' : ''} style="${cardStyle};border:2px solid ${BORDER};border-radius:10px;padding:14px 10px;background:${SURFACE2};text-align:center;transition:all .18s">${icon}${title}${subtitle}${status}</div>`;
     }
 
