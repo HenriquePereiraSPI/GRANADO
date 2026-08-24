@@ -5107,7 +5107,8 @@ poppins-700.woff2
         <p class="gd-lead">
           Recupera as informações de <strong>disponibilidade e paradas</strong> de um recurso
           (equipamento) num período. Retorna um <strong>resumo agregado</strong>
-          (<code>ResourceGrouped</code>), a <strong>linha do tempo dos estados</strong>
+          (<code>ResourceGrouped</code>), um <strong>detalhamento por dia</strong>
+          (<code>DateGrouped</code>), a <strong>linha do tempo dos estados</strong>
           (<code>ResourceStates</code> — cada intervalo de operação ou parada) e um
           <strong>resumo consolidado</strong> do período (<code>ResourceOverall</code>).
         </p>
@@ -5120,7 +5121,7 @@ poppins-700.woff2
         <p class="gd-lead">
           Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
           (<code>Success</code> / <code>Message</code>) acrescido de <code>ResourceGrouped</code>,
-          <code>ResourceStates</code> e <code>ResourceOverall</code>.
+          <code>DateGrouped</code>, <code>ResourceStates</code> e <code>ResourceOverall</code>.
         </p>
 
         <!-- ===== Inputs ===== -->
@@ -5176,6 +5177,20 @@ poppins-700.woff2
       <span class="tk-key">"TempoTotalSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"377690"</span><span class="tk-punc">,</span> <span class="tk-key">"DowntimeSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"35545"</span><span class="tk-punc">,</span> <span class="tk-key">"RunTimeSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"342145"</span><span class="tk-punc">,</span> <span class="tk-key">"DisponibilidadePct"</span><span class="tk-punc">:</span> <span class="tk-str">"90.59"</span>
     }
   ]<span class="tk-punc">,</span>
+  <span class="tk-key">"DateGrouped"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000032"</span><span class="tk-punc">,</span> <span class="tk-key">"Date"</span><span class="tk-punc">:</span> <span class="tk-str">"8/4/2026 12:00:00 AM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PeriodoIniUTC"</span><span class="tk-punc">:</span> <span class="tk-str">"8/4/2026 4:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoFimUTC"</span><span class="tk-punc">:</span> <span class="tk-str">"8/5/2026 4:00:00 AM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PeriodoIni"</span><span class="tk-punc">:</span> <span class="tk-str">"8/4/2026 1:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoFim"</span><span class="tk-punc">:</span> <span class="tk-str">"8/5/2026 1:00:00 AM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoTotalSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"86400"</span><span class="tk-punc">,</span> <span class="tk-key">"DowntimeSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"49890"</span><span class="tk-punc">,</span> <span class="tk-key">"RunTimeSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"36510"</span><span class="tk-punc">,</span> <span class="tk-key">"DisponibilidadePct"</span><span class="tk-punc">:</span> <span class="tk-str">"42.26"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000032"</span><span class="tk-punc">,</span> <span class="tk-key">"Date"</span><span class="tk-punc">:</span> <span class="tk-str">"8/5/2026 12:00:00 AM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PeriodoIniUTC"</span><span class="tk-punc">:</span> <span class="tk-str">"8/5/2026 4:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoFimUTC"</span><span class="tk-punc">:</span> <span class="tk-str">"8/6/2026 4:00:00 AM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PeriodoIni"</span><span class="tk-punc">:</span> <span class="tk-str">"8/5/2026 1:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoFim"</span><span class="tk-punc">:</span> <span class="tk-str">"8/6/2026 1:00:00 AM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoTotalSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"86400"</span><span class="tk-punc">,</span> <span class="tk-key">"DowntimeSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"RunTimeSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"86400"</span><span class="tk-punc">,</span> <span class="tk-key">"DisponibilidadePct"</span><span class="tk-punc">:</span> <span class="tk-str">"100.00"</span>
+    }
+  ]<span class="tk-punc">,</span>
   <span class="tk-key">"ResourceStates"</span><span class="tk-punc">:</span> [
     {
       <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000020"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoIni"</span><span class="tk-punc">:</span> <span class="tk-str">"6/25/2026 11:58:17 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoFim"</span><span class="tk-punc">:</span> <span class="tk-str">"6/25/2026 12:01:06 PM"</span><span class="tk-punc">,</span>
@@ -5206,6 +5221,7 @@ poppins-700.woff2
             <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se a consulta foi feita com sucesso.</td></tr>
             <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
             <tr><td class="col-name">ResourceGrouped</td><td class="col-type">array&lt;resumo&gt;</td><td class="col-desc">Resumo agregado do período (totais e disponibilidade). Campos abaixo.</td></tr>
+            <tr><td class="col-name">DateGrouped</td><td class="col-type">array&lt;resumo diário&gt;</td><td class="col-desc">Detalhamento da disponibilidade <strong>agrupado por dia</strong> (uma linha por dia do período). Campos abaixo.</td></tr>
             <tr><td class="col-name">ResourceStates</td><td class="col-type">array&lt;estado&gt;</td><td class="col-desc">Linha do tempo dos estados do recurso (cada intervalo de operação/parada). Campos abaixo.</td></tr>
             <tr><td class="col-name">ResourceOverall</td><td class="col-type">array&lt;resumo&gt;</td><td class="col-desc">Resumo <strong>consolidado</strong> (linha <code>"OVERALL"</code>) do período, com datas em UTC e local. Campos abaixo.</td></tr>
           </tbody>
@@ -5224,6 +5240,25 @@ poppins-700.woff2
             <tr><td class="col-name">DowntimeSeg</td><td class="col-type">string (número)</td><td class="col-desc">Tempo parado (downtime), em segundos.</td></tr>
             <tr><td class="col-name">RunTimeSeg</td><td class="col-type">string (número)</td><td class="col-desc">Tempo em operação (run time), em segundos.</td></tr>
             <tr><td class="col-name">DisponibilidadePct</td><td class="col-type">string (número)</td><td class="col-desc">Disponibilidade no período, em % (RunTime / TempoTotal).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de <code>DateGrouped</code> (resumo por dia)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:180px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">ResourceName</td><td class="col-type">string</td><td class="col-desc">Nome do recurso.</td></tr>
+            <tr><td class="col-name">Date</td><td class="col-type">string (data)</td><td class="col-desc">Dia a que se refere a linha (meia-noite local, ex.: <code>8/4/2026 12:00:00 AM</code>).</td></tr>
+            <tr><td class="col-name">PeriodoIniUTC</td><td class="col-type">string (data)</td><td class="col-desc">Início do dia considerado, em <strong>UTC</strong>.</td></tr>
+            <tr><td class="col-name">PeriodoFimUTC</td><td class="col-type">string (data)</td><td class="col-desc">Fim do dia considerado, em <strong>UTC</strong>.</td></tr>
+            <tr><td class="col-name">PeriodoIni</td><td class="col-type">string (data)</td><td class="col-desc">Início do dia considerado, no fuso <strong>local</strong>.</td></tr>
+            <tr><td class="col-name">PeriodoFim</td><td class="col-type">string (data)</td><td class="col-desc">Fim do dia considerado, no fuso <strong>local</strong>.</td></tr>
+            <tr><td class="col-name">TempoTotalSeg</td><td class="col-type">string (número)</td><td class="col-desc">Tempo total do dia, em segundos (normalmente 86400).</td></tr>
+            <tr><td class="col-name">DowntimeSeg</td><td class="col-type">string (número)</td><td class="col-desc">Tempo parado (downtime) no dia, em segundos.</td></tr>
+            <tr><td class="col-name">RunTimeSeg</td><td class="col-type">string (número)</td><td class="col-desc">Tempo em operação (run time) no dia, em segundos.</td></tr>
+            <tr><td class="col-name">DisponibilidadePct</td><td class="col-type">string (número)</td><td class="col-desc">Disponibilidade do dia, em % (RunTime ÷ TempoTotal).</td></tr>
           </tbody>
         </table>
 
@@ -5452,7 +5487,7 @@ poppins-700.woff2
           Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
           (<code>Success</code> / <code>Message</code>) acrescido de <code>Data</code> — cujo formato
           <strong>depende de <code>Type</code></strong> — e, no modo <code>DEFAULT</code>, também dos
-          blocos <code>Overall</code> e <code>Grouped</code> (ver Outputs).
+          blocos <code>Overall</code>, <code>GroupedResource</code> e <code>GroupedDate</code> (ver Outputs).
         </p>
 
         <!-- ===== Inputs ===== -->
@@ -5542,8 +5577,9 @@ poppins-700.woff2
         <h2 class="gd-h2">Outputs — <code>Type = "DEFAULT"</code></h2>
         <p class="gd-lead">
           <code>Data</code> traz uma linha por <strong>pesagem</strong> (item/linha da ordem);
-          <code>Overall</code> resume a performance média do período; e <code>Grouped</code> agrega a
-          performance média <strong>por recurso do centro de trabalho</strong>:
+          <code>Overall</code> resume a performance média do período; <code>GroupedResource</code> agrega a
+          performance média <strong>por recurso do centro de trabalho</strong>; e <code>GroupedDate</code>
+          agrega a performance média <strong>por recurso e por dia</strong>:
         </p>
         <pre class="gd-code">{
   <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
@@ -5571,10 +5607,17 @@ poppins-700.woff2
     }
   ]<span class="tk-punc">,</span>
   <span class="tk-key">"Overall"</span><span class="tk-punc">:</span> { <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"2573.113392"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2027 12:00:00 AM"</span> }<span class="tk-punc">,</span>
-  <span class="tk-key">"Grouped"</span><span class="tk-punc">:</span> [
-    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"6000.000000"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2027 12:00:00 AM"</span> }<span class="tk-punc">,</span>
-    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000004"</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"88.095000"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2027 12:00:00 AM"</span> }<span class="tk-punc">,</span>
-    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000039"</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"5008.695652"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/2027 12:00:00 AM"</span> }
+  <span class="tk-key">"GroupedResource"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000014"</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"913.144838"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/20/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/25/2026 12:00:00 AM"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000039"</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"6000.000000"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/20/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/25/2026 12:00:00 AM"</span> }
+  ]<span class="tk-punc">,</span>
+  <span class="tk-key">"GroupedDate"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000014"</span><span class="tk-punc">,</span> <span class="tk-key">"Date"</span><span class="tk-punc">:</span> <span class="tk-str">"8/20/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"313.346666"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/20/2026 7:06:39 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/20/2026 7:07:23 PM"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000014"</span><span class="tk-punc">,</span> <span class="tk-key">"Date"</span><span class="tk-punc">:</span> <span class="tk-str">"8/21/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"589.370500"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/21/2026 2:08:36 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/21/2026 7:52:24 PM"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000014"</span><span class="tk-punc">,</span> <span class="tk-key">"Date"</span><span class="tk-punc">:</span> <span class="tk-str">"8/24/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"2928.000000"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/24/2026 1:50:45 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/24/2026 8:55:29 PM"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000039"</span><span class="tk-punc">,</span> <span class="tk-key">"Date"</span><span class="tk-punc">:</span> <span class="tk-str">"8/20/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"6000.000000"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/20/2026 4:59:35 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/20/2026 7:55:05 PM"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000039"</span><span class="tk-punc">,</span> <span class="tk-key">"Date"</span><span class="tk-punc">:</span> <span class="tk-str">"8/21/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"6000.000000"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/21/2026 11:24:56 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/21/2026 6:04:22 PM"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000039"</span><span class="tk-punc">,</span> <span class="tk-key">"Date"</span><span class="tk-punc">:</span> <span class="tk-str">"8/24/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"6000.000000"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/24/2026 12:04:47 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/24/2026 6:05:20 PM"</span> }
   ]
 }</pre>
 
@@ -5619,7 +5662,7 @@ poppins-700.woff2
           </tbody>
         </table>
 
-        <h3 class="gd-h3">Campos de cada item de <code>Grouped</code> (DEFAULT)</h3>
+        <h3 class="gd-h3">Campos de cada item de <code>GroupedResource</code> (DEFAULT)</h3>
         <p class="gd-lead" style="font-size:12px;color:#8A8575">Performance média <strong>agrupada por recurso do centro de trabalho</strong> (um item por <code>WorkcenterResourceName</code>).</p>
         <table class="gd-api">
           <thead>
@@ -5630,6 +5673,21 @@ poppins-700.woff2
             <tr><td class="col-name">AvgPerformancePct</td><td class="col-type">string (número)</td><td class="col-desc">Performance <strong>média</strong> (%) das pesagens desse recurso no período.</td></tr>
             <tr><td class="col-name">StartDate</td><td class="col-type">string (data)</td><td class="col-desc">Início do período considerado (espelha o input <code>StartDate</code>).</td></tr>
             <tr><td class="col-name">FinishDate</td><td class="col-type">string (data)</td><td class="col-desc">Fim do período considerado (espelha o input <code>EndDate</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada item de <code>GroupedDate</code> (DEFAULT)</h3>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575">Performance média <strong>agrupada por recurso e por dia</strong> (um item por <code>WorkcenterResourceName</code> + <code>Date</code>).</p>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:240px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">WorkcenterResourceName</td><td class="col-type">string</td><td class="col-desc">Recurso do centro de trabalho do grupo.</td></tr>
+            <tr><td class="col-name">Date</td><td class="col-type">string (data)</td><td class="col-desc">Dia a que se refere a linha (meia-noite local, ex.: <code>8/20/2026 12:00:00 AM</code>).</td></tr>
+            <tr><td class="col-name">AvgPerformancePct</td><td class="col-type">string (número)</td><td class="col-desc">Performance <strong>média</strong> (%) das pesagens desse recurso <strong>naquele dia</strong>.</td></tr>
+            <tr><td class="col-name">StartDate</td><td class="col-type">string (data)</td><td class="col-desc">Data/hora da <strong>primeira</strong> pesagem do recurso no dia.</td></tr>
+            <tr><td class="col-name">FinishDate</td><td class="col-type">string (data)</td><td class="col-desc">Data/hora da <strong>última</strong> pesagem do recurso no dia.</td></tr>
           </tbody>
         </table>
 
