@@ -7104,8 +7104,7 @@ export const SCREENS = {
           _infoEl.innerHTML =
             '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">MP</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + d.mat + '</div></div>' +
             '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Lote</span><div style="font-family:var(--font-m);font-size:12px;font-weight:700;margin-top:2px">' + d.lote + '</div></div>' +
-            '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Qtd. Pesada</span><div style="font-size:12px;font-weight:700;color:var(--verde);margin-top:2px">' + d.pesado + ' kg</div></div>' +
-            '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Qtd. Alvo</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + d.alvo + ' kg</div></div>';
+            '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Quantidade Original</span><div style="font-size:12px;font-weight:700;color:var(--verde);margin-top:2px">' + d.pesado + ' kg</div></div>';
         }
         // A ação depende da aba:
         //  · Ordem   -> Ajuste. Mantém o dropdown de ações VISÍVEL (por ora só "Ajuste").
