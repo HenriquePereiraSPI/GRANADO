@@ -6435,10 +6435,90 @@ export const SCREENS = {
         </div>
       </div>
 
-      <div class="card cv">
-        <div class="card-title">Registro de Pesagens Confirmadas — Clique na linha para ações</div>
+      <!-- Abas: Matérias-Primas Ordem / Pesadas (mesmos dados por ora) -->
+      <div id="mps-tabs" style="display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:14px;flex-wrap:wrap">
+        <button id="mps-tab-ordem" type="button" onclick="mpsTabSel('ordem')" style="padding:9px 18px;font-size:12px;font-weight:800;letter-spacing:.02em;background:none;border:none;cursor:pointer;color:var(--verde);border-bottom:3px solid var(--verde);margin-bottom:-2px">📋 Matérias-Primas Ordem</button>
+        <button id="mps-tab-pesadas" type="button" onclick="mpsTabSel('pesadas')" style="padding:9px 18px;font-size:12px;font-weight:700;letter-spacing:.02em;background:none;border:none;cursor:pointer;color:var(--text3);border-bottom:3px solid transparent;margin-bottom:-2px">⚖️ Matérias-Primas Pesadas</button>
+      </div>
 
-        <div id="mps-tabela-wrap" style="overflow-x:auto">
+      <div class="card cv">
+        <div class="card-title" id="mps-card-title">Matérias-Primas da Ordem — Clique na linha para ações</div>
+
+        <!-- Mobile: as abas viram um dropdown DENTRO do card (mesmo painel dos
+             items), no padrão da tela de Gaiola. CSS troca tabs <-> select. -->
+        <div id="mps-tab-select-wrap" style="margin-bottom:14px">
+          <label class="lbl">Visualização</label>
+          <select id="mps-tab-select" class="sel" onchange="mpsTabSel(this.value)" style="width:100%;font-family:var(--font-m);color:var(--verde);font-weight:700">
+            <option value="ordem">📋 Matérias-Primas Ordem</option>
+            <option value="pesadas">⚖️ Matérias-Primas Pesadas</option>
+          </select>
+        </div>
+
+        <!-- Aba ORDEM: MESMOS itens da "Fila de Pesagem" do Cockpit (MPs da OP). -->
+        <div id="mps-ordem-wrap" style="overflow-x:auto">
+        <table class="tbl" id="tbl-mps-ordem" style="font-size:11px;min-width:760px">
+          <thead>
+            <tr>
+              <th>#</th><th>Código MP</th><th>Material</th><th>Lote</th>
+              <th>Alvo (kg)</th><th>Pesado (kg)</th><th>Status</th><th>Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-cod="MP-9999" style="cursor:pointer" onclick="pesAbrirDesvio({n:'1',mat:'Conservante BHT',lote:'BHT-2026-01',alvo:'1,800',pesado:'—',desv:'—',op:'',mat_op:'',sala:'',hr:'',bal:'',etq:'',status:'pendente'})">
+              <td class="mono" style="color:var(--text3)">1</td>
+              <td class="mono" style="font-size:10px;color:var(--text2)">MP-9999</td>
+              <td style="font-size:12px">Conservante BHT</td>
+              <td class="mono" style="font-size:10px">BHT-2026-01</td>
+              <td class="mono">1,800</td>
+              <td class="mono" style="color:var(--text3)">—</td>
+              <td><span class="bdg" style="font-size:9px;background:var(--alr-p);color:var(--alr);border:1px solid var(--alr-b)">PENDENTE</span></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'1',mat:'Conservante BHT',lote:'BHT-2026-01',alvo:'1,800',pesado:'—',desv:'—',op:'',mat_op:'',sala:'',hr:'',bal:'',etq:'',status:'pendente'});event.stopPropagation()">⋮ Ações</button></td>
+            </tr>
+            <tr data-cod="MP-9118" style="cursor:pointer" onclick="pesAbrirDesvio({n:'2',mat:'Corante Rosaline',lote:'COR-2026-15',alvo:'0,150',pesado:'—',desv:'—',op:'',mat_op:'',sala:'',hr:'',bal:'',etq:'',status:'pendente'})">
+              <td class="mono" style="color:var(--text3)">2</td>
+              <td class="mono" style="font-size:10px;color:var(--text2)">MP-9118</td>
+              <td style="font-size:12px">Corante Rosaline</td>
+              <td class="mono" style="font-size:10px">COR-2026-15</td>
+              <td class="mono">0,150</td>
+              <td class="mono" style="color:var(--text3)">—</td>
+              <td><span class="bdg" style="font-size:9px;background:var(--alr-p);color:var(--alr);border:1px solid var(--alr-b)">PENDENTE</span></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'2',mat:'Corante Rosaline',lote:'COR-2026-15',alvo:'0,150',pesado:'—',desv:'—',op:'',mat_op:'',sala:'',hr:'',bal:'',etq:'',status:'pendente'});event.stopPropagation()">⋮ Ações</button></td>
+            </tr>
+            <tr data-cod="MP-2256" style="cursor:pointer" onclick="pesAbrirDesvio({n:'3',mat:'Fenoxietanol',lote:'FEN-2026-03',alvo:'3,000',pesado:'3,012',desv:'+0,012',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'06:51',bal:'BAL-01',etq:'ETQ-2026-0416-004',status:'concluida'})">
+              <td class="mono" style="color:var(--ok)">3</td>
+              <td class="mono" style="font-size:10px;color:var(--text2)">MP-2256</td>
+              <td style="font-size:12px;color:var(--ok)">✓ Fenoxietanol</td>
+              <td class="mono" style="font-size:10px">FEN-2026-03</td>
+              <td class="mono">3,000</td>
+              <td class="mono" style="color:var(--ok)">3,012</td>
+              <td><span class="bdg bdg-ok" style="font-size:9px">CONCLUÍDA</span></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'3',mat:'Fenoxietanol',lote:'FEN-2026-03',alvo:'3,000',pesado:'3,012',desv:'+0,012',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'06:51',bal:'BAL-01',etq:'ETQ-2026-0416-004',status:'concluida'});event.stopPropagation()">⋮ Ações</button></td>
+            </tr>
+            <tr data-cod="MP-5593" style="cursor:pointer" onclick="pesAbrirDesvio({n:'4',mat:'TEA 99%',lote:'TEA-2026-07',alvo:'1,800',pesado:'1,801',desv:'+0,001',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005',status:'concluida'})">
+              <td class="mono" style="color:var(--ok)">4</td>
+              <td class="mono" style="font-size:10px;color:var(--text2)">MP-5593</td>
+              <td style="font-size:12px;color:var(--ok)">✓ TEA 99%</td>
+              <td class="mono" style="font-size:10px">TEA-2026-07</td>
+              <td class="mono">1,800</td>
+              <td class="mono" style="color:var(--ok)">1,801</td>
+              <td><span class="bdg bdg-ok" style="font-size:9px">CONCLUÍDA</span></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'4',mat:'TEA 99%',lote:'TEA-2026-07',alvo:'1,800',pesado:'1,801',desv:'+0,001',op:'J. Santos',mat_op:'155',sala:'Sala A · Box 1',hr:'07:02',bal:'BAL-01',etq:'ETQ-2026-0416-005',status:'concluida'});event.stopPropagation()">⋮ Ações</button></td>
+            </tr>
+            <tr data-cod="MP-0001" style="cursor:pointer" onclick="pesAbrirDesvio({n:'5',mat:'Aqua (Água Purificada)',lote:'AGUA-2026-03',alvo:'412,500',pesado:'—',desv:'—',op:'',mat_op:'',sala:'',hr:'',bal:'',etq:'',status:'pendente'})">
+              <td class="mono" style="color:var(--text3)">5</td>
+              <td class="mono" style="font-size:10px;color:var(--text2)">MP-0001</td>
+              <td style="font-size:12px">Aqua (Água Purificada)</td>
+              <td class="mono" style="font-size:10px">AGUA-2026-03</td>
+              <td class="mono">412,500</td>
+              <td class="mono" style="color:var(--text3)">—</td>
+              <td><span class="bdg" style="font-size:9px;background:var(--alr-p);color:var(--alr);border:1px solid var(--alr-b)">PENDENTE</span></td>
+              <td><button class="btn btn-sm btn-ghost" style="font-size:9px" onclick="pesAbrirDesvio({n:'5',mat:'Aqua (Água Purificada)',lote:'AGUA-2026-03',alvo:'412,500',pesado:'—',desv:'—',op:'',mat_op:'',sala:'',hr:'',bal:'',etq:'',status:'pendente'});event.stopPropagation()">⋮ Ações</button></td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+
+        <div id="mps-tabela-wrap" style="overflow-x:auto;display:none">
         <table class="tbl" id="tbl-mps-pesadas" style="font-size:11px;min-width:1180px">
           <thead>
             <tr>
@@ -6446,7 +6526,7 @@ export const SCREENS = {
               <th>Alvo (kg)</th><th>Pesado (kg)</th>
               <th title="Desvio = Pesado − Alvo">Desvio</th>
               <th title="Variância máxima permitida (cadastro da MP). Sistema bloqueia pesagens fora deste limite.">Variância máx.</th>
-              <th>Nº Gaiola</th><th>Cód. Etiqueta</th><th>Operador<br/>(Matrícula)</th><th>Horário</th><th>Balança</th><th>Sala · Box</th><th>Status</th><th></th>
+              <th>Nº Gaiola</th><th>Cód. Etiqueta</th><th>Operador<br/>(Matrícula)</th><th>Horário</th><th>Balança</th><th>Sala · Box</th><th>Status</th><th>Ação</th>
             </tr>
           </thead>
           <tbody>
@@ -6620,21 +6700,34 @@ export const SCREENS = {
         </table>
         </div><!-- /overflow-x:auto -->
 
-        <!-- Versão MOBILE: galeria das MPs pesadas (granado-gallery), sincronizada com a tabela -->
-        <style>#pes-mps-gallery{display:none}@media (max-width:768px){#mps-tabela-wrap{display:none!important}#pes-mps-gallery{display:block!important}}</style>
+        <!-- Versão MOBILE: cada aba vira uma galeria vertical (granado-gallery).
+             Visibilidade de tabelas x galerias é controlada por JS (mpsTabSel);
+             o CSS abaixo só troca as abas (tabs) pelo dropdown no breakpoint. -->
+        <style>
+          #pes-mps-gallery,#pes-mps-ordem-gallery{display:none}
+          #mps-tab-select-wrap{display:none}
+          /* !important vence o display:flex inline de #mps-tabs no breakpoint. */
+          @media (max-width:768px){
+            #mps-tabs{display:none!important}
+            #mps-tab-select-wrap{display:block!important}
+          }
+        </style>
+        <granado-gallery id="pes-mps-ordem-gallery" enable-scroll="true" scroll-height="60vh"></granado-gallery>
         <granado-gallery id="pes-mps-gallery" enable-scroll="true" scroll-height="60vh"></granado-gallery>
 
         <script>
-        // Remove as colunas "Desvio" (índice 7) e "Variância máx." (índice 8)
-        // de todas as linhas (thead + tbody). Idempotente por carga da tela.
-        (function mpsRemoverColunasDesvioVar() {
+        // Remove colunas da tabela (thead + tbody), em TODAS as linhas.
+        // Índices na ordem ORIGINAL do HTML: 7 Desvio · 8 Variância máx. ·
+        // 12 Horário · 13 Balança · 14 Sala · Box. Removidos em ordem DECRESCENTE
+        // (não desloca os índices menores). Idempotente por carga da tela.
+        (function mpsRemoverColunas() {
           function run() {
             var tbl = document.getElementById('tbl-mps-pesadas');
             if (!tbl) { setTimeout(run, 50); return; }
+            var remover = [14, 13, 12, 8, 7];
             tbl.querySelectorAll('tr').forEach(function(tr) {
               var c = tr.children;
-              if (c[8]) tr.removeChild(c[8]); // Variância máx.
-              if (c[7]) tr.removeChild(c[7]); // Desvio
+              remover.forEach(function(idx) { if (c[idx]) tr.removeChild(c[idx]); });
             });
           }
           run();
@@ -6665,16 +6758,15 @@ export const SCREENS = {
             var children = [];
             for (var k = 0; k < nP; k++) {
               children.push({
-                title: '📦 Gaiola ' + (seqBase + k),
-                subtitle: 'Leitura ' + (k + 1) + ' de ' + nP + (d.etq ? ' · ' + d.etq : ''),
-                data: '⚖️ ' + (pesadoNum / nP).toFixed(3).replace('.', ',') + ' kg' + (d.bal ? ' · ' + d.bal : ''),
-                status: 'OK', statusColor: '#1C7A38'
+                title: '🧪 ' + (d.mat || ''),
+                subtitle: '⚖️ Pesado ' + (pesadoNum / nP).toFixed(3).replace('.', ',') + ' kg',
+                data: '📅 16/04/2026 · ' + (d.hr || '—')
               });
             }
             items.push({
               title: '🧪 ' + (d.mat || ''),
-              subtitle: (d.n ? '#' + d.n + ' · ' : '') + (d.lote ? 'Lote ' + d.lote : ''),
-              data: '🎯 ' + (d.alvo || '—') + ' → ⚖️ ' + (d.pesado || '—') + ' kg · Δ ' + (d.desv || '—') + (d.bal ? ' · ' + d.bal : ''),
+              subtitle: (d.lote ? 'Lote ' + d.lote : ''),
+              data: '🎯 Alvo ' + (d.alvo || '—') + ' kg · ⚖️ Pesado ' + (d.pesado || '—') + ' kg',
               status: SL[st] || String(st).toUpperCase(),
               statusColor: SC[st] || '#8A8575',
               metadata: { row: r },
@@ -6688,6 +6780,38 @@ export const SCREENS = {
             if (row) row.click();
           };
         }
+
+        // Mobile: espelha a aba ORDEM (tbl-mps-ordem, estática) numa galeria.
+        // Clicar no card dispara o onclick da linha (abre a Leitura da Etiqueta).
+        function pesMpsSyncOrdemGallery() {
+          var g = document.getElementById('pes-mps-ordem-gallery'); if (!g) return;
+          var SC = { concluida:'#1C7A38', pendente:'#9A5A00' };
+          var SL = { concluida:'✓ CONCLUÍDA', pendente:'⏳ PENDENTE' };
+          var items = [];
+          document.querySelectorAll('#tbl-mps-ordem tbody tr').forEach(function (r) {
+            var oc = r.getAttribute('onclick') || '';
+            var s = oc.indexOf('{'), en = oc.lastIndexOf('}');
+            if (s === -1 || en === -1) return;
+            var d = null;
+            try { d = new Function('return (' + oc.slice(s, en + 1) + ')')(); } catch (e) { d = null; }
+            if (!d) return;
+            var st = d.status || 'ok';
+            items.push({
+              title: '🧪 ' + (d.mat || ''),
+              subtitle: (d.lote ? 'Lote ' + d.lote : ''),
+              data: '🎯 Alvo ' + (d.alvo || '—') + ' kg · ⚖️ Pesado ' + (d.pesado || '—') + ' kg',
+              status: SL[st] || String(st).toUpperCase(),
+              statusColor: SC[st] || '#8A8575',
+              metadata: { row: r }
+            });
+          });
+          g.data = items;
+          g.onItemClick = function (dd) {
+            var row = (dd.metadata && dd.metadata.row);
+            if (row) row.click();
+          };
+        }
+
         (function () {
           var tb = document.querySelector('#tbl-mps-pesadas tbody');
           if (tb && window.MutationObserver && !tb._mpsGalObs) {
@@ -6696,9 +6820,45 @@ export const SCREENS = {
             tb._mpsGalObs.observe(tb, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] });
           }
           pesMpsSyncGallery();
+          pesMpsSyncOrdemGallery();
         })();
         </script>
       </div><!-- /card -->
+
+      <!-- ── Modal 1 (Ordem): Leitura da Etiqueta a ajustar ── -->
+      <div id="modal-mps-etq-scan" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:900;align-items:flex-start;justify-content:center;padding-top:60px;overflow-y:auto">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 30px;max-width:480px;width:94%;box-shadow:var(--sh2);margin-bottom:40px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <div>
+              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--ouro);margin-bottom:3px">Pesagem · Ajuste de MP</div>
+              <div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc)">Leitura da Etiqueta</div>
+            </div>
+            <button onclick="document.getElementById('modal-mps-etq-scan').style.display='none'" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
+          </div>
+          <p style="font-size:12px;color:var(--text2);margin:0 0 14px;line-height:1.5">Escaneie a etiqueta da MP que será ajustada.</p>
+          <label class="lbl">Etiqueta MP</label>
+          <input class="inp" id="mps-scan-etq" inputmode="text" placeholder="Escaneie a etiqueta, ex.: ETQ-2026-0416-005" onkeydown="if(event.key==='Enter'){event.preventDefault();mpsConfirmarEtq()}" style="width:100%;box-sizing:border-box;font-family:var(--font-m);letter-spacing:.04em">
+          <div style="display:flex;gap:10px;margin-top:18px">
+            <button class="btn btn-md btn-v" style="flex:1" onclick="mpsConfirmarEtq()">CONTINUAR</button>
+            <button class="btn btn-md btn-ghost" onclick="document.getElementById('modal-mps-etq-scan').style.display='none'">CANCELAR</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Modal Menu de Ações (aba Pesadas): Cancelar Pesagem / Reimpressão ── -->
+      <div id="modal-mps-acao" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:920;align-items:flex-start;justify-content:center;padding-top:60px;overflow-y:auto">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px 28px;max-width:460px;width:94%;box-shadow:var(--sh2);margin-bottom:40px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc)">Ações</div>
+            <button onclick="document.getElementById('modal-mps-acao').style.display='none'" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
+          </div>
+          <div id="mps-acao-sub" style="font-family:var(--font-m);font-size:11px;color:var(--text3);margin-bottom:18px">—</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <button class="btn btn-md" onclick="mpsAcaoCancelar()" style="display:flex;align-items:center;justify-content:flex-start;gap:8px;border:1px solid var(--per-b);background:var(--per-p);color:var(--per);font-weight:700">🚫 Cancelar Pesagem</button>
+            <button class="btn btn-md" onclick="mpsReimprimirEtq()" style="display:flex;align-items:center;justify-content:flex-start;gap:8px;border:1px solid var(--ouro-claro);background:var(--surface);color:var(--verde);font-weight:700">🖨️ Reimpressão da etiqueta</button>
+          </div>
+        </div>
+      </div>
 
       <!-- ── Modal Ações / Add Desvio ── -->
       <div id="modal-mps-desvio" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:900;align-items:flex-start;justify-content:center;padding-top:60px;overflow-y:auto">
@@ -6706,37 +6866,36 @@ export const SCREENS = {
           <!-- Header -->
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
             <div>
-              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--ouro);margin-bottom:3px">Pesagem · Ações sobre MP</div>
               <div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc)" id="mps-popup-titulo">—</div>
+              <div id="mps-popup-etq" style="display:none;font-family:var(--font-m);font-size:11px;font-weight:700;color:var(--verde);margin-top:4px"></div>
             </div>
             <button onclick="document.getElementById('modal-mps-desvio').style.display='none'" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
           </div>
 
           <!-- Info da MP selecionada -->
-          <div style="position:relative;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:18px">
-            <button title="Reimprimir etiqueta" style="position:absolute;top:10px;right:12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 12px;cursor:pointer;font-size:11px;font-weight:700;color:var(--verde);display:inline-flex;align-items:center;gap:5px;z-index:1">🖨️ Reimprimir</button>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:18px">
             <div id="mps-popup-info" style="font-size:11px;color:var(--text2);display:grid;grid-template-columns:1fr 1fr;gap:6px"></div>
           </div>
 
-          <!-- Ação: Ajuste MP -->
+          <!-- Ação: Ajuste MP (o tipo é fixado pela aba; o dropdown fica oculto) -->
           <div id="mps-aba-desvio">
-            <div style="margin-bottom:12px">
-              <label class="lbl">Tipo de solicitação</label>
+            <div id="mps-tipo-field" style="margin-bottom:12px">
+              <label class="lbl" style="display:inline-flex;align-items:center;gap:6px">Tipo de solicitação<button type="button" onclick="document.getElementById('modal-mps-regras').style.display='flex'" title="Regras de aprovação do ajuste" aria-label="Regras de aprovação do ajuste" style="display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:16px;height:16px;padding:0;border-radius:50%;border:1.5px solid var(--inf);background:none;color:var(--inf);cursor:pointer;font:800 10px/1 'Poppins',sans-serif">i</button></label>
               <select class="sel" id="mps-desvio-tipo" onchange="mpsToggleNumDesvio()">
                 <option value="">Selecione o tipo...</option>
                 <option value="ajuste">AJUSTE</option>
                 <option value="perda">CANCELAR PESAGEM</option>
               </select>
-              <div id="mps-perda-aviso" style="display:none;margin-top:8px;padding:8px 12px;background:var(--per-p);border:1px solid var(--per-b);border-radius:6px;font-size:11px;color:var(--per);line-height:1.4">
-                <strong>⚠ Atenção:</strong> ao confirmar, o status da MP <strong id="mps-perda-mp-nome">selecionada</strong> será alterado para <span class="bdg bdg-per" style="font-size:9px">⛔ Cancelado</span> e a movimentação de estoque será revertida
-              </div>
+            </div>
+            <div id="mps-perda-aviso" style="display:none;margin-bottom:12px;padding:8px 12px;background:var(--per-p);border:1px solid var(--per-b);border-radius:6px;font-size:11px;color:var(--per);line-height:1.4">
+              <strong>⚠ Atenção:</strong> ao confirmar, o status da MP <strong id="mps-perda-mp-nome">selecionada</strong> será alterado para <span class="bdg bdg-per" style="font-size:9px">⛔ Cancelado</span> e a movimentação de estoque será revertida
             </div>
             <div id="mps-desvio-num-wrap" style="margin-bottom:12px;display:none">
               <label class="lbl">Número do desvio</label>
               <input class="inp" id="mps-desvio-num" placeholder="Ex: DEV-2026-0041" style="font-family:var(--font-m)">
               <span style="font-size:10px;color:var(--text3);margin-top:3px;display:block">Obrigatório quando o Tipo de solicitação é <strong>Desvio</strong>.</span>
             </div>
-            <!-- AJUSTE: quantidade a ajustar -->
+            <!-- AJUSTE: quantidade a ajustar (a etiqueta já foi lida no popup anterior) -->
             <div id="mps-ajuste-qtd-wrap" style="margin-bottom:16px;display:none">
               <label class="lbl">Quantidade a ajustar</label>
               <div style="display:flex;align-items:center;gap:8px">
@@ -6758,26 +6917,209 @@ export const SCREENS = {
         </div>
       </div>
 
+      <!-- ── Modal Regras de aprovação do Ajuste (aberto pelo "i") ── -->
+      <div id="modal-mps-regras" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:960;align-items:flex-start;justify-content:center;padding-top:60px;overflow-y:auto">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px 28px;max-width:560px;width:94%;box-shadow:var(--sh2);margin-bottom:40px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <div>
+              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--ouro);margin-bottom:3px">Pesagem · Ajuste de MP</div>
+              <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--verde-esc)">Regras de aprovação</div>
+            </div>
+            <button onclick="document.getElementById('modal-mps-regras').style.display='none'" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
+          </div>
+
+          <!-- Regra 1 · Valor -->
+          <div style="border:1px solid var(--border);border-left:3px solid var(--inf);border-radius:8px;padding:14px 16px;margin-bottom:12px;background:var(--surface2)">
+            <div style="font-size:13px;font-weight:800;color:var(--verde-esc);margin-bottom:6px">1 · Regra de Valor</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.65">
+              Com base no <strong>Valor unitário do item × Quantidade a ser ajustada</strong>.<br>
+              Se <strong>Valor Total</strong> &gt; <strong>X&nbsp;Valor</strong> (valor parametrizado):
+              <span style="display:inline-block;margin-top:6px;padding:3px 9px;background:var(--alr-p);border:1px solid var(--alr-b);border-radius:5px;font-size:11px;font-weight:700;color:var(--alr)">Necessário aprovação do <strong>Supervisor</strong> no sistema MES</span>
+            </div>
+          </div>
+
+          <!-- Regra 2 · Percentual -->
+          <div style="border:1px solid var(--border);border-left:3px solid var(--inf);border-radius:8px;padding:14px 16px;margin-bottom:4px;background:var(--surface2)">
+            <div style="font-size:13px;font-weight:800;color:var(--verde-esc);margin-bottom:6px">2 · Regra de Percentual</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.65">
+              Com base no <strong>% do total recebido do lote</strong>.<br>
+              Se <strong>% a ser ajustado</strong> &gt; <strong>X&nbsp;%</strong> (valor parametrizado):
+              <span style="display:inline-block;margin-top:6px;padding:3px 9px;background:var(--alr-p);border:1px solid var(--alr-b);border-radius:5px;font-size:11px;font-weight:700;color:var(--alr)">Necessário aprovação do <strong>Supervisor</strong> no sistema MES</span>
+            </div>
+          </div>
+
+          <div style="margin-top:18px;display:flex;justify-content:flex-end">
+            <button class="btn btn-md btn-v" onclick="document.getElementById('modal-mps-regras').style.display='none'">ENTENDI</button>
+          </div>
+        </div>
+      </div>
+
       <script>
       var _mpsSel = {};
+      var _mpsEtqLida = '';    // etiqueta lida no popup "Leitura da Etiqueta" (fluxo Ajuste)
+      var _mpsTab = 'ordem';   // aba ativa: 'ordem' (ação = Ajuste) | 'pesadas' (ação = Cancelar)
 
+      // Abas "Matérias-Primas Ordem" / "Matérias-Primas Pesadas".
+      // Por ora as duas mostram os MESMOS dados (mesma tabela); muda só a aba
+      // ativa, o título do card e a AÇÃO do popup (Ajuste vs Cancelar).
+      function mpsTabSel(tab) {
+        _mpsTab = (tab === 'pesadas') ? 'pesadas' : 'ordem';
+        // Cada aba tem a SUA visão: Ordem (itens do Cockpit) x Pesadas.
+        //  · Desktop -> tabela da aba ativa; galerias escondidas.
+        //  · Mobile  -> galeria vertical da aba ativa; tabelas escondidas.
+        var isOrdem = (_mpsTab === 'ordem');
+        var isMobile = !!(window.matchMedia && window.matchMedia('(max-width:768px)').matches);
+        var ordemWrap = document.getElementById('mps-ordem-wrap');
+        var pesWrap = document.getElementById('mps-tabela-wrap');
+        var ordemGal = document.getElementById('pes-mps-ordem-gallery');
+        var pesGal = document.getElementById('pes-mps-gallery');
+        if (isMobile) {
+          if (ordemWrap) ordemWrap.style.display = 'none';
+          if (pesWrap) pesWrap.style.display = 'none';
+          if (ordemGal) ordemGal.style.display = isOrdem ? 'block' : 'none';
+          if (pesGal) pesGal.style.display = isOrdem ? 'none' : 'block';
+        } else {
+          if (ordemWrap) ordemWrap.style.display = isOrdem ? '' : 'none';
+          if (pesWrap) pesWrap.style.display = isOrdem ? 'none' : '';
+          if (ordemGal) ordemGal.style.display = 'none';
+          if (pesGal) pesGal.style.display = 'none';
+        }
+        // Mantém o dropdown mobile em sincronia com a aba ativa.
+        var selEl = document.getElementById('mps-tab-select');
+        if (selEl && selEl.value !== _mpsTab) selEl.value = _mpsTab;
+        var setBtn = function (id, active) {
+          var b = document.getElementById(id);
+          if (!b) return;
+          b.style.color = active ? 'var(--verde)' : 'var(--text3)';
+          b.style.borderBottomColor = active ? 'var(--verde)' : 'transparent';
+          b.style.fontWeight = active ? '800' : '700';
+        };
+        setBtn('mps-tab-ordem', tab === 'ordem');
+        setBtn('mps-tab-pesadas', tab === 'pesadas');
+        var title = document.getElementById('mps-card-title');
+        if (title) title.textContent = (tab === 'pesadas')
+          ? 'Registro de Pesagens Confirmadas — Clique na linha para ações'
+          : 'Matérias-Primas da Ordem — Clique na linha para ações';
+        // Coluna única "Ação" por linha em AMBAS as abas: botão "⋮ Ações".
+        //  · Ordem   -> abre a Leitura da Etiqueta (fluxo Ajuste).
+        //  · Pesadas -> abre o menu de ações (Cancelar Pesagem / Reimpressão).
+        // (Limpa eventuais ícones legados de uma versão anterior.)
+        Array.prototype.forEach.call(document.querySelectorAll('#tbl-mps-pesadas tbody button'), function (b) {
+          if ((b.getAttribute('onclick') || '').indexOf('pesAbrirDesvio') < 0) return;
+          var cell = b.parentNode;
+          b.textContent = '⋮ Ações';
+          b.title = '';
+          b.removeAttribute('aria-label');
+          b.className = 'btn btn-sm btn-ghost';
+          b.style.cssText = 'font-size:9px';
+          if (cell) { var ri = cell.querySelector('.mps-reimp-icon'); if (ri) ri.remove(); }
+        });
+      }
+
+      // Entrada da aba:
+      //  · Ordem   (Ajuste)   -> abre PRIMEIRO a "Leitura da Etiqueta"; só depois o info.
+      //  · Pesadas            -> abre o menu de ações (Cancelar Pesagem / Reimpressão).
       function pesAbrirDesvio(d) {
+        var _tab = (typeof _mpsTab !== 'undefined') ? _mpsTab : 'ordem';
+        if (_tab === 'ordem') { mpsAbrirEtqScan(d); return; }
+        mpsAbrirAcaoMenu(d);
+      }
+
+      // Menu de ações da aba Pesadas: escolhe entre Cancelar Pesagem e Reimpressão.
+      function mpsAbrirAcaoMenu(d) {
+        _mpsSel = d;
+        var sub = document.getElementById('mps-acao-sub');
+        if (sub) sub.textContent = 'MP #' + (d.n || '—') + ' — ' + (d.mat || '—') + (d.etq ? ' · ' + d.etq : '');
+        document.getElementById('modal-mps-acao').style.display = 'flex';
+      }
+
+      // Opção "Cancelar Pesagem": abre o popup de info/cancelamento.
+      function mpsAcaoCancelar() {
+        document.getElementById('modal-mps-acao').style.display = 'none';
+        mpsAbrirInfoPopup(_mpsSel);
+      }
+
+      // Opção "Reimpressão da etiqueta": reenvia a etiqueta à impressora.
+      function mpsReimprimirEtq() {
+        document.getElementById('modal-mps-acao').style.display = 'none';
+        alert(
+          '🖨️ Reimpressão solicitada!\\n\\n' +
+          'MP: ' + (_mpsSel.mat || '—') + '\\n' +
+          'Etiqueta: ' + (_mpsSel.etq || '—') + '\\n\\n' +
+          'Etiqueta reenviada à impressora Zebra da sala.'
+        );
+      }
+
+      // Popup 1 (só Ordem): leitura da etiqueta da MP a ser ajustada.
+      function mpsAbrirEtqScan(d) {
+        _mpsSel = d;
+        _mpsEtqLida = '';
+        var inp = document.getElementById('mps-scan-etq');
+        if (inp) inp.value = '';
+        document.getElementById('modal-mps-etq-scan').style.display = 'flex';
+        if (inp) setTimeout(function () { inp.focus(); }, 30);
+      }
+
+      // Confirma a etiqueta lida e abre o popup de info/ajuste.
+      function mpsConfirmarEtq() {
+        var inp = document.getElementById('mps-scan-etq');
+        var etq = (inp && inp.value || '').trim();
+        if (!etq) { alert('⚠ Escaneie a Etiqueta MP para continuar.'); if (inp) inp.focus(); return; }
+        _mpsEtqLida = etq;
+        document.getElementById('modal-mps-etq-scan').style.display = 'none';
+        mpsAbrirInfoPopup(_mpsSel);
+      }
+
+      function mpsAbrirInfoPopup(d) {
         _mpsSel = d;
         document.getElementById('mps-popup-titulo').textContent = 'MP #' + d.n + ' — ' + d.mat;
+        // Etiqueta lida vira "header" do popup (fluxo Ajuste da aba Ordem).
+        var _etqEl = document.getElementById('mps-popup-etq');
+        var _tabHdr = (typeof _mpsTab !== 'undefined') ? _mpsTab : 'ordem';
+        if (_etqEl) {
+          if (_tabHdr === 'ordem' && _mpsEtqLida) {
+            _etqEl.textContent = '🏷️ Etiqueta: ' + _mpsEtqLida;
+            _etqEl.style.display = 'block';
+          } else {
+            _etqEl.style.display = 'none';
+          }
+        }
         var opLabel = d.op ? d.op + (d.mat_op ? ' (' + d.mat_op + ')' : '') : '—';
         var salaLabel = d.sala || '—';
-        document.getElementById('mps-popup-info').innerHTML =
-          '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Lote</span><div style="font-family:var(--font-m);font-size:12px;font-weight:700;margin-top:2px">' + d.lote + '</div></div>' +
-          '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Qtd. Alvo</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + d.alvo + ' kg</div></div>' +
-          '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Pesado</span><div style="font-size:12px;font-weight:700;color:var(--verde);margin-top:2px">' + d.pesado + ' kg</div></div>' +
-          '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Variância de pesagem</span><div style="font-size:12px;font-weight:700;color:' + (d.status==='desv'?'var(--alr)':'var(--ok)') + ';margin-top:2px">' + d.desv + ' kg</div></div>' +
-          '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Etiqueta</span><div style="font-family:var(--font-m);font-size:11px;margin-top:2px">' + d.etq + '</div></div>' +
-          '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Balança</span><div style="font-family:var(--font-m);font-size:12px;margin-top:2px">' + d.bal + '</div></div>' +
-          '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Operador</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + opLabel + '</div></div>' +
-          '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Sala · Box</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + salaLabel + '</div></div>';
-        // Sempre abre sem tipo selecionado -> campos e botões ocultos até escolher.
+        var _infoEl = document.getElementById('mps-popup-info');
+        var _mpsTabAtual = (typeof _mpsTab !== 'undefined') ? _mpsTab : 'ordem';
+        if (_mpsTabAtual === 'pesadas') {
+          // Aba Pesadas (Cancelar): informações completas da pesagem.
+          _infoEl.innerHTML =
+            '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Lote</span><div style="font-family:var(--font-m);font-size:12px;font-weight:700;margin-top:2px">' + d.lote + '</div></div>' +
+            '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Qtd. Alvo</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + d.alvo + ' kg</div></div>' +
+            '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Pesado</span><div style="font-size:12px;font-weight:700;color:var(--verde);margin-top:2px">' + d.pesado + ' kg</div></div>' +
+            '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Variância de pesagem</span><div style="font-size:12px;font-weight:700;color:' + (d.status==='desv'?'var(--alr)':'var(--ok)') + ';margin-top:2px">' + d.desv + ' kg</div></div>' +
+            '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Etiqueta</span><div style="font-family:var(--font-m);font-size:11px;margin-top:2px">' + d.etq + '</div></div>' +
+            '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Balança</span><div style="font-family:var(--font-m);font-size:12px;margin-top:2px">' + d.bal + '</div></div>' +
+            '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Operador</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + opLabel + '</div></div>' +
+            '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Sala · Box</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + salaLabel + '</div></div>';
+        } else {
+          // Aba Ordem (Ajuste): só Matéria Prima, Lote, Quantidade Pesada e Quantidade Alvo.
+          _infoEl.innerHTML =
+            '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">MP</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + d.mat + '</div></div>' +
+            '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Lote</span><div style="font-family:var(--font-m);font-size:12px;font-weight:700;margin-top:2px">' + d.lote + '</div></div>' +
+            '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Qtd. Pesada</span><div style="font-size:12px;font-weight:700;color:var(--verde);margin-top:2px">' + d.pesado + ' kg</div></div>' +
+            '<div><span style="font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)">Qtd. Alvo</span><div style="font-size:12px;font-weight:700;margin-top:2px">' + d.alvo + ' kg</div></div>';
+        }
+        // A ação depende da aba:
+        //  · Ordem   -> Ajuste. Mantém o dropdown de ações VISÍVEL (por ora só "Ajuste").
+        //  · Pesadas -> Cancelar Pesagem. Ação direta (dropdown oculto).
         var tipoEl = document.getElementById('mps-desvio-tipo');
-        if (tipoEl) tipoEl.value = '';
+        var tipoTab = (typeof _mpsTab !== 'undefined' && _mpsTab === 'pesadas') ? 'perda' : 'ajuste';
+        var tf = document.getElementById('mps-tipo-field');
+        if (tipoTab === 'perda') {
+          if (tipoEl) { tipoEl.innerHTML = '<option value="perda">CANCELAR PESAGEM</option>'; tipoEl.value = 'perda'; }
+          if (tf) tf.style.display = 'none';
+        } else {
+          if (tipoEl) { tipoEl.innerHTML = '<option value="ajuste">AJUSTE</option>'; tipoEl.value = 'ajuste'; }
+          if (tf) tf.style.display = '';
+        }
         var numEl = document.getElementById('mps-desvio-num');
         if (numEl) numEl.value = '';
         var justEl = document.getElementById('mps-desvio-justif');
@@ -6789,7 +7131,8 @@ export const SCREENS = {
       }
 
       function pesAbrirNovaPS() {
-        pesAbrirDesvio({n:'—',mat:'Nova Pesagem',lote:'—',alvo:'—',pesado:'—',desv:'—',op:'',mat_op:'',sala:'',hr:'',bal:'',etq:'',status:'novo'});
+        _mpsEtqLida = '';
+        mpsAbrirInfoPopup({n:'—',mat:'Nova Pesagem',lote:'—',alvo:'—',pesado:'—',desv:'—',op:'',mat_op:'',sala:'',hr:'',bal:'',etq:'',status:'novo'});
       }
 
       // Mostra/esconde campos auxiliares conforme o Tipo de solicitação:
@@ -6880,9 +7223,12 @@ export const SCREENS = {
         var just = justEl ? (justEl.value || '').trim() : '';
         var qtdEl = document.getElementById('mps-ajuste-qtd');
         var qtd = qtdEl ? (qtdEl.value || '').trim() : '';
+        // Etiqueta já lida no popup anterior (fluxo Ajuste).
+        var etqAj = (typeof _mpsEtqLida !== 'undefined' && _mpsEtqLida) ? _mpsEtqLida : (_mpsSel.etq || '');
         if (!tipo) { alert('⚠ Selecione o tipo de solicitação.'); return; }
         if (tipo === 'desvio' && !num) { alert('⚠ Para o tipo Desvio, o "Número do desvio" é obrigatório.'); numEl.focus(); return; }
         if (tipo === 'ajuste') {
+          if (!etqAj) { alert('⚠ Etiqueta MP não lida. Refaça a leitura da etiqueta.'); return; }
           var qn = parseFloat(qtd.replace(',', '.'));
           if (!qtd || isNaN(qn) || qn <= 0) { alert('⚠ Informe a quantidade a ajustar (kg).'); if (qtdEl) qtdEl.focus(); return; }
         }
@@ -6913,13 +7259,24 @@ export const SCREENS = {
           'Protocolo: ' + protocolo + '\\n' +
           'MP: ' + (_mpsSel.mat || '—') + '\\n' +
           'Tipo: ' + tipoLabel +
-          (tipo === 'ajuste' ? '\\nQuantidade ajustada: ' + qtd + ' kg' : '') +
+          (tipo === 'ajuste' ? '\\nEtiqueta MP: ' + etqAj + '\\nQuantidade ajustada: ' + qtd + ' kg' : '') +
           (tipo === 'desvio' ? '\\nNº Desvio: ' + num : '') +
           (just ? '\\n\\nJustificativa: ' + just : '') +
           (tipo === 'perda'
             ? '\\n\\nLinha marcada como CANCELADA na tabela. Notificação: Líder de Pesagem + Qualidade.'
             : '\\n\\nNotificação enviada a: Almoxarifado MF5 + Líder de Pesagem.')
         );
+      }
+
+      // Estado inicial: aba Ordem ativa (mostra tbl-mps-ordem, oculta a Pesadas/galeria).
+      mpsTabSel('ordem');
+
+      // Re-aplica o layout ao cruzar o breakpoint (desktop <-> mobile).
+      if (window.matchMedia) {
+        var _mpsMq = window.matchMedia('(max-width:768px)');
+        var _mpsMqH = function () { mpsTabSel(_mpsTab); };
+        if (_mpsMq.addEventListener) _mpsMq.addEventListener('change', _mpsMqH);
+        else if (_mpsMq.addListener) _mpsMq.addListener(_mpsMqH);
       }
 
       </script>
