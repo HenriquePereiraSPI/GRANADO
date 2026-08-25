@@ -1,0 +1,931 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Componentes Granado GRD — Documentação</title>
+
+  <!-- Fontes Granado (Lato + Playfair Display + DM Mono) self-host.
+       Em Apriso, o @font-face e os tokens vivem em [AprisoScripts]/fonts/. -->
+  <link rel="stylesheet" href="../fonts/granado-fonts.css">
+
+  <!-- Dependência opcional: os avisos de validação usam GranadoMessagePopup
+       quando disponível; sem ele, cai no alert() nativo. -->
+  <script src="../WebComponents/granado-message-popup.js"></script>
+
+  <!-- ===== Pesagem ===== -->
+  <script src="./Pesagem/granado-pesagem-reetiquetar-popup.js"></script>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: #F4EED9;
+      color: #103E20;
+      font-family: 'Lato', 'DejaVu Sans', Arial, sans-serif;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Sidebar */
+    .gd-side a.gd-link {
+      display: block;
+      padding: 6px 12px;
+      font-size: 13px;
+      color: #5A6B5E;
+      border-left: 2px solid transparent;
+      border-radius: 0 4px 4px 0;
+      transition: background .12s ease, color .12s ease, border-color .12s ease;
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
+    }
+
+    .gd-side a.gd-link:hover {
+      background: #ECE3BD;
+      color: #1C5C31;
+      border-left-color: #1C5C31;
+    }
+
+    .gd-side a.gd-link.gd-pending {
+      color: #B0AC93;
+      cursor: not-allowed;
+    }
+
+    .gd-side a.gd-link.gd-pending:hover {
+      background: transparent;
+      color: #B0AC93;
+      border-left-color: transparent;
+    }
+
+    .gd-side .gd-group {
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #8A9E8E;
+      padding: 16px 14px 8px;
+    }
+
+    /* Categoria expansível (árvore).
+       Layout blindado com !important porque o CSS global do Apriso
+       sobrescreve estilos de <button> (centralizando o conteúdo). */
+    .gd-side .gd-cat-toggle {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      gap: 8px;
+      width: 100% !important;
+      margin: 0 !important;
+      box-sizing: border-box;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1C5C31;
+      padding: 8px 12px;
+      text-align: left !important;
+      border-left: 2px solid transparent;
+      border-radius: 0 4px 4px 0;
+      transition: background .12s ease;
+    }
+
+    .gd-cat-toggle:hover {
+      background: #ECE3BD;
+      border-left-color: #1C5C31;
+    }
+
+    .gd-cat-chevron {
+      font-size: 10px;
+      color: #8A9E8E;
+      transition: transform .15s ease;
+      flex-shrink: 0;
+    }
+
+    .gd-cat-toggle[aria-expanded="true"] .gd-cat-chevron {
+      transform: rotate(90deg);
+    }
+
+    .gd-cat-items {
+      overflow: hidden;
+      display: none;
+    }
+
+    .gd-cat-items a.gd-link {
+      padding-left: 30px;
+    }
+
+    .gd-cat-items .gd-subgroup {
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: #B0AC93;
+      padding: 8px 12px 4px 30px;
+    }
+
+    /* Code block */
+    .gd-code {
+      margin: 0;
+      background: #1F2937;
+      color: #E5E7EB;
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      padding: 14px 16px;
+      border-radius: 6px;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .gd-code .tk-tag { color: #7DD3FC; }
+    .gd-code .tk-attr { color: #FCD34D; }
+    .gd-code .tk-str { color: #BBF7D0; }
+    .gd-code .tk-num { color: #FDBA74; }
+    .gd-code .tk-keyword { color: #93C5FD; }
+    .gd-code .tk-comment { color: #94A3B8; font-style: italic; }
+
+    /* API table */
+    .gd-api {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      background: #FDFAF1;
+      border: 1px solid #E5DDC8;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .gd-api thead th {
+      background: #EAE4CA;
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #103E20;
+    }
+
+    .gd-api tbody td {
+      padding: 11px 12px;
+      border-top: 1px solid #E5DDC8;
+      vertical-align: top;
+    }
+
+    .gd-api td.col-name {
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
+      color: #1C5C31;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .gd-api td.col-type {
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
+      color: #9A7520;
+      white-space: nowrap;
+    }
+
+    .gd-api td.col-default {
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
+      color: #5A6B5E;
+      white-space: nowrap;
+    }
+
+    .gd-api td.col-desc {
+      color: #103E20;
+      line-height: 1.5;
+    }
+
+    /* Linhas aninhadas (objetos dentro de objetos) */
+    .gd-api td.col-name.gd-nest {
+      padding-left: 26px;
+      color: #5A6B5E;
+    }
+
+    .gd-api td.col-name.gd-nest::before {
+      content: "\21B3 ";
+      color: #B0AC93;
+    }
+
+    /* Section pieces */
+    .gd-h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1C5C31;
+      margin: 0 0 4px;
+    }
+
+    .gd-h1 code {
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
+      font-size: 22px;
+      color: #1C5C31;
+      background: transparent;
+    }
+
+    .gd-h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #103E20;
+      margin: 32px 0 8px;
+    }
+
+    .gd-h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #103E20;
+      margin: 22px 0 8px;
+      letter-spacing: .02em;
+    }
+
+    .gd-lead {
+      font-size: 14px;
+      color: #5A6B5E;
+      line-height: 1.6;
+      margin: 0 0 8px;
+    }
+
+    code {
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
+      font-size: 12px;
+      background: #ECE3BD;
+      color: #1C5C31;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    .gd-demo {
+      background: #FDFAF1;
+      border: 1px solid #D6CDA4;
+      border-radius: 8px;
+      padding: 22px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    /* Exemplos: demo em largura TOTAL; o snippet abre num popup pelo ícone de código. */
+    .gd-codebtn {
+      position: absolute; top: 10px; right: 10px; z-index: 2;
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; padding: 0;
+      border: 1px solid #D6CDA4; border-radius: 7px;
+      background: #FDFAF1; color: #1C5C31; cursor: pointer;
+    }
+    .gd-codebtn:hover { background: #F4EED9; }
+    .gd-snip { display: none; }
+    #gd-snip-modal { display: none; position: fixed; inset: 0; z-index: 100000; background: rgba(15,51,25,.55); padding: 40px 16px; overflow: auto; box-sizing: border-box; }
+    #gd-snip-modal.open { display: flex; align-items: flex-start; justify-content: center; }
+    #gd-snip-modal .gd-snip-box { position: relative; width: 100%; max-width: 860px; margin: auto; background: #1F2937; border: 1px solid #0B1220; border-radius: 12px; box-shadow: 0 18px 50px rgba(0,0,0,.45); overflow: hidden; }
+    #gd-snip-modal .gd-snip-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid #334155; font: 700 11px/1 'Poppins',sans-serif; letter-spacing: .12em; text-transform: uppercase; color: #94A3B8; }
+    #gd-snip-modal .gd-snip-x { background: transparent; border: 1px solid #475569; border-radius: 6px; padding: 4px 10px; cursor: pointer; color: #CBD5E1; font-size: 13px; line-height: 1; }
+    #gd-snip-modal .gd-snip-x:hover { background: #334155; }
+    #gd-snip-modal #gd-snip-body pre { margin: 0; border-radius: 0; max-height: 72vh; overflow: auto; }
+
+    /* Botões dos exemplos */
+    .gd-btn {
+      font: 700 13px/1.4 'Poppins', system-ui, Arial, sans-serif;
+      padding: 9px 16px;
+      border: 1px solid #9A7520;
+      border-radius: 7px;
+      background: #9A7520;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .gd-btn.gd-ghost {
+      background: #fff;
+      color: #9A7520;
+    }
+
+    .gd-status {
+      font-family: 'DM Mono', 'DejaVu Mono', Consolas, monospace;
+      font-size: 12px;
+      color: #8A9E8E;
+    }
+
+    /* Categoria ainda sem componentes */
+    .gd-soon {
+      background: #FDFAF1;
+      border: 1px dashed #D6CDA4;
+      border-radius: 8px;
+      padding: 28px;
+      text-align: center;
+      color: #8A9E8E;
+      font-size: 13px;
+    }
+
+    /* Aviso / limitação */
+    .gd-note {
+      background: #F1E4BC;
+      border: 1px solid #E3CE94;
+      border-left: 4px solid #9A7520;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #5A4A20;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============== Top bar ============== -->
+  <header
+    style="background:#1C5C31;color:#FDFAF1;padding:14px 28px;display:flex;align-items:baseline;gap:14px;border-bottom:1px solid #103E20">
+    <div style="font-size:18px;font-weight:700">Componentes Granado GRD</div>
+    <div style="font-size:12px;color:#C9DDC8;letter-spacing:.04em">Documentação · componentes de negócio (Pesagem · Fabricação · Produção)</div>
+  </header>
+
+  <!-- ============== Layout (sidebar + main) ============== -->
+  <div style="display:flex;align-items:flex-start;min-height:calc(100vh - 49px)">
+
+    <!-- ===== Sidebar ===== -->
+    <nav class="gd-side"
+      style="width:280px;flex-shrink:0;position:sticky;top:0;height:calc(100vh - 49px);overflow-y:auto;background:#F8F1D8;border-right:1px solid #D6CDA4;padding:18px 0 32px">
+
+      <div class="gd-group">Componentes GRD</div>
+
+      <div class="gd-cat">
+        <button class="gd-cat-toggle" aria-expanded="true" onclick="gdToggleCat(this)">
+          <span class="gd-cat-chevron">&#9656;</span> Pesagem
+        </button>
+        <div class="gd-cat-items" style="display:block">
+          <div class="gd-subgroup">Popups</div>
+          <a class="gd-link" href="#granado-pesagem-reetiquetar-popup">granado-pesagem-reetiquetar-popup</a>
+        </div>
+      </div>
+
+      <div class="gd-cat">
+        <button class="gd-cat-toggle" aria-expanded="false" onclick="gdToggleCat(this)">
+          <span class="gd-cat-chevron">&#9656;</span> Fabricação
+        </button>
+        <div class="gd-cat-items">
+          <a class="gd-link gd-pending" href="#fabricacao">em breve</a>
+        </div>
+      </div>
+
+      <div class="gd-cat">
+        <button class="gd-cat-toggle" aria-expanded="false" onclick="gdToggleCat(this)">
+          <span class="gd-cat-chevron">&#9656;</span> Produção
+        </button>
+        <div class="gd-cat-items">
+          <a class="gd-link gd-pending" href="#producao">em breve</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ===== Main content ===== -->
+    <main style="flex:1;min-width:0;padding:32px 40px 80px;max-width:980px">
+
+      <!-- ===== Intro ===== -->
+      <section style="margin-bottom:8px">
+        <h1 class="gd-h1" style="font-size:22px">Componentes GRD</h1>
+        <p class="gd-lead">
+          Catálogo dos <strong>componentes de negócio</strong> do Granado — web components que já
+          embutem uma regra de chão de fábrica (drill-down de sala/balança, leitura de peso,
+          reentiquetagem etc.), diferente da biblioteca genérica de UI documentada em
+          <code>ComponentsDocumentation</code>.
+        </p>
+        <p class="gd-lead">
+          Os componentes vivem em <code>[AprisoScripts]/WebComponentsGranado/&lt;Categoria&gt;/</code> e a
+          documentação é organizada em <strong>3 categorias</strong>, no mesmo padrão da referência de
+          APIs: <strong>Pesagem</strong>, <strong>Fabricação</strong> e <strong>Produção</strong>.
+        </p>
+        <p class="gd-lead">
+          <strong>Regra do espaço GRD:</strong> componente GRD <strong>não chama API</strong>. Ele resolve a
+          interação e devolve o resultado por callback/evento; quem chama a
+          <code>GRD_API_</code> correspondente é sempre a tela.
+        </p>
+      </section>
+
+      <!-- ============================================================
+           PESAGEM · granado-pesagem-reetiquetar-popup
+           ============================================================ -->
+      <section id="granado-pesagem-reetiquetar-popup" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <div style="font:900 10px/1 'Poppins',system-ui,Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#9A7520;margin-bottom:8px">Pesagem</div>
+        <h1 class="gd-h1"><code>&lt;granado-pesagem-reetiquetar-popup&gt;</code></h1>
+        <p class="gd-lead">
+          Popup (overlay modal) de <strong>reentiquetagem de saldo</strong> — referência ao popup
+          "Reentiquetar Material" da <strong>Pesagem &rsaquo; Devolução de MP ao Estoque</strong>.
+          Traz um cabeçalho dourado com os dados do material, um <strong>drill-down Sala &rarr; Balança</strong>
+          e o campo <strong>Quantidade Pesada</strong>, lido da balança pelo <code>📡</code> ou digitado no
+          modo <strong>Peso manual</strong> (com Tara &rarr; Peso Líquido).
+        </p>
+        <p class="gd-lead">
+          Segue o padrão dos componentes <code>&lt;granado-box-popup&gt;</code> /
+          <code>&lt;granado-zpl-popup&gt;</code>, com layouts <strong>WEB</strong> e <strong>MOBILE</strong>.
+        </p>
+
+        <div class="gd-note">
+          <strong>Não chama API.</strong> O componente devolve o resultado por callback/evento —
+          quem chama <code>GRD_API_JDE_CancelAndGenerateNewLabel</code> (e imprime a nova etiqueta) é a tela.
+        </div>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponentsGranado/Pesagem/granado-pesagem-reetiquetar-popup.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span>
+
+<span class="tk-comment">&lt;!-- Opcional: sem ele os avisos de validação caem no alert() nativo --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-message-popup.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso</h2>
+        <p class="gd-lead">
+          Forma recomendada (<strong>API estática</strong>): <code>show()</code> cria o elemento, injeta no
+          <code>&lt;body&gt;</code> e o remove sozinho ao fechar. O peso só entra pelo <code>📡</code> —
+          o campo nasce <strong>somente leitura</strong> até você ligar o <em>Peso manual</em>.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <button class="gd-btn" type="button" onclick="docReetBasico()">🏷 Reentiquetar Material</button>
+          <span id="doc-reet-status" class="gd-status"></span>
+        </div>
+        <script>
+          // Massa de teste compartilhada pelos exemplos desta seção.
+          function docReetSalas() {
+            return [
+              { id: 'SALA-A', nome: 'Sala A', resourceName: '100000020',
+                bals: [ { id: 'BAL-01', cap: '600 kg', sug: true }, { id: 'BAL-02', cap: '100 kg' } ] },
+              { id: 'SALA-B', nome: 'Sala B', resourceName: '100000021',
+                bals: [ { id: 'BAL-03', cap: '300 kg' }, { id: 'BAL-04', cap: '60 kg' } ] },
+              { id: 'SALA-C', nome: 'Sala C', resourceName: '100000022',
+                bals: [ { id: 'BAL-05', cap: '30 kg' } ] }
+            ];
+          }
+
+          function docReetHeader() {
+            return { material: 'Fragância Rosa', lote: 'FRA-2026-04',
+                     etiqueta: 'ETQ-2026-0421', saldo: '0,498 kg' };
+          }
+
+          function docReetBasico() {
+            GranadoPesagemReetiquetarPopup.show({
+              header: docReetHeader(),
+              salas: docReetSalas(),
+              onConfirm: function (d) {
+                var s = document.getElementById('doc-reet-status');
+                if (s) s.textContent = '✅ ' + d.salaNome + ' · ' + d.balancaId + ' → ' + d.pesoLiquido + ' kg';
+                console.log('[reetiquetar] confirm →', d);
+              }
+            });
+          }
+        </script>
+        <pre class="gd-code gd-snip"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoPesagemReetiquetarPopup.<span class="tk-attr">show</span>({
+    header: { material: <span class="tk-str">'Fragância Rosa'</span>, lote: <span class="tk-str">'FRA-2026-04'</span>,
+              etiqueta: <span class="tk-str">'ETQ-2026-0421'</span>, saldo: <span class="tk-str">'0,498 kg'</span> },
+    salas: [
+      { id: <span class="tk-str">'SALA-A'</span>, nome: <span class="tk-str">'Sala A'</span>, resourceName: <span class="tk-str">'100000020'</span>,
+        bals: [ { id: <span class="tk-str">'BAL-01'</span>, cap: <span class="tk-str">'600 kg'</span>, sug: <span class="tk-keyword">true</span> },   <span class="tk-comment">// sug: true → ⭐ balança sugerida</span>
+                { id: <span class="tk-str">'BAL-02'</span>, cap: <span class="tk-str">'100 kg'</span> } ] },
+      { id: <span class="tk-str">'SALA-C'</span>, nome: <span class="tk-str">'Sala C'</span>, resourceName: <span class="tk-str">'100000022'</span>,
+        bals: [ { id: <span class="tk-str">'BAL-05'</span>, cap: <span class="tk-str">'30 kg'</span> } ] }
+    ],
+    onConfirm: <span class="tk-keyword">function</span> (d) {
+      <span class="tk-comment">// d.salaResourceName → WorkcenterResourceName da GRD_API_JDE_CancelAndGenerateNewLabel</span>
+      console.log(d.salaResourceName, d.balancaId, d.pesoLiquido);
+    }
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Leitura da balança — <code>onReadScale</code></h2>
+        <p class="gd-lead">
+          O botão <code>📡</code> não lê nada sozinho: ele dispara <code>onReadScale(ctx)</code> (e o evento
+          <code>read-scale</code>) e entra em estado <strong>carregando</strong> (<code>⏳</code>). Quem lê o peso é a
+          tela — normalmente via <code>GRD_API_BeginScaleReadings</code> — e devolve o valor com
+          <code>ctx.setValue(v)</code> (ou <code>el.setPeso(v)</code>), o que também <strong>restaura</strong> o botão.
+          Sem sala e balança selecionadas o <code>📡</code> recusa a leitura com um aviso.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <button class="gd-btn" type="button" onclick="docReetBalanca()">📡 Simular leitura da balança</button>
+          <span id="doc-reet-bal-status" class="gd-status"></span>
+        </div>
+        <script>
+          function docReetBalanca() {
+            GranadoPesagemReetiquetarPopup.show({
+              header: docReetHeader(),
+              salas: docReetSalas(),
+              confirmText: '✓ Concluir',
+              // Simula o round-trip da leitura: ⏳ enquanto busca, valor no setValue.
+              onReadScale: function (ctx) {
+                var s = document.getElementById('doc-reet-bal-status');
+                if (s) s.textContent = '⏳ lendo ' + ctx.balancaId + ' (' + ctx.salaId + ')…';
+                setTimeout(function () {
+                  ctx.setValue('0,498');
+                  if (s) s.textContent = '📡 ' + ctx.balancaId + ' → 0,498 kg';
+                }, 900);
+              },
+              onConfirm: function (d) {
+                var s = document.getElementById('doc-reet-bal-status');
+                if (s) s.textContent = '✅ ' + d.balancaId + ' → ' + d.pesoLiquido + ' kg';
+              }
+            });
+          }
+        </script>
+        <pre class="gd-code gd-snip"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoPesagemReetiquetarPopup.<span class="tk-attr">show</span>({
+    header: header,
+    salas: salas,
+    onReadScale: <span class="tk-keyword">function</span> (ctx) {
+      <span class="tk-comment">// ctx = { balancaId, salaId, setValue(v) } — o 📡 já está em ⏳</span>
+      lerPesoDaBalanca(ctx.balancaId).then(<span class="tk-keyword">function</span> (peso) {
+        ctx.<span class="tk-attr">setValue</span>(peso);   <span class="tk-comment">// preenche o campo E devolve o 📡 ao normal</span>
+      });
+    },
+    onConfirm: <span class="tk-keyword">function</span> (d) { console.log(d.quantidadePesada); }
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Peso manual — Tara e Peso Líquido</h2>
+        <p class="gd-lead">
+          O toggle <strong>Peso manual</strong> só destrava <strong>depois</strong> de escolher a Sala <em>e</em> a
+          Balança. Ligado, ele esmaece o drill-down, esconde o <code>📡</code>, libera a digitação e mostra
+          os campos <strong>Tara</strong> e <strong>Peso Líquido</strong> (<code>líquido = pesada − tara</code>, com
+          <strong>tara vazia = 0</strong>). Trocar de modo <strong>limpa</strong> peso e tara — nada vaza de um modo
+          para o outro. Líquido negativo aparece como <code>⚠ neg.</code> e barra o Concluir.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <button class="gd-btn" type="button" onclick="docReetManual()">⚖️ Abrir e testar o Peso manual</button>
+          <span id="doc-reet-man-status" class="gd-status"></span>
+        </div>
+        <script>
+          function docReetManual() {
+            GranadoPesagemReetiquetarPopup.show({
+              header: docReetHeader(),
+              salas: docReetSalas(),
+              onConfirm: function (d) {
+                var s = document.getElementById('doc-reet-man-status');
+                if (s) s.textContent = (d.manual ? '✍️ manual' : '📡 balança') +
+                  ' · pesada ' + d.quantidadePesada + ' − tara ' + d.tara + ' = ' + d.pesoLiquido + ' kg';
+                console.log('[reetiquetar] manual →', d);
+              }
+            });
+          }
+        </script>
+        <pre class="gd-code gd-snip"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoPesagemReetiquetarPopup.<span class="tk-attr">show</span>({
+    header: header,
+    salas: salas,
+    onConfirm: <span class="tk-keyword">function</span> (d) {
+      <span class="tk-keyword">if</span> (d.manual) {
+        <span class="tk-comment">// modo manual: tara informada (vazia = 0) e líquido = pesada − tara</span>
+        console.log(d.quantidadePesada, d.tara, d.pesoLiquido);
+      } <span class="tk-keyword">else</span> {
+        <span class="tk-comment">// modo balança: tara = 0 e pesoLiquido = quantidadePesada</span>
+        console.log(d.quantidadePesada);
+      }
+    }
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — declarativo (HTML)</h2>
+        <p class="gd-lead">
+          Também dá para deixar o popup no HTML, iniciar oculto com <code>open="false"</code> e exibir com
+          <code>el.open()</code>, escutando o resultado pelo evento <code>confirm</code>.
+          <strong>Atenção:</strong> <code>header</code> e <code>salas</code> <em>não</em> têm atributo — são
+          <strong>propriedades JS</strong>. E <code>close()</code> <strong>remove o elemento do DOM</strong>, então
+          para reabrir é preciso recriá-lo (o exemplo abaixo faz exatamente isso).
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <button class="gd-btn" type="button" onclick="docReetHtmlAbrir()">Abrir popup (HTML)</button>
+          <span id="doc-reet-html-status" class="gd-status"></span>
+          <div id="doc-reet-host">
+            <granado-pesagem-reetiquetar-popup id="doc-reet-html" confirm-text="✓ Concluir" open="false"></granado-pesagem-reetiquetar-popup>
+          </div>
+        </div>
+        <script>
+          (function () {
+            // Configura a instância declarativa (dados + listeners).
+            function preparar(el) {
+              // No elemento recriado o atributo do HTML não existe — a propriedade repõe.
+              el.confirmText = '✓ Concluir';
+              el.header = docReetHeader();
+              el.salas = docReetSalas();
+              el.addEventListener('confirm', function (ev) {
+                var s = document.getElementById('doc-reet-html-status');
+                if (s) s.textContent = '✅ ' + ev.detail.salaNome + ' · ' + ev.detail.balancaId +
+                                       ' → ' + ev.detail.pesoLiquido + ' kg';
+              });
+            }
+
+            preparar(document.getElementById('doc-reet-html'));
+
+            window.docReetHtmlAbrir = function () {
+              var el = document.getElementById('doc-reet-html');
+              // close() remove o elemento do DOM → recria antes de reabrir.
+              if (!el || !el.isConnected) {
+                el = document.createElement('granado-pesagem-reetiquetar-popup');
+                el.id = 'doc-reet-html';
+                preparar(el);
+                document.getElementById('doc-reet-host').appendChild(el);
+              }
+              el.open();
+            };
+          })();
+        </script>
+        <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- header/salas não têm atributo: são propriedades JS --&gt;</span>
+<span class="tk-tag">&lt;granado-pesagem-reetiquetar-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"reet"</span> <span class="tk-attr">confirm-text</span>=<span class="tk-str">"✓ Concluir"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span><span class="tk-tag">&gt;&lt;/granado-pesagem-reetiquetar-popup&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-keyword">var</span> el = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'reet'</span>);
+  el.header = { material: <span class="tk-str">'Fragância Rosa'</span>, lote: <span class="tk-str">'FRA-2026-04'</span>,
+                etiqueta: <span class="tk-str">'ETQ-2026-0421'</span>, saldo: <span class="tk-str">'0,498 kg'</span> };
+  el.salas  = [ { id: <span class="tk-str">'SALA-A'</span>, nome: <span class="tk-str">'Sala A'</span>, resourceName: <span class="tk-str">'100000020'</span>,
+                  bals: [ { id: <span class="tk-str">'BAL-01'</span>, cap: <span class="tk-str">'600 kg'</span>, sug: <span class="tk-keyword">true</span> } ] } ];
+
+  el.addEventListener(<span class="tk-str">'confirm'</span>, <span class="tk-keyword">function</span> (ev) { console.log(ev.detail); });
+  el.addEventListener(<span class="tk-str">'close'</span>,   <span class="tk-keyword">function</span> () { <span class="tk-comment">/* o elemento já saiu do DOM aqui */</span> });
+
+  el.<span class="tk-attr">open</span>();   <span class="tk-comment">// para REABRIR depois do close(), recrie o elemento</span>
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Responsividade — <code>mobile-breakpoint</code></h2>
+        <p class="gd-lead">
+          O popup troca entre os layouts <strong>WEB</strong> e <strong>MOBILE</strong> por
+          <code>matchMedia</code>, no limite definido em <code>mobile-breakpoint</code> (default
+          <code>768</code>). No MOBILE a caixa fica mais estreita, o padding menor e o rodapé vira dois
+          botões de largura total. O exemplo abaixo força o layout MOBILE com um breakpoint alto e
+          ainda liga <code>close-on-backdrop</code> (por padrão clicar fora <strong>não</strong> fecha).
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <button class="gd-btn gd-ghost" type="button" onclick="docReetMobile()">📱 Layout MOBILE + fecha fora</button>
+          <span id="doc-reet-mob-status" class="gd-status"></span>
+        </div>
+        <script>
+          function docReetMobile() {
+            var el = GranadoPesagemReetiquetarPopup.show({
+              header: docReetHeader(),
+              salas: docReetSalas(),
+              closeOnBackdrop: true,
+              onConfirm: function (d) {
+                var s = document.getElementById('doc-reet-mob-status');
+                if (s) s.textContent = '✅ ' + d.salaNome + ' · ' + d.balancaId;
+              }
+            });
+            // show() devolve o elemento — dá para ajustar atributos depois.
+            el.setAttribute('mobile-breakpoint', '9999');
+          }
+        </script>
+        <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- declarativo --&gt;</span>
+<span class="tk-tag">&lt;granado-pesagem-reetiquetar-popup</span> <span class="tk-attr">mobile-breakpoint</span>=<span class="tk-str">"900"</span> <span class="tk-attr">close-on-backdrop</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-pesagem-reetiquetar-popup&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-comment">// via API estática: show() devolve o elemento criado</span>
+  <span class="tk-keyword">var</span> el = GranadoPesagemReetiquetarPopup.<span class="tk-attr">show</span>({ header: header, salas: salas, closeOnBackdrop: <span class="tk-keyword">true</span> });
+  el.setAttribute(<span class="tk-str">'mobile-breakpoint'</span>, <span class="tk-str">'900'</span>);
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Integração com a tela (fluxo completo)</h2>
+        <p class="gd-lead">
+          Fluxo típico da <strong>Devolução de MP ao Estoque</strong>: o popup resolve a interação, a tela
+          chama a API e imprime a nova etiqueta.
+        </p>
+        <pre class="gd-code"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoPesagemReetiquetarPopup.<span class="tk-attr">show</span>({
+    header: { material: mat.descricao, lote: mat.lote, etiqueta: mat.etiqueta, saldo: mat.saldo },
+    salas: salasDoUsuario,
+    onReadScale: <span class="tk-keyword">function</span> (ctx) { lerPeso(ctx.balancaId).then(ctx.setValue); },
+    onConfirm: <span class="tk-keyword">function</span> (d) {
+      <span class="tk-comment">// 1) cancela a etiqueta atual e gera a nova (a TELA chama a API)</span>
+      chamarApi(<span class="tk-str">'GRD_API_JDE_CancelAndGenerateNewLabel'</span>, {
+        WorkcenterResourceName: d.salaResourceName,
+        LabelNoOrigin:          mat.etiqueta,
+        LabelQuantity:          <span class="tk-keyword">String</span>(mat.saldoNumerico),
+        LabelWeighedQuantity:   <span class="tk-keyword">String</span>(d.pesoLiquido)
+      }).then(<span class="tk-keyword">function</span> (r) {
+        <span class="tk-comment">// 2) r.Data traz o número da nova etiqueta → imprime / atualiza a grid</span>
+        GranadoToast.<span class="tk-attr">success</span>(<span class="tk-str">'Nova etiqueta: '</span> + r.Data);
+      });
+    }
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos HTML</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:200px">Nome</th><th style="width:150px">Tipo</th><th style="width:110px">Default</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">mobile-breakpoint</td><td class="col-type">number (px)</td><td class="col-default">768</td><td class="col-desc">Largura em que o popup troca para o layout <strong>MOBILE</strong>.</td></tr>
+            <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-default">—</td><td class="col-desc"><code>"true"</code> fecha ao clicar fora. Default: <strong>não fecha</strong>.</td></tr>
+            <tr><td class="col-name">confirm-text</td><td class="col-type">string</td><td class="col-default">"✓ Concluir"</td><td class="col-desc">Texto do botão de confirmação. Em JS: <code>.confirmText</code>. É o mesmo valor de <code>show({ confirmText })</code>.</td></tr>
+            <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code> / <code>close()</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Opções de <code>GranadoPesagemReetiquetarPopup.show(opts)</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:200px">Opção</th><th style="width:180px">Tipo</th><th style="width:110px">Default</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">header</td><td class="col-type">object</td><td class="col-default">{}</td><td class="col-desc">Dados do cabeçalho dourado. Campos abaixo — todos opcionais (vazio vira <code>—</code>).</td></tr>
+            <tr><td class="col-name gd-nest">header.material</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Descrição do material.</td></tr>
+            <tr><td class="col-name gd-nest">header.lote</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Lote do material.</td></tr>
+            <tr><td class="col-name gd-nest">header.etiqueta</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Etiqueta de origem (a que será cancelada).</td></tr>
+            <tr><td class="col-name gd-nest">header.saldo</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Saldo a devolver, já formatado (ex.: <code>"0,498 kg"</code>).</td></tr>
+            <tr><td class="col-name">salas</td><td class="col-type">array</td><td class="col-default">[]</td><td class="col-desc">Salas do drill-down. Estrutura na tabela seguinte.</td></tr>
+            <tr><td class="col-name">confirmText</td><td class="col-type">string</td><td class="col-default">"✓ Concluir"</td><td class="col-desc">Texto do botão de confirmação (grava o atributo <code>confirm-text</code>).</td></tr>
+            <tr><td class="col-name">closeOnBackdrop</td><td class="col-type">boolean</td><td class="col-default">false</td><td class="col-desc"><code>true</code> fecha ao clicar fora (equivale ao atributo <code>close-on-backdrop</code>).</td></tr>
+            <tr><td class="col-name">onConfirm</td><td class="col-type">function(detail)</td><td class="col-default">—</td><td class="col-desc">Clique em <em>Concluir</em>, já validado. Recebe o mesmo objeto do evento <code>confirm</code>.</td></tr>
+            <tr><td class="col-name">onReadScale</td><td class="col-type">function(ctx)</td><td class="col-default">—</td><td class="col-desc">Clique no <code>📡</code>. Recebe <code>{ balancaId, salaId, setValue(v) }</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Estrutura de <code>salas[]</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:200px">Campo</th><th style="width:180px">Tipo</th><th style="width:110px">Obrigatório</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">salas[].id</td><td class="col-type">string</td><td class="col-default">Sim</td><td class="col-desc">Identificador da sala — devolvido em <code>salaId</code>.</td></tr>
+            <tr><td class="col-name">salas[].nome</td><td class="col-type">string</td><td class="col-default">Sim</td><td class="col-desc">Nome exibido no card 🏭 e no cabeçalho do drill-down.</td></tr>
+            <tr><td class="col-name">salas[].resourceName</td><td class="col-type">string</td><td class="col-default">Recomendado</td><td class="col-desc">Resourcename do workcenter no Apriso — devolvido em <code>salaResourceName</code> e usado como <code>WorkcenterResourceName</code> na API.</td></tr>
+            <tr><td class="col-name">salas[].bals</td><td class="col-type">array</td><td class="col-default">Sim</td><td class="col-desc">Balanças da sala. O contador do card (<code>N bal ›</code>) sai daqui.</td></tr>
+            <tr><td class="col-name gd-nest">bals[].id</td><td class="col-type">string</td><td class="col-default">Sim</td><td class="col-desc">Identificador da balança — exibido no card ⚖️ e devolvido em <code>balancaId</code>.</td></tr>
+            <tr><td class="col-name gd-nest">bals[].cap</td><td class="col-type">string</td><td class="col-default">Não</td><td class="col-desc">Capacidade exibida no card (ex.: <code>"600 kg"</code>).</td></tr>
+            <tr><td class="col-name gd-nest">bals[].sug</td><td class="col-type">boolean</td><td class="col-default">Não</td><td class="col-desc"><code>true</code> marca a balança como <strong>sugerida</strong> (⭐). É só um indicador visual — não pré-seleciona.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Propriedades / métodos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:230px">Membro</th><th style="width:180px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">el.header</td><td class="col-type">object</td><td class="col-desc">Lê/define os dados do cabeçalho. Setar re-renderiza.</td></tr>
+            <tr><td class="col-name">el.salas</td><td class="col-type">array</td><td class="col-desc">Lê/define as salas. Setar re-renderiza (e volta o drill-down para a lista de salas).</td></tr>
+            <tr><td class="col-name">el.confirmText</td><td class="col-type">string</td><td class="col-desc">Espelha o atributo <code>confirm-text</code> — ler devolve o default quando não definido; setar <code>null</code> volta ao default.</td></tr>
+            <tr><td class="col-name">el.onConfirm</td><td class="col-type">function</td><td class="col-desc">Lê/define o callback de confirmação.</td></tr>
+            <tr><td class="col-name">el.onReadScale</td><td class="col-type">function</td><td class="col-desc">Lê/define o callback do <code>📡</code>.</td></tr>
+            <tr><td class="col-name">el.setPeso(v)</td><td class="col-type">method</td><td class="col-desc">Preenche <em>Quantidade Pesada</em>, recalcula o líquido e <strong>restaura o <code>📡</code></strong> do estado <code>⏳</code>. É o que <code>ctx.setValue()</code> chama.</td></tr>
+            <tr><td class="col-name">el.open()</td><td class="col-type">method</td><td class="col-desc">Exibe o popup (remove <code>open="false"</code>) e re-renderiza.</td></tr>
+            <tr><td class="col-name">el.close()</td><td class="col-type">method</td><td class="col-desc">Dispara <code>close</code> e <strong>remove o elemento do DOM</strong>.</td></tr>
+            <tr><td class="col-name">GranadoPesagemReetiquetarPopup.show(opts)</td><td class="col-type">static</td><td class="col-desc">Cria, configura e injeta o popup no <code>&lt;body&gt;</code>. <strong>Retorna o elemento</strong>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Eventos</h3>
+        <p class="gd-lead">Todos são <code>CustomEvent</code> com <code>bubbles: true</code> e <code>composed: true</code>.</p>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Evento</th><th style="width:300px">detail</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">confirm</td><td class="col-type">{ salaId, salaNome, salaResourceName, balancaId, quantidadePesada, tara, pesoLiquido, manual }</td><td class="col-desc">Clique em <em>Concluir</em> — só dispara depois de passar por todas as validações. O popup fecha em seguida (e dispara <code>close</code>).</td></tr>
+            <tr><td class="col-name">read-scale</td><td class="col-type">{ balancaId, salaId, setValue(v) }</td><td class="col-desc">Clique no <code>📡</code>. Disparado <strong>junto</strong> com o callback <code>onReadScale</code> — use um ou outro.</td></tr>
+            <tr><td class="col-name">close</td><td class="col-type">—</td><td class="col-desc">Popup fechado por <em>Cancelar</em>, <code>✕</code>, backdrop ou após o <em>Concluir</em>. O elemento já foi removido do DOM.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos do <code>detail</code> do <code>confirm</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:200px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">salaId</td><td class="col-type">string</td><td class="col-desc"><code>id</code> da sala escolhida.</td></tr>
+            <tr><td class="col-name">salaNome</td><td class="col-type">string</td><td class="col-desc"><code>nome</code> da sala (vazio se não informado).</td></tr>
+            <tr><td class="col-name">salaResourceName</td><td class="col-type">string</td><td class="col-desc"><code>resourceName</code> da sala — vai como <code>WorkcenterResourceName</code> na API.</td></tr>
+            <tr><td class="col-name">balancaId</td><td class="col-type">string | null</td><td class="col-desc"><code>id</code> da balança escolhida.</td></tr>
+            <tr><td class="col-name">quantidadePesada</td><td class="col-type">number</td><td class="col-desc">Valor do campo <em>Quantidade Pesada</em> já convertido para número (aceita vírgula ou ponto).</td></tr>
+            <tr><td class="col-name">tara</td><td class="col-type">number</td><td class="col-desc">Tara informada no modo manual. <strong>Sempre 0</strong> no modo balança (e também quando o campo fica vazio).</td></tr>
+            <tr><td class="col-name">pesoLiquido</td><td class="col-type">number</td><td class="col-desc"><code>quantidadePesada − tara</code>. No modo balança é igual a <code>quantidadePesada</code>.</td></tr>
+            <tr><td class="col-name">manual</td><td class="col-type">boolean</td><td class="col-desc"><code>true</code> se o peso foi digitado no modo <em>Peso manual</em>; <code>false</code> se veio da balança.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Validações (bloqueiam o Concluir)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:340px">Situação</th><th>Aviso</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-desc">Nenhuma sala selecionada</td><td class="col-desc">"Selecione a sala."</td></tr>
+            <tr><td class="col-desc">Modo balança sem balança selecionada</td><td class="col-desc">"Selecione a balança."</td></tr>
+            <tr><td class="col-desc">Quantidade Pesada vazia ou não numérica</td><td class="col-desc">"Informe a quantidade pesada."</td></tr>
+            <tr><td class="col-desc">Tara preenchida com valor não numérico</td><td class="col-desc">"Tara inválida — use apenas números."</td></tr>
+            <tr><td class="col-desc">Peso líquido <code>&lt;= 0</code> no modo manual</td><td class="col-desc">"Peso líquido inválido — verifique Quantidade Pesada e Tara."</td></tr>
+            <tr><td class="col-desc"><code>📡</code> sem sala/balança selecionada</td><td class="col-desc">"Selecione a sala e a balança antes de ler o peso."</td></tr>
+            <tr><td class="col-desc">Toggle <em>Peso manual</em> sem sala/balança selecionada</td><td class="col-desc">"Selecione a sala e a balança antes de usar o peso manual."</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Não chama API:</strong> o componente só devolve o resultado. Quem chama <code>GRD_API_JDE_CancelAndGenerateNewLabel</code> — e <code>GRD_API_BeginScaleReadings</code> para o <code>📡</code> — é a tela.</li>
+          <li><strong>Drill-down Sala &rarr; Balança:</strong> clicar numa sala abre as balanças dela; o botão <em>‹ Voltar</em> <strong>limpa a seleção</strong> (sala e balança), obrigando a escolher de novo.</li>
+          <li><strong>Modo balança é o default:</strong> o campo <em>Quantidade Pesada</em> nasce <code>readOnly</code> — o valor só entra pelo <code>📡</code> (ou por <code>setPeso()</code>).</li>
+          <li><strong>Troca de modo limpa os valores:</strong> peso e tara são zerados ao ligar/desligar o <em>Peso manual</em>, para nada carregar de um modo para o outro.</li>
+          <li><strong>Tara vazia = 0:</strong> deixar a tara em branco no modo manual faz o peso pesado virar o líquido. Líquido negativo exibe <code>⚠ neg.</code> em vermelho.</li>
+          <li><strong>Números em pt-BR:</strong> os campos aceitam vírgula ou ponto; o líquido é exibido com 3 casas e vírgula (<code>0,498 kg</code>).</li>
+          <li><strong><code>close()</code> destrói a instância:</strong> o elemento é removido do DOM. Com <code>show()</code> isso é transparente; no uso declarativo, recrie o elemento para reabrir.</li>
+          <li><strong><code>confirm-text</code> é a fonte da verdade:</strong> o atributo (ou <code>el.confirmText</code>) vale nos dois modos — <code>show({ confirmText })</code> só o grava no elemento, como em <code>&lt;granado-box-popup&gt;</code>.</li>
+          <li><strong>Avisos:</strong> usam <code>GranadoMessagePopup.warning()</code> quando o componente está carregado; sem ele, caem no <code>alert()</code> nativo.</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
+          <li><strong>Guard de registro:</strong> o arquivo é protegido por <code>if (!customElements.get(...))</code> — pode ser incluído mais de uma vez sem erro.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           FABRICAÇÃO — sem componentes ainda
+           ============================================================ -->
+      <section id="fabricacao" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <div style="font:900 10px/1 'Poppins',system-ui,Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#9A7520;margin-bottom:8px">Fabricação</div>
+        <h1 class="gd-h1" style="font-size:22px">Componentes de Fabricação</h1>
+        <p class="gd-lead">
+          Componentes de negócio das telas de <strong>Fabricação</strong> (ordens, in-batch, amostras,
+          tanque, fechamento). Ficam em
+          <code>[AprisoScripts]/WebComponentsGranado/Fabricacao/</code>.
+        </p>
+        <div class="gd-soon">Nenhum componente documentado ainda nesta categoria.</div>
+      </section>
+
+      <!-- ============================================================
+           PRODUÇÃO — sem componentes ainda
+           ============================================================ -->
+      <section id="producao" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <div style="font:900 10px/1 'Poppins',system-ui,Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#9A7520;margin-bottom:8px">Produção</div>
+        <h1 class="gd-h1" style="font-size:22px">Componentes de Produção</h1>
+        <p class="gd-lead">
+          Componentes de negócio das telas de <strong>Produção</strong> (cockpit, paradas, qualidade,
+          chamados, rastreabilidade). Ficam em
+          <code>[AprisoScripts]/WebComponentsGranado/Producao/</code>.
+        </p>
+        <div class="gd-soon">Nenhum componente documentado ainda nesta categoria.</div>
+      </section>
+
+      <!-- Popup GLOBAL do snippet: aberto pelo ícone de código de cada exemplo -->
+      <div id="gd-snip-modal" onclick="if(event.target===this)gdCloseSnip()">
+        <div class="gd-snip-box">
+          <div class="gd-snip-head"><span>Código do exemplo</span><button type="button" class="gd-snip-x" onclick="gdCloseSnip()">✕ Fechar</button></div>
+          <div id="gd-snip-body"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // Expande/colapsa uma categoria da sidebar.
+    function gdToggleCat(btn) {
+      var aberto = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!aberto));
+      var itens = btn.nextElementSibling;
+      if (itens) itens.style.display = aberto ? 'none' : 'block';
+    }
+
+    // Ao clicar num link de tópico, garante que a categoria pai esteja aberta.
+    document.addEventListener('click', function (ev) {
+      var a = ev.target.closest && ev.target.closest('.gd-cat-items a.gd-link');
+      if (!a) return;
+      var itens = a.closest('.gd-cat-items');
+      var toggle = itens && itens.previousElementSibling;
+      if (toggle && toggle.getAttribute('aria-expanded') === 'false') {
+        gdToggleCat(toggle);
+      }
+    });
+
+    // Snippet de cada exemplo (ícone no canto do .gd-demo).
+    function gdOpenSnip(btn) {
+      var demo = btn.closest('.gd-demo');
+      if (!demo) return;
+      // snippet pode estar DENTRO do demo ou ser um irmão posterior (pulando <script> etc.)
+      var snip = demo.querySelector('.gd-snip');
+      if (!snip) {
+        var n = demo.nextElementSibling;
+        while (n) {
+          if (n.classList && n.classList.contains('gd-snip')) { snip = n; break; }
+          if (n.classList && n.classList.contains('gd-demo')) break;
+          n = n.nextElementSibling;
+        }
+      }
+      var modal = document.getElementById('gd-snip-modal');
+      var body = document.getElementById('gd-snip-body');
+      if (!snip || !modal || !body) return;
+      body.innerHTML = '<pre class="gd-code">' + snip.innerHTML + '</pre>';
+      modal.classList.add('open');
+    }
+    function gdCloseSnip() {
+      var m = document.getElementById('gd-snip-modal');
+      if (m) m.classList.remove('open');
+    }
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') gdCloseSnip(); });
+  </script>
+
+</body>
+
+</html>

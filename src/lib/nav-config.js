@@ -112,6 +112,7 @@ export const MODULES = [
       { id: 'dev-charts',         label: '📊 Charts',          href: '/apriso/WebComponents/ComponentsChart.html' },
       { id: 'dev-charts-doc',     label: '📄 ChartsDoc',       href: '/apriso/WebComponents/ComponentsChartDocumentation.html' },
       { id: 'dev-api',            label: '📄 API',             href: '/apriso/WebComponents/APIDocumentation.html' },
+      { id: 'dev-grd-doc',        label: '📄 ComponentsGRD',   href: '/apriso/WebComponentsGranado/ComponentsDocumentationGRD.html' },
     ],
   },
 ];
