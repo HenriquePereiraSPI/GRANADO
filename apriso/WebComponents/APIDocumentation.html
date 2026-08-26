@@ -2430,7 +2430,7 @@ poppins-700.woff2
             <tr><td class="col-name">WipOrderNo</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">Número da ordem (WIP) a filtrar. Use <code>"-1"</code> para <strong>todas</strong> as ordens.</td></tr>
             <tr><td class="col-name">ProductNo</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">Código do material (produto) a filtrar. Use <code>"-1"</code> para <strong>todos</strong>.</td></tr>
             <tr><td class="col-name">LabelNoOrigin</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">Etiqueta de origem a filtrar. Use <code>"-1"</code> para <strong>todas</strong>.</td></tr>
-            <tr><td class="col-name">Status</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">Status da devolução a filtrar: <code>"OK"</code>, <code>"PENDING"</code> ou <code>"-1"</code> para <strong>todos</strong>.</td></tr>
+            <tr><td class="col-name">Status</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">Status da devolução a filtrar: <code>"PENDING"</code>, <code>"CANCELLED"</code> ou <code>"-1"</code> para <strong>todos</strong>.</td></tr>
           </tbody>
         </table>
 
@@ -2483,7 +2483,7 @@ poppins-700.woff2
             <tr><td class="col-name">OriginalLabelQuantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade da etiqueta de origem (saldo total).</td></tr>
             <tr><td class="col-name">WeighedQuantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade efetivamente pesada.</td></tr>
             <tr><td class="col-name">DiffQuantity</td><td class="col-type">string (número)</td><td class="col-desc">Diferença a devolver ao estoque (saldo). Pode ser <strong>negativa</strong> quando se pesou mais que o saldo da etiqueta.</td></tr>
-            <tr><td class="col-name">Status</td><td class="col-type">string</td><td class="col-desc">Status da devolução (ex.: <code>"OK"</code>, <code>"PENDING"</code>).</td></tr>
+            <tr><td class="col-name">Status</td><td class="col-type">string</td><td class="col-desc">Status da devolução (ex.: <code>"PENDING"</code>, <code>"CANCELLED"</code>).</td></tr>
             <tr><td class="col-name">StockReturnIntegratedDate</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data/hora de integração da devolução ao estoque. <code>"1/1/1900 …"</code> = ainda não devolvida.</td></tr>
             <tr><td class="col-name">StockReturnUser</td><td class="col-type">string</td><td class="col-desc">Usuário que realizou a devolução (vazio quando pendente).</td></tr>
             <tr><td class="col-name">CreatedOn</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data/hora de criação do registro.</td></tr>
@@ -4428,7 +4428,8 @@ poppins-700.woff2
         <pre class="gd-code">{
   <span class="tk-key">"LabelNo"</span><span class="tk-punc">:</span> <span class="tk-str">"2123145"</span><span class="tk-punc">,</span>
   <span class="tk-key">"NumberOfCopies"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"PrinterID"</span><span class="tk-punc">:</span> <span class="tk-str">"1234567"</span>
+  <span class="tk-key">"PrinterID"</span><span class="tk-punc">:</span> <span class="tk-str">"1234567"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"LabelFacility"</span><span class="tk-punc">:</span> <span class="tk-str">"APRISO | JDE"</span>
 }</pre>
 
         <h3 class="gd-h3">Campos de entrada</h3>
@@ -4459,6 +4460,12 @@ poppins-700.woff2
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
               <td class="col-desc">ID da impressora de destino (ver <a class="gd-link" href="#GRD_API_GetAllPrinters">GRD_API_GetAllPrinters</a>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">LabelFacility</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Origem dos dados da etiqueta: <code>"APRISO"</code> busca as informações no banco do <strong>Apriso</strong>; <code>"JDE"</code> busca na base do <strong>JDE</strong>.</td>
             </tr>
           </tbody>
         </table>
