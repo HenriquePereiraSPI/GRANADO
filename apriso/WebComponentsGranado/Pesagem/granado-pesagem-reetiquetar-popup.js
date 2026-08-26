@@ -457,6 +457,11 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
       if (st.mode === 'balanca' && !st.balId) { this._alerta('Selecione a balança.'); return; }
       const bruto = numBR(this._inp.value);
       if (bruto == null) { this._alerta('Informe a quantidade pesada.'); return; }
+      // Modo balança: só registra com peso > 0 (leitura 0/erro da balança não passa).
+      if (st.mode === 'balanca' && !(bruto > 0)) {
+        this._alerta('Peso da balança inválido (0). Refaça a leitura no 📡 ou use o Peso manual.');
+        return;
+      }
 
       let tara = 0, liquido = bruto;
       if (st.mode === 'manual') {
