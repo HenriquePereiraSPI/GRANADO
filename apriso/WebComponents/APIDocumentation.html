@@ -454,6 +454,7 @@
           <a class="gd-link" href="#GRD_API_JDE_GetStockInformation">GRD_API_JDE_GetStockInformation</a>
           <a class="gd-link" href="#GRD_API_GetJDELabels">GRD_API_GetJDELabels</a>
           <a class="gd-link" href="#GRD_API_JDE_CancelAndGenerateNewLabel">GRD_API_JDE_CancelAndGenerateNewLabel</a>
+          <a class="gd-link" href="#GRD_API_JDE_StockTransfer">GRD_API_JDE_StockTransfer</a>
         </div>
       </div>
     </nav>
@@ -5949,6 +5950,130 @@ poppins-700.woff2
             <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se a etiqueta foi cancelada e a nova gerada com sucesso.</td></tr>
             <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
             <tr><td class="col-name">Data</td><td class="col-type">string</td><td class="col-desc">Número da nova etiqueta gerada no JDE (ex.: <code>"52287897 (Nova etiqueta )"</code>).</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_JDE_StockTransfer
+           ============================================================ -->
+      <section id="GRD_API_JDE_StockTransfer">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_JDE_StockTransfer</code></h1>
+        <p class="gd-lead">
+          <strong>Movimentação de estoque</strong> no JDE — transfere uma quantidade de um lote de
+          um produto entre localizações (e/ou plantas), de <code>LocationFrom</code> para
+          <code>LocationTo</code>.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_JDE_StockTransfer</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>).
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"679195"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"M289"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1075525"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"15"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"PlantFrom"</span><span class="tk-punc">:</span> <span class="tk-str">"0015"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"PlantTo"</span><span class="tk-punc">:</span> <span class="tk-str">"0015"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"LocationFrom"</span><span class="tk-punc">:</span> <span class="tk-str">"PE2E01001"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"LocationTo"</span><span class="tk-punc">:</span> <span class="tk-str">"PE2S01001"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"UOM"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">WipOrderNo</td>
+              <td class="col-type">string (número)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Número da ordem associada à movimentação.</td>
+            </tr>
+            <tr>
+              <td class="col-name">ProductNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Código do produto (matéria-prima) a movimentar.</td>
+            </tr>
+            <tr>
+              <td class="col-name">LotNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Número do lote a movimentar.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Quantity</td>
+              <td class="col-type">string (número)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Quantidade a transferir (na unidade <code>UOM</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">PlantFrom</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Planta (filial) de origem.</td>
+            </tr>
+            <tr>
+              <td class="col-name">PlantTo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Planta (filial) de destino.</td>
+            </tr>
+            <tr>
+              <td class="col-name">LocationFrom</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Localização (endereço) de origem.</td>
+            </tr>
+            <tr>
+              <td class="col-name">LocationTo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Localização (endereço) de destino.</td>
+            </tr>
+            <tr>
+              <td class="col-name">UOM</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Unidade de medida da quantidade (ex.: <code>"KG"</code>).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Movimentação de estoque realizada com sucesso."</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se a movimentação de estoque foi realizada com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
           </tbody>
         </table>
       </section>
