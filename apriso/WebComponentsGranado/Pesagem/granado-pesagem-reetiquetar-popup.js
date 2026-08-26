@@ -272,9 +272,9 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
       const self = this;
       this.querySelector('[data-role="mode-toggle"]').addEventListener('click', function () {
         if (self._state.mode === 'balanca') {
-          // Só pode ir p/ manual depois de escolher a Sala E a Balança (ou se a sala não tem balança).
+          // Só precisa ter escolhido a Sala para poder usar o peso manual.
           if (!self._manualPermitido()) {
-            self._alerta('Selecione a sala e a balança antes de usar o peso manual.');
+            self._alerta('Selecione a sala antes de usar o peso manual.');
             return;
           }
           self._state.mode = 'manual';
@@ -390,8 +390,8 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
       return !!(sala && (!sala.bals || sala.bals.length === 0));
     }
 
-    // Manual liberado após escolher a balança OU quando a sala não tem balança.
-    _manualPermitido() { return !!(this._state.salaId && (this._state.balId || this._salaSemBalanca())); }
+    // Manual liberado assim que a SALA é escolhida (balança não é obrigatória).
+    _manualPermitido() { return !!this._state.salaId; }
 
     _updateToggleLock() {
       const lbl = this.querySelector('[data-role="mode-toggle"]');
