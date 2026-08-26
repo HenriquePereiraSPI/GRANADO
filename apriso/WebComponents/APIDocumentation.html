@@ -5888,7 +5888,7 @@ poppins-700.woff2
         </div>
         <p class="gd-lead">
           Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
-          (<code>Success</code> / <code>Message</code>) acrescido de <code>Data</code> com a nova etiqueta.
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>JDENewLabel</code> com a nova etiqueta.
         </p>
 
         <!-- ===== Inputs ===== -->
@@ -5941,11 +5941,11 @@ poppins-700.woff2
 
         <!-- ===== Outputs ===== -->
         <h2 class="gd-h2">Outputs</h2>
-        <p class="gd-lead">Envelope de resposta (JSON) — <code>Data</code> traz o número da nova etiqueta gerada:</p>
+        <p class="gd-lead">Envelope de resposta (JSON) — <code>JDENewLabel</code> traz o número da nova etiqueta gerada:</p>
         <pre class="gd-code">{
   <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
   <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Etiqueta cancelada e nova etiqueta gerada com sucesso."</span><span class="tk-punc">,</span>
-  <span class="tk-key">"Data"</span><span class="tk-punc">:</span> <span class="tk-str">"52287897 (Nova etiqueta )"</span>
+  <span class="tk-key">"JDENewLabel"</span><span class="tk-punc">:</span> <span class="tk-str">"52287897"</span>
 }</pre>
 
         <h3 class="gd-h3">Campos de saída</h3>
@@ -5956,7 +5956,7 @@ poppins-700.woff2
           <tbody>
             <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se a etiqueta foi cancelada e a nova gerada com sucesso.</td></tr>
             <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
-            <tr><td class="col-name">Data</td><td class="col-type">string</td><td class="col-desc">Número da nova etiqueta gerada no JDE (ex.: <code>"52287897 (Nova etiqueta )"</code>).</td></tr>
+            <tr><td class="col-name">JDENewLabel</td><td class="col-type">string</td><td class="col-desc">Número da nova etiqueta gerada no JDE (ex.: <code>"52287897"</code>).</td></tr>
           </tbody>
         </table>
       </section>
