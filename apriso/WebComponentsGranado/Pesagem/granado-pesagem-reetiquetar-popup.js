@@ -356,6 +356,7 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
         if (back) back.addEventListener('click', function () {
           // Voltar limpa a seleção -> obriga escolher sala/balança de novo
           st.view = 'salas'; st.salaId = null; st.balId = null;
+          self._limparPesagem();   // troca de contexto -> zera a pesagem
           self._renderDrill();
         });
         this._grpGrid.querySelectorAll('[data-bal]').forEach(function (card) {
@@ -366,6 +367,7 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
               cc.style.border = '2px solid ' + (on ? VERDE : BORDER);
               cc.style.background = on ? VERDE_DIM : SURFACE2;
             });
+            self._limparPesagem();   // trocou de balança -> zera a pesagem
             self._updateToggleLock();
           });
         });
@@ -418,6 +420,16 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
       this._qtdWrap.style.background = balOn ? 'transparent' : OURO_DIM;
       if (!balOn) { this._recalcLiq(); try { this._inp.focus(); } catch (e) {} }
       this._updateToggleLock();
+    }
+
+    // Zera Quantidade Pesada / Tara / Peso Líquido (troca de balança ou Voltar).
+    _limparPesagem() {
+      this._pesoStr = ''; this._taraStr = '';
+      if (this._inp) this._inp.value = '';
+      if (this._taraInp) this._taraInp.value = '';
+      if (this._liqDisp) { this._liqDisp.textContent = '— kg'; this._liqDisp.style.color = VERDE_ESC; }
+      // se o 📡 estava "carregando", destrava
+      if (this._pullBtn) { this._pullBtn.disabled = false; this._pullBtn.innerHTML = '📡'; }
     }
 
     _recalcLiq() {
