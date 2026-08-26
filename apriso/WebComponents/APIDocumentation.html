@@ -430,6 +430,7 @@
           <a class="gd-link" href="#GRD_API_GetAllWeighLineDetail">GRD_API_GetAllWeighLineDetail</a>
           <a class="gd-link" href="#GRD_API_GetDefaultWorkcenterPrinter">GRD_API_GetDefaultWorkcenterPrinter</a>
           <a class="gd-link" href="#GRD_API_GetCurrentUserInformation">GRD_API_GetCurrentUserInformation</a>
+          <a class="gd-link" href="#GRD_API_GetCageInformation">GRD_API_GetCageInformation</a>
         </div>
       </div>
 
@@ -2498,6 +2499,112 @@ poppins-700.woff2
           <li><strong>Filtros <code>-1</code>:</strong> <code>WipOrderNo</code>, <code>ProductNo</code>, <code>LabelNoOrigin</code> e <code>Status</code> aceitam <code>"-1"</code> para não filtrar.</li>
           <li><strong>Quantidades como string:</strong> os valores vêm com casas decimais fixas (string); converta para número antes de calcular.</li>
         </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetCageInformation
+           ============================================================ -->
+      <section id="GRD_API_GetCageInformation">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetCageInformation</code></h1>
+        <p class="gd-lead">
+          Recupera <strong>informações detalhadas de uma gaiola</strong> (container) e os
+          <strong>itens</strong> que ela agrupa. Retorna o resumo da gaiola em
+          <code>CageInformation</code> e a lista de etiquetas/pesagens em <code>Items</code>.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetCageInformation</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>CageInformation</code> e <code>Items</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Container"</span><span class="tk-punc">:</span> <span class="tk-str">"648412"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">Container</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Identificador do container (gaiola) a consultar.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON) — <code>Items</code> truncado para leitura; os demais seguem o mesmo formato:</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Informações recuperadas com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"CageInformation"</span><span class="tk-punc">:</span> {
+    <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"619332"</span><span class="tk-punc">,</span> <span class="tk-key">"Container"</span><span class="tk-punc">:</span> <span class="tk-str">"G000184"</span><span class="tk-punc">,</span> <span class="tk-key">"CurrentLocation"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"QtdItems"</span><span class="tk-punc">:</span> <span class="tk-str">"4"</span>
+  }<span class="tk-punc">,</span>
+  <span class="tk-key">"Items"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100518"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0801225"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0.6000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"LabelNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0000432"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"M610"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100519"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0801225"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"0.6000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"LabelNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0000433"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"M610"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100570"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0810925"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"175.8000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"LabelNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0000490"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"M602B"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100582"</span><span class="tk-punc">,</span> <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0810925"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighedQuantity"</span><span class="tk-punc">:</span> <span class="tk-str">"175.8000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"LabelNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0000506"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"M602B"</span> }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se a consulta foi feita com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">CageInformation</td><td class="col-type">object</td><td class="col-desc">Resumo da gaiola (ordem, container, localização e nº de itens). Campos abaixo.</td></tr>
+            <tr><td class="col-name">Items</td><td class="col-type">array&lt;item&gt;</td><td class="col-desc">Itens (etiquetas/pesagens) agrupados na gaiola. Campos abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de <code>CageInformation</code> (resumo da gaiola)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:180px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">WipOrderNo</td><td class="col-type">string (número)</td><td class="col-desc">Número da ordem vinculada à gaiola.</td></tr>
+            <tr><td class="col-name">Container</td><td class="col-type">string</td><td class="col-desc">Identificador/etiqueta do container (gaiola).</td></tr>
+            <tr><td class="col-name">CurrentLocation</td><td class="col-type">string</td><td class="col-desc">Localização atual da gaiola. Pode vir <strong>vazia</strong> (<code>""</code>).</td></tr>
+            <tr><td class="col-name">QtdItems</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade de itens (etiquetas) na gaiola.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada item de <code>Items</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:180px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">WeighLineDetailID</td><td class="col-type">string (número)</td><td class="col-desc">ID do detalhe da pesagem (item individual).</td></tr>
+            <tr><td class="col-name">LotNo</td><td class="col-type">string</td><td class="col-desc">Número do lote da matéria-prima.</td></tr>
+            <tr><td class="col-name">WeighedQuantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade pesada do item.</td></tr>
+            <tr><td class="col-name">LabelNo</td><td class="col-type">string</td><td class="col-desc">Número da etiqueta do item.</td></tr>
+            <tr><td class="col-name">ProductNo</td><td class="col-type">string</td><td class="col-desc">Código do produto (matéria-prima).</td></tr>
+          </tbody>
+        </table>
       </section>
 
       <!-- ============================================================
