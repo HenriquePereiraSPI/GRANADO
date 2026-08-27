@@ -40,6 +40,10 @@
    Propriedades JS:
      elemento.value -> valor atual (ler/setar)
      elemento.focus() / .blur()
+     elemento.openKeyboard() / .closeKeyboard() / .toggleKeyboard()
+        -> controla o teclado virtual quando enable-virtual-keyboard="true".
+           Chame dentro de um gesto do usuario (click/touch) para o "abrir"
+           realmente subir o teclado no Android.
 
    Exemplo:
 
@@ -123,6 +127,23 @@ if (!customElements.get('granado-input')) {
     blur() {
       const f = this.querySelector('[data-input-field]');
       if (f) f.blur();
+    }
+    // Controle do teclado virtual (so quando enable-virtual-keyboard="true").
+    // IMPORTANTE: chame openKeyboard()/toggleKeyboard() DENTRO de um gesto do
+    // usuario (click/touch) — senao o "abrir" nao sobe o teclado no Android.
+    openKeyboard() {
+      if (this.getAttribute('enable-virtual-keyboard') !== 'true') return;
+      if (this._vkbOpen) return;
+      this._openKeyboard();
+    }
+    closeKeyboard() {
+      if (this.getAttribute('enable-virtual-keyboard') !== 'true') return;
+      if (!this._vkbOpen) return;
+      this._closeKeyboard();
+    }
+    toggleKeyboard() {
+      if (this.getAttribute('enable-virtual-keyboard') !== 'true') return;
+      this._toggleVirtualKeyboard();
     }
 
     // ------------------------------------------------------------
@@ -342,26 +363,34 @@ if (!customElements.get('granado-input')) {
 
     // Abre/fecha o teclado virtual (mobile) manualmente pelo botao.
     _toggleVirtualKeyboard() {
+      if (!this._vkbOpen) this._openKeyboard();
+      else this._closeKeyboard();
+    }
+
+    // Abrir: troca o inputmode e re-foca (blur+focus) dentro do gesto do clique.
+    _openKeyboard() {
       const field = this.querySelector('[data-input-field]');
       const btn = this.querySelector('[data-vkb-toggle]');
       if (!field) return;
       const activeColor = this.getAttribute('color') || '#1C5C31';
-      if (!this._vkbOpen) {
-        // Abrir: troca o inputmode e re-foca (blur+focus) dentro do gesto do clique.
-        this._vkbToggling = true;
-        field.setAttribute('inputmode', this._kbInputMode());
-        field.blur();
-        field.focus();
-        this._vkbToggling = false;
-        this._vkbOpen = true;
-        if (btn) btn.style.color = activeColor;
-      } else {
-        // Fechar: volta para "none" e tira o foco.
-        field.setAttribute('inputmode', 'none');
-        this._vkbOpen = false;
-        field.blur();
-        if (btn) btn.style.color = '#8A9E8E';
-      }
+      this._vkbToggling = true;
+      field.setAttribute('inputmode', this._kbInputMode());
+      field.blur();
+      field.focus();
+      this._vkbToggling = false;
+      this._vkbOpen = true;
+      if (btn) btn.style.color = activeColor;
+    }
+
+    // Fechar: volta para "none" e tira o foco.
+    _closeKeyboard() {
+      const field = this.querySelector('[data-input-field]');
+      const btn = this.querySelector('[data-vkb-toggle]');
+      if (!field) return;
+      field.setAttribute('inputmode', 'none');
+      this._vkbOpen = false;
+      field.blur();
+      if (btn) btn.style.color = '#8A9E8E';
     }
 
     // Ao perder o foco (tocar fora), reseta o estado para "fechado".
