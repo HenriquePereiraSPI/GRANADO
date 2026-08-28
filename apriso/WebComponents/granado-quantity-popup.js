@@ -183,7 +183,7 @@ if (!customElements.get('granado-quantity-popup')) {
           ? (iconVal ? `<span style="font-size:22px;line-height:1">${this._esc(iconVal)}</span>` : '')
           : this._cageSvg(cor, 30);
         btns +=
-          `<button type="button" data-role="qty" data-qty="${n}" title="${n}" style="height:auto !important;min-height:0 !important;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;height:74px;border:2px solid ${s ? GOLD : BORDER2};border-radius:10px;background:${s ? GOLD_DIM : SURFACE2};color:${cor};cursor:pointer;padding-bottom:${s ? '11px' : '0'}">` +
+          `<button type="button" data-role="qty" data-qty="${n}" title="${n}" style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;height:74px !important;border:2px solid ${s ? GOLD : BORDER2};border-radius:10px;background:${s ? GOLD_DIM : SURFACE2};color:${cor};cursor:pointer;padding-bottom:${s ? '11px' : '0'}">` +
             iconHtml +
             `<span style="font:900 17px/1 ${MONO}">${n}</span>` +
             (s ? '<span style="position:absolute;bottom:3px;left:0;right:0;font:900 7px/1 ' + FONT + ';letter-spacing:.08em;text-transform:uppercase">sugerido</span>' : '') +

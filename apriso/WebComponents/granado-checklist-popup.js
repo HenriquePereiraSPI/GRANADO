@@ -311,7 +311,7 @@ if (!customElements.get('granado-checklist-popup')) {
     _checkBox(i, st, size) {
       const on = st === true;
       const s = size || 26, rad = size ? 8 : 6, fs = size ? 19 : 15;
-      return `<button type="button" data-role="check" data-idx="${i}" data-checked="${on}" aria-pressed="${on}" title="Marcar / desmarcar" style="height:auto !important;min-height:0 !important;width:${s}px;height:${s}px;flex-shrink:0;padding:0;border-radius:${rad}px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border:2px solid ${on ? OK.txt : BORDER2};background:${on ? OK.txt : SURFACE};color:#fff;font:900 ${fs}px/1 ${FONT};transition:all .12s ease">${on ? '✓' : ''}</button>`;
+      return `<button type="button" data-role="check" data-idx="${i}" data-checked="${on}" aria-pressed="${on}" title="Marcar / desmarcar" style="width:${s}px !important;height:${s}px !important;flex-shrink:0;padding:0;border-radius:${rad}px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border:2px solid ${on ? OK.txt : BORDER2};background:${on ? OK.txt : SURFACE};color:#fff;font:900 ${fs}px/1 ${FONT};transition:all .12s ease">${on ? '✓' : ''}</button>`;
     }
 
     // Escolhe o layout conforme a largura (WEB = tabela · MOBILE = wizard).

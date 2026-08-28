@@ -375,9 +375,8 @@ if (!customElements.get('granado-table')) {
       const ICON_PDF = `<svg ${iconBase}>${fileShape}${label('PDF')}</svg>`;
 
       const btn = (icon, action, title) => `
-        <button data-export-action="${action}" title="${title}" aria-label="${title}" style="height:auto !important;min-height:0 !important;
-          width:30px;
-          height:30px;
+        <button data-export-action="${action}" title="${title}" aria-label="${title}" style="width:30px !important;
+          height:30px !important;
           display:inline-flex;
           align-items:center;
           justify-content:center;
