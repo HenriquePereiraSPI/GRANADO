@@ -171,13 +171,13 @@ if (!customElements.get('granado-filter')) {
       const trigStyle = 'display:inline-flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0;' +
         'height:34px;' + (label ? 'padding:0 12px;' : 'width:34px;padding:0;') +
         `border:1px solid ${BORDER};border-radius:8px;background:${SURFACE};color:${color};cursor:pointer;font:700 13px/1.4 ${FONT}`;
-      const trigger = `<button data-role="trigger" type="button" title="${this._esc(title)}" aria-label="${this._esc(title)}" style="${trigStyle}">${FUNNEL}${label ? `<span>${this._esc(label)}</span>` : ''}</button>`;
+      const trigger = `<button data-role="trigger" type="button" title="${this._esc(title)}" aria-label="${this._esc(title)}" style="height:auto !important;min-height:0 !important;${trigStyle}">${FUNNEL}${label ? `<span>${this._esc(label)}</span>` : ''}</button>`;
 
       const backdrop = `<div data-role="backdrop" style="display:none;position:fixed;inset:0;background:${OVERLAY_BG};z-index:99998"></div>`;
 
       const applyHtml = applyText
         ? `<div style="position:sticky;bottom:0;background:${SURFACE};padding:12px 18px 18px;border-top:1px solid ${BORDER}">` +
-            `<button data-role="apply" type="button" style="width:100%;font:700 14px/1.4 ${FONT};padding:11px;border:1px solid ${color};border-radius:8px;background:${color};color:#fff;cursor:pointer">${this._esc(applyText)}</button>` +
+            `<button data-role="apply" type="button" style="height:auto !important;min-height:0 !important;width:100%;font:700 14px/1.4 ${FONT};padding:11px;border:1px solid ${color};border-radius:8px;background:${color};color:#fff;cursor:pointer">${this._esc(applyText)}</button>` +
           `</div>`
         : '';
 
@@ -185,7 +185,7 @@ if (!customElements.get('granado-filter')) {
         `<div data-role="sheet" style="display:none;position:fixed;left:0;right:0;bottom:0;margin:0 auto;max-width:${width};z-index:99999;background:${SURFACE};border:1px solid ${BORDER};border-bottom:none;border-radius:16px 16px 0 0;box-shadow:0 -10px 34px rgba(15,51,25,.28);max-height:85vh;overflow-y:auto;box-sizing:border-box;transform:translateY(100%);transition:transform .22s ease">` +
           `<div style="position:sticky;top:0;background:${SURFACE};display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px 10px;z-index:1">` +
             `<div style="display:flex;align-items:center;gap:8px;font:700 15px/1.3 ${FONT};color:${TEXT}"><span style="color:${color};display:flex">${FUNNEL}</span>${this._esc(title)}</div>` +
-            `<button data-role="close" type="button" aria-label="Fechar" style="flex-shrink:0;background:transparent;border:1px solid ${BORDER};border-radius:6px;padding:5px 10px;cursor:pointer;font:13px/1 ${FONT};color:${TEXT2}">&#10005;</button>` +
+            `<button data-role="close" type="button" aria-label="Fechar" style="height:auto !important;min-height:0 !important;flex-shrink:0;background:transparent;border:1px solid ${BORDER};border-radius:6px;padding:5px 10px;cursor:pointer;font:13px/1 ${FONT};color:${TEXT2}">&#10005;</button>` +
           `</div>` +
           `<div data-role="body" style="padding:6px 18px 14px;font:13px/1.5 ${FONT};color:${TEXT}"></div>` +
           applyHtml +

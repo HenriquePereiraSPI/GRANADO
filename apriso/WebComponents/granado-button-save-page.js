@@ -95,7 +95,7 @@ if (!customElements.get('granado-button-save-page')) {
       this.style.display = 'inline-block';
       this.innerHTML =
         `<div style="position:relative;display:inline-block">` +
-          `<button type="button" data-role="main"${disabled ? ' disabled' : ''} style="${btnStyle}">${icon}<span>${this._esc(label)}</span>${caret}</button>` +
+          `<button type="button" data-role="main"${disabled ? ' disabled' : ''} style="height:auto !important;min-height:0 !important;${btnStyle}">${icon}<span>${this._esc(label)}</span>${caret}</button>` +
           menu +
         `</div>`;
 
@@ -103,7 +103,7 @@ if (!customElements.get('granado-button-save-page')) {
     }
 
     _menuItem(kind, text) {
-      return `<button type="button" data-role="opt" data-kind="${kind}" style="display:block;width:100%;text-align:left;` +
+      return `<button type="button" data-role="opt" data-kind="${kind}" style="height:auto !important;min-height:0 !important;display:block;width:100%;text-align:left;` +
         `font:600 12.5px/1.4 ${FONT};color:${TEXT};background:transparent;border:none;border-radius:6px;padding:8px 10px;cursor:pointer">${text}</button>`;
     }
 

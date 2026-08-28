@@ -257,7 +257,7 @@ if (!customElements.get('granado-option-popup')) {
         const style = (b.variant === 'ghost')
           ? `border:1px solid ${b.color || BORDER};background:transparent;color:${b.color || GHOST_TXT}`
           : `border:1px solid ${bc};background:${bc};color:#fff`;
-        return `<button type="button" data-role="opt" data-index="${i}" style="${btnBase};${style}">${this._esc(b.text)}</button>`;
+        return `<button type="button" data-role="opt" data-index="${i}" style="height:auto !important;min-height:0 !important;${btnBase};${style}">${this._esc(b.text)}</button>`;
       }).join('');
 
       const secs = this._autoSeconds();

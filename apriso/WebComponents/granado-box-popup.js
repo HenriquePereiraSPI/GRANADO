@@ -219,7 +219,7 @@ if (!customElements.get('granado-box-popup')) {
                 (title ? `<div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:${OURO}">${this._esc(title)}</div>` : '') +
                 (subtitle ? `<div style="font-family:${FONT};font-size:18px;font-weight:700;color:${VERDE_ESC};margin-top:2px">${this._esc(subtitle)}</div>` : '') +
               `</div>` +
-              `<button type="button" data-role="x" title="Cancelar" style="background:none;border:1px solid ${BORDER};border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:${TEXT2};line-height:1;flex-shrink:0">✕</button>` +
+              `<button type="button" data-role="x" title="Cancelar" style="height:auto !important;min-height:0 !important;background:none;border:1px solid ${BORDER};border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:${TEXT2};line-height:1;flex-shrink:0">✕</button>` +
             `</div>` +
             // Cards — grid no web · faixa com scroll horizontal no mobile
             `<div data-role="grid" style="${gridStyle}">${cards}</div>` +
@@ -230,8 +230,8 @@ if (!customElements.get('granado-box-popup')) {
             `</div>` +
             // Botões
             `<div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;margin-top:16px;border-top:1px solid ${BORDER}">` +
-              `<button type="button" data-role="cancel" style="font:600 13px/1.4 ${FONT};padding:9px 18px;border:1px solid ${BORDER};border-radius:8px;background:transparent;color:${TEXT2};cursor:pointer">Cancelar</button>` +
-              `<button type="button" data-role="confirm" disabled style="font:700 13px/1.4 ${FONT};padding:9px 22px;border:1px solid ${VERDE};border-radius:8px;background:${VERDE};color:#fff;cursor:not-allowed;opacity:.5">${this._esc(confirmText)}</button>` +
+              `<button type="button" data-role="cancel" style="font:600 13px/1.4 ${FONT} !important;letter-spacing:normal !important;box-sizing:border-box !important;height:auto !important;min-height:0 !important;padding:9px 18px !important;border:1px solid ${BORDER};border-radius:8px;background:transparent;color:${TEXT2};cursor:pointer">Cancelar</button>` +
+              `<button type="button" data-role="confirm" disabled style="font:700 13px/1.4 ${FONT} !important;letter-spacing:normal !important;box-sizing:border-box !important;height:auto !important;min-height:0 !important;padding:9px 22px !important;border:1px solid ${VERDE};border-radius:8px;background:${VERDE};color:#fff;cursor:not-allowed;opacity:.5">${this._esc(confirmText)}</button>` +
             `</div>` +
           `</div>` +
         `</div>`;

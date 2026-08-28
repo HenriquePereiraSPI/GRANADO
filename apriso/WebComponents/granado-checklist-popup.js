@@ -311,7 +311,7 @@ if (!customElements.get('granado-checklist-popup')) {
     _checkBox(i, st, size) {
       const on = st === true;
       const s = size || 26, rad = size ? 8 : 6, fs = size ? 19 : 15;
-      return `<button type="button" data-role="check" data-idx="${i}" data-checked="${on}" aria-pressed="${on}" title="Marcar / desmarcar" style="width:${s}px;height:${s}px;flex-shrink:0;padding:0;border-radius:${rad}px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border:2px solid ${on ? OK.txt : BORDER2};background:${on ? OK.txt : SURFACE};color:#fff;font:900 ${fs}px/1 ${FONT};transition:all .12s ease">${on ? '✓' : ''}</button>`;
+      return `<button type="button" data-role="check" data-idx="${i}" data-checked="${on}" aria-pressed="${on}" title="Marcar / desmarcar" style="height:auto !important;min-height:0 !important;width:${s}px;height:${s}px;flex-shrink:0;padding:0;border-radius:${rad}px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border:2px solid ${on ? OK.txt : BORDER2};background:${on ? OK.txt : SURFACE};color:#fff;font:900 ${fs}px/1 ${FONT};transition:all .12s ease">${on ? '✓' : ''}</button>`;
     }
 
     // Escolhe o layout conforme a largura (WEB = tabela · MOBILE = wizard).
@@ -379,7 +379,7 @@ if (!customElements.get('granado-checklist-popup')) {
           ? `<td style="border-bottom:1px solid ${BORDER};padding:11px 12px;vertical-align:middle;min-width:150px">` + (r.observacao != null ? `<input data-role="obs" data-idx="${i}" type="text" value="${this._esc(r.observacao)}" style="${inpBase}">` : '') + `</td>`
           : '';
         const acaoCell = hasAcao
-          ? `<td style="text-align:center;border-bottom:1px solid ${BORDER};padding:11px 12px;vertical-align:middle">` + (r.acao ? `<button type="button" data-role="rowbtn" data-idx="${i}"${r.acao.title ? ` title="${this._esc(r.acao.title)}"` : ''} style="position:relative;overflow:hidden;font:700 14px/1.1 ${FONT};padding:6px 12px;border:1px solid ${VERDE};border-radius:6px;background:${VERDE};color:#fff;cursor:pointer;white-space:nowrap;transition:transform .1s ease,background .15s ease">${this._esc(r.acao.text)}</button>` : '') + `</td>`
+          ? `<td style="text-align:center;border-bottom:1px solid ${BORDER};padding:11px 12px;vertical-align:middle">` + (r.acao ? `<button type="button" data-role="rowbtn" data-idx="${i}"${r.acao.title ? ` title="${this._esc(r.acao.title)}"` : ''} style="height:auto !important;min-height:0 !important;position:relative;overflow:hidden;font:700 14px/1.1 ${FONT};padding:6px 12px;border:1px solid ${VERDE};border-radius:6px;background:${VERDE};color:#fff;cursor:pointer;white-space:nowrap;transition:transform .1s ease,background .15s ease">${this._esc(r.acao.text)}</button>` : '') + `</td>`
           : '';
         const valorCell = showValue ? `<td style="border-bottom:1px solid ${BORDER};padding:11px 12px;vertical-align:middle;width:150px">${leituraCell}</td>` : '';
         const autoStatus = r.hasLimits && showValue;   // sem coluna Valor, o Check vira checkbox
@@ -407,7 +407,7 @@ if (!customElements.get('granado-checklist-popup')) {
                 (title ? `<div style="font-size:19px;font-weight:800;color:${VERDE_ESC}">${title}</div>` : '') +
                 (subtitle ? `<div style="font-size:12px;color:${TEXT2};margin-top:2px">${subtitle}</div>` : '') +
               `</div>` +
-              `<button type="button" data-role="x" title="Cancelar" style="background:none;border:1px solid ${BORDER};border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:${TEXT2};line-height:1;flex-shrink:0">✕</button>` +
+              `<button type="button" data-role="x" title="Cancelar" style="height:auto !important;min-height:0 !important;background:none;border:1px solid ${BORDER};border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:${TEXT2};line-height:1;flex-shrink:0">✕</button>` +
             `</div>` +
             headerHtml +
             // Tabela
@@ -432,8 +432,8 @@ if (!customElements.get('granado-checklist-popup')) {
             `<div data-role="validate-error" style="display:none;margin-top:14px;padding:9px 12px;border:1px solid rgba(140,26,26,.35);background:rgba(140,26,26,.08);color:#8C1A1A;border-radius:8px;font:600 12px/1.45 ${FONT}"></div>` +
             // Botões
             `<div style="display:flex;gap:10px;justify-content:flex-end;padding-top:16px;margin-top:16px;border-top:1px solid ${BORDER}">` +
-              `<button type="button" data-role="cancel" style="font:600 13px/1.4 ${FONT};padding:9px 18px;border:1px solid ${BORDER};border-radius:8px;background:transparent;color:${TEXT2};cursor:pointer">Cancelar</button>` +
-              `<button type="button" data-role="confirm" style="font:700 13px/1.4 ${FONT};padding:9px 22px;border:1px solid ${VERDE};border-radius:8px;background:${VERDE};color:#fff;cursor:pointer">${this._esc(confirmText)}</button>` +
+              `<button type="button" data-role="cancel" style="height:auto !important;min-height:0 !important;font:600 13px/1.4 ${FONT};padding:9px 18px;border:1px solid ${BORDER};border-radius:8px;background:transparent;color:${TEXT2};cursor:pointer">Cancelar</button>` +
+              `<button type="button" data-role="confirm" style="height:auto !important;min-height:0 !important;font:700 13px/1.4 ${FONT};padding:9px 22px;border:1px solid ${VERDE};border-radius:8px;background:${VERDE};color:#fff;cursor:pointer">${this._esc(confirmText)}</button>` +
             `</div>` +
           `</div>` +
         `</div>`;
@@ -477,7 +477,7 @@ if (!customElements.get('granado-checklist-popup')) {
           : this._checkBox(i, r.status, 34);
         const checkBlock = `<div style="margin-top:12px"><span style="${lbl}">${autoStatus ? 'Status' : 'Check'}</span><div style="box-sizing:border-box;width:100%;min-height:44px;padding:4px 12px;border:1px dashed ${BORDER};border-radius:8px;background:#fff;display:flex;align-items:center">${checkControl}</div></div>`;
         const obsBlock = (hasObservacao && r.observacao != null) ? `<div style="margin-top:12px"><span style="${lbl}">Observação</span><input data-role="obs" data-idx="${i}" type="text" value="${this._esc(r.observacao)}" style="${inpBase}"></div>` : '';
-        const acaoBlock = r.acao ? `<div style="margin-top:12px"><button type="button" data-role="rowbtn" data-ghost="true" data-idx="${i}"${r.acao.title ? ` title="${this._esc(r.acao.title)}"` : ''} style="position:relative;overflow:hidden;width:100%;box-sizing:border-box;font:700 13px/1.1 ${FONT};padding:10px 14px;border:1px solid ${BORDER2};border-radius:8px;background:transparent;color:${TEXT2};cursor:pointer;transition:transform .1s ease,border-color .15s ease,color .15s ease">${this._esc(r.acao.text)}</button></div>` : '';
+        const acaoBlock = r.acao ? `<div style="margin-top:12px"><button type="button" data-role="rowbtn" data-ghost="true" data-idx="${i}"${r.acao.title ? ` title="${this._esc(r.acao.title)}"` : ''} style="height:auto !important;min-height:0 !important;position:relative;overflow:hidden;width:100%;box-sizing:border-box;font:700 13px/1.1 ${FONT};padding:10px 14px;border:1px solid ${BORDER2};border-radius:8px;background:transparent;color:${TEXT2};cursor:pointer;transition:transform .1s ease,border-color .15s ease,color .15s ease">${this._esc(r.acao.text)}</button></div>` : '';
         const cardInner = `<div style="border:1px solid ${BORDER};border-radius:10px;padding:14px;background:${SURFACE}">` +
           `<div style="font-weight:800;color:${TEXT};font-size:14px;line-height:1.35">${r.caracteristica != null ? r.caracteristica : ''}${showValue ? this._limitsLabel(r) : ''}</div>` +
           valorBlock + checkBlock + obsBlock + acaoBlock +
@@ -495,7 +495,7 @@ if (!customElements.get('granado-checklist-popup')) {
                 (subtitle ? `<div style="font-size:12px;color:${TEXT2};margin-top:2px">${subtitle}</div>` : '') +
                 metaLine +
               `</div>` +
-              `<button type="button" data-role="x" title="Cancelar" style="background:none;border:1px solid ${BORDER};border-radius:6px;padding:6px 11px;cursor:pointer;font-size:14px;color:${TEXT2};line-height:1;flex-shrink:0">✕</button>` +
+              `<button type="button" data-role="x" title="Cancelar" style="height:auto !important;min-height:0 !important;background:none;border:1px solid ${BORDER};border-radius:6px;padding:6px 11px;cursor:pointer;font-size:14px;color:${TEXT2};line-height:1;flex-shrink:0">✕</button>` +
             `</div>` +
             headerHtml +
             // Subheader: progresso "X / N" + barra
@@ -507,8 +507,8 @@ if (!customElements.get('granado-checklist-popup')) {
             `<div data-role="validate-error" style="display:none;margin-top:14px;padding:9px 12px;border:1px solid rgba(140,26,26,.35);background:rgba(140,26,26,.08);color:#8C1A1A;border-radius:8px;font:600 12px/1.45 ${FONT}"></div>` +
             // Navegação: Anterior + Próximo (→ Concluir no último)
             `<div style="display:flex;gap:10px;padding-top:16px;margin-top:16px;border-top:1px solid ${BORDER}">` +
-              `<button type="button" data-role="wiz-prev" style="flex:1;font:600 14px/1.4 ${FONT};padding:12px 16px;border:1px solid ${BORDER};border-radius:9px;background:transparent;color:${TEXT2};cursor:pointer">‹ Anterior</button>` +
-              `<button type="button" data-role="wiz-next" style="flex:1.4;font:700 14px/1.4 ${FONT};padding:12px 16px;border:1px solid ${VERDE};border-radius:9px;background:${VERDE};color:#fff;cursor:pointer">Próximo ›</button>` +
+              `<button type="button" data-role="wiz-prev" style="height:auto !important;min-height:0 !important;flex:1;font:600 14px/1.4 ${FONT};padding:12px 16px;border:1px solid ${BORDER};border-radius:9px;background:transparent;color:${TEXT2};cursor:pointer">‹ Anterior</button>` +
+              `<button type="button" data-role="wiz-next" style="height:auto !important;min-height:0 !important;flex:1.4;font:700 14px/1.4 ${FONT};padding:12px 16px;border:1px solid ${VERDE};border-radius:9px;background:${VERDE};color:#fff;cursor:pointer">Próximo ›</button>` +
             `</div>` +
           `</div>` +
         `</div>`;
@@ -556,7 +556,7 @@ if (!customElements.get('granado-checklist-popup')) {
         `<div data-role="hi-panel" style="display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:60;background:${IBG};border:1px solid ${IBD};border-radius:8px;padding:12px 14px;box-shadow:0 14px 34px rgba(15,51,25,.28);max-height:60vh;overflow-y:auto">` +
           content +
           `<div style="display:flex;justify-content:flex-end;margin-top:12px">` +
-            `<button type="button" data-role="hi-close" style="font:700 12px/1.2 ${FONT};padding:8px 18px;border:1px solid ${IBD};border-radius:7px;background:#fff;color:${IFG};cursor:pointer">Fechar</button>` +
+            `<button type="button" data-role="hi-close" style="height:auto !important;min-height:0 !important;font:700 12px/1.2 ${FONT};padding:8px 18px;border:1px solid ${IBD};border-radius:7px;background:#fff;color:${IFG};cursor:pointer">Fechar</button>` +
           `</div>` +
         `</div>` +
       `</div>`;

@@ -178,7 +178,7 @@ if (!customElements.get('granado-empty-popup')) {
       const subtitleHtml = subtitle
         ? `<div style="font:12px/1.4 ${FONT};color:${TEXT2};margin-top:2px">${this._esc(subtitle)}</div>` : '';
       const closeBtn = showClose
-        ? `<button type="button" data-role="close" aria-label="Fechar" title="Fechar" style="flex-shrink:0;background:transparent;border:1px solid ${BORDER};border-radius:6px;padding:5px 10px;cursor:pointer;font:13px/1 ${FONT};color:${TEXT2}">&#10005;</button>` : '';
+        ? `<button type="button" data-role="close" aria-label="Fechar" title="Fechar" style="height:auto !important;min-height:0 !important;flex-shrink:0;background:transparent;border:1px solid ${BORDER};border-radius:6px;padding:5px 10px;cursor:pointer;font:13px/1 ${FONT};color:${TEXT2}">&#10005;</button>` : '';
 
       const hasHeader = title || subtitle || showClose;
       const header = hasHeader

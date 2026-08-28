@@ -183,7 +183,7 @@ if (!customElements.get('granado-quantity-popup')) {
           ? (iconVal ? `<span style="font-size:22px;line-height:1">${this._esc(iconVal)}</span>` : '')
           : this._cageSvg(cor, 30);
         btns +=
-          `<button type="button" data-role="qty" data-qty="${n}" title="${n}" style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;height:74px;border:2px solid ${s ? GOLD : BORDER2};border-radius:10px;background:${s ? GOLD_DIM : SURFACE2};color:${cor};cursor:pointer;padding-bottom:${s ? '11px' : '0'}">` +
+          `<button type="button" data-role="qty" data-qty="${n}" title="${n}" style="height:auto !important;min-height:0 !important;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;height:74px;border:2px solid ${s ? GOLD : BORDER2};border-radius:10px;background:${s ? GOLD_DIM : SURFACE2};color:${cor};cursor:pointer;padding-bottom:${s ? '11px' : '0'}">` +
             iconHtml +
             `<span style="font:900 17px/1 ${MONO}">${n}</span>` +
             (s ? '<span style="position:absolute;bottom:3px;left:0;right:0;font:900 7px/1 ' + FONT + ';letter-spacing:.08em;text-transform:uppercase">sugerido</span>' : '') +
@@ -201,7 +201,7 @@ if (!customElements.get('granado-quantity-popup')) {
         ? `<label style="display:block;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#8A8575;margin:2px 0 5px">Digitar manualmente</label>` +
           `<div style="display:flex;gap:8px">` +
             `<input type="number" data-role="manual" min="${min}" placeholder="Ex.: 12" style="flex:1;box-sizing:border-box;font:13px/1.4 ${FONT};padding:9px 12px;border:1px solid ${BORDER};border-radius:8px;background:#fff;color:#1A1A1A">` +
-            `<button type="button" data-role="confirm" style="font:700 13px/1.4 ${FONT};padding:9px 20px;border:1px solid ${p.text};border-radius:8px;background:${p.text};color:#fff;cursor:pointer">${this._esc(confirmText)}</button>` +
+            `<button type="button" data-role="confirm" style="height:auto !important;min-height:0 !important;font:700 13px/1.4 ${FONT};padding:9px 20px;border:1px solid ${p.text};border-radius:8px;background:${p.text};color:#fff;cursor:pointer">${this._esc(confirmText)}</button>` +
           `</div>`
         : '';
 
@@ -212,7 +212,7 @@ if (!customElements.get('granado-quantity-popup')) {
               (title
                 ? `<div style="display:flex;align-items:center;gap:9px"><span style="font-size:22px;flex-shrink:0;line-height:1">${this._esc(p.icon)}</span><span style="font-size:18px;font-weight:800;color:${p.text}">${this._esc(title)}</span></div>`
                 : '<div></div>') +
-              `<button type="button" data-role="x" title="Cancelar" style="background:none;border:1px solid ${BORDER};border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:#555;line-height:1;flex-shrink:0">✕</button>` +
+              `<button type="button" data-role="x" title="Cancelar" style="height:auto !important;min-height:0 !important;background:none;border:1px solid ${BORDER};border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:#555;line-height:1;flex-shrink:0">✕</button>` +
             `</div>` +
             (title ? '<div style="margin-bottom:14px"></div>' : '') +
             callout +

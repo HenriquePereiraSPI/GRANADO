@@ -196,13 +196,13 @@ if (!customElements.get('granado-table-popup')) {
                 (title ? `<div style="font-family:${FONT};font-size:18px;font-weight:700;color:${VERDE_ESC}">${this._esc(title)}</div>` : '') +
                 (subtitle ? `<div style="font-family:${FONT};font-size:12.5px;color:${TEXT3};margin-top:2px">${this._esc(subtitle)}</div>` : '') +
               `</div>` +
-              `<button type="button" data-role="x" title="Fechar" style="background:none;border:1px solid ${BORDER};border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:${TEXT2};line-height:1;flex-shrink:0">✕</button>` +
+              `<button type="button" data-role="x" title="Fechar" style="height:auto !important;min-height:0 !important;background:none;border:1px solid ${BORDER};border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:${TEXT2};line-height:1;flex-shrink:0">✕</button>` +
             `</div>` +
             // Área da tabela (rola se for grande)
             `<div data-role="table-host" style="max-height:62vh;overflow:auto;scrollbar-width:thin;scrollbar-color:${SCROLL_THUMB} transparent"></div>` +
             // Rodapé
             `<div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;margin-top:16px;border-top:1px solid ${BORDER}">` +
-              `<button type="button" data-role="confirm" style="font:700 13px/1.4 ${FONT};padding:9px 22px;border:1px solid ${VERDE};border-radius:8px;background:${VERDE};color:#fff;cursor:pointer">${this._esc(confirmText)}</button>` +
+              `<button type="button" data-role="confirm" style="height:auto !important;min-height:0 !important;font:700 13px/1.4 ${FONT};padding:9px 22px;border:1px solid ${VERDE};border-radius:8px;background:${VERDE};color:#fff;cursor:pointer">${this._esc(confirmText)}</button>` +
             `</div>` +
           `</div>` +
         `</div>`;

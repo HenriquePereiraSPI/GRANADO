@@ -110,7 +110,7 @@ if (!customElements.get('granado-calendar')) {
       this.innerHTML = `
         <div style="position:relative;display:${wrapDisplay};font-family:'Poppins','DejaVu Sans',Arial,sans-serif">
           ${label ? `<label data-cal-label style="display:block;font-size:11px;font-weight:600;color:#103E20;margin-bottom:6px;font-family:inherit"></label>` : ''}
-          <button data-cal-toggle type="button" style="
+          <button data-cal-toggle type="button" style="height:auto !important;min-height:0 !important;
             display:inline-flex;
             align-items:center;
             gap:8px;
@@ -216,9 +216,9 @@ if (!customElements.get('granado-calendar')) {
           min-width:260px;
         ">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-            <button data-cal-prev type="button" style="background:transparent;border:none;cursor:pointer;color:${color};font-size:18px;font-weight:700;padding:4px 10px;height:auto;font-family:inherit;border-radius:4px">‹</button>
+            <button data-cal-prev type="button" style="height:auto !important;min-height:0 !important;background:transparent;border:none;cursor:pointer;color:${color};font-size:18px;font-weight:700;padding:4px 10px;height:auto;font-family:inherit;border-radius:4px">‹</button>
             <div style="font-size:13px;font-weight:700;color:${color};text-transform:capitalize">${i18n.months[month]} ${year}</div>
-            <button data-cal-next type="button" style="background:transparent;border:none;cursor:pointer;color:${color};font-size:18px;font-weight:700;padding:4px 10px;height:auto;font-family:inherit;border-radius:4px">›</button>
+            <button data-cal-next type="button" style="height:auto !important;min-height:0 !important;background:transparent;border:none;cursor:pointer;color:${color};font-size:18px;font-weight:700;padding:4px 10px;height:auto;font-family:inherit;border-radius:4px">›</button>
           </div>
           <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">
             ${weekdayHeaders}
@@ -226,10 +226,10 @@ if (!customElements.get('granado-calendar')) {
           </div>
           ${mode === 'datetime' ? this._renderTimeControls(color) : ''}
           <div style="display:flex;justify-content:space-between;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #E5DDC8">
-            <button data-cal-clear type="button" style="font-size:11px;padding:5px 10px;height:auto;border:1px solid #D6CDA4;background:#FDFAF1;color:#5A6B5E;border-radius:4px;cursor:pointer;font-family:inherit">${i18n.clear}</button>
+            <button data-cal-clear type="button" style="height:auto !important;min-height:0 !important;font-size:11px;padding:5px 10px;height:auto;border:1px solid #D6CDA4;background:#FDFAF1;color:#5A6B5E;border-radius:4px;cursor:pointer;font-family:inherit">${i18n.clear}</button>
             ${mode === 'datetime'
-          ? `<button data-cal-apply type="button" style="font-size:11px;font-weight:700;padding:5px 14px;height:auto;border:1px solid ${color};background:${color};color:#fff;border-radius:4px;cursor:pointer;font-family:inherit">${i18n.apply}</button>`
-          : `<button data-cal-today type="button" style="font-size:11px;font-weight:700;padding:5px 10px;height:auto;border:1px solid ${color};background:${color};color:#fff;border-radius:4px;cursor:pointer;font-family:inherit">${i18n.today}</button>`
+          ? `<button data-cal-apply type="button" style="height:auto !important;min-height:0 !important;font-size:11px;font-weight:700;padding:5px 14px;height:auto;border:1px solid ${color};background:${color};color:#fff;border-radius:4px;cursor:pointer;font-family:inherit">${i18n.apply}</button>`
+          : `<button data-cal-today type="button" style="height:auto !important;min-height:0 !important;font-size:11px;font-weight:700;padding:5px 10px;height:auto;border:1px solid ${color};background:${color};color:#fff;border-radius:4px;cursor:pointer;font-family:inherit">${i18n.today}</button>`
         }
           </div>
         </div>
@@ -258,7 +258,7 @@ if (!customElements.get('granado-calendar')) {
       const hoverIn = isSelected ? '' : `this.style.background='#ECE3C2'`;
       const hoverOut = isSelected ? '' : `this.style.background='${bg}'`;
 
-      return `<button data-cal-day="${date.getFullYear()}-${date.getMonth()}-${date.getDate()}" type="button" style="
+      return `<button data-cal-day="${date.getFullYear()}-${date.getMonth()}-${date.getDate()}" type="button" style="height:auto !important;min-height:0 !important;
         font-size:11px;
         font-weight:${weight};
         color:${textColor};

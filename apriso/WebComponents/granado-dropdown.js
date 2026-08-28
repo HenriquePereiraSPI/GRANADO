@@ -123,7 +123,7 @@ if (!customElements.get('granado-dropdown')) {
       this.innerHTML = `
         <div style="position:relative;display:block;font-family:'Poppins','DejaVu Sans',Arial,sans-serif">
           ${label ? `<label data-dd-label style="display:block;font-size:11px;font-weight:600;color:#103E20;margin-bottom:6px;font-family:inherit">${this._escapeHtml(label)}</label>` : ''}
-          <button data-dd-toggle type="button" ${disabled ? 'disabled' : ''} style="
+          <button data-dd-toggle type="button" ${disabled ? 'disabled' : ''} style="height:auto !important;min-height:0 !important;
             display:inline-flex;
             align-items:center;
             gap:8px;

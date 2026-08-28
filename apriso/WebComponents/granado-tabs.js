@@ -168,7 +168,7 @@ if (!customElements.get('granado-tabs')) {
           badgeHtml = `<span style="font-size:10px;font-weight:800;padding:1px 6px;border-radius:8px;${badgeStyle}">${this._escape(badgeAttr)}</span>`;
         }
 
-        return `<button data-tab-btn="${this._escapeAttr(v)}" type="button" ${disabled ? 'disabled' : ''} style="${style}">${iconHtml ? `<span style="display:inline-flex;align-items:center;line-height:0">${iconHtml}</span>` : ''}${label ? `<span>${label}</span>` : ''}${badgeHtml}</button>`;
+        return `<button data-tab-btn="${this._escapeAttr(v)}" type="button" ${disabled ? 'disabled' : ''} style="height:auto !important;min-height:0 !important;${style}">${iconHtml ? `<span style="display:inline-flex;align-items:center;line-height:0">${iconHtml}</span>` : ''}${label ? `<span>${label}</span>` : ''}${badgeHtml}</button>`;
       }).join('');
 
       this.style.display = this.style.display || 'block';

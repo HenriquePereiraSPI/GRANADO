@@ -274,7 +274,7 @@ if (!customElements.get('granado-zpl-popup')) {
                 `<div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:${OURO}">🖨️ Reimprimir Etiqueta</div>` +
                 `<div style="font-size:18px;font-weight:700;color:${VERDE_ESC};margin-top:2px">${this._esc(subtitulo)}</div>` +
               `</div>` +
-              `<button type="button" data-role="x" title="Cancelar" style="background:none;border:1px solid ${BORDER};border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:${TEXT2};line-height:1">✕</button>` +
+              `<button type="button" data-role="x" title="Cancelar" style="height:auto !important;min-height:0 !important;background:none;border:1px solid ${BORDER};border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:${TEXT2};line-height:1">✕</button>` +
             `</div>` +
             // Preview
             `<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:${TEXT3};margin-bottom:8px">Pré-visualização da etiqueta</div>` +
@@ -292,8 +292,8 @@ if (!customElements.get('granado-zpl-popup')) {
             `</div>` +
             // Botões
             `<div style="display:flex;gap:10px;justify-content:flex-end">` +
-              `<button type="button" data-role="cancel" style="font:${inpFont};font-weight:600;padding:9px 18px;border:1px solid ${BORDER};border-radius:7px;background:transparent;color:${TEXT2};cursor:pointer">Cancelar</button>` +
-              `<button type="button" data-role="print" style="font:${inpFont};font-weight:700;padding:9px 18px;border:1px solid ${VERDE};border-radius:7px;background:${VERDE};color:#fff;cursor:pointer">🖨️ Reimprimir</button>` +
+              `<button type="button" data-role="cancel" style="height:auto !important;min-height:0 !important;font:${inpFont};font-weight:600;padding:9px 18px;border:1px solid ${BORDER};border-radius:7px;background:transparent;color:${TEXT2};cursor:pointer">Cancelar</button>` +
+              `<button type="button" data-role="print" style="height:auto !important;min-height:0 !important;font:${inpFont};font-weight:700;padding:9px 18px;border:1px solid ${VERDE};border-radius:7px;background:${VERDE};color:#fff;cursor:pointer">🖨️ Reimprimir</button>` +
             `</div>` +
           `</div>` +
         `</div>`;
@@ -334,7 +334,7 @@ if (!customElements.get('granado-zpl-popup')) {
                 `<div style="font-size:9px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:${OURO}">🖨️ Reimprimir Etiqueta</div>` +
                 `<div style="font-size:17px;font-weight:700;color:${VERDE_ESC};margin-top:2px">${this._esc(subtitulo)}</div>` +
               `</div>` +
-              `<button type="button" data-role="x" title="Cancelar" style="background:none;border:1px solid ${BORDER};border-radius:6px;padding:6px 11px;cursor:pointer;font-size:14px;color:${TEXT2};line-height:1;flex-shrink:0">✕</button>` +
+              `<button type="button" data-role="x" title="Cancelar" style="height:auto !important;min-height:0 !important;background:none;border:1px solid ${BORDER};border-radius:6px;padding:6px 11px;cursor:pointer;font-size:14px;color:${TEXT2};line-height:1;flex-shrink:0">✕</button>` +
             `</div>` +
             // Resumo simplificado da etiqueta (sem rótulo, p/ ganhar espaço)
             `<div style="margin-bottom:16px">${mini}</div>` +
@@ -343,8 +343,8 @@ if (!customElements.get('granado-zpl-popup')) {
             `<div style="margin-bottom:18px"><label style="${lbl}">Cópias</label><select data-role="copies" style="${sel}">${copiasOptions}</select></div>` +
             // Botões
             `<div style="display:flex;gap:10px">` +
-              `<button type="button" data-role="cancel" style="flex:1;font:600 14px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:12px 16px;border:1px solid ${BORDER};border-radius:9px;background:transparent;color:${TEXT2};cursor:pointer">Cancelar</button>` +
-              `<button type="button" data-role="print" style="flex:1.4;font:700 14px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:12px 16px;border:1px solid ${VERDE};border-radius:9px;background:${VERDE};color:#fff;cursor:pointer">🖨️ Reimprimir</button>` +
+              `<button type="button" data-role="cancel" style="height:auto !important;min-height:0 !important;flex:1;font:600 14px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:12px 16px;border:1px solid ${BORDER};border-radius:9px;background:transparent;color:${TEXT2};cursor:pointer">Cancelar</button>` +
+              `<button type="button" data-role="print" style="height:auto !important;min-height:0 !important;flex:1.4;font:700 14px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:12px 16px;border:1px solid ${VERDE};border-radius:9px;background:${VERDE};color:#fff;cursor:pointer">🖨️ Reimprimir</button>` +
             `</div>` +
           `</div>` +
         `</div>`;

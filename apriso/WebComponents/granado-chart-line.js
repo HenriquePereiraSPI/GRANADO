@@ -202,8 +202,8 @@ if (!customElements.get('granado-chart-line')) {
       const expPos = (ep.indexOf('bottom') === 0 ? 'bottom:6px;' : 'top:6px;') + (ep.indexOf('left') !== -1 ? 'left:6px;' : 'right:6px;');
       const exportHTML = this.showExport
         ? `<div style="position:absolute;${expPos}display:flex;gap:6px;z-index:4">` +
-            `<button type="button" data-exp="png" title="Baixar imagem PNG" style="${expBtn}">⬇ PNG</button>` +
-            `<button type="button" data-exp="csv" title="Baixar dados (CSV)" style="${expBtn}">⬇ CSV</button>` +
+            `<button type="button" data-exp="png" title="Baixar imagem PNG" style="height:auto !important;min-height:0 !important;${expBtn}">⬇ PNG</button>` +
+            `<button type="button" data-exp="csv" title="Baixar dados (CSV)" style="height:auto !important;min-height:0 !important;${expBtn}">⬇ CSV</button>` +
           `</div>` : '';
 
       this.innerHTML =

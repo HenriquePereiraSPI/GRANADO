@@ -375,7 +375,7 @@ if (!customElements.get('granado-table')) {
       const ICON_PDF = `<svg ${iconBase}>${fileShape}${label('PDF')}</svg>`;
 
       const btn = (icon, action, title) => `
-        <button data-export-action="${action}" title="${title}" aria-label="${title}" style="
+        <button data-export-action="${action}" title="${title}" aria-label="${title}" style="height:auto !important;min-height:0 !important;
           width:30px;
           height:30px;
           display:inline-flex;
@@ -533,7 +533,7 @@ if (!customElements.get('granado-table')) {
         const isFirst = currentPage === 0;
         const isLast = currentPage >= totalPages - 1;
         const btn = (label, action, disabled) => `
-          <button data-page-action="${action}" ${disabled ? 'disabled' : ''} style="
+          <button data-page-action="${action}" ${disabled ? 'disabled' : ''} style="height:auto !important;min-height:0 !important;
             font-size:11px;
             font-weight:700;
             padding:5px 10px;
@@ -807,7 +807,7 @@ if (!customElements.get('granado-table')) {
 
     _filterIconHtml(key, isActive, color) {
       const c = isActive ? color : '#8A9E8E';
-      return `<button data-filter-icon="${key}" type="button" title="Filtrar" style="
+      return `<button data-filter-icon="${key}" type="button" title="Filtrar" style="height:auto !important;min-height:0 !important;
         background:transparent;
         border:none;
         cursor:pointer;
@@ -850,7 +850,7 @@ if (!customElements.get('granado-table')) {
           color:#103E20;
           outline:none;
         ">
-        <button data-filter-clear type="button" style="
+        <button data-filter-clear type="button" style="height:auto !important;min-height:0 !important;
           font-size:10px;
           font-weight:700;
           padding:5px 8px;

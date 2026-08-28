@@ -229,7 +229,7 @@ if (!customElements.get('granado-message-popup')) {
             (title ? `<div style="display:flex;align-items:center;gap:9px;margin-bottom:14px${secs ? ';padding-right:104px' : ''}"><span style="font-size:22px;flex-shrink:0;line-height:1">${p.icon}</span><span style="font-size:19px;font-weight:800;color:${p.text}">${this._esc(title)}</span></div>` : '') +
             callout +
             `<div style="display:flex;justify-content:flex-end">` +
-              `<button type="button" data-role="ok" style="${okStyle}">${this._esc(btn)}</button>` +
+              `<button type="button" data-role="ok" style="height:auto !important;min-height:0 !important;${okStyle}">${this._esc(btn)}</button>` +
             `</div>` +
           `</div>` +
         `</div>`;

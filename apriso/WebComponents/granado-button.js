@@ -76,7 +76,7 @@ if (!customElements.get('granado-button')) {
         : '';
       const order = iconPos === 'right' ? `${labelSpan}${iconSpan}` : `${iconSpan}${labelSpan}`;
 
-      this.innerHTML = `<button data-btn-root type="button" style="position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid;border-radius:6px;cursor:pointer;font-family:'Poppins','DejaVu Sans',Arial,sans-serif;font-weight:600;outline:none;transition:background 0.15s,border-color 0.15s,color 0.15s,transform 0.1s;height:auto;box-sizing:border-box">${order}</button>`;
+      this.innerHTML = `<button data-btn-root type="button" style="height:auto !important;min-height:0 !important;position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid;border-radius:6px;cursor:pointer;font-family:'Poppins','DejaVu Sans',Arial,sans-serif;font-weight:600;outline:none;transition:background 0.15s,border-color 0.15s,color 0.15s,transform 0.1s;height:auto;box-sizing:border-box">${order}</button>`;
 
       const btn = this.querySelector('[data-btn-root]');
 

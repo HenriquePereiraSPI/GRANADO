@@ -167,7 +167,7 @@ if (!customElements.get('granado-input')) {
         : 'position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#8A9E8E;display:flex;line-height:0;pointer-events:none';
 
       const eyeHtml = isPassword ? `
-        <button data-eye-toggle type="button" tabindex="-1" aria-label="Mostrar/ocultar senha" style="
+        <button data-eye-toggle type="button" tabindex="-1" aria-label="Mostrar/ocultar senha" style="height:auto !important;min-height:0 !important;
           position:absolute;
           right:6px;
           top:50%;
@@ -192,7 +192,7 @@ if (!customElements.get('granado-input')) {
         ? `right:${vkbRight};top:8px;`
         : `right:${vkbRight};top:50%;transform:translateY(-50%);`;
       const vkbHtml = vkbEnabled ? `
-        <button data-vkb-toggle type="button" tabindex="-1" aria-label="Abrir/fechar teclado" title="Abrir/fechar teclado" style="
+        <button data-vkb-toggle type="button" tabindex="-1" aria-label="Abrir/fechar teclado" title="Abrir/fechar teclado" style="height:auto !important;min-height:0 !important;
           position:absolute;
           ${vkbPos}
           background:transparent;
