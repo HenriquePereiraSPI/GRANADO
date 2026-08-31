@@ -11259,6 +11259,7 @@ GranadoMessagePopup.<span class="tk-attr">success</span>(<span class="tk-str">'A
           <button type="button" onclick="docOpt2()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A5A00;border-radius:7px;background:#9A5A00;color:#fff;cursor:pointer">2 botões</button>
           <button type="button" onclick="docOpt3()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #8C1A1A;border-radius:7px;background:#8C1A1A;color:#fff;cursor:pointer">3 botões</button>
           <button type="button" onclick="docOptAuto()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1C7A38;border-radius:7px;background:#1C7A38;color:#fff;cursor:pointer">Auto-destruição (5s)</button>
+          <button type="button" onclick="docOptManual()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #6B3FA0;border-radius:7px;background:#fff;color:#6B3FA0;cursor:pointer">Fechar manual + popup por cima</button>
           <span id="doc-opt-status" style="font-size:12px;color:#8A9E8E"></span>
         </div>
         <script>
@@ -11267,6 +11268,30 @@ GranadoMessagePopup.<span class="tk-attr">success</span>(<span class="tk-str">'A
           function docOpt2() { GranadoOptionPopup.show({ type: 'warning', title: 'Reativar sala?', message: 'A sala está parada. Deseja reativar e liberar a pesagem?', buttons: [ { text: 'Cancelar', value: 'cancel', variant: 'ghost', onClick: docOptStatus }, { text: 'Reativar', value: 'reativar', variant: 'primary', onClick: docOptStatus } ] }); }
           function docOpt3() { GranadoOptionPopup.show({ type: 'error', title: 'Alterações não salvas', message: 'Há leituras não confirmadas. O que deseja fazer?', buttons: [ { text: 'Cancelar', value: 'cancel', variant: 'ghost', onClick: docOptStatus }, { text: 'Sair sem salvar', value: 'descartar', variant: 'primary', color: '#6B3FA0', onClick: docOptStatus }, { text: 'Salvar e sair', value: 'salvar', variant: 'primary', onClick: docOptStatus } ] }); }
           function docOptAuto() { GranadoOptionPopup.show({ type: 'success', title: 'Etiqueta impressa', message: 'Aviso que fecha sozinho em 5s (com contador). Clicar num botão cancela o timer.', autoDestructAfterSeconds: 5, buttons: [ { text: 'Reimprimir', value: 'reimprimir', variant: 'ghost', onClick: docOptStatus }, { text: 'OK', value: 'ok', variant: 'primary', onClick: docOptStatus } ] }); }
+          // auto-close-popup-after-confirm:false -> o popup NÃO fecha ao clicar;
+          // aqui abrimos um 2º popup POR CIMA e fechamos o 1º manualmente (pop.close()).
+          function docOptManual() {
+            // PRINCIPAL: autoCloseAfterConfirm:false -> não fecha ao clicar num botão.
+            var pop = GranadoOptionPopup.show({
+              type: 'info', title: 'Escolha uma ação',
+              message: '<strong>Cancelar</strong> fecha este popup. <strong>Abrir detalhe</strong> abre outro por cima, sem fechar este.',
+              autoCloseAfterConfirm: false,
+              buttons: [
+                // Fecha só o PRINCIPAL.
+                { text: 'Cancelar', value: 'cancel', variant: 'ghost', onClick: function () { pop.close(); } },
+                { text: 'Abrir detalhe', value: 'detalhe', variant: 'primary', onClick: function (detail) {
+                    docOptStatus(detail);
+                    // 2º popup POR CIMA (autoClose default = true) -> o botão dele fecha SÓ ele;
+                    // o principal continua aberto atrás.
+                    GranadoOptionPopup.show({
+                      type: 'success', title: 'Popup por cima',
+                      message: 'Ao confirmar, fecho <strong>só este</strong>. O principal continua aberto atrás.',
+                      buttons: [ { text: 'OK', value: 'ok', variant: 'primary', onClick: docOptStatus } ]
+                    });
+                } }
+              ]
+            });
+          }
         </script>
         <pre class="gd-code gd-snip"><span class="tk-comment">// 1 botão</span>
 GranadoOptionPopup.<span class="tk-attr">show</span>({ type: <span class="tk-str">'info'</span>, title: <span class="tk-str">'Pesagem registrada'</span>,
@@ -11297,6 +11322,24 @@ GranadoOptionPopup.<span class="tk-attr">show</span>({ type: <span class="tk-str
   buttons: [
     { text: <span class="tk-str">'Reimprimir'</span>, value: <span class="tk-str">'reimprimir'</span>, variant: <span class="tk-str">'ghost'</span>, onClick: onEscolha },
     { text: <span class="tk-str">'OK'</span>, value: <span class="tk-str">'ok'</span>, variant: <span class="tk-str">'primary'</span>, onClick: onEscolha }
+  ] });
+
+<span class="tk-comment">// PRINCIPAL: autoCloseAfterConfirm:false — não fecha ao clicar num botão</span>
+<span class="tk-keyword">var</span> pop = GranadoOptionPopup.<span class="tk-attr">show</span>({ type: <span class="tk-str">'info'</span>, title: <span class="tk-str">'Escolha uma ação'</span>,
+  message: <span class="tk-str">'Cancelar fecha este; Abrir detalhe abre outro por cima.'</span>,
+  autoCloseAfterConfirm: <span class="tk-keyword">false</span>,
+  buttons: [
+    <span class="tk-comment">// fecha só o PRINCIPAL</span>
+    { text: <span class="tk-str">'Cancelar'</span>, value: <span class="tk-str">'cancel'</span>, variant: <span class="tk-str">'ghost'</span>,
+      onClick: <span class="tk-keyword">function</span> () { pop.<span class="tk-attr">close</span>(); } },
+    { text: <span class="tk-str">'Abrir detalhe'</span>, value: <span class="tk-str">'detalhe'</span>, variant: <span class="tk-str">'primary'</span>,
+      onClick: <span class="tk-keyword">function</span> (detail) {
+        <span class="tk-comment">// 2º popup POR CIMA — autoClose default (true): o botão fecha SÓ ele.</span>
+        <span class="tk-comment">// O principal continua aberto atrás.</span>
+        GranadoOptionPopup.<span class="tk-attr">show</span>({ type: <span class="tk-str">'success'</span>, title: <span class="tk-str">'Popup por cima'</span>,
+          message: <span class="tk-str">'Ao confirmar, fecho só este.'</span>,
+          buttons: [ { text: <span class="tk-str">'OK'</span>, value: <span class="tk-str">'ok'</span>, variant: <span class="tk-str">'primary'</span> } ] });
+      } }
   ] });</pre>
 
         <h2 class="gd-h2" id="opt-buttons">Como definir os botões</h2>
@@ -11354,6 +11397,7 @@ pop.open();</pre>
             <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code>.</td></tr>
             <tr><td class="col-name">auto-destruct-after-seconds</td><td class="col-type">number</td><td class="col-default">—</td><td class="col-desc">Se informado (&gt; 0), o popup se <strong>auto-destrói</strong> (fecha) após X segundos, exibindo um <strong>contador regressivo</strong>. Em JS use a propriedade <code>el.autoDestructAfterSeconds</code> ou, na API estática, <code>autoDestructAfterSeconds</code>. Clicar num botão ou fechar cancela o timer.</td></tr>
             <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-default">false</td><td class="col-desc"><code>"true"</code> permite <strong>fechar ao clicar fora</strong> (backdrop). Por padrão <strong>não fecha</strong> ao clicar fora. Em JS: <code>.closeOnBackdrop</code>.</td></tr>
+            <tr><td class="col-name">auto-close-popup-after-confirm</td><td class="col-type">boolean</td><td class="col-default">true</td><td class="col-desc"><code>"true"</code> (default) <strong>fecha</strong> o popup ao clicar em qualquer botão. <code>"false"</code> <strong>não fecha</strong> — o fechamento fica por conta do usuário (<code>el.close()</code>). Útil para manter o popup aberto e <strong>abrir outro por cima</strong>. Em JS: <code>.autoCloseAfterConfirm</code>.</td></tr>
             <tr><td class="col-name">onOptionClick</td><td class="col-type">string (JS)</td><td class="col-default">—</td><td class="col-desc">Handler inline executado em <strong>qualquer</strong> clique de botão. Recebe <code>event</code> e <code>detail</code>.</td></tr>
           </tbody>
         </table>

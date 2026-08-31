@@ -26,6 +26,11 @@
      open         - "false" inicia oculto (default visível)
      close-on-backdrop - "true" permite fechar ao clicar fora (backdrop). Default:
                     NÃO fecha ao clicar fora. Em JS use .closeOnBackdrop.
+     auto-close-popup-after-confirm - "true" (default) fecha o popup automaticamente
+                    ao clicar em qualquer botão (comportamento atual). "false" NÃO
+                    fecha — o fechamento fica por conta do usuário (el.close()). Útil
+                    quando este popup precisa continuar aberto e abrir outro por cima.
+                    Em JS use .autoCloseAfterConfirm.
      auto-destruct-after-seconds - (opcional) se informado (> 0), o popup se
                     "auto-destrói" (fecha) após X segundos, exibindo um contador
                     regressivo. Em JS use a propriedade .autoDestructAfterSeconds
@@ -98,6 +103,7 @@ if (!customElements.get('granado-option-popup')) {
       if (opts.onOptionClick != null) el.setAttribute('onOptionClick', String(opts.onOptionClick));
       if (opts.autoDestructAfterSeconds != null) el.setAttribute('auto-destruct-after-seconds', String(opts.autoDestructAfterSeconds));
       if (opts.closeOnBackdrop != null) el.setAttribute('close-on-backdrop', opts.closeOnBackdrop ? 'true' : 'false');
+      if (opts.autoCloseAfterConfirm != null) el.setAttribute('auto-close-popup-after-confirm', opts.autoCloseAfterConfirm ? 'true' : 'false');
       el._autoRemove = true;
       document.body.appendChild(el);
       if (opts.buttons != null) el.buttons = opts.buttons;  // mantém funções onClick
@@ -144,6 +150,11 @@ if (!customElements.get('granado-option-popup')) {
     _closeOnBackdrop() { return this.getAttribute('close-on-backdrop') === 'true'; }
     get closeOnBackdrop() { return this._closeOnBackdrop(); }
     set closeOnBackdrop(v) { this.setAttribute('close-on-backdrop', v ? 'true' : 'false'); }
+
+    // Fechar automaticamente ao clicar num botão? Default: true (só NÃO fecha se == "false").
+    _autoCloseAfterConfirm() { return this.getAttribute('auto-close-popup-after-confirm') !== 'false'; }
+    get autoCloseAfterConfirm() { return this._autoCloseAfterConfirm(); }
+    set autoCloseAfterConfirm(v) { this.setAttribute('auto-close-popup-after-confirm', v ? 'true' : 'false'); }
 
     get buttons() {
       if (this._buttonsArr && Array.isArray(this._buttonsArr)) return this._buttonsArr;
@@ -294,7 +305,9 @@ if (!customElements.get('granado-option-popup')) {
           // handler global opcional
           const h = self.getAttribute('onoptionclick');
           if (h) new Function('event', 'detail', h).call(self, ev, detail);
-          self.close();
+          // Fecha automaticamente, a menos que auto-close-popup-after-confirm="false".
+          // Nesse caso o fechamento fica por conta do usuário (ex.: abrir outro popup por cima).
+          if (self._autoCloseAfterConfirm()) self.close();
         });
       });
       // Clique fora da caixa apenas fecha (sem evento).
