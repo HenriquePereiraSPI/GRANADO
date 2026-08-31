@@ -11683,36 +11683,34 @@ export const SCREENS = {
       </div>
     `,
   "rel-andon": ``,
-  "rel-auditoria": `  <div style="padding:22px 28px;max-width:1280px;margin:0 auto">
+  "rel-auditoria": `  <div>
 
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px;padding-bottom:14px;border-bottom:2px solid var(--verde);position:relative;flex-wrap:wrap;gap:12px">
       <div>
         <div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--verde-esc)">Trilha de Auditoria</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:3px">ERU 5.1.43 · 5.1.45 · CFR 21 Part 11 · IN 134/2022 — Registro de Identidade, Data e Hora de Todas as Ações</div>
       </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-sm btn-ghost" onclick="alert('⬇ Exportando trilha de auditoria...')">⬇ Exportar</button>
-        <button class="btn btn-sm btn-ghost" onclick="alert('🖨 Imprimindo em Português conforme IN 134/2022...')">🖨 Imprimir</button>
-        <button class="btn btn-sm btn-primary" onclick="alert('🔒 Auditoria enviada ao QA para revisão.')">🔒 Enviar ao QA</button>
-      </div>
+      <!-- Linha dourada (igual ao .page-header::after das telas de Pesagem) -->
+      <div style="position:absolute;bottom:-2px;left:0;width:56px;height:2px;background:var(--ouro-claro)"></div>
     </div>
 
     <!-- Aviso regulatório -->
     <div style="background:var(--inf-p);border:1px solid var(--inf-b);border-radius:var(--r);padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px">
       <span style="font-size:20px">🔒</span>
-      <div style="font-size:12px;color:var(--inf)"><strong>Registro Imutável — CFR 21 Part 11 / IN 134/2022:</strong> Os registros desta trilha são somente leitura. Toda inserção, alteração ou exclusão de dados é registrada com identidade do usuário, data e hora. Dados passíveis de impressão com indicação de alteração desde a inserção original.</div>
+      <div style="font-size:12px;color:var(--inf)"><strong>Registro Imutável —</strong> Os registros desta trilha são somente leitura. Toda inserção, alteração ou exclusão de dados é registrada com identidade do usuário, data e hora.</div>
     </div>
 
     <!-- Filtros -->
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;margin-bottom:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
-      <div style="flex:1;min-width:120px"><div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase">Período</div>
-        <select class="sel" style="width:100%"><option selected>Hoje</option><option>Esta semana</option><option>Este mês</option><option>Customizado</option></select></div>
-      <div style="flex:1;min-width:120px"><div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase">Usuário</div>
-        <select class="sel" style="width:100%"><option>Todos</option><option>João Silva</option><option>Maria Santos</option><option>Supervisor A</option></select></div>
-      <div style="flex:1;min-width:130px"><div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase">Tipo de Ação</div>
-        <select class="sel" style="width:100%"><option>Todas</option><option>Inserção</option><option>Alteração</option><option>Exclusão</option><option>Confirmação</option><option>Assinatura Eletrônica</option></select></div>
       <div style="flex:1;min-width:120px"><div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase">Módulo</div>
         <select class="sel" style="width:100%"><option>Todos</option><option>Pesagem</option><option>Fabricação</option><option>Produção</option><option>OEE</option></select></div>
+      <div style="flex:1;min-width:130px"><div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase">Ação</div>
+        <select class="sel" style="width:100%"><option>Todas</option><option>Inserção</option><option>Alteração</option><option>Exclusão</option><option>Confirmação</option><option>Assinatura Eletrônica</option></select></div>
+      <div style="flex:1;min-width:120px"><div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase">Usuário</div>
+        <select class="sel" style="width:100%"><option>Todos</option><option>João Silva</option><option>Maria Santos</option><option>Supervisor A</option></select></div>
+      <div style="flex:1;min-width:120px"><div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase">Data (Início)</div>
+        <input class="inp" type="date" style="width:100%;box-sizing:border-box;font-size:12px;padding:7px 10px;font-family:var(--font-m)"></div>
+      <div style="flex:1;min-width:120px"><div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase">Data (Fim)</div>
+        <input class="inp" type="date" style="width:100%;box-sizing:border-box;font-size:12px;padding:7px 10px;font-family:var(--font-m)"></div>
       <button class="btn btn-sm btn-primary" style="padding:8px 18px;align-self:flex-end">🔍 Filtrar</button>
     </div>
 
@@ -11724,14 +11722,14 @@ export const SCREENS = {
         <div style="font-size:11px;color:var(--text3)">Ações registradas</div>
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;border-left:4px solid var(--alr)">
-        <div style="font-size:11px;text-transform:uppercase;color:var(--text3);font-weight:700">Alterações de Dados</div>
-        <div style="font-size:36px;font-weight:900;color:var(--alr);font-family:var(--font-m);margin:4px 0">14</div>
-        <div style="font-size:11px;color:var(--text3)">Requerem justificativa</div>
+        <div style="font-size:11px;text-transform:uppercase;color:var(--text3);font-weight:700">Eventos Últimos 7 Dias</div>
+        <div style="font-size:36px;font-weight:900;color:var(--alr);font-family:var(--font-m);margin:4px 0">1002</div>
+        <div style="font-size:11px;color:var(--text3)">Ações registradas</div>
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;border-left:4px solid var(--ok)">
-        <div style="font-size:11px;text-transform:uppercase;color:var(--text3);font-weight:700">Assinaturas Eletrônicas</div>
-        <div style="font-size:36px;font-weight:900;color:var(--ok);font-family:var(--font-m);margin:4px 0">47</div>
-        <div style="font-size:11px;color:var(--text3)">Registros confirmados</div>
+        <div style="font-size:11px;text-transform:uppercase;color:var(--text3);font-weight:700">Eventos Últimos 30 Dias</div>
+        <div style="font-size:36px;font-weight:900;color:var(--ok);font-family:var(--font-m);margin:4px 0">28093</div>
+        <div style="font-size:11px;color:var(--text3)">Ações registradas</div>
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;border-left:4px solid var(--per)">
         <div style="font-size:11px;text-transform:uppercase;color:var(--text3);font-weight:700">Usuários Ativos</div>
