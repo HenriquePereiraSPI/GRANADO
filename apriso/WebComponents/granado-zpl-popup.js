@@ -144,7 +144,18 @@ if (!customElements.get('granado-zpl-popup')) {
     get closeOnBackdrop() { return this._closeOnBackdrop(); }
     set closeOnBackdrop(v) { this.setAttribute('close-on-backdrop', v ? 'true' : 'false'); }
 
-    open() { this.removeAttribute('open'); this.style.display = ''; if (this.isConnected) this._render(); }
+    open() {
+      this.removeAttribute('open');
+      this.style.display = '';
+      // Empilhamento: todos os popups usam z-index 99999, então quem está por ÚLTIMO
+      // no DOM fica na frente. Popups abertos via .show() são anexados ao fim do body;
+      // este (normalmente estático no HTML) precisa ir ao fim também — senão o popup
+      // que o abriu (mais recente no DOM) o cobre. Mover dispara reconnect -> _render.
+      try {
+        if (document.body) { document.body.appendChild(this); return; }
+      } catch (e) { /* ignore */ }
+      if (this.isConnected) this._render();
+    }
     close() { this.style.display = 'none'; }
 
     // ------------------------------------------------------------
