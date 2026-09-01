@@ -36,6 +36,10 @@
      onchangeevent  - JS executado ao perder foco com mudanca. Vars: value, event.
      onkeydownevent - JS executado a cada tecla pressionada. Vars: value, event, key.
                       "key" e um atalho para event.key (ex.: "Enter", "Escape").
+     onfocusevent   - JS executado quando o campo GANHA foco. Vars: value, event.
+                      Tambem por JS: elemento.onfocusevent = (value, event) => {...}
+     onblurevent    - JS executado quando o campo PERDE foco. Vars: value, event.
+                      Tambem por JS: elemento.onblurevent = (value, event) => {...}
 
    Propriedades JS:
      elemento.value -> valor atual (ler/setar)
@@ -79,7 +83,7 @@ if (!customElements.get('granado-input')) {
     static get observedAttributes() {
       return ['label', 'placeholder', 'value', 'type', 'icon', 'mask', 'color',
         'disabled', 'readonly', 'rows', 'ispassword', 'enable-virtual-keyboard',
-        'oninputevent', 'onchangeevent', 'onkeydownevent'];
+        'oninputevent', 'onchangeevent', 'onkeydownevent', 'onfocusevent', 'onblurevent'];
     }
 
     connectedCallback() {
@@ -144,6 +148,19 @@ if (!customElements.get('granado-input')) {
     toggleKeyboard() {
       if (this.getAttribute('enable-virtual-keyboard') !== 'true') return;
       this._toggleVirtualKeyboard();
+    }
+    // Handlers de foco por JS (mesmo nome do atributo). Aceitam FUNCAO
+    //   el.onfocusevent = (value, event) => {...}
+    // ou string (equivale ao atributo). Passe null p/ limpar.
+    get onfocusevent() { return this._onfocusFn || this.getAttribute('onfocusevent'); }
+    set onfocusevent(v) {
+      if (typeof v === 'function') { this._onfocusFn = v; }
+      else { this._onfocusFn = null; if (v == null) this.removeAttribute('onfocusevent'); else this.setAttribute('onfocusevent', String(v)); }
+    }
+    get onblurevent() { return this._onblurFn || this.getAttribute('onblurevent'); }
+    set onblurevent(v) {
+      if (typeof v === 'function') { this._onblurFn = v; }
+      else { this._onblurFn = null; if (v == null) this.removeAttribute('onblurevent'); else this.setAttribute('onblurevent', String(v)); }
     }
 
     // ------------------------------------------------------------
@@ -226,8 +243,8 @@ if (!customElements.get('granado-input')) {
       field.addEventListener('input', (e) => this._handleInput(e));
       field.addEventListener('change', (e) => this._handleChange(e));
       field.addEventListener('keydown', (e) => this._handleKeydown(e));
-      field.addEventListener('focus', () => this._setFocus(true));
-      field.addEventListener('blur', () => { this._setFocus(false); this._onFieldBlur(); });
+      field.addEventListener('focus', (e) => { this._setFocus(true); this._handleFocus(e); });
+      field.addEventListener('blur', (e) => { this._setFocus(false); this._onFieldBlur(); this._handleBlur(e); });
 
       // Teclado virtual: inicia em inputmode="none" (nao abre ao focar) e liga o botao.
       if (vkbEnabled) {
@@ -343,6 +360,18 @@ if (!customElements.get('granado-input')) {
     _handleKeydown(e) {
       const handler = this.getAttribute('onkeydownevent');
       if (handler) new Function('value', 'event', 'key', handler).call(this, e.target.value, e, e.key);
+    }
+
+    _handleFocus(e) {
+      if (typeof this._onfocusFn === 'function') { this._onfocusFn.call(this, e.target.value, e); return; }
+      const handler = this.getAttribute('onfocusevent');
+      if (handler) new Function('value', 'event', handler).call(this, e.target.value, e);
+    }
+
+    _handleBlur(e) {
+      if (typeof this._onblurFn === 'function') { this._onblurFn.call(this, e.target.value, e); return; }
+      const handler = this.getAttribute('onblurevent');
+      if (handler) new Function('value', 'event', handler).call(this, e.target.value, e);
     }
 
     _setFocus(focused) {

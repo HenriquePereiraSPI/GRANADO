@@ -621,202 +621,189 @@ export const SCREENS = {
   "fab-ordens": `      <div class="page-header">
         <div><div class="ph-eyebrow">Fabricação · MF5</div><div class="ph-title">Seleção de Ordens de Fabricação</div></div>
       </div>
-      <!-- KPIs — dashboard de fila de fabricação -->
-      <div class="g4 mb14" style="gap:10px">
-        <!-- Pronta p/ Fabricar -->
-        <div style="position:relative;background:var(--surface);border:1px solid var(--ouro-claro);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh);overflow:hidden">
-          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--ouro)"></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <span style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Pronta p/ Fabricar</span>
-            <span style="font-size:14px;line-height:1;background:var(--ouro-dim);border:1px solid var(--ouro-claro);color:var(--ouro);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">📋</span>
-          </div>
-          <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
-            <div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--ouro)">2</div>
-            <div style="font-size:10px;color:var(--text3);font-weight:600">prontas p/ iniciar</div>
-          </div>
-        </div>
+      <div class="abox ok mb14"><span class="ai" style="display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:18px;height:18px;border-radius:50%;border:1.5px solid currentColor;font:800 11px/1 'Poppins',sans-serif">i</span><div>Ordens de fabricação são liberadas a partir do momento em que a pesagem estiver concluída.</div></div>
+      <!-- ── Leitura da Ordem (scan) — layout refatorado ── -->
+      <style>@keyframes fabScanLine{0%{transform:translateY(0)}50%{transform:translateY(94px)}100%{transform:translateY(0)}}</style>
+      <div style="display:flex;justify-content:center;padding:18px 12px 8px">
+        <div class="card cv" style="max-width:560px;width:100%;padding:26px 30px 24px;text-align:center">
+          <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--ouro);margin-bottom:4px">Leitura da Ordem</div>
+          <div style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--verde-esc)">Escaneie a Ordem de Fabricação</div>
+          <div style="font-size:12px;color:var(--text2);margin:6px 0 20px">Aponte o leitor para o código da OP ou digite abaixo e pressione Enter.</div>
 
-        <!-- Em Fabricação -->
-        <div style="position:relative;background:var(--surface);border:1px solid var(--inf-b);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh);overflow:hidden">
-          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--inf)"></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <span style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Em Fabricação</span>
-            <span style="font-size:14px;line-height:1;background:var(--inf-p);border:1px solid var(--inf-b);color:var(--inf);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">🔄</span>
+          <!-- Moldura de leitura -->
+          <div style="position:relative;height:150px;border-radius:12px;background:linear-gradient(180deg,var(--verde-dim),var(--surface2));border:1px solid var(--border);overflow:hidden;margin-bottom:22px">
+            <span style="position:absolute;top:14px;left:14px;width:28px;height:28px;border-top:3px solid var(--verde);border-left:3px solid var(--verde);border-radius:5px 0 0 0"></span>
+            <span style="position:absolute;top:14px;right:14px;width:28px;height:28px;border-top:3px solid var(--verde);border-right:3px solid var(--verde);border-radius:0 5px 0 0"></span>
+            <span style="position:absolute;bottom:14px;left:14px;width:28px;height:28px;border-bottom:3px solid var(--verde);border-left:3px solid var(--verde);border-radius:0 0 0 5px"></span>
+            <span style="position:absolute;bottom:14px;right:14px;width:28px;height:28px;border-bottom:3px solid var(--verde);border-right:3px solid var(--verde);border-radius:0 0 5px 0"></span>
+            <!-- código de barras estilizado -->
+            <div style="position:absolute;left:20%;right:20%;top:50%;transform:translateY(-50%);height:64px;opacity:.22;background:repeating-linear-gradient(90deg,var(--verde-esc) 0 3px,transparent 3px 7px,var(--verde-esc) 7px 9px,transparent 9px 14px,var(--verde-esc) 14px 19px,transparent 19px 22px,var(--verde-esc) 22px 24px,transparent 24px 29px)"></div>
+            <!-- linha de scan animada -->
+            <div style="position:absolute;left:12%;right:12%;top:26px;height:2px;background:linear-gradient(90deg,transparent,var(--verde-claro),transparent);box-shadow:0 0 8px 1px var(--verde-claro);animation:fabScanLine 2.2s ease-in-out infinite"></div>
           </div>
-          <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
-            <div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--inf)">1</div>
-            <div style="font-size:10px;color:var(--text3);font-weight:600">em batch agora</div>
-          </div>
-        </div>
 
-        <!-- Finalizadas Hoje -->
-        <div style="position:relative;background:var(--surface);border:1px solid var(--ok-b);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh);overflow:hidden">
-          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--verde)"></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <span style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Finalizadas Hoje</span>
-            <span style="font-size:16px;line-height:1;background:var(--ok-p);border:1px solid var(--ok-b);color:var(--verde);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">✓</span>
+          <!-- Leitura (padrão "Leitura de Etiquetas": caixa tracejada + spinner) -->
+          <div style="display:flex;gap:8px;align-items:stretch">
+            <div style="flex:1;display:flex;align-items:center;gap:12px;border:1.5px dashed var(--ouro);border-radius:8px;background:var(--ouro-dim);padding:10px 14px">
+              <div style="width:20px;height:20px;border:3px solid var(--ouro-claro);border-top-color:var(--ouro);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0"></div>
+              <input id="fab-scan-inp" autocomplete="off" placeholder="Aguardando leitura da ordem… (ou digite o código)" onkeydown="if(event.keyCode===13){event.preventDefault();fabScanOrdem();}" style="flex:1;border:none;outline:none;background:transparent;font-family:var(--font-m);font-size:14px;color:var(--text)" autofocus>
+              <button type="button" title="Digitar manualmente" onclick="var e=document.getElementById('fab-scan-inp');if(e)e.focus()" style="background:none;border:1px solid var(--ouro-claro);border-radius:6px;padding:4px 9px;cursor:pointer;font-size:14px;flex-shrink:0">⌨️</button>
+            </div>
+            <button class="btn btn-md btn-v" onclick="fabScanOrdem()" title="Abrir ordem" style="padding:0 20px;font-size:18px;line-height:1;flex-shrink:0">→</button>
           </div>
-          <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
-            <div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--verde)">6</div>
-            <div style="font-size:10px;color:var(--text3);font-weight:600">granéis concluídos</div>
-          </div>
-        </div>
-
-        <!-- Aguardando Pesagem -->
-        <div style="position:relative;background:var(--surface);border:1px solid var(--per-b);border-radius:var(--r);padding:14px 16px 12px;box-shadow:var(--sh);overflow:hidden">
-          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--per)"></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-            <span style="font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Aguardando Pesagem</span>
-            <span style="font-size:14px;line-height:1;background:var(--per-p);border:1px solid var(--per-b);color:var(--per);width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%">⚠</span>
-          </div>
-          <div style="display:flex;align-items:baseline;gap:6px;line-height:1">
-            <div style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--per)">1</div>
-            <div style="font-size:10px;color:var(--text3);font-weight:600">requer atenção</div>
-          </div>
+          <div id="fab-scan-msg" style="min-height:16px;font-size:11px;margin-top:10px;font-family:var(--font-m);color:var(--text3)">Aguardando leitura…</div>
         </div>
       </div>
 
-      <!-- ── Barra de Filtros (linha única) ── -->
-      <div class="card cv mb14" style="padding:10px 14px;overflow:visible">
-        <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap">
-          <div style="display:flex;flex-direction:column;flex:1 1 150px;min-width:140px">
-            <label class="lbl">Núm. da Ordem / Lote</label>
-            <input class="inp" id="fabf-ordem" placeholder="Ex.: OP-2026-0416 ou G2026-091" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)" oninput="fabFiltrarOrdens()">
-          </div>
-          <div style="display:flex;flex-direction:column;flex:1.4 1 160px;min-width:150px">
-            <label class="lbl">Produto / Fórmula</label>
-            <input class="inp" id="fabf-produto" placeholder="Buscar produto..." style="font-size:12px;padding:7px 10px" oninput="fabFiltrarOrdens()">
-          </div>
-          <div style="display:flex;flex-direction:column;flex:1.1 1 160px;min-width:150px">
-            <label class="lbl">Status</label>
-            <select class="inp" id="fabf-status" style="font-size:12px;padding:7px 10px" onchange="fabFiltrarOrdens()">
-              <option value="">Todos os status</option>
-              <option value="pronta">📋 Pronta p/ Fabricar</option>
-              <option value="fabricando">🔄 Em Fabricação</option>
-              <option value="aguardando-pesagem">⏳ Aguardando Pesagem</option>
-              <option value="finalizada">✅ Finalizada</option>
-            </select>
-          </div>
-          <div style="display:flex;flex-direction:column;flex:1 1 130px;min-width:120px">
-            <label class="lbl">Data Prev. (de)</label>
-            <input class="inp" id="fabf-data-ini" type="date" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
-          </div>
-          <div style="display:flex;flex-direction:column;flex:1 1 130px;min-width:120px">
-            <label class="lbl">Data Prev. (até)</label>
-            <input class="inp" id="fabf-data-fim" type="date" style="font-size:12px;padding:7px 10px;font-family:var(--font-m)">
-          </div>
-          <div style="display:flex;gap:6px;align-items:flex-end">
-            <button class="btn btn-md btn-v" onclick="fabFiltrarOrdens()" style="white-space:nowrap">🔍 Filtrar</button>
-            <button class="btn btn-md btn-ghost" onclick="fabLimparFiltrosOrdens()" title="Limpar filtros">✕</button>
-          </div>
-        </div>
-        <div id="fabf-result" style="font-size:10px;color:var(--text3);margin-top:8px;font-family:var(--font-m)"></div>
-      </div>
-
-      <div class="card-title">Fila de Fabricação — Prioridade</div>
-      <div class="abox info mb14"><span class="ai">ℹ</span><div>Ordens liberadas para fabricação do granel. O início só é possível após a <strong>Pesagem</strong> concluída — cada ordem passa por Pesagem → Fabricação (Inbatch).</div></div>
-      <div style="overflow-x:auto">
-      <table class="tbl" id="fab-ordens-tbl" style="min-width:1120px">
-        <thead>
-          <tr>
-            <th>Ordem</th>
-            <th>Produto / Fórmula</th>
-            <th>Lote</th>
-            <th>Volume</th>
-            <th>Pesagem</th>
-            <th>Inbatch</th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- OP-2026-0416 — PRONTA P/ FABRICAR -->
-          <tr data-ordem="op-2026-0416" data-lote="g2026-091" data-produto="loção hidratante rosa 200ml" data-status="pronta" onclick="fabAbrirIniciar()" style="background:var(--ouro-dim);cursor:pointer">
-            <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0416</td>
-            <td style="font-size:12px">Loção Hidratante Rosa 200ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-089</span></td>
-            <td class="mono" style="font-size:11px">G2026-091</td>
-            <td class="mono">600 kg</td>
-            <td><span class="bdg bdg-ok">✓ Liberada</span></td>
-            <td><span class="bdg bdg-alr">Aguardando</span></td>
-            <td><span class="bdg bdg-ouro">📋 Pronta p/ Fabricar</span></td>
-            <td><button class="btn btn-sm btn-v" onclick="fabAbrirIniciar();event.stopPropagation()">Iniciar</button></td>
-          </tr>
-
-          <!-- OP-2026-0414 — EM FABRICAÇÃO -->
-          <tr data-ordem="op-2026-0414" data-lote="g2026-089" data-produto="creme hidratante 150g" data-status="fabricando" onclick="nav('fab-inbatch',null,null)" style="background:var(--inf-p);cursor:pointer">
-            <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0414</td>
-            <td style="font-size:12px">Creme Hidratante 150g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-076</span></td>
-            <td class="mono" style="font-size:11px">G2026-089</td>
-            <td class="mono">540 kg</td>
-            <td><span class="bdg bdg-ok">✓ Concluída</span></td>
-            <td><span class="bdg bdg-inf">🔄 Em Batch</span></td>
-            <td><span class="bdg bdg-inf">🔄 Em Fabricação</span></td>
-            <td><button class="btn btn-sm btn-v" onclick="nav('fab-inbatch',null,null);event.stopPropagation()">Continuar</button></td>
-          </tr>
-
-          <!-- OP-2026-0419 — PRONTA P/ FABRICAR -->
-          <tr data-ordem="op-2026-0419" data-lote="g2026-094" data-produto="shampoo phebo 400ml" data-status="pronta" onclick="fabAbrirIniciar()" style="cursor:pointer">
-            <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0419</td>
-            <td style="font-size:12px">Shampoo Phebo 400ml<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-030</span></td>
-            <td class="mono" style="font-size:11px">G2026-094</td>
-            <td class="mono">400 kg</td>
-            <td><span class="bdg bdg-ok">✓ Liberada</span></td>
-            <td><span class="bdg bdg-alr">Aguardando</span></td>
-            <td><span class="bdg bdg-ouro">📋 Pronta p/ Fabricar</span></td>
-            <td><button class="btn btn-sm btn-v" onclick="fabAbrirIniciar();event.stopPropagation()">Iniciar</button></td>
-          </tr>
-
-          <!-- OP-2026-0418 — AGUARDANDO PESAGEM -->
-          <tr data-ordem="op-2026-0418" data-lote="g2026-093" data-produto="polvilho antisséptico 100g" data-status="aguardando-pesagem">
-            <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0418</td>
-            <td style="font-size:12px">Polvilho Antisséptico 100g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-012</span></td>
-            <td class="mono" style="font-size:11px">G2026-093</td>
-            <td class="mono">200 kg</td>
-            <td><span class="bdg bdg-alr">Em pesagem</span></td>
-            <td><span class="bdg bdg-ney">Não iniciado</span></td>
-            <td><span class="bdg bdg-ney">⏳ Aguardando Pesagem</span></td>
-            <td><button class="btn btn-sm btn-ghost">Detalhes</button></td>
-          </tr>
-
-          <!-- OP-2026-0410 — FINALIZADA -->
-          <tr data-ordem="op-2026-0410" data-lote="g2026-085" data-produto="sabonete phebo glicerinado 90g" data-status="finalizada" style="background:var(--ok-p);opacity:.85">
-            <td class="mono" style="color:var(--verde);font-weight:700">OP-2026-0410</td>
-            <td style="font-size:12px">Sabonete Phebo Glicerinado 90g<br><span style="color:var(--text3);font-size:10px">Fórmula F-2024-051</span></td>
-            <td class="mono" style="font-size:11px">G2026-085</td>
-            <td class="mono">320 kg</td>
-            <td><span class="bdg bdg-ok">✓ Concluída</span></td>
-            <td><span class="bdg bdg-ok">✓ Concluído</span></td>
-            <td><span class="bdg bdg-ney">✅ Finalizada</span></td>
-            <td><button class="btn btn-sm btn-ghost">Relatório</button></td>
-          </tr>
-        </tbody>
-      </table>
-      </div>
 
       <script>
-      function fabFiltrarOrdens() {
-        var q = (document.getElementById('fabf-ordem').value || '').toLowerCase();
-        var prod = (document.getElementById('fabf-produto').value || '').toLowerCase();
-        var st = document.getElementById('fabf-status').value;
-        var rows = document.querySelectorAll('#fab-ordens-tbl tbody tr');
-        var vis = 0;
-        rows.forEach(function(r){
-          var okQ = !q || (r.dataset.ordem || '').indexOf(q) !== -1 || (r.dataset.lote || '').indexOf(q) !== -1;
-          var okP = !prod || (r.dataset.produto || '').indexOf(prod) !== -1;
-          var okS = !st || r.dataset.status === st;
-          var show = okQ && okP && okS;
-          r.style.display = show ? '' : 'none';
-          if (show) vis++;
-        });
-        var res = document.getElementById('fabf-result');
-        if (res) res.textContent = vis + ' de ' + rows.length + ' ordem(ns) exibida(s)';
+      // Leitura da Ordem: no scan/Enter, roteia pro fluxo EXISTENTE.
+      //  · ordem em fabricação -> continua no Inbatch (nav 'fab-inbatch')
+      //  · demais              -> abre as Verificações de Setup (fabAbrirIniciar, global de scripts.js)
+      function fabScanOrdem() {
+        var inp = document.getElementById('fab-scan-inp');
+        var msg = document.getElementById('fab-scan-msg');
+        var v = (inp && inp.value || '').trim().toUpperCase();
+        if (!v) {
+          if (msg) { msg.style.color = 'var(--per)'; msg.textContent = '⚠ Escaneie ou digite uma ordem.'; }
+          if (inp) inp.focus();
+          return;
+        }
+        var emFabricacao = ['OP-2026-0414'];
+        if (emFabricacao.indexOf(v) !== -1) {
+          if (msg) { msg.style.color = 'var(--inf)'; msg.textContent = '🔄 ' + v + ' em fabricação — abrindo Inbatch…'; }
+          nav('fab-inbatch', null, null);
+          return;
+        }
+        if (msg) { msg.style.color = 'var(--verde)'; msg.textContent = '✓ Ordem ' + v + ' — abrindo Check-in…'; }
+        fabCheckinAbrir();
       }
-      function fabLimparFiltrosOrdens() {
-        ['fabf-ordem', 'fabf-produto', 'fabf-data-ini', 'fabf-data-fim'].forEach(function(id){ var e = document.getElementById(id); if (e) e.value = ''; });
-        var s = document.getElementById('fabf-status'); if (s) s.value = '';
-        fabFiltrarOrdens();
+
+      // ── Check-in Ordem Fabricação ──
+      // Duplo check: o usuário escaneia a etiqueta de cada item da ordem.
+      // Etiqueta fora da ordem => erro. Todos conferidos => habilita "Confirmar e Movimentar",
+      // que fecha o check-in e segue pro fluxo atual (fabAbrirIniciar / verificações de setup).
+      var FAB_CI_ITENS = [
+        { cod: 'MP-0001', mat: 'Água Purificada',        etq: 'ETQ-2026-0416-001' },
+        { cod: 'MP-4821', mat: 'Glicerina USP',          etq: 'ETQ-2026-0416-002' },
+        { cod: 'MP-3307', mat: 'Propilenoglicol',        etq: 'ETQ-2026-0416-003' },
+        { cod: 'MP-0914', mat: 'Carbopol 940',           etq: 'ETQ-2026-0416-004' },
+        { cod: 'MP-2256', mat: 'Fenoxietanol',           etq: 'ETQ-2026-0416-005' },
+        { cod: 'MP-5593', mat: 'TEA 99%',                etq: 'ETQ-2026-0416-006' },
+        { cod: 'MP-1872', mat: 'Pantenol',               etq: 'ETQ-2026-0416-007' },
+        { cod: 'MP-3341', mat: 'Extrato Rosa Mosqueta',  etq: 'ETQ-2026-0416-008' },
+        { cod: 'MP-7710', mat: 'Óleo de Amêndoas',       etq: 'ETQ-2026-0416-009' },
+        { cod: 'MP-6602', mat: 'Manteiga de Karité',     etq: 'ETQ-2026-0416-010' },
+        { cod: 'MP-5120', mat: 'Álcool Cetílico',        etq: 'ETQ-2026-0416-011' },
+        { cod: 'MP-4408', mat: 'Cera Emulsificante',     etq: 'ETQ-2026-0416-012' },
+        { cod: 'MP-2290', mat: 'Trietanolamina',         etq: 'ETQ-2026-0416-013' },
+        { cod: 'MP-3055', mat: 'EDTA Dissódico',         etq: 'ETQ-2026-0416-014' },
+        { cod: 'MP-1180', mat: 'Metilparabeno',          etq: 'ETQ-2026-0416-015' },
+        { cod: 'MP-8834', mat: 'Óleo Mineral',           etq: 'ETQ-2026-0416-016' },
+        { cod: 'MP-9021', mat: 'Dimeticone (Silicone)',  etq: 'ETQ-2026-0416-017' },
+        { cod: 'MP-7345', mat: 'Vitamina E (Tocoferol)', etq: 'ETQ-2026-0416-018' },
+        { cod: 'MP-6689', mat: 'Essência Rosa',          etq: 'ETQ-2026-0416-019' },
+        { cod: 'MP-9118', mat: 'Corante Rosaline',       etq: 'ETQ-2026-0416-020' }
+      ];
+      var _fabCiChecked = {};
+
+      function fabCheckinAbrir() {
+        _fabCiChecked = {};
+        fabCheckinRender();
+        var msg = document.getElementById('fab-ci-msg'); if (msg) { msg.textContent = ''; msg.style.color = ''; }
+        var inp = document.getElementById('fab-ci-scan'); if (inp) inp.value = '';
+        var m = document.getElementById('fab-checkin-modal'); if (m) m.style.display = 'flex';
+        if (inp) setTimeout(function () { try { inp.focus(); } catch (e) {} }, 60);
       }
+
+      function fabCheckinRender() {
+        var list = document.getElementById('fab-ci-list'); if (!list) return;
+        var total = FAB_CI_ITENS.length, done = 0;
+        list.innerHTML = FAB_CI_ITENS.map(function (it) {
+          var on = !!_fabCiChecked[it.etq]; if (on) done++;
+          return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--border);border-left:3px solid ' + (on ? 'var(--verde)' : 'var(--border2)') + ';border-radius:7px;background:' + (on ? 'var(--verde-dim)' : 'var(--surface2)') + '">' +
+            '<span style="font-size:15px">' + (on ? '✅' : '⏳') + '</span>' +
+            '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:var(--text)">' + it.mat + '</div><div style="font-family:var(--font-m);font-size:10px;color:var(--text3)">' + it.cod + ' · ' + it.etq + '</div></div>' +
+            '<span class="bdg ' + (on ? 'bdg-ok' : 'bdg-alr') + '" style="font-size:9px">' + (on ? 'Conferido' : 'Pendente') + '</span>' +
+          '</div>';
+        }).join('');
+        var cnt = document.getElementById('fab-ci-count'); if (cnt) cnt.textContent = done + ' de ' + total + ' itens conferidos';
+        var btn = document.getElementById('fab-ci-confirm');
+        if (btn) { var all = (done === total && total > 0); btn.disabled = !all; btn.style.opacity = all ? '1' : '.5'; btn.style.cursor = all ? 'pointer' : 'not-allowed'; }
+      }
+
+      function fabCheckinScan() {
+        var inp = document.getElementById('fab-ci-scan');
+        var msg = document.getElementById('fab-ci-msg');
+        var v = (inp && inp.value || '').trim().toUpperCase();
+        if (!v) { if (inp) inp.focus(); return; }
+        var item = null;
+        for (var i = 0; i < FAB_CI_ITENS.length; i++) { if (FAB_CI_ITENS[i].etq.toUpperCase() === v) { item = FAB_CI_ITENS[i]; break; } }
+        if (!item) {
+          if (msg) { msg.style.color = 'var(--per)'; msg.textContent = '⛔ Etiqueta ' + v + ' não pertence a esta ordem.'; }
+        } else if (_fabCiChecked[item.etq]) {
+          if (msg) { msg.style.color = 'var(--alr)'; msg.textContent = '⚠ ' + item.mat + ' já foi conferido.'; }
+        } else {
+          _fabCiChecked[item.etq] = true;
+          if (msg) { msg.style.color = 'var(--verde)'; msg.textContent = '✓ ' + item.mat + ' conferido.'; }
+          fabCheckinRender();
+        }
+        if (inp) { inp.value = ''; inp.focus(); }
+      }
+
+      function fabCheckinFechar() {
+        var m = document.getElementById('fab-checkin-modal'); if (m) m.style.display = 'none';
+      }
+
+      function fabCheckinConfirmar() {
+        var btn = document.getElementById('fab-ci-confirm'); if (btn && btn.disabled) return;
+        fabCheckinFechar();
+        fabAbrirIniciar();   // segue pro fluxo atual (verificações de setup)
+      }
+
+      // Foco automático no campo ao abrir a tela (scanner pronto).
+      (function () {
+        var inp = document.getElementById('fab-scan-inp');
+        if (inp) setTimeout(function () { try { inp.focus(); } catch (e) {} }, 60);
+      })();
       </script>
+
+      <!-- Popup: Check-in Ordem Fabricação (duplo check das etiquetas — ANTES das verificações) -->
+      <div id="fab-checkin-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:950;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 12px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px 26px;max-width:780px;width:96%;margin:auto;box-shadow:var(--sh2)">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px">
+            <div>
+              <div class="ph-eyebrow">Fabricação · MF5 · Conferência de Itens</div>
+              <div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc)">Check-in Ordem Fabricação</div>
+              <div style="font-size:11px;color:var(--text2);margin-top:2px">OP-2026-0416 · Lote G2026-091 · Loção Hidratante Rosa 200ml</div>
+            </div>
+            <button onclick="fabCheckinFechar()" title="Fechar" style="border:none;background:transparent;cursor:pointer;font-size:18px;color:var(--text3);line-height:1">✕</button>
+          </div>
+
+
+          <!-- Leitura (padrão "Leitura de Etiquetas": caixa tracejada + spinner) -->
+          <div style="margin-bottom:8px">
+            <label class="lbl">Escanear etiqueta do item</label>
+            <div style="display:flex;align-items:center;gap:12px;border:1.5px dashed var(--ouro);border-radius:8px;background:var(--ouro-dim);padding:10px 14px">
+              <div style="width:20px;height:20px;border:3px solid var(--ouro-claro);border-top-color:var(--ouro);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0"></div>
+              <input id="fab-ci-scan" autocomplete="off" placeholder="Aguardando leitura da próxima etiqueta… (ou digite o código)" onkeydown="if(event.keyCode===13){event.preventDefault();fabCheckinScan();}" style="flex:1;border:none;outline:none;background:transparent;font-family:var(--font-m);font-size:13px;color:var(--text)">
+              <button type="button" title="Digitar manualmente" onclick="var e=document.getElementById('fab-ci-scan');if(e)e.focus()" style="background:none;border:1px solid var(--ouro-claro);border-radius:6px;padding:4px 9px;cursor:pointer;font-size:14px;flex-shrink:0">⌨️</button>
+            </div>
+          </div>
+          <div id="fab-ci-msg" style="min-height:16px;font-size:11px;font-family:var(--font-m);margin-bottom:10px"></div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div class="card-title" style="margin:0">Itens da Ordem</div>
+            <div id="fab-ci-count" style="font-size:11px;font-family:var(--font-m);color:var(--text3)">0 de 0 itens conferidos</div>
+          </div>
+          <div id="fab-ci-list" style="display:flex;flex-direction:column;gap:6px;max-height:44vh;overflow-y:auto"></div>
+
+          <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;margin-top:14px;border-top:1px solid var(--border)">
+            <button class="btn btn-md btn-ghost" onclick="fabCheckinFechar()">Cancelar</button>
+            <button class="btn btn-md btn-v" id="fab-ci-confirm" disabled onclick="fabCheckinConfirmar()" style="opacity:.5;cursor:not-allowed">✓ Confirmar e Movimentar ›</button>
+          </div>
+        </div>
+      </div>
 
       <!-- Popup: Iniciar Ordem — Verificacoes de Setup (acionado pelo botao "Iniciar") -->
       <div id="fab-iniciar-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:950;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 12px">

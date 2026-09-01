@@ -54,6 +54,7 @@
   <script src="./granado-empty-popup.js"></script>
   <script src="./granado-button-save-page.js"></script>
   <script src="./granado-filter.js"></script>
+  <script src="./granado-scan.js"></script>
 
   <style>
     html,
@@ -321,6 +322,7 @@
       <a class="gd-link" href="#granado-empty-popup">granado-empty-popup</a>
       <a class="gd-link" href="#granado-button-save-page">granado-button-save-page</a>
       <a class="gd-link" href="#granado-filter">granado-filter</a>
+      <a class="gd-link" href="#granado-scan">granado-scan</a>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -3533,6 +3535,37 @@ inp.blur();</pre>
 <span class="tk-tag">&lt;/granado-input&gt;</span></pre>
         </div>
 
+        <h2 class="gd-h2">Foco por código + evento de foco (JS)</h2>
+        <p class="gd-lead">
+          Dê o foco por código com <code>el.focus()</code> e trate o foco em JS pela propriedade
+          <code>onfocusevent</code> (mesmo nome do atributo): atribua uma <strong>função</strong>
+          que recebe <code>value, event</code> — igual ao <code>el.onclick = fn</code> nativo.
+          A string do atributo continua valendo. Clique em <strong>Dar foco</strong>.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-input id="dt-input-foco" style="flex:1;min-width:240px" label="Ordem" icon="search" placeholder="Escaneie ou digite…"></granado-input>
+          <button type="button" onclick="document.getElementById('dt-input-foco').focus()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1C5C31;border-radius:7px;background:#1C5C31;color:#fff;cursor:pointer;align-self:flex-end">Dar foco</button>
+          <span id="dt-foco-msg" style="font-size:12px;color:#8A9E8E;font-family:'Poppins',system-ui,Arial,sans-serif">aguardando…</span>
+          <pre class="gd-code gd-snip"><span class="tk-keyword">const</span> gi = document.getElementById(<span class="tk-str">'campo'</span>);
+
+<span class="tk-comment">// handler por JS (mesmo nome do atributo) — atribua uma função</span>
+gi.onfocusevent = (value, event) =&gt; console.log(<span class="tk-str">'focou:'</span>, value);
+gi.onblurevent  = (value, event) =&gt; console.log(<span class="tk-str">'desfocou:'</span>, value);
+
+<span class="tk-comment">// dá o foco por código (no mobile, chame dentro de um gesto do usuário)</span>
+gi.focus();</pre>
+        </div>
+        <script>
+          (function () {
+            var gi = document.getElementById('dt-input-foco');
+            var msg = document.getElementById('dt-foco-msg');
+            if (!gi || !msg) return;
+            gi.onfocusevent = function (value) { msg.textContent = '🔵 Ganhou foco · valor: ' + (value || '(vazio)'); msg.style.color = '#1C7A38'; };
+            gi.onblurevent  = function () { msg.textContent = '⚪ Perdeu foco'; msg.style.color = '#8A9E8E'; };
+          })();
+        </script>
+
         <!-- ===== API ===== -->
         <h2 class="gd-h2">API</h2>
 
@@ -3656,6 +3689,18 @@ inp.blur();</pre>
               <td class="col-default">—</td>
               <td class="col-desc">JS executado a cada tecla pressionada (evento <code>keydown</code>). Variáveis: <code>value</code>, <code>event</code>, <code>key</code> (atalho para <code>event.key</code>).</td>
             </tr>
+            <tr>
+              <td class="col-name">onfocusevent</td>
+              <td class="col-type">string (JS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">JS executado quando o campo <strong>ganha</strong> foco (evento <code>focus</code>). Variáveis: <code>value</code>, <code>event</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">onblurevent</td>
+              <td class="col-type">string (JS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">JS executado quando o campo <strong>perde</strong> foco (evento <code>blur</code>). Variáveis: <code>value</code>, <code>event</code>.</td>
+            </tr>
           </tbody>
         </table>
 
@@ -3720,6 +3765,20 @@ inp.blur();</pre>
                 <code>value</code>, <code>event</code> (<code>KeyboardEvent</code>),
                 <code>key</code> (atalho para <code>event.key</code>, ex.: <code>"Enter"</code>,
                 <code>"Escape"</code>). Dispara a cada tecla pressionada.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">onfocusevent</td>
+              <td class="col-desc">
+                <code>value</code>, <code>event</code> (<code>FocusEvent</code>). Dispara quando o
+                campo <strong>ganha</strong> foco.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">onblurevent</td>
+              <td class="col-desc">
+                <code>value</code>, <code>event</code> (<code>FocusEvent</code>). Dispara quando o
+                campo <strong>perde</strong> foco.
               </td>
             </tr>
           </tbody>
@@ -13222,6 +13281,72 @@ GranadoQuantityPopup.<span class="tk-attr">show</span>({ type: <span class="tk-s
           <li><strong>Dropdowns/calendários não são cortados:</strong> após a animação de abertura o painel zera o próprio <code>transform</code> (um transform ≠ <code>none</code> viraria <em>containing block</em> de descendentes <code>position:fixed</code>, recortando-os pelo scroll). Assim os popups de <code>&lt;granado-dropdown&gt;</code>/<code>&lt;granado-calendar&gt;</code> aparecem por cima do painel, como um <code>&lt;select&gt;</code> nativo.</li>
           <li><strong>Gatilho externo:</strong> se quiser abrir por outro botão, é só chamar <code>el.open()</code> — o funil embutido continua funcionando.</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-scan
+           ============================================================ -->
+      <section id="granado-scan" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-scan&gt;</code></h1>
+        <p class="gd-lead">
+          Desenho <strong>animado</strong> de "moldura de leitura" (scan): cantos em L, código de barras
+          estilizado ao fundo e uma linha de leitura que sobe/desce. É só o <strong>visual</strong> — não
+          tem input. Por padrão ocupa <code>100%</code> da largura e <code>150px</code> de altura (igual à
+          moldura da tela de Fabricação); passe <code>width</code>/<code>height</code> só se quiser mudar.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-scan.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso básico (padrão)</h2>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <div style="max-width:520px">
+            <granado-scan></granado-scan>
+          </div>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-scan&gt;&lt;/granado-scan&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">width / height, cor e pausado</h2>
+        <div class="gd-demo" style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <div style="width:240px"><granado-scan height="90px"></granado-scan></div>
+          <div><granado-scan width="300px" height="120px"></granado-scan></div>
+          <div><granado-scan width="260px" height="120px" color="#9A7520" line-color="#C8A84B"></granado-scan></div>
+          <div><granado-scan width="260px" height="120px" paused="true"></granado-scan></div>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-scan</span> <span class="tk-attr">height</span>=<span class="tk-str">"90px"</span><span class="tk-tag">&gt;&lt;/granado-scan&gt;</span>
+<span class="tk-tag">&lt;granado-scan</span> <span class="tk-attr">width</span>=<span class="tk-str">"300px"</span> <span class="tk-attr">height</span>=<span class="tk-str">"120px"</span><span class="tk-tag">&gt;&lt;/granado-scan&gt;</span>
+<span class="tk-tag">&lt;granado-scan</span> <span class="tk-attr">width</span>=<span class="tk-str">"260px"</span> <span class="tk-attr">height</span>=<span class="tk-str">"120px"</span> <span class="tk-attr">color</span>=<span class="tk-str">"#9A7520"</span> <span class="tk-attr">line-color</span>=<span class="tk-str">"#C8A84B"</span><span class="tk-tag">&gt;&lt;/granado-scan&gt;</span>
+<span class="tk-tag">&lt;granado-scan</span> <span class="tk-attr">paused</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-scan&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">API</h2>
+        <h3 class="gd-h3">Atributos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Atributo</th><th style="width:150px">Valores</th><th style="width:140px">Default</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">width</td><td class="col-type">string (CSS)</td><td class="col-default">"100%"</td><td class="col-desc">Largura da moldura. Opcional.</td></tr>
+            <tr><td class="col-name">height</td><td class="col-type">string (CSS)</td><td class="col-default">"150px"</td><td class="col-desc">Altura da moldura. Opcional.</td></tr>
+            <tr><td class="col-name">color</td><td class="col-type">string (cor)</td><td class="col-default">"#1C5C31"</td><td class="col-desc">Cor dos cantos + código de barras. Aceita <code>var(--x)</code> (ex.: <code>color="var(--verde)"</code>).</td></tr>
+            <tr><td class="col-name">line-color</td><td class="col-type">string (cor)</td><td class="col-default">"#3FA05A"</td><td class="col-desc">Cor da linha de leitura (a que se move).</td></tr>
+            <tr><td class="col-name">background</td><td class="col-type">string (CSS)</td><td class="col-default">gradiente verde→creme</td><td class="col-desc">Fundo da moldura (cor ou gradiente CSS).</td></tr>
+            <tr><td class="col-name">border-color</td><td class="col-type">string (cor)</td><td class="col-default">"#E5DDC8"</td><td class="col-desc">Cor da borda da moldura.</td></tr>
+            <tr><td class="col-name">radius</td><td class="col-type">string (CSS)</td><td class="col-default">"12px"</td><td class="col-desc">Raio dos cantos da moldura.</td></tr>
+            <tr><td class="col-name">speed</td><td class="col-type">number (ms)</td><td class="col-default">2200</td><td class="col-desc">Duração do ciclo da linha de leitura.</td></tr>
+            <tr><td class="col-name">paused</td><td class="col-type">"true" | "false"</td><td class="col-default">"false"</td><td class="col-desc">Congela a animação (linha parada no topo).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Propriedades JS</h3>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575"><code>el.width</code> · <code>el.height</code> · <code>el.color</code> · <code>el.speed</code> (ler/setar).</p>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Só o desenho:</strong> não tem input — é o visual da moldura de leitura animada.</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; a animação usa a Web Animations API (sem <code>@keyframes</code>). Cores default hardcoded (paleta Granado), com override por atributo.</li>
         </ul>
       </section>
 

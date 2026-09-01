@@ -54,6 +54,7 @@
   <script src="./granado-empty-popup.js"></script>
   <script src="./granado-button-save-page.js"></script>
   <script src="./granado-filter.js"></script>
+  <script src="./granado-scan.js"></script>
 </head>
 
 <body style="margin:0;padding:24px;background:#F4EED9;font-family:'Lato','DejaVu Sans',Arial,sans-serif;color:#103E20">
@@ -2254,6 +2255,50 @@
       <granado-button-save-page format="pdf" label="Só PDF" filename="componentes-granado"></granado-button-save-page>
       <!-- Só HTML, com cor customizada -->
       <granado-button-save-page format="html" color="#9A7520" label="Só HTML" filename="componentes-granado"></granado-button-save-page>
+    </div>
+  </section>
+
+  <!-- ========== granado-scan ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-scan&gt;
+    </h2>
+
+    <!-- Padrão + variações de altura -->
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;margin-bottom:16px">
+      <div style="width:240px">
+        <div style="font-size:10px;color:#6B7280;margin-bottom:6px">padrão (100% × 150px)</div>
+        <granado-scan></granado-scan>
+      </div>
+      <div style="width:240px">
+        <div style="font-size:10px;color:#6B7280;margin-bottom:6px">height="90px"</div>
+        <granado-scan height="90px"></granado-scan>
+      </div>
+      <div style="width:240px">
+        <div style="font-size:10px;color:#6B7280;margin-bottom:6px">height="220px"</div>
+        <granado-scan height="220px"></granado-scan>
+      </div>
+    </div>
+
+    <!-- width/height explícitos, cor, velocidade e pausado -->
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+      <div>
+        <div style="font-size:10px;color:#6B7280;margin-bottom:6px">width="320px" height="120px"</div>
+        <granado-scan width="320px" height="120px"></granado-scan>
+      </div>
+      <div>
+        <div style="font-size:10px;color:#6B7280;margin-bottom:6px">color + line-color (ouro)</div>
+        <granado-scan width="260px" height="120px" color="#9A7520" line-color="#C8A84B"></granado-scan>
+      </div>
+      <div>
+        <div style="font-size:10px;color:#6B7280;margin-bottom:6px">speed="1200"</div>
+        <granado-scan width="260px" height="120px" speed="1200"></granado-scan>
+      </div>
+      <div>
+        <div style="font-size:10px;color:#6B7280;margin-bottom:6px">paused="true"</div>
+        <granado-scan width="260px" height="120px" paused="true"></granado-scan>
+      </div>
     </div>
   </section>
 </body>
