@@ -18,7 +18,9 @@
                         primary   -> fundo cheio com a cor + texto branco
                         secondary -> fundo creme + borda e texto na cor
                         ghost     -> sem borda, sem fundo, texto na cor
-     size           - "sm" | "md" (default) | "lg".
+     size           - "sm" | "md" (default) | "lg" | "xl".
+                      "xl" tem a altura de um campo de leitura/scan (~43px) —
+                      bom p/ ficar do mesmo tamanho de um granado-input ao lado.
      color          - cor base. Default: "#1C5C31".
                       Use "#C0392B" (vermelho) para acoes destrutivas.
      disabled       - "true" desabilita interacao.
@@ -67,7 +69,7 @@ if (!customElements.get('granado-button')) {
       const iconAttr = this.getAttribute('icon');
       const iconPos = this.getAttribute('iconposition') === 'right' ? 'right' : 'left';
       const size = this.getAttribute('size') || 'md';
-      const iconSize = size === 'sm' ? 12 : size === 'lg' ? 16 : 14;
+      const iconSize = size === 'sm' ? 12 : (size === 'lg' || size === 'xl') ? 16 : 14;
       const iconHtml = iconAttr ? this._resolveIcon(iconAttr, iconSize) : '';
 
       const labelSpan = `<span data-btn-label></span>`;
@@ -152,8 +154,8 @@ if (!customElements.get('granado-button')) {
       if (!btn) return;
 
       const size = this.getAttribute('size') || 'md';
-      const padding = size === 'sm' ? '6px 10px' : size === 'lg' ? '10px 18px' : '8px 14px';
-      const fontSize = size === 'sm' ? '11px' : size === 'lg' ? '14px' : '13px';
+      const padding = size === 'sm' ? '6px 10px' : size === 'xl' ? '12px 20px' : size === 'lg' ? '10px 18px' : '8px 14px';
+      const fontSize = size === 'sm' ? '11px' : (size === 'lg' || size === 'xl') ? '14px' : '13px';
 
       btn.style.padding = padding;
       btn.style.fontSize = fontSize;

@@ -29,6 +29,10 @@
                       No MOBILE, o teclado virtual so abre/fecha por esse botao
                       — nao abre automaticamente ao tocar no input. No desktop
                       nao muda nada (o teclado fisico continua funcionando).
+                      Quando "true", o campo tambem ganha o VISUAL DE SCAN
+                      (caixa tracejada dourada + spinner + input transparente),
+                      igual a leitura de etiqueta da tela de Fabricacao.
+                      (nao se aplica a textarea nem password.)
      disabled       - "true" desabilita o campo.
      readonly       - "true" deixa apenas-leitura.
      rows           - linhas iniciais quando type="textarea". Default: 4.
@@ -98,6 +102,8 @@ if (!customElements.get('granado-input')) {
         if (f && f.value !== initial) f.value = initial;
       }
     }
+
+    disconnectedCallback() { this._stopSpin(); }
 
     attributeChangedCallback(name, oldVal, newVal) {
       if (!this._built) return;
@@ -225,17 +231,25 @@ if (!customElements.get('granado-input')) {
         ">${this._keyboardIcon()}</button>
       ` : '';
 
+      // Estilo "scan" (caixa TRACEJADA + spinner) quando o teclado virtual esta
+      // ligado — mesmo visual da leitura de etiqueta em Fabricacao. So p/ input normal.
+      const scanStyle = vkbEnabled && !isTextarea && !isPassword;
+
       this.style.display = this.style.display || 'block';
 
+      const rowStyle = scanStyle
+        ? 'display:flex;align-items:center;gap:12px;border:1.5px dashed #9A7520;border-radius:8px;background:#FAF4D8;padding:10px 14px'
+        : 'position:relative';
+
+      const rowInner = scanStyle
+        ? `<div data-scan-spinner style="width:20px;height:20px;border:3px solid #C8A84B;border-top-color:#9A7520;border-radius:50%;flex-shrink:0"></div>${fieldTag}<button data-vkb-toggle type="button" tabindex="-1" aria-label="Abrir/fechar teclado" title="Abrir/fechar teclado" style="height:auto !important;min-height:0 !important;background:none;border:1px solid #C8A84B;border-radius:6px;padding:4px 9px;cursor:pointer;display:inline-flex;align-items:center;line-height:0;flex-shrink:0;color:#8A9E8E">${this._keyboardIcon()}</button>`
+        : `${iconHtml ? `<span data-input-icon style="${iconStyle}">${iconHtml}</span>` : ''}${fieldTag}${eyeHtml}${vkbHtml}`;
+
+      this._stopSpin();
       this.innerHTML = `
         <div style="font-family:'Poppins','DejaVu Sans',Arial,sans-serif">
           <label data-input-label style="display:none;font-size:11px;font-weight:600;color:#103E20;margin-bottom:6px;font-family:inherit"></label>
-          <div data-input-row style="position:relative">
-            ${iconHtml ? `<span data-input-icon style="${iconStyle}">${iconHtml}</span>` : ''}
-            ${fieldTag}
-            ${eyeHtml}
-            ${vkbHtml}
-          </div>
+          <div data-input-row style="${rowStyle}">${rowInner}</div>
         </div>
       `;
 
@@ -276,7 +290,20 @@ if (!customElements.get('granado-input')) {
           eyeBtn.innerHTML = this._eyeIcon(this._showPassword);
         });
       }
+
+      // Spinner do modo scan gira via Web Animations API (sem @keyframes/stylesheet).
+      if (scanStyle) {
+        const sp = this.querySelector('[data-scan-spinner]');
+        if (sp && typeof sp.animate === 'function') {
+          this._spinAnim = sp.animate(
+            [{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }],
+            { duration: 800, iterations: Infinity, easing: 'linear' }
+          );
+        }
+      }
     }
+
+    _stopSpin() { if (this._spinAnim) { try { this._spinAnim.cancel(); } catch (e) { /* ignore */ } this._spinAnim = null; } }
 
     // ------------------------------------------------------------
     // Sync (estilos e atributos no campo existente)
@@ -308,6 +335,13 @@ if (!customElements.get('granado-input')) {
 
       if (readonly) field.setAttribute('readonly', '');
       else field.removeAttribute('readonly');
+
+      // Modo scan (teclado virtual ligado): campo transparente dentro da caixa tracejada.
+      const scanStyle = this.getAttribute('enable-virtual-keyboard') === 'true' && !isTextarea && this.getAttribute('ispassword') !== 'true';
+      if (scanStyle) {
+        field.style.cssText = `flex:1;min-width:0;box-sizing:border-box;font-size:14px;line-height:1.4;padding:0;border:none;outline:none;background:transparent;color:${disabled ? '#B5AB85' : '#103E20'};font-family:'Arial','Helvetica',sans-serif;letter-spacing:.04em;cursor:${disabled ? 'not-allowed' : 'text'}`;
+        return;
+      }
 
       const hasIcon = !!iconEl;
       const hasEye = !!this.querySelector('[data-eye-toggle]');

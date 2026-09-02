@@ -3453,20 +3453,31 @@ dd.value = <span class="tk-str">'OK,DEV,PEN'</span>;</pre>
           sem subir o teclado automaticamente. Útil para leitura de código de barras/etiqueta, onde o teclado
           atrapalha. No desktop não muda nada (o teclado físico segue funcionando).
         </p>
-        <div class="gd-demo" style="max-width:340px">
+        <p class="gd-lead">
+          Quando ligado, o campo também assume o <strong>visual de leitura (scan)</strong> — caixa
+          <strong>tracejada</strong> dourada + <strong>spinner</strong> + input transparente, igual à leitura de
+          etiqueta da tela de <em>Fabricação › Seleção de Ordens</em>. (Só p/ input normal — não vale para
+          <code>textarea</code> nem <code>ispassword</code>; o <code>icon</code> é substituído pelo spinner.)
+        </p>
+        <div class="gd-demo" style="max-width:460px">
           <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
-          <granado-input
-            label="Código da etiqueta"
-            icon="search"
-            placeholder="Escaneie ou toque no ⌨ para digitar"
-            enable-virtual-keyboard="true">
-          </granado-input>
-          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-input</span>
-    <span class="tk-attr">label</span>=<span class="tk-str">"Código da etiqueta"</span>
-    <span class="tk-attr">icon</span>=<span class="tk-str">"search"</span>
-    <span class="tk-attr">placeholder</span>=<span class="tk-str">"Escaneie ou toque no ⌨ para digitar"</span>
-    <span class="tk-attr">enable-virtual-keyboard</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span>
-<span class="tk-tag">&lt;/granado-input&gt;</span></pre>
+          <div style="display:flex;gap:8px;align-items:flex-end">
+            <granado-input style="flex:1"
+              label="Código da etiqueta"
+              placeholder="Aguardando leitura… (ou toque no ⌨)"
+              enable-virtual-keyboard="true">
+            </granado-input>
+            <granado-button size="xl" icon="arrow-right" label="Abrir" onclickevent="console.log('abrir ordem')"></granado-button>
+          </div>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- input com visual de scan + botão ao lado (igual à Fabricação).
+     size="xl" no botão deixa a altura IDÊNTICA à caixa de scan do input. --&gt;</span>
+<span class="tk-tag">&lt;div</span> <span class="tk-attr">style</span>=<span class="tk-str">"display:flex;gap:8px;align-items:flex-end"</span><span class="tk-tag">&gt;</span>
+  <span class="tk-tag">&lt;granado-input</span> <span class="tk-attr">style</span>=<span class="tk-str">"flex:1"</span>
+      <span class="tk-attr">label</span>=<span class="tk-str">"Código da etiqueta"</span>
+      <span class="tk-attr">placeholder</span>=<span class="tk-str">"Aguardando leitura… (ou toque no ⌨)"</span>
+      <span class="tk-attr">enable-virtual-keyboard</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-input&gt;</span>
+  <span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">size</span>=<span class="tk-str">"xl"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"arrow-right"</span> <span class="tk-attr">label</span>=<span class="tk-str">"Abrir"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span>
+<span class="tk-tag">&lt;/div&gt;</span></pre>
         </div>
 
         <!-- ===== Disabled / Readonly ===== -->
