@@ -97,7 +97,7 @@ if (!customElements.get('granado-toast')) {
       };
       const div = document.createElement('div');
       div.setAttribute('data-toast-container', position);
-      div.style.cssText = `position:fixed;z-index:9999;pointer-events:none;display:flex;flex-direction:column;gap:10px;align-items:${ALIGN[position]};${POS[position]}`;
+      div.style.cssText = `position:fixed;z-index:2147483647;pointer-events:none;display:flex;flex-direction:column;gap:10px;align-items:${ALIGN[position]};${POS[position]}`;
       document.body.appendChild(div);
       GranadoToast._containers[position] = div;
     }
