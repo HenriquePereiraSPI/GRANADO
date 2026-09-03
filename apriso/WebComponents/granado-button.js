@@ -18,7 +18,10 @@
                         primary   -> fundo cheio com a cor + texto branco
                         secondary -> fundo creme + borda e texto na cor
                         ghost     -> sem borda, sem fundo, texto na cor
-     size           - "sm" | "md" (default) | "lg" | "xl".
+     size           - "sm" | "md" (default) | "lg" | "xl" OU um valor CSS custom
+                      de ALTURA (ex.: "30px", "30", "2.5rem"). Com valor custom,
+                      a altura passa a ser fixa (padding vertical vira 0; só o
+                      horizontal permanece) e a fonte usa o tamanho padrao.
                       "xl" tem a altura de um campo de leitura/scan (~43px) —
                       bom p/ ficar do mesmo tamanho de um granado-input ao lado.
      color          - cor base. Default: "#1C5C31".
@@ -153,11 +156,21 @@ if (!customElements.get('granado-button')) {
       const btn = this.querySelector('[data-btn-root]');
       if (!btn) return;
 
-      const size = this.getAttribute('size') || 'md';
-      const padding = size === 'sm' ? '6px 10px' : size === 'xl' ? '12px 20px' : size === 'lg' ? '10px 18px' : '8px 14px';
+      // size = preset ("sm"|"md"|"lg"|"xl") OU um valor CSS custom (ex.: "30px", "30", "2.5rem"),
+      // que vira ALTURA fixa do botão (o vertical passa a ser controlado pela altura, não pelo padding).
+      const size = (this.getAttribute('size') || 'md').trim();
+      const PRESET_PAD = { sm: '6px 10px', md: '8px 14px', lg: '10px 18px', xl: '12px 20px' };
+      const isPreset = Object.prototype.hasOwnProperty.call(PRESET_PAD, size);
       const fontSize = size === 'sm' ? '11px' : (size === 'lg' || size === 'xl') ? '14px' : '13px';
 
-      btn.style.padding = padding;
+      if (isPreset) {
+        btn.style.padding = PRESET_PAD[size];
+        btn.style.removeProperty('height');   // altura pelo conteúdo (padrão)
+      } else {
+        const h = /^[0-9.]+$/.test(size) ? size + 'px' : size;   // "30" -> "30px"
+        btn.style.setProperty('height', h, 'important');          // vence o height:auto !important do root
+        btn.style.padding = '0 14px';                             // só horizontal; a altura controla o vertical
+      }
       btn.style.fontSize = fontSize;
       btn.disabled = this.disabled;
       btn.style.cursor = this.disabled ? 'not-allowed' : 'pointer';

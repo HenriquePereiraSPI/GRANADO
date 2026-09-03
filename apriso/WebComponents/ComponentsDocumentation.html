@@ -5045,20 +5045,29 @@ tg.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tr
         <!-- ===== Tamanhos ===== -->
         <h2 class="gd-h2">Tamanhos</h2>
         <p class="gd-lead">
-          <code>size</code> aceita <code>"sm"</code>, <code>"md"</code> (default) e
-          <code>"lg"</code>. Os tamanhos ajustam padding, font-size e o tamanho do
-          ícone interno (12px / 14px / 16px) proporcionalmente.
+          <code>size</code> aceita os presets <code>"sm"</code>, <code>"md"</code> (default),
+          <code>"lg"</code> e <code>"xl"</code> — que ajustam padding, font-size e o ícone interno
+          (12/14/16px). Também aceita um <strong>valor CSS de altura custom</strong> (ex.:
+          <code>"30px"</code>, <code>"30"</code>, <code>"2.5rem"</code>): a altura vira fixa (padding
+          vertical zera, só o horizontal fica) e a fonte usa o tamanho padrão.
         </p>
         <div class="gd-demo" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
           <granado-button label="Pequeno" icon="plus" size="sm"></granado-button>
           <granado-button label="Médio"   icon="plus"></granado-button>
           <granado-button label="Grande"  icon="plus" size="lg"></granado-button>
-          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;div</span> <span class="tk-attr">style</span>=<span class="tk-str">"display:flex;gap:10px;align-items:center;flex-wrap:wrap"</span><span class="tk-tag">&gt;</span>
-  <span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">label</span>=<span class="tk-str">"Pequeno"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"plus"</span> <span class="tk-attr">size</span>=<span class="tk-str">"sm"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span>
-  <span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">label</span>=<span class="tk-str">"Médio"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"plus"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span>
-  <span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">label</span>=<span class="tk-str">"Grande"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"plus"</span> <span class="tk-attr">size</span>=<span class="tk-str">"lg"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span>
-<span class="tk-tag">&lt;/div&gt;</span></pre>
+          <granado-button label="XL"       icon="plus" size="xl"></granado-button>
+          <granado-button label="30px"     icon="plus" size="30px"></granado-button>
+          <granado-button label="48px"     icon="plus" size="48px"></granado-button>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- presets --&gt;</span>
+<span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">label</span>=<span class="tk-str">"Pequeno"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"plus"</span> <span class="tk-attr">size</span>=<span class="tk-str">"sm"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span>
+<span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">label</span>=<span class="tk-str">"Médio"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"plus"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span>
+<span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">label</span>=<span class="tk-str">"Grande"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"plus"</span> <span class="tk-attr">size</span>=<span class="tk-str">"lg"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span>
+<span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">label</span>=<span class="tk-str">"XL"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"plus"</span> <span class="tk-attr">size</span>=<span class="tk-str">"xl"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span>
+
+<span class="tk-comment">&lt;!-- altura custom (vira height fixo) --&gt;</span>
+<span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">label</span>=<span class="tk-str">"30px"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"plus"</span> <span class="tk-attr">size</span>=<span class="tk-str">"30px"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span>
+<span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">label</span>=<span class="tk-str">"48px"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"plus"</span> <span class="tk-attr">size</span>=<span class="tk-str">"48px"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span></pre>
         </div>
 
         <!-- ===== Ícones ===== -->
@@ -5205,11 +5214,14 @@ tg.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tr
             </tr>
             <tr>
               <td class="col-name">size</td>
-              <td class="col-type">"sm" | "md" | "lg"</td>
+              <td class="col-type">"sm" | "md" | "lg" | "xl" | CSS</td>
               <td class="col-default">"md"</td>
               <td class="col-desc">
-                Tamanho do botão. Ajusta padding, font-size e o tamanho do ícone
-                (12 / 14 / 16 px).
+                Tamanho do botão. Presets <code>sm/md/lg/xl</code> ajustam padding, font-size e o ícone
+                (12 / 14 / 16 px); <code>xl</code> tem a altura de um campo de leitura/scan (~43px).
+                Também aceita um <strong>valor CSS de altura custom</strong> (ex.: <code>"30px"</code>,
+                <code>"30"</code>, <code>"2.5rem"</code>) — a altura vira fixa (padding vertical zera,
+                só o horizontal fica; fonte padrão).
               </td>
             </tr>
             <tr>
