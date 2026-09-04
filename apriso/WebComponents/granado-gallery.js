@@ -8,13 +8,19 @@
    ── Atributos / propriedades
      data           - array de itens (em JS use a propriedade .data).
                       Cada item (todos os campos OPCIONAIS):
-                        { title, subtitle, data, status, metadata }
+                        { title, subtitle, data, status, icon, metadata }
                           title     - título do card (destaque)
                           subtitle  - subtítulo (linha abaixo)
                           data      - texto auxiliar (ex.: data/hora)
+                          icon      - (opcional) ícone à ESQUERDA do texto. Aceita
+                                      SVG cru (ex.: "<svg ...>...</svg>") OU um
+                                      texto/emoji (ex.: "⚖️", "★", "MP").
                           status    - texto do badge (canto direito)
                           statusColor - cor do badge deste item (texto+borda),
                                       sobrepondo status-color. Opcional.
+                          cardColor - (opcional) cor de fundo SÓ deste card,
+                                      sobrepondo card-color / child-card-color.
+                                      (Não se aplica no modo view-only.)
                           children  - array de sub-itens (mesmos campos). Se
                                       houver, o card vira EXPANSÍVEL: clicar no
                                       pai abre/fecha os filhos abaixo (indentados);
@@ -274,14 +280,21 @@ if (!customElements.get('granado-gallery')) {
         ? `<div style="font:11px/1.4 ${MONO};color:${colors.data};margin-top:4px">${this._esc(it.data)}</div>`
         : '';
 
+      // Ícone opcional à ESQUERDA do texto (aceita SVG cru ou texto/emoji).
+      const iconHtml = this._has(it.icon)
+        ? `<span data-role="icon" aria-hidden="true" style="flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;line-height:0;color:${titleColor}">${this._iconMarkup(it.icon)}</span>`
+        : '';
+      // Envolve o conteúdo (linha do título + subtítulo + data) com o ícone à esquerda.
+      const wrap = (headRow) => iconHtml
+        ? `<div style="display:flex;align-items:center;gap:12px">${iconHtml}<div style="flex:1 1 auto;min-width:0">${headRow}${subtitle}${dataLine}</div></div>`
+        : `${headRow}${subtitle}${dataLine}`;
+
       // ── View-only vertical: linha de uma lista limpa ──
       // Sem borda/raio/sombra/fundo próprios; a divisória em gradiente entre os
       // itens é inserida pelo _render (fica "estilosa" e some nas pontas).
       if (viewOnly && !opts.horizontal) {
         return `<div data-role="item" data-idx="${idx}" style="background:transparent;padding:13px 6px;cursor:default;box-sizing:border-box">` +
-            `<div style="display:flex;align-items:center;gap:10px">${title}${status}</div>` +
-            subtitle +
-            dataLine +
+            wrap(`<div style="display:flex;align-items:center;gap:10px">${title}${status}</div>`) +
           `</div>`;
       }
 
@@ -291,13 +304,18 @@ if (!customElements.get('granado-gallery')) {
       // No horizontal, cada card tem largura fixa e não encolhe (flex-shrink:0).
       const widthStyle = opts.horizontal ? `flex:0 0 ${opts.cardWidth};width:${opts.cardWidth};` : '';
       const cursor = viewOnly ? 'default' : 'pointer';   // view-only: cursor normal
-      // Filhos podem ter fundo próprio (child-card-color); senão usam card-color.
-      const cardBg = (isChild && this._has(colors.childCard)) ? colors.childCard : colors.card;
+      // Fundo do card: por item (it.cardColor) sobrepõe child-card-color / card-color.
+      let cardBg = (isChild && this._has(colors.childCard)) ? colors.childCard : colors.card;
+      if (this._has(it.cardColor)) cardBg = this._esc(it.cardColor);
       return `<div data-role="item" data-idx="${idx}"${isChild ? ' data-child="true"' : ''} style="background:${cardBg};border:1px solid ${colors.border};border-radius:10px;padding:${pad};margin-bottom:${mb};${widthStyle}${boxShadow}cursor:${cursor};transition:box-shadow .15s ease,transform .1s ease;box-sizing:border-box">` +
-          `<div style="display:flex;align-items:center;gap:10px">${title}${status}${chevron}</div>` +
-          subtitle +
-          dataLine +
+          wrap(`<div style="display:flex;align-items:center;gap:10px">${title}${status}${chevron}</div>`) +
         `</div>`;
+    }
+
+    // Ícone do item: se parece SVG/HTML (tem "<tag>"), usa cru; senão vira texto/emoji.
+    _iconMarkup(icon) {
+      const s = String(icon == null ? '' : icon);
+      return /<[a-z!/][\s\S]*>/i.test(s) ? s : `<span style="font-size:18px;line-height:1">${this._esc(s)}</span>`;
     }
 
     _isExpanded(i) { return !!(this._exp && this._exp[i]); }

@@ -12371,6 +12371,38 @@ GranadoQuantityPopup.<span class="tk-attr">show</span>({ type: <span class="tk-s
           aceita qualquer objeto e volta no <code>detail</code> do clique.
         </p>
 
+        <h2 class="gd-h2">Ícone + cor por item (<code>icon</code> / <code>cardColor</code>)</h2>
+        <p class="gd-lead">
+          Cada item pode ter um <code>icon</code> à esquerda (aceita <strong>SVG cru</strong> ou
+          <strong>texto/emoji</strong>) e um <code>cardColor</code> próprio, que sobrepõe a cor global
+          do card. Ambos são opcionais.
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-gallery id="dg-gallery-icon" style="display:block;max-width:420px"></granado-gallery>
+          <pre class="gd-code gd-snip"><span class="tk-keyword">var</span> g = document.getElementById(<span class="tk-str">'minha-galeria'</span>);
+g.data = [
+  { title: <span class="tk-str">'Balança BAL-03'</span>, subtitle: <span class="tk-str">'Sala A · Box 1'</span>, icon: <span class="tk-str">'⚖️'</span>, status: <span class="tk-str">'OK'</span> },
+  { title: <span class="tk-str">'Corante Rosaline'</span>, subtitle: <span class="tk-str">'Lote COR-2026-15'</span>,
+    icon: <span class="tk-str">'&lt;svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"&gt;…&lt;/svg&gt;'</span>,  <span class="tk-comment">// SVG cru</span>
+    cardColor: <span class="tk-str">'#FDECEC'</span> },                                 <span class="tk-comment">// cor só deste card</span>
+  { title: <span class="tk-str">'Água Purificada'</span>, subtitle: <span class="tk-str">'liberada'</span>, icon: <span class="tk-str">'💧'</span>, cardColor: <span class="tk-str">'var(--verde-dim)'</span>, status: <span class="tk-str">'PRONTA'</span> },
+  { title: <span class="tk-str">'Sem ícone'</span>, subtitle: <span class="tk-str">'item normal'</span> }
+];</pre>
+        </div>
+        <script>
+          (function () {
+            var g = document.getElementById('dg-gallery-icon');
+            if (!g) return;
+            g.data = [
+              { title: 'Balança BAL-03', subtitle: 'Sala A · Box 1', icon: '⚖️', status: 'OK' },
+              { title: 'Corante Rosaline', subtitle: 'Lote COR-2026-15', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>', cardColor: '#FDECEC' },
+              { title: 'Água Purificada', subtitle: 'liberada', icon: '💧', cardColor: 'var(--verde-dim,#E6F4EA)', status: 'PRONTA' },
+              { title: 'Sem ícone', subtitle: 'item normal' }
+            ];
+          })();
+        </script>
+
         <h2 class="gd-h2">API</h2>
 
         <h3 class="gd-h3">Atributos / propriedades</h3>
@@ -12410,6 +12442,8 @@ GranadoQuantityPopup.<span class="tk-attr">show</span>({ type: <span class="tk-s
             <tr><td class="col-name">data</td><td class="col-type">string</td><td class="col-desc">Texto auxiliar (ex.: data/hora) — exibido em fonte mono.</td></tr>
             <tr><td class="col-name">status</td><td class="col-type">string</td><td class="col-desc">Texto do badge no canto direito (cor = <code>status-color</code>).</td></tr>
             <tr><td class="col-name">statusColor</td><td class="col-type">string</td><td class="col-desc">Cor do badge deste item (texto + borda), sobrepondo <code>status-color</code>. Opcional.</td></tr>
+            <tr><td class="col-name">icon</td><td class="col-type">string (SVG ou texto)</td><td class="col-desc">Ícone à <strong>esquerda</strong> do texto. Aceita <strong>SVG cru</strong> (ex.: <code>"&lt;svg …&gt;…&lt;/svg&gt;"</code>) ou <strong>texto/emoji</strong> (ex.: <code>"⚖️"</code>, <code>"★"</code>). Opcional.</td></tr>
+            <tr><td class="col-name">cardColor</td><td class="col-type">string (cor CSS)</td><td class="col-desc">Cor de fundo <strong>só deste card</strong>, sobrepondo <code>card-color</code> / <code>child-card-color</code>. Aceita <code>hex</code>, <code>rgb()</code>, <code>var(--x)</code>. Não vale no <code>view-only</code>. Opcional.</td></tr>
             <tr><td class="col-name">children</td><td class="col-type">array&lt;item&gt;</td><td class="col-desc">Sub-itens (mesmos campos). Se houver, o card vira <strong>expansível</strong>: clicar no pai abre/fecha os filhos abaixo (indentados). O pai <strong>não</strong> dispara <code>item-click</code> — apenas expande.</td></tr>
             <tr><td class="col-name">metadata</td><td class="col-type">any</td><td class="col-desc"><strong>Não é exibido</strong> — qualquer objeto/valor extra devolvido no clique.</td></tr>
           </tbody>

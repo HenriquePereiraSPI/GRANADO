@@ -1,0 +1,1 @@
+--C:\Program Files\Dassault Systemes\DELMIA Apriso 2025\Labels Definitions
