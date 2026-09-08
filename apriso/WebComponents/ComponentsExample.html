@@ -1924,6 +1924,11 @@
         <div style="font-size:11px;font-weight:700;color:#8A9E8E;margin-bottom:6px">Com filhos (clique no pai p/ expandir)</div>
         <granado-gallery id="gal-tree"></granado-gallery>
       </div>
+      <!-- type="view-only2": mini-cards estilo "Itens da Ordem" (Fabricação) + icon + cardColor por item -->
+      <div style="flex:1 1 300px;min-width:280px;max-width:420px">
+        <div style="font-size:11px;font-weight:700;color:#8A9E8E;margin-bottom:6px">type="view-only2" (icon + cardColor + card-height por item)</div>
+        <granado-gallery id="gal-vo2" type="view-only2" enable-shadow="false" card-height="58px"></granado-gallery>
+      </div>
     </div>
     <div id="gal-status" style="font-size:12px;color:#8A9E8E;margin-top:10px"></div>
 
@@ -1987,6 +1992,20 @@
         if (s) s.textContent = '➡ ' + pref + d.title + ' (' + (d.status || '') + ')';
         console.log('[granado-gallery] item-click →', d);
       };
+
+      // type="view-only2": mesmo visual do popup "Itens da Ordem" em Fabricação.
+      // Cada item aceita icon (svg ou emoji/texto) à esquerda e cardColor próprio.
+      var gvo2 = document.getElementById('gal-vo2');
+      gvo2.data = [
+        { title: 'MP-4821 · Glicerina USP', subtitle: 'ETQ-2026-0416-001 · Lote GLI-2026-08',
+          status: 'LIDO', statusColor: '#1C7A38', icon: '⚖️' },
+        { title: 'MP-3307 · Propilenoglicol', subtitle: 'ETQ-2026-0416-002 · Lote PPG-2026-12',
+          status: 'LIDO', statusColor: '#1C7A38', icon: '⚖️' },
+        { title: 'MP-0914 · Carbopol 940', subtitle: 'ETQ-2026-0416-003 · Lote CAR-2026-05',
+          status: 'PENDENTE', statusColor: '#9A5A00', icon: '⏳', cardColor: '#FEF6E6' },
+        { title: 'MP-9999 · Conservante BHT', subtitle: 'ETQ-2026-0416-004 · estoque insuficiente',
+          status: 'FORA', statusColor: '#8C1A1A', icon: '⚠', cardColor: '#FBECEC' }
+      ];
     </script>
   </section>
 

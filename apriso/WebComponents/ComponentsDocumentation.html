@@ -12403,6 +12403,103 @@ g.data = [
           })();
         </script>
 
+        <h2 class="gd-h2">Mini-cards — <code>type="view-only2"</code></h2>
+        <p class="gd-lead">
+          Visual dos <strong>mini-cards</strong> usados no popup <em>"Itens da Ordem"</em> (Fabricação):
+          card compacto com <strong>faixa lateral</strong> na cor do status, <code>icon</code> à esquerda,
+          título + subtítulo/data e <strong>badge</strong> à direita. Sem hover/expansão. O fundo padrão é
+          creme (<code>#F4EED9</code>) e pode ser trocado por item com <code>cardColor</code>. Combine com
+          <code>card-height</code> (abaixo) para altura uniforme.
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-gallery id="dg-gallery-vo2" type="view-only2" enable-shadow="false" card-height="58px" enable-scroll="true" scroll-height="320px" style="display:block;max-width:420px"></granado-gallery>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-gallery</span> <span class="tk-attr">id</span>=<span class="tk-str">"minha-galeria"</span> <span class="tk-attr">type</span>=<span class="tk-str">"view-only2"</span> <span class="tk-attr">enable-shadow</span>=<span class="tk-str">"false"</span>
+  <span class="tk-attr">card-height</span>=<span class="tk-str">"58px"</span> <span class="tk-attr">enable-scroll</span>=<span class="tk-str">"true"</span> <span class="tk-attr">scroll-height</span>=<span class="tk-str">"320px"</span><span class="tk-tag">&gt;&lt;/granado-gallery&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-keyword">var</span> g = document.getElementById(<span class="tk-str">'minha-galeria'</span>);
+  <span class="tk-comment">// 20 itens simulados (matérias-primas da ordem) para demonstrar o scroll.</span>
+  <span class="tk-keyword">var</span> MPS = [
+    [<span class="tk-str">'MP-4821 · Glicerina USP'</span>, <span class="tk-str">'GLI-2026-08'</span>], [<span class="tk-str">'MP-3307 · Propilenoglicol'</span>, <span class="tk-str">'PPG-2026-12'</span>],
+    [<span class="tk-str">'MP-0914 · Carbopol 940'</span>, <span class="tk-str">'CAR-2026-05'</span>], [<span class="tk-str">'MP-9999 · Conservante BHT'</span>, <span class="tk-str">'BHT-2026-01'</span>],
+    [<span class="tk-str">'MP-1002 · Aqua Purificada'</span>, <span class="tk-str">'AGUA-2026-03'</span>], [<span class="tk-str">'MP-2210 · Óleo de Amêndoas'</span>, <span class="tk-str">'OAM-2026-07'</span>],
+    [<span class="tk-str">'MP-3345 · Manteiga de Karité'</span>, <span class="tk-str">'KAR-2026-02'</span>], [<span class="tk-str">'MP-4188 · Essência Rosa'</span>, <span class="tk-str">'ESR-2026-11'</span>],
+    [<span class="tk-str">'MP-5027 · Corante Rosaline'</span>, <span class="tk-str">'COR-2026-15'</span>], [<span class="tk-str">'MP-6033 · Ácido Cítrico'</span>, <span class="tk-str">'ACI-2026-09'</span>],
+    [<span class="tk-str">'MP-6742 · Trietanolamina'</span>, <span class="tk-str">'TEA-2026-04'</span>], [<span class="tk-str">'MP-7014 · EDTA Dissódico'</span>, <span class="tk-str">'EDT-2026-06'</span>],
+    [<span class="tk-str">'MP-7788 · Fenoxietanol'</span>, <span class="tk-str">'FEN-2026-10'</span>], [<span class="tk-str">'MP-8120 · Vitamina E'</span>, <span class="tk-str">'VTE-2026-03'</span>],
+    [<span class="tk-str">'MP-8451 · Pantenol'</span>, <span class="tk-str">'PAN-2026-08'</span>], [<span class="tk-str">'MP-8890 · Alantoína'</span>, <span class="tk-str">'ALA-2026-01'</span>],
+    [<span class="tk-str">'MP-9106 · Glicerina Vegetal'</span>, <span class="tk-str">'GLV-2026-13'</span>], [<span class="tk-str">'MP-9333 · Extrato de Aloe'</span>, <span class="tk-str">'ALO-2026-05'</span>],
+    [<span class="tk-str">'MP-9612 · Fragrância Lavanda'</span>, <span class="tk-str">'LAV-2026-12'</span>], [<span class="tk-str">'MP-9820 · Óleo Essencial Menta'</span>, <span class="tk-str">'OEM-2026-02'</span>]
+  ];
+  g.data = MPS.map(<span class="tk-keyword">function</span> (m, i) {
+    <span class="tk-keyword">var</span> n = String(i + 1).padStart(3, <span class="tk-str">'0'</span>);
+    <span class="tk-comment">// 3 primeiros lidos; 1 sem estoque; demais pendentes.</span>
+    <span class="tk-keyword">var</span> st = i &lt; 3 ? { status: <span class="tk-str">'LIDO'</span>, statusColor: <span class="tk-str">'#1C7A38'</span>, icon: <span class="tk-str">'⚖️'</span> }
+           : i === 7 ? { status: <span class="tk-str">'FORA'</span>, statusColor: <span class="tk-str">'#8C1A1A'</span>, icon: <span class="tk-str">'⚠'</span>, cardColor: <span class="tk-str">'#FBECEC'</span> }
+           : { status: <span class="tk-str">'PENDENTE'</span>, statusColor: <span class="tk-str">'#9A5A00'</span>, icon: <span class="tk-str">'⏳'</span>, cardColor: <span class="tk-str">'#FEF6E6'</span> };
+    <span class="tk-keyword">return</span> Object.assign({ title: m[0], subtitle: <span class="tk-str">'ETQ-2026-0416-'</span> + n + <span class="tk-str">' · Lote '</span> + m[1] }, st);
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+        <script>
+          (function () {
+            var g = document.getElementById('dg-gallery-vo2');
+            if (!g) return;
+            // 20 itens simulados (matérias-primas da ordem) para demonstrar o scroll.
+            var MPS = [
+              ['MP-4821 · Glicerina USP', 'GLI-2026-08'], ['MP-3307 · Propilenoglicol', 'PPG-2026-12'],
+              ['MP-0914 · Carbopol 940', 'CAR-2026-05'], ['MP-9999 · Conservante BHT', 'BHT-2026-01'],
+              ['MP-1002 · Aqua Purificada', 'AGUA-2026-03'], ['MP-2210 · Óleo de Amêndoas', 'OAM-2026-07'],
+              ['MP-3345 · Manteiga de Karité', 'KAR-2026-02'], ['MP-4188 · Essência Rosa', 'ESR-2026-11'],
+              ['MP-5027 · Corante Rosaline', 'COR-2026-15'], ['MP-6033 · Ácido Cítrico', 'ACI-2026-09'],
+              ['MP-6742 · Trietanolamina', 'TEA-2026-04'], ['MP-7014 · EDTA Dissódico', 'EDT-2026-06'],
+              ['MP-7788 · Fenoxietanol', 'FEN-2026-10'], ['MP-8120 · Vitamina E', 'VTE-2026-03'],
+              ['MP-8451 · Pantenol', 'PAN-2026-08'], ['MP-8890 · Alantoína', 'ALA-2026-01'],
+              ['MP-9106 · Glicerina Vegetal', 'GLV-2026-13'], ['MP-9333 · Extrato de Aloe', 'ALO-2026-05'],
+              ['MP-9612 · Fragrância Lavanda', 'LAV-2026-12'], ['MP-9820 · Óleo Essencial Menta', 'OEM-2026-02']
+            ];
+            g.data = MPS.map(function (m, i) {
+              var n = String(i + 1).padStart(3, '0');
+              // 3 primeiros lidos; 1 sem estoque; demais pendentes.
+              var st = i < 3 ? { status: 'LIDO', statusColor: '#1C7A38', icon: '⚖️' }
+                     : i === 7 ? { status: 'FORA', statusColor: '#8C1A1A', icon: '⚠', cardColor: '#FBECEC' }
+                     : { status: 'PENDENTE', statusColor: '#9A5A00', icon: '⏳', cardColor: '#FEF6E6' };
+              return Object.assign({ title: m[0], subtitle: 'ETQ-2026-0416-' + n + ' · Lote ' + m[1] }, st);
+            });
+          })();
+        </script>
+
+        <h2 class="gd-h2">Altura fixa dos cards — <code>card-height</code></h2>
+        <p class="gd-lead">
+          Por padrão cada card tem a <strong>altura do seu conteúdo</strong>. Com <code>card-height</code>
+          você fixa a altura de <strong>todos</strong> os cards (ex.: <code>"64px"</code>) — e o conteúdo é
+          <strong>centralizado verticalmente</strong>. Dá pra sobrepor a altura de um item específico com
+          <code>cardHeight</code>. Vale para todos os <code>type</code>.
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-gallery id="dg-gallery-h" card-height="64px" style="display:block;max-width:420px"></granado-gallery>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-gallery</span> <span class="tk-attr">id</span>=<span class="tk-str">"minha-galeria"</span> <span class="tk-attr">card-height</span>=<span class="tk-str">"64px"</span><span class="tk-tag">&gt;&lt;/granado-gallery&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  document.getElementById(<span class="tk-str">'minha-galeria'</span>).data = [
+    { title: <span class="tk-str">'OP-2026-0416'</span>, subtitle: <span class="tk-str">'Loção Rosa 200ml'</span>, status: <span class="tk-str">'NOVO'</span> },
+    { title: <span class="tk-str">'OP-2026-0414'</span>, subtitle: <span class="tk-str">'Creme 150g'</span>, status: <span class="tk-str">'PESANDO'</span>, cardHeight: <span class="tk-str">'96px'</span> },  <span class="tk-comment">// altura só deste card</span>
+    { title: <span class="tk-str">'OP-2026-0413'</span>, subtitle: <span class="tk-str">'Sabonete 90g'</span>, status: <span class="tk-str">'DETALHES'</span> }
+  ];
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+        <script>
+          (function () {
+            var g = document.getElementById('dg-gallery-h');
+            if (!g) return;
+            g.data = [
+              { title: 'OP-2026-0416', subtitle: 'Loção Rosa 200ml', status: 'NOVO' },
+              { title: 'OP-2026-0414', subtitle: 'Creme 150g', status: 'PESANDO', cardHeight: '96px' },
+              { title: 'OP-2026-0413', subtitle: 'Sabonete 90g', status: 'DETALHES' }
+            ];
+          })();
+        </script>
+
         <h2 class="gd-h2">API</h2>
 
         <h3 class="gd-h3">Atributos / propriedades</h3>
@@ -12412,10 +12509,11 @@ g.data = [
           </thead>
           <tbody>
             <tr><td class="col-name">data</td><td class="col-type">array</td><td class="col-desc">Itens da galeria (em JS use <code>.data</code>). Campos de cada item na tabela abaixo — <strong>todos opcionais</strong>.</td></tr>
-            <tr><td class="col-name">type</td><td class="col-type">string</td><td class="col-desc"><code>"view-only"</code> transforma a galeria em <strong>lista de visualização</strong>: a setinha some, sem hover, cursor normal e (no vertical) os itens ficam <strong>sem bordas/cards</strong>, separados por uma <strong>divisória fina em gradiente</strong> (some nas pontas). <code>children</code> não expandem neste modo. Em JS: <code>.type</code>.</td></tr>
+            <tr><td class="col-name">type</td><td class="col-type">string</td><td class="col-desc"><code>"view-only"</code> transforma a galeria em <strong>lista de visualização</strong>: a setinha some, sem hover, cursor normal e (no vertical) os itens ficam <strong>sem bordas/cards</strong>, separados por uma <strong>divisória fina em gradiente</strong> (some nas pontas). <code>"view-only2"</code> usa o visual de <strong>mini-cards</strong> do popup "Itens da Ordem" (Fabricação): card compacto com <strong>faixa lateral</strong> na cor do status, <code>icon</code> à esquerda, título/subtítulo e <strong>badge</strong> à direita — sem hover/expansão; fundo padrão creme <code>#F4EED9</code> (sobreponível por <code>cardColor</code>). Em ambos os modos <code>children</code> não expandem. Em JS: <code>.type</code>.</td></tr>
             <tr><td class="col-name">orientation</td><td class="col-type">string</td><td class="col-desc"><code>"vertical"</code> (default) ou <code>"horizontal"</code>. No <strong>horizontal</strong> os cards ficam lado a lado com <strong>scroll horizontal</strong> e os <code>children</code> <strong>não expandem</strong> (cada item vira um card simples). Em JS: <code>.orientation</code>.</td></tr>
             <tr><td class="col-name">card-width</td><td class="col-type">CSS length</td><td class="col-desc">Largura de cada card no modo <strong>horizontal</strong> (ex.: <code>"220px"</code>, <code>"70vw"</code>). Default <code>"220px"</code>. Ignorado no vertical. Em JS: <code>.cardWidth</code>.</td></tr>
             <tr><td class="col-name">card-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor de fundo dos cards. Default <code>#FDFAF1</code>.</td></tr>
+            <tr><td class="col-name">card-height</td><td class="col-type">CSS length</td><td class="col-desc"><strong>Altura fixa</strong> de cada card (ex.: <code>"64px"</code>, <code>"3.5rem"</code>). Vazio (default) = <strong>altura automática</strong> pelo conteúdo. Com altura fixa, o conteúdo é <strong>centralizado verticalmente</strong>. Sobreponível por item via <code>cardHeight</code>. Vale para todos os <code>type</code>. Em JS: <code>.cardHeight</code>.</td></tr>
             <tr><td class="col-name">child-card-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor de fundo <strong>apenas dos cards filhos</strong> (itens dentro de <code>children</code>). Vazio (default) = usam a mesma cor dos pais (<code>card-color</code>). Em JS: <code>.childCardColor</code>.</td></tr>
             <tr><td class="col-name">border-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor da <strong>borda dos cards</strong>. Default <code>#D6CDA4</code>. No modo <code>type="view-only"</code> também define a cor da <strong>divisória</strong> entre os itens. Em JS: <code>.borderColor</code>.</td></tr>
             <tr><td class="col-name">bg-color</td><td class="col-type">CSS color</td><td class="col-desc">Cor de fundo do <strong>container</strong> da galeria (atrás dos cards). Default <code>transparent</code> (mostra o fundo da página). Com uma cor, o container ganha padding e cantos arredondados. Em JS: <code>.bgColor</code>.</td></tr>
@@ -12443,7 +12541,8 @@ g.data = [
             <tr><td class="col-name">status</td><td class="col-type">string</td><td class="col-desc">Texto do badge no canto direito (cor = <code>status-color</code>).</td></tr>
             <tr><td class="col-name">statusColor</td><td class="col-type">string</td><td class="col-desc">Cor do badge deste item (texto + borda), sobrepondo <code>status-color</code>. Opcional.</td></tr>
             <tr><td class="col-name">icon</td><td class="col-type">string (SVG ou texto)</td><td class="col-desc">Ícone à <strong>esquerda</strong> do texto. Aceita <strong>SVG cru</strong> (ex.: <code>"&lt;svg …&gt;…&lt;/svg&gt;"</code>) ou <strong>texto/emoji</strong> (ex.: <code>"⚖️"</code>, <code>"★"</code>). Opcional.</td></tr>
-            <tr><td class="col-name">cardColor</td><td class="col-type">string (cor CSS)</td><td class="col-desc">Cor de fundo <strong>só deste card</strong>, sobrepondo <code>card-color</code> / <code>child-card-color</code>. Aceita <code>hex</code>, <code>rgb()</code>, <code>var(--x)</code>. Não vale no <code>view-only</code>. Opcional.</td></tr>
+            <tr><td class="col-name">cardColor</td><td class="col-type">string (cor CSS)</td><td class="col-desc">Cor de fundo <strong>só deste card</strong>, sobrepondo <code>card-color</code> / <code>child-card-color</code>. Aceita <code>hex</code>, <code>rgb()</code>, <code>var(--x)</code>. Não vale no <code>view-only</code> (vale no <code>view-only2</code>). Opcional.</td></tr>
+            <tr><td class="col-name">cardHeight</td><td class="col-type">string (CSS length)</td><td class="col-desc"><strong>Altura fixa só deste card</strong>, sobrepondo <code>card-height</code> do componente (ex.: <code>"96px"</code>). Conteúdo centralizado verticalmente. Opcional.</td></tr>
             <tr><td class="col-name">children</td><td class="col-type">array&lt;item&gt;</td><td class="col-desc">Sub-itens (mesmos campos). Se houver, o card vira <strong>expansível</strong>: clicar no pai abre/fecha os filhos abaixo (indentados). O pai <strong>não</strong> dispara <code>item-click</code> — apenas expande.</td></tr>
             <tr><td class="col-name">metadata</td><td class="col-type">any</td><td class="col-desc"><strong>Não é exibido</strong> — qualquer objeto/valor extra devolvido no clique.</td></tr>
           </tbody>

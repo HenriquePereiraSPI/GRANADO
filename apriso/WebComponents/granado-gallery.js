@@ -32,6 +32,12 @@
                       fica normal e (no vertical) os itens ficam sem bordas/cards,
                       separados por uma divisória fina em gradiente (some nas
                       pontas). Filhos não expandem no view-only. Em JS use .type.
+                      "view-only2" também é só visualização, mas com o visual dos
+                      "Itens da Ordem" da Fabricação: cada item vira um mini-card
+                      com FAIXA LATERAL colorida (accent = statusColor/status-color),
+                      ícone à esquerda, título + subtítulo/data e badge à direita.
+                      Sem chevron/hover/expansão. Fundo = cardColor/card-color
+                      (ou um creme suave por padrão).
      orientation    - "vertical" (default) | "horizontal". No horizontal os
                       cards ficam lado a lado com scroll horizontal e os
                       "children" NÃO expandem (cada item é um card simples).
@@ -39,6 +45,10 @@
      card-width     - largura de cada card no modo horizontal (CSS válido,
                       default "220px"). Ignorado no vertical. Em JS .cardWidth.
      card-color     - cor de fundo dos cards (default "#FDFAF1")
+     card-height    - (opcional) altura fixa de cada card (CSS válido, ex.:
+                      "64px", "3.5rem"). Vazio (default) = altura automática
+                      pelo conteúdo. Pode ser sobreposta por item via
+                      it.cardHeight. Em JS use .cardHeight.
      child-card-color - cor de fundo APENAS dos cards filhos. Vazio (default)
                       = usam a mesma cor dos pais (card-color).
      border-color   - cor da borda dos cards (default "#D6CDA4"). No view-only
@@ -86,6 +96,7 @@
 /* __granado_guard__ */
 if (!customElements.get('granado-gallery')) {
   const CARD_COLOR = '#FDFAF1';
+  const CARD_HEIGHT = '';           // altura fixa dos cards (vazio = automática pelo conteúdo)
   const CHILD_CARD_COLOR = '';      // fundo dos cards filhos (vazio = usa card-color)
   const BG_COLOR = 'transparent';   // fundo do container (default: mostra o fundo da página)
   const TITLE_COLOR = '#0F3319';
@@ -105,7 +116,7 @@ if (!customElements.get('granado-gallery')) {
 
   class GranadoGallery extends HTMLElement {
     static get observedAttributes() {
-      return ['data', 'type', 'orientation', 'card-width', 'card-color', 'child-card-color', 'border-color', 'bg-color', 'title-color', 'subtitle-color', 'data-color', 'status-color', 'enable-scroll', 'scroll-height', 'scroll-color', 'enable-shadow'];
+      return ['data', 'type', 'orientation', 'card-width', 'card-color', 'card-height', 'child-card-color', 'border-color', 'bg-color', 'title-color', 'subtitle-color', 'data-color', 'status-color', 'enable-scroll', 'scroll-height', 'scroll-color', 'enable-shadow'];
     }
 
     // ------------------------------------------------------------
@@ -141,12 +152,15 @@ if (!customElements.get('granado-gallery')) {
     get type() { return (this.getAttribute('type') || '').toLowerCase(); }
     set type(v) { this.setAttribute('type', String(v)); }
     get isViewOnly() { return this.type === 'view-only'; }
+    get isViewOnly2() { return this.type === 'view-only2'; }
     get orientation() { return (this.getAttribute('orientation') || ORIENTATION).toLowerCase() === 'horizontal' ? 'horizontal' : 'vertical'; }
     set orientation(v) { this.setAttribute('orientation', String(v)); }
     get cardWidth() { return this.getAttribute('card-width') || CARD_WIDTH; }
     set cardWidth(v) { this.setAttribute('card-width', String(v)); }
     get cardColor() { return this.getAttribute('card-color') || CARD_COLOR; }
     set cardColor(v) { this.setAttribute('card-color', String(v)); }
+    get cardHeight() { return this.getAttribute('card-height') || CARD_HEIGHT; }
+    set cardHeight(v) { this.setAttribute('card-height', String(v)); }
     get childCardColor() { return this.getAttribute('child-card-color') || CHILD_CARD_COLOR; }
     set childCardColor(v) { this.setAttribute('child-card-color', String(v)); }
     get borderColor() { return this.getAttribute('border-color') || ''; }
@@ -244,6 +258,11 @@ if (!customElements.get('granado-gallery')) {
         // Lista conectada: cada item é uma linha rente; filhos NÃO expandem aqui.
         return this._card(it, String(i), colors, shadow, { hasChildren: false, expanded: false, isChild: false, viewOnly: true, first: i === 0 });
       }
+      if (this.isViewOnly2) {
+        // Mini-cards no estilo "Itens da Ordem" (Fabricação): borda + faixa lateral
+        // + ícone + texto + badge. Filhos NÃO expandem.
+        return this._card(it, String(i), colors, shadow, { hasChildren: false, expanded: false, isChild: false });
+      }
       const hasCh = Array.isArray(it.children) && it.children.length > 0;
       const expanded = hasCh && this._isExpanded(i);
       let html = this._card(it, String(i), colors, shadow, { hasChildren: hasCh, expanded: expanded, isChild: false });
@@ -257,6 +276,11 @@ if (!customElements.get('granado-gallery')) {
     _card(it, idx, colors, shadow, opts) {
       opts = opts || {};
       const titleColor = colors.title, isChild = !!opts.isChild, viewOnly = !!opts.viewOnly;
+      // Altura fixa opcional: por item (it.cardHeight) sobrepõe o card-height do componente.
+      const cardH = this._has(it.cardHeight) ? this._esc(it.cardHeight) : this.cardHeight;
+      const heightStyle = this._has(cardH) ? `height:${cardH};` : '';
+      // Nos cards "em bloco" (não-flex), centraliza o conteúdo verticalmente quando há altura fixa.
+      const centerCol = heightStyle ? 'display:flex;flex-direction:column;justify-content:center;' : '';
       // statusColor por item (opcional) sobrepõe a cor padrão da série.
       const sc = this._has(it.statusColor) ? this._esc(it.statusColor) : colors.status;
       const status = this._has(it.status)
@@ -289,11 +313,30 @@ if (!customElements.get('granado-gallery')) {
         ? `<div style="display:flex;align-items:center;gap:12px">${iconHtml}<div style="flex:1 1 auto;min-width:0">${headRow}${subtitle}${dataLine}</div></div>`
         : `${headRow}${subtitle}${dataLine}`;
 
+      // ── View-only2: mini-card no estilo "Itens da Ordem" (Fabricação) ──
+      // Faixa lateral (accent) + borda + fundo suave; ícone à esquerda; título
+      // menor + subtítulo/data; badge à direita. Sem chevron/expansão.
+      if (this.isViewOnly2 && !opts.horizontal) {
+        const accent = sc;   // statusColor do item OU status-color padrão
+        const cardBg = this._has(it.cardColor)
+          ? this._esc(it.cardColor)
+          : (this._has(this.getAttribute('card-color')) ? colors.card : '#F4EED9');
+        const ic2 = this._has(it.icon)
+          ? `<span data-role="icon" aria-hidden="true" style="flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;line-height:0;font-size:15px;color:${accent}">${this._iconMarkup(it.icon)}</span>`
+          : '';
+        const t2 = this._has(it.title) ? `<div style="font:800 12px/1.3 ${FONT};color:${colors.title};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${this._esc(it.title)}</div>` : '';
+        const s2 = this._has(it.subtitle) ? `<div style="font:11px/1.35 ${FONT};color:${colors.subtitle};margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${this._esc(it.subtitle)}</div>` : '';
+        const d2 = this._has(it.data) ? `<div style="font:10px/1.35 ${MONO};color:${colors.data};margin-top:2px">${this._esc(it.data)}</div>` : '';
+        return `<div data-role="item" data-idx="${idx}" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid ${colors.border};border-left:3px solid ${accent};border-radius:8px;background:${cardBg};margin-bottom:8px;${heightStyle}cursor:default;box-sizing:border-box">` +
+            ic2 + `<div style="flex:1 1 auto;min-width:0">${t2}${s2}${d2}</div>` + status +
+          `</div>`;
+      }
+
       // ── View-only vertical: linha de uma lista limpa ──
       // Sem borda/raio/sombra/fundo próprios; a divisória em gradiente entre os
       // itens é inserida pelo _render (fica "estilosa" e some nas pontas).
       if (viewOnly && !opts.horizontal) {
-        return `<div data-role="item" data-idx="${idx}" style="background:transparent;padding:13px 6px;cursor:default;box-sizing:border-box">` +
+        return `<div data-role="item" data-idx="${idx}" style="background:transparent;padding:13px 6px;${heightStyle}${centerCol}cursor:default;box-sizing:border-box">` +
             wrap(`<div style="display:flex;align-items:center;gap:10px">${title}${status}</div>`) +
           `</div>`;
       }
@@ -307,7 +350,7 @@ if (!customElements.get('granado-gallery')) {
       // Fundo do card: por item (it.cardColor) sobrepõe child-card-color / card-color.
       let cardBg = (isChild && this._has(colors.childCard)) ? colors.childCard : colors.card;
       if (this._has(it.cardColor)) cardBg = this._esc(it.cardColor);
-      return `<div data-role="item" data-idx="${idx}"${isChild ? ' data-child="true"' : ''} style="background:${cardBg};border:1px solid ${colors.border};border-radius:10px;padding:${pad};margin-bottom:${mb};${widthStyle}${boxShadow}cursor:${cursor};transition:box-shadow .15s ease,transform .1s ease;box-sizing:border-box">` +
+      return `<div data-role="item" data-idx="${idx}"${isChild ? ' data-child="true"' : ''} style="background:${cardBg};border:1px solid ${colors.border};border-radius:10px;padding:${pad};margin-bottom:${mb};${widthStyle}${heightStyle}${centerCol}${boxShadow}cursor:${cursor};transition:box-shadow .15s ease,transform .1s ease;box-sizing:border-box">` +
           wrap(`<div style="display:flex;align-items:center;gap:10px">${title}${status}${chevron}</div>`) +
         `</div>`;
     }
@@ -346,8 +389,9 @@ if (!customElements.get('granado-gallery')) {
       const shadow = this.enableShadow;
       const horizontal = this.orientation === 'horizontal';
       const viewOnly = this.isViewOnly;
+      const noHover = this.isViewOnly || this.isViewOnly2;
       this.querySelectorAll('[data-role="item"]').forEach(function (el) {
-        if (!viewOnly) {
+        if (!noHover) {
           el.addEventListener('mouseenter', function () { if (shadow && el.getAttribute('data-child') !== 'true') el.style.boxShadow = SHADOW_HOVER; el.style.transform = 'translateY(-1px)'; });
           el.addEventListener('mouseleave', function () { if (shadow && el.getAttribute('data-child') !== 'true') el.style.boxShadow = SHADOW_BASE; el.style.transform = ''; });
         }
