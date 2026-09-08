@@ -55,6 +55,7 @@
   <script src="./granado-button-save-page.js"></script>
   <script src="./granado-filter.js"></script>
   <script src="./granado-scan.js"></script>
+  <script src="./granado-select-popup.js"></script>
 </head>
 
 <body style="margin:0;padding:24px;background:#F4EED9;font-family:'Lato','DejaVu Sans',Arial,sans-serif;color:#103E20">
@@ -2071,6 +2072,76 @@
             if (s) s.textContent = '✅ ' + (d.title || d.id) + ' → ' + alvo + ' · metadata: ' + JSON.stringify(d.metadata);
           }
         });
+      }
+    </script>
+  </section>
+
+  <!-- ========== Linha 33b — granado-select-popup ========== -->
+  <section style="margin-bottom:28px">
+    <h2
+      style="font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#6B7280;margin:0 0 10px">
+      &lt;granado-select-popup&gt;
+    </h2>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button type="button" onclick="selDemoMP()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#9A7520;color:#fff;cursor:pointer">🔎 Selecionar Matéria-Prima (com filtro)</button>
+      <button type="button" onclick="selDemoInline()"
+        style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#fff;color:#9A7520;cursor:pointer">📄 20 documentos (via atributo JSON)</button>
+      <span id="sel-status" style="font-size:12px;color:#8A9E8E"></span>
+    </div>
+
+    <script>
+      // Popup de seleção com busca ao vivo (cards no visual do granado-gallery view-only2).
+      function selDemoMP() {
+        GranadoSelectPopup.show({
+          title: 'SELEÇÃO DE MATÉRIA-PRIMA',
+          subtitle: 'Escolha o lote a pesar',
+          searchPlaceholder: 'Filtrar por MP, lote ou etiqueta...',
+          confirmText: '✓ Selecionar',
+          cardHeight: '58px',
+          data: [
+            { id: 'GLI-08', icon: '⚖️', title: 'MP-4821 · Glicerina USP', subtitle: 'ETQ-0416-001 · Lote GLI-2026-08', status: 'LIVRE', statusColor: '#1C7A38', metadata: { saldo: '412,5 kg' } },
+            { id: 'PPG-12', icon: '⚖️', title: 'MP-3307 · Propilenoglicol', subtitle: 'ETQ-0416-002 · Lote PPG-2026-12', status: 'LIVRE', statusColor: '#1C7A38' },
+            { id: 'CAR-05', icon: '⏳', title: 'MP-0914 · Carbopol 940', subtitle: 'ETQ-0416-003 · Lote CAR-2026-05', status: 'PENDENTE', statusColor: '#9A5A00', cardColor: '#FEF6E6' },
+            { id: 'BHT-01', icon: '⚠', title: 'MP-9999 · Conservante BHT', subtitle: 'ETQ-0416-004 · estoque insuficiente', status: 'FORA', statusColor: '#8C1A1A', cardColor: '#FBECEC' },
+            { id: 'AGUA-03', icon: '💧', title: 'MP-1002 · Água Purificada', subtitle: 'ETQ-0416-005 · Lote AGUA-2026-03', status: 'LIVRE', statusColor: '#1C7A38' },
+            { id: 'ESR-11', icon: '🌹', title: 'MP-4188 · Essência Rosa', subtitle: 'ETQ-0416-008 · Lote ESR-2026-11', status: 'LIVRE', statusColor: '#1C7A38' },
+            { id: 'COR-15', icon: '🎨', title: 'MP-5027 · Corante Rosaline', subtitle: 'ETQ-0416-009 · Lote COR-2026-15', status: 'PENDENTE', statusColor: '#9A5A00', cardColor: '#FEF6E6' },
+            { id: 'VTE-03', icon: '🧴', title: 'MP-8120 · Vitamina E', subtitle: 'ETQ-0416-014 · Lote VTE-2026-03', status: 'LIVRE', statusColor: '#1C7A38' }
+          ],
+          onConfirm: function (d) {
+            var s = document.getElementById('sel-status');
+            if (s) s.textContent = '✅ ' + d.title + ' (' + d.id + ') · metadata: ' + JSON.stringify(d.metadata || {});
+            console.log('[select-popup] confirm →', d);
+          }
+        });
+      }
+
+      // Mesma ideia, porém os itens vêm via ATRIBUTO data (JSON hardcoded),
+      // criando o elemento na mão em vez do .show().
+      function selDemoInline() {
+        var docs = [];
+        var codigos = ['298548-WO/00','AAI-0001/00','AAI-0002/00','ACE-EMB-0001/00','ACE-EMB-0004/02',
+          'ART-0001/01','ARV-QLF-0001/00','ARV-SIS-0002/00','BAC-0001/00','BO-0806109/00',
+          'BOL-CQE-0001/01','BOL-CQE-0009/00','BRS-V123/0','CD000006/00','EMB-0002/00',
+          'ERF-SIS-0001/00','ETD-SIS-0002/00','FAT-QLF-0003/00','MES-LCQ-0002/00','MIN-LCQ-0075/00'];
+        for (var i = 0; i < codigos.length; i++) {
+          docs.push({ id: codigos[i], icon: '📄', title: codigos[i], subtitle: 'Documento habilitado', status: 'ATIVO', statusColor: '#1C7A38' });
+        }
+        var el = document.createElement('granado-select-popup');
+        el.setAttribute('title', 'DOCUMENTOS HABILITADOS');
+        el.setAttribute('subtitle', 'Selecione um documento');
+        el.setAttribute('search-placeholder', 'Filtrar por código...');
+        el.setAttribute('confirm-text', '✓ Confirmar');
+        el.setAttribute('close-on-backdrop', 'true');
+        el.setAttribute('data', JSON.stringify(docs));   // itens via atributo (JSON)
+        el._autoRemove = true;
+        el.onConfirm = function (d) {
+          var s = document.getElementById('sel-status');
+          if (s) s.textContent = '✅ Documento: ' + d.id;
+        };
+        document.body.appendChild(el);
+        el.open();
       }
     </script>
   </section>

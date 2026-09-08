@@ -408,6 +408,7 @@
           <a class="gd-link" href="#GRD_API_CreateEquipmentIntegrationTractian">GRD_API_CreateEquipmentIntegrationTractian</a>
           <a class="gd-link" href="#GRD_API_DeleteEquipmentIntegrationTraction">GRD_API_DeleteEquipmentIntegrationTraction</a>
           <a class="gd-link" href="#GRD_API_GetEquipmentIntegrationTractian">GRD_API_GetEquipmentIntegrationTractian</a>
+          <a class="gd-link" href="#GRD_API_JDE_GetEnabledDocuments">GRD_API_JDE_GetEnabledDocuments</a>
         </div>
       </div>
 
@@ -3582,6 +3583,70 @@ poppins-700.woff2
             <a class="gd-link" href="#GRD_API_DeleteEquipmentIntegrationTraction">GRD_API_DeleteEquipmentIntegrationTraction</a>
             para gerenciar o vínculo de integração.</li>
         </ul>
+      </section>
+
+      <!-- ==================================================================
+           GRD_API_JDE_GetEnabledDocuments
+           ================================================================== -->
+      <section id="GRD_API_JDE_GetEnabledDocuments">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_JDE_GetEnabledDocuments</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera a lista de documentos habilitados</strong> (enabled) — devolve os
+          identificadores (<code>DocumentID</code>) dos documentos disponíveis para uso.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_JDE_GetEnabledDocuments</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido da lista <code>Documents</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Sem parâmetros — corpo vazio:</p>
+        <pre class="gd-code">{}</pre>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON) — <code>Documents</code> truncado para exibição:</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"..."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Documents"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"DocumentID"</span><span class="tk-punc">:</span> <span class="tk-str">"298548-WO/00"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"DocumentID"</span><span class="tk-punc">:</span> <span class="tk-str">"AAI-0001/00"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"DocumentID"</span><span class="tk-punc">:</span> <span class="tk-str">"ACE-EMB-0004/02"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"DocumentID"</span><span class="tk-punc">:</span> <span class="tk-str">"BOL-CQE-0001/01"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"DocumentID"</span><span class="tk-punc">:</span> <span class="tk-str">"MIN-LCQ-0075/00"</span> }
+    <span class="tk-comment">// ... demais documentos</span>
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:160px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se a consulta foi realizada com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">Documents</td><td class="col-type">array&lt;object&gt;</td><td class="col-desc">Lista de documentos habilitados (campos abaixo).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Itens de <code>Documents[]</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:160px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">DocumentID</td><td class="col-type">string</td><td class="col-desc">Identificador do documento, no formato <code>&lt;código&gt;/&lt;revisão&gt;</code> (ex.: <code>"BOL-CQE-0001/01"</code>).</td></tr>
+          </tbody>
+        </table>
       </section>
 
       <!-- ============================================================

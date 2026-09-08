@@ -55,6 +55,7 @@
   <script src="./granado-button-save-page.js"></script>
   <script src="./granado-filter.js"></script>
   <script src="./granado-scan.js"></script>
+  <script src="./granado-select-popup.js"></script>
 
   <style>
     html,
@@ -317,6 +318,7 @@
       <a class="gd-link" href="#granado-checklist-popup">granado-checklist-popup</a>
       <a class="gd-link" href="#granado-gallery">granado-gallery</a>
       <a class="gd-link" href="#granado-box-popup">granado-box-popup</a>
+      <a class="gd-link" href="#granado-select-popup">granado-select-popup</a>
       <a class="gd-link" href="#granado-table-popup">granado-table-popup</a>
       <a class="gd-link" href="#granado-timeline">granado-timeline</a>
       <a class="gd-link" href="#granado-empty-popup">granado-empty-popup</a>
@@ -12787,6 +12789,202 @@ g.data = [
           <li><strong>Dropdown condicional:</strong> só aparece quando o card selecionado tem <code>equipamentos</code>, e lista <strong>apenas os equipamentos</strong> (o próprio card não entra). Card sem equipamentos → confirma direto nele (<code>equipamento = null</code>).</li>
           <li><strong>metadata:</strong> use para carregar o contexto (ex.: setor/box) e recuperá-lo no confirm sem estado externo.</li>
           <li><strong>disabled / selected:</strong> <code>disabled</code> bloqueia o card (sem clique); <code>selected</code> pré-seleciona ao abrir (só o 1º vale, e <code>disabled</code> nunca é pré-selecionado).</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-select-popup
+           ============================================================ -->
+      <section id="granado-select-popup" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-select-popup&gt;</code></h1>
+        <p class="gd-lead">
+          Popup de <strong>seleção com filtro</strong>. No topo, um <strong>campo de busca</strong>: conforme
+          o usuário digita, os registros vão sendo filtrados <strong>ao vivo</strong>. Os registros aparecem
+          como <strong>cards</strong> no mesmo visual do
+          <a class="gd-link" href="#granado-gallery">granado-gallery <code>type="view-only2"</code></a>
+          (faixa lateral na cor do status, ícone à esquerda, título + subtítulo/data e badge à direita).
+          Rodapé com <strong>Confirmar / Cancelar</strong>; no Confirmar devolve o item selecionado.
+          O <strong>tamanho do popup é fixo</strong> — o filtro muda só a quantidade de cards (com scroll),
+          não a altura.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-select-popup.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — API estática</h2>
+        <p class="gd-lead">
+          Forma recomendada. A busca casa <code>id</code>, <code>title</code>, <code>subtitle</code>,
+          <code>data</code> e <code>status</code> — <strong>sem diferenciar maiúsculas nem acentos</strong>.
+          Clique num card para selecionar; <strong>duplo-clique</strong> (ou <strong>Enter</strong> com
+          um item marcado) confirma; <strong>Esc</strong> fecha.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <button type="button" onclick="docSelMP()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#9A7520;color:#fff;cursor:pointer">🔎 Selecionar Matéria-Prima</button>
+          <button type="button" onclick="docSelDocs()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#fff;color:#9A7520;cursor:pointer">📄 60 documentos (filtro)</button>
+          <span id="doc-sel-status" style="font-size:12px;color:#8A9E8E"></span>
+        </div>
+        <script>
+          function docSelMP() {
+            GranadoSelectPopup.show({
+              title: 'SELEÇÃO DE MATÉRIA-PRIMA',
+              subtitle: 'Escolha o lote a pesar',
+              searchPlaceholder: 'Filtrar por MP, lote ou etiqueta...',
+              confirmText: '✓ Selecionar',
+              cardHeight: '58px',
+              data: [
+                { id: 'GLI-08', icon: '⚖️', title: 'MP-4821 · Glicerina USP', subtitle: 'ETQ-0416-001 · Lote GLI-2026-08', status: 'LIVRE', statusColor: '#1C7A38', metadata: { saldo: '412,5 kg' } },
+                { id: 'PPG-12', icon: '⚖️', title: 'MP-3307 · Propilenoglicol', subtitle: 'ETQ-0416-002 · Lote PPG-2026-12', status: 'LIVRE', statusColor: '#1C7A38' },
+                { id: 'CAR-05', icon: '⏳', title: 'MP-0914 · Carbopol 940', subtitle: 'ETQ-0416-003 · Lote CAR-2026-05', status: 'PENDENTE', statusColor: '#9A5A00', cardColor: '#FEF6E6' },
+                { id: 'BHT-01', icon: '⚠', title: 'MP-9999 · Conservante BHT', subtitle: 'ETQ-0416-004 · estoque insuficiente', status: 'FORA', statusColor: '#8C1A1A', cardColor: '#FBECEC' },
+                { id: 'AGUA-03', icon: '💧', title: 'MP-1002 · Água Purificada', subtitle: 'ETQ-0416-005 · Lote AGUA-2026-03', status: 'LIVRE', statusColor: '#1C7A38' },
+                { id: 'ESR-11', icon: '🌹', title: 'MP-4188 · Essência Rosa', subtitle: 'ETQ-0416-008 · Lote ESR-2026-11', status: 'LIVRE', statusColor: '#1C7A38' }
+              ],
+              onConfirm: function (d) {
+                var s = document.getElementById('doc-sel-status');
+                if (s) s.textContent = '✅ ' + d.title + ' (' + d.id + ')';
+                console.log('[select-popup] confirm →', d);
+              }
+            });
+          }
+
+          // 60 documentos gerados — mostra o filtro + a altura fixa (scroll).
+          function docSelDocs() {
+            var pref = ['AAI', 'ACE-EMB', 'BOL-CQE', 'MIN-LCQ', 'ARV-QLF', 'FAT-QLF'];
+            var docs = [];
+            for (var i = 1; i <= 60; i++) {
+              var p = pref[i % pref.length];
+              var id = p + '-' + (i < 10 ? '000' + i : '00' + i) + '/00';
+              docs.push({ id: id, icon: '📄', title: id, subtitle: 'Documento habilitado', status: 'ATIVO', statusColor: '#1C7A38' });
+            }
+            GranadoSelectPopup.show({
+              title: 'DOCUMENTOS HABILITADOS',
+              subtitle: 'Selecione um documento',
+              searchPlaceholder: 'Filtrar por código...',
+              confirmText: '✓ Confirmar',
+              closeOnBackdrop: true,
+              data: docs,
+              onConfirm: function (d) {
+                var s = document.getElementById('doc-sel-status');
+                if (s) s.textContent = '✅ Documento: ' + d.id;
+              }
+            });
+          }
+        </script>
+        <pre class="gd-code gd-snip"><span class="tk-tag">&lt;script&gt;</span>
+  GranadoSelectPopup.<span class="tk-attr">show</span>({
+    title: <span class="tk-str">'SELEÇÃO DE MATÉRIA-PRIMA'</span>,
+    subtitle: <span class="tk-str">'Escolha o lote a pesar'</span>,
+    searchPlaceholder: <span class="tk-str">'Filtrar por MP, lote ou etiqueta...'</span>,
+    confirmText: <span class="tk-str">'✓ Selecionar'</span>,
+    cardHeight: <span class="tk-str">'58px'</span>,   <span class="tk-comment">// altura uniforme dos cards (opcional)</span>
+    data: [
+      { id: <span class="tk-str">'GLI-08'</span>, icon: <span class="tk-str">'⚖️'</span>, title: <span class="tk-str">'MP-4821 · Glicerina USP'</span>,
+        subtitle: <span class="tk-str">'ETQ-0416-001 · Lote GLI-2026-08'</span>, status: <span class="tk-str">'LIVRE'</span>, statusColor: <span class="tk-str">'#1C7A38'</span> },
+      { id: <span class="tk-str">'CAR-05'</span>, icon: <span class="tk-str">'⏳'</span>, title: <span class="tk-str">'MP-0914 · Carbopol 940'</span>,
+        subtitle: <span class="tk-str">'ETQ-0416-003 · Lote CAR-2026-05'</span>, status: <span class="tk-str">'PENDENTE'</span>, statusColor: <span class="tk-str">'#9A5A00'</span>, cardColor: <span class="tk-str">'#FEF6E6'</span> }
+    ],
+    onConfirm: <span class="tk-keyword">function</span> (d) { console.log(d.id, d.title, d.metadata); }
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — declarativo (HTML)</h2>
+        <p class="gd-lead">
+          Também dá para deixar o popup no HTML e passar os itens pelo atributo <code>data</code>
+          (JSON, aspas simples no atributo). Inicie oculto com <code>open="false"</code>, exiba com
+          <code>el.open()</code> e escute o resultado no evento <code>confirm</code>.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <button type="button" onclick="document.getElementById('doc-sel-html').open()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#9A7520;color:#fff;cursor:pointer">Abrir popup (HTML)</button>
+          <span id="doc-sel-html-status" style="font-size:12px;color:#8A9E8E"></span>
+          <granado-select-popup id="doc-sel-html" title="SELEÇÃO DE MP" subtitle="Escolha o lote" confirm-text="✓ Selecionar" card-height="58px" open="false"
+            data='[{"id":"GLI-08","icon":"⚖️","title":"MP-4821 · Glicerina USP","subtitle":"Lote GLI-2026-08","status":"LIVRE","statusColor":"#1C7A38"},{"id":"CAR-05","icon":"⏳","title":"MP-0914 · Carbopol 940","subtitle":"Lote CAR-2026-05","status":"PENDENTE","statusColor":"#9A5A00","cardColor":"#FEF6E6"},{"id":"BHT-01","icon":"⚠","title":"MP-9999 · Conservante BHT","subtitle":"estoque insuficiente","status":"FORA","statusColor":"#8C1A1A","cardColor":"#FBECEC"}]'></granado-select-popup>
+        </div>
+        <script>
+          (function () {
+            var el = document.getElementById('doc-sel-html');
+            if (el) el.addEventListener('confirm', function (ev) {
+              var s = document.getElementById('doc-sel-html-status');
+              if (s) s.textContent = '✅ ' + ev.detail.title + ' (' + ev.detail.id + ')';
+            });
+          })();
+        </script>
+        <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- data recebe o array de itens como JSON (aspas simples no atributo) --&gt;</span>
+<span class="tk-tag">&lt;granado-select-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"sel"</span> <span class="tk-attr">title</span>=<span class="tk-str">"SELEÇÃO DE MP"</span> <span class="tk-attr">subtitle</span>=<span class="tk-str">"Escolha o lote"</span> <span class="tk-attr">card-height</span>=<span class="tk-str">"58px"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span>
+  <span class="tk-attr">data</span>=<span class="tk-str">'[{"id":"GLI-08","icon":"⚖️","title":"MP-4821 · Glicerina USP","subtitle":"Lote GLI-2026-08",
+        "status":"LIVRE","statusColor":"#1C7A38"},
+       {"id":"CAR-05","title":"MP-0914 · Carbopol 940","subtitle":"Lote CAR-2026-05","status":"PENDENTE"}]'</span><span class="tk-tag">&gt;&lt;/granado-select-popup&gt;</span>
+
+<span class="tk-comment">&lt;!-- abre o popup e escuta o confirm --&gt;</span>
+<span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-str">"document.getElementById('sel').open()"</span><span class="tk-tag">&gt;</span>Selecionar<span class="tk-tag">&lt;/button&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'sel'</span>).addEventListener(<span class="tk-str">'confirm'</span>, <span class="tk-keyword">function</span> (ev) {
+    console.log(ev.detail.id, ev.detail.title);
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos / propriedades</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:200px">Nome</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-desc">Rótulo pequeno (eyebrow) no topo do popup.</td></tr>
+            <tr><td class="col-name">subtitle</td><td class="col-type">string</td><td class="col-desc">Título principal (abaixo do <code>title</code>).</td></tr>
+            <tr><td class="col-name">data</td><td class="col-type">array</td><td class="col-desc">Itens da lista (em JS use <code>.data</code>). Os campos de cada item (<code>data[]</code>) estão listados abaixo, na mesma tabela.</td></tr>
+            <tr><td class="col-name">search-placeholder</td><td class="col-type">string</td><td class="col-desc">Placeholder do campo de busca (default "Digite para filtrar...").</td></tr>
+            <tr><td class="col-name">confirm-text</td><td class="col-type">string</td><td class="col-desc">Texto do botão confirmar (default "Confirmar").</td></tr>
+            <tr><td class="col-name">empty-text</td><td class="col-type">string</td><td class="col-desc">Texto exibido quando nada casa o filtro (default "Nenhum registro encontrado.").</td></tr>
+            <tr><td class="col-name">card-height</td><td class="col-type">CSS length</td><td class="col-desc">(Opcional) altura fixa de cada card (ex.: <code>"58px"</code>). Vazio = altura pelo conteúdo. Em JS: <code>.cardHeight</code>.</td></tr>
+            <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> fecha ao clicar fora. Default <strong>não fecha</strong>. Em JS: <code>.closeOnBackdrop</code>.</td></tr>
+            <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code>.</td></tr>
+            <tr><td class="col-name">onConfirm</td><td class="col-type">função / string (JS)</td><td class="col-desc">Executado ao confirmar; recebe <code>event</code> e <code>detail</code>.</td></tr>
+            <tr><td colspan="3" style="background:#F4EED9;font-weight:800;color:#0F3319">Campos de cada item — dentro de <code>data[]</code> (todos opcionais; sem <code>id</code>, usa o índice como chave)</td></tr>
+            <tr><td class="col-name">data[].id</td><td class="col-type">string / number</td><td class="col-desc">Identificador do item — chave da seleção, devolvido no confirm. Entra na busca.</td></tr>
+            <tr><td class="col-name">data[].icon</td><td class="col-type">string</td><td class="col-desc">Ícone à esquerda: <strong>SVG cru</strong> ou <strong>texto/emoji</strong> (opcional).</td></tr>
+            <tr><td class="col-name">data[].title</td><td class="col-type">string</td><td class="col-desc">Título do card. Entra na busca (opcional).</td></tr>
+            <tr><td class="col-name">data[].subtitle</td><td class="col-type">string</td><td class="col-desc">Subtítulo (linha abaixo). Entra na busca (opcional).</td></tr>
+            <tr><td class="col-name">data[].data</td><td class="col-type">string</td><td class="col-desc">Texto auxiliar em fonte mono. Entra na busca (opcional).</td></tr>
+            <tr><td class="col-name">data[].status</td><td class="col-type">string</td><td class="col-desc">Texto do badge (à direita). Entra na busca (opcional).</td></tr>
+            <tr><td class="col-name">data[].statusColor</td><td class="col-type">string</td><td class="col-desc">Cor do badge <strong>e da faixa lateral</strong> do card. Sem ele, verde padrão. Aceita <code>hex</code>, <code>rgb()</code>, <code>var(--x)</code> (opcional).</td></tr>
+            <tr><td class="col-name">data[].cardColor</td><td class="col-type">string</td><td class="col-desc">Cor de fundo só deste card (opcional).</td></tr>
+            <tr><td class="col-name">data[].metadata</td><td class="col-type">any</td><td class="col-desc">Valor extra — não exibido, devolvido no confirm (opcional).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Método / API estática</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:200px">Item</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">GranadoSelectPopup.show(opts)</td><td class="col-desc">Cria, anexa ao <code>&lt;body&gt;</code> e abre o popup. <code>opts</code>: <code>{ title, subtitle, data, searchPlaceholder, confirmText, emptyText, cardHeight, closeOnBackdrop, onConfirm }</code>. Remove-se sozinho ao fechar.</td></tr>
+            <tr><td class="col-name">el.open() / el.close()</td><td class="col-desc">Abre / fecha o popup declarativo.</td></tr>
+            <tr><td class="col-name">el.data = [...]</td><td class="col-desc">Define os itens em runtime (array). Aceita também string JSON via atributo <code>data</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Evento</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Evento</th><th style="width:260px">detail</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">confirm</td><td class="col-type">{ index, id, icon, title, subtitle, data, status, metadata }</td><td class="col-desc">Clique em Confirmar (ou duplo-clique/Enter num item). Devolve o item selecionado. Cancelar/✕/Esc/fora apenas fecham.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Busca ao vivo:</strong> filtra por <code>id</code>, <code>title</code>, <code>subtitle</code>, <code>data</code> e <code>status</code>, ignorando maiúsculas/minúsculas e <strong>acentos</strong> (ex.: <code>glicérina</code> casa <code>Glicerina</code>).</li>
+          <li><strong>Tamanho fixo:</strong> a lista tem altura fixa — o popup não muda de tamanho com o filtro; só varia a quantidade de cards visíveis (com scroll).</li>
+          <li><strong>Visual dos cards:</strong> idêntico ao <a class="gd-link" href="#granado-gallery">granado-gallery <code>type="view-only2"</code></a> — faixa lateral na cor do status, ícone à esquerda, badge à direita.</li>
+          <li><strong>Atalhos:</strong> clique seleciona; <strong>duplo-clique</strong> ou <strong>Enter</strong> confirma; <strong>Esc</strong> fecha.</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
         </ul>
       </section>
