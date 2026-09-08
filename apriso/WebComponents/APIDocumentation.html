@@ -433,6 +433,7 @@
           <a class="gd-link" href="#GRD_API_GetDefaultWorkcenterPrinter">GRD_API_GetDefaultWorkcenterPrinter</a>
           <a class="gd-link" href="#GRD_API_GetCurrentUserInformation">GRD_API_GetCurrentUserInformation</a>
           <a class="gd-link" href="#GRD_API_GetCageInformation">GRD_API_GetCageInformation</a>
+          <a class="gd-link" href="#GRD_API_ValidateUser">GRD_API_ValidateUser</a>
         </div>
       </div>
 
@@ -2607,6 +2608,98 @@ poppins-700.woff2
             <tr><td class="col-name">ProductNo</td><td class="col-type">string</td><td class="col-desc">Código do produto (matéria-prima).</td></tr>
           </tbody>
         </table>
+      </section>
+
+      <!-- ==================================================================
+           GRD_API_ValidateUser
+           ================================================================== -->
+      <section id="GRD_API_ValidateUser">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_ValidateUser</code></h1>
+        <p class="gd-lead">
+          <strong>Valida um usuário</strong> (matrícula + senha) e, opcionalmente, se o usuário
+          possui um determinado <strong>Role</strong>. Envie <code>Role = "-1"</code> para
+          <strong>não validar</strong> o papel — nesse caso apenas as credenciais são verificadas.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_ValidateUser</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>IsPassToValidate</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"EmployeeNo"</span><span class="tk-punc">:</span> <span class="tk-str">"winke"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Password"</span><span class="tk-punc">:</span> <span class="tk-str">"737s45a4"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Role"</span><span class="tk-punc">:</span> <span class="tk-str">"Portal Administrator"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:160px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">EmployeeNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Matrícula / login do usuário a validar.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Password</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Senha do usuário.</td>
+            </tr>
+            <tr>
+              <td class="col-name">Role</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Nome do Role a validar (ex.: <code>"Portal Administrator"</code>). Use <code>"-1"</code> para <strong>não validar</strong> o Role (apenas usuário + senha).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"..."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"IsPassToValidate"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:160px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se a operação de validação foi executada com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">IsPassToValidate</td><td class="col-type">boolean</td><td class="col-desc"><code>true</code> quando o usuário é válido (e possui o Role, quando informado); <code>false</code> caso contrário.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Role opcional:</strong> passe <code>"-1"</code> para validar somente as
+            credenciais (usuário + senha), sem checar o papel.</li>
+          <li><strong>IsPassToValidate:</strong> é o resultado efetivo da validação — verifique-o
+            além de <code>Success</code> (que indica apenas que a operação rodou sem erro).</li>
+        </ul>
       </section>
 
       <!-- ============================================================
