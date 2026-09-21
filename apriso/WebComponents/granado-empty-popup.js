@@ -105,7 +105,6 @@ if (!customElements.get('granado-empty-popup')) {
     }
 
     disconnectedCallback() {
-      this._removeEsc();
       if (this._observer) this._observer.disconnect();
     }
 
@@ -132,11 +131,9 @@ if (!customElements.get('granado-empty-popup')) {
       this.removeAttribute('open');
       this.style.display = '';
       if (this.isConnected) this._render();
-      this._addEsc();
     }
     close() {
       this.style.display = 'none';
-      this._removeEsc();
       this._fireClose();
       if (this._autoRemove) this.remove();
     }
@@ -246,16 +243,6 @@ if (!customElements.get('granado-empty-popup')) {
       if (h) new Function(h).call(this);
     }
 
-    _addEsc() {
-      if (this._escBound) return;
-      const self = this;
-      this._escHandler = function (e) { if (e.key === 'Escape' || e.key === 'Esc') self.close(); };
-      document.addEventListener('keydown', this._escHandler);
-      this._escBound = true;
-    }
-    _removeEsc() {
-      if (this._escBound) { document.removeEventListener('keydown', this._escHandler); this._escBound = false; }
-    }
   }
 
   customElements.define('granado-empty-popup', GranadoEmptyPopup);

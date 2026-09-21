@@ -26,7 +26,7 @@
    ── Eventos (CustomEvent, bubbles)
      "open"   - painel aberto.
      "apply"  - clique em "Aplicar" (o painel fecha em seguida).
-     "close"  - painel fechado (✕, Esc, backdrop, aplicar ou close()).
+     "close"  - painel fechado (✕, backdrop, aplicar ou close()).
 
    ── Métodos JS
      el.open() / el.close() / el.toggle()
@@ -82,7 +82,6 @@ if (!customElements.get('granado-filter')) {
       if (this.getAttribute('open') === 'true') this.open();
     }
     disconnectedCallback() {
-      this._removeEsc();
       if (this._observer) this._observer.disconnect();
     }
     attributeChangedCallback(name) {
@@ -120,7 +119,6 @@ if (!customElements.get('granado-filter')) {
       // (comportamento de um <select> nativo) e não são mais cortados.
       this._txTimer = setTimeout(() => { if (this._isOpen) sh.style.transform = 'none'; }, 240);
       this._isOpen = true;
-      this._addEsc();
       this.dispatchEvent(new CustomEvent('open', { bubbles: true, composed: true }));
     }
     close() {
@@ -136,7 +134,6 @@ if (!customElements.get('granado-filter')) {
       const hide = () => { sh.style.display = 'none'; };
       setTimeout(hide, 220);
       this._isOpen = false;
-      this._removeEsc();
       this._fireClose();
     }
 
@@ -244,15 +241,6 @@ if (!customElements.get('granado-filter')) {
       const h = this.getAttribute('onclose');
       if (h) new Function(h).call(this);
     }
-
-    _addEsc() {
-      if (this._escBound) return;
-      const self = this;
-      this._escHandler = function (e) { if (e.key === 'Escape' || e.key === 'Esc') self.close(); };
-      document.addEventListener('keydown', this._escHandler);
-      this._escBound = true;
-    }
-    _removeEsc() { if (this._escBound) { document.removeEventListener('keydown', this._escHandler); this._escBound = false; } }
   }
 
   customElements.define('granado-filter', GranadoFilter);

@@ -342,10 +342,9 @@ if (!customElements.get('granado-select-popup')) {
 
       if (search) {
         search.addEventListener('input', function () { self._q = search.value || ''; self._renderList(); });
-        // Enter confirma se houver seleção; Esc fecha.
+        // Enter confirma se houver seleção (fechar só no ✕ / botões).
         search.addEventListener('keydown', function (e) {
           if (e.key === 'Enter') { if (self._selKey != null) self._confirm(e); }
-          else if (e.key === 'Escape') { self.close(); }
         });
       }
       if (clear) clear.addEventListener('click', function () {

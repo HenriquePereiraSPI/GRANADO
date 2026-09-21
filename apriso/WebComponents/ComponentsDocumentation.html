@@ -12818,7 +12818,7 @@ g.data = [
           Forma recomendada. A busca casa <code>id</code>, <code>title</code>, <code>subtitle</code>,
           <code>data</code> e <code>status</code> — <strong>sem diferenciar maiúsculas nem acentos</strong>.
           Clique num card para selecionar; <strong>duplo-clique</strong> (ou <strong>Enter</strong> com
-          um item marcado) confirma; <strong>Esc</strong> fecha.
+          um item marcado) confirma. O fechamento é só pelo <strong>✕</strong> ou <strong>Cancelar</strong>.
         </p>
         <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
@@ -12984,7 +12984,7 @@ g.data = [
           <li><strong>Busca ao vivo:</strong> filtra por <code>id</code>, <code>title</code>, <code>subtitle</code>, <code>data</code> e <code>status</code>, ignorando maiúsculas/minúsculas e <strong>acentos</strong> (ex.: <code>glicérina</code> casa <code>Glicerina</code>).</li>
           <li><strong>Tamanho fixo:</strong> a lista tem altura fixa — o popup não muda de tamanho com o filtro; só varia a quantidade de cards visíveis (com scroll).</li>
           <li><strong>Visual dos cards:</strong> idêntico ao <a class="gd-link" href="#granado-gallery">granado-gallery <code>type="view-only2"</code></a> — faixa lateral na cor do status, ícone à esquerda, badge à direita.</li>
-          <li><strong>Atalhos:</strong> clique seleciona; <strong>duplo-clique</strong> ou <strong>Enter</strong> confirma; <strong>Esc</strong> fecha.</li>
+          <li><strong>Atalhos:</strong> clique seleciona; <strong>duplo-clique</strong> ou <strong>Enter</strong> confirma. O fechamento é só pelo <strong>✕</strong> ou <strong>Cancelar</strong> (sem ESC).</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
         </ul>
       </section>
@@ -13398,7 +13398,7 @@ g.data = [
             <tr><td class="col-name">width</td><td class="col-type">CSS length</td><td class="col-desc">Largura máxima do card. Default <code>"520px"</code>.</td></tr>
             <tr><td class="col-name">color</td><td class="col-type">CSS color</td><td class="col-desc">Cor do detalhe (borda superior de 4px). Default <code>#1C5C31</code>.</td></tr>
             <tr><td class="col-name">show-close</td><td class="col-type">boolean</td><td class="col-desc"><code>"false"</code> esconde o ✕. Default: mostra.</td></tr>
-            <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> fecha ao clicar fora (backdrop). Default: <strong>não</strong> fecha. O ✕ e a tecla <strong>Esc</strong> sempre fecham. Em JS: <code>.closeOnBackdrop</code> não existe — use o atributo.</td></tr>
+            <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> fecha ao clicar fora (backdrop). Default: <strong>não</strong> fecha. O ✕ sempre fecha. Em JS: <code>.closeOnBackdrop</code> não existe — use o atributo.</td></tr>
             <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code> / <code>close()</code>.</td></tr>
             <tr><td class="col-name">onClose</td><td class="col-type">função / string (JS)</td><td class="col-desc">Executado ao fechar. Em JS use <code>.onClose</code> (função) ou o atributo <code>onclose</code>.</td></tr>
           </tbody>
@@ -13610,7 +13610,7 @@ g.data = [
             <tr><td class="col-name">apply-text</td><td class="col-type">string</td><td class="col-desc">Texto do botão de aplicar. Default <code>"Aplicar filtros"</code>. Vazio ou <code>"false"</code> esconde o botão.</td></tr>
             <tr><td class="col-name">color</td><td class="col-type">CSS color</td><td class="col-desc">Cor de destaque (funil + botão aplicar). Default <code>#1C5C31</code>.</td></tr>
             <tr><td class="col-name">width</td><td class="col-type">CSS length</td><td class="col-desc">Largura máxima do <strong>bottom-sheet</strong>. Default <code>"640px"</code> (centralizado; ocupa a largura toda em telas pequenas).</td></tr>
-            <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-desc"><code>"false"</code> não fecha ao clicar fora. Default: fecha. O ✕, o <em>Aplicar</em> e a tecla <strong>Esc</strong> sempre fecham.</td></tr>
+            <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-desc"><code>"false"</code> não fecha ao clicar fora. Default: fecha. O ✕ e o <em>Aplicar</em> sempre fecham.</td></tr>
             <tr><td class="col-name">open</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> inicia aberto. Use <code>open()</code>/<code>close()</code>/<code>toggle()</code>.</td></tr>
             <tr><td class="col-name">onApply / onClose</td><td class="col-type">função / string (JS)</td><td class="col-desc">Executados ao aplicar / fechar. Em JS use <code>.onApply</code>/<code>.onClose</code>, ou os atributos <code>onapply</code>/<code>onclose</code>.</td></tr>
           </tbody>
