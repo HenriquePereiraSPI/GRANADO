@@ -86,10 +86,10 @@ if (!customElements.get('granado-calendar')) {
     // ------------------------------------------------------------
 
     render() {
-      // Custom element e display:inline por padrao — usa inline-block para aceitar
-      // width/height/margin no host (alinhado ao granado-dropdown). O usuario pode
-      // sobrepor passando style="display:block" no elemento.
-      this.style.display = this.style.display || 'inline-block';
+      // Custom element e display:inline por padrao — usa block para preencher a
+      // largura do container e aceitar width/height/margin no host. O usuario pode
+      // sobrepor passando style="display:inline-block" (encolhe ao conteudo).
+      this.style.display = this.style.display || 'block';
 
       const lang = (this.getAttribute('lang') || 'pt-br').toLowerCase();
       const mode = this.getAttribute('mode') === 'datetime' ? 'datetime' : 'date';
@@ -103,9 +103,9 @@ if (!customElements.get('granado-calendar')) {
       const btnBg = this._open ? '#F5EFD9' : '#FDFAF1';
       const label = this.getAttribute('label') || '';
 
-      // O wrapper acompanha o display do host: block -> preenche a largura;
-      // inline-block (default) -> encolhe ao conteudo.
-      const wrapDisplay = this.style.display === 'block' ? 'block' : 'inline-block';
+      // O wrapper acompanha o display do host: block (default) -> preenche a
+      // largura; inline-block -> encolhe ao conteudo.
+      const wrapDisplay = this.style.display === 'inline-block' ? 'inline-block' : 'block';
 
       this.innerHTML = `
         <div style="position:relative;display:${wrapDisplay};font-family:'Poppins','DejaVu Sans',Arial,sans-serif">
