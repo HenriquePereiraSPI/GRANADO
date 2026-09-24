@@ -435,6 +435,7 @@
           <a class="gd-link" href="#GRD_API_GetCurrentUserInformation">GRD_API_GetCurrentUserInformation</a>
           <a class="gd-link" href="#GRD_API_GetCageInformation">GRD_API_GetCageInformation</a>
           <a class="gd-link" href="#GRD_API_ValidateUser">GRD_API_ValidateUser</a>
+          <a class="gd-link" href="#GRD_API_GetLog">GRD_API_GetLog</a>
         </div>
       </div>
 
@@ -2701,6 +2702,152 @@ poppins-700.woff2
             credenciais (usuário + senha), sem checar o papel.</li>
           <li><strong>IsPassToValidate:</strong> é o resultado efetivo da validação — verifique-o
             além de <code>Success</code> (que indica apenas que a operação rodou sem erro).</li>
+        </ul>
+      </section>
+
+      <!-- ==================================================================
+           GRD_API_GetLog
+           ================================================================== -->
+      <section id="GRD_API_GetLog">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetLog</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera os logs do sistema</strong> — devolve a lista <code>Logs</code> filtrada por
+          módulo, entidade, ordem, centro de trabalho, resultado, usuário e período. Opcionalmente
+          (via <code>RetrieveAllObjects</code>) também retorna os <strong>objetos que compõem os filtros</strong>
+          (módulos, entidades, usuários e centros de trabalho disponíveis) para montar telas de consulta.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetLog</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>Logs</code> e, quando pedido,
+          das listas de filtros.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"EntityModule"</span><span class="tk-punc">:</span> <span class="tk-str">"MANUTENCAO"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"EntityName"</span><span class="tk-punc">:</span> <span class="tk-str">"INT_JDE_CAGE_MOVEMENT"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"156489"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WorkCenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"EmployeeID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000013"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-01-25"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"EndDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-12-25"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"RetrieveAllObjects"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">EntityModule</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">Módulo da entidade (ex.: <code>MANUTENCAO</code>). Use <code>"-1"</code> para <strong>todos</strong>.</td></tr>
+            <tr><td class="col-name">EntityName</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">Nome da entidade/operação (ex.: <code>INT_JDE_CAGE_MOVEMENT</code>). Use <code>"-1"</code> para <strong>todas</strong>.</td></tr>
+            <tr><td class="col-name">WipOrderNo</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">Número da ordem (WIP) a filtrar. Use <code>"-1"</code> para <strong>todas</strong>.</td></tr>
+            <tr><td class="col-name">WorkCenter</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">Centro de trabalho (ex.: <code>MD1_SALA1</code>). Use <code>"-1"</code> para <strong>todos</strong>.</td></tr>
+            <tr><td class="col-name">Success</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">Filtra pelo resultado do log: <code>"1"</code> (sucesso), <code>"0"</code> (falha) ou <code>"-1"</code> para <strong>todos</strong>.</td></tr>
+            <tr><td class="col-name">EmployeeID</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc">ID do funcionário que originou o log. Use <code>"-1"</code> para <strong>todos</strong>.</td></tr>
+            <tr><td class="col-name">StartDate</td><td class="col-type">string (data)</td><td class="col-req">Sim</td><td class="col-desc"><strong>Obrigatório.</strong> Data inicial do período (<code>yyyy-MM-dd</code>).</td></tr>
+            <tr><td class="col-name">EndDate</td><td class="col-type">string (data)</td><td class="col-req">Sim</td><td class="col-desc"><strong>Obrigatório.</strong> Data final do período (<code>yyyy-MM-dd</code>).</td></tr>
+            <tr><td class="col-name">RetrieveAllObjects</td><td class="col-type">string</td><td class="col-req">Sim</td><td class="col-desc"><code>"1"</code> retorna também os <strong>objetos que compõem os filtros</strong> (<code>LogsEntityModule</code>, <code>LogsEntityName</code>, <code>LogsEmployee</code>, <code>LogsWorkcenter</code>); <code>"-1"</code> <strong>ignora</strong> (não traz essas listas).</td></tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON) — <code>Logs</code> e listas de filtros truncados para exibição:</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">".."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Logs"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"EntityModule"</span><span class="tk-punc">:</span> <span class="tk-str">"MANUTENCAO"</span><span class="tk-punc">,</span> <span class="tk-key">"EntityName"</span><span class="tk-punc">:</span> <span class="tk-str">"MAN_APPOINT_DOWNTIME_ORDER"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"EntityDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"Manutenção - Vinculação de ordem ao equipamento/recurso"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"678572"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkCenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD2_SALA1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"RequestJSON"</span><span class="tk-punc">:</span> <span class="tk-str">"{\"ResourceName\":\"100000014\",\"WipOrderNo\":\"678572\",\"WipOrderType\":\"1\",\"Workcenter\":\"MD2_SALA1\",\"Status\":\"1\"}"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ResponseJSON"</span><span class="tk-punc">:</span> <span class="tk-str">"{\"ResourceLaborIDList\":\"100025782\",\"Message\":\"Novo estado da ordem registrado com sucesso.\",\"Success\":1}"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span><span class="tk-punc">,</span> <span class="tk-key">"EmployeeID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000001"</span><span class="tk-punc">,</span> <span class="tk-key">"EmployeeNo"</span><span class="tk-punc">:</span> <span class="tk-str">"Kaic Lima"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"CreatedDate"</span><span class="tk-punc">:</span> <span class="tk-str">"9/24/2026 2:53:33 PM"</span>
+    }
+    <span class="tk-comment">// ... demais logs</span>
+  ]<span class="tk-punc">,</span>
+  <span class="tk-comment">// As listas abaixo só vêm quando RetrieveAllObjects = "1"</span>
+  <span class="tk-key">"LogsEntityModule"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"EntityModule"</span><span class="tk-punc">:</span> <span class="tk-str">"FABRICACAO"</span> }<span class="tk-punc">,</span> { <span class="tk-key">"EntityModule"</span><span class="tk-punc">:</span> <span class="tk-str">"MANUTENCAO"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"EntityModule"</span><span class="tk-punc">:</span> <span class="tk-str">"OUTROS"</span> }<span class="tk-punc">,</span> { <span class="tk-key">"EntityModule"</span><span class="tk-punc">:</span> <span class="tk-str">"PESAGEM"</span> }<span class="tk-punc">,</span> { <span class="tk-key">"EntityModule"</span><span class="tk-punc">:</span> <span class="tk-str">"PRODUCAO"</span> }
+  ]<span class="tk-punc">,</span>
+  <span class="tk-key">"LogsEntityName"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"EntityName"</span><span class="tk-punc">:</span> <span class="tk-str">"INT_JDE_CAGE_MOVEMENT"</span><span class="tk-punc">,</span> <span class="tk-key">"EntityDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"Integração JDE - Movimentação de Gaiola"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"EntityName"</span><span class="tk-punc">:</span> <span class="tk-str">"PES_APPOINT_WEIGHT"</span><span class="tk-punc">,</span> <span class="tk-key">"EntityDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem - Apontamento de nova pesagem"</span> }
+    <span class="tk-comment">// ... demais entidades</span>
+  ]<span class="tk-punc">,</span>
+  <span class="tk-key">"LogsEmployee"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"EmployeeID"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"EmployeeNo"</span><span class="tk-punc">:</span> <span class="tk-str">"ADMIN"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"EmployeeID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000013"</span><span class="tk-punc">,</span> <span class="tk-key">"EmployeeNo"</span><span class="tk-punc">:</span> <span class="tk-str">"Henrique"</span> }
+    <span class="tk-comment">// ... demais usuários</span>
+  ]<span class="tk-punc">,</span>
+  <span class="tk-key">"LogsWorkcenter"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA1"</span> }<span class="tk-punc">,</span> { <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD2_SALA1"</span> }
+    <span class="tk-comment">// ... demais centros</span>
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:200px">Campo</th><th style="width:160px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se a consulta foi realizada com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">Logs</td><td class="col-type">array&lt;log&gt;</td><td class="col-desc">Logs que casam os filtros (campos de cada item abaixo).</td></tr>
+            <tr><td class="col-name">LogsEntityModule</td><td class="col-type">array&lt;{EntityModule}&gt;</td><td class="col-desc">Módulos disponíveis para filtro. Só vem com <code>RetrieveAllObjects = "1"</code>.</td></tr>
+            <tr><td class="col-name">LogsEntityName</td><td class="col-type">array&lt;{EntityName, EntityDescription}&gt;</td><td class="col-desc">Entidades/operações disponíveis para filtro. Só vem com <code>RetrieveAllObjects = "1"</code>.</td></tr>
+            <tr><td class="col-name">LogsEmployee</td><td class="col-type">array&lt;{EmployeeID, EmployeeNo}&gt;</td><td class="col-desc">Usuários disponíveis para filtro. Só vem com <code>RetrieveAllObjects = "1"</code>.</td></tr>
+            <tr><td class="col-name">LogsWorkcenter</td><td class="col-type">array&lt;{Workcenter}&gt;</td><td class="col-desc">Centros de trabalho disponíveis para filtro. Só vem com <code>RetrieveAllObjects = "1"</code>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada <code>Logs</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:200px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">EntityModule</td><td class="col-type">string</td><td class="col-desc">Módulo da entidade (ex.: <code>MANUTENCAO</code>).</td></tr>
+            <tr><td class="col-name">EntityName</td><td class="col-type">string</td><td class="col-desc">Nome da entidade/operação registrada (ex.: <code>MAN_APPOINT_DOWNTIME_ORDER</code>).</td></tr>
+            <tr><td class="col-name">EntityDescription</td><td class="col-type">string</td><td class="col-desc">Descrição amigável da entidade/operação.</td></tr>
+            <tr><td class="col-name">WipOrderNo</td><td class="col-type">string</td><td class="col-desc">Número da ordem (WIP) relacionada ao log.</td></tr>
+            <tr><td class="col-name">WorkCenter</td><td class="col-type">string</td><td class="col-desc">Centro de trabalho relacionado ao log.</td></tr>
+            <tr><td class="col-name">RequestJSON</td><td class="col-type">string (JSON)</td><td class="col-desc">Corpo da requisição registrado, como <strong>JSON serializado em string</strong> (aspas escapadas). Faça <code>JSON.parse</code> para ler.</td></tr>
+            <tr><td class="col-name">ResponseJSON</td><td class="col-type">string (JSON)</td><td class="col-desc">Corpo da resposta registrado, como <strong>JSON serializado em string</strong> (aspas escapadas).</td></tr>
+            <tr><td class="col-name">Success</td><td class="col-type">string</td><td class="col-desc">Resultado do log como texto: <code>"True"</code> / <code>"False"</code>.</td></tr>
+            <tr><td class="col-name">EmployeeID</td><td class="col-type">string</td><td class="col-desc">ID do funcionário que originou o log.</td></tr>
+            <tr><td class="col-name">EmployeeNo</td><td class="col-type">string</td><td class="col-desc">Nome/identificação do funcionário (ex.: <code>"Kaic Lima"</code>).</td></tr>
+            <tr><td class="col-name">CreatedDate</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data/hora de criação do log (ex.: <code>"9/24/2026 2:53:33 PM"</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Filtros <code>-1</code>:</strong> <code>EntityModule</code>, <code>EntityName</code>, <code>WipOrderNo</code>, <code>WorkCenter</code>, <code>Success</code> e <code>EmployeeID</code> aceitam <code>"-1"</code> para não filtrar.</li>
+          <li><strong>Período obrigatório:</strong> <code>StartDate</code> e <code>EndDate</code> são sempre exigidos (formato <code>yyyy-MM-dd</code>).</li>
+          <li><strong>RetrieveAllObjects:</strong> use <code>"1"</code> para também popular os dropdowns de filtro (<code>LogsEntityModule</code>, <code>LogsEntityName</code>, <code>LogsEmployee</code>, <code>LogsWorkcenter</code>); com <code>"-1"</code> só <code>Logs</code> é retornado.</li>
+          <li><strong>RequestJSON / ResponseJSON:</strong> vêm como <strong>string</strong> com JSON escapado — faça <code>JSON.parse</code> para acessar os campos internos.</li>
+          <li><strong>Success — envelope × item:</strong> no envelope é <code>boolean</code>; dentro de cada <code>Logs[]</code> é <strong>string</strong> (<code>"True"</code>/<code>"False"</code>).</li>
         </ul>
       </section>
 
