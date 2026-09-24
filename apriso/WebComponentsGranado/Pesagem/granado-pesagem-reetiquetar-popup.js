@@ -1,7 +1,7 @@
 /* ============================================================
    <granado-pesagem-reetiquetar-popup>
-   Popup (overlay modal) de REENTIQUETAGEM de saldo — referência ao
-   popup "Reentiquetar Material" da Pesagem > Devolução de MP ao
+   Popup (overlay modal) de REETIQUETAGEM de saldo — referência ao
+   popup "reetiquetar Material" da Pesagem > Devolução de MP ao
    Estoque. Cabeçalho com dados do material + drill-down Sala →
    Balança + Quantidade Pesada (lida da balança pelo 📡 ou "Peso
    manual" com Tara → Peso Líquido). Segue o padrão dos componentes
@@ -79,8 +79,28 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
   const FONT_M     = "'DM Mono','DejaVu Sans Mono',Consolas,monospace";
 
   const esc  = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const numBR = (v) => { const n = parseFloat(String(v == null ? '' : v).replace(',', '.')); return isNaN(n) ? null : n; };
+  const numBR = (v) => {
+    var s = String(v == null ? '' : v).trim();
+    if (s === '') return null;
+    if (s.indexOf(',') >= 0) s = s.replace(/\./g, '').replace(',', '.'); // mascarado: ponto=milhar, vírgula=decimal
+    var n = parseFloat(s);
+    return isNaN(n) ? null : n;
+  };
   const fmt3 = (n) => n.toFixed(3).replace('.', ',');
+  // Máscara decimal estilo calculadora: dígitos entram pela direita, sempre com N casas.
+  function gdMaskDecimal(evento, casasDecimais) {
+    casasDecimais = casasDecimais || 2;
+    var campo = evento.target;
+    var ehNegativo = (campo.value.match(/-/g) || []).length % 2 === 1;
+    var digitos = campo.value.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+    while (digitos.length <= casasDecimais) digitos = '0' + digitos;
+    var parteDecimal = digitos.slice(-casasDecimais);
+    var parteInteira = digitos.slice(0, -casasDecimais).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    campo.value = (ehNegativo ? '-' : '') + parteInteira + ',' + parteDecimal;
+    try { campo.setSelectionRange(campo.value.length, campo.value.length); } catch (_) {}
+    var valorNumerico = Number(digitos) / Math.pow(10, casasDecimais);
+    return ehNegativo ? -valorNumerico : valorNumerico;
+  }
 
   class GranadoPesagemReetiquetarPopup extends HTMLElement {
 
@@ -185,7 +205,7 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
             '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:' + (m ? '10px' : '4px') + '">' +
               '<div style="display:flex;align-items:center;gap:9px">' +
                 '<span style="font-size:20px">🏷</span>' +
-                '<div style="font:800 ' + (m ? '16px' : '17px') + '/1.2 ' + FONT + ';color:' + VERDE_ESC + '">Reentiquetar Material</div>' +
+                '<div style="font:800 ' + (m ? '16px' : '17px') + '/1.2 ' + FONT + ';color:' + VERDE_ESC + '">reetiquetar Material</div>' +
               '</div>' +
               '<button type="button" data-role="x" title="Cancelar" style="background:none;border:1px solid ' + BORDER + ';border-radius:6px;padding:' + (m ? '6px 11px' : '5px 10px') + ';cursor:pointer;font-size:13px;color:' + TEXT2 + ';line-height:1;flex-shrink:0">✕</button>' +
             '</div>' +
@@ -293,8 +313,8 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
         self._pesoStr = ''; self._taraStr = '';
         self._applyMode();
       });
-      this._inp.addEventListener('input', function () { self._pesoStr = self._inp.value; self._recalcLiq(); });
-      this._taraInp.addEventListener('input', function () { self._taraStr = self._taraInp.value; self._recalcLiq(); });
+      this._inp.addEventListener('input', function (ev) { gdMaskDecimal(ev, 3); self._pesoStr = self._inp.value; self._recalcLiq(); });
+      this._taraInp.addEventListener('input', function (ev) { gdMaskDecimal(ev, 3); self._taraStr = self._taraInp.value; self._recalcLiq(); });
       this._pullBtn.addEventListener('click', function () { self._pull(); });
       this.querySelector('[data-role="cancel"]').addEventListener('click', function () { self.close(); });
       this.querySelector('[data-role="x"]').addEventListener('click', function () { self.close(); });
