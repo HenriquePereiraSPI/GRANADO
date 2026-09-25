@@ -6,7 +6,11 @@
 
    Atributos (todos opcionais):
      label          - texto exibido acima do campo.
-     placeholder    - texto do placeholder.
+     placeholder    - texto do placeholder. A COR do placeholder e fixa em
+                      "#B4B6BA" (mesmo cinza do Apriso): o componente injeta 1
+                      regra ::placeholder global com !important (pseudo-elemento
+                      nao aceita estilo inline), garantindo a mesma cor em
+                      qualquer ambiente (DEV x QA).
      value          - valor inicial.
      type           - "text" (default), "password", "email", "number",
                       "tel", "search", "url" ou "textarea".
@@ -83,6 +87,25 @@
 
 /* __granado_guard__ */
 if (!customElements.get('granado-input')) {
+  const PLACEHOLDER_COLOR = '#B4B6BA';   // cor do placeholder (mesmo cinza do Apriso: rgb(180,182,186))
+  const PH_STYLE_ID = 'granado-input-placeholder-style';
+
+  // Injeta UMA vez por documento a regra de ::placeholder, com a cor FIXA. Exceção
+  // consciente à regra de "só estilo inline": pseudo-elemento NÃO é estilizável inline
+  // nem via JS no elemento — a única saída é um <style>. O !important vence as regras
+  // globais de placeholder do tema do Apriso, que variam entre ambientes (DEV x QA).
+  function ensurePlaceholderStyle() {
+    try {
+      if (typeof document === 'undefined' || document.getElementById(PH_STYLE_ID)) return;
+      const st = document.createElement('style');
+      st.id = PH_STYLE_ID;
+      st.textContent =
+        'granado-input input::placeholder,granado-input textarea::placeholder{color:' + PLACEHOLDER_COLOR + '!important;opacity:1!important}' +
+        'granado-input input::-webkit-input-placeholder,granado-input textarea::-webkit-input-placeholder{color:' + PLACEHOLDER_COLOR + '!important;opacity:1!important}';
+      (document.head || document.documentElement).appendChild(st);
+    } catch (e) { /* ignore */ }
+  }
+
   class GranadoInput extends HTMLElement {
     static get observedAttributes() {
       return ['label', 'placeholder', 'value', 'type', 'icon', 'mask', 'color',
@@ -91,6 +114,7 @@ if (!customElements.get('granado-input')) {
     }
 
     connectedCallback() {
+      ensurePlaceholderStyle();
       if (!this._built) {
         this._build();
         this._built = true;

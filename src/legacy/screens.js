@@ -4598,6 +4598,7 @@ export const SCREENS = {
       // Gaiolas já existentes para esta OP (simulado: 2 já criadas).
       var P5_GAIOLAS      = [{ seq: 563944, num: 1 }, { seq: 563945, num: 2 }];
       var P5_SEL          = P5_GAIOLAS.length - 1;   // seleção padrão = última
+      var P5_SEM_GAIOLA   = false;                   // toggle "Sem gaiola": oculta a seção de gaiolas
 
       function p5Fechar() {
         var ov = document.getElementById('p5-modal');
@@ -4634,11 +4635,23 @@ export const SCREENS = {
         var tem = P5_GAIOLAS.length > 0;
         var html =
           '<style>@media (max-width:768px){#p5-gaiola-list{flex-wrap:nowrap!important;overflow-x:auto;overflow-y:hidden;gap:10px!important;padding:16px 12px 12px!important;margin-bottom:14px!important;scrollbar-width:thin;scrollbar-color:rgba(191,177,114,.55) transparent}.p5-gaiola-card{width:84px!important;height:74px!important;flex-shrink:0}}</style>' +
-          '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">✔ Confirmar Pesagem &amp; Imprimir Etiqueta</div>' +
-          '<div style="font-size:12px;color:var(--text2);margin-bottom:16px">Aqua (Água Purificada) · <strong>411,840 kg</strong> · ' + (window.PES_SALA_SEL === 'SB' ? 'Sem balança · etiqueta ' + PES_ETIQUETA_MOCK.codigo : 'BAL-01') + '</div>' +
-          '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Gaiola a vincular</div>';
+          // Cabeçalho: título à esquerda + toggle "Sem gaiola" compacto no canto superior direito.
+          '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:4px">' +
+            '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc)">✔ Confirmar Pesagem &amp; Imprimir Etiqueta</div>' +
+            '<div onclick="p5ToggleSemGaiola()" role="switch" aria-checked="' + (P5_SEM_GAIOLA ? 'true' : 'false') + '" title="Confirmar sem vincular gaiola" style="display:flex;align-items:center;gap:7px;cursor:pointer;flex-shrink:0;white-space:nowrap">' +
+              '<span style="font-size:11px;font-weight:700;color:' + (P5_SEM_GAIOLA ? 'var(--verde-esc)' : 'var(--text3)') + '">Sem gaiola</span>' +
+              '<span style="position:relative;width:38px;height:20px;flex-shrink:0;border-radius:999px;background:' + (P5_SEM_GAIOLA ? 'var(--verde)' : '#C9C4B4') + ';transition:background .18s">' +
+                '<span style="position:absolute;top:2px;left:' + (P5_SEM_GAIOLA ? '20px' : '2px') + ';width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .18s"></span>' +
+              '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div style="font-size:12px;color:var(--text2);margin-bottom:16px">Aqua (Água Purificada) · <strong>411,840 kg</strong> · ' + (window.PES_SALA_SEL === 'SB' ? 'Sem balança · etiqueta ' + PES_ETIQUETA_MOCK.codigo : 'BAL-01') + '</div>';
 
-        if (tem) {
+        if (!P5_SEM_GAIOLA) {
+          html += '<div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Gaiola a vincular</div>';
+        }
+
+        if (!P5_SEM_GAIOLA && tem) {
           html += '<div style="font-size:11px;color:var(--text2);margin-bottom:10px">Selecione a gaiola que receberá esta MP (por padrão, a última).</div>';
           html += '<div id="p5-gaiola-list" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px">';
           P5_GAIOLAS.forEach(function(g, i) {
@@ -4666,7 +4679,7 @@ export const SCREENS = {
               '<div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Nova Gaiola</div>' +
             '</button>';
           html += '</div>';
-        } else {
+        } else if (!P5_SEM_GAIOLA) {
           // Nenhuma gaiola → sugestão do MES
           html +=
             '<div style="background:var(--ouro-dim);border:1.5px solid var(--ouro-claro);border-radius:7px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">' +
@@ -4686,10 +4699,11 @@ export const SCREENS = {
             '</div>';
         }
 
-        // Botão confirmar + voltar
-        var disabled = tem ? '' : 'disabled';
-        var op = tem ? '1' : '.5';
-        var cur = tem ? 'pointer' : 'not-allowed';
+        // Botão confirmar + voltar (habilita se há gaiola OU se "Sem gaiola" está ligado)
+        var podeConfirmar = P5_SEM_GAIOLA || tem;
+        var disabled = podeConfirmar ? '' : 'disabled';
+        var op = podeConfirmar ? '1' : '.5';
+        var cur = podeConfirmar ? 'pointer' : 'not-allowed';
         html +=
           '<button class="btn btn-lg btn-v" style="width:100%;opacity:' + op + ';cursor:' + cur + '" ' + disabled + ' onclick="p5ConfirmarPesagem()">✔ Confirmar Pesagem &amp; Imprimir Etiqueta da MP</button>' +
           '<button class="btn btn-md btn-ghost" style="width:100%;margin-top:8px" onclick="p5Fechar()">‹ Voltar</button>';
@@ -4698,6 +4712,9 @@ export const SCREENS = {
       }
 
       function p5Selecionar(i) { P5_SEL = i; p5Render(); }
+
+      // Toggle "Sem gaiola": liga/desliga e re-renderiza (oculta/mostra as gaiolas).
+      function p5ToggleSemGaiola() { P5_SEM_GAIOLA = !P5_SEM_GAIOLA; p5Render(); }
 
       function p5Adicionar() {
         P5_GAIOLAS.push({ seq: P5_PROX_SEQ++, num: P5_GAIOLAS.length + 1 });
@@ -4715,8 +4732,8 @@ export const SCREENS = {
 
       /* ── Confirmação: loading → interface externa → sucesso ── */
       function p5ConfirmarPesagem() {
-        if (P5_GAIOLAS.length === 0) { alert('🚫 Crie ao menos uma gaiola antes de confirmar.'); return; }
-        var g = P5_GAIOLAS[P5_SEL] || P5_GAIOLAS[P5_GAIOLAS.length - 1];
+        if (!P5_SEM_GAIOLA && P5_GAIOLAS.length === 0) { alert('🚫 Crie ao menos uma gaiola antes de confirmar.'); return; }
+        var g = P5_SEM_GAIOLA ? null : (P5_GAIOLAS[P5_SEL] || P5_GAIOLAS[P5_GAIOLAS.length - 1]);
         var box = document.getElementById('p5-modal-box');
         box.innerHTML =
           '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:12px 0">' +
@@ -4729,7 +4746,7 @@ export const SCREENS = {
             '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:4px 0 8px">' +
               '<div style="font-size:44px;margin-bottom:6px">✅</div>' +
               '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">Comunicação realizada com sucesso</div>' +
-              '<div style="font-size:12px;color:var(--text2);max-width:360px;margin-bottom:18px">A pesagem foi confirmada na interface externa e a <strong>etiqueta da MP foi impressa</strong> na PRN-BOX3, vinculada à <strong>Gaiola ' + g.num + ' (Nº ' + g.seq + ')</strong>.</div>' +
+              '<div style="font-size:12px;color:var(--text2);max-width:360px;margin-bottom:18px">A pesagem foi confirmada na interface externa e a <strong>etiqueta da MP foi impressa</strong> na PRN-BOX3' + (P5_SEM_GAIOLA ? ' <strong>(sem vínculo de gaiola)</strong>.' : ', vinculada à <strong>Gaiola ' + g.num + ' (Nº ' + g.seq + ')</strong>.') + '</div>' +
               '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">' +
                 '<button class="btn btn-md btn-ghost" onclick="p5ReimprimirMP()">↩ Reimprimir Etiqueta da MP</button>' +
                 '<button class="btn btn-md btn-v" onclick="p5Concluir()">✔ Concluir</button>' +
@@ -6064,23 +6081,41 @@ export const SCREENS = {
 
       <!-- Gerenciar etiquetas das gaiolas — ocupa toda a largura -->
       <div class="card cv mb14">
-        <div class="card-title">Gerenciar Etiquetas da Gaiola</div>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+          <div class="card-title">Gerenciar Etiquetas da Gaiola</div>
+          <!-- Toggle "Sem gaiola" (canto superior direito): troca os itens para MPs sem gaiola. -->
+          <div id="gaio-semtgl" onclick="gaioToggleSemGaiola()" role="switch" aria-checked="false" title="Ver itens sem gaiola" style="display:flex;align-items:center;gap:7px;cursor:pointer;flex-shrink:0;white-space:nowrap">
+            <span id="gaio-semtgl-lbl" style="font-size:11px;font-weight:700;color:var(--text3)">Sem gaiola</span>
+            <span id="gaio-semtgl-track" style="position:relative;width:38px;height:20px;flex-shrink:0;border-radius:999px;background:#C9C4B4;transition:background .18s">
+              <span id="gaio-semtgl-knob" style="position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .18s"></span>
+            </span>
+          </div>
+        </div>
         <div class="form-row">
-          <div class="fg" style="max-width:320px">
-            <label class="lbl">ID da Gaiola <span style="font-size:9px;color:var(--text3);font-weight:400;margin-left:4px">(gaiolas desta OP)</span></label>
-            <div style="display:flex;align-items:center;gap:8px">
-              <select class="sel" id="pgaio-sel" onchange="gaioRenderTabela()" style="flex:1;min-width:0;font-family:var(--font-m);color:var(--verde);font-weight:700">
-                <option value="GAI-2026-0089" selected>GAI-2026-0089</option>
-                <option value="GAI-2026-0090">GAI-2026-0090</option>
-                <option value="GAI-2026-0091">GAI-2026-0091</option>
-                <option value="GAI-2026-0087">GAI-2026-0087</option>
-                <option value="GAI-2026-0088">GAI-2026-0088</option>
-              </select>
-              <button type="button" title="Reimprimir etiqueta da gaiola" aria-label="Reimprimir etiqueta da gaiola" style="flex-shrink:0;width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--ouro-claro);border-radius:8px;background:var(--surface);color:var(--verde);cursor:pointer;font-size:16px;line-height:1">🖨️</button>
+          <div class="fg" style="max-width:480px">
+            <label class="lbl">ID da Gaiola <span style="font-size:9px;color:var(--text3);font-weight:400;margin-left:4px">(escaneie a etiqueta da gaiola, ex: <span class="mono" style="color:var(--verde);font-weight:700;user-select:all;-webkit-user-select:all">GAI-2026-0089</span> <span class="mono" style="color:var(--verde);font-weight:700;user-select:all;-webkit-user-select:all">GAI-2026-0087</span>)</span></label>
+
+            <!-- Select ESCONDIDO: mantém toda a lógica existente (mover/adicionar/deletar).
+                 A leitura do scan apenas seta o valor deste select e re-renderiza. -->
+            <select id="pgaio-sel" onchange="gaioRenderTabela()" style="display:none">
+              <option value="GAI-2026-0089" selected>GAI-2026-0089</option>
+              <option value="GAI-2026-0090">GAI-2026-0090</option>
+              <option value="GAI-2026-0091">GAI-2026-0091</option>
+              <option value="GAI-2026-0087">GAI-2026-0087</option>
+              <option value="GAI-2026-0088">GAI-2026-0088</option>
+            </select>
+
+            <!-- Leitura (padrão "Leitura de Etiquetas" da Fabricação: caixa tracejada + spinner) -->
+            <div style="display:flex;gap:8px;align-items:stretch">
+              <div id="pgaio-scan-box" style="flex:1;display:flex;align-items:center;gap:12px;border:1.5px dashed var(--ouro);border-radius:8px;background:var(--ouro-dim);padding:10px 14px">
+                <div style="width:20px;height:20px;border:3px solid var(--ouro-claro);border-top-color:var(--ouro);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0"></div>
+                <input id="pgaio-scan" autocomplete="off" placeholder="Aguardando leitura da etiqueta da gaiola… (ou digite o código)" onkeydown="if(event.keyCode===13){event.preventDefault();gaioScan();}" style="flex:1;min-width:0;border:none;outline:none;background:transparent;font-family:var(--font-m);font-size:14px;color:var(--text)">
+                <button type="button" title="Digitar manualmente" onclick="var e=document.getElementById('pgaio-scan');if(e)e.focus()" style="background:none;border:1px solid var(--ouro-claro);border-radius:6px;padding:4px 9px;cursor:pointer;font-size:14px;flex-shrink:0">⌨️</button>
+              </div>
+              <button class="btn btn-md btn-v" onclick="gaioScan()" title="Carregar gaiola" style="padding:0 20px;font-size:18px;line-height:1;flex-shrink:0">→</button>
+              <button type="button" title="Reimprimir etiqueta da gaiola" aria-label="Reimprimir etiqueta da gaiola" style="flex-shrink:0;width:44px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--ouro-claro);border-radius:8px;background:var(--surface);color:var(--verde);cursor:pointer;font-size:16px;line-height:1">🖨️</button>
             </div>
-            <div style="font-size:10px;color:var(--text3);margin-top:4px">
-              5 gaiolas vinculadas à <strong>OP-2026-0416</strong> · enquanto a OP não for enviada à Fabricação, as MPs podem ser movidas entre quaisquer gaiolas desta lista.
-            </div>
+            <div id="pgaio-scan-msg" style="min-height:16px;font-size:11px;margin-top:8px;font-family:var(--font-m);color:var(--text3)">Gaiola atual: <strong>GAI-2026-0089</strong></div>
           </div>
         </div>
 
@@ -6098,41 +6133,58 @@ export const SCREENS = {
         <granado-gallery id="gaiola-mps-gallery" enable-scroll="true" scroll-height="58vh"></granado-gallery>
 
         <div style="display:flex;gap:10px;margin-top:14px">
-          <button class="btn btn-md btn-v" id="gaio-print-mae" onclick="gaioImprimirMae()">🏷️ Imprimir Etiqueta Mãe</button>
+          <button class="btn btn-md btn-v" id="gaio-print-mae" onclick="gaioMoverTodosAbrir()">↔ Mover todos os itens</button>
         </div>
       </div>
 
-      <!-- ── Modal: Mover MP para outra Gaiola ── -->
-      <div id="modal-gaio-mover" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:960;align-items:flex-start;justify-content:center;padding-top:80px;backdrop-filter:blur(3px)">
-        <div style="background:var(--surface);border-top:4px solid var(--inf);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:520px;width:94%;box-shadow:var(--sh2)">
+      <!-- ── Modal: Mover MP para outra Gaiola (escanear destino, formato Fabricação) ── -->
+      <div id="modal-gaio-mover" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:960;align-items:flex-start;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto">
+        <style>@keyframes gaioScanLine{0%{transform:translateY(0)}50%{transform:translateY(94px)}100%{transform:translateY(0)}}</style>
+        <div style="background:var(--surface);border-top:4px solid var(--ouro);border:1px solid var(--border);border-radius:10px;padding:22px 26px;max-width:520px;width:96%;box-shadow:var(--sh2);margin:auto;box-sizing:border-box">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
             <div>
-              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--inf)">↔ Mover MP entre Gaiolas</div>
+              <div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--ouro)">↔ Mover MP entre Gaiolas</div>
               <div style="font-family:var(--font-d);font-size:17px;font-weight:700;color:var(--verde-esc);margin-top:2px" id="gaio-mover-titulo">—</div>
             </div>
             <button onclick="document.getElementById('modal-gaio-mover').style.display='none'" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2)">✕</button>
           </div>
 
-          <div class="abox inf mb14" style="margin-bottom:14px"><span class="ai">ℹ️</span><div>Selecione a <strong>gaiola destino</strong>. Estão listadas <strong>todas as gaiolas da OP atual</strong> (exceto a origem). A movimentação é permitida enquanto a OP não foi enviada à Fabricação.</div></div>
-
           <div id="gaio-mover-info" style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;margin-bottom:14px;font-size:11px;color:var(--text2)"></div>
 
-          <div class="fg" style="margin-bottom:14px">
-            <label class="lbl">Gaiola destino (somente gaiolas existentes)</label>
-            <select class="sel" id="gaio-mover-destino" style="font-family:var(--font-m);font-weight:700">
-              <!-- preenchido em runtime por gaioAbrirMover() -->
-            </select>
+          <label class="lbl">Gaiola destino <span style="font-size:9px;color:var(--text3);font-weight:400">(escaneie a etiqueta da gaiola)</span></label>
+          <div id="gaio-mover-exemplos" style="font-size:10px;color:var(--text3);margin:2px 0 10px"></div>
+
+          <!-- Moldura de leitura (mesma da Fabricação: cantos + código de barras + linha animada) -->
+          <div style="position:relative;height:150px;border-radius:12px;background:linear-gradient(180deg,var(--verde-dim),var(--surface2));border:1px solid var(--border);overflow:hidden;margin-bottom:18px">
+            <span style="position:absolute;top:14px;left:14px;width:28px;height:28px;border-top:3px solid var(--verde);border-left:3px solid var(--verde);border-radius:5px 0 0 0"></span>
+            <span style="position:absolute;top:14px;right:14px;width:28px;height:28px;border-top:3px solid var(--verde);border-right:3px solid var(--verde);border-radius:0 5px 0 0"></span>
+            <span style="position:absolute;bottom:14px;left:14px;width:28px;height:28px;border-bottom:3px solid var(--verde);border-left:3px solid var(--verde);border-radius:0 0 0 5px"></span>
+            <span style="position:absolute;bottom:14px;right:14px;width:28px;height:28px;border-bottom:3px solid var(--verde);border-right:3px solid var(--verde);border-radius:0 0 5px 0"></span>
+            <div style="position:absolute;left:20%;right:20%;top:50%;transform:translateY(-50%);height:64px;opacity:.22;background:repeating-linear-gradient(90deg,var(--verde-esc) 0 3px,transparent 3px 7px,var(--verde-esc) 7px 9px,transparent 9px 14px,var(--verde-esc) 14px 19px,transparent 19px 22px,var(--verde-esc) 22px 24px,transparent 24px 29px)"></div>
+            <div style="position:absolute;left:12%;right:12%;top:26px;height:2px;background:linear-gradient(90deg,transparent,var(--verde-claro),transparent);box-shadow:0 0 8px 1px var(--verde-claro);animation:gaioScanLine 2.2s ease-in-out infinite"></div>
           </div>
 
-          <div class="fg" style="margin-bottom:14px">
-            <label class="lbl">Motivo da movimentação <span style="font-size:9px;color:var(--text3)">(registrado na trilha)</span></label>
-            <textarea class="txta" id="gaio-mover-motivo" rows="2" placeholder="Ex.: reorganização de fase, gaiola atingiu peso máximo, correção de associação..."></textarea>
+          <!-- Input (caixa tracejada + spinner) + botão → -->
+          <div style="display:flex;gap:8px;align-items:stretch">
+            <div style="flex:1;display:flex;align-items:center;gap:12px;border:1.5px dashed var(--ouro);border-radius:8px;background:var(--ouro-dim);padding:10px 14px">
+              <div style="width:20px;height:20px;border:3px solid var(--ouro-claro);border-top-color:var(--ouro);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0"></div>
+              <input id="gaio-mover-scan" autocomplete="off" placeholder="Aguardando leitura da gaiola destino… (ou digite o código)" onkeydown="if(event.keyCode===13){event.preventDefault();gaioConfirmarMover();}" style="flex:1;min-width:0;border:none;outline:none;background:transparent;font-family:var(--font-m);font-size:14px;color:var(--text)">
+              <button type="button" title="Digitar manualmente" onclick="var e=document.getElementById('gaio-mover-scan');if(e)e.focus()" style="background:none;border:1px solid var(--ouro-claro);border-radius:6px;padding:4px 9px;cursor:pointer;font-size:14px;flex-shrink:0">⌨️</button>
+            </div>
+            <button class="btn btn-md btn-v" onclick="gaioConfirmarMover()" title="Mover para esta gaiola" style="padding:0 20px;font-size:18px;line-height:1;flex-shrink:0">→</button>
           </div>
+          <div id="gaio-mover-msg" style="min-height:16px;font-size:11px;margin-top:8px;font-family:var(--font-m);color:var(--text3)">Aguardando leitura…</div>
 
-          <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:12px;border-top:1px solid var(--border)">
+          <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:12px;margin-top:12px;border-top:1px solid var(--border)">
             <button class="btn btn-md btn-ghost" onclick="document.getElementById('modal-gaio-mover').style.display='none'">Cancelar</button>
-            <button class="btn btn-md btn-v" onclick="gaioConfirmarMover()">↔ Mover MP</button>
           </div>
+        </div>
+      </div>
+
+      <!-- ── Modal: Mover TODOS os itens → escanear gaiola destino (formato Fabricação) ── -->
+      <div id="modal-gaio-movtodos" style="display:none;position:fixed;inset:0;background:rgba(15,51,25,.55);z-index:962;align-items:flex-start;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto">
+        <div id="modal-gaio-movtodos-box" style="background:var(--surface);border-top:4px solid var(--ouro);border:1px solid var(--border);border-radius:10px;padding:24px 28px;max-width:560px;width:96%;box-shadow:var(--sh2);margin:auto;box-sizing:border-box">
+          <!-- preenchido por gaioMoverTodosRenderScan() / gaioMoverTodosSucesso() -->
         </div>
       </div>
 
@@ -6165,32 +6217,35 @@ export const SCREENS = {
         document.getElementById('gaio-mover-info').innerHTML =
           '<strong>' + etq + '</strong> · Lote ' + lote + ' · ' + qtd +
           '<br/><span style="color:var(--text3);font-size:10px">Origem: ' + (document.getElementById('pgaio-sel')||{value:'—'}).value + '</span>';
-        // Popula destino
-        var dest = document.getElementById('gaio-mover-destino');
-        dest.innerHTML = '';
-        var gaiolas = gaioListarExistentes();
-        if (gaiolas.length === 0) {
-          dest.innerHTML = '<option value="">⚠ Nenhuma outra gaiola existente disponível</option>';
-        } else {
-          gaiolas.forEach(function(g){
-            var op = document.createElement('option');
-            op.value = g.id; op.text = g.label;
-            dest.appendChild(op);
-          });
+        // Exemplos = demais gaiolas da OP (IDs copiáveis para simular a leitura).
+        var ex = document.getElementById('gaio-mover-exemplos');
+        if (ex) {
+          var gaiolas = gaioListarExistentes();
+          ex.innerHTML = gaiolas.length
+            ? 'Ex.: ' + gaiolas.map(function (g) { return '<span class="mono" style="color:var(--verde);font-weight:700;user-select:all;-webkit-user-select:all">' + g.id + '</span>'; }).join(' ')
+            : '<span style="color:var(--alr)">⚠ Nenhuma outra gaiola disponível — crie uma nova primeiro.</span>';
         }
-        document.getElementById('gaio-mover-motivo').value = '';
+        // Reseta o scan
+        var sc = document.getElementById('gaio-mover-scan');
+        if (sc) sc.value = '';
+        var mg = document.getElementById('gaio-mover-msg');
+        if (mg) { mg.style.color = 'var(--text3)'; mg.textContent = 'Aguardando leitura…'; }
         document.getElementById('modal-gaio-mover').style.display = 'flex';
+        setTimeout(function () { var i = document.getElementById('gaio-mover-scan'); if (i) { try { i.focus(); } catch (e) {} } }, 30);
       }
 
       function gaioConfirmarMover() {
-        var dest = document.getElementById('gaio-mover-destino').value;
-        if (!dest) { alert('⚠ Selecione uma gaiola destino. Se não houver, crie primeiro uma nova gaiola usando o seletor superior.'); return; }
-        var motivo = (document.getElementById('gaio-mover-motivo').value || '').trim();
-        if (!motivo) { alert('⚠ Motivo da movimentação é obrigatório (registrado na trilha de auditoria).'); return; }
+        var msg = document.getElementById('gaio-mover-msg');
+        var inp = document.getElementById('gaio-mover-scan');
+        var raw = inp ? (inp.value || '').trim() : '';
+        if (!raw) { if (msg) { msg.style.color = 'var(--text3)'; msg.textContent = 'Escaneie (ou digite) a gaiola destino.'; } return; }
+        var origem = (document.getElementById('pgaio-sel')||{value:'—'}).value;
+        var dest = gaioResolveId(raw);
+        if (!dest) { if (msg) { msg.style.color = 'var(--alr)'; msg.innerHTML = '⚠ Gaiola <strong>' + raw + '</strong> não encontrada nesta OP.'; } return; }
+        if (dest === origem) { if (msg) { msg.style.color = 'var(--alr)'; msg.innerHTML = '⚠ A gaiola destino é a mesma da origem. Escaneie outra.'; } return; }
         if (!_gaioMpMover) return;
         var etq = _gaioMpMover.getAttribute('data-etq') || '—';
         var mat = _gaioMpMover.cells[2].textContent.trim();
-        var origem = (document.getElementById('pgaio-sel')||{value:'—'}).value;
         // Move a MP no modelo de dados (origem -> destino) e re-renderiza a
         // gaiola atual (tabela + galeria) a partir do modelo atualizado.
         gaioMoverNoModelo(origem, dest, etq);
@@ -6205,8 +6260,7 @@ export const SCREENS = {
           'Etiqueta: ' + etq + '\\n' +
           'Material: ' + mat + '\\n' +
           'Origem: ' + origem + '\\n' +
-          'Destino: ' + dest + '\\n' +
-          'Motivo: ' + motivo + '\\n\\n' +
+          'Destino: ' + dest + '\\n\\n' +
           'Movimentação registrada na trilha de auditoria.'
         );
       }
@@ -6309,7 +6363,59 @@ export const SCREENS = {
         'GAI-2026-0091': []
       };
 
+      // Toggle "Sem gaiola": quando ligado, a tabela/galeria mostra estas MPs
+      // pesadas SEM vínculo de gaiola (itens simulados), no lugar das MPs da gaiola.
+      var GAIO_SEM_GAIOLA = false;
+      var GAIO_SEM_MPS = [
+        { etq:'ETQ-2026-0501', mat:'Óleo de Amêndoas',    lote:'OAM-2026-07', qtd:'12,500 kg', fase:'— Sem gaiola' },
+        { etq:'ETQ-2026-0502', mat:'Manteiga de Karité',  lote:'KAR-2026-02', qtd:'8,200 kg',  fase:'— Sem gaiola' },
+        { etq:'ETQ-2026-0503', mat:'Essência Rosa',       lote:'ESR-2026-11', qtd:'0,318 kg',  fase:'— Sem gaiola' },
+        { etq:'ETQ-2026-0504', mat:'Vitamina E',          lote:'VTE-2026-03', qtd:'1,050 kg',  fase:'— Sem gaiola' }
+      ];
+
       function gaioSelId() { var s = document.getElementById('pgaio-sel'); return s ? s.value : ''; }
+
+      // Leitura do scan: casa o código lido com uma das gaiolas (options do select
+      // escondido), seta a seleção e re-renderiza. Aceita o ID completo ou só o
+      // número final (ex.: "89" -> GAI-2026-0089). No-op quando "Sem gaiola" ligado.
+      function gaioScan() {
+        if (GAIO_SEM_GAIOLA) return;
+        var inp = document.getElementById('pgaio-scan');
+        var sel = document.getElementById('pgaio-sel');
+        var msg = document.getElementById('pgaio-scan-msg');
+        if (!inp || !sel) return;
+        var raw = (inp.value || '').trim();
+        if (!raw) return;
+        var alvo = raw.toUpperCase();
+        var digitos = raw.replace(/\\D/g, '');
+        var alvoNum = digitos ? parseInt(digitos, 10) : null;
+        var achou = null;
+        Array.from(sel.options).forEach(function (o) {
+          var v = o.value.toUpperCase();
+          if (v === alvo) { achou = o.value; return; }
+          // casa também só pelo último número do ID (ex.: "89" -> GAI-2026-0089)
+          if (!achou && alvoNum != null) {
+            var mm = o.value.match(/(\\d+)\\s*$/);
+            if (mm && parseInt(mm[1], 10) === alvoNum) achou = o.value;
+          }
+        });
+        if (!achou) {
+          if (msg) { msg.style.color = 'var(--alr)'; msg.innerHTML = '⚠ Gaiola <strong>' + raw + '</strong> não encontrada nesta OP.'; }
+          return;
+        }
+        sel.value = achou;
+        inp.value = '';
+        if (msg) msg.style.color = 'var(--verde)';
+        gaioRenderTabela();
+        if (msg) { msg.style.color = 'var(--verde)'; msg.innerHTML = '✓ Gaiola atual: <strong>' + achou + '</strong>'; }
+      }
+      // Chip de exemplo: preenche o input e dispara a leitura (simula o leitor).
+      function gaioScanExemplo(code) {
+        if (GAIO_SEM_GAIOLA) return;
+        var inp = document.getElementById('pgaio-scan');
+        if (inp) inp.value = code;
+        gaioScan();
+      }
       function gaioParseKg(q) { var n = parseFloat(String(q).split(' ')[0].split('.').join('').replace(',', '.')); return isNaN(n) ? 0 : n; }
       function gaioFmtKg(n) { return n.toFixed(3).replace('.', ','); }
 
@@ -6346,7 +6452,14 @@ export const SCREENS = {
       // Re-renderiza a tabela + a galeria mobile a partir da gaiola selecionada.
       function gaioRenderTabela() {
         var gai = gaioSelId();
-        var mps = GAIO_MPS[gai] || [];
+        // Toggle "Sem gaiola" ligado -> itens simulados sem vínculo; scan desabilitado.
+        var mps = GAIO_SEM_GAIOLA ? GAIO_SEM_MPS : (GAIO_MPS[gai] || []);
+        var scanEl = document.getElementById('pgaio-scan');
+        var scanBox = document.getElementById('pgaio-scan-box');
+        if (scanEl) scanEl.disabled = GAIO_SEM_GAIOLA;
+        if (scanBox) { scanBox.style.opacity = GAIO_SEM_GAIOLA ? '.5' : '1'; scanBox.style.pointerEvents = GAIO_SEM_GAIOLA ? 'none' : 'auto'; }
+        var msgEl = document.getElementById('pgaio-scan-msg');
+        if (msgEl) msgEl.innerHTML = GAIO_SEM_GAIOLA ? 'Exibindo <strong>itens sem gaiola</strong>' : ('Gaiola atual: <strong>' + gai + '</strong>');
         var tb = document.querySelector('#tbl-gaiola-mps tbody');
         if (tb) {
           if (!mps.length) {
@@ -6369,14 +6482,14 @@ export const SCREENS = {
           }
         }
         gaioSyncGallery(gai, mps);
-        // Botão "Imprimir Etiqueta Mãe": desabilita se a gaiola está vazia.
+        // Botão "Mover todos os itens": desabilita se não há itens para mover.
         var pb = document.getElementById('gaio-print-mae');
         if (pb) {
           var vazia = !mps.length;
           pb.disabled = vazia;
           pb.style.opacity = vazia ? '.45' : '1';
           pb.style.cursor = vazia ? 'not-allowed' : 'pointer';
-          pb.title = vazia ? 'Gaiola vazia — nada a imprimir' : 'Imprimir etiqueta mãe da ' + gai;
+          pb.title = vazia ? 'Nenhum item para mover' : 'Mover todos os itens para outra gaiola';
         }
       }
 
@@ -6410,7 +6523,134 @@ export const SCREENS = {
         alert('✅ Gaiola ' + gai + ' montada!\\n\\nEtiqueta mãe impressa (Zebra).\\n' + mps.length + ' MPs · ' + gaioFmtKg(total) + ' kg total\\nDestino: Reator R-01\\nRel. pai-filho registrada no Apriso.');
       }
 
+      // ====== MOVER TODOS OS ITENS -> escanear gaiola destino (formato Fabricação) ======
+      var GAIO_MOVTODOS_ORIGEM = '';
+
+      // Resolve um código lido para o ID de uma gaiola da OP (exato ou só o número final).
+      function gaioResolveId(raw) {
+        var sel = document.getElementById('pgaio-sel');
+        if (!sel) return null;
+        var alvo = String(raw == null ? '' : raw).trim().toUpperCase();
+        if (!alvo) return null;
+        var digitos = alvo.replace(/\\D/g, '');
+        var alvoNum = digitos ? parseInt(digitos, 10) : null;
+        var achou = null;
+        Array.from(sel.options).forEach(function (o) {
+          var v = o.value.toUpperCase();
+          if (v === alvo) { achou = o.value; return; }
+          if (!achou && alvoNum != null) {
+            var mm = o.value.match(/(\\d+)\\s*$/);
+            if (mm && parseInt(mm[1], 10) === alvoNum) achou = o.value;
+          }
+        });
+        return achou;
+      }
+
+      function gaioMoverTodosAbrir() {
+        // Origem: gaiola atual (ou os itens "sem gaiola", quando o toggle está ligado).
+        GAIO_MOVTODOS_ORIGEM = GAIO_SEM_GAIOLA ? '' : gaioSelId();
+        var itens = GAIO_SEM_GAIOLA ? GAIO_SEM_MPS : (GAIO_MPS[GAIO_MOVTODOS_ORIGEM] || []);
+        if (!itens.length) return;   // nada a mover (botão já fica desabilitado)
+        gaioMoverTodosRenderScan();
+        document.getElementById('modal-gaio-movtodos').style.display = 'flex';
+        setTimeout(function () { var i = document.getElementById('gaio-movtodos-scan'); if (i) { try { i.focus(); } catch (e) {} } }, 30);
+      }
+
+      function gaioMoverTodosRenderScan() {
+        var box = document.getElementById('modal-gaio-movtodos-box');
+        if (!box) return;
+        var origem = GAIO_SEM_GAIOLA ? 'itens sem gaiola' : GAIO_MOVTODOS_ORIGEM;
+        var qtd = GAIO_SEM_GAIOLA ? GAIO_SEM_MPS.length : (GAIO_MPS[GAIO_MOVTODOS_ORIGEM] || []).length;
+        box.innerHTML =
+          '<style>@keyframes gaioScanLine{0%{transform:translateY(0)}50%{transform:translateY(94px)}100%{transform:translateY(0)}}</style>' +
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:4px">' +
+            '<div>' +
+              '<div style="font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--ouro)">↔ Mover todos os itens</div>' +
+              '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin-top:2px">Escaneie a gaiola destino</div>' +
+            '</div>' +
+            '<button onclick="document.getElementById(\\'modal-gaio-movtodos\\').style.display=\\'none\\'" title="Cancelar" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2);flex-shrink:0">✕</button>' +
+          '</div>' +
+          '<div style="font-size:12px;color:var(--text2);margin:2px 0 18px">Movendo <strong>' + qtd + ' item' + (qtd === 1 ? '' : 's') + '</strong> de <strong>' + origem + '</strong>. Aponte o leitor para a etiqueta da gaiola destino ou digite o código e pressione Enter.</div>' +
+          // Moldura de leitura (mesma da Fabricação: cantos + código de barras + linha animada)
+          '<div style="position:relative;height:150px;border-radius:12px;background:linear-gradient(180deg,var(--verde-dim),var(--surface2));border:1px solid var(--border);overflow:hidden;margin-bottom:22px">' +
+            '<span style="position:absolute;top:14px;left:14px;width:28px;height:28px;border-top:3px solid var(--verde);border-left:3px solid var(--verde);border-radius:5px 0 0 0"></span>' +
+            '<span style="position:absolute;top:14px;right:14px;width:28px;height:28px;border-top:3px solid var(--verde);border-right:3px solid var(--verde);border-radius:0 5px 0 0"></span>' +
+            '<span style="position:absolute;bottom:14px;left:14px;width:28px;height:28px;border-bottom:3px solid var(--verde);border-left:3px solid var(--verde);border-radius:0 0 0 5px"></span>' +
+            '<span style="position:absolute;bottom:14px;right:14px;width:28px;height:28px;border-bottom:3px solid var(--verde);border-right:3px solid var(--verde);border-radius:0 0 5px 0"></span>' +
+            '<div style="position:absolute;left:20%;right:20%;top:50%;transform:translateY(-50%);height:64px;opacity:.22;background:repeating-linear-gradient(90deg,var(--verde-esc) 0 3px,transparent 3px 7px,var(--verde-esc) 7px 9px,transparent 9px 14px,var(--verde-esc) 14px 19px,transparent 19px 22px,var(--verde-esc) 22px 24px,transparent 24px 29px)"></div>' +
+            '<div style="position:absolute;left:12%;right:12%;top:26px;height:2px;background:linear-gradient(90deg,transparent,var(--verde-claro),transparent);box-shadow:0 0 8px 1px var(--verde-claro);animation:gaioScanLine 2.2s ease-in-out infinite"></div>' +
+          '</div>' +
+          // Input (caixa tracejada + spinner) + botão →
+          '<div style="display:flex;gap:8px;align-items:stretch">' +
+            '<div style="flex:1;display:flex;align-items:center;gap:12px;border:1.5px dashed var(--ouro);border-radius:8px;background:var(--ouro-dim);padding:10px 14px">' +
+              '<div style="width:20px;height:20px;border:3px solid var(--ouro-claro);border-top-color:var(--ouro);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0"></div>' +
+              '<input id="gaio-movtodos-scan" autocomplete="off" placeholder="Aguardando leitura da gaiola destino… (ou digite o código)" onkeydown="if(event.keyCode===13){event.preventDefault();gaioMoverTodosScan();}" style="flex:1;min-width:0;border:none;outline:none;background:transparent;font-family:var(--font-m);font-size:14px;color:var(--text)">' +
+              '<button type="button" title="Digitar manualmente" onclick="var e=document.getElementById(\\'gaio-movtodos-scan\\');if(e)e.focus()" style="background:none;border:1px solid var(--ouro-claro);border-radius:6px;padding:4px 9px;cursor:pointer;font-size:14px;flex-shrink:0">⌨️</button>' +
+            '</div>' +
+            '<button class="btn btn-md btn-v" onclick="gaioMoverTodosScan()" title="Mover para esta gaiola" style="padding:0 20px;font-size:18px;line-height:1;flex-shrink:0">→</button>' +
+          '</div>' +
+          '<div style="font-size:10px;color:var(--text3);margin-top:8px">Ex.: ' +
+            '<span class="mono" style="color:var(--verde);font-weight:700;user-select:all;-webkit-user-select:all">GAI-2026-0090</span> ' +
+            '<span class="mono" style="color:var(--verde);font-weight:700;user-select:all;-webkit-user-select:all">GAI-2026-0091</span></div>' +
+          '<div id="gaio-movtodos-msg" style="min-height:16px;font-size:11px;margin-top:8px;font-family:var(--font-m);color:var(--text3)">Aguardando leitura…</div>';
+      }
+
+      function gaioMoverTodosScan() {
+        var inp = document.getElementById('gaio-movtodos-scan');
+        var msg = document.getElementById('gaio-movtodos-msg');
+        if (!inp) return;
+        var raw = (inp.value || '').trim();
+        if (!raw) return;
+        var dest = gaioResolveId(raw);
+        if (!dest) { if (msg) { msg.style.color = 'var(--alr)'; msg.innerHTML = '⚠ Gaiola <strong>' + raw + '</strong> não encontrada nesta OP.'; } return; }
+        if (!GAIO_SEM_GAIOLA && dest === GAIO_MOVTODOS_ORIGEM) { if (msg) { msg.style.color = 'var(--alr)'; msg.innerHTML = '⚠ A gaiola destino é a mesma da origem. Escolha outra.'; } return; }
+        var movidos;
+        if (GAIO_SEM_GAIOLA) {
+          movidos = GAIO_SEM_MPS.length;
+          var d0 = GAIO_MPS[dest] || (GAIO_MPS[dest] = []);
+          d0.push.apply(d0, GAIO_SEM_MPS.splice(0));
+          gaioAtualizarContadorMPs(dest, +movidos);
+        } else {
+          var o = GAIO_MPS[GAIO_MOVTODOS_ORIGEM] || [];
+          var d = GAIO_MPS[dest] || (GAIO_MPS[dest] = []);
+          movidos = o.length;
+          d.push.apply(d, o.splice(0));
+          gaioAtualizarContadorMPs(GAIO_MOVTODOS_ORIGEM, -movidos);
+          gaioAtualizarContadorMPs(dest, +movidos);
+        }
+        gaioRenderTabela();
+        gaioMoverTodosSucesso(dest, movidos);
+      }
+
+      function gaioMoverTodosSucesso(dest, movidos) {
+        var box = document.getElementById('modal-gaio-movtodos-box');
+        if (!box) return;
+        var origem = GAIO_SEM_GAIOLA ? 'itens sem gaiola' : GAIO_MOVTODOS_ORIGEM;
+        box.innerHTML =
+          '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 0 8px">' +
+            '<div style="font-size:44px;margin-bottom:6px">✅</div>' +
+            '<div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:var(--verde-esc);margin-bottom:4px">Itens movidos com sucesso</div>' +
+            '<div style="font-size:12px;color:var(--text2);max-width:380px;margin-bottom:18px"><strong>' + movidos + ' item' + (movidos === 1 ? '' : 's') + '</strong> movido' + (movidos === 1 ? '' : 's') + ' de <strong>' + origem + '</strong> para a gaiola <strong>' + dest + '</strong>. Movimentação registrada na trilha de auditoria.</div>' +
+            '<button class="btn btn-md btn-v" onclick="document.getElementById(\\'modal-gaio-movtodos\\').style.display=\\'none\\'">✔ Concluir</button>' +
+          '</div>';
+      }
+
+      // Toggle "Sem gaiola": alterna o estado, atualiza o switch e re-renderiza.
+      function gaioToggleSemGaiola() { GAIO_SEM_GAIOLA = !GAIO_SEM_GAIOLA; gaioSyncToggle(); gaioRenderTabela(); }
+      function gaioSyncToggle() {
+        var on = GAIO_SEM_GAIOLA;
+        var wrap = document.getElementById('gaio-semtgl');
+        var lbl = document.getElementById('gaio-semtgl-lbl');
+        var tr = document.getElementById('gaio-semtgl-track');
+        var kn = document.getElementById('gaio-semtgl-knob');
+        if (wrap) wrap.setAttribute('aria-checked', on ? 'true' : 'false');
+        if (lbl) lbl.style.color = on ? 'var(--verde-esc)' : 'var(--text3)';
+        if (tr) tr.style.background = on ? 'var(--verde)' : '#C9C4B4';
+        if (kn) kn.style.left = on ? '20px' : '2px';
+      }
+
       // Render inicial (na carga da tela).
+      gaioSyncToggle();
       gaioRenderTabela();
       </script>
 
