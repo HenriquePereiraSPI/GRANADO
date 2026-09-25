@@ -306,11 +306,10 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
           }
           self._state.mode = 'balanca';
         }
-        // Troca de modo limpa os valores -> nada carrega de um modo pro outro
-        // (no modo balança o peso só entra pelo 📡; no manual, digitado do zero).
-        self._inp.value = '';
-        self._taraInp.value = '';
-        self._pesoStr = ''; self._taraStr = '';
+        // Troca de modo -> começa em 0,000 (igual à pesagem manual das outras telas)
+        self._inp.value = '0,000';
+        self._taraInp.value = '0,000';
+        self._pesoStr = '0,000'; self._taraStr = '0,000';
         self._applyMode();
       });
       this._inp.addEventListener('input', function (ev) { gdMaskDecimal(ev, 3); self._pesoStr = self._inp.value; self._recalcLiq(); });
@@ -442,11 +441,11 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
       this._updateToggleLock();
     }
 
-    // Zera Quantidade Pesada / Tara / Peso Líquido (troca de balança ou Voltar).
+    // Zera Quantidade Pesada / Tara / Peso Líquido (troca de balança ou Voltar) -> volta a 0,000.
     _limparPesagem() {
-      this._pesoStr = ''; this._taraStr = '';
-      if (this._inp) this._inp.value = '';
-      if (this._taraInp) this._taraInp.value = '';
+      this._pesoStr = '0,000'; this._taraStr = '0,000';
+      if (this._inp) this._inp.value = '0,000';
+      if (this._taraInp) this._taraInp.value = '0,000';
       if (this._liqDisp) { this._liqDisp.textContent = '— kg'; this._liqDisp.style.color = VERDE_ESC; }
       // se o 📡 estava "carregando", destrava
       if (this._pullBtn) { this._pullBtn.disabled = false; this._pullBtn.innerHTML = '📡'; }
