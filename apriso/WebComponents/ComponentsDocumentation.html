@@ -10957,6 +10957,107 @@ setTimeout(<span class="tk-key">() =&gt;</span> GranadoPopupLoading.hide(), 2800
           </tbody>
         </table>
 
+        <h2 class="gd-h2">Uso — type="default"</h2>
+        <p class="gd-lead">
+          Etiqueta <strong>simples</strong>: código de barras + poucos campos (<code>material</code>,
+          <code>lote</code>, <code>quantidade</code>). Útil para etiquetas genéricas.
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-zpl type="default" data='{
+            "titulo":"ETIQUETA MP","noEtiqueta":"7953072",
+            "material":"M9808 - MANTEIGA DE MURUMURU STD (SAB)",
+            "lote":"0273826","quantidade":"3,120 KG",
+            "barcode":"#P12814471417953072",
+            "impressoPor":"Claudinei","impressoEm":"31/03/2026 08:05"
+          }'></granado-zpl>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-zpl</span> <span class="tk-attr">id</span>=<span class="tk-str">"etq"</span> <span class="tk-attr">type</span>=<span class="tk-str">"default"</span><span class="tk-tag">&gt;&lt;/granado-zpl&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'etq'</span>).data = {
+    titulo: <span class="tk-str">'ETIQUETA MP'</span>, noEtiqueta: <span class="tk-str">'7953072'</span>,
+    material: <span class="tk-str">'M9808 - MANTEIGA DE MURUMURU STD (SAB)'</span>,
+    lote: <span class="tk-str">'0273826'</span>, quantidade: <span class="tk-str">'3,120 KG'</span>,
+    barcode: <span class="tk-str">'#P12814471417953072'</span>
+  };
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
+        <h3 class="gd-h3">Campos de <code>data</code> — type="default"</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:120px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">titulo</td><td class="col-type">string</td><td class="col-desc">Título da etiqueta (default "ETIQUETA").</td></tr>
+            <tr><td class="col-name">material</td><td class="col-type">string</td><td class="col-desc">Material (código + descrição).</td></tr>
+            <tr><td class="col-name">lote</td><td class="col-type">string</td><td class="col-desc">Lote.</td></tr>
+            <tr><td class="col-name">quantidade</td><td class="col-type">string</td><td class="col-desc">Quantidade.</td></tr>
+            <tr><td class="col-name">barcode</td><td class="col-type">string</td><td class="col-desc">Conteúdo do código de barras.</td></tr>
+            <tr><td class="col-name">noEtiqueta</td><td class="col-type">string</td><td class="col-desc">Número da etiqueta (opcional; canto superior direito).</td></tr>
+            <tr><td class="col-name">impressoPor / impressoEm</td><td class="col-type">string</td><td class="col-desc">Rodapé (opcional). Só aparece se informado.</td></tr>
+          </tbody>
+        </table>
+
+        <h2 class="gd-h2">Uso — type="reidentificacao"</h2>
+        <p class="gd-lead">
+          Etiqueta de <strong>Reidentificação de Material</strong> — cabeçalho (título + RA), OUN / Item /
+          TP Cont / Código Container, descrição + Nota Fiscal / Receb, código de barras,
+          Quantidade / UM / Volume / Validade / Nº Etiqueta e Fornecedor / Lote.
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-zpl type="reidentificacao" data='{
+            "titulo":"REIDENTIFICACAO MATERIAL","ra":"0134226","oun":"OUN14","item":"M0618",
+            "tpCont":"TP","codigoContainer":"TP003","descricaoContainer":"L58 x P58 x A89 - PB 19KG",
+            "descricao":"ESS. ITALIAN LEMON BODY CARE","notaFiscal":"660997","receb":"12/02/26",
+            "barcode":"#D1M0618013422617953048","quantidade":"8,200","um":"KG","volume":"1/1",
+            "dataVencimento":"26/01/27","noEtiqueta":"7953048",
+            "fornecedor":"GIVAUDAN DO BRASIL LTDA","loteFornece":"SXD0381770",
+            "impressoPor":"Claudinei","impressoEm":"19/03/2026 08:05"
+          }'></granado-zpl>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-zpl</span> <span class="tk-attr">id</span>=<span class="tk-str">"etq"</span> <span class="tk-attr">type</span>=<span class="tk-str">"reidentificacao"</span><span class="tk-tag">&gt;&lt;/granado-zpl&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'etq'</span>).data = {
+    titulo: <span class="tk-str">'REIDENTIFICACAO MATERIAL'</span>, ra: <span class="tk-str">'0134226'</span>, oun: <span class="tk-str">'OUN14'</span>, item: <span class="tk-str">'M0618'</span>,
+    tpCont: <span class="tk-str">'TP'</span>, codigoContainer: <span class="tk-str">'TP003'</span>, descricaoContainer: <span class="tk-str">'L58 x P58 x A89 - PB 19KG'</span>,
+    descricao: <span class="tk-str">'ESS. ITALIAN LEMON BODY CARE'</span>, notaFiscal: <span class="tk-str">'660997'</span>, receb: <span class="tk-str">'12/02/26'</span>,
+    barcode: <span class="tk-str">'#D1M0618013422617953048'</span>, quantidade: <span class="tk-str">'8,200'</span>, um: <span class="tk-str">'KG'</span>, volume: <span class="tk-str">'1/1'</span>,
+    dataVencimento: <span class="tk-str">'26/01/27'</span>, noEtiqueta: <span class="tk-str">'7953048'</span>,
+    fornecedor: <span class="tk-str">'GIVAUDAN DO BRASIL LTDA'</span>, loteFornece: <span class="tk-str">'SXD0381770'</span>
+  };
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
+        <h3 class="gd-h3">Campos de <code>data</code> — type="reidentificacao"</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:180px">Campo</th><th style="width:120px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">titulo</td><td class="col-type">string</td><td class="col-desc">Título (default "REIDENTIFICACAO MATERIAL").</td></tr>
+            <tr><td class="col-name">ra</td><td class="col-type">string</td><td class="col-desc">Número RA (cabeçalho, à direita).</td></tr>
+            <tr><td class="col-name">oun</td><td class="col-type">string</td><td class="col-desc">Código OUN (renderizado como código de barras).</td></tr>
+            <tr><td class="col-name">item</td><td class="col-type">string</td><td class="col-desc">Código do item (ex.: <code>M0618</code>).</td></tr>
+            <tr><td class="col-name">tpCont</td><td class="col-type">string</td><td class="col-desc">Tipo do container (badge invertido).</td></tr>
+            <tr><td class="col-name">codigoContainer</td><td class="col-type">string</td><td class="col-desc">Código do container (ex.: <code>TP003</code>).</td></tr>
+            <tr><td class="col-name">descricaoContainer</td><td class="col-type">string</td><td class="col-desc">Dimensões/descrição do container (ex.: <code>L58 x P58 x A89 - PB 19KG</code>).</td></tr>
+            <tr><td class="col-name">descricao</td><td class="col-type">string</td><td class="col-desc">Descrição do material (bloco invertido).</td></tr>
+            <tr><td class="col-name">notaFiscal</td><td class="col-type">string</td><td class="col-desc">Número da Nota Fiscal.</td></tr>
+            <tr><td class="col-name">receb</td><td class="col-type">string</td><td class="col-desc">Data de recebimento.</td></tr>
+            <tr><td class="col-name">barcode</td><td class="col-type">string</td><td class="col-desc">Conteúdo do código de barras principal.</td></tr>
+            <tr><td class="col-name">quantidade</td><td class="col-type">string</td><td class="col-desc">Quantidade.</td></tr>
+            <tr><td class="col-name">um</td><td class="col-type">string</td><td class="col-desc">Unidade de medida (ex.: <code>KG</code>).</td></tr>
+            <tr><td class="col-name">volume</td><td class="col-type">string</td><td class="col-desc">Volume no formato <code>atual/total</code> (ex.: <code>1/1</code>).</td></tr>
+            <tr><td class="col-name">dataVencimento</td><td class="col-type">string</td><td class="col-desc">Data de vencimento.</td></tr>
+            <tr><td class="col-name">noEtiqueta</td><td class="col-type">string</td><td class="col-desc">Número da etiqueta.</td></tr>
+            <tr><td class="col-name">fornecedor</td><td class="col-type">string</td><td class="col-desc">Fornecedor.</td></tr>
+            <tr><td class="col-name">loteFornece</td><td class="col-type">string</td><td class="col-desc">Lote do fornecedor.</td></tr>
+            <tr><td class="col-name">impressoPor / impressoEm</td><td class="col-type">string</td><td class="col-desc">Rodapé (opcional). Só aparece se informado.</td></tr>
+          </tbody>
+        </table>
+
         <h3 class="gd-h3">Propriedades JS</h3>
         <table class="gd-api">
           <thead>
@@ -11122,6 +11223,101 @@ setTimeout(<span class="tk-key">() =&gt;</span> GranadoPopupLoading.hide(), 2800
   });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
 
+        <h2 class="gd-h2">Uso — <code>type="default"</code></h2>
+        <p class="gd-lead">Etiqueta <strong>simples</strong>: código de barras + poucos campos (<code>material</code>, <code>lote</code>, <code>quantidade</code>). Útil para etiquetas genéricas, sem o layout completo de pesagem.</p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <button type="button" onclick="document.getElementById('doc-zpl-default').open()"
+            style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:10px 18px;border:1px solid #9A7520;border-radius:7px;background:#fff;color:#9A7520;cursor:pointer">🏷️ Reimprimir (Simples)</button>
+          <div id="doc-zpl-default-status" style="font-size:12px;color:#8A9E8E;margin-top:8px"></div>
+          <granado-zpl-popup id="doc-zpl-default" type="default" open="false"></granado-zpl-popup>
+        </div>
+        <script>
+          (function () {
+            var pop = document.getElementById('doc-zpl-default');
+            pop.data = {
+              etiqueta: 'Etiqueta Nº 7953072',
+              titulo: 'ETIQUETA MP', noEtiqueta: '7953072',
+              material: 'M9808 - MANTEIGA DE MURUMURU STD (SAB)',
+              lote: '0273826', quantidade: '3,120 KG',
+              barcode: '#P12814471417953072', impressoPor: 'Claudinei', impressoEm: '31/03/2026 08:05',
+              impressoras: [
+                { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' },
+                { id: 'PRN-LAB', descricao: 'Zebra GK420t (Laboratório)' }
+              ],
+              impressora: { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' }, copias: 1
+            };
+            pop.addEventListener('reimprimir', function (e) {
+              var s = document.getElementById('doc-zpl-default-status');
+              if (s) s.textContent = e.detail.impressora ? ('✅ ' + e.detail.impressora.id + ' · ' + e.detail.copias + 'x') : '⚠ Nenhuma impressora';
+              pop.close();
+            });
+          })();
+        </script>
+        <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-zpl-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"pop"</span> <span class="tk-attr">type</span>=<span class="tk-str">"default"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span><span class="tk-tag">&gt;&lt;/granado-zpl-popup&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">var</span> pop = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'pop'</span>);
+  pop.data = {
+    titulo: <span class="tk-str">'ETIQUETA MP'</span>, noEtiqueta: <span class="tk-str">'7953072'</span>,
+    material: <span class="tk-str">'M9808 - MANTEIGA DE MURUMURU STD (SAB)'</span>,
+    lote: <span class="tk-str">'0273826'</span>, quantidade: <span class="tk-str">'3,120 KG'</span>,
+    barcode: <span class="tk-str">'#P12814471417953072'</span>,
+    impressoras: [ { id: <span class="tk-str">'PRN-BOX3'</span>, descricao: <span class="tk-str">'Zebra ZD420 (Box Pesagem)'</span> } ]
+  };
+  pop.<span class="tk-attr">addEventListener</span>(<span class="tk-str">'reimprimir'</span>, <span class="tk-keyword">function</span> (e) { imprimir(e.detail.impressora, e.detail.copias); pop.<span class="tk-attr">close</span>(); });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — <code>type="reidentificacao"</code></h2>
+        <p class="gd-lead">Etiqueta de <strong>Reidentificação de Material</strong> — cabeçalho (título + RA), OUN / Item / TP Cont / Código Container, descrição + Nota Fiscal / Receb, código de barras, Quantidade / UM / Volume / Validade / Nº Etiqueta e Fornecedor / Lote.</p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <button type="button" onclick="document.getElementById('doc-zpl-reid').open()"
+            style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:10px 18px;border:1px solid #9A7520;border-radius:7px;background:#9A7520;color:#fff;cursor:pointer">🏷️ Reidentificação de material</button>
+          <div id="doc-zpl-reid-status" style="font-size:12px;color:#8A9E8E;margin-top:8px"></div>
+          <granado-zpl-popup id="doc-zpl-reid" type="reidentificacao" open="false"></granado-zpl-popup>
+        </div>
+        <script>
+          (function () {
+            var pop = document.getElementById('doc-zpl-reid');
+            pop.data = {
+              etiqueta: 'Etiqueta Nº 7953048',
+              titulo: 'REIDENTIFICACAO MATERIAL', ra: '0134226', oun: 'OUN14', item: 'M0618',
+              tpCont: 'TP', codigoContainer: 'TP003', descricaoContainer: 'L58 x P58 x A89 - PB 19KG',
+              descricao: 'ESS. ITALIAN LEMON BODY CARE', notaFiscal: '660997', receb: '12/02/26',
+              barcode: '#D1M0618013422617953048', quantidade: '8,200', um: 'KG', volume: '1/1',
+              dataVencimento: '26/01/27', noEtiqueta: '7953048',
+              fornecedor: 'GIVAUDAN DO BRASIL LTDA', loteFornece: 'SXD0381770',
+              impressoPor: 'Claudinei', impressoEm: '19/03/2026 08:05',
+              impressoras: [
+                { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' },
+                { id: 'PRN-LAB', descricao: 'Zebra GK420t (Laboratório)' }
+              ],
+              impressora: { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' }, copias: 1
+            };
+            pop.addEventListener('reimprimir', function (e) {
+              var s = document.getElementById('doc-zpl-reid-status');
+              if (s) s.textContent = e.detail.impressora ? ('✅ ' + e.detail.impressora.id + ' · ' + e.detail.copias + 'x') : '⚠ Nenhuma impressora';
+              pop.close();
+            });
+          })();
+        </script>
+        <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-zpl-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"pop"</span> <span class="tk-attr">type</span>=<span class="tk-str">"reidentificacao"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span><span class="tk-tag">&gt;&lt;/granado-zpl-popup&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">var</span> pop = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'pop'</span>);
+  pop.data = {
+    titulo: <span class="tk-str">'REIDENTIFICACAO MATERIAL'</span>, ra: <span class="tk-str">'0134226'</span>, oun: <span class="tk-str">'OUN14'</span>, item: <span class="tk-str">'M0618'</span>,
+    tpCont: <span class="tk-str">'TP'</span>, codigoContainer: <span class="tk-str">'TP003'</span>, descricaoContainer: <span class="tk-str">'L58 x P58 x A89 - PB 19KG'</span>,
+    descricao: <span class="tk-str">'ESS. ITALIAN LEMON BODY CARE'</span>, notaFiscal: <span class="tk-str">'660997'</span>, receb: <span class="tk-str">'12/02/26'</span>,
+    barcode: <span class="tk-str">'#D1M0618013422617953048'</span>, quantidade: <span class="tk-str">'8,200'</span>, um: <span class="tk-str">'KG'</span>, volume: <span class="tk-str">'1/1'</span>,
+    dataVencimento: <span class="tk-str">'26/01/27'</span>, noEtiqueta: <span class="tk-str">'7953048'</span>,
+    fornecedor: <span class="tk-str">'GIVAUDAN DO BRASIL LTDA'</span>, loteFornece: <span class="tk-str">'SXD0381770'</span>,
+    impressoras: [ { id: <span class="tk-str">'PRN-BOX3'</span>, descricao: <span class="tk-str">'Zebra ZD420 (Box Pesagem)'</span> } ]
+  };
+  pop.<span class="tk-attr">addEventListener</span>(<span class="tk-str">'reimprimir'</span>, <span class="tk-keyword">function</span> (e) { imprimir(e.detail.impressora, e.detail.copias); pop.<span class="tk-attr">close</span>(); });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
         <h2 class="gd-h2">API</h2>
 
         <h3 class="gd-h3">Atributos</h3>
@@ -11134,7 +11330,7 @@ setTimeout(<span class="tk-key">() =&gt;</span> GranadoPopupLoading.hide(), 2800
               <td class="col-name">type</td>
               <td class="col-type">string</td>
               <td class="col-default">"pesagem"</td>
-              <td class="col-desc">Tipo da etiqueta. Define o layout do preview e os campos esperados em <code>data</code>. Atuais: <code>pesagem</code> e <code>pesagem-gaiola</code> (ver campos no <a class="gd-link" href="#granado-zpl">granado-zpl</a>).</td>
+              <td class="col-desc">Tipo da etiqueta. Define o layout do preview e os campos esperados em <code>data</code>. Atuais: <code>pesagem</code>, <code>pesagem-gaiola</code> (ver campos no <a class="gd-link" href="#granado-zpl">granado-zpl</a>), <code>default</code> (etiqueta simples: <code>material</code>, <code>lote</code>, <code>quantidade</code>, <code>barcode</code>) e <code>reidentificacao</code> (reidentificação de material: <code>ra</code>, <code>oun</code>, <code>item</code>, <code>codigoContainer</code>, <code>descricao</code>, <code>notaFiscal</code>, <code>quantidade</code>, <code>dataVencimento</code>, <code>fornecedor</code>, <code>loteFornece</code>, ...).</td>
             </tr>
             <tr>
               <td class="col-name">data</td>

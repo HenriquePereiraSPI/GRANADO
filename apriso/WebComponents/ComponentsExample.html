@@ -1494,12 +1494,6 @@
         }'></granado-zpl>
       </div>
 
-      <!-- Exemplo — via JavaScript (.data) -->
-      <div>
-        <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E;margin-bottom:6px">via JS (.data)</div>
-        <granado-zpl id="zpl-demo" type="pesagem"></granado-zpl>
-      </div>
-
       <!-- Exemplo — type="pesagem-gaiola" com data inline (JSON) -->
       <div>
         <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E;margin-bottom:6px">type="pesagem-gaiola" · data inline (JSON)</div>
@@ -1513,22 +1507,33 @@
         }'></granado-zpl>
       </div>
 
+      <!-- Exemplo — type="default" com data inline (JSON) -->
+      <div>
+        <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E;margin-bottom:6px">type="default" · data inline (JSON)</div>
+        <granado-zpl type="default" data='{
+          "titulo":"ETIQUETA MP","noEtiqueta":"7953072",
+          "material":"M9808 - MANTEIGA DE MURUMURU STD (SAB)",
+          "lote":"0273826","quantidade":"3,120 KG",
+          "barcode":"#P12814471417953072",
+          "impressoPor":"Claudinei","impressoEm":"31/03/2026 08:05"
+        }'></granado-zpl>
+      </div>
+
+      <!-- Exemplo — type="reidentificacao" com data inline (JSON) -->
+      <div>
+        <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E;margin-bottom:6px">type="reidentificacao" · data inline (JSON)</div>
+        <granado-zpl type="reidentificacao" data='{
+          "titulo":"REIDENTIFICACAO MATERIAL","ra":"0134226","oun":"OUN14","item":"M0618",
+          "tpCont":"TP","codigoContainer":"TP003","descricaoContainer":"L58 x P58 x A89 - PB 19KG",
+          "descricao":"ESS. ITALIAN LEMON BODY CARE","notaFiscal":"660997","receb":"12/02/26",
+          "barcode":"#D1M0618013422617953048","quantidade":"8,200","um":"KG","volume":"1/1",
+          "dataVencimento":"26/01/27","noEtiqueta":"7953048",
+          "fornecedor":"GIVAUDAN DO BRASIL LTDA","loteFornece":"SXD0381770",
+          "impressoPor":"Claudinei","impressoEm":"19/03/2026 08:05"
+        }'></granado-zpl>
+      </div>
+
     </div>
-    <script>
-      (function () {
-        var z = document.getElementById('zpl-demo');
-        if (!z) return;
-        z.data = {
-          titulo: 'PESAGEM DE MATERIAL', dataImpressao: '31/03/2026',
-          ordemFabricacao: '784426', loteGranel: '0262/2026', dataPesagem: '31/03/2026 09:10', aprovado: true,
-          granelResultante: 'PA 262417 - SHAMPOO PHEBO', materiaPrima: 'MP-0001 - AQUA (AGUA PURIFICADA)',
-          loteMP: 'AGUA-2026-03', validade: '12/2026', tipoPesagem: 'SIMPLES', qtdOrdem: '412,500 KG',
-          pesadoPor: 'J. SANTOS', matricula: '000155', balanca: '03', tara: '0,000 KG', pesoBruto: '411,840 KG', noEtiqueta: '8112045',
-          barcode: '#P26241708112045', pesoLiquido: '411,840 KG',
-          impressoPor: 'J. Santos', impressoEm: '31/03/2026 09:11'
-        };
-      })();
-    </script>
   </section>
 
   <!-- ========== Linha 28 — granado-zpl-popup ========== -->
@@ -1554,6 +1559,22 @@
         </button>
         <div id="zpl-popup-gaiola-status" style="font-size:11px;color:#8A9E8E;margin-top:8px"></div>
       </div>
+      <div>
+        <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E;margin-bottom:6px">type="default" · etiqueta simples</div>
+        <button type="button" onclick="document.getElementById('zpl-popup-default').open()"
+          style="font:600 13px/1.4 'Poppins',system-ui,Arial,sans-serif;font-weight:700;padding:10px 18px;border:1px solid #C8A84B;border-radius:7px;background:#fff;color:#9A7520;cursor:pointer">
+          🖨️ Reimprimir etiqueta simples
+        </button>
+        <div id="zpl-popup-default-status" style="font-size:11px;color:#8A9E8E;margin-top:8px"></div>
+      </div>
+      <div>
+        <div style="font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#8A9E8E;margin-bottom:6px">type="reidentificacao"</div>
+        <button type="button" onclick="document.getElementById('zpl-popup-reid').open()"
+          style="font:600 13px/1.4 'Poppins',system-ui,Arial,sans-serif;font-weight:700;padding:10px 18px;border:1px solid #C8A84B;border-radius:7px;background:#C8A84B;color:#0F3319;cursor:pointer">
+          🏷️ Reidentificação de material
+        </button>
+        <div id="zpl-popup-reid-status" style="font-size:11px;color:#8A9E8E;margin-top:8px"></div>
+      </div>
     </div>
 
     <!-- O popup começa oculto (open="false"); o botão acima chama .open().
@@ -1563,6 +1584,12 @@
 
     <granado-zpl-popup id="zpl-popup-gaiola" type="pesagem-gaiola" open="false"
       onPrintClick="onPrintClickGaiola(detail)"></granado-zpl-popup>
+
+    <granado-zpl-popup id="zpl-popup-default" type="default" open="false"
+      onPrintClick="onPrintClickDefault(detail)"></granado-zpl-popup>
+
+    <granado-zpl-popup id="zpl-popup-reid" type="reidentificacao" open="false"
+      onPrintClick="onPrintClickReid(detail)"></granado-zpl-popup>
 
     <script>
       // Handler do botão "Reimprimir" do popup
@@ -1577,6 +1604,18 @@
         var imp = detail.impressora;
         if (st) st.textContent = imp ? ('✅ Reimpressão solicitada em: ' + imp.id + ' — ' + imp.descricao + ' · ' + detail.copias + ' cópia(s)') : '⚠ Nenhuma impressora selecionada';
         document.getElementById('zpl-popup-gaiola').close();
+      }
+      function onPrintClickDefault(detail) {
+        var st = document.getElementById('zpl-popup-default-status');
+        var imp = detail.impressora;
+        if (st) st.textContent = imp ? ('✅ Reimpressão solicitada em: ' + imp.id + ' — ' + imp.descricao + ' · ' + detail.copias + ' cópia(s)') : '⚠ Nenhuma impressora selecionada';
+        document.getElementById('zpl-popup-default').close();
+      }
+      function onPrintClickReid(detail) {
+        var st = document.getElementById('zpl-popup-reid-status');
+        var imp = detail.impressora;
+        if (st) st.textContent = imp ? ('✅ Reimpressão solicitada em: ' + imp.id + ' — ' + imp.descricao + ' · ' + detail.copias + ' cópia(s)') : '⚠ Nenhuma impressora selecionada';
+        document.getElementById('zpl-popup-reid').close();
       }
       (function () {
         var pop = document.getElementById('zpl-popup-demo');
@@ -1607,6 +1646,38 @@
           lote: '1621/2026', usuario: 'VALMIR', matricula: '102266', noGaiola: '563943',
           barcode: '#G1563943:771166:7951496',
           impressoPor: 'Claudinei', impressoEm: '31/03/2026 08:05',
+          impressoras: [
+            { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' },
+            { id: 'PRN-LAB', descricao: 'Zebra GK420t (Laboratório)' }
+          ],
+          impressora: { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' }
+        };
+
+        var popD = document.getElementById('zpl-popup-default');
+        if (popD) popD.data = {
+          etiqueta: 'Etiqueta Nº 7953072',
+          titulo: 'ETIQUETA MP', noEtiqueta: '7953072',
+          material: 'M9808 - MANTEIGA DE MURUMURU STD (SAB)',
+          lote: '0273826', quantidade: '3,120 KG',
+          barcode: '#P12814471417953072',
+          impressoPor: 'Claudinei', impressoEm: '31/03/2026 08:05',
+          impressoras: [
+            { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' },
+            { id: 'PRN-LAB', descricao: 'Zebra GK420t (Laboratório)' }
+          ],
+          impressora: { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' }
+        };
+
+        var popR = document.getElementById('zpl-popup-reid');
+        if (popR) popR.data = {
+          etiqueta: 'Etiqueta Nº 7953048',
+          titulo: 'REIDENTIFICACAO MATERIAL', ra: '0134226', oun: 'OUN14', item: 'M0618',
+          tpCont: 'TP', codigoContainer: 'TP003', descricaoContainer: 'L58 x P58 x A89 - PB 19KG',
+          descricao: 'ESS. ITALIAN LEMON BODY CARE', notaFiscal: '660997', receb: '12/02/26',
+          barcode: '#D1M0618013422617953048', quantidade: '8,200', um: 'KG', volume: '1/1',
+          dataVencimento: '26/01/27', noEtiqueta: '7953048',
+          fornecedor: 'GIVAUDAN DO BRASIL LTDA', loteFornece: 'SXD0381770',
+          impressoPor: 'Claudinei', impressoEm: '19/03/2026 08:05',
           impressoras: [
             { id: 'PRN-BOX3', descricao: 'Zebra ZD420 (Box Pesagem)' },
             { id: 'PRN-LAB', descricao: 'Zebra GK420t (Laboratório)' }

@@ -17,6 +17,14 @@
         titulo, dataImpressao, ordemFabricacao, gaiola, granelResultante,
         noEtiqueta, lote, usuario, matricula, noGaiola, barcode,
         impressoPor, impressoEm
+     type="default" - Etiqueta simples (código de barras + poucos campos).
+        Campos em "data": titulo, material, lote, quantidade, barcode,
+        noEtiqueta (opcional), impressoPor/impressoEm (opcionais).
+     type="reidentificacao" - Reidentificação de Material. Campos em "data":
+        titulo, ra, oun, item, tpCont, codigoContainer, descricaoContainer,
+        descricao, notaFiscal, receb, barcode, quantidade, um, volume,
+        dataVencimento, noEtiqueta, fornecedor, loteFornece,
+        impressoPor, impressoEm
 
    ── Atributos
      type   - tipo da etiqueta (default "pesagem")
@@ -98,6 +106,7 @@ if (!customElements.get('granado-zpl')) {
       return String(s == null ? '' : s)
         .split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;');
     }
+    _has(v) { return v != null && String(v) !== ''; }
     // Campo: rótulo pequeno (maiúsculo) + valor.
     _campo(label, valor, valSize) {
       return `<div style="padding:5px 8px"><div style="font-size:8px;font-weight:700;letter-spacing:.03em;color:${INK}">${this._esc(label)}</div>` +
@@ -106,8 +115,9 @@ if (!customElements.get('granado-zpl')) {
     // Divisória horizontal.
     _hr() { return `<div style="border-top:2px solid ${INK}"></div>`; }
     // Barras "código de barras" determinísticas a partir do texto.
-    _barcode(code) {
+    _barcode(code, h) {
       const s = String(code || '');
+      const H = h || 56;
       let bars = '';
       for (let i = 0; i < s.length; i++) {
         const c = s.charCodeAt(i);
@@ -116,7 +126,7 @@ if (!customElements.get('granado-zpl')) {
         bars += `<span style="display:inline-block;width:${w}px;height:100%;background:${INK}"></span>`;
         bars += `<span style="display:inline-block;width:${g}px;height:100%;background:#fff"></span>`;
       }
-      return `<div style="display:flex;align-items:flex-end;height:56px;overflow:hidden">${bars}</div>` +
+      return `<div style="display:flex;align-items:flex-end;height:${H}px;overflow:hidden">${bars}</div>` +
         `<div style="font-family:${MONO};font-size:11px;letter-spacing:.05em;margin-top:3px;color:${INK}">${this._esc(s)}</div>`;
     }
 
@@ -129,6 +139,8 @@ if (!customElements.get('granado-zpl')) {
       let inner;
       if (type === 'pesagem') inner = this._renderPesagem(this.data || {});
       else if (type === 'pesagem-gaiola') inner = this._renderPesagemGaiola(this.data || {});
+      else if (type === 'default') inner = this._renderDefault(this.data || {});
+      else if (type === 'reidentificacao') inner = this._renderReidentificacao(this.data || {});
       else inner = `<div style="font-family:${MONO};font-size:12px;color:#8C1A1A;padding:16px">granado-zpl: tipo "${this._esc(type)}" não suportado.</div>`;
 
       // "Papel" da etiqueta: borda dupla (externa fina + moldura interna),
@@ -269,6 +281,121 @@ if (!customElements.get('granado-zpl')) {
         `</div>`;
 
       return sec1 + this._hr() + sec2 + this._hr() + sec3 + this._hr() + sec4 + this._hr() + sec5 + this._hr() + sec6;
+    }
+
+    // type="default" — Etiqueta simples: código de barras + Material / Lote / Quantidade.
+    _renderDefault(d) {
+      const cv = (l, v, s) => this._campo(l, v, s);
+      const vdiv = `border-right:2px solid ${INK}`;
+
+      const sec1 =
+        `<div style="display:flex;align-items:flex-start;justify-content:space-between;padding:8px 8px 6px">` +
+          `<div style="font-size:18px;font-weight:800;letter-spacing:.02em;color:${INK}">${this._esc(d.titulo) || 'ETIQUETA'}</div>` +
+          (this._has(d.noEtiqueta)
+            ? `<div style="text-align:right"><div style="font-size:8px;font-weight:700;color:${INK}">No ETIQUETA</div>` +
+                `<div style="font-family:${MONO};font-size:12px;font-weight:800;color:${INK}">${this._esc(d.noEtiqueta)}</div></div>`
+            : '') +
+        `</div>`;
+
+      const sec2 = this._campo('MATERIAL', d.material, 15);
+
+      const sec3 =
+        `<div style="display:flex">` +
+          `<div style="flex:1;${vdiv}">${cv('LOTE', d.lote, 15)}</div>` +
+          `<div style="flex:1">${cv('QUANTIDADE', d.quantidade, 15)}</div>` +
+        `</div>`;
+
+      const sec4 = `<div style="padding:12px 8px;display:flex;flex-direction:column;align-items:center;min-width:0">${this._barcode(d.barcode)}</div>`;
+
+      const footer = (this._has(d.impressoPor) || this._has(d.impressoEm))
+        ? this._hr() +
+          `<div style="display:flex;justify-content:space-between;padding:6px 8px;font-size:9px;color:${INK}">` +
+            `<span>Impresso por: ${this._esc(d.impressoPor)}</span>` +
+            `<span>Impresso em: ${this._esc(d.impressoEm)}</span>` +
+          `</div>`
+        : '';
+
+      return sec1 + this._hr() + sec2 + this._hr() + sec3 + this._hr() + sec4 + footer;
+    }
+
+    // type="reidentificacao" — Reidentificação de Material.
+    _renderReidentificacao(d) {
+      const cv = (l, v, s) => this._campo(l, v, s);
+      const vdiv = `border-right:2px solid ${INK}`;
+
+      // Cabeçalho invertido: título + RA.
+      const header =
+        `<div style="display:flex;align-items:center;justify-content:space-between;background:${INK};color:#fff;padding:8px 10px">` +
+          `<div style="font-size:16px;font-weight:800;letter-spacing:.02em">${this._esc(d.titulo) || 'REIDENTIFICACAO MATERIAL'}</div>` +
+          `<div style="text-align:right"><div style="font-size:8px;font-weight:700">RA</div>` +
+            `<div style="font-size:15px;font-weight:800">${this._esc(d.ra) || '&nbsp;'}</div></div>` +
+        `</div>`;
+
+      // Seção 2: OUN (código de barras) + ITEM + TP CONT + CODIGO CONTAINER.
+      const ounCol =
+        `<div style="flex:0 0 24%;${vdiv};padding:6px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0">` +
+          this._barcode(d.oun, 30) +
+        `</div>`;
+      const itemCol =
+        `<div style="flex:1;${vdiv};padding:5px 8px">` +
+          `<div style="font-size:8px;font-weight:700;color:${INK}">ITEM</div>` +
+          `<div style="font-size:22px;font-weight:800;color:${INK}">${this._esc(d.item) || '&nbsp;'}</div>` +
+        `</div>`;
+      const tpCol =
+        `<div style="flex:0 0 18%;${vdiv};padding:5px 8px">` +
+          `<div style="font-size:8px;font-weight:700;color:${INK}">TP CONT</div>` +
+          `<div style="display:inline-block;background:${INK};color:#fff;font-size:16px;font-weight:800;padding:2px 8px;margin-top:3px">${this._esc(d.tpCont) || '&nbsp;'}</div>` +
+        `</div>`;
+      const contCol =
+        `<div style="flex:1;padding:5px 8px;min-width:0">` +
+          `<div style="font-size:8px;font-weight:700;color:${INK}">CODIGO CONTAINER</div>` +
+          `<div style="font-size:15px;font-weight:800;color:${INK}">${this._esc(d.codigoContainer) || '&nbsp;'}</div>` +
+          (this._has(d.descricaoContainer) ? `<div style="font-size:9px;color:${INK};margin-top:2px;word-break:break-word">${this._esc(d.descricaoContainer)}</div>` : '') +
+        `</div>`;
+      const sec2 = `<div style="display:flex;align-items:stretch">${ounCol}${itemCol}${tpCol}${contCol}</div>`;
+
+      // Seção 3: Descrição (invertido) + Nota Fiscal + Receb.
+      const sec3 =
+        `<div style="background:${INK};color:#fff;padding:8px 10px">` +
+          `<div style="font-size:8px;font-weight:700">DESCRICAO</div>` +
+          `<div style="font-size:18px;font-weight:800;line-height:1.15;margin-top:2px;word-break:break-word">${this._esc(d.descricao) || '&nbsp;'}</div>` +
+          (this._has(d.item) ? `<div style="font-size:9px;font-weight:700;margin-top:2px">${this._esc(d.item)}</div>` : '') +
+          `<div style="display:flex;gap:18px;margin-top:6px;font-size:11px;font-weight:700">` +
+            `<span>NOTA FISCAL: ${this._esc(d.notaFiscal) || '—'}</span>` +
+            `<span>RECEB: ${this._esc(d.receb) || '—'}</span>` +
+          `</div>` +
+        `</div>`;
+
+      // Código de barras principal.
+      const bc = `<div style="padding:10px 8px;display:flex;flex-direction:column;align-items:center;min-width:0">${this._barcode(d.barcode)}</div>`;
+
+      // Seção 5: Quantidade / UM / Volume / Data Vencimento / No Etiqueta.
+      const sec5 =
+        `<div style="display:flex">` +
+          `<div style="flex:1.2;${vdiv}">${cv('QUANTIDADE', d.quantidade, 20)}</div>` +
+          `<div style="flex:.6;${vdiv}">${cv('UM', d.um, 20)}</div>` +
+          `<div style="flex:.8;${vdiv}">${cv('VOLUME', d.volume, 20)}</div>` +
+          `<div style="flex:1.3;${vdiv}">${cv('DATA VENCIMENTO', d.dataVencimento, 15)}</div>` +
+          `<div style="flex:1.1">${cv('No ETIQUETA', d.noEtiqueta, 15)}</div>` +
+        `</div>`;
+
+      // Seção 6: Fornecedor / Lote Fornecedor.
+      const sec6 =
+        `<div style="display:flex">` +
+          `<div style="flex:1;${vdiv}">${cv('FORNECE.', d.fornecedor, 13)}</div>` +
+          `<div style="flex:.9">${cv('LOTE FORNECE.', d.loteFornece, 13)}</div>` +
+        `</div>`;
+
+      // Rodapé (só se informado).
+      const footer = (this._has(d.impressoPor) || this._has(d.impressoEm))
+        ? this._hr() +
+          `<div style="display:flex;justify-content:space-between;padding:6px 8px;font-size:9px;color:${INK}">` +
+            `<span>Impresso por: ${this._esc(d.impressoPor)}</span>` +
+            `<span>Impresso em: ${this._esc(d.impressoEm)}</span>` +
+          `</div>`
+        : '';
+
+      return header + sec2 + this._hr() + sec3 + this._hr() + bc + this._hr() + sec5 + this._hr() + sec6 + footer;
     }
   }
 
