@@ -2218,10 +2218,11 @@ poppins-700.woff2
         <h2 class="gd-h2">Inputs</h2>
         <p class="gd-lead">Corpo da requisição (JSON):</p>
         <pre class="gd-code">{
-  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000001"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"123456"</span><span class="tk-punc">,</span>
   <span class="tk-key">"WorkCenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD1_SALA1"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100005"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"DestinationContainer"</span><span class="tk-punc">:</span> <span class="tk-str">"G000019"</span>
+  <span class="tk-key">"WeighLineDetailID"</span><span class="tk-punc">:</span> <span class="tk-str">"100965, 100966, 100968, 100970"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"OriginContainer"</span><span class="tk-punc">:</span> <span class="tk-str">"G000328"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"DestinationContainer"</span><span class="tk-punc">:</span> <span class="tk-str">"G000359"</span>
 }</pre>
 
         <h3 class="gd-h3">Campos de entrada</h3>
@@ -2251,13 +2252,19 @@ poppins-700.woff2
               <td class="col-name">WeighLineDetailID</td>
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
-              <td class="col-desc">ID do detalhe da linha de pesagem (a MP que será movida).</td>
+              <td class="col-desc">ID(s) do detalhe da linha de pesagem (a(s) MP(s) que serão movidas). Aceita <strong>vários IDs separados por vírgula</strong> — ex.: <code>"100965, 100966, 100968, 100970"</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">OriginContainer</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Gaiola de <strong>origem</strong> onde as MPs estão atualmente (ex.: <code>"G000328"</code>).</td>
             </tr>
             <tr>
               <td class="col-name">DestinationContainer</td>
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
-              <td class="col-desc">Gaiola de destino para onde a MP será movida (ex.: <code>"G000019"</code>).</td>
+              <td class="col-desc">Gaiola de <strong>destino</strong> para onde as MPs serão movidas (ex.: <code>"G000359"</code>).</td>
             </tr>
           </tbody>
         </table>
