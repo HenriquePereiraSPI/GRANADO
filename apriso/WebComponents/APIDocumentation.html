@@ -1794,7 +1794,8 @@ poppins-700.woff2
         <pre class="gd-code">{
   <span class="tk-key">"OrderNumber"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000010"</span><span class="tk-punc">,</span>
   <span class="tk-key">"CountCages"</span><span class="tk-punc">:</span> <span class="tk-str">"5"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"CageType"</span><span class="tk-punc">:</span> <span class="tk-str">"FISICO"</span>
+  <span class="tk-key">"CageType"</span><span class="tk-punc">:</span> <span class="tk-str">"FISICO"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"CageLocation"</span><span class="tk-punc">:</span> <span class="tk-str">"L1544SE"</span>
 }</pre>
 
         <h3 class="gd-h3">Campos de entrada</h3>
@@ -1825,6 +1826,12 @@ poppins-700.woff2
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
               <td class="col-desc">Tipo da gaiola: <code>"FISICO"</code> (container físico) ou <code>"VIRTUAL"</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">CageLocation</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Localização da gaiola (ex.: <code>"L1544SE"</code>).</td>
             </tr>
           </tbody>
         </table>
@@ -4797,6 +4804,9 @@ poppins-700.woff2
     { <span class="tk-key">"RoleID"</span><span class="tk-punc">:</span> <span class="tk-str">"10210"</span><span class="tk-punc">,</span> <span class="tk-key">"RoleCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Cockpit User"</span> }<span class="tk-punc">,</span>
     { <span class="tk-key">"RoleID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000004"</span><span class="tk-punc">,</span> <span class="tk-key">"RoleCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Cube Editor"</span> }<span class="tk-punc">,</span>
     { <span class="tk-key">"RoleID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000020"</span><span class="tk-punc">,</span> <span class="tk-key">"RoleCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Cube View Designer"</span> }
+  ]<span class="tk-punc">,</span>
+  <span class="tk-key">"UserCharacteristiscs"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"Characteristic"</span><span class="tk-punc">:</span> <span class="tk-str">"MATRICULA_ENABLEY"</span><span class="tk-punc">,</span> <span class="tk-key">"CharacteristicValue"</span><span class="tk-punc">:</span> <span class="tk-str">"123456"</span> }
   ]
 }</pre>
 
@@ -4810,6 +4820,7 @@ poppins-700.woff2
             <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
             <tr><td class="col-name">User</td><td class="col-type">object</td><td class="col-desc">Dados do usuário atual. Campos abaixo.</td></tr>
             <tr><td class="col-name">UserRoles</td><td class="col-type">array&lt;object&gt;</td><td class="col-desc">Roles (perfis) atribuídas ao usuário. Campos abaixo.</td></tr>
+            <tr><td class="col-name">UserCharacteristiscs</td><td class="col-type">array&lt;object&gt;</td><td class="col-desc">Características (parâmetros) do usuário. Campos abaixo.</td></tr>
           </tbody>
         </table>
 
@@ -4831,6 +4842,15 @@ poppins-700.woff2
           <tbody>
             <tr><td class="col-name">RoleID</td><td class="col-type">string</td><td class="col-desc">Identificador da role.</td></tr>
             <tr><td class="col-name">RoleCode</td><td class="col-type">string</td><td class="col-desc">Código/nome da role (ex.: <code>"Account Administrator"</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada <code>UserCharacteristiscs</code></h3>
+        <table class="gd-api">
+          <thead><tr><th style="width:220px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">Characteristic</td><td class="col-type">string</td><td class="col-desc">Nome da característica/parâmetro (ex.: <code>"MATRICULA_ENABLEY"</code>).</td></tr>
+            <tr><td class="col-name">CharacteristicValue</td><td class="col-type">string</td><td class="col-desc">Valor da característica (ex.: <code>"123456"</code>).</td></tr>
           </tbody>
         </table>
 
