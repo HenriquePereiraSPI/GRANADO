@@ -1,3 +1,8 @@
+// FUNÇÂO CRIADA PARA MOSTRAR QUE ESTÁ EM DESENVOLVIMENTO
+function emDesenvolvimento() {
+    alert('Funcionalidade em desenvolvimento');
+}
+
 
 function initSidebarEvents() {
     var sidebar = document.querySelector('.sidebar');
@@ -149,4 +154,34 @@ function updateResponsiveLayoutDash(isMobile) {
 
     document.documentElement.classList.toggle("is-granado-mobile", isMobile);
 
+}
+
+async function aplicarModulos() {
+    var ctxSide = window.SidebarContext;
+
+    var info = await callDFCAsync(ctxSide, 'GRD_API_GetCurrentUserInformation', {});
+    if (!info.responseResultData.Success) {
+        GranadoToast.error('Erro ao verificar permissões do usuário', { heading: 'Erro', duration: 5000 });
+        return;
+    }
+
+    var roles = JSON.parse(info.responseResultData.UserRoles);
+    var codigos = roles.map(function (r) { return String(r.RoleCode) });
+
+    var sidebar = document.querySelector('.sidebar');
+
+    sidebar.querySelectorAll('.sb-module').forEach(function (mod) {
+        var label = mod.querySelector('.sb-module-btn .sb-label');
+        if (!label) return;                          // sem rótulo → não é gated, fica visível
+
+        var role = label.textContent.trim();
+        var temRole = codigos.indexOf(role) !== -1;
+        mod.hidden = !temRole;                       // tem → aparece; não tem → some
+    });
+
+    sidebar.querySelectorAll('.sb-sub-item[data-role]').forEach(function (item) {
+        var role = item.dataset.role.trim();
+        var temRole = codigos.indexOf(role) !== -1;
+        item.style.display = temRole ? '' : 'none';   // tem → aparece; não tem → some
+    });
 }

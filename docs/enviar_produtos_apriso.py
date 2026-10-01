@@ -83,12 +83,31 @@ def main():
     p.add_argument("--delay", type=float, default=0.0)
     p.add_argument("--timeout", type=int, default=HTTP_TIMEOUT)
     p.add_argument("--no-verify-ssl", action="store_true")
+    p.add_argument("--codes-file", default=None,
+                   help="Arquivo texto com 1 product.productCode por linha; envia SOMENTE esses produtos.")
     args = p.parse_args()
 
     if not os.path.isfile(args.excel):
         sys.exit("ERRO: Excel nao encontrado: %s" % args.excel)
 
     df = pd.read_excel(args.excel, sheet_name=args.sheet, dtype=str)
+
+    # Filtro opcional por lista de codigos (product.productCode).
+    if args.codes_file:
+        if not os.path.isfile(args.codes_file):
+            sys.exit("ERRO: codes-file nao encontrado: %s" % args.codes_file)
+        with open(args.codes_file, encoding="utf-8") as fh:
+            codes = [ln.strip() for ln in fh if ln.strip()]
+        codes_set = set(codes)
+        pc = df["product.productCode"].astype(str).str.strip()
+        df = df[pc.isin(codes_set)].reset_index(drop=True)
+        achados = set(pc[pc.isin(codes_set)].tolist())
+        faltando = [c for c in codes if c not in achados]
+        print("Filtro por codigos: %d na lista — %d encontrados no Excel, %d ausentes."
+              % (len(codes), len(df), len(faltando)))
+        if faltando:
+            print("AUSENTES (nao enviados): " + ", ".join(faltando))
+
     total = len(df)
     end = total if args.limit is None else min(total, args.start + args.limit)
     df_slice = df.iloc[args.start:end]
