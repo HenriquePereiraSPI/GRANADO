@@ -53,3 +53,44 @@ function updateResponsiveLayoutHeader(isMobile) {
     document.getElementById("HEADER_MOBILE").style.display = isMobile ? "block" : "none";
 
 }
+
+
+function Logout_Apriso() {
+    GranadoOptionPopup.show({
+        type: 'warning',
+        title: 'Sair do sistema',
+        message: 'Deseja realmente fazer logout?',
+        buttons: [
+            { text: 'Cancelar', value: 'cancelar', variant: 'ghost' },
+            {
+                text: 'Sair', value: 'sair', variant: 'primary',
+                onClick: function () {
+                    _context = window.AprisoHeaderContext;
+                    _context.outputs.IsLogout = true;
+                    _context.outputs.Action = "LOGOUT";
+                    _context.submit();
+                }
+            }
+        ]
+    });
+}
+
+async function waitForDashboard() {
+
+    const maxAttempts = 20;
+    const interval = 500;
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+
+        if (window.top.location.href.includes("/apriso/apriso/#/dashboard/")) {
+
+            window.top.location.href =
+                window.top.location.origin +
+                "/apriso/Portal/UIService.aspx?Alias=GRD_MainDashboard";
+
+            return;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, interval));
+    }
+}

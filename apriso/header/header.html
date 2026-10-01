@@ -1,121 +1,142 @@
-<!-- ============================================================
-     ============================================================
-     ============================ WEB ===========================
-     ============================================================
-     ============================================================ -->
-<div id="HEADER_WEB">
-    <header class="topbar">
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-        <!-- ============ BREADCRUMB ============ -->
-        <div class="topbar-breadcrumb">
-            <button type="button" class="tb-home" data-flx-bind="Action" value="OPEN_HOME">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M3 12 12 3l9 9" />
-                    <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10" />
-                </svg>
-                <span class="tb-home__label">MES Apriso</span>
-            </button>
-            <span class="tb-sep" aria-hidden="true">&rsaquo;</span>
-            <strong class="tb-page">{ScreenTitle}</strong>
-        </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Header · MES Apriso</title>
 
-        <!-- ============ RIGHT ============ -->
-        <div class="topbar-right">
+    <!-- Componentes Granado usados pelo header (popup de confirmação, chamada de DFC,
+         preloader e toast do logout). -->
+    <script src="[AprisoScripts]/WebComponents/granado-base-api.js"></script>
+    <script src="[AprisoScripts]/WebComponents/granado-option-popup.js"></script>
+    <script src="[AprisoScripts]/WebComponents/granado-preloader.js"></script>
+    <script src="[AprisoScripts]/WebComponents/granado-toast.js"></script>
+</head>
 
-            <button type="button" class="tb-icon" data-flx-bind="Action_DDDD" value="OPEN_NOTIFICATIONS"
-                title="Notificacoes" aria-label="Notificacoes">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                </svg>
-                <span class="tb-icon-dot"></span>
-            </button>
+<body>
 
-            <div class="tb-user-wrap">
-                <button type="button" class="tb-user" title="Usuario" aria-label="Usuario" data-flx-bind="Action_DDDD"
-                    value="OPEN_USER_INFO">
-                    <span class="tb-user-avatar">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                            <circle cx="12" cy="7" r="4" />
-                        </svg>
-                    </span>
-                    <span class="tb-user-name">{UserName}</span>
+    <!-- ============================================================
+         ============================ WEB ===========================
+         ============================================================ -->
+    <div id="HEADER_WEB">
+        <header class="topbar">
+
+            <!-- ============ BREADCRUMB ============ -->
+            <div class="topbar-breadcrumb">
+                <button type="button" class="tb-home" data-flx-bind="Action" value="OPEN_HOME">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 12 12 3l9 9" />
+                        <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10" />
+                    </svg>
+                    <span class="tb-home__label">MES Apriso</span>
                 </button>
-
+                <span class="tb-sep" aria-hidden="true">&rsaquo;</span>
+                <strong class="tb-page">{ScreenTitle}</strong>
             </div>
 
-        </div>
+            <!-- ============ RIGHT ============ -->
+            <div class="topbar-right">
 
-    </header>
-</div>
-
-<!-- ============================================================
-     ============================================================
-     ========================== MOBILE ==========================
-     ============================================================
-     ============================================================ -->
-<div id="HEADER_MOBILE" style="display:none">
-    <header class="topbar topbar-mobile">
-
-        <!-- ============ MENU (abre o drawer da sidebar) ============ -->
-        <button type="button" class="tb-hamburger" aria-label="Abrir menu">
-            <span class="tb-hamburger-bar"></span>
-            <span class="tb-hamburger-bar"></span>
-            <span class="tb-hamburger-bar"></span>
-        </button>
-
-        <!-- ============ TÍTULO DA TELA ============ -->
-        <div class="topbar-breadcrumb">
-            <strong class="tb-page">{ScreenTitle}</strong>
-        </div>
-
-        <!-- ============ RIGHT (badge + usuário) ============ -->
-        <div class="topbar-right">
-
-            <span class="tb-logo-mobile"><span class="tb-logo-mark">G</span>GRANADO</span>
-
-            <div class="tb-user-wrap">
-                <button type="button" class="tb-user" title="Usuario" aria-label="Usuario" aria-haspopup="menu"
-                    aria-expanded="false">
-                    <span class="tb-user-avatar">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                            <circle cx="12" cy="7" r="4" />
-                        </svg>
-                    </span>
+                <button type="button" class="tb-icon" title="Notificacoes" aria-label="Notificacoes">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                    </svg>
+                    <span class="tb-icon-dot"></span>
                 </button>
 
-                <div class="tb-user-menu" role="menu">
-                    <button type="button" class="tb-user-menu-item" role="menuitem" data-flx-bind="Action"
-                        value="LOGOUT">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                            <polyline points="16 17 21 12 16 7" />
-                            <line x1="21" y1="12" x2="9" y2="12" />
-                        </svg>
-                        Sair
+                <div class="tb-user-wrap">
+                    <button type="button" class="tb-user" id="user-button" title="Sair" aria-label="Sair"
+                        onClick="Logout_Apriso()">
+                        <span class="tb-user-avatar">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                        </span>
+                        <span class="tb-user-name">{UserName}</span>
                     </button>
+
                 </div>
+
             </div>
 
-        </div>
+        </header>
+    </div>
 
-    </header>
-</div>
+    <!-- ============================================================
+         ========================== MOBILE ==========================
+         ============================================================ -->
+    <div id="HEADER_MOBILE" style="display:none">
+        <header class="topbar topbar-mobile">
+
+            <!-- ============ MENU (abre o drawer da sidebar) ============ -->
+            <button type="button" class="tb-hamburger" aria-label="Abrir menu">
+                <span class="tb-hamburger-bar"></span>
+                <span class="tb-hamburger-bar"></span>
+                <span class="tb-hamburger-bar"></span>
+            </button>
+
+            <!-- ============ TÍTULO DA TELA ============ -->
+            <div class="topbar-breadcrumb">
+                <strong class="tb-page">{ScreenTitle}</strong>
+            </div>
+
+            <!-- ============ RIGHT (badge + usuário) ============ -->
+            <div class="topbar-right">
+
+                <span class="tb-logo-mobile"><span class="tb-logo-mark">G</span>GRANADO</span>
+
+                <div class="tb-user-wrap">
+                    <button type="button" class="tb-user" title="Usuario" aria-label="Usuario" aria-haspopup="menu"
+                        aria-expanded="false">
+                        <span class="tb-user-avatar">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                        </span>
+                    </button>
+
+                    <div class="tb-user-menu" role="menu">
+                        <button type="button" class="tb-user-menu-item" onClick="Logout_Apriso()">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                <polyline points="16 17 21 12 16 7" />
+                                <line x1="21" y1="12" x2="9" y2="12" />
+                            </svg>
+                            Sair
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </header>
+    </div>
+
+</body>
+
+</html>
 
 <script>
     (function () {
 
         function init() {
 
+            if (typeof $Context !== 'undefined') {
+                window.AprisoHeaderContext = $Context;
+            }
+
             initHeaderEvents();
             initResponsiveLayoutHeader();
+            waitForDashboard();
 
         }
         // Garante que so roda depois do DOM montado
