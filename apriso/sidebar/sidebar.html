@@ -171,6 +171,21 @@
 
 <script>
     (function () {
+
+        // Ambiente (mesma lógica do header): marca a classe no <html> o quanto antes
+        // para o CSS pintar o sidebar já no 1º paint (sem "piscar"). Guarda evita
+        // duplicar caso o header já tenha marcado (mesmo documento).
+        (function () {
+            var root = document.documentElement;
+            if (/\benv-(dev|qa|prod)\b/.test(root.className)) return;
+            var o = '';
+            try { o = (window.top.location.origin || '').toLowerCase(); }
+            catch (e) { try { o = (window.location.origin || '').toLowerCase(); } catch (_) { o = ''; } }
+            if (o.indexOf('mes-teste.granado.com.br') !== -1) root.classList.add('env-nonprod', 'env-dev');
+            else if (o.indexOf('mes-web-qa.granado.com.br') !== -1) root.classList.add('env-nonprod', 'env-qa');
+            else root.classList.add('env-prod');
+        })();
+
         function init() {
 
             //console.log("CONTEXT FROM SIDEBAR:", JSON.stringify($Context));

@@ -336,6 +336,16 @@ html.is-granado-mobile #panel_SIDEBAR.drawer-open {
     background: transparent;
 }
 
+/* === Ambiente (classe no <html>): só muda o fundo do sidebar ===
+   DEV = azul · QA = marrom · PROD = mantém o verde padrão (var --grn-verde-esc). */
+.env-dev .sidebar {
+    background: #0B3550;
+}
+
+.env-qa .sidebar {
+    background: #3B2A20;
+}
+
 html.is-granado-mobile .sidebar {
     position: fixed;
     top: 0;

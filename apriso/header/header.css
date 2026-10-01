@@ -253,6 +253,187 @@
     }
 }
 
+/* === Badge de ambiente (DEV / QA) ===
+   Já vem no HTML (os dois), OCULTO por padrão; o CSS mostra só o do ambiente
+   atual (classe no <html>). Pílula de contorno dourado + texto branco, com a
+   MESMA pulsação do logo da Granado (respiração + halo dourado que se expande). */
+.tb-env-badge {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: 12px;
+    padding: 4px 13px;
+    line-height: 1;
+    border-radius: 999px;
+    font-family: var(--grn-font-d);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: .16em;
+    color: #FFFFFF;
+    background: transparent;
+    border: 1px solid var(--grn-ouro);
+    box-shadow: 0 2px 6px rgba(15, 51, 25, .25), 0 0 0 0 rgba(200, 168, 75, .45);
+    animation: tb-env-pulse 2.6s ease-in-out infinite;
+}
+
+/* Mostra só o badge do ambiente atual (PROD não tem badge). */
+.env-dev .tb-env-badge--dev,
+.env-qa .tb-env-badge--qa {
+    display: inline-flex;
+}
+
+@keyframes tb-env-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 2px 6px rgba(15, 51, 25, .25), 0 0 0 0 rgba(200, 168, 75, .45);
+    }
+
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(15, 51, 25, .30), 0 0 0 12px rgba(200, 168, 75, 0);
+    }
+}
+
+/* === Tema por ambiente (classe no <html>): aplica no 1º paint, sem "piscar" === */
+
+/* --- DEV: azul (texto branco) --- */
+.env-dev .topbar {
+    background: linear-gradient(90deg, #0B3550 0%, #0B3550 90%, #28566D 100%);
+    color: #FFFFFF;
+}
+
+/* --- QA: marrom (texto branco) --- */
+.env-qa .topbar {
+    background: linear-gradient(90deg, #3B2A20 0%, #3B2A20 90%, #574034 100%);
+    color: #FFFFFF;
+}
+
+/* DEV + QA: textos claros sobre o fundo escuro. */
+.env-nonprod .topbar .tb-home,
+.env-nonprod .topbar .topbar-breadcrumb,
+.env-nonprod .topbar .tb-sep,
+.env-nonprod .topbar .tb-section,
+.env-nonprod .topbar .tb-page,
+.env-nonprod .topbar .tb-user-name,
+.env-nonprod .topbar .tb-logo-mobile {
+    color: #FFFFFF;
+}
+
+.env-nonprod .topbar .tb-hamburger-bar {
+    background: #FFFFFF;
+}
+
+/* DEV + QA: ícone de notificação e botão de usuário -> fundo TRANSPARENTE,
+   texto branco, BORDA mantida (a padrão). */
+.env-nonprod .topbar .tb-icon,
+.env-nonprod .topbar .tb-user {
+    background: transparent;
+    color: #FFFFFF;
+}
+
+/* DEV + QA: avatar do usuário sem o fundo verde (transparente). */
+.env-nonprod .topbar .tb-user-avatar {
+    background: transparent;
+}
+
+/* --- PROD: verde sólido (texto claro), SEM badge --- */
+.env-prod .topbar {
+    background: #0F3319;
+    color: #FDFAF1;
+}
+
+.env-prod .topbar .tb-home,
+.env-prod .topbar .topbar-breadcrumb,
+.env-prod .topbar .tb-sep,
+.env-prod .topbar .tb-section,
+.env-prod .topbar .tb-page,
+.env-prod .topbar .tb-logo-mobile {
+    color: #FDFAF1;
+}
+
+.env-prod .topbar .tb-hamburger-bar {
+    background: #FDFAF1;
+}
+
+/* PROD: ícones/usuário -> fundo dourado, texto verde, borda dourada. */
+.env-prod .topbar .tb-icon,
+.env-prod .topbar .tb-user {
+    color: var(--grn-verde-esc);
+    background: var(--grn-ouro-claro);
+    border-color: var(--grn-ouro);
+}
+
+.env-prod .topbar .tb-user-name {
+    color: var(--grn-verde-esc);
+}
+
+.env-prod .topbar .tb-icon-dot {
+    border-color: var(--grn-verde-esc);
+}
+
+/* === Seletor de TEMA (apenas no host DEV): ícone ao lado da notificação + menu === */
+.tb-theme-wrap {
+    position: relative;
+    display: none;
+}
+
+.env-host-dev .tb-theme-wrap,
+.env-host-qa .tb-theme-wrap {
+    display: inline-flex;
+}
+
+/* Flyout horizontal: abre para a ESQUERDA do ícone (não para baixo). */
+.tb-theme-menu {
+    display: none;
+    position: absolute;
+    right: calc(100% + 8px);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 99999;
+    padding: 4px;
+    background: var(--grn-surface);
+    border: 1px solid var(--grn-border);
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(15, 51, 25, .18);
+    white-space: nowrap;
+}
+
+.tb-theme-menu.open {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tb-theme-menu button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 11px;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--grn-text2);
+    font: 700 11px/1 var(--grn-font-b);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.tb-theme-menu button:hover {
+    background: var(--grn-surface2);
+    color: var(--grn-verde);
+}
+
+.tb-theme-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, .2);
+    flex-shrink: 0;
+}
+
 /* === Ícones do topo (notificação / usuário) === */
 .tb-icon {
     position: relative;
