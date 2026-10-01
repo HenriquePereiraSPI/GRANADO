@@ -305,9 +305,9 @@
     color: #FFFFFF;
 }
 
-/* --- QA: marrom (texto branco) --- */
+/* --- QA: vermelho-escuro (texto branco) --- */
 .env-qa .topbar {
-    background: linear-gradient(90deg, #3B2A20 0%, #3B2A20 90%, #574034 100%);
+    background: linear-gradient(90deg, #3E1316 0%, #3E1316 90%, #5A292A 100%);
     color: #FFFFFF;
 }
 
