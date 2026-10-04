@@ -299,9 +299,9 @@
 
 /* === Tema por ambiente (classe no <html>): aplica no 1º paint, sem "piscar" === */
 
-/* --- DEV: azul (texto branco) --- */
+/* --- DEV: marrom (texto branco) --- */
 .env-dev .topbar {
-    background: linear-gradient(90deg, #0B3550 0%, #0B3550 90%, #28566D 100%);
+    background: linear-gradient(90deg, #3B2A20 0%, #3B2A20 90%, #574034 100%);
     color: #FFFFFF;
 }
 

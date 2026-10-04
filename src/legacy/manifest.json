@@ -1,5 +1,6 @@
 {
   "screens": [
+    "dev-apimanager",
     "fab-amostras",
     "fab-checkin",
     "fab-fechar",

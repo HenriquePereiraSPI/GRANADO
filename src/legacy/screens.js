@@ -1,6 +1,148 @@
 // AUTO-GERADO por scripts/extract.py — NAO EDITE.
 
 export const SCREENS = {
+  "dev-apimanager": `
+      <div class="page-header">
+        <div><div class="ph-eyebrow">Dev-Tools · API</div><div class="ph-title">API Manager</div></div>
+        <div class="ph-actions" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+          <div>
+            <label style="display:block;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Endpoint</label>
+            <select class="inp" id="apimgr-f-endpoint" style="width:auto;font-size:12px;padding:6px 10px"></select>
+          </div>
+          <div>
+            <label style="display:block;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Data inicial</label>
+            <input type="date" class="inp" id="apimgr-f-ini" style="width:auto;font-size:12px;padding:6px 10px">
+          </div>
+          <div>
+            <label style="display:block;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Data final</label>
+            <input type="date" class="inp" id="apimgr-f-fim" style="width:auto;font-size:12px;padding:6px 10px">
+          </div>
+          <button class="btn btn-sm btn-v" onclick="apimgrRender()">🔄 Atualizar</button>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+        <div class="card cv" style="flex:1;min-width:180px;text-align:center">
+          <div id="apimgr-kpi-total" style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--verde)">—</div>
+          <div id="apimgr-kpi-total-label" style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">Total de chamadas</div>
+        </div>
+        <div class="card" style="flex:1;min-width:180px;text-align:center">
+          <div id="apimgr-kpi-maior-num" style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--ouro)">—</div>
+          <div id="apimgr-kpi-maior-nome" class="mono" style="font-size:11px;color:var(--text2,#4A6250);margin-top:2px;word-break:break-all">—</div>
+          <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">API com mais chamadas</div>
+        </div>
+        <div class="card" style="flex:1;min-width:180px;text-align:center">
+          <div id="apimgr-kpi-menor-num" style="font-family:var(--font-m);font-size:32px;font-weight:700;color:var(--inf)">—</div>
+          <div id="apimgr-kpi-menor-nome" class="mono" style="font-size:11px;color:var(--text2,#4A6250);margin-top:2px;word-break:break-all">—</div>
+          <div style="font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-top:4px">API com menos chamadas</div>
+        </div>
+      </div>
+
+      <!-- Tabela -->
+      <div class="card cv mb14">
+        <div class="card-title">Chamadas por API</div>
+        <div style="overflow-x:auto">
+          <table class="tbl" id="apimgr-tbl">
+            <thead><tr><th>API</th><th style="width:130px">Data</th><th style="width:110px;text-align:right">Quantidade</th></tr></thead>
+            <tbody><!-- preenchido por JS --></tbody>
+          </table>
+        </div>
+      </div>
+
+      <script>
+        (function () {
+          // Dados simulados — hoje é apenas a contagem por API/dia.
+          // Troque DADOS por um fetch na API real (mesmo formato: endpoint, data, total).
+          var DADOS = [
+            { endpoint: 'GetActualShift',         data: '2026-10-04', total: 4 },
+            { endpoint: 'GRD_API_GetActualShift', data: '2026-10-04', total: 1 },
+            { endpoint: 'GRD_API_GetWipOrder',    data: '2026-10-03', total: 27 },
+            { endpoint: 'GRD_API_GetCage',        data: '2026-10-03', total: 12 },
+            { endpoint: 'GRD_API_MoveMPCage',     data: '2026-10-03', total: 5 },
+            { endpoint: 'GRD_API_GetJDELabels',   data: '2026-10-02', total: 18 },
+            { endpoint: 'GRD_CreateProductWS',    data: '2026-10-02', total: 79 }
+          ];
+
+          // Popula os selects de filtro (uma vez).
+          function opcoes(sel, valores, labelTodos) {
+            if (!sel) return;
+            var html = '<option value="">' + labelTodos + '</option>';
+            valores.forEach(function (v) { html += '<option value="' + v + '">' + v + '</option>'; });
+            sel.innerHTML = html;
+          }
+          var endpoints = Object.keys(DADOS.reduce(function (a, r) { a[r.endpoint] = 1; return a; }, {})).sort();
+          opcoes(document.getElementById('apimgr-f-endpoint'), endpoints, 'Todos');
+
+          // Intervalo de datas: default = do menor ao maior dia presente nos dados.
+          var datasAsc = Object.keys(DADOS.reduce(function (a, r) { a[r.data] = 1; return a; }, {})).sort();
+          var ini = document.getElementById('apimgr-f-ini');
+          var fim = document.getElementById('apimgr-f-fim');
+          if (ini && datasAsc.length) ini.value = datasAsc[0];
+          if (fim && datasAsc.length) fim.value = datasAsc[datasAsc.length - 1];
+
+          // ISO (YYYY-MM-DD) -> DD/MM/YYYY
+          function fmtBR(iso) {
+            if (!iso) return '—';
+            var p = String(iso).split('-');
+            return p.length === 3 ? (p[2] + '/' + p[1] + '/' + p[0]) : iso;
+          }
+
+          // Render reativo aos filtros (exposto no window p/ o botão Atualizar / onchange).
+          window.apimgrRender = function () {
+            var fE = (document.getElementById('apimgr-f-endpoint') || {}).value || '';
+            var dIni = (document.getElementById('apimgr-f-ini') || {}).value || '';
+            var dFim = (document.getElementById('apimgr-f-fim') || {}).value || '';
+            var rows = DADOS.filter(function (r) {
+              return (!fE || r.endpoint === fE) &&
+                     (!dIni || r.data >= dIni) &&
+                     (!dFim || r.data <= dFim);
+            });
+
+            // Tabela: API · Data · Quantidade (data desc, depois quantidade desc).
+            var ordenadas = rows.slice().sort(function (a, b) {
+              if (a.data !== b.data) return a.data < b.data ? 1 : -1;
+              return b.total - a.total;
+            });
+            var tb = document.querySelector('#apimgr-tbl tbody');
+            if (tb) {
+              tb.innerHTML = ordenadas.length
+                ? ordenadas.map(function (r) {
+                    return '<tr>' +
+                      '<td class="mono" style="color:var(--inf)">' + r.endpoint + '</td>' +
+                      '<td class="mono">' + r.data + '</td>' +
+                      '<td class="mono" style="text-align:right;font-weight:700">' + r.total + '</td>' +
+                    '</tr>';
+                  }).join('')
+                : '<tr><td colspan="3" style="text-align:center;color:var(--text3);padding:18px">— Nenhum registro para o filtro —</td></tr>';
+            }
+
+            // KPIs (sobre o conjunto filtrado).
+            var total = rows.reduce(function (s, r) { return s + r.total; }, 0);
+            var porApi = {};
+            rows.forEach(function (r) { porApi[r.endpoint] = (porApi[r.endpoint] || 0) + r.total; });
+            var apis = Object.keys(porApi);
+            var maior = null, menor = null;
+            apis.forEach(function (a) {
+              if (maior === null || porApi[a] > porApi[maior]) maior = a;
+              if (menor === null || porApi[a] < porApi[menor]) menor = a;
+            });
+
+            var set = function (id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+            set('apimgr-kpi-total', total);
+            set('apimgr-kpi-total-label', (dIni || dFim)
+              ? ('Total de chamadas (' + fmtBR(dIni) + ' a ' + fmtBR(dFim) + ')')
+              : 'Total de chamadas');
+            set('apimgr-kpi-maior-num', maior ? porApi[maior] : '—');
+            set('apimgr-kpi-maior-nome', maior || '—');
+            set('apimgr-kpi-menor-num', menor ? porApi[menor] : '—');
+            set('apimgr-kpi-menor-nome', menor || '—');
+          };
+
+          window.apimgrRender();
+        })();
+      </script>
+    `,
   "fab-amostras": `      <div class="page-header">
         <div><div class="ph-eyebrow">Fabricação · CQ · MF5</div><div class="ph-title">Controle de Amostras — Laboratório</div></div>
         <div class="screen-meta" style="text-align:right;font-family:var(--font-m);font-size:10px;line-height:1.9;color:var(--text2)">OP-2026-0416 · Lote G2026-091</div>

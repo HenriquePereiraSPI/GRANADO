@@ -106,6 +106,8 @@ export const MODULES = [
     label: 'Dev-Tools',
     icon: '🛠️',
     items: [
+      // Tela React (rota interna) — sem href.
+      { id: 'dev-apimanager',     label: '📡 API Manager' },
       // Itens com `href` abrem um HTML estatico em nova aba (nao sao rotas React).
       { id: 'dev-components',     label: '🧩 Components',      href: '/apriso/WebComponents/ComponentsExample.html' },
       { id: 'dev-components-doc', label: '📄 ComponentsDoc',   href: '/apriso/WebComponents/ComponentsDocumentation.html' },
