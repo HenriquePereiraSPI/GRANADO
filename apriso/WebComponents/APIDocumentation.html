@@ -436,6 +436,7 @@
           <a class="gd-link" href="#GRD_API_GetCageInformation">GRD_API_GetCageInformation</a>
           <a class="gd-link" href="#GRD_API_ValidateUser">GRD_API_ValidateUser</a>
           <a class="gd-link" href="#GRD_API_GetLog">GRD_API_GetLog</a>
+          <a class="gd-link" href="#GRD_API_GetAllAPIManager">GRD_API_GetAllAPIManager</a>
         </div>
       </div>
 
@@ -2869,6 +2870,122 @@ poppins-700.woff2
           <li><strong>RetrieveAllObjects:</strong> use <code>"1"</code> para também popular os dropdowns de filtro (<code>LogsEntityModule</code>, <code>LogsEntityName</code>, <code>LogsEmployee</code>, <code>LogsWorkcenter</code>); com <code>"-1"</code> só <code>Logs</code> é retornado.</li>
           <li><strong>RequestJSON / ResponseJSON:</strong> vêm como <strong>string</strong> com JSON escapado — faça <code>JSON.parse</code> para acessar os campos internos.</li>
           <li><strong>Success — envelope × item:</strong> no envelope é <code>boolean</code>; dentro de cada <code>Logs[]</code> é <strong>string</strong> (<code>"True"</code>/<code>"False"</code>).</li>
+        </ul>
+      </section>
+
+      <!-- ==================================================================
+           GRD_API_GetAllAPIManager
+           ================================================================== -->
+      <section id="GRD_API_GetAllAPIManager">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetAllAPIManager</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera informações consolidadas das APIs</strong> — a contagem de chamadas por
+          endpoint e por dia no período, em <code>APIManager</code>, além da lista de endpoints
+          disponíveis em <code>APINames</code> (para montar o filtro).
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetAllAPIManager</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>APINames</code> e <code>APIManager</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Endpoint"</span><span class="tk-punc">:</span> <span class="tk-str">"GRD_API_GetWipOrder"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-01-01"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2027-01-01"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:150px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">Endpoint</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Endpoint a filtrar (ex.: <code>"GRD_API_GetWipOrder"</code>). Use <code>"-1"</code> para <strong>todos</strong>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">StartDate</td>
+              <td class="col-type">string (data)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Data inicial do período (<code>yyyy-MM-dd</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">FinishDate</td>
+              <td class="col-type">string (data)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Data final do período (<code>yyyy-MM-dd</code>).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON) — <code>APINames</code> e <code>APIManager</code> truncados para exibição:</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+  <span class="tk-key">"APINames"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"Endpoint"</span><span class="tk-punc">:</span> <span class="tk-str">"GetActualShift"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"Endpoint"</span><span class="tk-punc">:</span> <span class="tk-str">"GRD_API_GetActualShift"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"Endpoint"</span><span class="tk-punc">:</span> <span class="tk-str">"GRD_API_GetCage"</span> }
+    <span class="tk-comment">// ... demais endpoints</span>
+  ]<span class="tk-punc">,</span>
+  <span class="tk-key">"APIManager"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"Endpoint"</span><span class="tk-punc">:</span> <span class="tk-str">"GRD_API_GetCage"</span><span class="tk-punc">,</span> <span class="tk-key">"Data"</span><span class="tk-punc">:</span> <span class="tk-str">"10/5/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"Total"</span><span class="tk-punc">:</span> <span class="tk-str">"2"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"Endpoint"</span><span class="tk-punc">:</span> <span class="tk-str">"GRD_API_GetCurrentUserInformation"</span><span class="tk-punc">,</span> <span class="tk-key">"Data"</span><span class="tk-punc">:</span> <span class="tk-str">"10/5/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"Total"</span><span class="tk-punc">:</span> <span class="tk-str">"29"</span> }<span class="tk-punc">,</span>
+    { <span class="tk-key">"Endpoint"</span><span class="tk-punc">:</span> <span class="tk-str">"GRD_API_GetWipOrderSimplified"</span><span class="tk-punc">,</span> <span class="tk-key">"Data"</span><span class="tk-punc">:</span> <span class="tk-str">"10/5/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"Total"</span><span class="tk-punc">:</span> <span class="tk-str">"14"</span> }
+    <span class="tk-comment">// ... demais registros</span>
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída (envelope)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Campo</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se a consulta foi realizada com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">APINames</td><td class="col-type">array&lt;{Endpoint}&gt;</td><td class="col-desc">Lista de endpoints existentes (para popular o filtro de Endpoint).</td></tr>
+            <tr><td class="col-name">APIManager</td><td class="col-type">array&lt;object&gt;</td><td class="col-desc">Contagem consolidada por endpoint/dia. Campos de cada item abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada <code>APIManager</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Campo</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Endpoint</td><td class="col-type">string</td><td class="col-desc">Nome do endpoint/API (ex.: <code>"GRD_API_GetCage"</code>).</td></tr>
+            <tr><td class="col-name">Data</td><td class="col-type">string (data/hora)</td><td class="col-desc">Dia da contagem (ex.: <code>"10/5/2026 12:00:00 AM"</code>).</td></tr>
+            <tr><td class="col-name">Total</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade de chamadas do endpoint naquele dia.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Endpoint <code>-1</code>:</strong> traz a contagem de <strong>todos</strong> os endpoints no período.</li>
+          <li><strong>Período:</strong> <code>StartDate</code>/<code>FinishDate</code> no formato <code>yyyy-MM-dd</code>.</li>
+          <li><strong><code>APINames</code> × <code>APIManager</code>:</strong> use <code>APINames</code> para montar o filtro e <code>APIManager</code> para a tabela/consolidação (por endpoint e dia).</li>
+          <li><strong>Total como string:</strong> o campo vem como texto — converta para número antes de somar.</li>
         </ul>
       </section>
 
