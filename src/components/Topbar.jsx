@@ -52,11 +52,6 @@ export default function Topbar({ onToggleSidebar, sidebarCollapsed }) {
     setNotifSelectedId(null);
   }
 
-  function markNotifRead(ids) {
-    const sel = new Set(ids);
-    setNotifItems((prev) => prev.map((i) => (sel.has(i.id) ? { ...i, unread: false } : i)));
-  }
-
   // TODO: integrar com GRD_API_CreateAlert — toType 'user' -> AlertEmployeeID = toId (AlertRole = "-1"),
   // toType 'role' -> AlertRole = toId (AlertEmployeeID = -1); title/message -> AlertTitle/AlertMessage.
   function sendNotif(draft) {
@@ -137,7 +132,6 @@ export default function Topbar({ onToggleSidebar, sidebarCollapsed }) {
               selectedId={notifSelectedId}
               onSelect={openNotif}
               onDelete={deleteNotif}
-              onMarkRead={markNotifRead}
               onSend={sendNotif}
               onClose={() => setNotifOpen(false)}
             />

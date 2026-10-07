@@ -170,16 +170,22 @@ const norm = (s) => s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
 const EMPTY_DRAFT = { mode: 'new', to: '', recipient: null, title: '', message: '' };
 
 export default function NotificationsPopup({
-  items, selectedId, onSelect, onDelete, onMarkRead, onSend, onClose,
+  items, selectedId, onSelect, onDelete, onSend, onClose,
 }) {
   const selected = items.find((i) => i.id === selectedId) || null;
   const unread = items.filter((i) => i.unread).length;
 
+  // Filtro da lista: busca por texto no remetente, assunto e mensagem.
+  const [query, setQuery] = useState('');
+  const q = norm(query.trim());
+  const visible = q ? items.filter((i) => norm(`${i.from} ${i.subject} ${i.body}`).includes(q)) : items;
+
   // Seleção múltipla (estilo Outlook): Shift+clique = intervalo a partir da âncora,
   // Ctrl/Cmd+clique = marca/desmarca um item. Clique simples volta a 1 item (leitura).
+  // Opera só sobre os itens visíveis (filtrados).
   const [multiIds, setMultiIds] = useState([]);
   const [anchorId, setAnchorId] = useState(selectedId);
-  const existing = new Set(items.map((i) => i.id));
+  const existing = new Set(visible.map((i) => i.id));
   const pickedIds = multiIds.filter((id) => existing.has(id));
   const picked = new Set(pickedIds.length ? pickedIds : selectedId != null ? [selectedId] : []);
   const isMulti = picked.size > 1;
@@ -224,10 +230,6 @@ export default function NotificationsPopup({
     setMultiIds([]);
   }
 
-  function markPickedRead() {
-    onMarkRead([...picked]);
-  }
-
   function clearPicked() {
     setMultiIds([]);
     onSelect(null);
@@ -244,7 +246,7 @@ export default function NotificationsPopup({
 
     if (e.shiftKey) {
       // intervalo entre a âncora (último clique simples/Ctrl) e o item clicado
-      const ids = items.map((i) => i.id);
+      const ids = visible.map((i) => i.id);
       const from = ids.indexOf(anchorId != null && existing.has(anchorId) ? anchorId : id);
       const to = ids.indexOf(id);
       const range = ids.slice(Math.min(from, to), Math.max(from, to) + 1);
@@ -287,8 +289,26 @@ export default function NotificationsPopup({
         </div>
 
         <div className="tb-notif-body">
+        <div className="tb-notif-col">
+        <div className="tb-notif-filter">
+          <div className="tb-notif-search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar notificações"
+              aria-label="Buscar notificações"
+            />
+            {query && (
+              <button type="button" className="tb-notif-search-clear" onClick={() => setQuery('')} aria-label="Limpar busca">✕</button>
+            )}
+          </div>
+        </div>
         <div className="tb-notif-list" role="listbox" aria-label="Lista de notificações">
-          {items.map((it) => (
+          {visible.map((it) => (
             <button
               key={it.id}
               type="button"
@@ -316,7 +336,20 @@ export default function NotificationsPopup({
               </span>
             </button>
           ))}
-          {items.length === 0 && <div className="tb-notif-list-empty">Nenhuma notificação.</div>}
+          {visible.length === 0 && (
+            <div className="tb-notif-list-empty">
+              {q ? (
+                <>
+                  Nenhuma notificação encontrada.
+                  <br />
+                  <button type="button" className="tb-notif-link" onClick={() => setQuery('')}>Limpar busca</button>
+                </>
+              ) : (
+                'Nenhuma notificação.'
+              )}
+            </div>
+          )}
+        </div>
         </div>
 
         <div className="tb-notif-detail">
@@ -326,12 +359,6 @@ export default function NotificationsPopup({
               <div className="tb-notif-detail-head">
                 <div className="tb-notif-detail-subject">{picked.size} notificações selecionadas</div>
                 <span className="tb-notif-detail-actions">
-                  <button type="button" className="tb-notif-act" onClick={markPickedRead} title="Marcar como lidas" aria-label="Marcar como lidas">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z" />
-                      <path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10" />
-                    </svg>
-                  </button>
                   <button type="button" className="tb-notif-act tb-notif-act--del" onClick={deletePicked} title="Excluir selecionadas" aria-label="Excluir selecionadas">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <polyline points="3 6 5 6 21 6" />
@@ -342,8 +369,7 @@ export default function NotificationsPopup({
                   </button>
                 </span>
               </div>
-              <div className="tb-notif-detail-meta">
-                <span>Shift+clique seleciona um intervalo · Ctrl+clique marca/desmarca</span>
+              <div className="tb-notif-detail-meta tb-notif-multi-meta">
                 <button type="button" className="tb-notif-link" onClick={clearPicked}>Limpar seleção</button>
               </div>
               <ul className="tb-notif-multi-list">

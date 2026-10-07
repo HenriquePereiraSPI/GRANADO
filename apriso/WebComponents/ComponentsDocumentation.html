@@ -56,6 +56,7 @@
   <script src="./granado-filter.js"></script>
   <script src="./granado-scan.js"></script>
   <script src="./granado-select-popup.js"></script>
+  <script src="./granado-notification-popup.js"></script>
 
   <style>
     html,
@@ -319,6 +320,7 @@
       <a class="gd-link" href="#granado-gallery">granado-gallery</a>
       <a class="gd-link" href="#granado-box-popup">granado-box-popup</a>
       <a class="gd-link" href="#granado-select-popup">granado-select-popup</a>
+      <a class="gd-link" href="#granado-notification-popup">granado-notification-popup</a>
       <a class="gd-link" href="#granado-table-popup">granado-table-popup</a>
       <a class="gd-link" href="#granado-timeline">granado-timeline</a>
       <a class="gd-link" href="#granado-empty-popup">granado-empty-popup</a>
@@ -13182,6 +13184,284 @@ g.data = [
           <li><strong>Visual dos cards:</strong> idêntico ao <a class="gd-link" href="#granado-gallery">granado-gallery <code>type="view-only2"</code></a> — faixa lateral na cor do status, ícone à esquerda, badge à direita.</li>
           <li><strong>Atalhos:</strong> clique seleciona; <strong>duplo-clique</strong> ou <strong>Enter</strong> confirma. O fechamento é só pelo <strong>✕</strong> ou <strong>Cancelar</strong> (sem ESC).</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-notification-popup
+           ============================================================ -->
+      <section id="granado-notification-popup" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-notification-popup&gt;</code></h1>
+        <p class="gd-lead">
+          Popup de <strong>notificações</strong> no estilo Outlook: <strong>lista</strong> à esquerda (não lidas com
+          bolinha e em negrito) e <strong>leitura</strong> da notificação à direita. Recebe as notificações no formato
+          do <code>GRD_API_GetAllAlertMessages</code> e os destinos (usuários e roles) no formato do <code>GRD_API_GetAllAllowedDestinationAlert</code>.
+          Permite <strong>criar</strong> (+ Novo), <strong>responder</strong> e <strong>excluir</strong> notificações,
+          com <strong>busca</strong> e <strong>seleção múltipla</strong> (Shift/Ctrl + clique). Cada ação dispara um
+          evento com os dados prontos para a API correspondente — o componente <strong>não chama as APIs</strong>,
+          quem integra é a tela.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-notification-popup.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — API estática</h2>
+        <p class="gd-lead">
+          Forma recomendada (ex.: no clique do sino do header). Passe o array <code>Alerts</code> do
+          <code>GRD_API_GetAllAlertMessages</code> em <code>data</code> e o array <code>Employees</code> do
+          <code>GRD_API_GetAllAllowedDestinationAlert</code> em <code>destinations</code>. Os eventos abaixo mostram, na linha de status,
+          o que cada ação devolve.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <button type="button" onclick="docNotifShow()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1F7A3D;border-radius:7px;background:#1F7A3D;color:#fff;cursor:pointer">🔔 Abrir notificações</button>
+          <span id="doc-notif-status" style="font-size:12px;color:#8A9E8E"></span>
+        </div>
+        <script>
+          // Mesmo mock exibido no código ("Ver código") — formato do GRD_API_GetAllAlertMessages.
+          var DOC_NOTIF_ALERTS = [
+            { AlertRecipientID: '100000035', AlertID: '100000011', AlertTitle: 'Novo Produto Cadastrado', AlertMessage: 'Produto M0008 cadastrado com sucesso!', PriorityID: '1', AlertStatusID: '1', GeneratedOn: '10/6/2026 10:11:31 PM', CreatedBy: 'winke', CreatedByEmployeeID: '100000003', RecipientID: '100000013', IsMessageRead: '0' },
+            { AlertRecipientID: '100000020', AlertID: '100000008', AlertTitle: 'Nova Notificação', AlertMessage: 'Erro ao cadastrar Produto M000877S', PriorityID: '1', AlertStatusID: '1', GeneratedOn: '10/6/2026 7:55:42 PM', CreatedBy: 'winke', CreatedByEmployeeID: '100000003', RecipientID: '100000013', IsMessageRead: '0' },
+            { AlertRecipientID: '100000018', AlertID: '100000006', AlertTitle: '', AlertMessage: 'TEST MES ALERT', PriorityID: '1', AlertStatusID: '1', GeneratedOn: '10/6/2026 7:47:17 PM', CreatedBy: 'Kaic Lima', CreatedByEmployeeID: '100000001', RecipientID: '100000013', IsMessageRead: '1' }
+          ];
+          // Formato do GRD_API_GetAllAllowedDestinationAlert.
+          var DOC_NOTIF_DESTS = [
+            { ID: '100000001', Description: 'Kaic Lima', Type: 'USER' },
+            { ID: '100000005', Description: 'Rodrigo Contino', Type: 'USER' },
+            { ID: '100000003', Description: 'winke', Type: 'USER' },
+            { ID: '100000027', Description: 'GRD.WDC.Checklist', Type: 'ROLE' }
+          ];
+          function docNotifStatus(id, msg) { var s = document.getElementById(id); if (s) s.textContent = msg; }
+          function docNotifShow() {
+            GranadoNotificationPopup.show({
+              data: DOC_NOTIF_ALERTS,
+              destinations: DOC_NOTIF_DESTS,
+              onConfirmNewNotification: function (d) {
+                docNotifStatus('doc-notif-status', '✉️ Nova → ' + d.recipient.Description + ' (' + d.recipient.Type + ')' + ': ' + d.AlertTitle);
+                console.log('[notification] new →', d);
+              },
+              onReplyNotification: function (d) {
+                docNotifStatus('doc-notif-status', '↩️ Resposta para ' + d.recipient.Description + ' (alerta ' + d.ReplyToAlertID + ')');
+                console.log('[notification] reply →', d);
+              },
+              onDeleteNotification: function (d) {
+                docNotifStatus('doc-notif-status', '🗑️ Excluídas: ' + d.AlertRecipientIDs.join(', '));
+                console.log('[notification] delete →', d);
+              },
+              onNotificationMarkedAsRead: function (d) {
+                docNotifStatus('doc-notif-status', '👁️ Lida: ' + d.AlertRecipientID);
+                console.log('[notification] read →', d);
+              }
+            });
+          }
+        </script>
+        <pre class="gd-code gd-snip"><span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-comment">// Mock das notificações — mesmo formato do "Alerts" do GRD_API_GetAllAlertMessages</span>
+  <span class="tk-keyword">var</span> alerts = [
+    {
+      AlertRecipientID: <span class="tk-str">'100000035'</span>,           <span class="tk-comment">// chave do item (usada na exclusão)</span>
+      AlertID: <span class="tk-str">'100000011'</span>,                    <span class="tk-comment">// ID do alerta</span>
+      AlertTitle: <span class="tk-str">'Novo Produto Cadastrado'</span>,     <span class="tk-comment">// assunto ('' = "(Sem título)")</span>
+      AlertMessage: <span class="tk-str">'Produto M0008 cadastrado com sucesso!'</span>,
+      PriorityID: <span class="tk-str">'1'</span>,                          <span class="tk-comment">// não exibido (volta no detail)</span>
+      AlertStatusID: <span class="tk-str">'1'</span>,                       <span class="tk-comment">// não exibido (volta no detail)</span>
+      GeneratedOn: <span class="tk-str">'10/6/2026 10:11:31 PM'</span>,      <span class="tk-comment">// M/D/AAAA h:mm:ss AM/PM</span>
+      CreatedBy: <span class="tk-str">'winke'</span>,                       <span class="tk-comment">// remetente exibido</span>
+      CreatedByEmployeeID: <span class="tk-str">'100000003'</span>,        <span class="tk-comment">// destinatário pré-selecionado no Responder</span>
+      RecipientID: <span class="tk-str">'100000013'</span>,                <span class="tk-comment">// não exibido (volta no detail)</span>
+      IsMessageRead: <span class="tk-str">'0'</span>                        <span class="tk-comment">// "0" = não lida · "1" = lida</span>
+    },
+    {
+      AlertRecipientID: <span class="tk-str">'100000020'</span>, AlertID: <span class="tk-str">'100000008'</span>,
+      AlertTitle: <span class="tk-str">'Nova Notificação'</span>, AlertMessage: <span class="tk-str">'Erro ao cadastrar Produto M000877S'</span>,
+      PriorityID: <span class="tk-str">'1'</span>, AlertStatusID: <span class="tk-str">'1'</span>, GeneratedOn: <span class="tk-str">'10/6/2026 7:55:42 PM'</span>,
+      CreatedBy: <span class="tk-str">'winke'</span>, CreatedByEmployeeID: <span class="tk-str">'100000003'</span>, RecipientID: <span class="tk-str">'100000013'</span>,
+      IsMessageRead: <span class="tk-str">'0'</span>
+    },
+    {
+      AlertRecipientID: <span class="tk-str">'100000018'</span>, AlertID: <span class="tk-str">'100000006'</span>,
+      AlertTitle: <span class="tk-str">''</span>, AlertMessage: <span class="tk-str">'TEST MES ALERT'</span>,
+      PriorityID: <span class="tk-str">'1'</span>, AlertStatusID: <span class="tk-str">'1'</span>, GeneratedOn: <span class="tk-str">'10/6/2026 7:47:17 PM'</span>,
+      CreatedBy: <span class="tk-str">'Kaic Lima'</span>, CreatedByEmployeeID: <span class="tk-str">'100000001'</span>, RecipientID: <span class="tk-str">'100000013'</span>,
+      IsMessageRead: <span class="tk-str">'1'</span>
+    }
+  ];
+
+  <span class="tk-comment">// Mock dos destinos do "Para" — mesmo formato do "Destinations" do GRD_API_GetAllAllowedDestinationAlert</span>
+  <span class="tk-keyword">var</span> destinations = [
+    { ID: <span class="tk-str">'100000001'</span>, Description: <span class="tk-str">'Kaic Lima'</span>, Type: <span class="tk-str">'USER'</span> },   <span class="tk-comment">// Type: "USER" | "ROLE"</span>
+    { ID: <span class="tk-str">'100000005'</span>, Description: <span class="tk-str">'Rodrigo Contino'</span>, Type: <span class="tk-str">'USER'</span> },
+    { ID: <span class="tk-str">'100000003'</span>, Description: <span class="tk-str">'winke'</span>, Type: <span class="tk-str">'USER'</span> },
+    { ID: <span class="tk-str">'100000027'</span>, Description: <span class="tk-str">'GRD.WDC.Checklist'</span>, Type: <span class="tk-str">'ROLE'</span> }
+  ];
+
+  GranadoNotificationPopup.<span class="tk-attr">show</span>({
+    data: alerts,
+    destinations: destinations,
+    onConfirmNewNotification: <span class="tk-keyword">function</span> (d) { console.log(<span class="tk-str">'nova'</span>, d); },
+    onReplyNotification: <span class="tk-keyword">function</span> (d) { console.log(<span class="tk-str">'resposta'</span>, d); },
+    onDeleteNotification: <span class="tk-keyword">function</span> (d) { console.log(<span class="tk-str">'excluir'</span>, d.AlertRecipientIDs); },
+    onNotificationMarkedAsRead: <span class="tk-keyword">function</span> (d) { console.log(<span class="tk-str">'lida'</span>, d.AlertRecipientID); }
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — declarativo (HTML)</h2>
+        <p class="gd-lead">
+          Também dá para deixar o popup no HTML com as notificações e os usuários direto nos atributos
+          <code>data</code> e <code>destinations</code> (JSON, aspas simples no atributo). Inicie oculto com
+          <code>open="false"</code>, abra com <code>el.open()</code> e escute os eventos
+          (<code>addEventListener</code>) ou use os atributos <code>on…</code> com código JS.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <button type="button" onclick="document.getElementById('doc-notif-html').open()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1F7A3D;border-radius:7px;background:#fff;color:#1F7A3D;cursor:pointer">Abrir popup (HTML)</button>
+          <span id="doc-notif-html-status" style="font-size:12px;color:#8A9E8E"></span>
+          <granado-notification-popup id="doc-notif-html" open="false"
+            data='[{"AlertRecipientID":"100000035","AlertID":"100000011","AlertTitle":"Novo Produto Cadastrado","AlertMessage":"Produto M0008 cadastrado com sucesso!","GeneratedOn":"10/6/2026 10:11:31 PM","CreatedBy":"winke","CreatedByEmployeeID":"100000003","IsMessageRead":"0"},{"AlertRecipientID":"100000020","AlertID":"100000008","AlertTitle":"Nova Notificação","AlertMessage":"Erro ao cadastrar Produto M000877S","GeneratedOn":"10/6/2026 7:55:42 PM","CreatedBy":"winke","CreatedByEmployeeID":"100000003","IsMessageRead":"1"}]'
+            destinations='[{"ID":"100000001","Description":"Kaic Lima","Type":"USER"},{"ID":"100000003","Description":"winke","Type":"USER"},{"ID":"100000027","Description":"GRD.WDC.Checklist","Type":"ROLE"}]'
+            onDeleteNotification="docNotifStatus('doc-notif-html-status', '🗑️ Excluídas: ' + detail.AlertRecipientIDs.join(', '))"></granado-notification-popup>
+        </div>
+        <script>
+          (function () {
+            var el = document.getElementById('doc-notif-html');
+            if (!el) return;
+            el.addEventListener('notification-marked-as-read', function (ev) {
+              docNotifStatus('doc-notif-html-status', '👁️ Lida: ' + ev.detail.AlertRecipientID);
+            });
+            el.addEventListener('confirm-new-notification', function (ev) {
+              docNotifStatus('doc-notif-html-status', '✉️ Nova → ' + ev.detail.recipient.Description);
+            });
+            el.addEventListener('reply-notification', function (ev) {
+              docNotifStatus('doc-notif-html-status', '↩️ Resposta para ' + ev.detail.recipient.Description);
+            });
+          })();
+        </script>
+        <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- data e destinations recebem JSON (aspas simples no atributo) --&gt;</span>
+<span class="tk-tag">&lt;granado-notification-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"notif"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span>
+  <span class="tk-attr">data</span>=<span class="tk-str">'[{"AlertRecipientID":"100000035","AlertID":"100000011","AlertTitle":"Novo Produto Cadastrado",
+         "AlertMessage":"Produto M0008 cadastrado com sucesso!","GeneratedOn":"10/6/2026 10:11:31 PM",
+         "CreatedBy":"winke","CreatedByEmployeeID":"100000003","IsMessageRead":"0"}]'</span>
+  <span class="tk-attr">destinations</span>=<span class="tk-str">'[{"ID":"100000001","Description":"Kaic Lima","Type":"USER"},
+                {"ID":"100000027","Description":"GRD.WDC.Checklist","Type":"ROLE"}]'</span>
+  <span class="tk-attr">onDeleteNotification</span>=<span class="tk-str">"console.log(detail.AlertRecipientIDs)"</span><span class="tk-tag">&gt;&lt;/granado-notification-popup&gt;</span>
+
+<span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-str">"document.getElementById('notif').open()"</span><span class="tk-tag">&gt;</span>🔔<span class="tk-tag">&lt;/button&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'notif'</span>).addEventListener(<span class="tk-str">'notification-marked-as-read'</span>, <span class="tk-keyword">function</span> (ev) {
+    console.log(ev.detail.AlertRecipientID);
+  });
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Integração com as APIs</h2>
+        <p class="gd-lead">
+          O <code>detail</code> de cada evento já vem no formato de entrada da API. Exemplo usando o
+          <code>callDFCAsync</code> do <code>granado-base-api.js</code> (o componente apenas atualiza a lista
+          local — lida/excluída — e devolve os dados; a chamada fica com a tela):
+        </p>
+        <pre class="gd-code"><span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-keyword">async function</span> abrirNotificacoes() {
+    <span class="tk-keyword">var</span> alerts = <span class="tk-keyword">await</span> callDFCAsync($Context, <span class="tk-str">'GRD_API_GetAllAlertMessages'</span>, { EmployeeID: idUsuario });
+    <span class="tk-keyword">var</span> dests  = <span class="tk-keyword">await</span> callDFCAsync($Context, <span class="tk-str">'GRD_API_GetAllAllowedDestinationAlert'</span>, {});
+
+    GranadoNotificationPopup.<span class="tk-attr">show</span>({
+      data:  alerts.responseResultData.Alerts,
+      destinations: dests.responseResultData.Destinations,
+
+      <span class="tk-comment">// AlertEmployeeID / AlertRole("-1") / AlertTitle / AlertMessage</span>
+      onConfirmNewNotification: <span class="tk-keyword">function</span> (d) {
+        callDFCAsync($Context, <span class="tk-str">'GRD_API_CreateAlert'</span>, {
+          AlertEmployeeID: d.AlertEmployeeID, AlertRole: d.AlertRole,
+          AlertTitle: d.AlertTitle, AlertMessage: d.AlertMessage
+        });
+      },
+      <span class="tk-comment">// resposta = novo alerta para o remetente (mesmos campos + dados do original)</span>
+      onReplyNotification: <span class="tk-keyword">function</span> (d) {
+        callDFCAsync($Context, <span class="tk-str">'GRD_API_CreateAlert'</span>, {
+          AlertEmployeeID: d.AlertEmployeeID, AlertRole: d.AlertRole,
+          AlertTitle: d.AlertTitle, AlertMessage: d.AlertMessage
+        });
+      },
+      <span class="tk-comment">// pode vir mais de uma (seleção múltipla) — a API exclui uma por chamada</span>
+      onDeleteNotification: <span class="tk-keyword">function</span> (d) {
+        d.AlertRecipientIDs.forEach(<span class="tk-keyword">function</span> (id) {
+          callDFCAsync($Context, <span class="tk-str">'GRD_API_DeleteAlert'</span>, { AlertItemRecipientID: id });
+        });
+      },
+      onNotificationMarkedAsRead: <span class="tk-keyword">function</span> (d) {
+        callDFCAsync($Context, <span class="tk-str">'GRD_API_MarkAlertAsRead'</span>, { AlertRecipientID: d.AlertRecipientID });
+      }
+    });
+  }
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">API</h2>
+
+        <h3 class="gd-h3">Atributos / propriedades</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:230px">Nome</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">data</td><td class="col-type">array</td><td class="col-desc">Notificações (em JS use <code>.data</code>). Formato do <code>GRD_API_GetAllAlertMessages</code> — campos abaixo. A ordem é mantida (a API já devolve da mais recente para a mais antiga). <code>.data</code> devolve a lista <strong>atual</strong> (com lidas atualizadas e excluídas removidas).</td></tr>
+            <tr><td class="col-name">destinations</td><td class="col-type">array</td><td class="col-desc">Destinos do campo <strong>Para</strong> (em JS use <code>.destinations</code>). Formato do <code>GRD_API_GetAllAllowedDestinationAlert</code>: <code>{ ID, Description, Type }</code>, com <code>Type</code> = <code>"USER"</code> ou <code>"ROLE"</code>. O dropdown separa os grupos <strong>Usuários</strong> e <strong>Roles</strong>.</td></tr>
+            <tr><td class="col-name">users</td><td class="col-type">array</td><td class="col-desc">(Compatibilidade) lista no formato do <code>GRD_API_GetUsers</code> — <code>{ ID, EmployeeNo }</code>, todos tratados como <code>USER</code>. Prefira <code>destinations</code>.</td></tr>
+            <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-desc">Título do popup (default "Notificações").</td></tr>
+            <tr><td class="col-name">close-on-backdrop</td><td class="col-type">boolean</td><td class="col-desc"><code>"false"</code> não fecha ao clicar fora. Default <strong>fecha</strong>. Em JS: <code>.closeOnBackdrop</code>.</td></tr>
+            <tr><td class="col-name">open</td><td class="col-type">string</td><td class="col-desc"><code>open="false"</code> inicia oculto. Use <code>open()</code>/<code>close()</code>.</td></tr>
+            <tr><td class="col-name">onConfirmNewNotification</td><td class="col-type">função / string (JS)</td><td class="col-desc">Ao enviar uma <strong>nova</strong> notificação (+ Novo). Recebe <code>event</code> e <code>detail</code>.</td></tr>
+            <tr><td class="col-name">onReplyNotification</td><td class="col-type">função / string (JS)</td><td class="col-desc">Ao enviar uma <strong>resposta</strong>.</td></tr>
+            <tr><td class="col-name">onDeleteNotification</td><td class="col-type">função / string (JS)</td><td class="col-desc">Ao <strong>excluir</strong> uma ou várias notificações.</td></tr>
+            <tr><td class="col-name">onNotificationMarkedAsRead</td><td class="col-type">função / string (JS)</td><td class="col-desc">Ao <strong>abrir</strong> uma notificação com <code>IsMessageRead = "0"</code>.</td></tr>
+            <tr><td class="col-name">onClose</td><td class="col-type">função / string (JS)</td><td class="col-desc">Ao fechar o popup (✕, Esc ou clique fora).</td></tr>
+            <tr><td colspan="3" style="background:#F4EED9;font-weight:800;color:#0F3319">Campos de cada notificação — dentro de <code>data[]</code></td></tr>
+            <tr><td class="col-name">data[].AlertRecipientID</td><td class="col-type">string</td><td class="col-desc">Chave do item (vínculo alerta × destinatário). Usado na exclusão (<code>AlertItemRecipientID</code> do <code>GRD_API_DeleteAlert</code>).</td></tr>
+            <tr><td class="col-name">data[].AlertID</td><td class="col-type">string</td><td class="col-desc">ID do alerta.</td></tr>
+            <tr><td class="col-name">data[].AlertTitle</td><td class="col-type">string</td><td class="col-desc">Assunto. Vazio é exibido como "(Sem título)".</td></tr>
+            <tr><td class="col-name">data[].AlertMessage</td><td class="col-type">string</td><td class="col-desc">Texto da notificação (quebras de linha são respeitadas).</td></tr>
+            <tr><td class="col-name">data[].GeneratedOn</td><td class="col-type">string (data/hora)</td><td class="col-desc">Formato <code>"10/6/2026 10:11:31 PM"</code> (M/D/AAAA). Na lista: hoje → <code>hh:mm</code>, ontem → "Ontem", até 6 dias → dia da semana, depois <code>dd/mm/aaaa</code>. Na leitura: <code>dd/mm/aaaa hh:mm</code>.</td></tr>
+            <tr><td class="col-name">data[].CreatedBy</td><td class="col-type">string</td><td class="col-desc">Remetente exibido.</td></tr>
+            <tr><td class="col-name">data[].CreatedByEmployeeID</td><td class="col-type">string</td><td class="col-desc">ID do remetente — vem selecionado no <strong>Responder</strong> (se não estiver em <code>destinations</code>, é incluído na lista como usuário).</td></tr>
+            <tr><td class="col-name">data[].IsMessageRead</td><td class="col-type">"0" | "1"</td><td class="col-desc"><code>"0"</code> = não lida (bolinha + negrito, entra no contador "N novas").</td></tr>
+            <tr><td class="col-name">data[].PriorityID / AlertStatusID / RecipientID</td><td class="col-type">string</td><td class="col-desc">Não exibidos; voltam nos <code>detail</code> (objeto <code>notification</code> / <code>notifications</code> / <code>replyTo</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Métodos / API estática</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:230px">Item</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">GranadoNotificationPopup.show(opts)</td><td class="col-desc">Cria, anexa ao <code>&lt;body&gt;</code> e abre o popup. <code>opts</code>: <code>{ title, data, destinations, closeOnBackdrop, onConfirmNewNotification, onReplyNotification, onDeleteNotification, onNotificationMarkedAsRead, onClose }</code>. Remove-se sozinho ao fechar.</td></tr>
+            <tr><td class="col-name">el.open() / el.close()</td><td class="col-desc">Abre / fecha o popup declarativo.</td></tr>
+            <tr><td class="col-name">el.data = [...] / el.destinations = [...]</td><td class="col-desc">Atualiza notificações / destinatários em runtime (array ou string JSON).</td></tr>
+            <tr><td class="col-name">el.unreadCount</td><td class="col-desc">Quantidade de não lidas na lista atual (ex.: para a bolinha do sino).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Eventos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:220px">Evento</th><th style="width:300px">detail</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">confirm-new-notification</td><td class="col-type">{ AlertEmployeeID, AlertRole, AlertTitle, AlertMessage, recipient: { ID, Description, Type } }</td><td class="col-desc">Enviar no popup <strong>+ Novo</strong>. Campos prontos para o <code>GRD_API_CreateAlert</code>: destino <code>USER</code> → <code>AlertEmployeeID</code> = ID (numérico) e <code>AlertRole</code> = <code>"-1"</code>; destino <code>ROLE</code> → <code>AlertEmployeeID</code> = <code>-1</code> e <code>AlertRole</code> = nome da role (<code>Description</code>). O <code>ID</code> da role continua disponível em <code>recipient.ID</code>.</td></tr>
+            <tr><td class="col-name">reply-notification</td><td class="col-type">mesmos do anterior + { ReplyToAlertRecipientID, ReplyToAlertID, replyTo }</td><td class="col-desc">Enviar no popup de <strong>Responder</strong>. <code>replyTo</code> é a notificação original.</td></tr>
+            <tr><td class="col-name">delete-notification</td><td class="col-type">{ AlertRecipientIDs: [...], notifications: [...] }</td><td class="col-desc">Excluir (1 ou várias). Os itens já saem da lista. O <code>GRD_API_DeleteAlert</code> exclui um por chamada.</td></tr>
+            <tr><td class="col-name">notification-marked-as-read</td><td class="col-type">{ AlertRecipientID, AlertID, notification }</td><td class="col-desc">Abrir uma notificação não lida. Ela passa a <code>IsMessageRead = "1"</code> na lista. Só dispara uma vez por notificação.</td></tr>
+            <tr><td class="col-name">close</td><td class="col-type">{}</td><td class="col-desc">Popup fechado (✕, Esc ou clique fora).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Seleção múltipla:</strong> Shift + clique seleciona um intervalo; Ctrl (ou Cmd) + clique marca/desmarca. Com mais de uma selecionada, o painel mostra o resumo e o ícone de excluir. Selecionar várias <strong>não</strong> marca como lidas.</li>
+          <li><strong>Busca:</strong> filtra por remetente, título e mensagem, ignorando maiúsculas e <strong>acentos</strong>. A seleção múltipla vale só para os itens visíveis.</li>
+          <li><strong>Envio:</strong> o botão Enviar só habilita com destinatário, título e mensagem preenchidos. Após enviar aparece "Notificação enviada." por alguns segundos.</li>
+          <li><strong>Esc em camadas:</strong> fecha primeiro o dropdown do Para, depois o popup de envio e, por último, o de notificações.</li>
+          <li><strong>Exclusão sem confirmação:</strong> o item sai da lista na hora; se a API falhar, recarregue <code>el.data</code>.</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado). O dropdown do Para usa <code>position:fixed</code>.</li>
         </ul>
       </section>
 

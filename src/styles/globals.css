@@ -399,11 +399,34 @@ body { font-family:var(--font-b); background:var(--bg); color:var(--text); displ
 .tb-notif-close:hover { background:var(--surface2); color:var(--per); }
 .tb-notif-body { flex:1; display:flex; min-height:0; }
 
-/* Coluna esquerda — lista */
-.tb-notif-list {
-  width:250px; flex-shrink:0; border-right:1px solid var(--border);
-  overflow-y:auto; background:var(--surface2);
+/* Coluna esquerda — filtro + lista */
+.tb-notif-col {
+  width:250px; flex-shrink:0; display:flex; flex-direction:column; min-height:0;
+  border-right:1px solid var(--border); background:var(--surface2);
 }
+.tb-notif-list { flex:1; min-height:0; overflow-y:auto; }
+
+/* Filtro */
+.tb-notif-filter {
+  display:flex; flex-direction:column;
+  padding:10px 12px; border-bottom:1px solid var(--border);
+}
+.tb-notif-search {
+  display:flex; align-items:center; gap:6px;
+  padding:0 8px; height:30px; box-sizing:border-box;
+  background:var(--surface); border:1px solid var(--border); border-radius:6px;
+  color:var(--text3); transition:border-color .12s, box-shadow .12s;
+}
+.tb-notif-search:focus-within { border-color:var(--verde); box-shadow:0 0 0 3px rgba(28,92,49,.1); }
+.tb-notif-search input {
+  flex:1; min-width:0; border:none; outline:none; background:transparent;
+  font-family:var(--font-b); font-size:12px; color:var(--text);
+}
+.tb-notif-search-clear {
+  border:none; background:transparent; color:var(--text3); cursor:pointer;
+  font-size:11px; line-height:1; padding:2px 4px; border-radius:4px;
+}
+.tb-notif-search-clear:hover { color:var(--per); }
 .tb-notif-item {
   box-sizing:border-box; display:flex; align-items:flex-start; gap:8px; width:100%;
   padding:10px 12px; margin:0; border:none; border-bottom:1px solid var(--border);
@@ -483,6 +506,7 @@ body { font-family:var(--font-b); background:var(--bg); color:var(--text); displ
   font-size:11px; font-weight:700; color:var(--verde);
 }
 .tb-notif-link:hover { text-decoration:underline; }
+.tb-notif-multi-meta { justify-content:flex-end; }
 .tb-notif-multi-list { list-style:none; margin:0; padding:0; }
 .tb-notif-multi-list li {
   display:flex; align-items:baseline; gap:10px;
