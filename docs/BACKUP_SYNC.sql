@@ -1,6 +1,6 @@
 USE [AprOp25M]
 GO
-/****** Object:  StoredProcedure [dbo].[GRD_SP_SYNC_JDE_ORDER]    Script Date: 05/10/2026 14:52:43 ******/
+/****** Object:  StoredProcedure [dbo].[GRD_SP_SYNC_JDE_ORDER]    Script Date: 05/10/2026 19:09:15 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -75,7 +75,34 @@ BEGIN
 		StockQuantityUpdated		 NVARCHAR(100) NULL
     );
 
+	CREATE TABLE #JDE_HEADER
+    (
+        OrderNumber                  NVARCHAR(100) NULL,
+        OrderStatus                  NVARCHAR(100) NULL,
+        OrderStatusDescription       NVARCHAR(200) NULL,
+        OrderType                    NVARCHAR(100) NULL,
+        OrderTypeDescription         NVARCHAR(200) NULL,
+        OrderTypeAux                 NVARCHAR(100) NULL,
+        ResultProductNumber          NVARCHAR(100) NULL,
+        ResultProductDescription     NVARCHAR(200) NULL,
+        ResultLotNumber              NVARCHAR(100) NULL,
+        OrderReference               NVARCHAR(100) NULL,
+        ParentShortItemNumber        NVARCHAR(100) NULL,
+        ParentItemNumber             NVARCHAR(100) NULL,
+        OrderQuantity                NVARCHAR(100) NULL,
+        Uom                          NVARCHAR(100) NULL,
+        SubLotSize                   NVARCHAR(100) NULL,
+        SubLotID                     NVARCHAR(100) NULL,
+        ReleaseDate                  NVARCHAR(100) NULL,
+        ExpectedStartDate            NVARCHAR(100) NULL,
+        ExpectedFinishDate           NVARCHAR(100) NULL,
+        Facility                     NVARCHAR(100) NULL,
+        WorkCenter                   NVARCHAR(100) NULL,
+        Operation                    NVARCHAR(100) NULL,
+		ProductID                    INT NULL
+    );
 
+	--INSERT #JDE
     INSERT INTO #JDE
     (
         OrderNumber,
@@ -203,6 +230,91 @@ BEGIN
 		SELECT ID, SKUCode, ROW_NUMBER() OVER ( PARTITION BY SKUCode ORDER BY ID ) AS RN FROM PRODUCT
 	) P 
 	ON P.SKUCode = J.ComponentItemNumber AND P.RN = 1
+
+	--INSERT #JDE_HEADER
+	INSERT INTO #JDE_HEADER
+    (
+        OrderNumber,
+        OrderStatus,
+        OrderStatusDescription,
+        OrderType,
+        OrderTypeDescription,
+        OrderTypeAux,
+        ResultProductNumber,
+        ResultProductDescription,
+        ResultLotNumber,
+        OrderReference,
+        ParentShortItemNumber,
+        ParentItemNumber,
+        OrderQuantity,
+        Uom,
+        SubLotSize,
+        SubLotID,
+        ReleaseDate,
+        ExpectedStartDate,
+        ExpectedFinishDate,
+        Facility,
+        WorkCenter,
+        Operation,
+		ProductID
+    )
+    SELECT TOP(1)
+        NULLIF(LTRIM(RTRIM(J.OrderNumber)), ''),
+        NULLIF(LTRIM(RTRIM(J.OrderStatus)), ''),
+        NULLIF(LTRIM(RTRIM(J.OrderStatusDescription)), ''),
+        NULLIF(LTRIM(RTRIM(J.OrderType)), ''),
+        NULLIF(LTRIM(RTRIM(J.OrderTypeDescription)), ''),
+        NULLIF(LTRIM(RTRIM(J.OrderTypeAux)), ''),
+        NULLIF(LTRIM(RTRIM(J.ResultProductNumber)), ''),
+        NULLIF(LTRIM(RTRIM(J.ResultProductDescription)), ''),
+        NULLIF(LTRIM(RTRIM(J.ResultLotNumber)), ''),
+        NULLIF(LTRIM(RTRIM(J.OrderReference)), ''),
+        NULLIF(LTRIM(RTRIM(J.ParentShortItemNumber)), ''),
+        NULLIF(LTRIM(RTRIM(J.ParentItemNumber)), ''),
+        NULLIF(LTRIM(RTRIM(J.OrderQuantity)), ''),
+        NULLIF(LTRIM(RTRIM(J.Uom)), ''),
+        NULLIF(LTRIM(RTRIM(J.SubLotSize)), ''),
+        NULLIF(LTRIM(RTRIM(J.SubLotID)), ''),
+        NULLIF(LTRIM(RTRIM(J.ReleaseDate)), ''),
+        NULLIF(LTRIM(RTRIM(J.ExpectedStartDate)), ''),
+        NULLIF(LTRIM(RTRIM(J.ExpectedFinishDate)), ''),
+        NULLIF(LTRIM(RTRIM(J.Facility)), ''),
+        NULLIF(LTRIM(RTRIM(J.WorkCenter)), ''),
+        NULLIF(LTRIM(RTRIM(J.Operation)), ''),
+        P.ID AS ProductID
+
+    FROM OPENJSON(@Json)
+    WITH
+    (
+        OrderNumber                  NVARCHAR(100) '$.OrderNumber',
+        OrderStatus                  NVARCHAR(100) '$.OrderStatus',
+        OrderStatusDescription       NVARCHAR(200) '$.OrderStatusDescription',
+        OrderType                    NVARCHAR(100) '$.OrderType',
+        OrderTypeDescription         NVARCHAR(200) '$.OrderTypeDescription',
+        OrderTypeAux                 NVARCHAR(100) '$.OrderTypeAux',
+        ResultProductNumber          NVARCHAR(100) '$.ResultProductNumber',
+        ResultProductDescription     NVARCHAR(200) '$.ResultProductDescription',
+        ResultLotNumber              NVARCHAR(100) '$.ResultLotNumber',
+        OrderReference               NVARCHAR(100) '$.OrderReference',
+        ParentShortItemNumber        NVARCHAR(100) '$.ParentShortItemNumber',
+        ParentItemNumber             NVARCHAR(100) '$.ParentItemNumber',
+        OrderQuantity                NVARCHAR(100) '$.OrderQuantity',
+        Uom                          NVARCHAR(100) '$.Uom',
+        SubLotSize                   NVARCHAR(100) '$.SubLotSize',
+        SubLotID                     NVARCHAR(100) '$.SubLotID',
+        ReleaseDate                  NVARCHAR(100) '$.ReleaseDate',
+        ExpectedStartDate            NVARCHAR(100) '$.ExpectedStartDate',
+        ExpectedFinishDate           NVARCHAR(100) '$.ExpectedFinishDate',
+        Facility                     NVARCHAR(100) '$.Facility',
+        WorkCenter                   NVARCHAR(100) '$.WorkCenter',
+        Operation                    NVARCHAR(100) '$.Operation'
+    ) J
+
+    LEFT JOIN
+	(
+		SELECT ID, SKUCode, ROW_NUMBER() OVER ( PARTITION BY SKUCode ORDER BY ID ) AS RN FROM PRODUCT
+	) P 
+	ON P.SKUCode = J.ResultProductNumber AND P.RN = 1
 
 	SET @WipOrderNo = (SELECT TOP(1)OrderNumber FROM #JDE )
 	SET @QtdJde = (SELECT COUNT(*) FROM #JDE)
@@ -363,6 +475,28 @@ BEGIN
             EXCEPT
             SELECT J.StockQuantityUpdated
         );
+
+		--ORDER HEADER
+		IF NOT EXISTS (SELECT 1 FROM LOT_NO L INNER JOIN #JDE_HEADER JH ON L.ProductID = JH.ProductID AND L.LotNo = JH.ResultLotNumber)
+		BEGIN
+			INSERT INTO LOT_NO (ProductID, LotNo)
+			SELECT ProductID, ResultLotNumber FROM #JDE_HEADER;
+		END;
+
+		UPDATE WIP_ORDER
+		SET
+			ProductID = JH.ProductID,
+			OrderQuantity = JH.OrderQuantity,
+			ExpectedStartDate = JH.ExpectedStartDate
+		FROM WIP_ORDER
+		INNER JOIN #JDE_HEADER JH ON WIP_ORDER.WipOrderNo = JH.OrderNumber;
+
+		UPDATE WIP_ORDER_LOT
+		SET
+			ProductID = JH.ProductID,
+			LotNo = JH.ResultLotNumber
+		FROM WIP_ORDER_LOT
+		INNER JOIN #JDE_HEADER JH ON WIP_ORDER_LOT.WipOrderNo = JH.OrderNumber;
 
         /*----------------------------------------------------------------------
 		----------------------------------------------------------------------

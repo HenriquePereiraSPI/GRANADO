@@ -437,6 +437,9 @@
           <a class="gd-link" href="#GRD_API_ValidateUser">GRD_API_ValidateUser</a>
           <a class="gd-link" href="#GRD_API_GetLog">GRD_API_GetLog</a>
           <a class="gd-link" href="#GRD_API_GetAllAPIManager">GRD_API_GetAllAPIManager</a>
+          <a class="gd-link" href="#GRD_API_GetAllUserAlert">GRD_API_GetAllUserAlert</a>
+          <a class="gd-link" href="#GRD_API_CreateAlert">GRD_API_CreateAlert</a>
+          <a class="gd-link" href="#GRD_API_DeleteAlert">GRD_API_DeleteAlert</a>
         </div>
       </div>
 
@@ -2986,6 +2989,297 @@ poppins-700.woff2
           <li><strong>Período:</strong> <code>StartDate</code>/<code>FinishDate</code> no formato <code>yyyy-MM-dd</code>.</li>
           <li><strong><code>APINames</code> × <code>APIManager</code>:</strong> use <code>APINames</code> para montar o filtro e <code>APIManager</code> para a tabela/consolidação (por endpoint e dia).</li>
           <li><strong>Total como string:</strong> o campo vem como texto — converta para número antes de somar.</li>
+        </ul>
+      </section>
+
+      <!-- ==================================================================
+           GRD_API_GetAllUserAlert
+           ================================================================== -->
+      <section id="GRD_API_GetAllUserAlert">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetAllUserAlert</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera todos os alertas do usuário</strong> — devolve, em <code>Alerts</code>, os
+          alertas destinados ao funcionário informado, do mais recente para o mais antigo.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetAllUserAlert</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>Alerts</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"EmployeeID"</span><span class="tk-punc">:</span> <span class="tk-num">1000000013</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:150px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">EmployeeID</td>
+              <td class="col-type">number</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ID do funcionário (destinatário) cujos alertas serão retornados.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON) — <code>Alerts</code> truncado para exibição:</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Alerts"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"AlertRecipientID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000020"</span><span class="tk-punc">,</span> <span class="tk-key">"AlertID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000008"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"AlertTitle"</span><span class="tk-punc">:</span> <span class="tk-str">"Nova Notificação"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"AlertMessage"</span><span class="tk-punc">:</span> <span class="tk-str">"Erro ao cadastrar Produto M000877S"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PriorityID"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"AlertStatusID"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"GeneratedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"10/6/2026 7:55:42 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"winke"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedByEmployeeID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000003"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"RecipientID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000013"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"AlertRecipientID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000019"</span><span class="tk-punc">,</span> <span class="tk-key">"AlertID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000007"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"AlertTitle"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+      <span class="tk-key">"AlertMessage"</span><span class="tk-punc">:</span> <span class="tk-str">"Teste Aerta Unico 2"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PriorityID"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"AlertStatusID"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"GeneratedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"10/6/2026 7:48:16 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"winke"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedByEmployeeID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000003"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"RecipientID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000013"</span>
+    }
+    <span class="tk-comment">// ... demais alertas</span>
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída (envelope)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se os alertas foram recuperados com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">Alerts</td><td class="col-type">array&lt;alerta&gt;</td><td class="col-desc">Alertas do usuário. Campos de cada item abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada <code>Alerts</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:170px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">AlertRecipientID</td><td class="col-type">string</td><td class="col-desc">ID do vínculo alerta × destinatário (único por usuário que recebe o alerta).</td></tr>
+            <tr><td class="col-name">AlertID</td><td class="col-type">string</td><td class="col-desc">ID do alerta.</td></tr>
+            <tr><td class="col-name">AlertTitle</td><td class="col-type">string</td><td class="col-desc">Título do alerta (ex.: <code>"Nova Notificação"</code>). Pode vir vazio.</td></tr>
+            <tr><td class="col-name">AlertMessage</td><td class="col-type">string</td><td class="col-desc">Texto/mensagem do alerta.</td></tr>
+            <tr><td class="col-name">PriorityID</td><td class="col-type">string (número)</td><td class="col-desc">ID da prioridade do alerta.</td></tr>
+            <tr><td class="col-name">AlertStatusID</td><td class="col-type">string (número)</td><td class="col-desc">ID do status do alerta.</td></tr>
+            <tr><td class="col-name">GeneratedOn</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data/hora de geração do alerta (ex.: <code>"10/6/2026 7:55:42 PM"</code>).</td></tr>
+            <tr><td class="col-name">CreatedBy</td><td class="col-type">string</td><td class="col-desc">Login do funcionário que criou o alerta (ex.: <code>"winke"</code>).</td></tr>
+            <tr><td class="col-name">CreatedByEmployeeID</td><td class="col-type">string</td><td class="col-desc">ID do funcionário que criou o alerta.</td></tr>
+            <tr><td class="col-name">RecipientID</td><td class="col-type">string</td><td class="col-desc">ID do funcionário destinatário (igual ao <code>EmployeeID</code> informado).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Ordenação:</strong> os alertas vêm do mais recente para o mais antigo (<code>GeneratedOn</code> decrescente).</li>
+          <li><strong>AlertTitle opcional:</strong> pode vir vazio — use um título padrão na exibição quando necessário.</li>
+          <li><strong>IDs como string:</strong> no retorno todos os campos (inclusive IDs e <code>PriorityID</code>/<code>AlertStatusID</code>) vêm como texto.</li>
+        </ul>
+      </section>
+
+      <!-- ==================================================================
+           GRD_API_CreateAlert
+           ================================================================== -->
+      <section id="GRD_API_CreateAlert">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_CreateAlert</code></h1>
+        <p class="gd-lead">
+          <strong>Cria um novo alerta</strong> — destinado a um <strong>usuário</strong> específico
+          (<code>AlertEmployeeID</code>) ou a todos os usuários de uma <strong>role</strong>
+          (<code>AlertRole</code>). Retorna o <code>AlertID</code> gerado.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_CreateAlert</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>AlertID</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"AlertEmployeeID"</span><span class="tk-punc">:</span> <span class="tk-num">1000000013</span><span class="tk-punc">,</span>
+  <span class="tk-key">"AlertRole"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"AlertTitle"</span><span class="tk-punc">:</span> <span class="tk-str">"Novo Produto Cadastrado"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"AlertMessage"</span><span class="tk-punc">:</span> <span class="tk-str">"Produto M0005 foi cadastrado com sucesso!"</span>
+}</pre>
+        <p class="gd-lead">Exemplo enviando para uma role:</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"AlertEmployeeID"</span><span class="tk-punc">:</span> <span class="tk-num">-1</span><span class="tk-punc">,</span>
+  <span class="tk-key">"AlertRole"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"AlertTitle"</span><span class="tk-punc">:</span> <span class="tk-str">"Novo Produto Cadastrado"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"AlertMessage"</span><span class="tk-punc">:</span> <span class="tk-str">"Produto M0005 foi cadastrado com sucesso!"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:150px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">AlertEmployeeID</td>
+              <td class="col-type">number</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ID do funcionário destinatário. Use <code>-1</code> para <strong>não usar</strong> (alerta por role).</td>
+            </tr>
+            <tr>
+              <td class="col-name">AlertRole</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Role destinatária (ex.: <code>"Pesagem"</code>) — todos os usuários da role recebem o alerta. Use <code>"-1"</code> para <strong>não usar</strong> (alerta por usuário).</td>
+            </tr>
+            <tr>
+              <td class="col-name">AlertTitle</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Título do alerta.</td>
+            </tr>
+            <tr>
+              <td class="col-name">AlertMessage</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Texto/mensagem do alerta.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Alerta criado com sucesso."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"AlertID"</span><span class="tk-punc">:</span> <span class="tk-num">100000010</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Campo</th><th style="width:120px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se o alerta foi criado com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">AlertID</td><td class="col-type">number</td><td class="col-desc">ID do alerta criado.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Usuário × role:</strong> informe o destinatário em <code>AlertEmployeeID</code> <em>ou</em> em <code>AlertRole</code>, passando <code>-1</code> no campo que não for usado.</li>
+          <li><strong>Consulta:</strong> os alertas criados podem ser lidos pelo destinatário via <a href="#GRD_API_GetAllUserAlert"><code>GRD_API_GetAllUserAlert</code></a>.</li>
+        </ul>
+      </section>
+
+      <!-- ==================================================================
+           GRD_API_DeleteAlert
+           ================================================================== -->
+      <section id="GRD_API_DeleteAlert">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_DeleteAlert</code></h1>
+        <p class="gd-lead">
+          <strong>Deleta um alerta enviado para o usuário</strong> — remove o vínculo do alerta com
+          o destinatário identificado por <code>AlertItemRecipientID</code>.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_DeleteAlert</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>).
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"AlertItemRecipientID"</span><span class="tk-punc">:</span> <span class="tk-num">100000035</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">AlertItemRecipientID</td>
+              <td class="col-type">number</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ID do vínculo alerta × destinatário a deletar — corresponde ao <code>AlertRecipientID</code> retornado por <a href="#GRD_API_GetAllUserAlert"><code>GRD_API_GetAllUserAlert</code></a>.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Alerta deletado com sucesso."</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Campo</th><th style="width:120px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se o alerta foi deletado com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Por destinatário:</strong> a deleção é feita pelo ID do vínculo com o usuário (<code>AlertRecipientID</code>), não pelo <code>AlertID</code> — em alertas enviados a uma role, apenas o item daquele usuário é removido.</li>
         </ul>
       </section>
 

@@ -44,6 +44,26 @@ export default function Topbar({ onToggleSidebar, sidebarCollapsed }) {
     setNotifItems((prev) => prev.map((i) => (i.id === id ? { ...i, unread: false } : i)));
   }
 
+  // TODO: integrar com GRD_API_DeleteAlert (AlertItemRecipientID = AlertRecipientID do item),
+  // uma chamada por id.
+  function deleteNotif(ids) {
+    const del = new Set(ids);
+    setNotifItems((prev) => prev.filter((i) => !del.has(i.id)));
+    setNotifSelectedId(null);
+  }
+
+  function markNotifRead(ids) {
+    const sel = new Set(ids);
+    setNotifItems((prev) => prev.map((i) => (sel.has(i.id) ? { ...i, unread: false } : i)));
+  }
+
+  // TODO: integrar com GRD_API_CreateAlert — toType 'user' -> AlertEmployeeID = toId (AlertRole = "-1"),
+  // toType 'role' -> AlertRole = toId (AlertEmployeeID = -1); title/message -> AlertTitle/AlertMessage.
+  function sendNotif(draft) {
+    // eslint-disable-next-line no-console
+    console.info('[notificações] enviar', draft);
+  }
+
   useEffect(() => {
     if (!userMenuOpen && !notifOpen) return undefined;
     function onDoc(e) {
@@ -116,6 +136,9 @@ export default function Topbar({ onToggleSidebar, sidebarCollapsed }) {
               items={notifItems}
               selectedId={notifSelectedId}
               onSelect={openNotif}
+              onDelete={deleteNotif}
+              onMarkRead={markNotifRead}
+              onSend={sendNotif}
               onClose={() => setNotifOpen(false)}
             />
           )}
