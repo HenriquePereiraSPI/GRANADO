@@ -12,12 +12,15 @@
 
    ── API estática
      GranadoPesagemReetiquetarPopup.show({
-        header, salas, confirmText, closeOnBackdrop, onConfirm, onReadScale
+        header, salas, salaId, confirmText, closeOnBackdrop, onConfirm, onReadScale
      })
 
    ── show({ ... })
      header  - { material, lote, etiqueta, saldo }   (cabeçalho dourado)
      salas   - [ { id, nome, resourceName, bals:[ { id, cap, sug } ] } ]
+     salaId  - (opcional) id de uma sala já definida (ex.: a sala da OP).
+               Quando informado, o popup abre DIRETO na seleção de balança
+               dessa sala e esconde o "‹ Voltar" (não deixa trocar de sala).
      confirmText     - texto do botão (default "✓ Concluir")
      closeOnBackdrop - true fecha ao clicar fora (default: NÃO fecha)
      onReadScale(ctx)- (opcional) 📡 ler peso: ctx = { balancaId, salaId, setValue(v) }
@@ -53,6 +56,7 @@
          { id: 'SALA-C', nome: 'Sala C', resourceName: '100000022',
            bals: [ { id: 'BAL-05', cap: '30 kg' } ] }
        ],
+       salaId: 'SALA-A',   // abre direto na balança da Sala A
        onConfirm: function (d) { console.log(d.salaResourceName, d.pesoLiquido); }
      });
    </script>
@@ -115,12 +119,22 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
       if (typeof opts.onConfirm   === 'function') el._onConfirmFn   = opts.onConfirm;
       if (typeof opts.onReadScale === 'function') el._onReadScaleFn = opts.onReadScale;
       if (opts.closeOnBackdrop === true) el.setAttribute('close-on-backdrop', 'true');
+      if (opts.salaId != null) el._salaId = String(opts.salaId);   // sala pré-selecionada → pula a seleção de sala
       document.body.appendChild(el);
       return el;
     }
 
     connectedCallback() {
-      if (!this._state) this._state = { view: 'salas', salaId: null, balId: null, mode: 'balanca' };
+      if (!this._state) {
+        if (this._salaId != null) {
+          // sala já definida (veio da OP) → entra direto na seleção de balança
+          this._state = { view: 'bals', salaId: this._salaId, balId: null, mode: 'balanca' };
+          var salaIni = this._achaSala(this._salaId);
+          if (!salaIni || !(salaIni.bals && salaIni.bals.length)) this._state.mode = 'manual';
+        } else {
+          this._state = { view: 'salas', salaId: null, balId: null, mode: 'balanca' };
+        }
+      }
       if (this._pesoStr == null) this._pesoStr = '0,000';
       if (this._taraStr == null) this._taraStr = '0,000';
       this._setupMedia();
@@ -355,9 +369,13 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
       if (st.view === 'bals') {
         const sala = this._achaSala(st.salaId);
         if (!sala) { st.view = 'salas'; this._renderDrill(); return; }
+        // Sala fixa (veio da OP via salaId) → sem "Voltar", não dá pra trocar de sala.
+        const voltar = this._salaId
+          ? ''
+          : '<button type="button" data-role="drill-back" style="display:inline-flex;align-items:center;gap:4px;font:700 12px/1 ' + FONT + ';padding:6px 11px;border:1px solid ' + BORDER + ';border-radius:8px;background:' + SURFACE2 + ';color:' + VERDE_ESC + ';cursor:pointer">‹ Voltar</button>';
         html =
           '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
-            '<button type="button" data-role="drill-back" style="display:inline-flex;align-items:center;gap:4px;font:700 12px/1 ' + FONT + ';padding:6px 11px;border:1px solid ' + BORDER + ';border-radius:8px;background:' + SURFACE2 + ';color:' + VERDE_ESC + ';cursor:pointer">‹ Voltar</button>' +
+            voltar +
             '<span style="font:800 12px/1.2 ' + FONT + ';color:' + VERDE_ESC + '">🏭 ' + esc(sala.nome) + '</span>' +
           '</div>' +
           '<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch">' +
