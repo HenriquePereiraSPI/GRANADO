@@ -2238,8 +2238,8 @@
       destinations='[{"ID":"100000001","Description":"Kaic Lima","Type":"USER"},{"ID":"100000005","Description":"Rodrigo Contino","Type":"USER"},{"ID":"100000003","Description":"winke","Type":"USER"},{"ID":"100000027","Description":"GRD.WDC.Checklist","Type":"ROLE"}]'
       onNotificationMarkedAsRead="notifStatus('👁️ Lida: ' + detail.AlertRecipientID)"
       onDeleteNotification="notifStatus('🗑️ Excluídas: ' + detail.AlertRecipientIDs.join(', '))"
-      onConfirmNewNotification="notifStatus('✉️ Nova → ' + detail.recipient.Description + ' (' + detail.recipient.Type + ')' + ': ' + detail.AlertTitle)"
-      onReplyNotification="notifStatus('↩️ Resposta para ' + detail.recipient.Description)"></granado-notification-popup>
+      onConfirmNewNotification="notifStatus('✉️ Nova → ' + detail.DestinationDescription + ' (' + detail.DestinationType + ')' + ': ' + detail.AlertTitle)"
+      onReplyNotification="notifStatus('↩️ Resposta para ' + detail.DestinationDescription)"></granado-notification-popup>
 
     <script>
       function notifStatus(msg) {
@@ -2250,6 +2250,19 @@
       function notifDemoShow() {
         // Mock das notificações — mesmo formato do "Alerts" do GRD_API_GetAllAlertMessages.
         var alerts = [
+          // Resposta — ReplyAlertID ≠ "0": ao abrir, a mensagem respondida aparece como citação.
+          {
+            AlertRecipientID: '100000099', AlertID: '100000047',
+            AlertTitle: 'RE: Testes Notificações', AlertMessage: 'Valeu! Já ajustei o que faltava.',
+            PriorityID: '1', AlertStatusID: '1', GeneratedOn: '10/9/2026 4:03:04 PM',
+            CreatedBy: 'winke', CreatedByEmployeeID: '100000003', RecipientID: '100000013',
+            IsMessageRead: '0',
+            ReplyAlertID: '100000042',                // AlertID da mensagem respondida ("0" = não é resposta)
+            ReplyUser: 'Henrique',                    // autor da mensagem respondida
+            ReplyDate: '10/8/2026 7:23:25 PM',        // data da mensagem respondida
+            ReplyTitle: 'Testes Notificações',
+            ReplyMessage: 'Ficou legal em amigo, parabéns!'
+          },
           {
             AlertRecipientID: '100000035',            // chave do item (usada na exclusão)
             AlertID: '100000011',                     // ID do alerta
@@ -2307,8 +2320,8 @@
         GranadoNotificationPopup.show({
           data: alerts,
           destinations: destinations,
-          onConfirmNewNotification: function (d) { notifStatus('✉️ Nova → ' + d.recipient.Description + ' (' + d.recipient.Type + ')' + ': ' + d.AlertTitle); console.log('[notification] new →', d); },
-          onReplyNotification: function (d) { notifStatus('↩️ Resposta para ' + d.recipient.Description); console.log('[notification] reply →', d); },
+          onConfirmNewNotification: function (d) { notifStatus('✉️ Nova → ' + d.DestinationDescription + ' (' + d.DestinationType + ')' + ': ' + d.AlertTitle); console.log('[notification] new →', d); },
+          onReplyNotification: function (d) { notifStatus('↩️ Resposta para ' + d.DestinationDescription); console.log('[notification] reply →', d); },
           onDeleteNotification: function (d) { notifStatus('🗑️ Excluídas: ' + d.AlertRecipientIDs.join(', ')); console.log('[notification] delete →', d); },
           onNotificationMarkedAsRead: function (d) { notifStatus('👁️ Lida: ' + d.AlertRecipientID); console.log('[notification] read →', d); }
         });

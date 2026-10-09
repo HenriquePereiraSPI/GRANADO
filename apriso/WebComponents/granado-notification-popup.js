@@ -10,7 +10,8 @@
      • + Novo      -> abre um 2º popup (por cima) p/ criar uma notificação
                       (Para · Título · Mensagem).
      • Responder   -> ícone na linha do assunto; abre o mesmo popup já com o
-                      remetente selecionado e o título "RE: …".
+                      remetente selecionado e o título "RE: …" — ambos
+                      BLOQUEADOS (só a mensagem é editável).
      • Excluir     -> ícone na linha do assunto (ou várias de uma vez, com
                       seleção múltipla).
      • Busca       -> campo no topo da lista; filtra por remetente, título e
@@ -31,6 +32,11 @@
                            CreatedByEmployeeID - ID do remetente (destinatário
                                               pré-selecionado no Responder)
                            IsMessageRead    - "0" = não lida · "1" = lida
+                           ReplyAlertID / ReplyUser / ReplyDate / ReplyTitle /
+                           ReplyMessage     - (opcionais) quando ReplyAlertID ≠ "0" a
+                                              notificação é uma RESPOSTA: ao abrir, a
+                                              mensagem respondida aparece abaixo do texto,
+                                              no mesmo bloco de citação do Responder.
      destinations      - array de destinos do "Para" (em JS use .destinations).
                          Formato do GRD_API_GetAllAllowedDestinationAlert:
                            { ID, Description, Type }   Type = "USER" | "ROLE"
@@ -47,15 +53,20 @@
      onClose                    - string JS / função (event, detail)
 
    ── Eventos (CustomEvent, bubbles) — o detail é o mesmo do callback
-     "confirm-new-notification" -> { AlertEmployeeID, AlertRole, AlertTitle,
-                                     AlertMessage, recipient: { ID, Description, Type } }
-                                   (campos prontos p/ o GRD_API_CreateAlert)
-                                   USER -> AlertEmployeeID = ID, AlertRole = "-1"
-                                   ROLE -> AlertEmployeeID = -1, AlertRole = Description
-     "reply-notification"       -> mesmos campos do confirm-new-notification +
-                                   { ReplyToAlertRecipientID, ReplyToAlertID, replyTo }
-     "delete-notification"      -> { AlertRecipientIDs: [...], notifications: [...] }
-                                   (1 ou várias; o GRD_API_DeleteAlert é 1 por id)
+     "confirm-new-notification" -> { DestinationID, DestinationDescription, DestinationType,
+                                     AlertTitle, AlertMessage }
+                                   Destination* = DESTINATÁRIO escolhido no "Para"
+                                   (DestinationType "USER" | "ROLE"). Nada do usuário atual.
+                                   Para o GRD_API_CreateAlert:
+                                     USER -> AlertEmployeeID = DestinationID, AlertRole = "-1"
+                                     ROLE -> AlertEmployeeID = -1, AlertRole = DestinationDescription
+     "reply-notification"       -> mesmos campos do confirm-new-notification (o destinatário
+                                   é o remetente da mensagem original) + { ReplyAlertID }
+                                   ReplyAlertID = AlertID da mensagem respondida
+                                   (envie em AlertReplyOnID no GRD_API_CreateAlert)
+     "delete-notification"      -> { AlertItemRecipientID, AlertRecipientIDs: [...], notifications: [...] }
+                                   (1 ou várias; AlertItemRecipientID = IDs separados por
+                                    vírgula, pronto p/ o GRD_API_DeleteAlert numa chamada)
      "notification-marked-as-read" -> { AlertRecipientID, AlertID, notification }
                                    (ao abrir uma notificação com IsMessageRead "0")
      "close"                    -> {} (✕, Esc ou clique fora)
@@ -327,11 +338,31 @@ if (!customElements.get('granado-notification-popup')) {
       if (diff < 7) return WEEKDAYS[d.getDay()];
       return this._pad(d.getDate()) + '/' + this._pad(d.getMonth() + 1) + '/' + d.getFullYear();
     }
-    _fullDate(it) {
-      const d = this._parseDate(it.GeneratedOn);
-      if (!d) return this._esc(it.GeneratedOn || '');
+    _fullDate(it) { return this._fmtDate(it.GeneratedOn); }
+    // "10/8/2026 7:23:25 PM" -> "08/10/2026 19:23"
+    _fmtDate(s) {
+      const d = this._parseDate(s);
+      if (!d) return this._esc(s || '');
       return this._pad(d.getDate()) + '/' + this._pad(d.getMonth() + 1) + '/' + d.getFullYear() +
         ' ' + this._pad(d.getHours()) + ':' + this._pad(d.getMinutes());
+    }
+
+    // É resposta? (ReplyAlertID preenchido e diferente de "0")
+    _isReply(it) {
+      const id = it && it.ReplyAlertID != null ? String(it.ReplyAlertID).trim() : '';
+      return id !== '' && id !== '0';
+    }
+
+    // Bloco de citação (mesmo visual no popup de Responder e na leitura de uma resposta):
+    // "autor · dd/mm/aaaa hh:mm", título (se houver) e o texto da mensagem citada.
+    _quoteHtml(user, date, title, message, marginTop) {
+      return `<div data-role="quote" style="margin-top:${marginTop || 12}px;padding:8px 12px;border-left:3px solid ${BORDER};background:${SURFACE2};font:12px/1.5 ${FONT};color:${TEXT2};word-break:break-word">` +
+          `<div style="font:700 10px/1.4 ${FONT};color:${TEXT3};margin-bottom:4px">${this._esc(user || '')}` +
+            (this._has(date) ? ` · <span style="font-family:${MONO}">${this._fmtDate(date)}</span>` : '') +
+          `</div>` +
+          (this._has(title) ? `<div style="font:700 12px/1.4 ${FONT};color:${TEXT2};margin-bottom:2px">${this._esc(title)}</div>` : '') +
+          `<div style="white-space:pre-wrap">${this._esc(message || '')}</div>` +
+        `</div>`;
     }
 
     // Itens visíveis (busca por remetente, título e mensagem).
@@ -646,7 +677,9 @@ if (!customElements.get('granado-notification-popup')) {
           `<span style="font:700 11px/1.4 ${FONT};color:${TEXT2}">${this._esc(it.CreatedBy || '')}</span>` +
           `<span style="font:11px/1.4 ${MONO};color:${TEXT3}">${this._fullDate(it)}</span>` +
         `</div>` +
-        `<div style="font:13px/1.6 ${FONT};color:${TEXT};white-space:pre-wrap;word-break:break-word">${this._esc(it.AlertMessage || '')}</div>`;
+        `<div style="font:13px/1.6 ${FONT};color:${TEXT};white-space:pre-wrap;word-break:break-word">${this._esc(it.AlertMessage || '')}</div>` +
+        // Resposta: mostra a mensagem respondida (Reply*) no mesmo bloco de citação do Responder.
+        (this._isReply(it) ? this._quoteHtml(it.ReplyUser, it.ReplyDate, it.ReplyTitle, it.ReplyMessage, 16) : '');
       this._bindIconBtns(box);
       box.querySelector('[data-role="reply"]').addEventListener('click', () => this._openCompose('reply', w.k));
       box.querySelector('[data-role="del"]').addEventListener('click', (e) => this._delete([w.k], e));
@@ -664,8 +697,10 @@ if (!customElements.get('granado-notification-popup')) {
       this._renderCount();
       this._renderList();
       this._renderDetail();
+      const ids = removed.map((it) => it.AlertRecipientID);
       this._fire('delete-notification', 'onDeleteNotification', {
-        AlertRecipientIDs: removed.map((it) => it.AlertRecipientID),
+        AlertItemRecipientID: ids.join(', '),   // formato do GRD_API_DeleteAlert (vários IDs)
+        AlertRecipientIDs: ids,
         notifications: removed
       }, ev);
     }
@@ -728,6 +763,10 @@ if (!customElements.get('granado-notification-popup')) {
       const w = isReply ? this._find(c.replyKey) : null;
       const label = (t) => `<label style="display:block;font:600 11px/1.4 ${FONT};color:${LABEL};margin:14px 0 6px">${t}</label>`;
       const field = `box-sizing:border-box;width:100%;font:13px/1.4 ${FONT};padding:8px 12px;border:1px solid ${BORDER2};border-radius:6px;background:${SURFACE};color:${LABEL};outline:none;margin:0`;
+      // Na resposta, destinatário e título ficam bloqueados (só a mensagem é editável).
+      const LOCKED_BG = '#EFE6CC';
+      const toBg = isReply ? LOCKED_BG : (this._ddOpen ? '#F5EFD9' : SURFACE);
+      const toBorder = !isReply && this._ddOpen ? VERDE : BORDER2;
 
       host.innerHTML =
         `<div data-role="c-overlay" style="position:fixed;inset:0;background:${OVERLAY_BG2};z-index:100000;display:flex;align-items:center;justify-content:center;padding:24px 12px;box-sizing:border-box">` +
@@ -738,22 +777,18 @@ if (!customElements.get('granado-notification-popup')) {
             `</div>` +
             `<div style="flex:1 1 auto;min-height:0;overflow-y:auto;padding:0 18px 4px;${SCROLL}">` +
               label('Para') +
-              `<button type="button" data-role="to" aria-haspopup="listbox" aria-expanded="${this._ddOpen ? 'true' : 'false'}" ` +
-                `style="${BTN_RESET}display:flex;align-items:center;gap:8px;width:100%;font:13px/1.4 ${FONT} !important;padding:8px 12px !important;border:1px solid ${this._ddOpen ? VERDE : BORDER2};border-radius:6px;background:${this._ddOpen ? '#F5EFD9' : SURFACE};color:${cur ? LABEL : '#8A9E8E'};cursor:pointer;text-align:left">` +
+              `<button type="button" data-role="to" aria-haspopup="listbox" aria-expanded="${this._ddOpen ? 'true' : 'false'}" ${isReply ? 'disabled aria-disabled="true"' : ''} ` +
+                `style="${BTN_RESET}display:flex;align-items:center;gap:8px;width:100%;font:13px/1.4 ${FONT} !important;padding:8px 12px !important;border:1px solid ${toBorder};border-radius:6px;background:${toBg};color:${cur ? LABEL : '#8A9E8E'};cursor:${isReply ? 'not-allowed' : 'pointer'};text-align:left;opacity:1">` +
                 `<span style="flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${cur ? this._esc(cur.name) : 'Selecione o destinatário'}</span>` +
                 (cur ? this._typeTag(cur.type) : '') +
-                `<span style="display:block;transform:rotate(${this._ddOpen ? 180 : 0}deg);transition:transform .15s">${ICON_CHEVRON}</span>` +
+                (isReply ? '' : `<span style="display:block;transform:rotate(${this._ddOpen ? 180 : 0}deg);transition:transform .15s">${ICON_CHEVRON}</span>`) +
               `</button>` +
               label('Título') +
-              `<input data-role="c-title" type="text" value="${this._esc(c.title)}" placeholder="Título da notificação" autocomplete="off" style="${field}" />` +
+              `<input data-role="c-title" type="text" value="${this._esc(c.title)}" placeholder="Título da notificação" autocomplete="off" ${isReply ? 'readonly aria-readonly="true" tabindex="-1"' : ''} ` +
+                `style="${field}${isReply ? `;background:${LOCKED_BG};cursor:not-allowed` : ''}" />` +
               label('Mensagem') +
               `<textarea data-role="c-message" placeholder="Escreva a mensagem" style="${field};min-height:120px;resize:vertical;display:block">${this._esc(c.message)}</textarea>` +
-              (w
-                ? `<div style="margin-top:12px;padding:8px 12px;border-left:3px solid ${BORDER};background:${SURFACE2};font:12px/1.5 ${FONT};color:${TEXT2};white-space:pre-wrap;word-break:break-word">` +
-                    `<div style="font:700 10px/1.4 ${FONT};color:${TEXT3};margin-bottom:4px">${this._esc(w.it.CreatedBy || '')} · <span style="font-family:${MONO}">${this._fullDate(w.it)}</span></div>` +
-                    this._esc(w.it.AlertMessage || '') +
-                  `</div>`
-                : '') +
+              (w ? this._quoteHtml(w.it.CreatedBy, w.it.GeneratedOn, w.it.AlertTitle, w.it.AlertMessage) : '') +
             `</div>` +
             `<div style="display:flex;gap:10px;justify-content:flex-end;padding:12px 18px;margin-top:12px;border-top:1px solid ${BORDER}">` +
               `<button type="button" data-role="c-cancel" style="${BTN_RESET}font:600 13px/1.4 ${FONT} !important;padding:9px 18px !important;border:1px solid ${BORDER};border-radius:8px;background:transparent;color:${TEXT2};cursor:pointer">Cancelar</button>` +
@@ -840,14 +875,16 @@ if (!customElements.get('granado-notification-popup')) {
       this._hover(send, { background: VERDE_ESC }, { background: VERDE });
       send.addEventListener('click', (e) => this._send(e));
 
-      [title, msg].forEach((el) => {
+      const isReply = c.mode === 'reply';
+      (isReply ? [msg] : [title, msg]).forEach((el) => {
         el.addEventListener('focus', () => { el.style.borderColor = VERDE; });
         el.addEventListener('blur', () => { el.style.borderColor = BORDER2; });
       });
-      title.addEventListener('input', () => { c.title = title.value; this._syncSend(); });
+      if (!isReply) title.addEventListener('input', () => { c.title = title.value; this._syncSend(); });
       msg.addEventListener('input', () => { c.message = msg.value; this._syncSend(); });
 
       to.addEventListener('click', () => {
+        if (isReply) return;   // resposta: destinatário fixo (remetente original)
         this._ddOpen = !this._ddOpen;
         this._ddQ = '';
         this._renderCompose();
@@ -883,26 +920,24 @@ if (!customElements.get('granado-notification-popup')) {
       });
     }
 
-    // Monta o detail no formato do GRD_API_CreateAlert e dispara o evento.
+    // Detail do envio: só o DESTINATÁRIO + o conteúdo (nada do usuário atual).
+    // Na resposta, acrescenta ReplyAlertID (AlertID da mensagem respondida).
     _send(ev) {
       const c = this._compose;
       if (!this._canSend()) return;
       const u = this._recipients().find((x) => x.key === c.toKey);
       if (!u) return;
-      const isRole = u.type === 'ROLE';
-      // USER -> AlertEmployeeID = ID (AlertRole "-1") · ROLE -> AlertRole = nome (AlertEmployeeID -1)
       const detail = {
-        AlertEmployeeID: isRole ? -1 : (/^\d+$/.test(u.id) ? Number(u.id) : u.id),
-        AlertRole: isRole ? u.name : '-1',
+        DestinationID: u.id,              // ID do usuário ou da role
+        DestinationDescription: u.name,   // nome do usuário ou da role
+        DestinationType: u.type,          // "USER" | "ROLE"
         AlertTitle: c.title.trim(),
-        AlertMessage: c.message.trim(),
-        recipient: { ID: u.id, Description: u.name, Type: u.type }
+        AlertMessage: c.message.trim()
       };
       if (c.mode === 'reply') {
+        // AlertID da mensagem que está sendo respondida (-> AlertReplyOnID no GRD_API_CreateAlert)
         const w = this._find(c.replyKey);
-        detail.ReplyToAlertRecipientID = w ? w.it.AlertRecipientID : null;
-        detail.ReplyToAlertID = w ? w.it.AlertID : null;
-        detail.replyTo = w ? Object.assign({}, w.it) : null;
+        detail.ReplyAlertID = w && w.it.AlertID != null ? String(w.it.AlertID) : '';
       }
       this._compose = null;
       this._ddOpen = false;

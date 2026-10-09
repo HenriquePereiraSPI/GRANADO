@@ -13221,6 +13221,7 @@ g.data = [
         <script>
           // Mesmo mock exibido no código ("Ver código") — formato do GRD_API_GetAllAlertMessages.
           var DOC_NOTIF_ALERTS = [
+            { AlertRecipientID: '100000099', AlertID: '100000047', AlertTitle: 'RE: Testes Notificações', AlertMessage: 'Valeu! Já ajustei o que faltava.', PriorityID: '1', AlertStatusID: '1', GeneratedOn: '10/9/2026 4:03:04 PM', CreatedBy: 'winke', CreatedByEmployeeID: '100000003', RecipientID: '100000013', IsMessageRead: '0', ReplyAlertID: '100000042', ReplyUser: 'Henrique', ReplyDate: '10/8/2026 7:23:25 PM', ReplyTitle: 'Testes Notificações', ReplyMessage: 'Ficou legal em amigo, parabéns!' },
             { AlertRecipientID: '100000035', AlertID: '100000011', AlertTitle: 'Novo Produto Cadastrado', AlertMessage: 'Produto M0008 cadastrado com sucesso!', PriorityID: '1', AlertStatusID: '1', GeneratedOn: '10/6/2026 10:11:31 PM', CreatedBy: 'winke', CreatedByEmployeeID: '100000003', RecipientID: '100000013', IsMessageRead: '0' },
             { AlertRecipientID: '100000020', AlertID: '100000008', AlertTitle: 'Nova Notificação', AlertMessage: 'Erro ao cadastrar Produto M000877S', PriorityID: '1', AlertStatusID: '1', GeneratedOn: '10/6/2026 7:55:42 PM', CreatedBy: 'winke', CreatedByEmployeeID: '100000003', RecipientID: '100000013', IsMessageRead: '0' },
             { AlertRecipientID: '100000018', AlertID: '100000006', AlertTitle: '', AlertMessage: 'TEST MES ALERT', PriorityID: '1', AlertStatusID: '1', GeneratedOn: '10/6/2026 7:47:17 PM', CreatedBy: 'Kaic Lima', CreatedByEmployeeID: '100000001', RecipientID: '100000013', IsMessageRead: '1' }
@@ -13238,11 +13239,11 @@ g.data = [
               data: DOC_NOTIF_ALERTS,
               destinations: DOC_NOTIF_DESTS,
               onConfirmNewNotification: function (d) {
-                docNotifStatus('doc-notif-status', '✉️ Nova → ' + d.recipient.Description + ' (' + d.recipient.Type + ')' + ': ' + d.AlertTitle);
+                docNotifStatus('doc-notif-status', '✉️ Nova → ' + d.DestinationDescription + ' (' + d.DestinationType + ')' + ': ' + d.AlertTitle);
                 console.log('[notification] new →', d);
               },
               onReplyNotification: function (d) {
-                docNotifStatus('doc-notif-status', '↩️ Resposta para ' + d.recipient.Description + ' (alerta ' + d.ReplyToAlertID + ')');
+                docNotifStatus('doc-notif-status', '↩️ Resposta para ' + d.DestinationDescription + ' (alerta ' + d.ReplyAlertID + ')');
                 console.log('[notification] reply →', d);
               },
               onDeleteNotification: function (d) {
@@ -13259,6 +13260,19 @@ g.data = [
         <pre class="gd-code gd-snip"><span class="tk-tag">&lt;script&gt;</span>
   <span class="tk-comment">// Mock das notificações — mesmo formato do "Alerts" do GRD_API_GetAllAlertMessages</span>
   <span class="tk-keyword">var</span> alerts = [
+    <span class="tk-comment">// resposta — ReplyAlertID ≠ "0": ao abrir, a mensagem respondida aparece como citação</span>
+    {
+      AlertRecipientID: <span class="tk-str">'100000099'</span>, AlertID: <span class="tk-str">'100000047'</span>,
+      AlertTitle: <span class="tk-str">'RE: Testes Notificações'</span>, AlertMessage: <span class="tk-str">'Valeu! Já ajustei o que faltava.'</span>,
+      PriorityID: <span class="tk-str">'1'</span>, AlertStatusID: <span class="tk-str">'1'</span>, GeneratedOn: <span class="tk-str">'10/9/2026 4:03:04 PM'</span>,
+      CreatedBy: <span class="tk-str">'winke'</span>, CreatedByEmployeeID: <span class="tk-str">'100000003'</span>, RecipientID: <span class="tk-str">'100000013'</span>,
+      IsMessageRead: <span class="tk-str">'0'</span>,
+      ReplyAlertID: <span class="tk-str">'100000042'</span>,                 <span class="tk-comment">// AlertID da mensagem respondida ("0" = não é resposta)</span>
+      ReplyUser: <span class="tk-str">'Henrique'</span>,                     <span class="tk-comment">// autor da mensagem respondida</span>
+      ReplyDate: <span class="tk-str">'10/8/2026 7:23:25 PM'</span>,         <span class="tk-comment">// data da mensagem respondida</span>
+      ReplyTitle: <span class="tk-str">'Testes Notificações'</span>,
+      ReplyMessage: <span class="tk-str">'Ficou legal em amigo, parabéns!'</span>
+    },
     {
       AlertRecipientID: <span class="tk-str">'100000035'</span>,           <span class="tk-comment">// chave do item (usada na exclusão)</span>
       AlertID: <span class="tk-str">'100000011'</span>,                    <span class="tk-comment">// ID do alerta</span>
@@ -13330,10 +13344,10 @@ g.data = [
               docNotifStatus('doc-notif-html-status', '👁️ Lida: ' + ev.detail.AlertRecipientID);
             });
             el.addEventListener('confirm-new-notification', function (ev) {
-              docNotifStatus('doc-notif-html-status', '✉️ Nova → ' + ev.detail.recipient.Description);
+              docNotifStatus('doc-notif-html-status', '✉️ Nova → ' + ev.detail.DestinationDescription);
             });
             el.addEventListener('reply-notification', function (ev) {
-              docNotifStatus('doc-notif-html-status', '↩️ Resposta para ' + ev.detail.recipient.Description);
+              docNotifStatus('doc-notif-html-status', '↩️ Resposta para ' + ev.detail.DestinationDescription);
             });
           })();
         </script>
@@ -13360,6 +13374,17 @@ g.data = [
           local — lida/excluída — e devolve os dados; a chamada fica com a tela):
         </p>
         <pre class="gd-code"><span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-comment">// Destinatário do evento -> inputs do GRD_API_CreateAlert</span>
+  <span class="tk-keyword">function</span> paraCreateAlert(d) {
+    <span class="tk-keyword">var</span> isRole = d.DestinationType === <span class="tk-str">'ROLE'</span>;
+    <span class="tk-keyword">return</span> {
+      AlertEmployeeID: isRole ? -1 : Number(d.DestinationID),   <span class="tk-comment">// USER</span>
+      AlertRole: isRole ? d.DestinationDescription : <span class="tk-str">'-1'</span>,     <span class="tk-comment">// ROLE</span>
+      AlertTitle: d.AlertTitle,
+      AlertMessage: d.AlertMessage
+    };
+  }
+
   <span class="tk-keyword">async function</span> abrirNotificacoes() {
     <span class="tk-keyword">var</span> alerts = <span class="tk-keyword">await</span> callDFCAsync($Context, <span class="tk-str">'GRD_API_GetAllAlertMessages'</span>, { EmployeeID: idUsuario });
     <span class="tk-keyword">var</span> dests  = <span class="tk-keyword">await</span> callDFCAsync($Context, <span class="tk-str">'GRD_API_GetAllAllowedDestinationAlert'</span>, {});
@@ -13368,25 +13393,19 @@ g.data = [
       data:  alerts.responseResultData.Alerts,
       destinations: dests.responseResultData.Destinations,
 
-      <span class="tk-comment">// AlertEmployeeID / AlertRole("-1") / AlertTitle / AlertMessage</span>
+      <span class="tk-comment">// d = { DestinationID, DestinationDescription, DestinationType, AlertTitle, AlertMessage }</span>
       onConfirmNewNotification: <span class="tk-keyword">function</span> (d) {
-        callDFCAsync($Context, <span class="tk-str">'GRD_API_CreateAlert'</span>, {
-          AlertEmployeeID: d.AlertEmployeeID, AlertRole: d.AlertRole,
-          AlertTitle: d.AlertTitle, AlertMessage: d.AlertMessage
-        });
+        callDFCAsync($Context, <span class="tk-str">'GRD_API_CreateAlert'</span>, paraCreateAlert(d));
       },
-      <span class="tk-comment">// resposta = novo alerta para o remetente (mesmos campos + dados do original)</span>
+      <span class="tk-comment">// resposta = novo alerta para o remetente original (+ ReplyAlertID)</span>
       onReplyNotification: <span class="tk-keyword">function</span> (d) {
-        callDFCAsync($Context, <span class="tk-str">'GRD_API_CreateAlert'</span>, {
-          AlertEmployeeID: d.AlertEmployeeID, AlertRole: d.AlertRole,
-          AlertTitle: d.AlertTitle, AlertMessage: d.AlertMessage
-        });
+        <span class="tk-keyword">var</span> inputs = paraCreateAlert(d);
+        inputs.AlertReplyOnID = d.ReplyAlertID;   <span class="tk-comment">// AlertID da mensagem respondida</span>
+        callDFCAsync($Context, <span class="tk-str">'GRD_API_CreateAlert'</span>, inputs);
       },
-      <span class="tk-comment">// pode vir mais de uma (seleção múltipla) — a API exclui uma por chamada</span>
+      <span class="tk-comment">// 1 ou várias (seleção múltipla) — AlertItemRecipientID já vem "id1, id2, ..."</span>
       onDeleteNotification: <span class="tk-keyword">function</span> (d) {
-        d.AlertRecipientIDs.forEach(<span class="tk-keyword">function</span> (id) {
-          callDFCAsync($Context, <span class="tk-str">'GRD_API_DeleteAlert'</span>, { AlertItemRecipientID: id });
-        });
+        callDFCAsync($Context, <span class="tk-str">'GRD_API_DeleteAlert'</span>, { AlertItemRecipientID: d.AlertItemRecipientID });
       },
       onNotificationMarkedAsRead: <span class="tk-keyword">function</span> (d) {
         callDFCAsync($Context, <span class="tk-str">'GRD_API_MarkAlertAsRead'</span>, { AlertRecipientID: d.AlertRecipientID });
@@ -13422,8 +13441,11 @@ g.data = [
             <tr><td class="col-name">data[].GeneratedOn</td><td class="col-type">string (data/hora)</td><td class="col-desc">Formato <code>"10/6/2026 10:11:31 PM"</code> (M/D/AAAA). Na lista: hoje → <code>hh:mm</code>, ontem → "Ontem", até 6 dias → dia da semana, depois <code>dd/mm/aaaa</code>. Na leitura: <code>dd/mm/aaaa hh:mm</code>.</td></tr>
             <tr><td class="col-name">data[].CreatedBy</td><td class="col-type">string</td><td class="col-desc">Remetente exibido.</td></tr>
             <tr><td class="col-name">data[].CreatedByEmployeeID</td><td class="col-type">string</td><td class="col-desc">ID do remetente — vem selecionado no <strong>Responder</strong> (se não estiver em <code>destinations</code>, é incluído na lista como usuário).</td></tr>
+            <tr><td class="col-name">data[].ReplyAlertID</td><td class="col-type">string</td><td class="col-desc">(Opcional) <code>AlertID</code> da mensagem respondida. Diferente de <code>"0"</code> = a notificação é uma <strong>resposta</strong>: ao abrir, a mensagem respondida aparece abaixo do texto, no mesmo bloco de citação do popup de Responder.</td></tr>
+            <tr><td class="col-name">data[].ReplyUser / ReplyDate</td><td class="col-type">string</td><td class="col-desc">(Opcional) autor e data/hora da mensagem respondida — linha de cabeçalho da citação (<code>"Henrique · 08/10/2026 19:23"</code>).</td></tr>
+            <tr><td class="col-name">data[].ReplyTitle / ReplyMessage</td><td class="col-type">string</td><td class="col-desc">(Opcional) título e texto da mensagem respondida, exibidos na citação.</td></tr>
             <tr><td class="col-name">data[].IsMessageRead</td><td class="col-type">"0" | "1"</td><td class="col-desc"><code>"0"</code> = não lida (bolinha + negrito, entra no contador "N novas").</td></tr>
-            <tr><td class="col-name">data[].PriorityID / AlertStatusID / RecipientID</td><td class="col-type">string</td><td class="col-desc">Não exibidos; voltam nos <code>detail</code> (objeto <code>notification</code> / <code>notifications</code> / <code>replyTo</code>).</td></tr>
+            <tr><td class="col-name">data[].PriorityID / AlertStatusID / RecipientID</td><td class="col-type">string</td><td class="col-desc">Não exibidos; voltam nos <code>detail</code> de exclusão/leitura (objeto <code>notification</code> / <code>notifications</code>).</td></tr>
           </tbody>
         </table>
 
@@ -13446,19 +13468,40 @@ g.data = [
             <tr><th style="width:220px">Evento</th><th style="width:300px">detail</th><th>Descrição</th></tr>
           </thead>
           <tbody>
-            <tr><td class="col-name">confirm-new-notification</td><td class="col-type">{ AlertEmployeeID, AlertRole, AlertTitle, AlertMessage, recipient: { ID, Description, Type } }</td><td class="col-desc">Enviar no popup <strong>+ Novo</strong>. Campos prontos para o <code>GRD_API_CreateAlert</code>: destino <code>USER</code> → <code>AlertEmployeeID</code> = ID (numérico) e <code>AlertRole</code> = <code>"-1"</code>; destino <code>ROLE</code> → <code>AlertEmployeeID</code> = <code>-1</code> e <code>AlertRole</code> = nome da role (<code>Description</code>). O <code>ID</code> da role continua disponível em <code>recipient.ID</code>.</td></tr>
-            <tr><td class="col-name">reply-notification</td><td class="col-type">mesmos do anterior + { ReplyToAlertRecipientID, ReplyToAlertID, replyTo }</td><td class="col-desc">Enviar no popup de <strong>Responder</strong>. <code>replyTo</code> é a notificação original.</td></tr>
-            <tr><td class="col-name">delete-notification</td><td class="col-type">{ AlertRecipientIDs: [...], notifications: [...] }</td><td class="col-desc">Excluir (1 ou várias). Os itens já saem da lista. O <code>GRD_API_DeleteAlert</code> exclui um por chamada.</td></tr>
+            <tr><td class="col-name">confirm-new-notification</td><td class="col-type">{ DestinationID, DestinationDescription, DestinationType, AlertTitle, AlertMessage }</td><td class="col-desc">Enviar no popup <strong>+ Novo</strong>. Traz só o <strong>destinatário</strong> escolhido no "Para" e o conteúdo — nada do usuário atual. Campos detalhados na tabela abaixo.</td></tr>
+            <tr><td class="col-name">reply-notification</td><td class="col-type">mesmos do anterior + { ReplyAlertID }</td><td class="col-desc">Enviar no popup de <strong>Responder</strong>. O destinatário é o <strong>remetente da mensagem original</strong>; <code>ReplyAlertID</code> é o <code>AlertID</code> da mensagem que está sendo respondida.</td></tr>
+            <tr><td class="col-name">delete-notification</td><td class="col-type">{ AlertItemRecipientID, AlertRecipientIDs: [...], notifications: [...] }</td><td class="col-desc">Excluir (1 ou várias). Os itens já saem da lista. <code>AlertItemRecipientID</code> traz os IDs separados por vírgula (ex.: <code>"100000084, 100000085"</code>) — pronto para o <code>GRD_API_DeleteAlert</code> numa única chamada; <code>AlertRecipientIDs</code> traz os mesmos IDs em array.</td></tr>
             <tr><td class="col-name">notification-marked-as-read</td><td class="col-type">{ AlertRecipientID, AlertID, notification }</td><td class="col-desc">Abrir uma notificação não lida. Ela passa a <code>IsMessageRead = "1"</code> na lista. Só dispara uma vez por notificação.</td></tr>
             <tr><td class="col-name">close</td><td class="col-type">{}</td><td class="col-desc">Popup fechado (✕, Esc ou clique fora).</td></tr>
           </tbody>
         </table>
+
+        <h3 class="gd-h3">Campos de <code>confirm-new-notification</code> / <code>reply-notification</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:200px">Campo</th><th style="width:110px">Evento</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">DestinationID</td><td class="col-type">novo · resposta</td><td class="col-desc">ID do <strong>destinatário</strong> — ID do usuário (<code>USER</code>) ou da role (<code>ROLE</code>). Ex.: <code>"100000001"</code>.</td></tr>
+            <tr><td class="col-name">DestinationDescription</td><td class="col-type">novo · resposta</td><td class="col-desc">Nome do destinatário. Ex.: <code>"Kaic Lima"</code> ou <code>"GRD.WDC.Checklist"</code>.</td></tr>
+            <tr><td class="col-name">DestinationType</td><td class="col-type">novo · resposta</td><td class="col-desc"><code>"USER"</code> ou <code>"ROLE"</code>. Na resposta é sempre <code>"USER"</code> (o remetente original).</td></tr>
+            <tr><td class="col-name">AlertTitle</td><td class="col-type">novo · resposta</td><td class="col-desc">Título enviado. Na resposta: <code>"RE: &lt;título original&gt;"</code>.</td></tr>
+            <tr><td class="col-name">AlertMessage</td><td class="col-type">novo · resposta</td><td class="col-desc">Texto digitado pelo usuário (na resposta, só o texto novo).</td></tr>
+            <tr><td class="col-name">ReplyAlertID</td><td class="col-type">resposta</td><td class="col-desc"><code>AlertID</code> da mensagem que está sendo respondida (ex.: <code>"100000011"</code>) — envie em <code>AlertReplyOnID</code> no <code>GRD_API_CreateAlert</code>.</td></tr>
+          </tbody>
+        </table>
+        <p class="gd-lead" style="font-size:12px">
+          <strong>Para o <code>GRD_API_CreateAlert</code>:</strong> <code>USER</code> → <code>AlertEmployeeID = DestinationID</code> e
+          <code>AlertRole = "-1"</code>; <code>ROLE</code> → <code>AlertEmployeeID = -1</code> e
+          <code>AlertRole = DestinationDescription</code> (veja <code>paraCreateAlert</code> em "Integração com as APIs").
+        </p>
 
         <h3 class="gd-h3">Notas</h3>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong>Seleção múltipla:</strong> Shift + clique seleciona um intervalo; Ctrl (ou Cmd) + clique marca/desmarca. Com mais de uma selecionada, o painel mostra o resumo e o ícone de excluir. Selecionar várias <strong>não</strong> marca como lidas.</li>
           <li><strong>Busca:</strong> filtra por remetente, título e mensagem, ignorando maiúsculas e <strong>acentos</strong>. A seleção múltipla vale só para os itens visíveis.</li>
           <li><strong>Envio:</strong> o botão Enviar só habilita com destinatário, título e mensagem preenchidos. Após enviar aparece "Notificação enviada." por alguns segundos.</li>
+          <li><strong>Responder:</strong> o destinatário (remetente original) e o título (<code>"RE: …"</code>) vêm preenchidos e <strong>bloqueados</strong> — só a mensagem pode ser editada.</li>
           <li><strong>Esc em camadas:</strong> fecha primeiro o dropdown do Para, depois o popup de envio e, por último, o de notificações.</li>
           <li><strong>Exclusão sem confirmação:</strong> o item sai da lista na hora; se a API falhar, recarregue <code>el.data</code>.</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado). O dropdown do Para usa <code>position:fixed</code>.</li>

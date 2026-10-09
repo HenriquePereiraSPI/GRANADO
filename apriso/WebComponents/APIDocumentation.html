@@ -430,6 +430,7 @@
           <a class="gd-link" href="#GRD_API_GetWipOrder">GRD_API_GetWipOrder</a>
           <a class="gd-link" href="#GRD_API_GetCage">GRD_API_GetCage</a>
           <a class="gd-link" href="#GRD_API_GetWipOrderSimplified">GRD_API_GetWipOrderSimplified</a>
+          <a class="gd-link" href="#GRD_API_GetWipOrderJDESimplified">GRD_API_GetWipOrderJDESimplified</a>
           <a class="gd-link" href="#GRD_API_GetAllWeighLineDetail">GRD_API_GetAllWeighLineDetail</a>
           <a class="gd-link" href="#GRD_API_GetDefaultWorkcenterPrinter">GRD_API_GetDefaultWorkcenterPrinter</a>
           <a class="gd-link" href="#GRD_API_GetCurrentUserInformation">GRD_API_GetCurrentUserInformation</a>
@@ -442,6 +443,7 @@
           <a class="gd-link" href="#GRD_API_DeleteAlert">GRD_API_DeleteAlert</a>
           <a class="gd-link" href="#GRD_API_GetAllAllowedDestinationAlert">GRD_API_GetAllAllowedDestinationAlert</a>
           <a class="gd-link" href="#GRD_API_MarkAlertAsRead">GRD_API_MarkAlertAsRead</a>
+          <a class="gd-link" href="#GRD_API_GetAllMessagesCount">GRD_API_GetAllMessagesCount</a>
         </div>
       </div>
 
@@ -3048,25 +3050,33 @@ poppins-700.woff2
   <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
   <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
   <span class="tk-key">"Alerts"</span><span class="tk-punc">:</span> [
+    <span class="tk-comment">// resposta — os campos Reply* trazem a mensagem que foi respondida</span>
     {
-      <span class="tk-key">"AlertRecipientID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000020"</span><span class="tk-punc">,</span> <span class="tk-key">"AlertID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000008"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"AlertTitle"</span><span class="tk-punc">:</span> <span class="tk-str">"Nova Notificação"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"AlertMessage"</span><span class="tk-punc">:</span> <span class="tk-str">"Erro ao cadastrar Produto M000877S"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"AlertRecipientID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000099"</span><span class="tk-punc">,</span> <span class="tk-key">"AlertID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000047"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"AlertTitle"</span><span class="tk-punc">:</span> <span class="tk-str">"RE: X"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"AlertMessage"</span><span class="tk-punc">:</span> <span class="tk-str">"TESTE MESSAGE"</span><span class="tk-punc">,</span>
       <span class="tk-key">"PriorityID"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"AlertStatusID"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"GeneratedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"10/6/2026 7:55:42 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"GeneratedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"10/9/2026 4:03:04 PM"</span><span class="tk-punc">,</span>
       <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"winke"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedByEmployeeID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000003"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"RecipientID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000013"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"IsMessageRead"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span>
+      <span class="tk-key">"RecipientID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"IsMessageRead"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReplyAlertID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000042"</span><span class="tk-punc">,</span> <span class="tk-key">"ReplyUser"</span><span class="tk-punc">:</span> <span class="tk-str">"Henrique"</span><span class="tk-punc">,</span> <span class="tk-key">"ReplyDate"</span><span class="tk-punc">:</span> <span class="tk-str">"10/8/2026 7:23:25 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReplyTitle"</span><span class="tk-punc">:</span> <span class="tk-str">"Testes Notificações"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReplyMessage"</span><span class="tk-punc">:</span> <span class="tk-str">"Ficou legal em amigo, parabéns!"</span>
     }<span class="tk-punc">,</span>
+    <span class="tk-comment">// alerta comum — ReplyAlertID "0" e demais Reply* vazios</span>
     {
-      <span class="tk-key">"AlertRecipientID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000019"</span><span class="tk-punc">,</span> <span class="tk-key">"AlertID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000007"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"AlertTitle"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
-      <span class="tk-key">"AlertMessage"</span><span class="tk-punc">:</span> <span class="tk-str">"Teste Aerta Unico 2"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"AlertRecipientID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000025"</span><span class="tk-punc">,</span> <span class="tk-key">"AlertID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000011"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"AlertTitle"</span><span class="tk-punc">:</span> <span class="tk-str">"Novo Produto Cadastrado"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"AlertMessage"</span><span class="tk-punc">:</span> <span class="tk-str">"Produto M0008 cadastrado com sucesso!"</span><span class="tk-punc">,</span>
       <span class="tk-key">"PriorityID"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"AlertStatusID"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"GeneratedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"10/6/2026 7:48:16 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"GeneratedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"10/6/2026 7:11:31 PM"</span><span class="tk-punc">,</span>
       <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"winke"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedByEmployeeID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000003"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"RecipientID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000013"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"IsMessageRead"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span>
+      <span class="tk-key">"RecipientID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"IsMessageRead"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReplyAlertID"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"ReplyUser"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"ReplyDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/1900 12:00:00 AM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReplyTitle"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReplyMessage"</span><span class="tk-punc">:</span> <span class="tk-str">""</span>
     }
     <span class="tk-comment">// ... demais alertas</span>
   ]
@@ -3101,6 +3111,12 @@ poppins-700.woff2
             <tr><td class="col-name">CreatedByEmployeeID</td><td class="col-type">string</td><td class="col-desc">ID do funcionário que criou o alerta.</td></tr>
             <tr><td class="col-name">RecipientID</td><td class="col-type">string</td><td class="col-desc">ID do funcionário destinatário (igual ao <code>EmployeeID</code> informado).</td></tr>
             <tr><td class="col-name">IsMessageRead</td><td class="col-type">string (bool)</td><td class="col-desc">Indica se o destinatário já leu o alerta: <code>"0"</code> = não lida · <code>"1"</code> = lida.</td></tr>
+            <tr><td colspan="3" style="background:#F4EED9;font-weight:800;color:#0F3319">Mensagem respondida — preenchidos só quando o alerta é uma <strong>resposta</strong></td></tr>
+            <tr><td class="col-name">ReplyAlertID</td><td class="col-type">string</td><td class="col-desc"><code>AlertID</code> da mensagem que este alerta responde (o <code>AlertReplyOnID</code> enviado no <a href="#GRD_API_CreateAlert"><code>GRD_API_CreateAlert</code></a>). <code>"0"</code> = não é resposta.</td></tr>
+            <tr><td class="col-name">ReplyUser</td><td class="col-type">string</td><td class="col-desc">Quem enviou a mensagem respondida (ex.: <code>"Henrique"</code>). Vazio quando não é resposta.</td></tr>
+            <tr><td class="col-name">ReplyDate</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data/hora da mensagem respondida (ex.: <code>"10/8/2026 7:23:25 PM"</code>). <code>"1/1/1900 12:00:00 AM"</code> quando não é resposta.</td></tr>
+            <tr><td class="col-name">ReplyTitle</td><td class="col-type">string</td><td class="col-desc">Título da mensagem respondida. Vazio quando não é resposta.</td></tr>
+            <tr><td class="col-name">ReplyMessage</td><td class="col-type">string</td><td class="col-desc">Texto da mensagem respondida. Vazio quando não é resposta.</td></tr>
           </tbody>
         </table>
 
@@ -3108,6 +3124,7 @@ poppins-700.woff2
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong>Ordenação:</strong> os alertas vêm do mais recente para o mais antigo (<code>GeneratedOn</code> decrescente).</li>
           <li><strong>AlertTitle opcional:</strong> pode vir vazio — use um título padrão na exibição quando necessário.</li>
+          <li><strong>Respostas:</strong> identifique por <code>ReplyAlertID</code> diferente de <code>"0"</code>; nesse caso os campos <code>ReplyUser</code>, <code>ReplyDate</code>, <code>ReplyTitle</code> e <code>ReplyMessage</code> trazem a mensagem original (útil para exibir a citação). Sem resposta, a data vem como <code>"1/1/1900 12:00:00 AM"</code> e os textos vazios.</li>
           <li><strong>IDs como string:</strong> no retorno todos os campos (inclusive IDs e <code>PriorityID</code>/<code>AlertStatusID</code>) vêm como texto.</li>
         </ul>
       </section>
@@ -3149,6 +3166,14 @@ poppins-700.woff2
   <span class="tk-key">"AlertTitle"</span><span class="tk-punc">:</span> <span class="tk-str">"Novo Produto Cadastrado"</span><span class="tk-punc">,</span>
   <span class="tk-key">"AlertMessage"</span><span class="tk-punc">:</span> <span class="tk-str">"Produto M0005 foi cadastrado com sucesso!"</span>
 }</pre>
+        <p class="gd-lead">Exemplo <strong>respondendo</strong> um alerta (informa o <code>AlertID</code> respondido em <code>AlertReplyOnID</code>):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"AlertEmployeeID"</span><span class="tk-punc">:</span> <span class="tk-num">100000003</span><span class="tk-punc">,</span>
+  <span class="tk-key">"AlertRole"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"AlertTitle"</span><span class="tk-punc">:</span> <span class="tk-str">"RE: Novo Produto Cadastrado"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"AlertMessage"</span><span class="tk-punc">:</span> <span class="tk-str">"Ok, verificado."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"AlertReplyOnID"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000042"</span>
+}</pre>
 
         <h3 class="gd-h3">Campos de entrada</h3>
         <table class="gd-api">
@@ -3185,6 +3210,12 @@ poppins-700.woff2
               <td class="col-req">Sim</td>
               <td class="col-desc">Texto/mensagem do alerta.</td>
             </tr>
+            <tr>
+              <td class="col-name">AlertReplyOnID</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Não</td>
+              <td class="col-desc">Usado só quando o alerta é uma <strong>resposta</strong>: o <code>AlertID</code> do alerta que está sendo respondido (ex.: <code>"1000000042"</code>). Em alertas novos, não informe.</td>
+            </tr>
           </tbody>
         </table>
 
@@ -3212,6 +3243,7 @@ poppins-700.woff2
         <h3 class="gd-h3">Notas</h3>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong>Usuário × role:</strong> informe o destinatário em <code>AlertEmployeeID</code> <em>ou</em> em <code>AlertRole</code>, passando <code>-1</code> no campo que não for usado.</li>
+          <li><strong>Resposta:</strong> ao responder um alerta, envie o destinatário (normalmente quem enviou o original) e preencha <code>AlertReplyOnID</code> com o <code>AlertID</code> do alerta original — é o que liga a resposta à mensagem respondida.</li>
           <li><strong>Consulta:</strong> os alertas criados podem ser lidos pelo destinatário via <a href="#GRD_API_GetAllAlertMessages"><code>GRD_API_GetAllAlertMessages</code></a>.</li>
         </ul>
       </section>
@@ -3222,8 +3254,9 @@ poppins-700.woff2
       <section id="GRD_API_DeleteAlert">
         <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_DeleteAlert</code></h1>
         <p class="gd-lead">
-          <strong>Deleta um alerta enviado para o usuário</strong> — remove o vínculo do alerta com
-          o destinatário identificado por <code>AlertItemRecipientID</code>.
+          <strong>Deleta um ou mais alertas enviados para o usuário</strong> — remove o vínculo do alerta com
+          o destinatário identificado por <code>AlertItemRecipientID</code>. Aceita <strong>vários IDs</strong>
+          numa mesma chamada, separados por vírgula.
         </p>
 
         <h2 class="gd-h2">Chamada</h2>
@@ -3239,8 +3272,14 @@ poppins-700.woff2
         <!-- ===== Inputs ===== -->
         <h2 class="gd-h2">Inputs</h2>
         <p class="gd-lead">Corpo da requisição (JSON):</p>
-        <pre class="gd-code">{
-  <span class="tk-key">"AlertItemRecipientID"</span><span class="tk-punc">:</span> <span class="tk-num">100000035</span>
+        <pre class="gd-code"><span class="tk-comment">// um alerta</span>
+{
+  <span class="tk-key">"AlertItemRecipientID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000084"</span>
+}
+
+<span class="tk-comment">// vários alertas — IDs separados por vírgula</span>
+{
+  <span class="tk-key">"AlertItemRecipientID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000084, 100000085, 100000086"</span>
 }</pre>
 
         <h3 class="gd-h3">Campos de entrada</h3>
@@ -3256,9 +3295,9 @@ poppins-700.woff2
           <tbody>
             <tr>
               <td class="col-name">AlertItemRecipientID</td>
-              <td class="col-type">number</td>
+              <td class="col-type">string</td>
               <td class="col-req">Sim</td>
-              <td class="col-desc">ID do vínculo alerta × destinatário a deletar — corresponde ao <code>AlertRecipientID</code> retornado por <a href="#GRD_API_GetAllAlertMessages"><code>GRD_API_GetAllAlertMessages</code></a>.</td>
+              <td class="col-desc">ID(s) do vínculo alerta × destinatário a deletar — corresponde ao <code>AlertRecipientID</code> retornado por <a href="#GRD_API_GetAllAlertMessages"><code>GRD_API_GetAllAlertMessages</code></a>. Para excluir <strong>vários</strong>, separe os IDs por vírgula (ex.: <code>"100000084, 100000085, 100000086"</code>).</td>
             </tr>
           </tbody>
         </table>
@@ -3277,7 +3316,7 @@ poppins-700.woff2
             <tr><th style="width:150px">Campo</th><th style="width:120px">Tipo</th><th>Descrição</th></tr>
           </thead>
           <tbody>
-            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se o alerta foi deletado com sucesso.</td></tr>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se o(s) alerta(s) foi(ram) deletado(s) com sucesso.</td></tr>
             <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
           </tbody>
         </table>
@@ -3285,6 +3324,7 @@ poppins-700.woff2
         <h3 class="gd-h3">Notas</h3>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong>Por destinatário:</strong> a deleção é feita pelo ID do vínculo com o usuário (<code>AlertRecipientID</code>), não pelo <code>AlertID</code> — em alertas enviados a uma role, apenas o item daquele usuário é removido.</li>
+          <li><strong>Vários IDs:</strong> envie os <code>AlertRecipientID</code> numa única string separada por vírgula — ex.: <code>ids.join(', ')</code> a partir de um array. Espaços após a vírgula são aceitos.</li>
         </ul>
       </section>
 
@@ -3433,6 +3473,99 @@ poppins-700.woff2
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong>Por destinatário:</strong> marca só o item daquele usuário (<code>AlertRecipientID</code>), não o alerta inteiro — em alertas enviados a uma role, os demais usuários continuam com a mensagem não lida.</li>
           <li><strong>Uso com o <code>&lt;granado-notification-popup&gt;</code>:</strong> chame esta API no evento <code>onNotificationMarkedAsRead</code>, passando <code>detail.AlertRecipientID</code>.</li>
+        </ul>
+      </section>
+
+      <!-- ==================================================================
+           GRD_API_GetAllMessagesCount
+           ================================================================== -->
+      <section id="GRD_API_GetAllMessagesCount">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetAllMessagesCount</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera o resumo das mensagens do usuário</strong> — devolve, em <code>AlertCount</code>,
+          o <strong>total</strong> de mensagens (alertas) do funcionário e quantas ainda <strong>não foram lidas</strong>.
+          Útil para o contador/bolinha do sino sem precisar trazer a lista completa
+          (<a href="#GRD_API_GetAllAlertMessages"><code>GRD_API_GetAllAlertMessages</code></a>).
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetAllMessagesCount</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>AlertCount</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"EmployeeID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:150px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">EmployeeID</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ID do funcionário (destinatário) cujas mensagens serão contadas.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+  <span class="tk-key">"AlertCount"</span><span class="tk-punc">:</span> {
+    <span class="tk-key">"EmployeeID"</span><span class="tk-punc">:</span> <span class="tk-str">"100000002"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"TotalMessages"</span><span class="tk-punc">:</span> <span class="tk-str">"6"</span><span class="tk-punc">,</span>
+    <span class="tk-key">"UnreadMessages"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span>
+  }
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se o resumo foi recuperado com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">AlertCount</td><td class="col-type">object</td><td class="col-desc">Resumo das mensagens do usuário. Campos abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de <code>AlertCount</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">EmployeeID</td><td class="col-type">string</td><td class="col-desc">ID do funcionário consultado (igual ao informado no input).</td></tr>
+            <tr><td class="col-name">TotalMessages</td><td class="col-type">string (número)</td><td class="col-desc">Total de mensagens (alertas) do usuário.</td></tr>
+            <tr><td class="col-name">UnreadMessages</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade de mensagens ainda <strong>não lidas</strong> (<code>IsMessageRead = "0"</code>).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Objeto, não array:</strong> <code>AlertCount</code> vem como um <strong>único objeto</strong> (diferente das listas das outras APIs de alerta).</li>
+          <li><strong>Contagens como string:</strong> <code>TotalMessages</code> e <code>UnreadMessages</code> vêm como texto — converta para número antes de comparar (ex.: <code>Number(AlertCount.UnreadMessages) &gt; 0</code> para exibir a bolinha do sino).</li>
         </ul>
       </section>
 
@@ -5106,6 +5239,198 @@ poppins-700.woff2
         <h3 class="gd-h3">Notas</h3>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong>Somente header:</strong> versão enxuta de <a class="gd-link" href="#GRD_API_GetWipOrder">GRD_API_GetWipOrder</a> — não traz componentes nem o bloco de pesagem.</li>
+          <li><strong>Progresso:</strong> use <code>TotalItemsFormatted</code> para exibir direto (ex.: <code>"7/7"</code>) ou <code>OkItems</code>/<code>TotalItems</code> para cálculos.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_GetWipOrderJDESimplified
+           ============================================================ -->
+      <section id="GRD_API_GetWipOrderJDESimplified">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetWipOrderJDESimplified</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera as informações das ordens JDE de forma simplificada</strong> — apenas o
+          <em>header</em> (sem componentes/pesagem). Devolve a lista <code>OrderSimplified</code> com
+          os dados essenciais da ordem e o progresso de itens (<code>OkItems</code>/<code>TotalItems</code>).
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetWipOrderJDESimplified</span>
+        </div>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"154897"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"123456"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Status"</span><span class="tk-punc">:</span> <span class="tk-str">"CompletedWeight"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-01-01"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"EndDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-12-20"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:180px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">WipOrderNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">
+                Número da ordem (WIP Order) a filtrar (ex.: <code>"154897"</code>).
+                Use <code>"-1"</code> para trazer <strong>todas</strong> as ordens.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">ProductNo</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">
+                Número/código do produto resultante a filtrar (ex.: <code>"123456"</code>).
+                Use <code>"-1"</code> para <strong>todos</strong> os produtos.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">Status</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">
+                Status da ordem a filtrar (ex.: <code>"New"</code>, <code>"Started"</code>,
+                <code>"Completed"</code>, <code>"CompletedWeight"</code>, <code>"Cancelled"</code>).
+                Use <code>"-1"</code> para <strong>todos</strong> os status.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">StartDate</td>
+              <td class="col-type">string (data)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">
+                Data inicial do período de filtro, no formato <code>"AAAA-MM-DD"</code>
+                (ex.: <code>"2026-01-01"</code>).
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">EndDate</td>
+              <td class="col-type">string (data)</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">
+                Data final do período de filtro, no formato <code>"AAAA-MM-DD"</code>
+                (ex.: <code>"2026-12-20"</code>).
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span>
+  <span class="tk-key">"OrderSimplified"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"620942"</span><span class="tk-punc">,</span> <span class="tk-key">"WipOrderType"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"OrderStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"Started"</span><span class="tk-punc">,</span> <span class="tk-key">"OrderWeighStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"PendingRelease"</span><span class="tk-punc">,</span> <span class="tk-key">"UOM"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReleaseDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/4/2025 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"175.0000000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ExpectedStartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"4/28/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"ExpectedFinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"1/1/1900 12:00:00 AM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ProductIDResult"</span><span class="tk-punc">:</span> <span class="tk-str">"100024300"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNoResult"</span><span class="tk-punc">:</span> <span class="tk-str">"2985860"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductDescription"</span><span class="tk-punc">:</span> <span class="tk-str">"PERFUME PHEBO PATCHOULI"</span><span class="tk-punc">,</span> <span class="tk-key">"LotResult"</span><span class="tk-punc">:</span> <span class="tk-str">"5853/2025"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Facility"</span><span class="tk-punc">:</span> <span class="tk-str">"Pesagem"</span><span class="tk-punc">,</span> <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">""</span><span class="tk-punc">,</span> <span class="tk-key">"OkItems"</span><span class="tk-punc">:</span> <span class="tk-str">"7"</span><span class="tk-punc">,</span> <span class="tk-key">"TotalItems"</span><span class="tk-punc">:</span> <span class="tk-str">"7"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TotalItemsFormatted"</span><span class="tk-punc">:</span> <span class="tk-str">"7/7"</span><span class="tk-punc">,</span> <span class="tk-key">"IsAllItemsWeighed"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"CreatedOn"</span><span class="tk-punc">:</span> <span class="tk-str">"7/29/2026 1:30:11 PM"</span>
+    }
+  ]<span class="tk-punc">,</span>
+  <span class="tk-key">"OrderOverall"</span><span class="tk-punc">:</span> { <span class="tk-key">"New"</span><span class="tk-punc">:</span> <span class="tk-str">"289"</span><span class="tk-punc">,</span> <span class="tk-key">"Started"</span><span class="tk-punc">:</span> <span class="tk-str">"11"</span><span class="tk-punc">,</span> <span class="tk-key">"Completed"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"CompletedToday"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"Cancelled"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span> }<span class="tk-punc">,</span>
+  <span class="tk-key">"OrderWeighOverall"</span><span class="tk-punc">:</span> { <span class="tk-key">"New"</span><span class="tk-punc">:</span> <span class="tk-str">"299"</span><span class="tk-punc">,</span> <span class="tk-key">"Started"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"Completed"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"CompletedToday"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"PartialWeigh"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span> <span class="tk-key">"PartialWeighToday"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"Cancelled"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span> <span class="tk-key">"PendingRelease"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span> }
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as informações foram recuperadas com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno (vazia em caso de sucesso).</td></tr>
+            <tr><td class="col-name">OrderSimplified</td><td class="col-type">array&lt;ordem&gt;</td><td class="col-desc">Header(s) da ordem. Campos de cada item abaixo.</td></tr>
+            <tr><td class="col-name">OrderOverall</td><td class="col-type">object</td><td class="col-desc">Resumo/contagem geral de ordens por status. Campos abaixo.</td></tr>
+            <tr><td class="col-name">OrderWeighOverall</td><td class="col-type">object</td><td class="col-desc">Resumo/contagem geral de ordens por status <strong>de pesagem</strong>. Campos abaixo.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de cada <code>OrderSimplified</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:210px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">WipOrderNo</td><td class="col-type">string</td><td class="col-desc">Número da ordem.</td></tr>
+            <tr><td class="col-name">WipOrderType</td><td class="col-type">string</td><td class="col-desc">Tipo da ordem.</td></tr>
+            <tr><td class="col-name">OrderStatus</td><td class="col-type">string</td><td class="col-desc">Status da ordem (ex.: <code>"Started"</code>).</td></tr>
+            <tr><td class="col-name">OrderWeighStatus</td><td class="col-type">string</td><td class="col-desc">Status de <strong>pesagem</strong> da ordem (ex.: <code>"PendingRelease"</code>).</td></tr>
+            <tr><td class="col-name">UOM</td><td class="col-type">string</td><td class="col-desc">Unidade de medida (ex.: <code>"KG"</code>).</td></tr>
+            <tr><td class="col-name">ReleaseDate</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data de liberação da ordem.</td></tr>
+            <tr><td class="col-name">Quantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade planejada da ordem.</td></tr>
+            <tr><td class="col-name">ExpectedStartDate</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data prevista de início.</td></tr>
+            <tr><td class="col-name">ExpectedFinishDate</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data prevista de término. <code>"1/1/1900 …"</code> indica não preenchida.</td></tr>
+            <tr><td class="col-name">ProductIDResult</td><td class="col-type">string</td><td class="col-desc">ID do produto resultante (produto acabado).</td></tr>
+            <tr><td class="col-name">ProductNoResult</td><td class="col-type">string</td><td class="col-desc">Número/código do produto resultante.</td></tr>
+            <tr><td class="col-name">ProductDescription</td><td class="col-type">string</td><td class="col-desc">Descrição do produto resultante (ex.: <code>"PERFUME PHEBO PATCHOULI"</code>).</td></tr>
+            <tr><td class="col-name">LotResult</td><td class="col-type">string</td><td class="col-desc">Lote do produto resultante (ex.: <code>"5853/2025"</code>).</td></tr>
+            <tr><td class="col-name">Facility</td><td class="col-type">string</td><td class="col-desc">Facility/etapa da ordem (ex.: <code>"Pesagem"</code>).</td></tr>
+            <tr><td class="col-name">Workcenter</td><td class="col-type">string</td><td class="col-desc">Centro de trabalho (pode vir vazio).</td></tr>
+            <tr><td class="col-name">OkItems</td><td class="col-type">string (número)</td><td class="col-desc">Itens concluídos/OK da ordem.</td></tr>
+            <tr><td class="col-name">TotalItems</td><td class="col-type">string (número)</td><td class="col-desc">Total de itens da ordem.</td></tr>
+            <tr><td class="col-name">TotalItemsFormatted</td><td class="col-type">string</td><td class="col-desc">Progresso formatado <code>OkItems/TotalItems</code> (ex.: <code>"7/7"</code>).</td></tr>
+            <tr><td class="col-name">IsAllItemsWeighed</td><td class="col-type">string ("1" / "0")</td><td class="col-desc">Indica se todos os itens da ordem já foram pesados.</td></tr>
+            <tr><td class="col-name">CreatedOn</td><td class="col-type">string (data/hora)</td><td class="col-desc">Data/hora de criação da ordem.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de <code>OrderOverall</code></h3>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575">Contagens gerais (não se referem à ordem consultada, e sim ao panorama de ordens).</p>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:210px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">New</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade de ordens em <strong>Novo</strong>.</td></tr>
+            <tr><td class="col-name">Started</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade de ordens <strong>iniciadas</strong> (Started).</td></tr>
+            <tr><td class="col-name">Completed</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade de ordens <strong>concluídas</strong>.</td></tr>
+            <tr><td class="col-name">CompletedToday</td><td class="col-type">string (número)</td><td class="col-desc">Ordens concluídas <strong>hoje</strong>.</td></tr>
+            <tr><td class="col-name">Cancelled</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade de ordens <strong>canceladas</strong>.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Campos de <code>OrderWeighOverall</code></h3>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575">Contagens gerais por status de <strong>pesagem</strong> (panorama de ordens na pesagem).</p>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:210px">Campo</th><th style="width:150px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">New</td><td class="col-type">string (número)</td><td class="col-desc">Ordens em <strong>Novo</strong> (aguardando pesagem).</td></tr>
+            <tr><td class="col-name">Started</td><td class="col-type">string (número)</td><td class="col-desc">Ordens com pesagem <strong>iniciada</strong>.</td></tr>
+            <tr><td class="col-name">Completed</td><td class="col-type">string (número)</td><td class="col-desc">Ordens com pesagem <strong>concluída</strong>.</td></tr>
+            <tr><td class="col-name">CompletedToday</td><td class="col-type">string (número)</td><td class="col-desc">Pesagens concluídas <strong>hoje</strong>.</td></tr>
+            <tr><td class="col-name">PartialWeigh</td><td class="col-type">string (número)</td><td class="col-desc">Ordens com pesagem <strong>parcial</strong>.</td></tr>
+            <tr><td class="col-name">PartialWeighToday</td><td class="col-type">string (número)</td><td class="col-desc">Pesagens parciais <strong>hoje</strong>.</td></tr>
+            <tr><td class="col-name">Cancelled</td><td class="col-type">string (número)</td><td class="col-desc">Ordens <strong>canceladas</strong>.</td></tr>
+            <tr><td class="col-name">PendingRelease</td><td class="col-type">string (número)</td><td class="col-desc">Ordens <strong>aguardando liberação</strong> (pending release).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Mesmo contrato:</strong> inputs e outputs <strong>iguais</strong> aos da <a class="gd-link" href="#GRD_API_GetWipOrderSimplified">GRD_API_GetWipOrderSimplified</a> — a diferença é que esta consulta as ordens <strong>JDE</strong>.</li>
+          <li><strong>Somente header:</strong> não traz componentes nem o bloco de pesagem.</li>
           <li><strong>Progresso:</strong> use <code>TotalItemsFormatted</code> para exibir direto (ex.: <code>"7/7"</code>) ou <code>OkItems</code>/<code>TotalItems</code> para cálculos.</li>
         </ul>
       </section>
