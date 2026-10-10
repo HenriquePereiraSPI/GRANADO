@@ -356,7 +356,7 @@ if (!customElements.get('granado-notification-popup')) {
     // Bloco de citação (mesmo visual no popup de Responder e na leitura de uma resposta):
     // "autor · dd/mm/aaaa hh:mm", título (se houver) e o texto da mensagem citada.
     _quoteHtml(user, date, title, message, marginTop) {
-      return `<div data-role="quote" style="margin-top:${marginTop || 12}px;padding:8px 12px;border-left:3px solid ${BORDER};background:${SURFACE2};font:12px/1.5 ${FONT};color:${TEXT2};word-break:break-word">` +
+      return `<div data-role="quote" style="box-sizing:border-box;max-width:100%;min-width:0;margin-top:${marginTop || 12}px;padding:8px 12px;border-left:3px solid ${BORDER};background:${SURFACE2};font:12px/1.5 ${FONT};color:${TEXT2};word-break:break-word;overflow-wrap:anywhere">` +
           `<div style="font:700 10px/1.4 ${FONT};color:${TEXT3};margin-bottom:4px">${this._esc(user || '')}` +
             (this._has(date) ? ` · <span style="font-family:${MONO}">${this._fmtDate(date)}</span>` : '') +
           `</div>` +
@@ -762,7 +762,9 @@ if (!customElements.get('granado-notification-popup')) {
       const cur = recips.find((u) => u.key === c.toKey) || null;
       const w = isReply ? this._find(c.replyKey) : null;
       const label = (t) => `<label style="display:block;font:600 11px/1.4 ${FONT};color:${LABEL};margin:14px 0 6px">${t}</label>`;
-      const field = `box-sizing:border-box;width:100%;font:13px/1.4 ${FONT};padding:8px 12px;border:1px solid ${BORDER2};border-radius:6px;background:${SURFACE};color:${LABEL};outline:none;margin:0`;
+      // box-sizing/width/max-width com !important: o CSS global do Apriso em input/textarea
+      // sobrescreve esses valores e o campo passava da largura (scroll horizontal no popup).
+      const field = `box-sizing:border-box !important;width:100% !important;max-width:100% !important;min-width:0 !important;font:13px/1.4 ${FONT};padding:8px 12px;border:1px solid ${BORDER2};border-radius:6px;background:${SURFACE};color:${LABEL};outline:none;margin:0`;
       // Na resposta, destinatário e título ficam bloqueados (só a mensagem é editável).
       const LOCKED_BG = '#EFE6CC';
       const toBg = isReply ? LOCKED_BG : (this._ddOpen ? '#F5EFD9' : SURFACE);
@@ -775,7 +777,8 @@ if (!customElements.get('granado-notification-popup')) {
               `<span style="font:700 15px/1.3 ${FONT};color:${VERDE_ESC}">${isReply ? 'Responder notificação' : 'Nova notificação'}</span>` +
               `<button type="button" data-role="c-x" title="Fechar" aria-label="Fechar" style="${BTN_RESET}background:none;border:1px solid ${BORDER};border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:${TEXT2};line-height:1">✕</button>` +
             `</div>` +
-            `<div style="flex:1 1 auto;min-height:0;overflow-y:auto;padding:0 18px 4px;${SCROLL}">` +
+            // overflow-x:hidden — só rolagem vertical (overflow-y:auto sozinho liberava a horizontal)
+            `<div style="flex:1 1 auto;min-height:0;min-width:0;overflow-y:auto;overflow-x:hidden;padding:0 18px 4px;${SCROLL}">` +
               label('Para') +
               `<button type="button" data-role="to" aria-haspopup="listbox" aria-expanded="${this._ddOpen ? 'true' : 'false'}" ${isReply ? 'disabled aria-disabled="true"' : ''} ` +
                 `style="${BTN_RESET}display:flex;align-items:center;gap:8px;width:100%;font:13px/1.4 ${FONT} !important;padding:8px 12px !important;border:1px solid ${toBorder};border-radius:6px;background:${toBg};color:${cur ? LABEL : '#8A9E8E'};cursor:${isReply ? 'not-allowed' : 'pointer'};text-align:left;opacity:1">` +

@@ -370,8 +370,17 @@
     color: var(--grn-verde-esc);
 }
 
-.env-prod .topbar .tb-icon-dot {
-    border-color: var(--grn-verde-esc);
+/* Borda do contador na cor do fundo do topo (recorta a bolinha sobre o ícone). */
+.env-prod .topbar .tb-icon-badge {
+    border-color: var(--grn-ouro-claro); /* fundo dourado do botão em PROD */
+}
+
+.env-dev .topbar .tb-icon-badge {
+    border-color: #3B2A20;
+}
+
+.env-qa .topbar .tb-icon-badge {
+    border-color: #3E1316;
 }
 
 /* === Seletor de TEMA (apenas no host DEV): ícone ao lado da notificação + menu === */
@@ -463,15 +472,38 @@
     border-color: var(--grn-verde-meio);
 }
 
-.tb-icon-dot {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+/* Contador de notificações não lidas (bolinha com o número) no canto do sino.
+   Oculto via [hidden] enquanto a quantidade for 0. Número em Arial (--grn-font-m).
+   Fica DENTRO dos limites do botão (sem offset negativo) e com !important nas
+   medidas/fonte: o CSS global do Apriso em <button> corta o que vaza e
+   sobrescreve height/line-height/font dos filhos. */
+.tb-icon {
+    overflow: visible !important;
+}
+
+.tb-icon-badge {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    box-sizing: border-box !important;
+    min-width: 17px !important;
+    height: 17px !important;
+    padding: 0 4px !important;
+    margin: 0 !important;
+    border-radius: 9px;
     background: var(--grn-per);
+    color: #FFFFFF !important;
     border: 1.5px solid var(--grn-surface2);
+    font: 700 10px/14px var(--grn-font-m) !important;
+    text-align: center;
+    letter-spacing: 0 !important;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.tb-icon-badge[hidden] {
+    display: none !important;
 }
 
 /* Usuário: avatar circular + nome abreviado ao lado */

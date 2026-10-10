@@ -99,6 +99,20 @@ async function getUser() {
     return userInfo.EmployeeID;
 }
 
+// Contador de não lidas na bolinha do sino (chamado de forma assíncrona após o header carregar).
+async function atualizarContadorNotificacoes() {
+    var ctx = window.AprisoHeaderContext;
+    var userId = await getUser();
+    var resp = await callDFCAsync(ctx, 'GRD_API_GetAllAlertMessageCount', { EmployeeID: userId });
+    if (!resp.responseResultData.Success) return;
+
+    var responseMessageCountObj = JSON.parse(resp.responseResultData.AlertCount)
+    var naoLidas = Number(responseMessageCountObj.UnreadMessages);
+    var badge = document.querySelector('.tb-icon-badge');
+    badge.textContent = naoLidas > 99 ? '99+' : naoLidas;
+    badge.hidden = naoLidas === 0;
+}
+
 async function abrirNotificacoes() {
     var userId = await getUser();
 

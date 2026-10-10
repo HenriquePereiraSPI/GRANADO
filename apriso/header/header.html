@@ -94,7 +94,9 @@
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
                         <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                     </svg>
-                    <span class="tb-icon-dot"></span>
+                    <!-- Quantidade de não lidas — preenchida de forma assíncrona após o header carregar
+                         (atualizarContadorNotificacoes). Oculta enquanto for 0. -->
+                    <span class="tb-icon-badge" hidden></span>
                 </button>
 
                 <div class="tb-user-wrap">
@@ -191,6 +193,7 @@
             initHeaderEvents();
             initResponsiveLayoutHeader();
             waitForDashboard();
+            atualizarContadorNotificacoes(); // assíncrono — não bloqueia o carregamento do header
 
         }
         // Garante que so roda depois do DOM montado
