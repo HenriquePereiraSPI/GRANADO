@@ -114,59 +114,55 @@ async function atualizarContadorNotificacoes() {
 }
 
 async function abrirNotificacoes() {
-    var userId = await getUser();
 
     var ctx = window.AprisoHeaderContext;
+
+    GranadoPreloader.show('Carregando notificações...');
+    await new Promise(e => setTimeout(() => e(), 500));
+
+    // API informações do usuario
+    var userId = await getUser();
+    if (!userId) {
+        GranadoPreloader.hide();
+        GranadoMessagePopup.error('Erro ao obter as informações do usuario', { title: 'Erro' });
+        return;
+    }
 
     // API de Carregamento de Mensagens
     var respMensagens = await callDFCAsync(ctx, 'GRD_API_GetAllAlertMessages', { EmployeeID: userId });
     if (!respMensagens.responseResultData.Success) {
+        GranadoPreloader.hide();
         GranadoMessagePopup.error('Erro ao obter as notificações', { title: 'Erro' });
         return;
     }
     var mensagens = JSON.parse(respMensagens.responseResultData.Alerts);
-    var alerta = mensagens.map(function (m) {
-        return {
-            AlertRecipientID: m.AlertRecipientID,
-            AlertID: m.AlertID,
-            AlertTitle: m.AlertTitle,
-            AlertMessage: m.AlertMessage,
-            PriorityID: m.PriorityID,
-            AlertStatusID: m.AlertStatusID,
-            GeneratedOn: m.GeneratedOn,
-            CreatedBy: m.CreatedBy,
-            CreatedByEmployeeID: m.CreatedByEmployeeID,
-            RecipientID: m.RecipientID,
-            IsMessageRead: m.IsMessageRead
-        }
-    });
 
     // API de Destinatários
     var respDestinos = await callDFCAsync(ctx, 'GRD_API_GetAllAllowedDestinationAlert', {});
     if (!respDestinos.responseResultData.Success) {
+        GranadoPreloader.hide();
         GranadoMessagePopup.error('Erro ao obter destinatários', { title: 'Erro' });
         return;
     }
-    var arrayDestinos = JSON.parse(respDestinos.responseResultData.Destinations);
-    var destinos = arrayDestinos.map(function (a) {
-        return {
-            ID: a.ID,
-            Description: a.Description,
-            Type: a.Type
-        }
-    });
+    var destinos = JSON.parse(respDestinos.responseResultData.Destinations);
+
+    GranadoPreloader.hide();
 
     GranadoNotificationPopup.show({
-        data: alerta,
+        data: mensagens,
         destinations: destinos,
         onConfirmNewNotification: async function (d) {
             GranadoPreloader.show({ text: 'Enviando notificação...', zindex: 100010 }); // Z-index do overlay -> usado para garantir valor maior que outros modais/popups da tela.
+
+            var isRole = d.DestinationType === 'ROLE';
+
             var respCriar = await callDFCAsync(ctx, 'GRD_API_CreateAlert', {
-                AlertEmployeeID: d.AlertEmployeeID ? d.AlertEmployeeID : -1,
-                AlertRole: d.AlertRole ? d.AlertRole : "-1",
+                AlertEmployeeID: isRole ? -1 : Number(d.DestinationID),   // USER
+                AlertRole: isRole ? d.DestinationDescription : '-1',     // ROLE
                 AlertTitle: d.AlertTitle,
                 AlertMessage: d.AlertMessage
             });
+
             if (!respCriar.responseResultData.Success) {
                 GranadoToast.error('Erro ao enviar notificação.', { heading: 'Erro' });
                 GranadoPreloader.hide();
@@ -177,12 +173,17 @@ async function abrirNotificacoes() {
 
         onReplyNotification: async function (d) {
             GranadoPreloader.show({ text: 'Enviando resposta...', zindex: 100010 }); // Z-index do overlay -> usado para garantir valor maior que outros modais/popups da tela.
+
+            var isRole = d.DestinationType === 'ROLE';
+
             var respResponder = await callDFCAsync(ctx, 'GRD_API_CreateAlert', {
-                AlertEmployeeID: d.AlertEmployeeID,
-                AlertRole: d.AlertRole,
+                AlertEmployeeID: isRole ? -1 : Number(d.DestinationID),   // USER
+                AlertRole: isRole ? d.DestinationDescription : '-1',     // ROLE
                 AlertTitle: d.AlertTitle,
-                AlertMessage: d.AlertMessage
+                AlertMessage: d.AlertMessage,
+                AlertReplyOnID: d.ReplyAlertID
             });
+
             if (!respResponder.responseResultData.Success) {
                 GranadoToast.error('Erro ao enviar resposta.', { heading: 'Erro' });
                 GranadoPreloader.hide();
@@ -193,14 +194,16 @@ async function abrirNotificacoes() {
 
         onDeleteNotification: async function (d) {
             GranadoPreloader.show({ text: 'Deletando respostas...', zindex: 100010 }); // Z-index do overlay -> usado para garantir valor maior que outros modais/popups da tela.
-            for (var i = 0; i < d.AlertRecipientIDs.length; i++) {
-                var respDeletar = await callDFCAsync(ctx, 'GRD_API_DeleteAlert', { AlertItemRecipientID: d.AlertRecipientIDs[i] });
-            }
+            var respDeletar = await callDFCAsync(ctx, 'GRD_API_DeleteAlert', { AlertItemRecipientID: d.AlertItemRecipientID });
             GranadoPreloader.hide();
         },
 
         onNotificationMarkedAsRead: function (d) {
             callDFCAsync(ctx, 'GRD_API_MarkAlertAsRead', { AlertRecipientID: d.AlertRecipientID });
+        },
+
+        onClose: function () {
+            atualizarContadorNotificacoes();
         }
     });
 }

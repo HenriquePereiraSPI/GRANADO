@@ -372,7 +372,8 @@
 
 /* Borda do contador na cor do fundo do topo (recorta a bolinha sobre o ícone). */
 .env-prod .topbar .tb-icon-badge {
-    border-color: var(--grn-ouro-claro); /* fundo dourado do botão em PROD */
+    border-color: var(--grn-ouro-claro);
+    /* fundo dourado do botão em PROD */
 }
 
 .env-dev .topbar .tb-icon-badge {

@@ -13253,6 +13253,10 @@ g.data = [
               onNotificationMarkedAsRead: function (d) {
                 docNotifStatus('doc-notif-status', '👁️ Lida: ' + d.AlertRecipientID);
                 console.log('[notification] read →', d);
+              },
+              onClose: function () {
+                docNotifStatus('doc-notif-status', '✖️ Popup fechado');
+                console.log('[notification] close');
               }
             });
           }
@@ -13316,7 +13320,8 @@ g.data = [
     onConfirmNewNotification: <span class="tk-keyword">function</span> (d) { console.log(<span class="tk-str">'nova'</span>, d); },
     onReplyNotification: <span class="tk-keyword">function</span> (d) { console.log(<span class="tk-str">'resposta'</span>, d); },
     onDeleteNotification: <span class="tk-keyword">function</span> (d) { console.log(<span class="tk-str">'excluir'</span>, d.AlertRecipientIDs); },
-    onNotificationMarkedAsRead: <span class="tk-keyword">function</span> (d) { console.log(<span class="tk-str">'lida'</span>, d.AlertRecipientID); }
+    onNotificationMarkedAsRead: <span class="tk-keyword">function</span> (d) { console.log(<span class="tk-str">'lida'</span>, d.AlertRecipientID); },
+    onClose: <span class="tk-keyword">function</span> () { console.log(<span class="tk-str">'popup fechado'</span>); }   <span class="tk-comment">// ✕, Esc ou clique fora</span>
   });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
 
@@ -13349,6 +13354,9 @@ g.data = [
             el.addEventListener('reply-notification', function (ev) {
               docNotifStatus('doc-notif-html-status', '↩️ Resposta para ' + ev.detail.DestinationDescription);
             });
+            el.addEventListener('close', function () {
+              docNotifStatus('doc-notif-html-status', '✖️ Popup fechado');
+            });
           })();
         </script>
         <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- data e destinations recebem JSON (aspas simples no atributo) --&gt;</span>
@@ -13358,12 +13366,18 @@ g.data = [
          "CreatedBy":"winke","CreatedByEmployeeID":"100000003","IsMessageRead":"0"}]'</span>
   <span class="tk-attr">destinations</span>=<span class="tk-str">'[{"ID":"100000001","Description":"Kaic Lima","Type":"USER"},
                 {"ID":"100000027","Description":"GRD.WDC.Checklist","Type":"ROLE"}]'</span>
-  <span class="tk-attr">onDeleteNotification</span>=<span class="tk-str">"console.log(detail.AlertRecipientIDs)"</span><span class="tk-tag">&gt;&lt;/granado-notification-popup&gt;</span>
+  <span class="tk-attr">onDeleteNotification</span>=<span class="tk-str">"console.log(detail.AlertRecipientIDs)"</span>
+  <span class="tk-attr">onClose</span>=<span class="tk-str">"console.log('popup fechado')"</span><span class="tk-tag">&gt;&lt;/granado-notification-popup&gt;</span>
 
 <span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-str">"document.getElementById('notif').open()"</span><span class="tk-tag">&gt;</span>🔔<span class="tk-tag">&lt;/button&gt;</span>
 <span class="tk-tag">&lt;script&gt;</span>
-  document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'notif'</span>).addEventListener(<span class="tk-str">'notification-marked-as-read'</span>, <span class="tk-keyword">function</span> (ev) {
+  <span class="tk-keyword">var</span> notif = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'notif'</span>);
+  notif.addEventListener(<span class="tk-str">'notification-marked-as-read'</span>, <span class="tk-keyword">function</span> (ev) {
     console.log(ev.detail.AlertRecipientID);
+  });
+  <span class="tk-comment">// ou, em vez do atributo onClose, o evento "close"</span>
+  notif.addEventListener(<span class="tk-str">'close'</span>, <span class="tk-keyword">function</span> () {
+    console.log(<span class="tk-str">'popup fechado'</span>);
   });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
 
@@ -13409,6 +13423,10 @@ g.data = [
       },
       onNotificationMarkedAsRead: <span class="tk-keyword">function</span> (d) {
         callDFCAsync($Context, <span class="tk-str">'GRD_API_MarkAlertAsRead'</span>, { AlertRecipientID: d.AlertRecipientID });
+      },
+      <span class="tk-comment">// popup fechado (✕, Esc ou clique fora) — ex.: atualizar a bolinha de não lidas do sino</span>
+      onClose: <span class="tk-keyword">function</span> () {
+        atualizarContadorNotificacoes();
       }
     });
   }
