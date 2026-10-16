@@ -3,8 +3,8 @@
    Popup (overlay modal) de REETIQUETAGEM de saldo — referência ao
    popup "reetiquetar Material" da Pesagem > Devolução de MP ao
    Estoque. Cabeçalho com dados do material + drill-down Sala →
-   Balança + Quantidade Pesada (lida da balança pelo 📡 ou "Peso
-   manual" com Tara → Peso Líquido). Segue o padrão dos componentes
+   Balança + Peso Líquido (lido da balança pelo 📡 ou "Peso manual"
+   com Tara → Peso Bruto informativo). Segue o padrão dos componentes
    <granado-box-popup> / <granado-zpl-popup>, com layouts WEB e MOBILE.
 
    NÃO chama API — devolve o resultado por evento; quem chama
@@ -25,7 +25,7 @@
      closeOnBackdrop - true fecha ao clicar fora (default: NÃO fecha)
      onReadScale(ctx)- (opcional) 📡 ler peso: ctx = { balancaId, salaId, setValue(v) }
      onConfirm(d)    - clicou Concluir. d = { salaId, salaNome, salaResourceName,
-                       balancaId, quantidadePesada, tara, pesoLiquido, manual }
+                       balancaId, quantidadePesada, tara, pesoLiquido, pesoBruto, manual }
 
    ── Atributos
      mobile-breakpoint - largura (px) p/ trocar p/ o layout MOBILE. Default 768.
@@ -35,12 +35,12 @@
    ── Propriedades / métodos JS
      el.header / el.salas          -> ler/setar dados
      el.onConfirm / el.onReadScale -> ler/setar callbacks
-     el.setPeso(v)                 -> preenche o campo Quantidade Pesada
+     el.setPeso(v)                 -> preenche o campo Peso Líquido
      el.open() / el.close()
 
    ── Eventos (CustomEvent, bubbles)
      "confirm"    -> detail { salaId, salaNome, salaResourceName, balancaId,
-                     quantidadePesada, tara, pesoLiquido, manual }
+                     quantidadePesada, tara, pesoLiquido, pesoBruto, manual }
      "read-scale" -> detail { balancaId, salaId, setValue(v) }   (clique no 📡)
      "close"      -> fechado (Cancelar, ✕, backdrop, ou após Concluir)
 
@@ -241,10 +241,10 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
             // Grid drill-down (salas / balanças)
             '<div data-role="grp-grid" style="margin-bottom:18px"></div>' +
 
-            // Quantidade pesada (+ tara/líquido no modo manual)
+            // Peso líquido (digitado) (+ tara/bruto no modo manual)
             '<div data-role="qtd-wrap" style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;border-radius:8px">' +
               '<div style="flex:1;min-width:170px">' +
-                '<label style="display:block;font:900 9px/1.4 ' + FONT + ';letter-spacing:.08em;text-transform:uppercase;color:' + TEXT3 + ';margin-bottom:6px">Quantidade Pesada</label>' +
+                '<label style="display:block;font:900 9px/1.4 ' + FONT + ';letter-spacing:.08em;text-transform:uppercase;color:' + TEXT3 + ';margin-bottom:6px">Peso Líquido</label>' +
                 '<div style="display:flex;align-items:center;gap:8px">' +
                   '<input data-role="qtd" inputmode="decimal" placeholder="0,000" style="' + inpCss + ';background:' + SURFACE2 + '">' +
                   '<button data-role="pull" type="button" title="Ler peso da balança" style="flex-shrink:0;width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;border:1px solid ' + VERDE + ';border-radius:8px;background:' + VERDE_DIM + ';color:' + VERDE + ';cursor:pointer;font-size:16px;transition:filter .15s">📡</button>' +
@@ -259,7 +259,7 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
                 '</div>' +
               '</div>' +
               '<div data-role="liq-col" style="flex:1;min-width:120px;display:none">' +
-                '<label style="display:block;font:900 9px/1.4 ' + FONT + ';letter-spacing:.08em;text-transform:uppercase;color:' + VERDE_ESC + ';margin-bottom:6px">Peso Líquido</label>' +
+                '<label style="display:block;font:900 9px/1.4 ' + FONT + ';letter-spacing:.08em;text-transform:uppercase;color:' + VERDE_ESC + ';margin-bottom:6px">Peso Bruto</label>' +
                 '<div data-role="liq" style="font:800 16px/1.2 ' + FONT_M + ';padding:11px 12px;background:' + VERDE_DIM + ';border:1px solid ' + OK_B + ';border-radius:8px;color:' + VERDE_ESC + ';text-align:center">— kg</div>' +
               '</div>' +
             '</div>' +
@@ -459,7 +459,7 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
       this._updateToggleLock();
     }
 
-    // Zera Quantidade Pesada / Tara / Peso Líquido (troca de balança ou Voltar) -> volta a 0,000.
+    // Zera Peso Líquido / Tara / Peso Bruto (troca de balança ou Voltar) -> volta a 0,000.
     _limparPesagem() {
       this._pesoStr = '0,000'; this._taraStr = '0,000';
       if (this._inp) this._inp.value = '0,000';
@@ -469,15 +469,16 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
       if (this._pullBtn) { this._pullBtn.disabled = false; this._pullBtn.innerHTML = '📡'; }
     }
 
+    // Atualiza o campo da direita: Peso Bruto = Peso Líquido (digitado) + Tara.
     _recalcLiq() {
       const b = numBR(this._inp.value);
       const traw = (this._taraInp.value || '').trim();
-      const t = traw === '' ? 0 : numBR(traw);   // Tara vazia = 0 (só o peso vira líquido)
+      const t = traw === '' ? 0 : numBR(traw);   // Tara vazia = 0
       if (b == null || t == null) { this._liqDisp.textContent = '— kg'; this._liqDisp.style.color = VERDE_ESC; return; }
-      const liq = b - t;
-      if (liq < 0) { this._liqDisp.textContent = '⚠ neg.'; this._liqDisp.style.color = PER; return; }
+      const bruto = b + t;   // Peso Bruto = líquido + tara
+      if (bruto < 0) { this._liqDisp.textContent = '⚠ neg.'; this._liqDisp.style.color = PER; return; }
       this._liqDisp.style.color = VERDE_ESC;
-      this._liqDisp.textContent = fmt3(liq) + ' kg';
+      this._liqDisp.textContent = fmt3(bruto) + ' kg';
     }
 
     _pull() {
@@ -504,21 +505,21 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
       const st = this._state;
       if (!st.salaId) { this._alerta('Selecione a sala.'); return; }
       if (st.mode === 'balanca' && !st.balId) { this._alerta('Selecione a balança.'); return; }
-      const bruto = numBR(this._inp.value);
-      if (bruto == null) { this._alerta('Informe a quantidade pesada.'); return; }
+      const liquido = numBR(this._inp.value);   // o operador digita o PESO LÍQUIDO
+      if (liquido == null) { this._alerta('Informe o peso líquido.'); return; }
       // Modo balança: só registra com peso > 0 (leitura 0/erro da balança não passa).
-      if (st.mode === 'balanca' && !(bruto > 0)) {
+      if (st.mode === 'balanca' && !(liquido > 0)) {
         this._alerta('Peso da balança inválido (0). Refaça a leitura no 📡 ou use o Peso manual.');
         return;
       }
 
-      let tara = 0, liquido = bruto;
+      // Peso Bruto (campo da direita) = líquido + tara → só informativo, não vai pra API.
+      let tara = 0;
       if (st.mode === 'manual') {
         const traw = (this._taraInp.value || '').trim();
         tara = traw === '' ? 0 : numBR(traw);   // Tara vazia = 0
         if (tara == null) { this._alerta('Tara inválida — use apenas números.'); try { this._taraInp.focus(); } catch (e) {} return; }
-        liquido = bruto - tara;
-        if (liquido <= 0) { this._alerta('Peso líquido inválido — verifique Quantidade Pesada e Tara.'); return; }
+        if (!(liquido > 0)) { this._alerta('Informe o peso líquido.'); return; }
       }
 
       const sala = this._achaSala(st.salaId) || {};
@@ -527,9 +528,10 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
         salaNome: sala.nome || '',
         salaResourceName: sala.resourceName || '',
         balancaId: st.balId,
-        quantidadePesada: bruto,
+        quantidadePesada: liquido,     // o que o operador digitou (líquido)
         tara: tara,
-        pesoLiquido: liquido,
+        pesoLiquido: liquido,          // valor ÚTIL → o LÍQUIDO digitado (vai pra API)
+        pesoBruto: liquido + tara,     // só informativo (sem utilidade prática)
         manual: st.mode === 'manual'
       };
       this.dispatchEvent(new CustomEvent('confirm', { bubbles: true, composed: true, detail: detail }));
