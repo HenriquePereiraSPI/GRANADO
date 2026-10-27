@@ -16,7 +16,7 @@
      })
 
    ── show({ ... })
-     header  - { material, lote, etiqueta, saldo }   (cabeçalho dourado)
+     header  - { material, codigo, lote, etiqueta, saldo }   (cabeçalho dourado)
      salas   - [ { id, nome, resourceName, bals:[ { id, cap, sug } ] } ]
      salaId  - (opcional) id de uma sala já definida (ex.: a sala da OP).
                Quando informado, o popup abre DIRETO na seleção de balança
@@ -48,7 +48,7 @@
    <script src="[AprisoScripts]/WebComponents/granado-pesagem-reetiquetar-popup.js"></script>
    <script>
      GranadoPesagemReetiquetarPopup.show({
-       header: { material: 'Fragância Rosa', lote: 'FRA-2026-04',
+       header: { material: 'Fragância Rosa', codigo: '708316', lote: 'FRA-2026-04',
                  etiqueta: 'ETQ-2026-0421', saldo: '0,498 kg' },
        salas: [
          { id: 'SALA-A', nome: 'Sala A', resourceName: '100000020',
@@ -226,7 +226,7 @@ if (!customElements.get('granado-pesagem-reetiquetar-popup')) {
 
             // Cabeçalho dourado
             '<div style="background:' + OURO_DIM + ';border:1px solid ' + OURO_CLARO + ';border-radius:8px;padding:12px 14px;margin:12px 0 18px;display:flex;flex-wrap:wrap;gap:7px ' + (m ? '16px' : '22px') + '">' +
-              this._kv('Material', h.material) + this._kv('Lote', h.lote) + this._kv('Etiqueta', h.etiqueta) + this._kv('Saldo a devolver', h.saldo) +
+              this._kv('Material', h.material) + this._kv('Código', h.codigo) + this._kv('Lote', h.lote) + this._kv('Etiqueta', h.etiqueta) + this._kv('Saldo a devolver', h.saldo) +
             '</div>' +
 
             // Label da área + toggle Peso manual
