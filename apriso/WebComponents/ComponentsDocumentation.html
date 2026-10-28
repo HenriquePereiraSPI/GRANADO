@@ -1746,11 +1746,11 @@
         </p>
         <div class="gd-demo">
           <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
-          <granado-table id="dt-children" tabletitle="Ordens · clique para ver as MPs" childrowcolor="#EEF4FC"></granado-table>
+          <granado-table id="dt-children" tabletitle="Ordens · clique para ver as MPs"></granado-table>
         </div>
         <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">id</span>=<span class="tk-str">"tbl"</span>
-    <span class="tk-attr">tabletitle</span>=<span class="tk-str">"Ordens · clique para ver as MPs"</span>
-    <span class="tk-attr">childrowcolor</span>=<span class="tk-str">"#EEF4FC"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
+    <span class="tk-attr">tabletitle</span>=<span class="tk-str">"Ordens · clique para ver as MPs"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
+<span class="tk-com">&lt;!-- opcional: expandedrowcolor="#F1DFA8" troca a cor do destaque do grupo --&gt;</span>
 
 <span class="tk-tag">&lt;script&gt;</span>
   <span class="tk-kw">const</span> columns = [
@@ -1975,10 +1975,16 @@
               <td class="col-desc">Cor das linhas alternadas (zebra). Use <code>"none"</code> ou <code>""</code> para desligar. <code>_bg</code> por linha sempre sobrepõe.</td>
             </tr>
             <tr>
+              <td class="col-name">expandedrowcolor</td>
+              <td class="col-type">string (cor hex)</td>
+              <td class="col-default">"#D6E4F5"</td>
+              <td class="col-desc">Destaque do <strong>grupo expandido</strong>: a linha-pai fica nesta cor (azul por padrão), os <code>children</code> usam um tom mais claro (igual para todos) da mesma cor. Use hex (<code>#rgb</code>/<code>#rrggbb</code>) para os tons serem derivados. <code>onrenderrow</code> e <code>_bg</code> continuam com prioridade.</td>
+            </tr>
+            <tr>
               <td class="col-name">childrowcolor</td>
               <td class="col-type">string (cor CSS)</td>
-              <td class="col-default">"#FBF7EA"</td>
-              <td class="col-desc">Cor de fundo das <strong>linhas-filhas</strong> (<code>children</code> expandidos).</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Opcional: cor <strong>fixa</strong> das linhas-filhas, ignorando os tons derivados de <code>expandedrowcolor</code>.</td>
             </tr>
             <tr>
               <td class="col-name">rowheight</td>

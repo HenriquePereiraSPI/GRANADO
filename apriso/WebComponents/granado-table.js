@@ -82,8 +82,13 @@
      rowaltcolor         - cor de fundo das linhas alternadas (zebra).
                            Default: "#FEF0CC". Use "none" ou "" para desabilitar.
                            "_bg" por linha sempre sobrepoe esta cor.
-     childrowcolor       - cor de fundo das linhas-filhas (children expandidos).
-                           Default: "#FBF7EA".
+     expandedrowcolor    - cor de destaque do grupo expandido (pai + children).
+                           A linha-pai fica nesta cor; os filhos usam um tom mais
+                           claro (igual para todos) da mesma cor.
+                           Default: "#D6E4F5" (azul).
+                           Use hex (#rgb/#rrggbb) para os tons serem derivados.
+     childrowcolor       - opcional: cor FIXA das linhas-filhas (ignora os tons
+                           derivados de expandedrowcolor).
      rowheight           - padding vertical das celulas (CSS valido).
                            Default: "4px" (linhas finas). Aumente para
                            "8px", "12px", etc. para linhas mais altas.
@@ -133,7 +138,7 @@
 if (!customElements.get('granado-table')) {
   class GranadoTable extends HTMLElement {
     static get observedAttributes() {
-      return ['columns', 'rows', 'color', 'gross-border-color', 'title-color', 'soft-border-color', 'onrender', 'onrenderrow', 'onclickevent', 'ondoubleclickevent', 'isenablepagination', 'pagesize', 'tablelayout', 'isenableexportcsv', 'isenableexportpdf', 'exportfilename', 'tabletitle', 'rowaltcolor', 'childrowcolor', 'rowheight', 'isenablefilter', 'isenablesort'];
+      return ['columns', 'rows', 'color', 'gross-border-color', 'title-color', 'soft-border-color', 'onrender', 'onrenderrow', 'onclickevent', 'ondoubleclickevent', 'isenablepagination', 'pagesize', 'tablelayout', 'isenableexportcsv', 'isenableexportpdf', 'exportfilename', 'tabletitle', 'rowaltcolor', 'childrowcolor', 'expandedrowcolor', 'rowheight', 'isenablefilter', 'isenablesort'];
     }
 
     constructor() {
@@ -232,16 +237,23 @@ if (!customElements.get('granado-table')) {
       const rowAltAttr = this.getAttribute('rowaltcolor');
       const rowAltColor = (rowAltAttr === 'none' || rowAltAttr === '') ? '' : (rowAltAttr || '#FEF0CC');
 
-      const childRowColor = this.getAttribute('childrowcolor') || '#FBF7EA';
-      const ctx = { columns, onRender, TD_BASE, MONO, color, hasClick, hasDblClick, childBg: childRowColor };
+      // Destaque do grupo expandido: pai na cor base, filhos num tom mais claro da mesma cor.
+      const expandedColor = this.getAttribute('expandedrowcolor') || '#D6E4F5';
+      const childRowAttr = this.getAttribute('childrowcolor');
+      const childBg = childRowAttr || this._mixHex(expandedColor, '#FFFFFF', 0.55) || expandedColor;
+      // Hover do grupo expandido segue a mesma cor (pai um pouco mais escuro; filho entre o tom dele e o do pai).
+      const expandedHover = this._mixHex(expandedColor, '#000000', 0.07) || '';
+      const childHover = this._mixHex(expandedColor, '#FFFFFF', 0.25) || '';
+      const ctx = { columns, onRender, TD_BASE, MONO, color, hasClick, hasDblClick };
       const body = pageRows.map((row, i) => {
         const globalIdx = pageStart + i;
         const hasCh = Array.isArray(row.children) && row.children.length > 0;
         const expanded = hasCh && this._expanded.has(row.__i);
         const rs = rowStyleFor(row, globalIdx);
-        const altBg = (rs && rs.color) || row._bg || (rowAltColor && i % 2 === 1 ? rowAltColor : '');
+        // Expandido: destaque sobrepoe a zebra (onrenderrow e _bg continuam com prioridade).
+        const altBg = (rs && rs.color) || row._bg || (expanded ? expandedColor : '') || (rowAltColor && i % 2 === 1 ? rowAltColor : '');
         let html = this._rowTrHtml(row, ctx, {
-          globalIdx, hasChildren: hasCh, expanded, altBg,
+          globalIdx, hasChildren: hasCh, expanded, altBg, hoverBg: expanded ? expandedHover : '',
           anim: !!(rs && rs.animate), animColor: rs && rs.animateColor,
         });
         // Linhas-filhas renderizadas logo abaixo da linha-pai, quando expandida.
@@ -250,7 +262,7 @@ if (!customElements.get('granado-table')) {
             const crs = rowStyleFor(ch || {}, -1);
             return this._rowTrHtml(ch || {}, ctx, {
               globalIdx, isChild: true, parentI: row.__i, childIdx: ci, childClickable: hasClick,
-              childBgOverride: crs && crs.color, anim: !!(crs && crs.animate), animColor: crs && crs.animateColor,
+              childBg: (crs && crs.color) || (ch && ch._bg) || childBg, hoverBg: childHover, anim: !!(crs && crs.animate), animColor: crs && crs.animateColor,
             });
           }).join('');
         }
@@ -604,18 +616,28 @@ if (!customElements.get('granado-table')) {
         const value = row[col.key];
         let html = onRender(value, col, row, opts.globalIdx);
         if (ci === 0) {
+          let icon = '';
           if (opts.hasChildren) {
             // Triângulo ▶ (SVG — evita o glifo virar emoji) que gira 90° (▼) ao abrir.
             // Na linha recém-clicada nasce no ângulo ANTERIOR e anima pós-render (_animateChevron).
             const toDeg = opts.expanded ? 90 : 0;
             const justToggled = row.__i === this._lastToggled;
             const fromDeg = justToggled ? (90 - toDeg) : toDeg;
-            html = `<span data-role="chev" data-to="${toDeg}" aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;width:12px;height:12px;margin-right:7px;vertical-align:-1px;color:${color};transition:transform .15s ease;transform:rotate(${fromDeg}deg)">` +
-              `<svg width="9" height="9" viewBox="0 0 10 10" style="display:block"><path d="M2 1 L8.5 5 L2 9 Z" fill="currentColor"/></svg></span>` + html;
+            // !important no espaçamento/tamanho: o CSS global do Apriso zera margin/padding de <span>.
+            icon = `<span data-role="chev" data-to="${toDeg}" aria-hidden="true" style="display:inline-flex !important;flex-shrink:0;align-items:center;justify-content:center;width:12px !important;height:12px !important;margin:0 7px 0 0 !important;padding:0 !important;color:${color};transition:transform .15s ease;transform:rotate(${fromDeg}deg)">` +
+              `<svg width="9" height="9" viewBox="0 0 10 10" style="display:block"><path d="M2 1 L8.5 5 L2 9 Z" fill="currentColor"/></svg></span>`;
           } else if (isChild) {
             // Marcador ↳ (SVG, dourado) nas linhas-filhas — no lugar do recuo vazio.
-            html = `<span aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;width:12px;height:12px;margin:0 7px 0 10px;vertical-align:-1px;color:#9A7520">` +
-              `<svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="M2.5 1.5 V7.5 H10"/><path d="M7.5 5 L10 7.5 L7.5 10"/></svg></span>` + html;
+            icon = `<span aria-hidden="true" style="display:inline-flex !important;flex-shrink:0;align-items:center;justify-content:center;width:12px !important;height:12px !important;margin:0 7px 0 10px !important;padding:0 !important;color:#9A7520">` +
+              `<svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="M2.5 1.5 V7.5 H10"/><path d="M7.5 5 L10 7.5 L7.5 10"/></svg></span>`;
+          }
+          if (icon) {
+            // Ícone FIXO na borda esquerda da célula; o texto ocupa o resto e segue o
+            // alinhamento da coluna (antes o ícone era inline e "andava" com o texto
+            // em colunas centralizadas/à direita).
+            const ell = col.width ? 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' : '';
+            html = `<span style="display:flex !important;align-items:center;min-width:0">${icon}` +
+              `<span style="flex:1 1 auto;min-width:0;${ell}">${html}</span></span>`;
           }
         }
         const align = col.align ? `;text-align:${col.align}` : '';
@@ -624,13 +646,13 @@ if (!customElements.get('granado-table')) {
         return `<td style="${style}">${html}</td>`;
       }).join('');
 
-      const bgColor = isChild ? (opts.childBgOverride || ctx.childBg || '') : (opts.altBg || '');
+      const bgColor = isChild ? (opts.childBg || '') : (opts.altBg || '');
       const trBg = bgColor ? `;background:${bgColor}` : '';
       const clickable = isChild
         ? !!opts.childClickable
         : (opts.hasChildren || ctx.hasClick || ctx.hasDblClick);
       const trCursor = clickable ? 'cursor:pointer' : '';
-      const hoverIn = `this.style.background='#ECE3C2'`;
+      const hoverIn = `this.style.background='${opts.hoverBg || '#ECE3C2'}'`;
       const hoverOut = `this.style.background=this.dataset.bg||''`;
       const idAttrs = isChild
         ? `data-child="1" data-parent="${opts.parentI}" data-cidx="${opts.childIdx}"`
@@ -639,6 +661,20 @@ if (!customElements.get('granado-table')) {
       const animAttrs = opts.anim ? ` data-anim="1" data-anim-color="${opts.animColor || '#8C1A1A'}"` : '';
       const animPos = opts.anim ? ';position:relative' : '';
       return `<tr style="${trCursor}${trBg}${animPos}" ${idAttrs}${animAttrs} data-bg="${bgColor}" onmouseover="${hoverIn}" onmouseout="${hoverOut}">${tds}</tr>`;
+    }
+
+    // Mistura duas cores hex (#rgb/#rrggbb) — t=0 retorna a, t=1 retorna b.
+    // Retorna '' se alguma nao for hex (ex.: var(), rgb()), para o chamador usar fallback.
+    _mixHex(a, b, t) {
+      const parse = (h) => {
+        const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(String(h || '').trim());
+        if (!m) return null;
+        const s = m[1].length === 3 ? m[1].replace(/./g, c => c + c) : m[1];
+        return [0, 2, 4].map(k => parseInt(s.substr(k, 2), 16));
+      };
+      const pa = parse(a), pb = parse(b);
+      if (!pa || !pb) return '';
+      return '#' + pa.map((v, k) => Math.round(v + (pb[k] - v) * t).toString(16).padStart(2, '0')).join('').toUpperCase();
     }
 
     _toggleExpand(hi) {

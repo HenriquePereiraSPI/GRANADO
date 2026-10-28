@@ -21,7 +21,7 @@
        onrender, onrenderrow, onclickevent, ondoubleclickevent,
        isenablepagination, pagesize, tablelayout, isenableexportcsv,
        isenableexportpdf, exportfilename, tabletitle, rowaltcolor,
-       childrowcolor, rowheight, isenablefilter, isenablesort
+       childrowcolor, expandedrowcolor, rowheight, isenablefilter, isenablesort
      (veja a doc do <granado-table> para o significado de cada uma.)
 
      onRenderRow: além do atributo (string JS), aceita FUNÇÃO via propriedade
@@ -75,7 +75,7 @@ if (!customElements.get('granado-table-popup')) {
 
   // Atributos repassados 1:1 ao <granado-table> (exceto columns/rows,
   // tratados à parte pelos getters .columns / .rows).
-  const TABLE_ATTRS = ['color', 'gross-border-color', 'title-color', 'soft-border-color', 'onrender', 'onrenderrow', 'onclickevent', 'ondoubleclickevent', 'isenablepagination', 'pagesize', 'tablelayout', 'isenableexportcsv', 'isenableexportpdf', 'exportfilename', 'tabletitle', 'rowaltcolor', 'childrowcolor', 'rowheight', 'isenablefilter', 'isenablesort'];
+  const TABLE_ATTRS = ['color', 'gross-border-color', 'title-color', 'soft-border-color', 'onrender', 'onrenderrow', 'onclickevent', 'ondoubleclickevent', 'isenablepagination', 'pagesize', 'tablelayout', 'isenableexportcsv', 'isenableexportpdf', 'exportfilename', 'tabletitle', 'rowaltcolor', 'childrowcolor', 'expandedrowcolor', 'rowheight', 'isenablefilter', 'isenablesort'];
 
   // Mapa das opções camelCase (show) -> atributo kebab da tabela.
   // Obs.: onRenderRow é tratado à parte (pode ser função) — não entra aqui.
@@ -84,7 +84,7 @@ if (!customElements.get('granado-table-popup')) {
     onRender: 'onrender', onClickEvent: 'onclickevent', onDoubleClickEvent: 'ondoubleclickevent',
     isEnablePagination: 'isenablepagination', pageSize: 'pagesize', tableLayout: 'tablelayout',
     isEnableExportCsv: 'isenableexportcsv', isEnableExportPdf: 'isenableexportpdf', exportFilename: 'exportfilename',
-    tableTitle: 'tabletitle', rowAltColor: 'rowaltcolor', childRowColor: 'childrowcolor', rowHeight: 'rowheight',
+    tableTitle: 'tabletitle', rowAltColor: 'rowaltcolor', childRowColor: 'childrowcolor', expandedRowColor: 'expandedrowcolor', rowHeight: 'rowheight',
     isEnableFilter: 'isenablefilter', isEnableSort: 'isenablesort'
   };
 
