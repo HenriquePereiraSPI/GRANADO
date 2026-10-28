@@ -29,9 +29,10 @@
                            Linha pode ter "_bg" para sobrepor a cor de fundo
                            padrao (ex: destacar uma linha especifica).
                            Linha pode ter "children" (array de linhas, mesmas
-                           keys): a linha vira EXPANSIVEL — ganha um chevron na
-                           1a coluna e, ao clicar, mostra as linhas-filhas logo
-                           abaixo (indentadas). A linha-pai com filhos NAO dispara
+                           keys): a linha vira EXPANSIVEL — ganha um triangulo (▶)
+                           na 1a coluna que gira para ▼ ao abrir e, ao clicar, mostra
+                           as linhas-filhas logo abaixo (com o marcador ↳ dourado
+                           antes da 1a coluna). A linha-pai com filhos NAO dispara
                            onclickevent (apenas expande/recolhe); o clique num
                            filho dispara onclickevent com a linha-filha e
                            rowIndex = -1. Filhos nao entram em ordenacao, filtro,
@@ -604,9 +605,17 @@ if (!customElements.get('granado-table')) {
         let html = onRender(value, col, row, opts.globalIdx);
         if (ci === 0) {
           if (opts.hasChildren) {
-            html = `<span data-role="chev" aria-hidden="true" style="display:inline-block;width:10px;margin-right:7px;color:${color};font-weight:800;transition:transform .15s ease;transform:rotate(${opts.expanded ? 90 : 0}deg)">&rsaquo;</span>` + html;
+            // Triângulo ▶ (SVG — evita o glifo virar emoji) que gira 90° (▼) ao abrir.
+            // Na linha recém-clicada nasce no ângulo ANTERIOR e anima pós-render (_animateChevron).
+            const toDeg = opts.expanded ? 90 : 0;
+            const justToggled = row.__i === this._lastToggled;
+            const fromDeg = justToggled ? (90 - toDeg) : toDeg;
+            html = `<span data-role="chev" data-to="${toDeg}" aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;width:12px;height:12px;margin-right:7px;vertical-align:-1px;color:${color};transition:transform .15s ease;transform:rotate(${fromDeg}deg)">` +
+              `<svg width="9" height="9" viewBox="0 0 10 10" style="display:block"><path d="M2 1 L8.5 5 L2 9 Z" fill="currentColor"/></svg></span>` + html;
           } else if (isChild) {
-            html = `<span aria-hidden="true" style="display:inline-block;width:17px"></span>` + html;
+            // Marcador ↳ (SVG, dourado) nas linhas-filhas — no lugar do recuo vazio.
+            html = `<span aria-hidden="true" style="display:inline-flex;align-items:center;justify-content:center;width:12px;height:12px;margin:0 7px 0 10px;vertical-align:-1px;color:#9A7520">` +
+              `<svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:block"><path d="M2.5 1.5 V7.5 H10"/><path d="M7.5 5 L10 7.5 L7.5 10"/></svg></span>` + html;
           }
         }
         const align = col.align ? `;text-align:${col.align}` : '';
@@ -635,7 +644,19 @@ if (!customElements.get('granado-table')) {
     _toggleExpand(hi) {
       if (!this._expanded) this._expanded = new Set();
       if (this._expanded.has(hi)) this._expanded.delete(hi); else this._expanded.add(hi);
+      this._lastToggled = hi;   // o chevron dessa linha anima do ângulo anterior p/ o novo
       this.render();
+      this._lastToggled = null;
+      this._animateChevron();
+    }
+
+    // Após o render, gira o chevron da linha recém-clicada até o ângulo final (data-to).
+    _animateChevron() {
+      const chevs = this.querySelectorAll('[data-role="chev"]');
+      if (!chevs.length) return;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        chevs.forEach(el => { el.style.transform = `rotate(${el.getAttribute('data-to')}deg)`; });
+      }));
     }
 
     _wireRowEvents(sortedRows, pageStart, hasClick, hasDblClick, onClickAttr, onDblClickAttr) {
