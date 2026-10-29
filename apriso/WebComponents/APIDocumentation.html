@@ -357,6 +357,7 @@
           <a class="gd-link" href="#best-responsividade">Responsividade</a>
           <a class="gd-link" href="#best-webcomponent">WebComponent</a>
           <a class="gd-link" href="#best-fonts">Fonts</a>
+          <a class="gd-link" href="#best-login-logo">Logo de Login</a>
         </div>
       </div>
 
@@ -766,6 +767,112 @@
 <span class="tk-tag">&lt;/main</span><span class="tk-tag">&gt;</span></pre>
           </div>
         </div>
+      </section>
+
+
+
+            <!-- ============================================================
+           _BestPractices / Logo de Login
+           ============================================================ -->
+      <section id="best-login-logo">
+        <h1 class="gd-h1" style="margin-top:24px">Logo de Login</h1>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575">
+          <strong>_BestPractices</strong> &middot; padrões e boas práticas de uso do Apriso.
+        </p>
+        <p class="gd-lead">
+          Como <strong>trocar a logo padrão da Dassault</strong> na tela de login do Apriso — trocando
+          o arquivo do <strong>símbolo</strong> e aplicando o <strong>ícone principal</strong> como
+          plano de fundo da área da logo via CSS.
+        </p>
+
+        <p class="gd-lead" style="background:#FCEBBE;border:1px solid #D9B85A;border-left:6px solid #9A7520;border-radius:7px;padding:13px 16px;font-size:13px;box-shadow:0 2px 8px rgba(154,117,32,.18);margin-top:14px;color:#4A3A0E">
+          <strong style="color:#8A5A00;text-transform:uppercase;letter-spacing:.03em">⚠ Atenção</strong> ·
+          faça <strong>backup</strong> de todos os arquivos antes de modificá-los — tanto da imagem
+          original (<code>3DS_Logo_RGB_White.png</code>) quanto do <code>apr.css</code>. São arquivos
+          do produto e são sobrescritos em atualizações/upgrades do Apriso.
+        </p>
+
+        <div class="gd-tabwrap">
+          <div class="gd-tabs">
+            <button type="button" class="gd-tab active" onclick="gdTab(this,'ll-imagens')">Imagens</button>
+            <button type="button" class="gd-tab" onclick="gdTab(this,'ll-css')">CSS</button>
+          </div>
+
+          <div class="gd-tabpanel" id="ll-imagens">
+            <p class="gd-lead">
+              No <strong>servidor do Apriso</strong>, acesse a pasta de imagens do portal:
+            </p>
+            <pre class="gd-code">&lt;Disco&gt;:\Program Files\Dassault Systemes\DELMIA Apriso 2025\WebSite\Portal\Styles\Default\Images</pre>
+
+            <p class="gd-lead" style="margin-top:14px">Nessa pasta:</p>
+            <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+              <li><strong>Substitua</strong> a imagem <code>3DS_Logo_RGB_White.png</code> pela imagem
+                que deseja usar como símbolo do login — <strong>mantendo exatamente o mesmo nome
+                de arquivo</strong>.</li>
+              <li><strong>Adicione</strong> a imagem que será o <strong>ícone principal</strong>
+                (o plano de fundo da área da logo) — ex.: <code>IconePrincipal.jpg</code>.</li>
+            </ul>
+
+            <p class="gd-lead" style="margin-top:14px">
+              O caminho da imagem usado no CSS é relativo ao portal — ex.:
+              <code>/Apriso/Portal/Styles/Default/Images/IconePrincipal.jpg</code>.
+            </p>
+          </div>
+
+          <div class="gd-tabpanel" id="ll-css" style="display:none">
+            <p class="gd-lead">
+              No <strong>servidor do Apriso</strong>, abra o arquivo <code>apr.css</code> em:
+            </p>
+            <pre class="gd-code">&lt;Disco&gt;:\Program Files\Dassault Systemes\DELMIA Apriso 2025\WebSite\Portal\Styles\Default\apr.css</pre>
+
+            <p class="gd-lead" style="margin-top:14px">
+              Cole o trecho abaixo <strong>no final</strong> do arquivo:
+            </p>
+            <pre class="gd-code"><span class="tk-comment">/* Imagem cobrindo 100% da área da logo */</span>
+.loginBody #logoCol {
+    <span class="tk-attr">background</span>: url(<span class="tk-str">'{Caminho do ícone principal — ex.: /Apriso/Portal/Styles/Default/Images/IconePrincipal.jpg}'</span>) center / cover no-repeat !important;
+}
+
+.loginBody #logoCol img,
+.loginBody #logoCol &gt; * {
+    <span class="tk-attr">display</span>: none !important;
+}
+
+<span class="tk-comment">/* Símbolo do login: fundo branco, centralizado e com 70% do tamanho original (64px). */</span>
+.loginBody #loginCol #loginSymbol {
+    <span class="tk-attr">background</span>: <span class="tk-str">#FFFFFF</span> !important;
+    <span class="tk-attr">width</span>: <span class="tk-num">70%</span> !important;
+    <span class="tk-attr">height</span>: <span class="tk-num">45px</span> !important;          <span class="tk-comment">/* 70% de 64px */</span>
+    <span class="tk-attr">display</span>: block !important;        <span class="tk-comment">/* necessário para o margin auto centralizar a &lt;img&gt; */</span>
+    <span class="tk-attr">margin</span>: <span class="tk-num">0</span> auto <span class="tk-num">8px</span> auto !important; <span class="tk-comment">/* centraliza e mantém o espaçamento inferior original */</span>
+}
+
+<span class="tk-comment">/* Símbolo do login: fundo branco e largura proporcional à imagem.
+   Mesmo seletor do original para ter a mesma especificidade. */</span>
+.loginBody #loginCol #loginSymbol {
+    <span class="tk-attr">background</span>: <span class="tk-str">#FFFFFF</span> !important;
+    <span class="tk-attr">width</span>: auto !important;
+}</pre>
+
+            <p class="gd-lead" style="margin-top:14px">
+              Troque o <code>url(...)</code> pelo caminho da imagem adicionada na aba
+              <strong>Imagens</strong>.
+            </p>
+          </div>
+        </div>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Backup:</strong> guarde uma cópia de <code>3DS_Logo_RGB_White.png</code> e de
+            <code>apr.css</code> antes de alterar.</li>
+          <li><strong>Mesmo nome de arquivo:</strong> a imagem do símbolo precisa manter o nome
+            <code>3DS_Logo_RGB_White.png</code>; é esse o arquivo referenciado pela tela de login.</li>
+          <li><strong>Dois blocos para <code>#loginSymbol</code>:</strong> o segundo repete o seletor
+            de propósito — mesma especificidade do original — para sobrescrever a largura
+            (<code>width: auto</code>) e deixá-la proporcional à imagem.</li>
+          <li><strong>Cache:</strong> após a alteração, limpe o cache do navegador (ou force
+            <code>Ctrl + F5</code>) para ver a nova logo.</li>
+        </ul>
       </section>
 
       <!-- ============================================================
