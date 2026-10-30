@@ -412,11 +412,14 @@
         <div style="font:900 10px/1 'Poppins',system-ui,Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#9A7520;margin-bottom:8px">Pesagem</div>
         <h1 class="gd-h1"><code>&lt;granado-pesagem-reetiquetar-popup&gt;</code></h1>
         <p class="gd-lead">
-          Popup (overlay modal) de <strong>reentiquetagem de saldo</strong> — referência ao popup
-          "Reentiquetar Material" da <strong>Pesagem &rsaquo; Devolução de MP ao Estoque</strong>.
-          Traz um cabeçalho dourado com os dados do material, um <strong>drill-down Sala &rarr; Balança</strong>
-          e o campo <strong>Quantidade Pesada</strong>, lido da balança pelo <code>📡</code> ou digitado no
-          modo <strong>Peso manual</strong> (com Tara &rarr; Peso Líquido).
+          Popup (overlay modal) de <strong>reetiquetagem de saldo</strong> — referência ao popup
+          "reetiquetar Material" da <strong>Pesagem &rsaquo; Devolução de MP ao Estoque</strong>.
+          Traz um cabeçalho dourado com os dados do material (material, <strong>código</strong>, lote,
+          etiqueta e saldo), um <strong>drill-down Sala &rarr; Balança</strong> e o campo
+          <strong>Peso Líquido</strong>, lido da balança pelo <code>📡</code> ou digitado no
+          modo <strong>Peso manual</strong>. No manual, o operador informa o <strong>Peso Líquido</strong>
+          e uma <strong>Tara</strong> opcional; o <strong>Peso Bruto</strong> (<code>líquido + tara</code>)
+          é só exibido, informativo. O valor útil (enviado à API) é sempre o <strong>Peso Líquido digitado</strong>.
         </p>
         <p class="gd-lead">
           Segue o padrão dos componentes <code>&lt;granado-box-popup&gt;</code> /
@@ -443,7 +446,7 @@
         </p>
         <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
-          <button class="gd-btn" type="button" onclick="docReetBasico()">🏷 Reentiquetar Material</button>
+          <button class="gd-btn" type="button" onclick="docReetBasico()">🏷 reetiquetar Material</button>
           <span id="doc-reet-status" class="gd-status"></span>
         </div>
         <script>
@@ -460,7 +463,7 @@
           }
 
           function docReetHeader() {
-            return { material: 'Fragância Rosa', lote: 'FRA-2026-04',
+            return { material: 'Fragância Rosa', codigo: '708316', lote: 'FRA-2026-04',
                      etiqueta: 'ETQ-2026-0421', saldo: '0,498 kg' };
           }
 
@@ -478,7 +481,7 @@
         </script>
         <pre class="gd-code gd-snip"><span class="tk-tag">&lt;script&gt;</span>
   GranadoPesagemReetiquetarPopup.<span class="tk-attr">show</span>({
-    header: { material: <span class="tk-str">'Fragância Rosa'</span>, lote: <span class="tk-str">'FRA-2026-04'</span>,
+    header: { material: <span class="tk-str">'Fragância Rosa'</span>, codigo: <span class="tk-str">'708316'</span>, lote: <span class="tk-str">'FRA-2026-04'</span>,
               etiqueta: <span class="tk-str">'ETQ-2026-0421'</span>, saldo: <span class="tk-str">'0,498 kg'</span> },
     salas: [
       { id: <span class="tk-str">'SALA-A'</span>, nome: <span class="tk-str">'Sala A'</span>, resourceName: <span class="tk-str">'100000020'</span>,
@@ -543,13 +546,17 @@
   });
 <span class="tk-tag">&lt;/script&gt;</span></pre>
 
-        <h2 class="gd-h2">Peso manual — Tara e Peso Líquido</h2>
+        <h2 class="gd-h2">Peso manual — Peso Líquido e Peso Bruto</h2>
         <p class="gd-lead">
-          O toggle <strong>Peso manual</strong> só destrava <strong>depois</strong> de escolher a Sala <em>e</em> a
-          Balança. Ligado, ele esmaece o drill-down, esconde o <code>📡</code>, libera a digitação e mostra
-          os campos <strong>Tara</strong> e <strong>Peso Líquido</strong> (<code>líquido = pesada − tara</code>, com
-          <strong>tara vazia = 0</strong>). Trocar de modo <strong>limpa</strong> peso e tara — nada vaza de um modo
-          para o outro. Líquido negativo aparece como <code>⚠ neg.</code> e barra o Concluir.
+          O toggle <strong>Peso manual</strong> destrava assim que a <strong>Sala</strong> é escolhida (a balança
+          não é obrigatória no manual). Ligado, ele esmaece o drill-down, esconde o <code>📡</code>, libera a
+          digitação e mostra os campos <strong>Tara</strong> e <strong>Peso Bruto</strong>. O operador digita o
+          <strong>Peso Líquido</strong> (campo da esquerda) e, opcionalmente, a <strong>Tara</strong>; o
+          <strong>Peso Bruto</strong> (campo da direita) é calculado como <code>bruto = líquido + tara</code> e é
+          apenas <strong>informativo</strong> — o valor útil enviado à API é o <strong>Peso Líquido digitado</strong>.
+          Com <strong>tara vazia = 0</strong>, o bruto fica igual ao líquido. Trocar de modo <strong>limpa</strong>
+          os campos (voltam a <code>0,000</code>) — nada vaza de um modo para o outro. Bruto negativo aparece como
+          <code>⚠ neg.</code>.
         </p>
         <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
           <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
@@ -564,7 +571,7 @@
               onConfirm: function (d) {
                 var s = document.getElementById('doc-reet-man-status');
                 if (s) s.textContent = (d.manual ? '✍️ manual' : '📡 balança') +
-                  ' · pesada ' + d.quantidadePesada + ' − tara ' + d.tara + ' = ' + d.pesoLiquido + ' kg';
+                  ' · líquido ' + d.pesoLiquido + ' + tara ' + d.tara + ' = bruto ' + d.pesoBruto + ' kg';
                 console.log('[reetiquetar] manual →', d);
               }
             });
@@ -576,11 +583,11 @@
     salas: salas,
     onConfirm: <span class="tk-keyword">function</span> (d) {
       <span class="tk-keyword">if</span> (d.manual) {
-        <span class="tk-comment">// modo manual: tara informada (vazia = 0) e líquido = pesada − tara</span>
-        console.log(d.quantidadePesada, d.tara, d.pesoLiquido);
+        <span class="tk-comment">// modo manual: operador digita o líquido; bruto = líquido + tara (informativo)</span>
+        console.log(d.pesoLiquido, d.tara, d.pesoBruto);
       } <span class="tk-keyword">else</span> {
-        <span class="tk-comment">// modo balança: tara = 0 e pesoLiquido = quantidadePesada</span>
-        console.log(d.quantidadePesada);
+        <span class="tk-comment">// modo balança: tara = 0 e pesoBruto = pesoLiquido (lido da balança)</span>
+        console.log(d.pesoLiquido);
       }
     }
   });
@@ -637,7 +644,7 @@
 
 <span class="tk-tag">&lt;script&gt;</span>
   <span class="tk-keyword">var</span> el = document.<span class="tk-attr">getElementById</span>(<span class="tk-str">'reet'</span>);
-  el.header = { material: <span class="tk-str">'Fragância Rosa'</span>, lote: <span class="tk-str">'FRA-2026-04'</span>,
+  el.header = { material: <span class="tk-str">'Fragância Rosa'</span>, codigo: <span class="tk-str">'708316'</span>, lote: <span class="tk-str">'FRA-2026-04'</span>,
                 etiqueta: <span class="tk-str">'ETQ-2026-0421'</span>, saldo: <span class="tk-str">'0,498 kg'</span> };
   el.salas  = [ { id: <span class="tk-str">'SALA-A'</span>, nome: <span class="tk-str">'Sala A'</span>, resourceName: <span class="tk-str">'100000020'</span>,
                   bals: [ { id: <span class="tk-str">'BAL-01'</span>, cap: <span class="tk-str">'600 kg'</span>, sug: <span class="tk-keyword">true</span> } ] } ];
@@ -692,7 +699,7 @@
         </p>
         <pre class="gd-code"><span class="tk-tag">&lt;script&gt;</span>
   GranadoPesagemReetiquetarPopup.<span class="tk-attr">show</span>({
-    header: { material: mat.descricao, lote: mat.lote, etiqueta: mat.etiqueta, saldo: mat.saldo },
+    header: { material: mat.descricao, codigo: mat.codigo, lote: mat.lote, etiqueta: mat.etiqueta, saldo: mat.saldo },
     salas: salasDoUsuario,
     onReadScale: <span class="tk-keyword">function</span> (ctx) { lerPeso(ctx.balancaId).then(ctx.setValue); },
     onConfirm: <span class="tk-keyword">function</span> (d) {
@@ -733,10 +740,12 @@
           <tbody>
             <tr><td class="col-name">header</td><td class="col-type">object</td><td class="col-default">{}</td><td class="col-desc">Dados do cabeçalho dourado. Campos abaixo — todos opcionais (vazio vira <code>—</code>).</td></tr>
             <tr><td class="col-name gd-nest">header.material</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Descrição do material.</td></tr>
+            <tr><td class="col-name gd-nest">header.codigo</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Código da matéria-prima (ex.: <code>ProductNo</code>).</td></tr>
             <tr><td class="col-name gd-nest">header.lote</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Lote do material.</td></tr>
             <tr><td class="col-name gd-nest">header.etiqueta</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Etiqueta de origem (a que será cancelada).</td></tr>
             <tr><td class="col-name gd-nest">header.saldo</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc">Saldo a devolver, já formatado (ex.: <code>"0,498 kg"</code>).</td></tr>
             <tr><td class="col-name">salas</td><td class="col-type">array</td><td class="col-default">[]</td><td class="col-desc">Salas do drill-down. Estrutura na tabela seguinte.</td></tr>
+            <tr><td class="col-name">salaId</td><td class="col-type">string</td><td class="col-default">—</td><td class="col-desc"><code>id</code> de uma sala já definida (ex.: a sala da OP). Quando informado, o popup abre <strong>direto na seleção de balança</strong> dessa sala e esconde o <em>‹ Voltar</em> (não deixa trocar de sala). Se a sala não tiver balança, já entra no <em>Peso manual</em>.</td></tr>
             <tr><td class="col-name">confirmText</td><td class="col-type">string</td><td class="col-default">"✓ Concluir"</td><td class="col-desc">Texto do botão de confirmação (grava o atributo <code>confirm-text</code>).</td></tr>
             <tr><td class="col-name">closeOnBackdrop</td><td class="col-type">boolean</td><td class="col-default">false</td><td class="col-desc"><code>true</code> fecha ao clicar fora (equivale ao atributo <code>close-on-backdrop</code>).</td></tr>
             <tr><td class="col-name">onConfirm</td><td class="col-type">function(detail)</td><td class="col-default">—</td><td class="col-desc">Clique em <em>Concluir</em>, já validado. Recebe o mesmo objeto do evento <code>confirm</code>.</td></tr>
@@ -771,7 +780,7 @@
             <tr><td class="col-name">el.confirmText</td><td class="col-type">string</td><td class="col-desc">Espelha o atributo <code>confirm-text</code> — ler devolve o default quando não definido; setar <code>null</code> volta ao default.</td></tr>
             <tr><td class="col-name">el.onConfirm</td><td class="col-type">function</td><td class="col-desc">Lê/define o callback de confirmação.</td></tr>
             <tr><td class="col-name">el.onReadScale</td><td class="col-type">function</td><td class="col-desc">Lê/define o callback do <code>📡</code>.</td></tr>
-            <tr><td class="col-name">el.setPeso(v)</td><td class="col-type">method</td><td class="col-desc">Preenche <em>Quantidade Pesada</em>, recalcula o líquido e <strong>restaura o <code>📡</code></strong> do estado <code>⏳</code>. É o que <code>ctx.setValue()</code> chama.</td></tr>
+            <tr><td class="col-name">el.setPeso(v)</td><td class="col-type">method</td><td class="col-desc">Preenche o <em>Peso Líquido</em>, recalcula o <em>Peso Bruto</em> e <strong>restaura o <code>📡</code></strong> do estado <code>⏳</code>. É o que <code>ctx.setValue()</code> chama.</td></tr>
             <tr><td class="col-name">el.open()</td><td class="col-type">method</td><td class="col-desc">Exibe o popup (remove <code>open="false"</code>) e re-renderiza.</td></tr>
             <tr><td class="col-name">el.close()</td><td class="col-type">method</td><td class="col-desc">Dispara <code>close</code> e <strong>remove o elemento do DOM</strong>.</td></tr>
             <tr><td class="col-name">GranadoPesagemReetiquetarPopup.show(opts)</td><td class="col-type">static</td><td class="col-desc">Cria, configura e injeta o popup no <code>&lt;body&gt;</code>. <strong>Retorna o elemento</strong>.</td></tr>
@@ -785,7 +794,7 @@
             <tr><th style="width:150px">Evento</th><th style="width:300px">detail</th><th>Descrição</th></tr>
           </thead>
           <tbody>
-            <tr><td class="col-name">confirm</td><td class="col-type">{ salaId, salaNome, salaResourceName, balancaId, quantidadePesada, tara, pesoLiquido, manual }</td><td class="col-desc">Clique em <em>Concluir</em> — só dispara depois de passar por todas as validações. O popup fecha em seguida (e dispara <code>close</code>).</td></tr>
+            <tr><td class="col-name">confirm</td><td class="col-type">{ salaId, salaNome, salaResourceName, balancaId, quantidadePesada, tara, pesoLiquido, pesoBruto, manual }</td><td class="col-desc">Clique em <em>Concluir</em> — só dispara depois de passar por todas as validações. O popup fecha em seguida (e dispara <code>close</code>).</td></tr>
             <tr><td class="col-name">read-scale</td><td class="col-type">{ balancaId, salaId, setValue(v) }</td><td class="col-desc">Clique no <code>📡</code>. Disparado <strong>junto</strong> com o callback <code>onReadScale</code> — use um ou outro.</td></tr>
             <tr><td class="col-name">close</td><td class="col-type">—</td><td class="col-desc">Popup fechado por <em>Cancelar</em>, <code>✕</code>, backdrop ou após o <em>Concluir</em>. O elemento já foi removido do DOM.</td></tr>
           </tbody>
@@ -801,9 +810,10 @@
             <tr><td class="col-name">salaNome</td><td class="col-type">string</td><td class="col-desc"><code>nome</code> da sala (vazio se não informado).</td></tr>
             <tr><td class="col-name">salaResourceName</td><td class="col-type">string</td><td class="col-desc"><code>resourceName</code> da sala — vai como <code>WorkcenterResourceName</code> na API.</td></tr>
             <tr><td class="col-name">balancaId</td><td class="col-type">string | null</td><td class="col-desc"><code>id</code> da balança escolhida.</td></tr>
-            <tr><td class="col-name">quantidadePesada</td><td class="col-type">number</td><td class="col-desc">Valor do campo <em>Quantidade Pesada</em> já convertido para número (aceita vírgula ou ponto).</td></tr>
+            <tr><td class="col-name">quantidadePesada</td><td class="col-type">number</td><td class="col-desc">O <strong>Peso Líquido</strong> digitado/lido, já convertido para número (aceita vírgula ou ponto). Hoje é igual a <code>pesoLiquido</code>.</td></tr>
             <tr><td class="col-name">tara</td><td class="col-type">number</td><td class="col-desc">Tara informada no modo manual. <strong>Sempre 0</strong> no modo balança (e também quando o campo fica vazio).</td></tr>
-            <tr><td class="col-name">pesoLiquido</td><td class="col-type">number</td><td class="col-desc"><code>quantidadePesada − tara</code>. No modo balança é igual a <code>quantidadePesada</code>.</td></tr>
+            <tr><td class="col-name">pesoLiquido</td><td class="col-type">number</td><td class="col-desc"><strong>Valor útil</strong> → o Peso Líquido digitado (modo manual) ou lido da balança. É o que vai para <code>LabelWeighedQuantity</code> na API.</td></tr>
+            <tr><td class="col-name">pesoBruto</td><td class="col-type">number</td><td class="col-desc"><code>pesoLiquido + tara</code>. Apenas <strong>informativo</strong> (não vai para a API). No modo balança é igual a <code>pesoLiquido</code> (tara 0).</td></tr>
             <tr><td class="col-name">manual</td><td class="col-type">boolean</td><td class="col-desc"><code>true</code> se o peso foi digitado no modo <em>Peso manual</em>; <code>false</code> se veio da balança.</td></tr>
           </tbody>
         </table>
@@ -816,22 +826,24 @@
           <tbody>
             <tr><td class="col-desc">Nenhuma sala selecionada</td><td class="col-desc">"Selecione a sala."</td></tr>
             <tr><td class="col-desc">Modo balança sem balança selecionada</td><td class="col-desc">"Selecione a balança."</td></tr>
-            <tr><td class="col-desc">Quantidade Pesada vazia ou não numérica</td><td class="col-desc">"Informe a quantidade pesada."</td></tr>
+            <tr><td class="col-desc">Peso Líquido vazio ou não numérico</td><td class="col-desc">"Informe o peso líquido."</td></tr>
+            <tr><td class="col-desc">Modo balança com peso <code>0</code> (leitura inválida)</td><td class="col-desc">"Peso da balança inválido (0). Refaça a leitura no 📡 ou use o Peso manual."</td></tr>
             <tr><td class="col-desc">Tara preenchida com valor não numérico</td><td class="col-desc">"Tara inválida — use apenas números."</td></tr>
-            <tr><td class="col-desc">Peso líquido <code>&lt;= 0</code> no modo manual</td><td class="col-desc">"Peso líquido inválido — verifique Quantidade Pesada e Tara."</td></tr>
             <tr><td class="col-desc"><code>📡</code> sem sala/balança selecionada</td><td class="col-desc">"Selecione a sala e a balança antes de ler o peso."</td></tr>
-            <tr><td class="col-desc">Toggle <em>Peso manual</em> sem sala/balança selecionada</td><td class="col-desc">"Selecione a sala e a balança antes de usar o peso manual."</td></tr>
+            <tr><td class="col-desc">Toggle <em>Peso manual</em> sem sala selecionada</td><td class="col-desc">"Selecione a sala antes de usar o peso manual."</td></tr>
+            <tr><td class="col-desc">Toggle <em>balança</em> numa sala sem balança</td><td class="col-desc">"Esta sala não tem balança — use o peso manual."</td></tr>
           </tbody>
         </table>
 
         <h3 class="gd-h3">Notas</h3>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong>Não chama API:</strong> o componente só devolve o resultado. Quem chama <code>GRD_API_JDE_CancelAndGenerateNewLabel</code> — e <code>GRD_API_BeginScaleReadings</code> para o <code>📡</code> — é a tela.</li>
-          <li><strong>Drill-down Sala &rarr; Balança:</strong> clicar numa sala abre as balanças dela; o botão <em>‹ Voltar</em> <strong>limpa a seleção</strong> (sala e balança), obrigando a escolher de novo.</li>
-          <li><strong>Modo balança é o default:</strong> o campo <em>Quantidade Pesada</em> nasce <code>readOnly</code> — o valor só entra pelo <code>📡</code> (ou por <code>setPeso()</code>).</li>
-          <li><strong>Troca de modo limpa os valores:</strong> peso e tara são zerados ao ligar/desligar o <em>Peso manual</em>, para nada carregar de um modo para o outro.</li>
-          <li><strong>Tara vazia = 0:</strong> deixar a tara em branco no modo manual faz o peso pesado virar o líquido. Líquido negativo exibe <code>⚠ neg.</code> em vermelho.</li>
-          <li><strong>Números em pt-BR:</strong> os campos aceitam vírgula ou ponto; o líquido é exibido com 3 casas e vírgula (<code>0,498 kg</code>).</li>
+          <li><strong>Drill-down Sala &rarr; Balança:</strong> clicar numa sala abre as balanças dela; o botão <em>‹ Voltar</em> <strong>limpa a seleção</strong> (sala e balança), obrigando a escolher de novo. Com <code>salaId</code> informado o popup abre direto na balança e <strong>esconde o ‹ Voltar</strong>.</li>
+          <li><strong>Modo balança é o default:</strong> o campo <em>Peso Líquido</em> nasce <code>readOnly</code> — o valor só entra pelo <code>📡</code> (ou por <code>setPeso()</code>).</li>
+          <li><strong>Prefill 0,000:</strong> os campos de peso iniciam (e resetam) em <code>0,000</code>.</li>
+          <li><strong>Troca de modo limpa os valores:</strong> Peso Líquido e Tara voltam a <code>0,000</code> ao ligar/desligar o <em>Peso manual</em> (e ao trocar de balança/Voltar), para nada carregar de um modo para o outro.</li>
+          <li><strong>Peso Líquido digitado, Peso Bruto calculado:</strong> no manual o operador informa o <em>Peso Líquido</em>; o <em>Peso Bruto</em> (<code>líquido + tara</code>, tara vazia = 0) é só exibido. O valor enviado à API é o <strong>Peso Líquido</strong>. Bruto negativo exibe <code>⚠ neg.</code> em vermelho.</li>
+          <li><strong>Números em pt-BR:</strong> os campos aceitam vírgula ou ponto; os valores são exibidos com 3 casas e vírgula (<code>0,498 kg</code>).</li>
           <li><strong><code>close()</code> destrói a instância:</strong> o elemento é removido do DOM. Com <code>show()</code> isso é transparente; no uso declarativo, recrie o elemento para reabrir.</li>
           <li><strong><code>confirm-text</code> é a fonte da verdade:</strong> o atributo (ou <code>el.confirmText</code>) vale nos dois modos — <code>show({ confirmText })</code> só o grava no elemento, como em <code>&lt;granado-box-popup&gt;</code>.</li>
           <li><strong>Avisos:</strong> usam <code>GranadoMessagePopup.warning()</code> quando o componente está carregado; sem ele, caem no <code>alert()</code> nativo.</li>
