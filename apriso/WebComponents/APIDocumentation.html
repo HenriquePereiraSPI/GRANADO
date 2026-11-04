@@ -6807,8 +6807,9 @@ poppins-700.woff2
           (equipamento) num período. Retorna um <strong>resumo agregado</strong>
           (<code>ResourceGrouped</code>), um <strong>detalhamento por dia</strong>
           (<code>DateGrouped</code>), a <strong>linha do tempo dos estados</strong>
-          (<code>ResourceStates</code> — cada intervalo de operação ou parada) e um
-          <strong>resumo consolidado</strong> do período (<code>ResourceOverall</code>).
+          (<code>ResourceStates</code> — cada intervalo de operação ou parada), um
+          <strong>resumo consolidado</strong> do período (<code>ResourceOverall</code>) e as
+          <strong>paradas com percentuais</strong> (<code>ResourceStatesWithPercent</code>).
         </p>
 
         <h2 class="gd-h2">Chamada</h2>
@@ -6819,7 +6820,8 @@ poppins-700.woff2
         <p class="gd-lead">
           Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
           (<code>Success</code> / <code>Message</code>) acrescido de <code>ResourceGrouped</code>,
-          <code>DateGrouped</code>, <code>ResourceStates</code> e <code>ResourceOverall</code>.
+          <code>DateGrouped</code>, <code>ResourceStates</code>, <code>ResourceOverall</code> e
+          <code>ResourceStatesWithPercent</code>.
         </p>
 
         <!-- ===== Inputs ===== -->
@@ -6907,6 +6909,22 @@ poppins-700.woff2
       <span class="tk-key">"PeriodoIni"</span><span class="tk-punc">:</span> <span class="tk-str">"7/6/2026 11:21:30 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoFim"</span><span class="tk-punc">:</span> <span class="tk-str">"7/16/2026 8:48:05 AM"</span><span class="tk-punc">,</span>
       <span class="tk-key">"TempoTotalSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"5007959"</span><span class="tk-punc">,</span> <span class="tk-key">"DowntimeSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"2795"</span><span class="tk-punc">,</span> <span class="tk-key">"RunTimeSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"5005164"</span><span class="tk-punc">,</span> <span class="tk-key">"DisponibilidadePct"</span><span class="tk-punc">:</span> <span class="tk-str">"99.94"</span>
     }
+  ]<span class="tk-punc">,</span>
+  <span class="tk-key">"ResourceStatesWithPercent"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"ID"</span><span class="tk-punc">:</span> <span class="tk-str">"100028731"</span><span class="tk-punc">,</span> <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000032"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PeriodoIni"</span><span class="tk-punc">:</span> <span class="tk-str">"11/3/2026 7:19:57 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoFim"</span><span class="tk-punc">:</span> <span class="tk-str">"11/3/2026 7:23:33 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"DurSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"216"</span><span class="tk-punc">,</span> <span class="tk-key">"Parado"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Separacao Material"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonType"</span><span class="tk-punc">:</span> <span class="tk-str">"24"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonCodeComment"</span><span class="tk-punc">:</span> <span class="tk-str">"45555"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TotalOverallTime"</span><span class="tk-punc">:</span> <span class="tk-str">"82800"</span><span class="tk-punc">,</span> <span class="tk-key">"PercentOfOverall"</span><span class="tk-punc">:</span> <span class="tk-str">"0.2609"</span><span class="tk-punc">,</span> <span class="tk-key">"PercentOfDowntime"</span><span class="tk-punc">:</span> <span class="tk-str">"97.7376"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"ID"</span><span class="tk-punc">:</span> <span class="tk-str">"100028721"</span><span class="tk-punc">,</span> <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000032"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PeriodoIni"</span><span class="tk-punc">:</span> <span class="tk-str">"11/3/2026 7:19:45 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"PeriodoFim"</span><span class="tk-punc">:</span> <span class="tk-str">"11/3/2026 7:19:50 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"DurSeg"</span><span class="tk-punc">:</span> <span class="tk-str">"5"</span><span class="tk-punc">,</span> <span class="tk-key">"Parado"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ReasonCode"</span><span class="tk-punc">:</span> <span class="tk-str">"Falta de Mat Prima"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonType"</span><span class="tk-punc">:</span> <span class="tk-str">"24"</span><span class="tk-punc">,</span> <span class="tk-key">"ReasonCodeComment"</span><span class="tk-punc">:</span> <span class="tk-str">"1111"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TotalOverallTime"</span><span class="tk-punc">:</span> <span class="tk-str">"82800"</span><span class="tk-punc">,</span> <span class="tk-key">"PercentOfOverall"</span><span class="tk-punc">:</span> <span class="tk-str">"0.0060"</span><span class="tk-punc">,</span> <span class="tk-key">"PercentOfDowntime"</span><span class="tk-punc">:</span> <span class="tk-str">"2.2624"</span>
+    }
   ]
 }</pre>
 
@@ -6922,6 +6940,7 @@ poppins-700.woff2
             <tr><td class="col-name">DateGrouped</td><td class="col-type">array&lt;resumo diário&gt;</td><td class="col-desc">Detalhamento da disponibilidade <strong>agrupado por dia</strong> (uma linha por dia do período). Campos abaixo.</td></tr>
             <tr><td class="col-name">ResourceStates</td><td class="col-type">array&lt;estado&gt;</td><td class="col-desc">Linha do tempo dos estados do recurso (cada intervalo de operação/parada). Campos abaixo.</td></tr>
             <tr><td class="col-name">ResourceOverall</td><td class="col-type">array&lt;resumo&gt;</td><td class="col-desc">Resumo <strong>consolidado</strong> (linha <code>"OVERALL"</code>) do período, com datas em UTC e local. Campos abaixo.</td></tr>
+            <tr><td class="col-name">ResourceStatesWithPercent</td><td class="col-type">array&lt;estado com %&gt;</td><td class="col-desc">Intervalos de parada com o <strong>percentual sobre o tempo total</strong> e sobre o <strong>tempo parado</strong>. Campos abaixo.</td></tr>
           </tbody>
         </table>
 
@@ -6994,10 +7013,34 @@ poppins-700.woff2
           </tbody>
         </table>
 
+        <h3 class="gd-h3">Campos de <code>ResourceStatesWithPercent</code> (cada estado com percentuais)</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:180px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">ID</td><td class="col-type">string (número)</td><td class="col-desc">Identificador do registro.</td></tr>
+            <tr><td class="col-name">ResourceName</td><td class="col-type">string</td><td class="col-desc">Nome do recurso.</td></tr>
+            <tr><td class="col-name">PeriodoIni</td><td class="col-type">string (data)</td><td class="col-desc">Início do intervalo.</td></tr>
+            <tr><td class="col-name">PeriodoFim</td><td class="col-type">string (data)</td><td class="col-desc">Fim do intervalo.</td></tr>
+            <tr><td class="col-name">DurSeg</td><td class="col-type">string (número)</td><td class="col-desc">Duração do intervalo, em segundos.</td></tr>
+            <tr><td class="col-name">Parado</td><td class="col-type">string (bool)</td><td class="col-desc"><code>"1"</code> = recurso parado (downtime) · <code>"0"</code> = em operação.</td></tr>
+            <tr><td class="col-name">ReasonCode</td><td class="col-type">string</td><td class="col-desc">Motivo da parada (ex.: <code>"Separacao Material"</code>).</td></tr>
+            <tr><td class="col-name">ReasonType</td><td class="col-type">string (número)</td><td class="col-desc">Tipo da parada: <code>"23"</code> = programada · <code>"24"</code> = não programada.</td></tr>
+            <tr><td class="col-name">ReasonCodeComment</td><td class="col-type">string</td><td class="col-desc">Observação/justificativa do estado.</td></tr>
+            <tr><td class="col-name">TotalOverallTime</td><td class="col-type">string (número)</td><td class="col-desc">Tempo total usado como base de <code>PercentOfOverall</code>, em segundos.</td></tr>
+            <tr><td class="col-name">PercentOfOverall</td><td class="col-type">string (número)</td><td class="col-desc">Percentual do intervalo sobre o tempo total: <code>DurSeg</code> ÷ <code>TotalOverallTime</code> × 100.</td></tr>
+            <tr><td class="col-name">PercentOfDowntime</td><td class="col-type">string (número)</td><td class="col-desc">Percentual do intervalo sobre o tempo total parado: <code>DurSeg</code> ÷ soma de <code>DurSeg</code> das paradas × 100.</td></tr>
+          </tbody>
+        </table>
+
         <h3 class="gd-h3">Notas</h3>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong>Disponibilidade:</strong> <code>DisponibilidadePct</code> = <code>RunTimeSeg</code> ÷
             <code>TempoTotalSeg</code> × 100 (no exemplo, 342145 ÷ 377690 ≈ 90,59%).</li>
+          <li><strong>Percentuais das paradas:</strong> no exemplo de <code>ResourceStatesWithPercent</code>, as
+            paradas somam 221 s (216 + 5). A primeira representa 216 ÷ 82800 ≈ 0,2609% do tempo total e
+            216 ÷ 221 ≈ 97,7376% do tempo parado.</li>
           <li><strong>Datas:</strong> os inputs usam <code>yyyy-MM-dd HH:mm:ss</code>; os outputs vêm no
             formato de data/hora do servidor (ex.: <code>6/25/2026 11:58:17 AM</code>).</li>
           <li><strong>ResourceName:</strong> é o mesmo <code>ResourceName</code> devolvido por
