@@ -5,7 +5,7 @@ SYSTEM_PARAMETER: PRDCT_UnitCharacteristicName
     "Inputs":{
         "messageId": "JDE-PROD-2026-05-19-000123",
         "productCode": "E176",
-        "itemShort": "702854",	
+        "itemShort": "E176",	
         "description": "ALGODAO BRUTO",
         "descriptionLong": "MISCELANIA",
         "uom": "KG",
