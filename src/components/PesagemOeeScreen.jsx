@@ -1,4 +1,5 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useId, useLayoutEffect, useMemo, useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { PESAGEM_OEE as D } from '../data/pes-oee-data.js';
 import SalasFilter from './SalasFilter.jsx';
 
@@ -297,8 +298,131 @@ function KpiMini({ label, valor, cor }) {
 /* ─────────────────────────────────────────────────────────────
    Disponibilidade — paradas
 ───────────────────────────────────────────────────────────── */
+const LINHA_TOOLTIP = { display: 'flex', justifyContent: 'space-between', gap: 12, padding: '2px 0', color: 'var(--text2)' };
+const VALOR_TOOLTIP = { fontFamily: 'var(--font-m)', fontWeight: 700, color: 'var(--text)' };
+
+// Badge de percentual com tooltip do calculo. Abre ao passar o mouse, ao tocar
+// (celular) ou ao focar pelo teclado. Vai para o body porque .screen.active tem
+// transform, que deslocaria o position:fixed.
+function BadgeParada({ texto, rotulo, min, base, cor }) {
+  const [aberto, setAberto] = useState(false);
+  const [pos, setPos] = useState({ top: 0, left: 0, setaX: 0, acima: true });
+  const badgeRef = useRef(null);
+  const tooltipRef = useRef(null);
+  const ponteiroRef = useRef('mouse');
+  const id = useId();
+  const percentual = base > 0 ? (min / base) * 100 : 0;
+  const minusculo = rotulo.toLowerCase();
+
+  useLayoutEffect(() => {
+    if (!aberto) return;
+    const MARGEM = 8;
+    const DISTANCIA = 8;
+    const badge = badgeRef.current.getBoundingClientRect();
+    const { offsetWidth: largura, offsetHeight: altura } = tooltipRef.current;
+    const centro = badge.left + badge.width / 2;
+    const left = Math.max(MARGEM, Math.min(centro - largura / 2, window.innerWidth - largura - MARGEM));
+    const acima = badge.top - altura - DISTANCIA >= MARGEM;
+    setPos({ top: acima ? badge.top - altura - DISTANCIA : badge.bottom + DISTANCIA, left, setaX: centro - left, acima });
+  }, [aberto]);
+
+  useEffect(() => {
+    if (!aberto) return undefined;
+    const fechar = () => setAberto(false);
+    const onKey = (e) => { if (e.key === 'Escape') fechar(); };
+    const onFora = (e) => { if (!badgeRef.current.contains(e.target)) fechar(); };
+    window.addEventListener('keydown', onKey);
+    window.addEventListener('pointerdown', onFora);
+    window.addEventListener('scroll', fechar, true);
+    window.addEventListener('resize', fechar);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('pointerdown', onFora);
+      window.removeEventListener('scroll', fechar, true);
+      window.removeEventListener('resize', fechar);
+    };
+  }, [aberto]);
+
+  return (
+    <>
+      <span
+        ref={badgeRef}
+        className="bdg bdg-ney"
+        style={{ cursor: 'help' }}
+        tabIndex={0}
+        aria-describedby={aberto ? id : undefined}
+        onPointerEnter={(e) => { if (e.pointerType === 'mouse') setAberto(true); }}
+        onPointerLeave={(e) => { if (e.pointerType === 'mouse') setAberto(false); }}
+        onPointerDown={(e) => { ponteiroRef.current = e.pointerType; }}
+        onClick={() => { if (ponteiroRef.current !== 'mouse') setAberto((a) => !a); }}
+        onFocus={(e) => { if (e.target.matches(':focus-visible')) setAberto(true); }}
+        onBlur={() => setAberto(false)}
+      >
+        {percentual.toFixed(1)}% {texto}
+      </span>
+      {aberto && createPortal(
+        <div
+          ref={tooltipRef}
+          id={id}
+          role="tooltip"
+          style={{
+            position: 'fixed',
+            top: pos.top,
+            left: pos.left,
+            zIndex: 99999,
+            width: 240,
+            maxWidth: 'calc(100vw - 16px)',
+            boxSizing: 'border-box',
+            padding: '10px 12px',
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderTop: `3px solid ${cor}`,
+            borderRadius: 8,
+            boxShadow: '0 8px 24px rgba(26, 46, 30, .18)',
+            fontFamily: 'var(--font-b)',
+            fontSize: 11,
+            pointerEvents: 'none',
+            animation: 'fadeUp .12s ease',
+          }}
+        >
+          <div style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 6 }}>Afetou % sobre o {minusculo}</div>
+          <div style={LINHA_TOOLTIP}>
+            <span>{rotulo}</span>
+            <span style={VALOR_TOOLTIP}>{base} min</span>
+          </div>
+          <div style={LINHA_TOOLTIP}>
+            <span>Tempo da parada</span>
+            <span style={VALOR_TOOLTIP}>{min} min</span>
+          </div>
+          <div style={{ height: 6, margin: '8px 0', background: 'var(--surface2)', borderRadius: 3, overflow: 'hidden' }}>
+            <div style={{ width: `${Math.min(percentual, 100)}%`, height: '100%', background: cor, borderRadius: 3 }} />
+          </div>
+          <div style={{ color: 'var(--text2)' }}>
+            Afetou <strong style={{ fontFamily: 'var(--font-m)', fontSize: 14, color: cor }}>{percentual.toFixed(1)}%</strong> do {minusculo}
+          </div>
+          <span
+            style={{
+              position: 'absolute',
+              left: pos.setaX - 5,
+              width: 10,
+              height: 10,
+              background: 'var(--surface)',
+              transform: 'rotate(45deg)',
+              ...(pos.acima
+                ? { bottom: -6, borderRight: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }
+                : { top: -7, background: cor }),
+            }}
+          />
+        </div>,
+        document.body,
+      )}
+    </>
+  );
+}
+
 function CardDisponibilidade({ calc }) {
   const dados = D.paradas;
+  const totalParadas = calc.programadas + calc.naoProgramadas;
 
   const corMap = {
     inf: 'var(--inf)',
@@ -331,7 +455,11 @@ function CardDisponibilidade({ calc }) {
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', color: 'var(--alr)' }}>
           <span>Tempo Parado</span>
-          <strong>{calc.programadas + calc.naoProgramadas} Minutos</strong>
+          <strong>{totalParadas} Minutos</strong>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
+          <span style={{ color: 'var(--text2)' }}>Paradas Programadas</span>
+          <strong>{calc.programadas} Minutos</strong>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', borderTop: '1px dashed var(--border)' }}>
           <span style={{ color: 'var(--text2)', fontWeight: 700 }}>Tempo Disponível</span>
@@ -362,7 +490,7 @@ function CardDisponibilidade({ calc }) {
             style={{
               display: 'grid',
               gridTemplateColumns: 'auto 1fr auto auto',
-              gap: 10,
+              gap: '4px 10px',
               alignItems: 'center',
               padding: '6px 10px',
               background: 'var(--surface2)',
@@ -375,6 +503,10 @@ function CardDisponibilidade({ calc }) {
             <span style={{ fontWeight: 700, color: 'var(--text)' }}>{p.motivo}</span>
             <span className="mono" style={{ color: 'var(--text3)' }}>{p.ocorr}× </span>
             <span className="mono" style={{ fontWeight: 700, color: corMap[p.cor], minWidth: 50, textAlign: 'right' }}>{p.min}m</span>
+            <div style={{ gridColumn: '2 / -1', display: 'flex', flexWrap: 'wrap', gap: 4, fontFamily: 'var(--font-m)' }}>
+              <BadgeParada texto="Sobre total" rotulo="Tempo total" min={p.min} base={calc.tempoTotal} cor={corMap[p.cor]} />
+              <BadgeParada texto="Sobre total paradas" rotulo="Tempo total de paradas" min={p.min} base={totalParadas} cor={corMap[p.cor]} />
+            </div>
           </div>
         ))}
       </div>

@@ -57,6 +57,7 @@
   <script src="./granado-scan.js"></script>
   <script src="./granado-select-popup.js"></script>
   <script src="./granado-notification-popup.js"></script>
+  <script src="./granado-tooltip.js"></script>
 
   <style>
     html,
@@ -327,6 +328,7 @@
       <a class="gd-link" href="#granado-button-save-page">granado-button-save-page</a>
       <a class="gd-link" href="#granado-filter">granado-filter</a>
       <a class="gd-link" href="#granado-scan">granado-scan</a>
+      <a class="gd-link" href="#granado-tooltip">granado-tooltip</a>
     </nav>
 
     <!-- ===== Main content ===== -->
@@ -14384,6 +14386,108 @@ g.data = [
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong>Só o desenho:</strong> não tem input — é o visual da moldura de leitura animada.</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; a animação usa a Web Animations API (sem <code>@keyframes</code>). Cores default hardcoded (paleta Granado), com override por atributo.</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-tooltip
+           ============================================================ -->
+      <section id="granado-tooltip" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-tooltip&gt;</code></h1>
+        <p class="gd-lead">
+          Badge com um tooltip em forma de cartão, no estilo da tela de OEE. O cartão abre ao passar o
+          mouse, ao tocar (celular) ou ao focar com <code>Tab</code>, e aceita texto simples ou HTML.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-tooltip.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Tooltip com texto</h2>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-tooltip content="Passe o mouse aqui" tooltip="OEE = Disponibilidade x Performance x Qualidade"></granado-tooltip>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-tooltip</span>
+  <span class="tk-attr">content</span>=<span class="tk-str">"Passe o mouse aqui"</span>
+  <span class="tk-attr">tooltip</span>=<span class="tk-str">"OEE = Disponibilidade x Performance x Qualidade"</span><span class="tk-tag">&gt;&lt;/granado-tooltip&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">Tooltip com HTML</h2>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-tooltip content="12.5% Sobre total" tooltip="<div style='font-weight:700;margin-bottom:6px'>Afetou % sobre o tempo total</div><div style='display:flex;justify-content:space-between;gap:12px;padding:2px 0;color:#4A6250'><span>Tempo total</span><span style='font-family:Arial;font-weight:700;color:#1A2E1E'>480 min</span></div><div style='display:flex;justify-content:space-between;gap:12px;padding:2px 0;color:#4A6250'><span>Tempo da parada</span><span style='font-family:Arial;font-weight:700;color:#1A2E1E'>60 min</span></div><div style='height:6px;margin:8px 0;background:#F4EED9;border-radius:3px;overflow:hidden'><div style='width:12.5%;height:100%;background:#1C5C31;border-radius:3px'></div></div><div style='color:#4A6250'>Afetou <strong style='font-family:Arial;font-size:14px;color:#1C5C31'>12.5%</strong> do tempo total</div>"></granado-tooltip>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-tooltip</span>
+  <span class="tk-attr">content</span>=<span class="tk-str">"12.5% Sobre total"</span>
+  <span class="tk-attr">tooltip</span>=<span class="tk-str">"
+    &lt;div style='font-weight:700;margin-bottom:6px'&gt;Afetou % sobre o tempo total&lt;/div&gt;
+    &lt;div style='display:flex;justify-content:space-between;gap:12px;padding:2px 0;color:#4A6250'&gt;
+      &lt;span&gt;Tempo total&lt;/span&gt;
+      &lt;span style='font-family:Arial;font-weight:700;color:#1A2E1E'&gt;480 min&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div style='display:flex;justify-content:space-between;gap:12px;padding:2px 0;color:#4A6250'&gt;
+      &lt;span&gt;Tempo da parada&lt;/span&gt;
+      &lt;span style='font-family:Arial;font-weight:700;color:#1A2E1E'&gt;60 min&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div style='height:6px;margin:8px 0;background:#F4EED9;border-radius:3px;overflow:hidden'&gt;
+      &lt;div style='width:12.5%;height:100%;background:#1C5C31;border-radius:3px'&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div style='color:#4A6250'&gt;
+      Afetou &lt;strong style='font-family:Arial;font-size:14px;color:#1C5C31'&gt;12.5%&lt;/strong&gt; do tempo total
+    &lt;/div&gt;
+  "</span><span class="tk-tag">&gt;&lt;/granado-tooltip&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">Definindo por JavaScript</h2>
+        <p class="gd-lead">
+          Útil quando os valores vêm de uma consulta. Funciona com <code>setAttribute</code> ou com as
+          propriedades <code>content</code> e <code>tooltip</code>.
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-tooltip id="dt-tooltip-js"></granado-tooltip>
+          <script>
+            (function () {
+              var el = document.getElementById('dt-tooltip-js');
+              var minutos = 60;
+              var total = 480;
+              el.content = minutos + ' min de parada';
+              el.tooltip = '<strong>Refeição</strong><br>' + ((minutos / total) * 100).toFixed(1) + '% do tempo total';
+            })();
+          </script>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-tooltip</span> <span class="tk-attr">id</span>=<span class="tk-str">"parada"</span><span class="tk-tag">&gt;&lt;/granado-tooltip&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  const el = document.getElementById('parada');
+  const minutos = 60;
+  const total = 480;
+
+  el.content = minutos + ' min de parada';
+  el.tooltip = '&lt;strong&gt;Refeição&lt;/strong&gt;&lt;br&gt;' + ((minutos / total) * 100).toFixed(1) + '% do tempo total';
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">API</h2>
+        <h3 class="gd-h3">Atributos</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Atributo</th><th style="width:150px">Valores</th><th style="width:140px">Default</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">content</td><td class="col-type">string (texto)</td><td class="col-default">""</td><td class="col-desc">Texto do badge, exibido em maiúsculas. Sempre tratado como texto: tags aparecem escritas, sem serem interpretadas.</td></tr>
+            <tr><td class="col-name">tooltip</td><td class="col-type">string (texto ou HTML)</td><td class="col-default">""</td><td class="col-desc">Conteúdo do cartão. Sem valor, o tooltip não abre.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Propriedades JS</h3>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575"><code>el.content</code> · <code>el.tooltip</code> (ler/setar). Se o cartão estiver aberto, ele atualiza na hora.</p>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Segurança:</strong> <code>tooltip</code> é inserido como HTML. Escape antes qualquer dado digitado pelo usuário ou vindo de fora.</li>
+          <li><strong>Texto com <code>&lt;</code>:</strong> como o valor é lido como HTML, escreva <code>&amp;lt;</code> para exibir esse caractere.</li>
+          <li><strong>Cores:</strong> o badge é neutro e a faixa do cartão é sempre verde. Dentro do HTML do <code>tooltip</code> as cores são livres.</li>
+          <li><strong>Só leitura:</strong> o cartão não recebe clique nem foco, então links e botões dentro dele não funcionam.</li>
+          <li><strong>Posição:</strong> abre acima do texto e, se não couber, abaixo. Fica no <code>body</code> com <code>position:fixed</code>, então não é cortado por <code>overflow:hidden</code>.</li>
+          <li><strong>Fechamento:</strong> fecha ao tirar o mouse, ao tocar de novo ou fora, com <code>Esc</code>, ao perder o foco e ao rolar ou redimensionar a tela.</li>
         </ul>
       </section>
 
