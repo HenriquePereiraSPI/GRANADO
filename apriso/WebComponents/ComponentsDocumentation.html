@@ -1169,6 +1169,26 @@
 <span class="tk-tag">&lt;/granado-empty-card&gt;</span></pre>
         </div>
 
+        <!-- ===== Interativo ===== -->
+        <h2 class="gd-h2">Interativo (clicável)</h2>
+        <p class="gd-lead">
+          Quando <code>onclickevent</code> é definido, o card ganha cursor pointer, sombra ampliada
+          no hover e um leve <em>lift</em> de 1px. O conteúdo do atributo é executado como JS no
+          contexto do elemento.
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-empty-card title="Clique aqui" color="#1A4A8C" onclickevent="alert('Card vazio clicado')">
+            <p style="margin:0;font-size:13px;color:#103E20">Clique em qualquer parte do card para abrir o alerta.</p>
+          </granado-empty-card>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-empty-card</span>
+    <span class="tk-attr">title</span>=<span class="tk-str">"Clique aqui"</span>
+    <span class="tk-attr">color</span>=<span class="tk-str">"#1A4A8C"</span>
+    <span class="tk-attr">onclickevent</span>=<span class="tk-str">"alert('Card vazio clicado')"</span><span class="tk-tag">&gt;</span>
+  <span class="tk-tag">&lt;p&gt;</span>Clique em qualquer parte do card para abrir o alerta.<span class="tk-tag">&lt;/p&gt;</span>
+<span class="tk-tag">&lt;/granado-empty-card&gt;</span></pre>
+        </div>
+
         <!-- ===== API ===== -->
         <h2 class="gd-h2">API</h2>
 
@@ -1209,6 +1229,16 @@
               <td class="col-desc">
                 Padding interno do card. Aceita qualquer valor CSS válido — <code>"24px"</code>,
                 <code>"12px 20px"</code>, <code>"0"</code> (para encaixar uma tabela full-bleed).
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">onclickevent</td>
+              <td class="col-type">string (JS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">
+                Código JS executado no clique, com <code>this</code> sendo o próprio card. Quando
+                definido, o card fica clicável. Cliques em elementos internos, como botões, também
+                disparam esse código; use <code>event.stopPropagation()</code> neles para evitar.
               </td>
             </tr>
           </tbody>

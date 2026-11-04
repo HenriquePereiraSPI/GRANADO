@@ -9,6 +9,8 @@
      title    - texto do cabecalho (eyebrow estilo card-title)
      color    - cor da faixa lateral (default: var(--verde))
      padding  - padding interno (default: 18px)
+     onclickevent - codigo JS executado no clique (opcional).
+                    Quando setado, o card vira clicavel (cursor + hover).
 
    Exemplo de uso:
 
@@ -26,13 +28,17 @@
        <h2>Qualquer conteudo aqui</h2>
        <p>Texto livre, formularios, graficos...</p>
    </granado-empty-card>
+
+   <granado-empty-card title="Pesagens" onclickevent="alert('Card clicado')">
+       <p>Clique para abrir</p>
+   </granado-empty-card>
    ============================================================ */
 
 /* __granado_guard__ */
 if (!customElements.get('granado-empty-card')) {
   class GranadoEmptyCard extends HTMLElement {
       static get observedAttributes() {
-          return ['title', 'color', 'padding'];
+          return ['title', 'color', 'padding', 'onclickevent'];
       }
 
       connectedCallback() {
@@ -69,6 +75,7 @@ if (!customElements.get('granado-empty-card')) {
           const title = this._escape(this.getAttribute('title') || '');
           const color = this.getAttribute('color') || '#1C5C31';
           const padding = this.getAttribute('padding') || '18px';
+          const onClickEvent = this.getAttribute('onclickevent');
 
           // Captura o conteudo do usuario tanto do slot anterior (re-render)
           // quanto de filhos diretos do host (parser inseriu apos a casca).
@@ -92,7 +99,12 @@ if (!customElements.get('granado-empty-card')) {
                   padding: ${padding};
                   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
                   font-family: 'Poppins', 'DejaVu Sans', Arial, sans-serif;
-              ">
+                  ${onClickEvent ? 'cursor: pointer; transition: box-shadow 0.15s, top 0.15s;' : ''}
+              "
+              ${onClickEvent ? `
+                  onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.12)'; this.style.top='-1px';"
+                  onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.06)'; this.style.top='0';"
+              ` : ''}>
                   <span style="
                       position: absolute;
                       top: 0; left: 0;
@@ -118,6 +130,12 @@ if (!customElements.get('granado-empty-card')) {
 
           // Devolve o conteudo original para dentro do slot.
           this.querySelector('.gec-slot').appendChild(fragment);
+
+          if (onClickEvent) {
+              this.querySelector('.gec-card').addEventListener('click', () => {
+                  new Function(onClickEvent).call(this);
+              });
+          }
 
           // Reconecta o observer: se o parser ainda for inserir mais filhos,
           // ou se o usuario manipular childNodes depois, refazemos o encaixe.
