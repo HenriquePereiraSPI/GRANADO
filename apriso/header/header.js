@@ -208,7 +208,7 @@ async function abrirNotificacoes() {
     });
 }
 
-async function abrirPopup() {
+async function abrirPopupUsuarioHeader() {
     var ctx = window.AprisoHeaderContext;
     var respApi = await callDFCAsync(ctx, 'GRD_API_GetCurrentUserInformation', {});
     if (!respApi.responseResultData.Success) {
@@ -220,7 +220,7 @@ async function abrirPopup() {
         color: "#F4EED9",
         showClose: false,
         content:
-            `<div style="display:flex; flex-direction:column; gap: 1rem;">
+            `<div style="display:flex; flex-direction:column;">
 				<div style="position:relative; background-color: #F4EED9; display:flex; align-items:center; gap: 1rem; border-bottom: 1px solid #D6CDA4; margin:-22px -24px 0; padding:18px 24px; border-radius:12px 12px 0 0">
 					<span style="flex-shrink:0;width:56px;height:56px;border-radius:50%;background:#1C5C31;display:flex;align-items:center;justify-content:center;color:#FDFAF1">
                 		<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -228,10 +228,6 @@ async function abrirPopup() {
 					<div style="font:800 18px/1.2 'Poppins',sans-serif;">${userInfo.EmployeeNo}</div>
 					<button type="button" data-close aria-label="Fechar" title="Fechar" style="position:absolute !important; top:12px; right:12px; width:30px !important;background:transparent !important; border:none !important;">&#10005;</button>
 				</div>
-				<div style="display: flex; justify-content: space-between; align-items: center;"><div>Matrícula</div><div>${userInfo.ExployeeExternalLogin}</div></div>
-				<div style="display: flex; justify-content: space-between; align-items: center;"><div>Setor</div><div>Pesagem</div></div>
-				<div style="display: flex; justify-content: space-between; align-items: center;"><div>Turno</div><div>Manhã</div></div>
-				<div style="display: flex; justify-content: space-between; align-items: center;"><div>E-mail</div><div>usuario@granado.com</div></div>
 				<div style="border-top: 1px solid #D6CDA4; display:flex; justify-content:center; margin:0 -24px; padding:14px 24px 0">
 					<granado-button label="Sair" onclickevent="Logout_Apriso()" variant="secondary" color="#8C1A1A" 
 					icon='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>'>
@@ -266,4 +262,29 @@ async function waitForDashboard() {
 
         await new Promise(resolve => setTimeout(resolve, interval));
     }
+}
+
+// função para desativar a ação de reload do enter default do APRISO
+function bloquearEnterPopupsHeader() {
+    window.addEventListener('keydown', function (evento) {
+        if (evento.key !== 'Enter') return;
+
+        var elementoFocado = evento.target;
+
+        var notificacaoAberta = document.querySelector('granado-notification-popup:not([style*="display: none"])');
+        var logoutAberto = document.querySelector('granado-empty-popup:not([style*="display: none"]) [onclickevent*="Logout_Apriso"]');
+
+        // nenhum aberto: quem trata o Enter é a tela
+        if (!notificacaoAberta && !logoutAberto) return;
+
+        // popup do Header aberto: o Enter não chega na tela
+        evento.stopPropagation();
+
+        // textarea quebra linha e o "OK" de um aviso fecha o aviso normalmente
+        if (elementoFocado.tagName === 'TEXTAREA') return;
+        if (elementoFocado.closest('granado-message-popup')) return;
+
+        // sem postback e sem clique nativo de botão
+        evento.preventDefault();
+    }, true);
 }

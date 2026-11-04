@@ -101,7 +101,7 @@
 
                 <div class="tb-user-wrap">
                     <button type="button" class="tb-user" id="user-button" title="Sair" aria-label="Sair"
-                        onClick="abrirPopup()">
+                        onClick="abrirPopupUsuarioHeader()">
                         <span class="tb-user-avatar">
                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -148,7 +148,7 @@
 
                 <div class="tb-user-wrap">
                     <button type="button" class="tb-user" title="Usuario" aria-label="Usuario" aria-haspopup="menu"
-                        aria-expanded="false">
+                        aria-expanded="false" onClick="abrirPopupUsuarioHeader()">
                         <span class="tb-user-avatar">
                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -194,7 +194,8 @@
             initResponsiveLayoutHeader();
             waitForDashboard();
             atualizarContadorNotificacoes();
-
+            // bloqueia o Enter enquanto notificações/logout estiverem abertos
+            bloquearEnterPopupsHeader();
         }
         // Garante que so roda depois do DOM montado
         if (document.readyState === 'loading') {
