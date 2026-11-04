@@ -102,6 +102,29 @@
                            Quando ativo, header da coluna vira clicavel e
                            cicla: nada -> ascendente -> descendente -> nada.
                            Ordenacao aplica entre filtro e paginacao.
+     isenableadvancedfilter - "true" liga o filtro avancado. Default: false.
+                           E independente do isenablefilter: exibe um botao de funil
+                           a direita do titulo que abre um painel subindo da base da
+                           tela. O painel fica no <body> (position:fixed), fora do card.
+                           NAO altera as linhas: so coleta os valores e dispara os
+                           eventos abaixo. Quem filtra e o servidor; atualize a tabela
+                           com setAttribute('rows', ...) no retorno.
+     advancedfilterdata  - JSON array com os campos do painel. Cada campo:
+                           { filterName, filterType, filterDefaultDropdownValues? }
+                           - filterName: rotulo do campo e chave em detail.values.
+                           - filterType: "text", "dropdown", "number" ou "date"
+                             (o valor vem como yyyy-MM-dd). Outro valor vira "text".
+                           - filterDefaultDropdownValues: opcoes do dropdown.
+     onAdvancedFilterClick - ao clicar em Filtrar (o painel fecha antes de disparar).
+     onAdvancedFilterClear - ao clicar em Limpar (campos limpos; o painel fecha antes de disparar).
+                           Ambos aceitam atributo com JS (variaveis: event, detail),
+                           propriedade com funcao (detail, event) ou os CustomEvents
+                           "advanced-filter-click" / "advanced-filter-clear".
+                           detail = {
+                             values:  { "<filterName>": "valor" },
+                             filters: [{ filterName, filterType, filterValue }]
+                           }
+                           Todos os campos vem no detail; vazio vem como "".
 
    Exportacao:
      - Sempre exporta TODAS as linhas (ignora paginacao).
@@ -138,7 +161,7 @@
 if (!customElements.get('granado-table')) {
   class GranadoTable extends HTMLElement {
     static get observedAttributes() {
-      return ['columns', 'rows', 'color', 'gross-border-color', 'title-color', 'soft-border-color', 'onrender', 'onrenderrow', 'onclickevent', 'ondoubleclickevent', 'isenablepagination', 'pagesize', 'tablelayout', 'isenableexportcsv', 'isenableexportpdf', 'exportfilename', 'tabletitle', 'rowaltcolor', 'childrowcolor', 'expandedrowcolor', 'rowheight', 'isenablefilter', 'isenablesort'];
+      return ['columns', 'rows', 'color', 'gross-border-color', 'title-color', 'soft-border-color', 'onrender', 'onrenderrow', 'onclickevent', 'ondoubleclickevent', 'isenablepagination', 'pagesize', 'tablelayout', 'isenableexportcsv', 'isenableexportpdf', 'exportfilename', 'tabletitle', 'rowaltcolor', 'childrowcolor', 'expandedrowcolor', 'rowheight', 'isenablefilter', 'isenablesort', 'isenableadvancedfilter', 'advancedfilterdata'];
     }
 
     constructor() {
@@ -149,11 +172,24 @@ if (!customElements.get('granado-table')) {
       this._globalFilter = '';
       this._sort = { key: null, dir: null };
       this._expanded = new Set();   // linhas-pai expandidas (por __i estável)
+      this._advValues = {};         // valores do filtro avançado (por filterName)
+      this._advOpen = false;
+      this._advApplied = false;     // ultimo "Filtrar" tinha algum valor (funil preenchido)
+      this._advFns = {};
     }
 
-    connectedCallback() { this.render(); }
+    connectedCallback() {
+      // Lazy-props: funcao atribuida antes do upgrade do elemento (Apriso).
+      ['onAdvancedFilterClick', 'onAdvancedFilterClear'].forEach(p => {
+        if (Object.prototype.hasOwnProperty.call(this, p)) { const v = this[p]; delete this[p]; this[p] = v; }
+      });
+      this.render();
+    }
 
-    disconnectedCallback() { this._removeFilterDocClick(); }
+    disconnectedCallback() {
+      this._removeFilterDocClick();
+      this._destroyAdvancedSheet();
+    }
 
     attributeChangedCallback(name) {
       if (name === 'rows' || name === 'pagesize' || name === 'isenablepagination') this._page = 0;
@@ -276,12 +312,16 @@ if (!customElements.get('granado-table')) {
       const hasExports = isCsv || isPdf;
 
       const tableTitleAttr = this.getAttribute('tabletitle');
-      const headerHtml = (tableTitleAttr || isFilterEnabled) ? `
+      const isAdvancedEnabled = this.getAttribute('isenableadvancedfilter') === 'true';
+      const headerFilters = isAdvancedEnabled
+        ? `<div style="display:flex;align-items:center;gap:8px">${isFilterEnabled ? this._renderGlobalFilter() : ''}${this._renderAdvancedButton(color)}</div>`
+        : (isFilterEnabled ? this._renderGlobalFilter() : '');
+      const headerHtml = (tableTitleAttr || isFilterEnabled || isAdvancedEnabled) ? `
                   <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px">
                     ${tableTitleAttr
           ? `<h2 style="margin:0;font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:${titleColor};font-family:inherit">${tableTitleAttr}</h2>`
           : '<div></div>'}
-                    ${isFilterEnabled ? this._renderGlobalFilter() : ''}
+                    ${headerFilters}
                   </div>` : '';
 
       const showFooter = isPaginated || hasExports;
@@ -339,6 +379,7 @@ if (!customElements.get('granado-table')) {
       if (isSortEnabled) this._wireSortHeaders();
       if (this._openFilter) this._wireFilterPopup();
       this._wireRowAnimations();
+      this._syncAdvancedSheet(isAdvancedEnabled, color, softBorderColor);
     }
 
     // onRenderRow (propriedade JS): função (row, rowIndex) => cor | { color, animate, animateColor }.
@@ -1000,6 +1041,216 @@ if (!customElements.get('granado-table')) {
         document.removeEventListener('click', this._filterDocHandler);
         this._filterDocHandler = null;
       }
+    }
+
+    // ------------------------------------------------------------
+    // Filtro avancado
+    // ------------------------------------------------------------
+
+    get onAdvancedFilterClick() { return this._advFns.onAdvancedFilterClick || null; }
+    set onAdvancedFilterClick(fn) { this._advFns.onAdvancedFilterClick = typeof fn === 'function' ? fn : null; }
+    get onAdvancedFilterClear() { return this._advFns.onAdvancedFilterClear || null; }
+    set onAdvancedFilterClear(fn) { this._advFns.onAdvancedFilterClear = typeof fn === 'function' ? fn : null; }
+
+    // So faz o parse quando o atributo muda (o render roda a cada filtro/pagina).
+    _advancedFilterDefs() {
+      const raw = this.getAttribute('advancedfilterdata') || '[]';
+      if (raw === this._advRaw) return this._advDefs;
+      let data = [];
+      try { data = JSON.parse(raw); }
+      catch (e) { console.error('[granado-table] advancedfilterdata nao e um JSON valido:', e); }
+      this._advRaw = raw;
+      this._advDefs = (Array.isArray(data) ? data : []).filter(f => f && f.filterName).map(f => {
+        const rawType = String(f.filterType || '').toLowerCase();
+        const preset = f.filterDefaultDropdownValues;
+        return {
+          name: String(f.filterName),
+          type: ['text', 'dropdown', 'number', 'date'].includes(rawType) ? rawType : 'text',
+          options: Array.isArray(preset) ? preset.map(String) : [],
+        };
+      });
+      return this._advDefs;
+    }
+
+    _advancedDetail() {
+      const filters = this._advancedFilterDefs().map(d => ({
+        filterName: d.name,
+        filterType: d.type,
+        filterValue: String(this._advValues[d.name] || '').trim(),
+      }));
+      const values = {};
+      filters.forEach(f => { values[f.filterName] = f.filterValue; });
+      return { values, filters };
+    }
+
+    _fireAdvanced(evName, cbName, ev) {
+      const detail = this._advancedDetail();
+      this.dispatchEvent(new CustomEvent(evName, { bubbles: true, composed: true, detail }));
+      const fn = this._advFns[cbName];
+      if (fn) fn.call(this, detail, ev);
+      const h = this.getAttribute(cbName.toLowerCase());
+      if (h) new Function('event', 'detail', h).call(this, ev, detail);
+    }
+
+    _escAttr(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+    }
+
+    _renderAdvancedButton(color) {
+      const active = this._advApplied;
+      return `<button data-adv-open type="button" title="Filtro avançado" aria-label="Filtro avançado" aria-expanded="${this._advOpen}" style="width:34px !important;height:34px !important;min-height:0 !important;
+        display:inline-flex;
+        flex-shrink:0;
+        align-items:center;
+        justify-content:center;
+        padding:0;
+        border:1px solid ${active ? color : '#E5DDC8'};
+        background:${active ? color : '#FDFAF1'};
+        color:${active ? '#fff' : color};
+        border-radius:8px;
+        cursor:pointer;
+      "><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></button>`;
+    }
+
+    // O painel fica no <body>: o render() refaz o innerHTML da tabela (ao ordenar,
+    // paginar ou receber rows novas), o que apagaria os valores e cortaria a animacao,
+    // e os cards do Apriso cortam o que fica dentro deles.
+    _syncAdvancedSheet(enabled, color, softBorder) {
+      if (!enabled) { this._destroyAdvancedSheet(); return; }
+      if (!this.isConnected) return;   // render antes de entrar no DOM nao cria o painel
+
+      const openBtn = this.querySelector('[data-adv-open]');
+      if (openBtn) openBtn.addEventListener('click', () => this._setAdvancedOpen(true));
+
+      if (!this._advSheet) this._createAdvancedSheet();
+      const defs = this._advancedFilterDefs();
+      const key = JSON.stringify([defs, color, softBorder]);
+      if (key === this._advSheetKey) return;
+      this._advSheetKey = key;
+      this._advSheet.style.borderColor = softBorder;
+      this._advSheet.innerHTML = this._advancedSheetHtml(defs, color, softBorder);
+      this._advSheet.querySelectorAll('[data-adv-field]').forEach(el => {
+        const name = el.getAttribute('data-adv-field');
+        el.value = this._advValues[name] || '';
+        this._advValues[name] = el.value;   // opcao que saiu do dropdown volta para vazio
+      });
+    }
+
+    _createAdvancedSheet() {
+      const backdrop = document.createElement('div');
+      backdrop.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(15,51,25,.5);z-index:100000';
+      backdrop.addEventListener('click', () => this._setAdvancedOpen(false));
+
+      const sheet = document.createElement('div');
+      sheet.setAttribute('role', 'dialog');
+      sheet.setAttribute('aria-modal', 'true');
+      sheet.setAttribute('aria-label', 'Filtros');
+      sheet.style.cssText = `position:fixed;left:0;right:0;bottom:0;margin:0 auto;z-index:100001;
+        max-width:640px;max-height:85vh;overflow-y:auto;box-sizing:border-box;
+        background:#FDFAF1;border:1px solid #E5DDC8;border-bottom:none;border-radius:16px 16px 0 0;
+        box-shadow:0 -10px 34px rgba(15,51,25,.28);font-family:'Poppins','DejaVu Sans',Arial,sans-serif;
+        transform:translateY(100%);visibility:hidden;transition:transform .22s ease,visibility .22s`;
+
+      const onField = (e) => {
+        const name = e.target.getAttribute('data-adv-field');
+        if (name != null) this._advValues[name] = e.target.value;
+      };
+      sheet.addEventListener('input', onField);
+      sheet.addEventListener('change', onField);
+      sheet.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-adv-action]');
+        if (!btn) return;
+        const action = btn.getAttribute('data-adv-action');
+        if (action === 'close') { this._setAdvancedOpen(false); return; }
+        if (action === 'apply') {
+          this._advApplied = this._advancedDetail().filters.some(f => f.filterValue);
+          this._setAdvancedOpen(false);
+          this.render();
+          this._fireAdvanced('advanced-filter-click', 'onAdvancedFilterClick', e);
+          return;
+        }
+        this._advValues = {};
+        this._advApplied = false;
+        sheet.querySelectorAll('[data-adv-field]').forEach(el => { el.value = ''; });
+        this._setAdvancedOpen(false);
+        this.render();
+        this._fireAdvanced('advanced-filter-clear', 'onAdvancedFilterClear', e);
+      });
+
+      document.body.appendChild(backdrop);
+      document.body.appendChild(sheet);
+      this._advBackdrop = backdrop;
+      this._advSheet = sheet;
+    }
+
+    _advancedSheetHtml(defs, color, softBorder) {
+      const POPPINS = "'Poppins','DejaVu Sans',Arial,sans-serif";
+      const fieldStyle = (font) => `display:block;width:100%;box-sizing:border-box;margin:6px 0 0 !important;height:auto !important;min-height:0 !important;
+        font-family:${font};font-size:13px;line-height:1.4;font-weight:400;letter-spacing:normal;text-transform:none;
+        padding:8px 12px;border:1px solid ${softBorder};border-radius:6px;background:#fff;color:#103E20;outline:none`;
+      const fields = defs.map(d => {
+        const attr = `data-adv-field="${this._escAttr(d.name)}"`;
+        let control;
+        if (d.type === 'dropdown') {
+          control = `<select ${attr} style="${fieldStyle(POPPINS)}"><option value="">Todos</option>${d.options.map(o => `<option value="${this._escAttr(o)}">${this._escAttr(o)}</option>`).join('')}</select>`;
+        } else if (d.type === 'number') {
+          control = `<input ${attr} type="number" step="any" style="${fieldStyle('Arial,Helvetica,sans-serif')}">`;
+        } else if (d.type === 'date') {
+          control = `<input ${attr} type="date" style="${fieldStyle('Arial,Helvetica,sans-serif')}">`;
+        } else {
+          control = `<input ${attr} type="text" placeholder="Filtrar..." style="${fieldStyle(POPPINS)}">`;
+        }
+        return `<label style="display:block;margin:0 !important;font-size:9px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:#5A6B5E">${this._escAttr(d.name)}${control}</label>`;
+      }).join('');
+      const btn = (action, label, style) => `<button data-adv-action="${action}" type="button" style="flex:1;height:auto !important;min-height:0 !important;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:${POPPINS};font-size:14px;line-height:1.4;font-weight:700;padding:11px;border-radius:8px;cursor:pointer;${style}">${label}</button>`;
+      return `
+        <div style="position:sticky;top:0;z-index:1;background:#FDFAF1;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px 10px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:15px;line-height:1.3;font-weight:700;color:#103E20">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;flex-shrink:0"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>Filtros
+          </div>
+          <button data-adv-action="close" type="button" aria-label="Fechar" style="height:auto !important;min-height:0 !important;flex-shrink:0;background:transparent;border:1px solid ${softBorder};border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;line-height:1;color:#5A6B5E">✕</button>
+        </div>
+        <div style="display:grid;gap:12px;padding:6px 18px 14px">
+          ${fields}
+        </div>
+        <div style="position:sticky;bottom:0;z-index:1;background:#FDFAF1;padding:12px 18px 18px;border-top:1px solid ${softBorder}">
+          <div style="display:flex;gap:8px">
+            ${btn('clear', 'Limpar', `border:1px solid #D6CDA4;background:#FDFAF1;color:#5A6B5E`)}
+            ${btn('apply', 'Filtrar', `border:1px solid ${color};background:${color};color:#fff`)}
+          </div>
+        </div>`;
+    }
+
+    _setAdvancedOpen(open) {
+      if (!this._advSheet) return;
+      this._advOpen = open;
+      this._advSheet.style.transform = open ? 'translateY(0)' : 'translateY(100%)';
+      this._advSheet.style.visibility = open ? 'visible' : 'hidden';
+      this._advBackdrop.style.display = open ? 'block' : 'none';
+      const openBtn = this.querySelector('[data-adv-open]');
+      if (openBtn) openBtn.setAttribute('aria-expanded', String(open));
+      this._removeAdvancedKey();
+      if (open) {
+        this._advKeyHandler = (e) => { if (e.key === 'Escape') this._setAdvancedOpen(false); };
+        document.addEventListener('keydown', this._advKeyHandler);
+      }
+    }
+
+    _removeAdvancedKey() {
+      if (this._advKeyHandler) {
+        document.removeEventListener('keydown', this._advKeyHandler);
+        this._advKeyHandler = null;
+      }
+    }
+
+    _destroyAdvancedSheet() {
+      this._removeAdvancedKey();
+      if (this._advSheet) this._advSheet.remove();
+      if (this._advBackdrop) this._advBackdrop.remove();
+      this._advSheet = null;
+      this._advBackdrop = null;
+      this._advSheetKey = null;
+      this._advOpen = false;
     }
   }
 

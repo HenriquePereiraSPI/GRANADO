@@ -21,7 +21,9 @@
        onrender, onrenderrow, onclickevent, ondoubleclickevent,
        isenablepagination, pagesize, tablelayout, isenableexportcsv,
        isenableexportpdf, exportfilename, tabletitle, rowaltcolor,
-       childrowcolor, expandedrowcolor, rowheight, isenablefilter, isenablesort
+       childrowcolor, expandedrowcolor, rowheight, isenablefilter, isenablesort,
+       isenableadvancedfilter, advancedfilterdata,
+       onadvancedfilterclick, onadvancedfilterclear
      (veja a doc do <granado-table> para o significado de cada uma.)
 
      onRenderRow: além do atributo (string JS), aceita FUNÇÃO via propriedade
@@ -37,7 +39,9 @@
        onRender, onRenderRow, onClickEvent, onDoubleClickEvent,
        isEnablePagination, pageSize, tableLayout, isEnableExportCsv,
        isEnableExportPdf, exportFilename, tableTitle, rowAltColor,
-       childRowColor, rowHeight, isEnableFilter, isEnableSort
+       childRowColor, rowHeight, isEnableFilter, isEnableSort,
+       isEnableAdvancedFilter, advancedFilterData (array ou string JSON),
+       onAdvancedFilterClick, onAdvancedFilterClear (função ou string JS)
      })
 
    ── Exemplo
@@ -75,17 +79,18 @@ if (!customElements.get('granado-table-popup')) {
 
   // Atributos repassados 1:1 ao <granado-table> (exceto columns/rows,
   // tratados à parte pelos getters .columns / .rows).
-  const TABLE_ATTRS = ['color', 'gross-border-color', 'title-color', 'soft-border-color', 'onrender', 'onrenderrow', 'onclickevent', 'ondoubleclickevent', 'isenablepagination', 'pagesize', 'tablelayout', 'isenableexportcsv', 'isenableexportpdf', 'exportfilename', 'tabletitle', 'rowaltcolor', 'childrowcolor', 'expandedrowcolor', 'rowheight', 'isenablefilter', 'isenablesort'];
+  const TABLE_ATTRS = ['color', 'gross-border-color', 'title-color', 'soft-border-color', 'onrender', 'onrenderrow', 'onclickevent', 'ondoubleclickevent', 'isenablepagination', 'pagesize', 'tablelayout', 'isenableexportcsv', 'isenableexportpdf', 'exportfilename', 'tabletitle', 'rowaltcolor', 'childrowcolor', 'expandedrowcolor', 'rowheight', 'isenablefilter', 'isenablesort', 'isenableadvancedfilter', 'advancedfilterdata', 'onadvancedfilterclick', 'onadvancedfilterclear'];
 
   // Mapa das opções camelCase (show) -> atributo kebab da tabela.
-  // Obs.: onRenderRow é tratado à parte (pode ser função) — não entra aqui.
+  // Obs.: onRenderRow e os eventos do filtro avançado (podem ser função) e
+  // advancedFilterData (pode ser array) são tratados à parte — não entram aqui.
   const OPT_TO_ATTR = {
     color: 'color', grossBorderColor: 'gross-border-color', titleColor: 'title-color', softBorderColor: 'soft-border-color',
     onRender: 'onrender', onClickEvent: 'onclickevent', onDoubleClickEvent: 'ondoubleclickevent',
     isEnablePagination: 'isenablepagination', pageSize: 'pagesize', tableLayout: 'tablelayout',
     isEnableExportCsv: 'isenableexportcsv', isEnableExportPdf: 'isenableexportpdf', exportFilename: 'exportfilename',
     tableTitle: 'tabletitle', rowAltColor: 'rowaltcolor', childRowColor: 'childrowcolor', expandedRowColor: 'expandedrowcolor', rowHeight: 'rowheight',
-    isEnableFilter: 'isenablefilter', isEnableSort: 'isenablesort'
+    isEnableFilter: 'isenablefilter', isEnableSort: 'isenablesort', isEnableAdvancedFilter: 'isenableadvancedfilter'
   };
 
   class GranadoTablePopup extends HTMLElement {
@@ -107,6 +112,13 @@ if (!customElements.get('granado-table-popup')) {
       Object.keys(OPT_TO_ATTR).forEach((k) => { if (opts[k] != null) el.setAttribute(OPT_TO_ATTR[k], String(opts[k])); });
       // onRenderRow pode ser função (propriedade) ou string (atributo).
       if (opts.onRenderRow != null) el.onRenderRow = opts.onRenderRow;
+      if (opts.advancedFilterData != null) {
+        el.setAttribute('advancedfilterdata', typeof opts.advancedFilterData === 'string' ? opts.advancedFilterData : JSON.stringify(opts.advancedFilterData));
+      }
+      ['onAdvancedFilterClick', 'onAdvancedFilterClear'].forEach((k) => {
+        if (typeof opts[k] === 'function') el[k] = opts[k];
+        else if (opts[k] != null) el.setAttribute(k.toLowerCase(), String(opts[k]));
+      });
       el._autoRemove = true;
       document.body.appendChild(el);
       if (opts.columns != null) el.columns = opts.columns;   // mantém o array
@@ -119,7 +131,7 @@ if (!customElements.get('granado-table-popup')) {
     // Ciclo de vida
     // ------------------------------------------------------------
     connectedCallback() {
-      ['columns', 'rows'].forEach((p) => {
+      ['columns', 'rows', 'onAdvancedFilterClick', 'onAdvancedFilterClear'].forEach((p) => {
         if (Object.prototype.hasOwnProperty.call(this, p)) { const v = this[p]; delete this[p]; this[p] = v; }
       });
       if (this.getAttribute('open') === 'false') this.style.display = 'none';
@@ -170,6 +182,20 @@ if (!customElements.get('granado-table-popup')) {
       if (this.isConnected) this._render();
     }
 
+    // Repassados ao <granado-table> interno; a tabela é recriada a cada render do popup.
+    get onAdvancedFilterClick() { return this._onAdvClick || null; }
+    set onAdvancedFilterClick(fn) {
+      this._onAdvClick = typeof fn === 'function' ? fn : null;
+      const t = this.querySelector('granado-table');
+      if (t) t.onAdvancedFilterClick = this._onAdvClick;
+    }
+    get onAdvancedFilterClear() { return this._onAdvClear || null; }
+    set onAdvancedFilterClear(fn) {
+      this._onAdvClear = typeof fn === 'function' ? fn : null;
+      const t = this.querySelector('granado-table');
+      if (t) t.onAdvancedFilterClear = this._onAdvClear;
+    }
+
     open() { this.removeAttribute('open'); this.style.display = ''; if (this.isConnected) this._render(); }
     close() { this.style.display = 'none'; if (this._autoRemove) this.remove(); }
 
@@ -186,6 +212,7 @@ if (!customElements.get('granado-table-popup')) {
       const title = this.getAttribute('title') || '';
       const subtitle = this.getAttribute('subtitle') || '';
       const confirmText = this.getAttribute('confirm-text') || 'Fechar';
+      const prevTable = this.querySelector('granado-table');
 
       this.innerHTML =
         `<div data-role="overlay" style="position:fixed;inset:0;background:${OVERLAY_BG};z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:40px 12px;backdrop-filter:blur(3px);overflow-y:auto;box-sizing:border-box">` +
@@ -207,12 +234,12 @@ if (!customElements.get('granado-table-popup')) {
           `</div>` +
         `</div>`;
 
-      this._mountTable();
+      this._mountTable(prevTable);
       this._bind();
     }
 
     // Cria o <granado-table> embutido, repassando columns/rows e as opções.
-    _mountTable() {
+    _mountTable(prevTable) {
       const host = this.querySelector('[data-role="table-host"]');
       if (!host) return;
       const t = document.createElement('granado-table');
@@ -220,6 +247,10 @@ if (!customElements.get('granado-table-popup')) {
       TABLE_ATTRS.forEach((a) => { const v = this.getAttribute(a); if (v != null) t.setAttribute(a, v); });
       // onRenderRow como propriedade função (tem prioridade sobre o atributo)
       if (this._onRenderRowFn) t.onRenderRow = this._onRenderRowFn;
+      if (this._onAdvClick) t.onAdvancedFilterClick = this._onAdvClick;
+      if (this._onAdvClear) t.onAdvancedFilterClear = this._onAdvClear;
+      // popup.rows = resposta do fetch recria a tabela: mantém o que foi preenchido no filtro.
+      if (prevTable) { t._advValues = prevTable._advValues; t._advApplied = prevTable._advApplied; }
       // columns/rows sempre via atributo JSON (aceita array ou string)
       t.setAttribute('columns', JSON.stringify(this.columns || []));
       t.setAttribute('rows', JSON.stringify(this.rows || []));

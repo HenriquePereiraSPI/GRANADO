@@ -1546,6 +1546,119 @@
 <span class="tk-comment">// Desabilitar por coluna (no objeto da coluna)</span>
 { key: <span class="tk-str">'acao'</span>, label: <span class="tk-str">'Ação'</span>, filterable: <span class="tk-keyword">false</span>, sortable: <span class="tk-keyword">false</span> }</pre>
 
+        <!-- ===== Filtro avançado ===== -->
+        <h2 class="gd-h2">Filtro avançado</h2>
+        <p class="gd-lead">
+          Opção separada do filtro comum e <strong>desligada por padrão</strong>. Com
+          <code>isenableadvancedfilter="true"</code>, a tabela ganha um botão de funil à direita do
+          título, que abre um painel subindo da base da tela com os campos de
+          <code>advancedfilterdata</code>. Ele <strong>não altera as linhas</strong>: ao clicar em
+          <em>Filtrar</em>, o painel fecha e dispara <code>onAdvancedFilterClick</code> com os valores,
+          para a pesquisa ser feita no servidor e a tabela atualizada com <code>setAttribute('rows', ...)</code>.
+          O que foi preenchido continua no painel, e o funil fica preenchido enquanto houver filtro aplicado.
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-table
+            tabletitle="Pesagens · filtro avançado"
+            isenableadvancedfilter="true"
+            onadvancedfilterclick="document.getElementById('dt-adv-result').textContent = 'onAdvancedFilterClick: ' + JSON.stringify(detail.values);"
+            onadvancedfilterclear="document.getElementById('dt-adv-result').textContent = 'onAdvancedFilterClear: ' + JSON.stringify(detail.values);"
+            advancedfilterdata='[
+              { "filterName": "Material", "filterType": "text" },
+              { "filterName": "Status", "filterType": "dropdown", "filterDefaultDropdownValues": ["OK", "Desvio", "Pendente"] },
+              { "filterName": "Pesado (kg)", "filterType": "number" },
+              { "filterName": "Data", "filterType": "date" }
+            ]'
+            columns='[
+              { "key": "cod", "label": "Código", "mono": true },
+              { "key": "mat", "label": "Material" },
+              { "key": "pesado", "label": "Pesado (kg)", "mono": true, "align": "right" },
+              { "key": "status", "label": "Status" }
+            ]'
+            rows='[
+              { "cod": "MP-01001", "mat": "Glicerina USP", "pesado": "44983,21", "status": "OK" },
+              { "cod": "MP-01002", "mat": "Fenoxietanol", "pesado": "3028,50", "status": "Desvio" },
+              { "cod": "MP-01003", "mat": "Ácido Cítrico", "pesado": "12450,00", "status": "Pendente" }
+            ]'></granado-table>
+          <div id="dt-adv-result" style="margin-top:10px;font-size:12px;font-family:Arial,Helvetica,sans-serif;color:#5A6B5E">Clique no funil, preencha e clique em Filtrar: o conteúdo do evento aparece aqui.</div>
+        </div>
+        <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Opção 1: eventos direto no HTML (JSON direto nos atributos) --&gt;</span>
+<span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">id</span>=<span class="tk-str">"tbl"</span>
+    <span class="tk-attr">isenableadvancedfilter</span>=<span class="tk-str">"true"</span>
+    <span class="tk-attr">onadvancedfilterclick</span>=<span class="tk-str">"pesquisar(detail.values)"</span>
+    <span class="tk-attr">onadvancedfilterclear</span>=<span class="tk-str">"pesquisar(detail.values)"</span>
+    <span class="tk-attr">advancedfilterdata</span>=<span class="tk-str">'[
+      { "filterName": "Material", "filterType": "text" },
+      { "filterName": "Status", "filterType": "dropdown", "filterDefaultDropdownValues": ["OK", "Desvio", "Pendente"] },
+      { "filterName": "Pesado (kg)", "filterType": "number" },
+      { "filterName": "Data", "filterType": "date" }
+    ]'</span>
+    <span class="tk-attr">columns</span>=<span class="tk-str">'[ ... ]'</span>
+    <span class="tk-attr">rows</span>=<span class="tk-str">'[ ... ]'</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">const</span> tbl = document.getElementById(<span class="tk-str">'tbl'</span>);
+
+  <span class="tk-comment">// Pesquisa no servidor e atualiza a tabela. URL ilustrativa.</span>
+  <span class="tk-comment">// Na opção 1, a função precisa ser global para o atributo encontrá-la.</span>
+  <span class="tk-comment">// filtros = { "Material": "gli", "Status": "OK", "Pesado (kg)": "", "Data": "2026-03-18" }</span>
+  <span class="tk-kw">async function</span> pesquisar(filtros) {
+    <span class="tk-kw">const</span> resp = <span class="tk-kw">await</span> fetch(<span class="tk-str">'/sua-api'</span>, { method: <span class="tk-str">'POST'</span>, body: JSON.stringify(filtros) });
+    tbl.setAttribute(<span class="tk-str">'rows'</span>, JSON.stringify(<span class="tk-kw">await</span> resp.json()));
+  }
+<span class="tk-tag">&lt;/script&gt;</span>
+
+<span class="tk-comment">&lt;!-- Opção 2: eventos via JS (sem onadvancedfilterclick/clear no HTML; a função não precisa ser global) --&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  tbl.onAdvancedFilterClick = (detail) =&gt; pesquisar(detail.values);
+  tbl.onAdvancedFilterClear = (detail) =&gt; pesquisar(detail.values);
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h3 class="gd-h3">Campos de <code>advancedfilterdata</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:230px">Campo</th>
+              <th style="width:140px">Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">filterName</td><td class="col-type">string</td><td class="col-desc">Rótulo do campo no painel e chave em <code>detail.values</code>.</td></tr>
+            <tr><td class="col-name">filterType</td><td class="col-type">string</td><td class="col-desc"><code>"text"</code>, <code>"dropdown"</code>, <code>"number"</code> ou <code>"date"</code> (o valor vem como <code>yyyy-MM-dd</code>). Outro valor é tratado como <code>"text"</code>.</td></tr>
+            <tr><td class="col-name">filterDefaultDropdownValues</td><td class="col-type">array de string</td><td class="col-desc">Opções do <code>dropdown</code>. A opção "Todos" é adicionada automaticamente e envia valor vazio.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Eventos do filtro avançado</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:230px">Evento</th>
+              <th>Quando dispara</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">onAdvancedFilterClick</td><td class="col-desc">Ao clicar em <em>Filtrar</em>. O painel fecha antes de disparar.</td></tr>
+            <tr><td class="col-name">onAdvancedFilterClear</td><td class="col-desc">Ao clicar em <em>Limpar</em>. Os campos são limpos e o painel fecha antes de disparar.</td></tr>
+          </tbody>
+        </table>
+        <p class="gd-lead">
+          Os dois aceitam atributo com JS (<code>onadvancedfilterclick="..."</code>, variáveis
+          <code>event</code> e <code>detail</code>), propriedade com função
+          (<code>tbl.onAdvancedFilterClick = (detail, event) =&gt; ...</code>) ou os CustomEvents
+          <code>advanced-filter-click</code> e <code>advanced-filter-clear</code>
+          (em <code>event.detail</code>). Todos os campos vêm no <code>detail</code>; campo vazio vem como <code>""</code>.
+        </p>
+        <pre class="gd-code">{
+  values:  { <span class="tk-str">"Material"</span>: <span class="tk-str">"gli"</span>, <span class="tk-str">"Status"</span>: <span class="tk-str">"OK"</span>, <span class="tk-str">"Pesado (kg)"</span>: <span class="tk-str">""</span>, <span class="tk-str">"Data"</span>: <span class="tk-str">"2026-03-18"</span> },
+  filters: [
+    { filterName: <span class="tk-str">"Material"</span>, filterType: <span class="tk-str">"text"</span>, filterValue: <span class="tk-str">"gli"</span> },
+    <span class="tk-comment">// ... um item por campo, na ordem de advancedfilterdata</span>
+  ]
+}</pre>
+
         <!-- ===== Eventos de clique ===== -->
         <h2 class="gd-h2">Eventos de clique</h2>
         <p class="gd-lead">
@@ -1997,6 +2110,30 @@
               <td class="col-type">"true" | "false"</td>
               <td class="col-default">"true"</td>
               <td class="col-desc">Quando <code>"true"</code>, exibe ícone de funil em cada coluna + filtro global ao lado do título.</td>
+            </tr>
+            <tr>
+              <td class="col-name">isenableadvancedfilter</td>
+              <td class="col-type">"true" | "false"</td>
+              <td class="col-default">"false"</td>
+              <td class="col-desc">Quando <code>"true"</code>, exibe o botão de funil do <strong>filtro avançado</strong>, independente do <code>isenablefilter</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">advancedfilterdata</td>
+              <td class="col-type">JSON array</td>
+              <td class="col-default">[]</td>
+              <td class="col-desc">Campos do filtro avançado: <code>filterName</code>, <code>filterType</code> e <code>filterDefaultDropdownValues</code>. Veja a seção Filtro avançado.</td>
+            </tr>
+            <tr>
+              <td class="col-name">onadvancedfilterclick</td>
+              <td class="col-type">string (JS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Executado ao clicar em <em>Filtrar</em>. Variáveis: <code>event</code>, <code>detail</code>. Em JS: <code>.onAdvancedFilterClick</code>.</td>
+            </tr>
+            <tr>
+              <td class="col-name">onadvancedfilterclear</td>
+              <td class="col-type">string (JS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Executado ao clicar em <em>Limpar</em>. Variáveis: <code>event</code>, <code>detail</code>. Em JS: <code>.onAdvancedFilterClear</code>.</td>
             </tr>
             <tr>
               <td class="col-name">isenablesort</td>
@@ -13655,6 +13792,9 @@ g.data = [
             <tr><td class="col-name">isenablepagination / <em>isEnablePagination</em></td><td class="col-type">boolean</td><td class="col-desc">Ativa paginação.</td></tr>
             <tr><td class="col-name">pagesize / <em>pageSize</em></td><td class="col-type">number</td><td class="col-desc">Linhas por página.</td></tr>
             <tr><td class="col-name">isenablefilter / <em>isEnableFilter</em></td><td class="col-type">boolean</td><td class="col-desc">Filtros por coluna + filtro global.</td></tr>
+            <tr><td class="col-name">isenableadvancedfilter / <em>isEnableAdvancedFilter</em></td><td class="col-type">boolean</td><td class="col-desc">Liga o filtro avançado (default: desligado). Não altera as linhas; só dispara os eventos.</td></tr>
+            <tr><td class="col-name">advancedfilterdata / <em>advancedFilterData</em></td><td class="col-type">JSON / array</td><td class="col-desc">Campos do filtro avançado (veja <a class="gd-link" href="#granado-table">granado-table</a>). No <code>show()</code> aceita array ou string JSON.</td></tr>
+            <tr><td class="col-name">onadvancedfilterclick · onadvancedfilterclear / <em>onAdvancedFilterClick · onAdvancedFilterClear</em></td><td class="col-type">string (JS) / função</td><td class="col-desc">Eventos de <em>Filtrar</em> e <em>Limpar</em>. Para atualizar a tabela, use <code>popup.rows = dados</code>: o que foi preenchido no filtro é mantido.</td></tr>
             <tr><td class="col-name">isenablesort / <em>isEnableSort</em></td><td class="col-type">boolean</td><td class="col-desc">Ordenação por coluna.</td></tr>
             <tr><td class="col-name">isenableexportcsv / isenableexportpdf</td><td class="col-type">boolean</td><td class="col-desc">Botões de exportar CSV / PDF.</td></tr>
             <tr><td class="col-name">onrender / onclickevent / ondoubleclickevent</td><td class="col-type">string (JS)</td><td class="col-desc">Render por célula / clique / duplo-clique na linha.</td></tr>
