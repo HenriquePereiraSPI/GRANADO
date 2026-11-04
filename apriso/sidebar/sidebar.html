@@ -27,7 +27,8 @@
         <div class="sb-module" data-mod="mod-sinotico">
             <div class="sb-module-btn" data-toggle="mod-sinotico" role="button" tabindex="0">
                 <div class="sb-dot"></div>
-                <span class="sb-ico">&#128507;</span>Sinotico da Fabrica
+                <span class="sb-ico">&#128507;</span>
+                <span class="sb-label">Sinotico da Fabrica</span>
                 <span class="sb-arr">&rsaquo;</span>
             </div>
             <div class="sb-sub-list">
@@ -41,7 +42,8 @@
         <div class="sb-module" data-mod="mod-oee">
             <div class="sb-module-btn" data-toggle="mod-oee" role="button" tabindex="0">
                 <div class="sb-dot"></div>
-                <span class="sb-ico">&#128202;</span>OEE Dashboard
+                <span class="sb-ico">&#128202;</span>
+                <span class="sb-label">OEE Dashboard</span>
                 <span class="sb-arr">&rsaquo;</span>
             </div>
             <div class="sb-sub-list">
@@ -101,7 +103,8 @@
         <div class="sb-module" data-mod="mod-prod">
             <div class="sb-module-btn" data-toggle="mod-prod" role="button" tabindex="0">
                 <div class="sb-dot"></div>
-                <span class="sb-ico">&#127981;</span>Producao
+                <span class="sb-ico">&#127981;</span>
+                <span class="sb-label">Producao</span>
                 <span class="sb-arr">&rsaquo;</span>
             </div>
             <div class="sb-sub-list">
@@ -129,7 +132,8 @@
         <div class="sb-module" data-mod="mod-rel">
             <div class="sb-module-btn" data-toggle="mod-rel" role="button" tabindex="0">
                 <div class="sb-dot"></div>
-                <span class="sb-ico">&#128200;</span>Relatorios
+                <span class="sb-ico">&#128200;</span>
+                <span class="sb-label">Relatorios</span>
                 <span class="sb-arr">&rsaquo;</span>
             </div>
             <div class="sb-sub-list">
@@ -138,8 +142,27 @@
                     value="rel-oee">OEE Dashboard</button>
                 <button type="button" class="sb-sub-item" data-flx-bind="Action"
                     value="ACTION_DOWNTIME_AND_AVAILABILITY">Paradas e Disponibilidade</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="ACTION_CHECK_CAGES">Consulta de
+                    Gaiolas</button>
                 <button type="button" class="sb-sub-item" data-flx-bind="Action" value="ACTION_AUDIT_TRAIL"
                     data-role="GRD.REP.AuditTrail" hidden>Trilha de Auditoria</button>
+            </div>
+        </div>
+
+        <!-- ===== MODULO: CADASTROS ===== -->
+        <div class="sb-module" data-mod="mod-cadastro">
+            <div class="sb-module-btn" data-toggle="mod-cadastro" role="button" tabindex="0">
+                <div class="sb-dot"></div>
+                <span class="sb-ico">&#128450;</span>
+                <span class="sb-label">Cadastros</span>
+                <span class="sb-arr">&rsaquo;</span>
+            </div>
+            <div class="sb-sub-list">
+                <!-- QUANDO FOR PARA USAR O data-flx-bind TIRAR O OFF -->
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="ACTION_REASON"
+                    data-role="GRD.CAD.Reason" hidden>Motivo</button>
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="ACTION_PRODUCT_REGISTER"
+                    data-role="GRD.CAD.Product" hidden>Produto</button>
             </div>
         </div>
 
@@ -147,10 +170,13 @@
         <div class="sb-module" data-mod="mod-dev-tools">
             <div class="sb-module-btn" data-toggle="mod-dev-tools" role="button" tabindex="0">
                 <div class="sb-dot"></div>
-                <span class="sb-ico">&#128736;</span>Dev Tools
+                <span class="sb-ico">&#128736;</span>
+                <span class="sb-label">Dev Tools</span>
                 <span class="sb-arr">&rsaquo;</span>
             </div>
             <div class="sb-sub-list">
+                <button type="button" class="sb-sub-item" data-flx-bind="Action" value="ACTION_API_MANAGER">
+                    API Manager</button>
                 <button type="button" class="sb-sub-item" data-flx-bind="Action" value="DEV_TOOLS_ALL_COMPONENTS">
                     Components</button>
                 <button type="button" class="sb-sub-item" data-flx-bind="Action"
@@ -187,14 +213,6 @@
         })();
 
         function init() {
-
-            //console.log("CONTEXT FROM SIDEBAR:", JSON.stringify($Context));
-
-            //[...document.fonts].forEach(f =>
-            //    console.log(f)
-            //);
-
-
             if (typeof $Context !== 'undefined') {
                 window.AprisoContext = $Context;
                 window.SidebarContext = $Context; // Armazena contexto da Sidebar para não ser afetada pela view
