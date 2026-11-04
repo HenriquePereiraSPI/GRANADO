@@ -102,6 +102,15 @@ export const MODULES = [
     ],
   },
   {
+    id: 'mod-cad',
+    label: 'Cadastros',
+    icon: '🗂️',
+    items: [
+      { id: 'cad-motivos', label: '📝 Cadastro Motivos' },
+      { id: 'cad-produto', label: '📦 Cadastro Produto' },
+    ],
+  },
+  {
     id: 'mod-dev',
     label: 'Dev-Tools',
     icon: '🛠️',

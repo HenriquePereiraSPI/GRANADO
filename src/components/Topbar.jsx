@@ -5,7 +5,7 @@ import NotificationsPopup, { INITIAL_NOTIFICATIONS } from './NotificationsPopup.
 import UserPopup from './UserPopup.jsx';
 
 // Usuário logado (placeholder — trocar quando houver auth real).
-const USER = {
+export const USER = {
   name: 'Kaic Lima',
   role: 'Operador de Pesagem',
   matricula: '004821',

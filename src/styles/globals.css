@@ -724,6 +724,7 @@ body { font-family:var(--font-b); background:var(--bg); color:var(--text); displ
   border-bottom:1px solid var(--border); background:var(--surface2);
 }
 .tbl td { padding:11px 12px; border-bottom:1px solid var(--border); font-size:13px; vertical-align:middle; }
+.tbl.tbl-fina td { padding:4px 12px; }
 .tbl tr:last-child td { border-bottom:none; }
 .tbl tr:hover td { background:var(--verde-dim); cursor:pointer; }
 .tbl .mono { font-family:var(--font-m); font-size:12px; }
@@ -736,6 +737,7 @@ table th, table td { font-family:var(--font-m); }
 .form-row { display:flex; gap:12px; margin-bottom:12px; }
 .form-row:last-child { margin-bottom:0; }
 .fg { flex:1; }
+@media (max-width:768px){ .cad-filtros .inp, .cad-filtros .sel { font-size:16px; } }
 .lbl {
   display:block; font-size:9px; font-weight:900; letter-spacing:.16em;
   text-transform:uppercase; color:var(--text2); margin-bottom:6px;

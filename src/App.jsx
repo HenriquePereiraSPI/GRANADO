@@ -18,6 +18,8 @@ import PesOrdemSubScreen from './components/PesOrdemSubScreen.jsx';
 import ReconciliacaoContexto from './components/ReconciliacaoContexto.jsx';
 import ProdOrdemContexto from './components/ProdOrdemContexto.jsx';
 import FabOrdemContexto from './components/FabOrdemContexto.jsx';
+import CadastroMotivosScreen from './components/CadastroMotivosScreen.jsx';
+import CadastroProdutoScreen from './components/CadastroProdutoScreen.jsx';
 
 /** Sub-telas da Pesagem que so podem ser acessadas com ?op= setado.
  *  Sao agrupadas dentro de pes-ordens (a tela "pai"). Acesso direto
@@ -126,6 +128,12 @@ export default function App() {
 
           {/* Qualidade — Dashboard de Correcoes (gerencial, perfil Q-MGMT) */}
           <Route path="/qual-correcoes-gestao" element={<QualidadeCorrecoesGestaoScreen />} />
+
+          {/* Cadastros — Motivos (lista + popup de novo motivo) */}
+          <Route path="/cad-motivos" element={<CadastroMotivosScreen />} />
+
+          {/* Cadastros — Produto (lista + popup de novo produto) */}
+          <Route path="/cad-produto" element={<CadastroProdutoScreen />} />
 
           {/* todas as demais telas extraidas */}
           {manifest.screens.map((id) => {

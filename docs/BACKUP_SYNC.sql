@@ -1,6 +1,6 @@
 USE [AprOp25M]
 GO
-/****** Object:  StoredProcedure [dbo].[GRD_SP_SYNC_JDE_ORDER]    Script Date: 05/10/2026 19:09:15 ******/
+/****** Object:  StoredProcedure [dbo].[GRD_SP_SYNC_JDE_ORDER]    Script Date: 30/10/2026 10:18:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
