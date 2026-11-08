@@ -7227,9 +7227,9 @@ poppins-700.woff2
         <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_OEE_GetOrderWeightItemPerformance</code></h1>
         <p class="gd-lead">
           Recupera a <strong>performance das matérias-primas de pesagem</strong> (nível item/linha)
-          num período. Tem <strong>dois modos</strong> definidos pelo input <code>Type</code>:
-          <code>DEFAULT</code> (uma linha por pesagem) e <code>RANKED_BY_USER</code> (agregado por
-          usuário, com média e mediana).
+          num período, no calendário escolhido em <code>FilterType</code>. Um único retorno traz o detalhe
+          por pesagem, os agregados por período/recurso/dia e o ranking por usuário
+          (<code>RankedByUser</code>, com média e mediana).
         </p>
 
         <h2 class="gd-h2">Chamada</h2>
@@ -7239,9 +7239,8 @@ poppins-700.woff2
         </div>
         <p class="gd-lead">
           Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
-          (<code>Success</code> / <code>Message</code>) acrescido de <code>Data</code> — cujo formato
-          <strong>depende de <code>Type</code></strong> — e, no modo <code>DEFAULT</code>, também dos
-          blocos <code>Overall</code>, <code>GroupedResource</code> e <code>GroupedDate</code> (ver Outputs).
+          (<code>Success</code> / <code>Message</code>) acrescido de <code>Data</code>, <code>Overall</code>,
+          <code>GroupedResource</code>, <code>GroupedDate</code> e <code>RankedByUser</code> (ver Outputs).
         </p>
 
         <!-- ===== Inputs ===== -->
@@ -7254,7 +7253,7 @@ poppins-700.woff2
   <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
   <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000010"</span><span class="tk-punc">,</span>
   <span class="tk-key">"Shift"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"Type"</span><span class="tk-punc">:</span> <span class="tk-str">"DEFAULT|RANKED_BY_USER"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"FilterType"</span><span class="tk-punc">:</span> <span class="tk-str">"TraditionalCalendar | OperationalCalendar"</span><span class="tk-punc">,</span>
   <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-01-01"</span><span class="tk-punc">,</span>
   <span class="tk-key">"EndDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-12-30"</span>
 }</pre>
@@ -7307,10 +7306,10 @@ poppins-700.woff2
               <td class="col-desc">Turno a filtrar. Use <code>"-1"</code> para <strong>todos</strong> os turnos.</td>
             </tr>
             <tr>
-              <td class="col-name">Type</td>
+              <td class="col-name">FilterType</td>
               <td class="col-type">string</td>
               <td class="col-req">Sim</td>
-              <td class="col-desc">Formato do retorno: <code>"DEFAULT"</code> (uma linha por pesagem) ou <code>"RANKED_BY_USER"</code> (agregado por usuário com média/mediana).</td>
+              <td class="col-desc">Tipo de calendário usado no período: <code>"TraditionalCalendar"</code> (calendário tradicional) ou <code>"OperationalCalendar"</code> (calendário operacional).</td>
             </tr>
             <tr>
               <td class="col-name">StartDate</td>
@@ -7327,13 +7326,14 @@ poppins-700.woff2
           </tbody>
         </table>
 
-        <!-- ===== Outputs DEFAULT ===== -->
-        <h2 class="gd-h2">Outputs — <code>Type = "DEFAULT"</code></h2>
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
         <p class="gd-lead">
           <code>Data</code> traz uma linha por <strong>pesagem</strong> (item/linha da ordem);
           <code>Overall</code> resume a performance média do período; <code>GroupedResource</code> agrega a
-          performance média <strong>por recurso do centro de trabalho</strong>; e <code>GroupedDate</code>
-          agrega a performance média <strong>por recurso e por dia</strong>:
+          performance média <strong>por recurso do centro de trabalho</strong>; <code>GroupedDate</code>
+          agrega a performance média <strong>por recurso e por dia</strong>; e <code>RankedByUser</code>
+          traz o agregado <strong>por usuário</strong> (média e mediana):
         </p>
         <pre class="gd-code">{
   <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
@@ -7372,10 +7372,19 @@ poppins-700.woff2
     { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000039"</span><span class="tk-punc">,</span> <span class="tk-key">"Date"</span><span class="tk-punc">:</span> <span class="tk-str">"8/20/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"6000.000000"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/20/2026 4:59:35 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/20/2026 7:55:05 PM"</span> }<span class="tk-punc">,</span>
     { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000039"</span><span class="tk-punc">,</span> <span class="tk-key">"Date"</span><span class="tk-punc">:</span> <span class="tk-str">"8/21/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"6000.000000"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/21/2026 11:24:56 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/21/2026 6:04:22 PM"</span> }<span class="tk-punc">,</span>
     { <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000039"</span><span class="tk-punc">,</span> <span class="tk-key">"Date"</span><span class="tk-punc">:</span> <span class="tk-str">"8/24/2026 12:00:00 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"AvgPerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"6000.000000"</span><span class="tk-punc">,</span> <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/24/2026 12:04:47 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"8/24/2026 6:05:20 PM"</span> }
+  ]<span class="tk-punc">,</span>
+  <span class="tk-key">"RankedByUser"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Kaic Lima"</span><span class="tk-punc">,</span> <span class="tk-key">"QtdPesagens"</span><span class="tk-punc">:</span> <span class="tk-str">"3"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"MediaTempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"4.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"MediaTempoTotalPesagemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"0.0000000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"MediaPerformance"</span><span class="tk-punc">:</span> <span class="tk-str">"1555.556666"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"MedianaTempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"3"</span><span class="tk-punc">,</span> <span class="tk-key">"MedianaTempoTotalPesagemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"MedianaPerformance"</span><span class="tk-punc">:</span> <span class="tk-str">"1666.67"</span>
+    }
   ]
 }</pre>
 
-        <h3 class="gd-h3">Campos de cada pesagem (<code>Data[]</code> · DEFAULT)</h3>
+        <h3 class="gd-h3">Campos de cada pesagem (<code>Data[]</code>)</h3>
         <table class="gd-api">
           <thead>
             <tr><th style="width:240px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
@@ -7403,7 +7412,7 @@ poppins-700.woff2
           </tbody>
         </table>
 
-        <h3 class="gd-h3">Campos de <code>Overall</code> (DEFAULT)</h3>
+        <h3 class="gd-h3">Campos de <code>Overall</code></h3>
         <p class="gd-lead" style="font-size:12px;color:#8A8575">Resumo do período consultado (todas as pesagens do filtro).</p>
         <table class="gd-api">
           <thead>
@@ -7416,7 +7425,7 @@ poppins-700.woff2
           </tbody>
         </table>
 
-        <h3 class="gd-h3">Campos de cada item de <code>GroupedResource</code> (DEFAULT)</h3>
+        <h3 class="gd-h3">Campos de cada item de <code>GroupedResource</code></h3>
         <p class="gd-lead" style="font-size:12px;color:#8A8575">Performance média <strong>agrupada por recurso do centro de trabalho</strong> (um item por <code>WorkcenterResourceName</code>).</p>
         <table class="gd-api">
           <thead>
@@ -7430,7 +7439,7 @@ poppins-700.woff2
           </tbody>
         </table>
 
-        <h3 class="gd-h3">Campos de cada item de <code>GroupedDate</code> (DEFAULT)</h3>
+        <h3 class="gd-h3">Campos de cada item de <code>GroupedDate</code></h3>
         <p class="gd-lead" style="font-size:12px;color:#8A8575">Performance média <strong>agrupada por recurso e por dia</strong> (um item por <code>WorkcenterResourceName</code> + <code>Date</code>).</p>
         <table class="gd-api">
           <thead>
@@ -7445,34 +7454,7 @@ poppins-700.woff2
           </tbody>
         </table>
 
-        <!-- ===== Outputs RANKED_BY_USER ===== -->
-        <h2 class="gd-h2">Outputs — <code>Type = "RANKED_BY_USER"</code></h2>
-        <p class="gd-lead">Um registro <strong>agregado por usuário</strong> (média e mediana):</p>
-        <pre class="gd-code">{
-  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
-  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Informações recuperadas com sucesso."</span><span class="tk-punc">,</span>
-  <span class="tk-key">"Data"</span><span class="tk-punc">:</span> [
-    {
-      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Kaic Lima"</span><span class="tk-punc">,</span> <span class="tk-key">"QtdPesagens"</span><span class="tk-punc">:</span> <span class="tk-str">"34"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"MediaTempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"18.0882352941"</span><span class="tk-punc">,</span> <span class="tk-key">"MediaTempoTotalPesagemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"0.2058823529"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"MediaPerformance"</span><span class="tk-punc">:</span> <span class="tk-str">"1772.182058"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"MedianaTempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"10.5"</span><span class="tk-punc">,</span> <span class="tk-key">"MedianaTempoTotalPesagemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"0"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"MedianaPerformance"</span><span class="tk-punc">:</span> <span class="tk-str">"572.725"</span>
-    }<span class="tk-punc">,</span>
-    {
-      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"winke"</span><span class="tk-punc">,</span> <span class="tk-key">"QtdPesagens"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"MediaTempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"10.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"MediaPerformance"</span><span class="tk-punc">:</span> <span class="tk-str">"600.000000"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"MedianaTempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"10"</span><span class="tk-punc">,</span> <span class="tk-key">"MedianaPerformance"</span><span class="tk-punc">:</span> <span class="tk-str">"600"</span>
-    }<span class="tk-punc">,</span>
-    {
-      <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"Eduardo Aguiar"</span><span class="tk-punc">,</span> <span class="tk-key">"QtdPesagens"</span><span class="tk-punc">:</span> <span class="tk-str">"4"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"MediaTempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"178.5000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"MediaPerformance"</span><span class="tk-punc">:</span> <span class="tk-str">"284.520000"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"MedianaTempoTotalPesagemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"27.5"</span><span class="tk-punc">,</span> <span class="tk-key">"MedianaPerformance"</span><span class="tk-punc">:</span> <span class="tk-str">"231.09"</span>
-    }
-  ]
-}</pre>
-
-        <h3 class="gd-h3">Campos de cada usuário (<code>Data[]</code> · RANKED_BY_USER)</h3>
+        <h3 class="gd-h3">Campos de cada usuário (<code>RankedByUser[]</code>)</h3>
         <table class="gd-api">
           <thead>
             <tr><th style="width:280px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
@@ -7491,15 +7473,14 @@ poppins-700.woff2
 
         <h3 class="gd-h3">Notas</h3>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
-          <li><strong><code>Type</code>:</strong> <code>"DEFAULT"</code> devolve uma linha por pesagem;
-            <code>"RANKED_BY_USER"</code> devolve o agregado por usuário (média/mediana de tempo e performance).</li>
+          <li><strong><code>FilterType</code>:</strong> define o calendário do período &mdash; <code>"TraditionalCalendar"</code> (tradicional) ou <code>"OperationalCalendar"</code> (operacional, por turnos).</li>
           <li><strong>Filtros <code>-1</code>:</strong> <code>WipOrderNo</code>, <code>ProductNo</code>,
             <code>CreatedBy</code>, <code>WorkcenterResourceName</code> e <code>Shift</code> aceitam <code>"-1"</code> para não filtrar.</li>
           <li><strong>Relação com <a class="gd-link" href="#GRD_API_OEE_GetOrderWeightPerformance">GRD_API_OEE_GetOrderWeightPerformance</a>:</strong>
             aquela dá a performance por <em>ordem</em>; esta detalha por <em>matéria-prima/pesagem</em>.</li>
-          <li><strong><code>Overall</code> e <code>Grouped</code> (só no <code>DEFAULT</code>):</strong> além do detalhe por pesagem,
+          <li><strong><code>Overall</code>, <code>Grouped*</code> e <code>RankedByUser</code>:</strong> além do detalhe por pesagem,
             o retorno traz a média geral do período (<code>Overall</code>) e a média por recurso do centro de trabalho
-            (<code>Grouped</code>, um item por <code>WorkcenterResourceName</code> — inclui <code>""</code> e <code>"STOPPED"</code>).</li>
+            (<code>GroupedResource</code>, um item por <code>WorkcenterResourceName</code> — inclui <code>""</code> e <code>"STOPPED"</code>), por recurso e dia (<code>GroupedDate</code>) e por usuário (<code>RankedByUser</code>).</li>
         </ul>
       </section>
 
