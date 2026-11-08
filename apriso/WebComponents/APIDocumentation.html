@@ -6829,8 +6829,10 @@ poppins-700.woff2
         <p class="gd-lead">Corpo da requisição (JSON):</p>
         <pre class="gd-code">{
   <span class="tk-key">"ResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000020"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-06-25 05:00:00"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-06-30 05:00:00"</span>
+  <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-11-07 00:00:00"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"FinishDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-11-07 23:59:59"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"FilterType"</span><span class="tk-punc">:</span> <span class="tk-str">"TraditionalCalendar | OperationalCalendar"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WorkPeriod"</span><span class="tk-punc">:</span> <span class="tk-str">"MANHA | NOITE | -1"</span>
 }</pre>
 
         <h3 class="gd-h3">Campos de entrada</h3>
@@ -6854,13 +6856,25 @@ poppins-700.woff2
               <td class="col-name">StartDate</td>
               <td class="col-type">string (data/hora)</td>
               <td class="col-req">Sim</td>
-              <td class="col-desc">Início do período (formato <code>yyyy-MM-dd HH:mm:ss</code>).</td>
+              <td class="col-desc">Início do período, <strong>com hora</strong> (formato <code>yyyy-MM-dd HH:mm:ss</code>, ex.: <code>"2026-11-07 00:00:00"</code>).</td>
             </tr>
             <tr>
               <td class="col-name">FinishDate</td>
               <td class="col-type">string (data/hora)</td>
               <td class="col-req">Sim</td>
-              <td class="col-desc">Fim do período (formato <code>yyyy-MM-dd HH:mm:ss</code>).</td>
+              <td class="col-desc">Fim do período, <strong>com hora</strong> (formato <code>yyyy-MM-dd HH:mm:ss</code>, ex.: <code>"2026-11-07 23:59:59"</code>).</td>
+            </tr>
+            <tr>
+              <td class="col-name">FilterType</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Tipo de calendário usado no período: <code>"TraditionalCalendar"</code> (calendário tradicional) ou <code>"OperationalCalendar"</code> (calendário operacional).</td>
+            </tr>
+            <tr>
+              <td class="col-name">WorkPeriod</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Turno a filtrar: <code>"MANHA"</code>, <code>"NOITE"</code> ou <code>"-1"</code> (todos). Os turnos vêm de <a class="gd-link" href="#GRD_API_GetShift">GRD_API_GetShift</a> (campo <code>WorkPeriod</code>).</td>
             </tr>
           </tbody>
         </table>

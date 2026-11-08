@@ -2,6 +2,7 @@ import { useId, useLayoutEffect, useMemo, useRef, useState, useEffect } from 're
 import { createPortal } from 'react-dom';
 import { PESAGEM_OEE as D } from '../data/pes-oee-data.js';
 import SalasFilter from './SalasFilter.jsx';
+import { useFecharComEsc } from './CadastroComum.jsx';
 
 /**
  * Breakpoint responsivo: > 768px = WEB · <= 768px = MOBILE.
@@ -80,9 +81,185 @@ function calcularOEE(dados) {
   };
 }
 
+// Data de hoje no fuso local, no formato do <input type="date"> (yyyy-MM-dd).
+function hojeIso() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+const CAMPO_DATA = { width: 'auto', fontSize: 12, padding: '6px 10px', fontFamily: 'var(--font-m)' };
+
+// Valores iguais ao WorkPeriod da GRD_API_OEE_GetResourceAvailability ("-1" = todos).
+const TURNOS = [
+  { valor: '-1', rotulo: 'Todos os turnos' },
+  { valor: 'MANHA', rotulo: 'Manhã' },
+  { valor: 'NOITE', rotulo: 'Noite' },
+];
+
+// Valores iguais ao FilterType da GRD_API_OEE_GetResourceAvailability.
+const TIPOS_CALENDARIO = [
+  { valor: 'TraditionalCalendar', rotulo: 'Calendário Tradicional' },
+  { valor: 'OperationalCalendar', rotulo: 'Calendário Operacional' },
+];
+
+const TITULO_CAL = { fontWeight: 700, fontSize: 12, color: 'var(--verde)', marginBottom: 2 };
+const SUBTITULO_CAL = { fontWeight: 700, color: 'var(--text)', marginTop: 6 };
+const LISTA_CAL = { margin: '2px 0 0', paddingLeft: 16 };
+
+const ExplicacaoCalendario = () => (
+  <div style={{ color: 'var(--text2)', lineHeight: 1.45 }}>
+    <div style={TITULO_CAL}>1. Calendário Tradicional</div>
+    <div>É baseado em um intervalo de data e hora selecionado pelo usuário, independentemente dos turnos cadastrados na fábrica.</div>
+    <div style={SUBTITULO_CAL}>Exemplo:</div>
+    <ul style={LISTA_CAL}>
+      <li>Data inicial: <span style={VALOR_TOOLTIP}>08/11/2026 16:00</span></li>
+      <li>Data final: <span style={VALOR_TOOLTIP}>08/11/2026 17:30</span></li>
+    </ul>
+    <div>O sistema considera todos os registros que ocorreram dentro desse intervalo.</div>
+    <div style={SUBTITULO_CAL}>Características:</div>
+    <ul style={LISTA_CAL}>
+      <li>Não depende da configuração dos turnos.</li>
+      <li>Permite selecionar qualquer intervalo de tempo.</li>
+      <li>Considera os eventos de produção, paradas e apontamentos dentro do período.</li>
+      <li>Ideal para análises pontuais, detalhadas e investigações.</li>
+    </ul>
+
+    <div style={{ height: 1, background: 'var(--border)', margin: '10px 0' }} />
+
+    <div style={TITULO_CAL}>2. Calendário Operacional (Turnos)</div>
+    <div>É baseado na configuração dos turnos da fábrica.</div>
+    <div style={SUBTITULO_CAL}>Exemplo:</div>
+    <ul style={LISTA_CAL}>
+      <li>Data inicial: <span style={VALOR_TOOLTIP}>08/11/2026</span></li>
+      <li>Data final: <span style={VALOR_TOOLTIP}>08/11/2026</span></li>
+    </ul>
+    <div style={{ marginTop: 4 }}>
+      Retorna os dados do turno que vai das <span style={VALOR_TOOLTIP}>06:00</span> às <span style={VALOR_TOOLTIP}>17:59</span> do dia 08
+      e do turno que vai das <span style={VALOR_TOOLTIP}>18:00</span> às <span style={VALOR_TOOLTIP}>05:59</span> do dia 09.
+    </div>
+    <div style={{ marginTop: 4 }}>
+      Ou seja, mesmo o turno da noite ultrapassando a meia-noite, ele ainda é considerado como um turno operacional do dia 08.
+    </div>
+    <div style={SUBTITULO_CAL}>Características:</div>
+    <ul style={LISTA_CAL}>
+      <li>Respeita os horários de início e término dos turnos.</li>
+      <li>Considera turnos que atravessam a meia-noite.</li>
+      <li>Permite analisar a eficiência por turno.</li>
+      <li>Permite consolidar indicadores por turno.</li>
+    </ul>
+  </div>
+);
+
+// Toggle com o "i" como ultima parte, dentro da mesma borda.
+function CalendarioToggle({ valor, onChange }) {
+  return (
+    <div
+      role="group"
+      aria-label="Tipo de calendário"
+      style={{ display: 'inline-flex', alignItems: 'stretch', border: '1px solid var(--border)', borderRadius: 6, overflow: 'hidden', background: 'var(--surface)' }}
+    >
+      {TIPOS_CALENDARIO.map((t, i) => {
+        const ativo = t.valor === valor;
+        return (
+          <button
+            key={t.valor}
+            type="button"
+            aria-pressed={ativo}
+            onClick={() => onChange(t.valor)}
+            style={{
+              padding: '6px 10px',
+              border: 'none',
+              borderLeft: i > 0 ? '1px solid var(--border)' : 'none',
+              background: ativo ? 'var(--verde)' : 'transparent',
+              color: ativo ? '#FDFAF1' : 'var(--text2)',
+              fontFamily: 'var(--font-b)',
+              fontSize: 12,
+              fontWeight: ativo ? 700 : 500,
+              whiteSpace: 'nowrap',
+              cursor: 'pointer',
+              transition: 'background .15s, color .15s',
+            }}
+          >
+            {t.rotulo}
+          </button>
+        );
+      })}
+      <Tooltip conteudo={<ExplicacaoCalendario />} largura={380}>
+        {(props) => (
+          <span
+            {...props}
+            role="img"
+            aria-label="Diferença entre os tipos de calendário"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '0 8px',
+              borderLeft: '1px solid var(--border)',
+              cursor: 'help',
+              userSelect: 'none',
+              outlineOffset: -2,
+            }}
+          >
+            <span
+              aria-hidden="true"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 16,
+                height: 16,
+                borderRadius: '50%',
+                border: '1.5px solid var(--text3)',
+                color: 'var(--text2)',
+                fontFamily: 'Georgia, serif',
+                fontSize: 10,
+                fontWeight: 700,
+                fontStyle: 'italic',
+                lineHeight: 1,
+              }}
+            >
+              i
+            </span>
+          </span>
+        )}
+      </Tooltip>
+    </div>
+  );
+}
+
+// Popup para trocar o tipo de calendario. A escolha so vale ao clicar em Aplicar;
+// fechar pelo X, Esc ou clicando fora descarta. Vai para o body porque o
+// transform do .screen.active prenderia o position:fixed do overlay.
+function CalendarioPopup({ valor, onAplicar, onCancel }) {
+  const [escolha, setEscolha] = useState(valor);
+  useFecharComEsc(onCancel);
+
+  return createPortal(
+    <div className="modal-overlay open" onClick={(e) => { if (e.target === e.currentTarget) onCancel(); }}>
+      <div className="modal" role="dialog" aria-modal="true" aria-label="Tipo de calendário" style={{ minWidth: 0, maxWidth: 460 }}>
+        <button type="button" className="modal-close" onClick={onCancel} aria-label="Fechar">✕</button>
+        <div className="modal-title">Tipo de calendário</div>
+        <div className="modal-sub">Define como o período entre as datas é considerado.</div>
+        <CalendarioToggle valor={escolha} onChange={setEscolha} />
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 20 }}>
+          <button type="button" className="btn btn-md btn-v" onClick={() => onAplicar(escolha)}>Aplicar</button>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
 export default function PesagemOeeScreen() {
   const calc = useMemo(() => calcularOEE(D), []);
   const isMobile = useIsMobile();   // > 768px = WEB · <= 768px = MOBILE
+  const [dataInicial, setDataInicial] = useState(hojeIso);
+  const [dataFinal, setDataFinal] = useState(hojeIso);
+  const [tipoCalendario, setTipoCalendario] = useState('TraditionalCalendar');
+  const [turno, setTurno] = useState('-1');
+  const operacional = tipoCalendario === 'OperationalCalendar';
+  const [popupCalendario, setPopupCalendario] = useState(false);
 
   return (
     <div className="screen active" style={{ display: 'block' }}>
@@ -92,15 +269,71 @@ export default function PesagemOeeScreen() {
           <div className="ph-eyebrow">Pesagem · MF5 · ERU 5.2.x — OEE Operacional</div>
           <div className="ph-title" style={isMobile ? { fontSize: 20 } : undefined}>OEE da Pesagem</div>
         </div>
-        <div className="ph-actions" style={isMobile ? { flexWrap: 'wrap', width: '100%' } : undefined}>
-          <select className="inp" style={{ width: 'auto', fontSize: 12, padding: '6px 10px' }} defaultValue="hoje">
-            <option value="hoje">Hoje</option>
-            <option value="7d">7 dias</option>
-            <option value="30d">30 dias</option>
-            <option value="60d">60 dias</option>
-          </select>
+        <div className="ph-actions" style={{ flexWrap: 'wrap', justifyContent: 'flex-end', ...(isMobile ? { width: '100%', justifyContent: 'flex-start' } : {}) }}>
+          <button
+            type="button"
+            className="inp"
+            id="oee-calendario"
+            title="Trocar o tipo de calendário"
+            aria-haspopup="dialog"
+            aria-expanded={popupCalendario}
+            onClick={() => setPopupCalendario(true)}
+            style={{ width: 'auto', fontSize: 12, padding: '6px 10px', display: 'inline-flex', alignItems: 'center', gap: 8, cursor: 'pointer', background: 'var(--surface)', whiteSpace: 'nowrap' }}
+          >
+            <span>📅 {TIPOS_CALENDARIO.find((t) => t.valor === tipoCalendario).rotulo}</span>
+            <span style={{ color: 'var(--text3)', fontSize: 9 }}>▼</span>
+          </button>
+          <input
+            id="oee-data-inicial"
+            type="date"
+            className="inp"
+            style={CAMPO_DATA}
+            title="Data Inicial"
+            aria-label="Data Inicial"
+            value={dataInicial}
+            max={dataFinal || undefined}
+            onChange={(e) => setDataInicial(e.target.value)}
+          />
+          <input
+            id="oee-data-final"
+            type="date"
+            className="inp"
+            style={CAMPO_DATA}
+            title="Data Final"
+            aria-label="Data Final"
+            value={dataFinal}
+            min={dataInicial || undefined}
+            onChange={(e) => setDataFinal(e.target.value)}
+          />
           <SalasFilter />
-          <button className="btn btn-sm btn-v" onClick={() => alert('🔄 Recalculando OEE com base nos últimos apontamentos...')}>🔄 Atualizar</button>
+          {/* Turno só existe no calendário operacional (o dia segue os turnos). */}
+          {operacional && (
+            <select
+              id="oee-turno"
+              className="inp"
+              style={{ width: 'auto', fontSize: 12, padding: '6px 10px' }}
+              title="Filtrar turno"
+              aria-label="Turno"
+              value={turno}
+              onChange={(e) => setTurno(e.target.value)}
+            >
+              {TURNOS.map((t) => <option key={t.valor} value={t.valor}>{t.rotulo}</option>)}
+            </select>
+          )}
+          <button
+            className="btn btn-sm btn-v"
+            onClick={() => {
+              if (!dataInicial || !dataFinal) return alert('Informe a Data Inicial e a Data Final.');
+              if (dataFinal < dataInicial) return alert('A Data Final não pode ser anterior à Data Inicial.');
+              const br = (iso) => iso.split('-').reverse().join('/');
+              const tipo = TIPOS_CALENDARIO.find((t) => t.valor === tipoCalendario).rotulo;
+              // No tradicional não há filtro de turno: equivale a "-1" (todos).
+              const periodoTurno = operacional ? `, ${TURNOS.find((t) => t.valor === turno).rotulo}` : '';
+              alert(`🔄 Recalculando OEE de ${br(dataInicial)} a ${br(dataFinal)} (${tipo}${periodoTurno})...`);
+            }}
+          >
+            🔄 Atualizar
+          </button>
         </div>
       </div>
 
@@ -144,6 +377,17 @@ export default function PesagemOeeScreen() {
       <div className="mt14">
         <CardHistorico />
       </div>
+
+      {popupCalendario && (
+        <CalendarioPopup
+          valor={tipoCalendario}
+          onCancel={() => setPopupCalendario(false)}
+          onAplicar={(valor) => {
+            setTipoCalendario(valor);
+            setPopupCalendario(false);
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -301,36 +545,41 @@ function KpiMini({ label, valor, cor }) {
 const LINHA_TOOLTIP = { display: 'flex', justifyContent: 'space-between', gap: 12, padding: '2px 0', color: 'var(--text2)' };
 const VALOR_TOOLTIP = { fontFamily: 'var(--font-m)', fontWeight: 700, color: 'var(--text)' };
 
-// Badge de percentual com tooltip do calculo. Abre ao passar o mouse, ao tocar
-// (celular) ou ao focar pelo teclado. Vai para o body porque .screen.active tem
-// transform, que deslocaria o position:fixed.
-function BadgeParada({ texto, rotulo, min, base, cor }) {
+// Tooltip em cartao, reutilizado pelos badges de paradas e pelo "i" do tipo de
+// calendario. Abre ao passar o mouse, ao tocar (celular) ou ao focar pelo
+// teclado. Vai para o body porque .screen.active tem transform, que deslocaria
+// o position:fixed. `children` recebe as props para espalhar no gatilho.
+function Tooltip({ conteudo, cor = 'var(--verde)', largura = 240, children }) {
   const [aberto, setAberto] = useState(false);
   const [pos, setPos] = useState({ top: 0, left: 0, setaX: 0, acima: true });
-  const badgeRef = useRef(null);
+  const gatilhoRef = useRef(null);
   const tooltipRef = useRef(null);
   const ponteiroRef = useRef('mouse');
   const id = useId();
-  const percentual = base > 0 ? (min / base) * 100 : 0;
-  const minusculo = rotulo.toLowerCase();
 
   useLayoutEffect(() => {
     if (!aberto) return;
     const MARGEM = 8;
     const DISTANCIA = 8;
-    const badge = badgeRef.current.getBoundingClientRect();
-    const { offsetWidth: largura, offsetHeight: altura } = tooltipRef.current;
-    const centro = badge.left + badge.width / 2;
-    const left = Math.max(MARGEM, Math.min(centro - largura / 2, window.innerWidth - largura - MARGEM));
-    const acima = badge.top - altura - DISTANCIA >= MARGEM;
-    setPos({ top: acima ? badge.top - altura - DISTANCIA : badge.bottom + DISTANCIA, left, setaX: centro - left, acima });
+    const alvo = gatilhoRef.current.getBoundingClientRect();
+    const { offsetWidth: w, offsetHeight: altura } = tooltipRef.current;
+    const centro = alvo.left + alvo.width / 2;
+    const left = Math.max(MARGEM, Math.min(centro - w / 2, window.innerWidth - w - MARGEM));
+    // Acima se couber; se nao couber nem acima nem abaixo, fica do lado com mais espaco.
+    const cabeAcima = alvo.top - altura - DISTANCIA >= MARGEM;
+    const cabeAbaixo = alvo.bottom + DISTANCIA + altura <= window.innerHeight - MARGEM;
+    const acima = cabeAcima || (!cabeAbaixo && alvo.top > window.innerHeight - alvo.bottom);
+    const top = acima
+      ? Math.max(MARGEM, alvo.top - altura - DISTANCIA)
+      : Math.min(alvo.bottom + DISTANCIA, Math.max(MARGEM, window.innerHeight - altura - MARGEM));
+    setPos({ top, left, setaX: centro - left, acima });
   }, [aberto]);
 
   useEffect(() => {
     if (!aberto) return undefined;
     const fechar = () => setAberto(false);
     const onKey = (e) => { if (e.key === 'Escape') fechar(); };
-    const onFora = (e) => { if (!badgeRef.current.contains(e.target)) fechar(); };
+    const onFora = (e) => { if (!gatilhoRef.current.contains(e.target)) fechar(); };
     window.addEventListener('keydown', onKey);
     window.addEventListener('pointerdown', onFora);
     window.addEventListener('scroll', fechar, true);
@@ -343,23 +592,21 @@ function BadgeParada({ texto, rotulo, min, base, cor }) {
     };
   }, [aberto]);
 
+  const propsGatilho = {
+    ref: gatilhoRef,
+    tabIndex: 0,
+    'aria-describedby': aberto ? id : undefined,
+    onPointerEnter: (e) => { if (e.pointerType === 'mouse') setAberto(true); },
+    onPointerLeave: (e) => { if (e.pointerType === 'mouse') setAberto(false); },
+    onPointerDown: (e) => { ponteiroRef.current = e.pointerType; },
+    onClick: () => { if (ponteiroRef.current !== 'mouse') setAberto((a) => !a); },
+    onFocus: (e) => { if (e.target.matches(':focus-visible')) setAberto(true); },
+    onBlur: () => setAberto(false),
+  };
+
   return (
     <>
-      <span
-        ref={badgeRef}
-        className="bdg bdg-ney"
-        style={{ cursor: 'help' }}
-        tabIndex={0}
-        aria-describedby={aberto ? id : undefined}
-        onPointerEnter={(e) => { if (e.pointerType === 'mouse') setAberto(true); }}
-        onPointerLeave={(e) => { if (e.pointerType === 'mouse') setAberto(false); }}
-        onPointerDown={(e) => { ponteiroRef.current = e.pointerType; }}
-        onClick={() => { if (ponteiroRef.current !== 'mouse') setAberto((a) => !a); }}
-        onFocus={(e) => { if (e.target.matches(':focus-visible')) setAberto(true); }}
-        onBlur={() => setAberto(false)}
-      >
-        {percentual.toFixed(1)}% {texto}
-      </span>
+      {children(propsGatilho)}
       {aberto && createPortal(
         <div
           ref={tooltipRef}
@@ -369,8 +616,8 @@ function BadgeParada({ texto, rotulo, min, base, cor }) {
             position: 'fixed',
             top: pos.top,
             left: pos.left,
-            zIndex: 99999,
-            width: 240,
+            zIndex: 100000, // acima do painel de filtros (99999)
+            width: largura,
             maxWidth: 'calc(100vw - 16px)',
             boxSizing: 'border-box',
             padding: '10px 12px',
@@ -381,25 +628,12 @@ function BadgeParada({ texto, rotulo, min, base, cor }) {
             boxShadow: '0 8px 24px rgba(26, 46, 30, .18)',
             fontFamily: 'var(--font-b)',
             fontSize: 11,
+            textAlign: 'left',
             pointerEvents: 'none',
             animation: 'fadeUp .12s ease',
           }}
         >
-          <div style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 6 }}>Afetou % sobre o {minusculo}</div>
-          <div style={LINHA_TOOLTIP}>
-            <span>{rotulo}</span>
-            <span style={VALOR_TOOLTIP}>{base} min</span>
-          </div>
-          <div style={LINHA_TOOLTIP}>
-            <span>Tempo da parada</span>
-            <span style={VALOR_TOOLTIP}>{min} min</span>
-          </div>
-          <div style={{ height: 6, margin: '8px 0', background: 'var(--surface2)', borderRadius: 3, overflow: 'hidden' }}>
-            <div style={{ width: `${Math.min(percentual, 100)}%`, height: '100%', background: cor, borderRadius: 3 }} />
-          </div>
-          <div style={{ color: 'var(--text2)' }}>
-            Afetou <strong style={{ fontFamily: 'var(--font-m)', fontSize: 14, color: cor }}>{percentual.toFixed(1)}%</strong> do {minusculo}
-          </div>
+          {conteudo}
           <span
             style={{
               position: 'absolute',
@@ -417,6 +651,42 @@ function BadgeParada({ texto, rotulo, min, base, cor }) {
         document.body,
       )}
     </>
+  );
+}
+
+// Badge de percentual com tooltip do calculo.
+function BadgeParada({ texto, rotulo, min, base, cor }) {
+  const percentual = base > 0 ? (min / base) * 100 : 0;
+  const minusculo = rotulo.toLowerCase();
+
+  const conteudo = (
+    <>
+      <div style={{ fontWeight: 700, color: 'var(--text)', marginBottom: 6 }}>Afetou % sobre o {minusculo}</div>
+      <div style={LINHA_TOOLTIP}>
+        <span>{rotulo}</span>
+        <span style={VALOR_TOOLTIP}>{base} min</span>
+      </div>
+      <div style={LINHA_TOOLTIP}>
+        <span>Tempo da parada</span>
+        <span style={VALOR_TOOLTIP}>{min} min</span>
+      </div>
+      <div style={{ height: 6, margin: '8px 0', background: 'var(--surface2)', borderRadius: 3, overflow: 'hidden' }}>
+        <div style={{ width: `${Math.min(percentual, 100)}%`, height: '100%', background: cor, borderRadius: 3 }} />
+      </div>
+      <div style={{ color: 'var(--text2)' }}>
+        Afetou <strong style={{ fontFamily: 'var(--font-m)', fontSize: 14, color: cor }}>{percentual.toFixed(1)}%</strong> do {minusculo}
+      </div>
+    </>
+  );
+
+  return (
+    <Tooltip conteudo={conteudo} cor={cor}>
+      {(props) => (
+        <span {...props} className="bdg bdg-ney" style={{ cursor: 'help' }}>
+          {percentual.toFixed(1)}% {texto}
+        </span>
+      )}
+    </Tooltip>
   );
 }
 
