@@ -336,6 +336,80 @@ html.is-granado-mobile #panel_SIDEBAR.drawer-open {
     background: transparent;
 }
 
+/* === WEB: sidebar recolhida, só com ícones ===
+   O hambúrguer do header alterna 'sb-collapsed' no <html>. Não vale no mobile,
+   que usa o drawer acima. As larguras incluem os 3px da borda direita.
+   Rótulos, submenus, marca e rodapé mantêm a largura fixa durante a animação
+   para o texto não quebrar: a borda da sidebar só os recorta. */
+html:not(.is-granado-mobile) #panel_SIDEBAR {
+    width: 233px !important;
+    min-width: 0 !important;
+    flex: 0 0 233px !important;
+    transition: width .22s ease, flex-basis .22s ease;
+}
+
+html:not(.is-granado-mobile) .sidebar {
+    box-sizing: content-box;
+    transition: width .22s ease;
+}
+
+html:not(.is-granado-mobile) .sb-module-btn .sb-label {
+    flex: 0 0 154px;
+    transition: opacity .15s ease;
+}
+
+html:not(.is-granado-mobile) .sb-module-btn .sb-arr {
+    transition: transform .2s, opacity .15s ease;
+}
+
+html:not(.is-granado-mobile) .sb-sub-list {
+    width: 230px;
+    box-sizing: border-box;
+}
+
+html:not(.is-granado-mobile) .sb-brand,
+html:not(.is-granado-mobile) .sb-footer {
+    width: 230px;
+    box-sizing: border-box;
+    overflow: hidden;
+    transition: max-height .22s ease, padding .22s ease, opacity .15s ease;
+}
+
+html:not(.is-granado-mobile) .sb-brand {
+    max-height: 160px;
+}
+
+html:not(.is-granado-mobile) .sb-footer {
+    max-height: 80px;
+}
+
+html.sb-collapsed:not(.is-granado-mobile) #panel_SIDEBAR {
+    width: 55px !important;
+    flex-basis: 55px !important;
+}
+
+html.sb-collapsed:not(.is-granado-mobile) .sidebar {
+    width: 52px;
+}
+
+html.sb-collapsed:not(.is-granado-mobile) .sb-module-btn .sb-label,
+html.sb-collapsed:not(.is-granado-mobile) .sb-module-btn .sb-arr {
+    opacity: 0;
+}
+
+html.sb-collapsed:not(.is-granado-mobile) .sb-sub-list {
+    display: none;
+}
+
+html.sb-collapsed:not(.is-granado-mobile) .sb-brand,
+html.sb-collapsed:not(.is-granado-mobile) .sb-footer {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border: none;
+    opacity: 0;
+}
+
 /* === Ambiente (classe no <html>): só muda o fundo do sidebar ===
    DEV = azul · QA = marrom · PROD = mantém o verde padrão (var --grn-verde-esc). */
 .env-dev .sidebar {

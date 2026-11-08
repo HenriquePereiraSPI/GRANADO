@@ -7079,6 +7079,7 @@ poppins-700.woff2
   <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
   <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
   <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"OK | FORA | -1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
   <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-01-01"</span><span class="tk-punc">,</span>
   <span class="tk-key">"EndDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-12-30"</span>
 }</pre>
@@ -7113,6 +7114,12 @@ poppins-700.woff2
               <td class="col-desc">Filtro por status de performance: <code>"OK"</code>, <code>"FORA"</code> ou <code>"-1"</code> (ambos).</td>
             </tr>
             <tr>
+              <td class="col-name">Workcenter</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">Centro de trabalho/sala a filtrar (ex.: <code>"MD2_SALA1"</code>). Use <code>"-1"</code> para <strong>todos</strong>.</td>
+            </tr>
+            <tr>
               <td class="col-name">StartDate</td>
               <td class="col-type">string (data)</td>
               <td class="col-req">Sim</td>
@@ -7135,30 +7142,22 @@ poppins-700.woff2
   <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"Informações recuperadas com sucesso."</span><span class="tk-punc">,</span>
   <span class="tk-key">"Data"</span><span class="tk-punc">:</span> [
     {
-      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000010"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"52570"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"1000.0000000000"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"StartDateUTC"</span><span class="tk-punc">:</span> <span class="tk-str">"7/6/2026 5:50:31 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"CompletionDateUTC"</span><span class="tk-punc">:</span> <span class="tk-str">"7/6/2026 5:52:26 PM"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"7/6/2026 2:50:31 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"CompletionDate"</span><span class="tk-punc">:</span> <span class="tk-str">"7/6/2026 2:52:26 PM"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"TempoTotalOrdemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"115"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoTotalOrdemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"2"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"TempoPorPecaSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"60.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPorPecaMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"60.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPecaXQuantidadeMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"52.17"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"FORA"</span>
+      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"665065"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"S0301C"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"10000.000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"7465/2025"</span><span class="tk-punc">,</span> <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD2_SALA1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"10/15/2026 8:10:20 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"CompletionDate"</span><span class="tk-punc">:</span> <span class="tk-str">"10/20/2026 4:06:47 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoTotalOrdemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"460587"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoTotalOrdemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"7676"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoPorPecaSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"50.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPorPecaMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"50.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPecaXQuantidadeMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"0.01"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"FORA"</span>
     }<span class="tk-punc">,</span>
     {
-      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000011"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"52570"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"1000.0000000000"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"TempoTotalOrdemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"23"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"60.0000000000"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"260.87"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"OK"</span>
-    }<span class="tk-punc">,</span>
-    {
-      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000012"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"52570"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"1000.0000000000"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"TempoTotalOrdemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"3200"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoTotalOrdemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"53"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"360.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPecaXQuantidadeMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"6"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"11.25"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"FORA"</span>
-    }<span class="tk-punc">,</span>
-    {
-      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1000000014"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"52570"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"1000.0000000000"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"TempoTotalOrdemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"4260"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoTotalOrdemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"71"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"240.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPecaXQuantidadeMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"4"</span><span class="tk-punc">,</span>
-      <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"5.63"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"FORA"</span>
+      <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"632502"</span><span class="tk-punc">,</span> <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"S0347D"</span><span class="tk-punc">,</span> <span class="tk-key">"Quantity"</span><span class="tk-punc">:</span> <span class="tk-str">"175.000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"LotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"7026/2025"</span><span class="tk-punc">,</span> <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD2_SALA1"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"10/28/2026 10:01:01 AM"</span><span class="tk-punc">,</span> <span class="tk-key">"CompletionDate"</span><span class="tk-punc">:</span> <span class="tk-str">"10/28/2026 10:04:38 AM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoTotalOrdemSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"217"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoTotalOrdemMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"4"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoPorPecaSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"120.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPorPecaMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"2"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TempoPecaXQuantidadeSegundos"</span><span class="tk-punc">:</span> <span class="tk-str">"120.0000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"TempoPecaXQuantidadeMinutos"</span><span class="tk-punc">:</span> <span class="tk-str">"2"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"PerformancePct"</span><span class="tk-punc">:</span> <span class="tk-str">"55.30"</span><span class="tk-punc">,</span> <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"FORA"</span>
     }
   ]
 }</pre>
@@ -7184,8 +7183,8 @@ poppins-700.woff2
             <tr><td class="col-name">WipOrderNo</td><td class="col-type">string (número)</td><td class="col-desc">Número da ordem de pesagem.</td></tr>
             <tr><td class="col-name">ProductNo</td><td class="col-type">string</td><td class="col-desc">Código do produto (granel) da ordem.</td></tr>
             <tr><td class="col-name">Quantity</td><td class="col-type">string (número)</td><td class="col-desc">Quantidade da ordem.</td></tr>
-            <tr><td class="col-name">StartDateUTC</td><td class="col-type">string (data)</td><td class="col-desc">Início da ordem em UTC.</td></tr>
-            <tr><td class="col-name">CompletionDateUTC</td><td class="col-type">string (data)</td><td class="col-desc">Fim da ordem em UTC.</td></tr>
+            <tr><td class="col-name">LotNo</td><td class="col-type">string</td><td class="col-desc">Número do lote (ex.: <code>"7465/2025"</code>).</td></tr>
+            <tr><td class="col-name">Workcenter</td><td class="col-type">string</td><td class="col-desc">Centro de trabalho/sala da ordem (ex.: <code>"MD2_SALA1"</code>).</td></tr>
             <tr><td class="col-name">StartDate</td><td class="col-type">string (data)</td><td class="col-desc">Início da ordem no fuso local.</td></tr>
             <tr><td class="col-name">CompletionDate</td><td class="col-type">string (data)</td><td class="col-desc">Fim da ordem no fuso local.</td></tr>
             <tr><td class="col-name">TempoTotalOrdemSegundos</td><td class="col-type">string (número)</td><td class="col-desc">Tempo real total da ordem (início→fim), em segundos.</td></tr>
@@ -7201,7 +7200,7 @@ poppins-700.woff2
 
         <h3 class="gd-h3">Notas</h3>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
-          <li><strong>Filtros <code>-1</code>:</strong> <code>WipOrderNo</code> e <code>ProductNo</code> aceitam <code>"-1"</code> para não filtrar (todas as ordens / todos os produtos).</li>
+          <li><strong>Filtros <code>-1</code>:</strong> <code>WipOrderNo</code>, <code>ProductNo</code> e <code>Workcenter</code> aceitam <code>"-1"</code> para não filtrar (todas as ordens / todos os produtos / todos os centros de trabalho).</li>
           <li><strong><code>PerformanceStatus</code> de entrada:</strong> use <code>"-1"</code> para trazer os dois status; ou apenas <code>"OK"</code> / <code>"FORA"</code> para filtrar.</li>
           <li><strong>Cálculo:</strong> <code>PerformancePct</code> = <code>TempoPecaXQuantidade</code> ÷ <code>TempoTotalOrdem</code> × 100 — quanto maior, melhor.</li>
         </ul>

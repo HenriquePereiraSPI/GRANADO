@@ -85,6 +85,23 @@ function initSidebarEvents() {
     if (backdrop) backdrop.addEventListener('click', closeSidebarDrawer);
 
     // ============================================================
+    // 1d. Sidebar recolhida na web (so icones)
+    //     O estado e controlado pelo hamburguer do header.
+    // ============================================================
+    function isCollapsed() {
+        var root = document.documentElement;
+        return root.classList.contains('sb-collapsed') && !root.classList.contains('is-granado-mobile');
+    }
+
+    // Sem o rotulo visivel, o nome do modulo aparece como title do icone.
+    sidebar.addEventListener('mouseover', function (e) {
+        var btn = e.target.closest('.sb-module-btn');
+        if (!btn) return;
+        var label = btn.querySelector('.sb-label');
+        btn.title = isCollapsed() && label ? label.textContent.trim() : '';
+    });
+
+    // ============================================================
     // 2. Toggle dos modulos via event delegation
     // ============================================================
     sidebar.addEventListener('click', function (e) {
@@ -96,6 +113,16 @@ function initSidebarEvents() {
         if (!moduleDiv) return;
         var subList = moduleDiv.querySelector('.sb-sub-list');
         if (!subList) return;
+
+        // Recolhida: o clique no icone expande a sidebar e abre o modulo.
+        if (isCollapsed()) {
+            var hamburger = document.querySelector('#HEADER_WEB .tb-hamburger');
+            if (hamburger) hamburger.click();
+            subList.classList.add('open');
+            btn.classList.add('open');
+            return;
+        }
+
         subList.classList.toggle('open');
         btn.classList.toggle('open');
     });

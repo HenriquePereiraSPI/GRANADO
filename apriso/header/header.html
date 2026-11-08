@@ -19,6 +19,10 @@
             if (o.indexOf('mes-teste.granado.com.br') !== -1) root.classList.add('env-host-dev', 'env-nonprod', 'env-dev');
             else if (o.indexOf('mes-web-qa.granado.com.br') !== -1) root.classList.add('env-host-qa', 'env-nonprod', 'env-qa');
             else root.classList.add('env-host-prod', 'env-prod');
+
+            // Sidebar recolhida na resolução WEB: restaura antes do 1º paint para não "piscar".
+            try { if (localStorage.getItem('granado_sidebar_collapsed') === '1') root.classList.add('sb-collapsed'); }
+            catch (e) { /* localStorage indisponivel */ }
         })();
     </script>
 
@@ -41,6 +45,14 @@
          ============================================================ -->
     <div id="HEADER_WEB">
         <header class="topbar">
+
+            <!-- ============ MENU (expande/recolhe a sidebar) ============ -->
+            <button type="button" class="tb-hamburger" title="Expandir ou recolher menu"
+                aria-label="Expandir ou recolher menu" aria-expanded="true">
+                <span class="tb-hamburger-bar"></span>
+                <span class="tb-hamburger-bar"></span>
+                <span class="tb-hamburger-bar"></span>
+            </button>
 
             <!-- ============ BREADCRUMB ============ -->
             <div class="topbar-breadcrumb">

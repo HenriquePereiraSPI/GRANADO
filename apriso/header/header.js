@@ -12,11 +12,21 @@ function initHeaderEvents() {
         });
     });
 
-    // Hambúrguer (mobile) — abre/fecha o drawer da sidebar.
+    // Hambúrguer — no mobile abre/fecha o drawer; na web expande/recolhe a sidebar.
+    var root = document.documentElement;
     document.querySelectorAll('.tb-hamburger').forEach(function (hamburger) {
+        var isMobile = !!hamburger.closest('.topbar-mobile');
+        if (!isMobile) hamburger.setAttribute('aria-expanded', root.classList.contains('sb-collapsed') ? 'false' : 'true');
+
         hamburger.addEventListener('click', function () {
-            var panel = document.getElementById('panel_SIDEBAR');
-            if (panel) panel.classList.toggle('drawer-open');
+            if (isMobile) {
+                var panel = document.getElementById('panel_SIDEBAR');
+                if (panel) panel.classList.toggle('drawer-open');
+                return;
+            }
+            var collapsed = root.classList.toggle('sb-collapsed');
+            hamburger.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+            try { localStorage.setItem('granado_sidebar_collapsed', collapsed ? '1' : '0'); } catch (e) { /* localStorage indisponivel */ }
         });
     });
 

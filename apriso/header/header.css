@@ -34,9 +34,9 @@
     box-shadow: 0 1px 6px rgba(28, 92, 49, .06);
 }
 
-/* === Menu (hambúrguer) — só no mobile, abre o drawer da sidebar === */
+/* === Menu (hambúrguer) — mobile: abre o drawer · web: expande/recolhe a sidebar === */
 .tb-hamburger {
-    display: none;
+    display: flex;
     flex-direction: column;
     justify-content: space-between;
     width: 26px;
@@ -59,6 +59,24 @@
 
 .tb-hamburger:hover .tb-hamburger-bar {
     background: var(--grn-verde-meio);
+}
+
+/* Sem realce depois do clique: !important porque o CSS global do Apriso e o
+   navegador pintam o <button> focado. Pelo teclado, o anel continua aparecendo. */
+.tb-hamburger:hover,
+.tb-hamburger:focus,
+.tb-hamburger:active {
+    background: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.tb-hamburger:focus-visible {
+    outline: 2px solid rgba(200, 168, 90, .8) !important;
+    outline-offset: 3px;
 }
 
 /* === Badge Granado (só no mobile) — mesmo padrão da aplicação === */
@@ -612,11 +630,7 @@
     gap: 8px;
 }
 
-/* Hambúrguer e badge Granado existem só no bloco mobile */
-.topbar-mobile .tb-hamburger {
-    display: flex;
-}
-
+/* Badge Granado existe só no bloco mobile */
 .topbar-mobile .tb-logo-mobile {
     display: inline-flex;
 }
