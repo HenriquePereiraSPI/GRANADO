@@ -3247,6 +3247,38 @@ document.querySelectorAll(<span class="tk-str">'.filtros granado-checkbox'</span
 <span class="tk-tag">&lt;/granado-dropdown&gt;</span></pre>
         </div>
 
+        <!-- ===== Selecionar todos ===== -->
+        <h2 class="gd-h2">Selecionar todos</h2>
+        <p class="gd-lead">
+          Com <code>multi="true"</code>, o atributo <code>select-all="true"</code> adiciona o item
+          <strong>Selecionar todos</strong> no topo da lista. Um clique marca todas as opções; se já
+          estiverem todas marcadas, desmarca. Com parte das opções marcadas, o checkbox mostra um traço.
+          Junto com <code>searchable</code>, age só nas opções que aparecem no resultado da busca.
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-dropdown multi="true" select-all="true" searchable="true" placeholder="Filtrar salas…"
+            value="S1"
+            options='[
+              {"value":"S1","label":"Sala 1"},
+              {"value":"S2","label":"Sala 2"},
+              {"value":"S3","label":"Sala 3"},
+              {"value":"S4","label":"Sala 4"}
+            ]'
+            onchangeevent="console.log('salas:', value);">
+          </granado-dropdown>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-dropdown</span> <span class="tk-attr">multi</span>=<span class="tk-str">"true"</span> <span class="tk-attr">select-all</span>=<span class="tk-str">"true"</span> <span class="tk-attr">searchable</span>=<span class="tk-str">"true"</span> <span class="tk-attr">placeholder</span>=<span class="tk-str">"Filtrar salas…"</span>
+    <span class="tk-attr">value</span>=<span class="tk-str">"S1"</span>
+    <span class="tk-attr">options</span>=<span class="tk-str">'[
+      {"value":"S1","label":"Sala 1"},
+      {"value":"S2","label":"Sala 2"},
+      {"value":"S3","label":"Sala 3"},
+      {"value":"S4","label":"Sala 4"}
+    ]'</span>
+    <span class="tk-attr">onchangeevent</span>=<span class="tk-str">"console.log('salas:', value);"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-dropdown&gt;</span></pre>
+        </div>
+
         <!-- ===== Cores customizadas ===== -->
         <h2 class="gd-h2">Cor de destaque</h2>
         <p class="gd-lead">
@@ -3372,6 +3404,17 @@ dd.value = <span class="tk-str">'OK,DEV,PEN'</span>;</pre>
               <td class="col-desc">
                 Habilita seleção múltipla. Cada item ganha checkbox no popup; o gatilho
                 exibe labels selecionados separados por vírgula.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">select-all</td>
+              <td class="col-type">"true" | "false"</td>
+              <td class="col-default">"false"</td>
+              <td class="col-desc">
+                Só com <code>multi="true"</code>. Adiciona <strong>Selecionar todos</strong> no topo
+                da lista: marca todas as opções ou, se já estiverem todas marcadas, desmarca. Com
+                <code>searchable</code>, age só nas opções do resultado da busca (as já marcadas fora
+                da busca são mantidas). Dispara o <code>onchangeevent</code> uma vez.
               </td>
             </tr>
             <tr>

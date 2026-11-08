@@ -16,6 +16,9 @@
      color         - cor de destaque (selecionado/borda foco). Default: "#1C5C31".
      disabled      - "true" desabilita interacao.
      multi         - "true" habilita selecao multipla.
+     select-all    - "true" (so com multi) adiciona "Selecionar todos" no topo da
+                     lista: marca todas as opcoes visiveis ou, se ja estiverem
+                     todas marcadas, desmarca. Com busca, age so no resultado.
      searchable    - "true" exibe campo de busca dentro do popup.
      onchangeevent - JS executado ao alterar selecao.
                      Variaveis: value (string|array), option (object|array), event.
@@ -45,13 +48,19 @@
        value="OK,DEV"
        onchangeevent="console.log(value)">
    </granado-dropdown>
+
+   <granado-dropdown
+       multi="true"
+       select-all="true"
+       options='["Sala 1","Sala 2","Sala 3"]'>
+   </granado-dropdown>
    ============================================================ */
 
 /* __granado_guard__ */
 if (!customElements.get('granado-dropdown')) {
   class GranadoDropdown extends HTMLElement {
     static get observedAttributes() {
-      return ['label', 'options', 'value', 'placeholder', 'color', 'disabled', 'multi', 'searchable', 'onchangeevent'];
+      return ['label', 'options', 'value', 'placeholder', 'color', 'disabled', 'multi', 'select-all', 'searchable', 'onchangeevent'];
     }
 
     constructor() {
@@ -190,7 +199,8 @@ if (!customElements.get('granado-dropdown')) {
 
       const list = filtered.length === 0
         ? `<div style="padding:14px 12px;font-size:12px;color:#8A9E8E;text-align:center">Nenhum resultado</div>`
-        : filtered.map(opt => this._renderOption(opt, selected.includes(opt.value), color, multi)).join('');
+        : this._renderSelectAll(filtered, selected, color, multi)
+          + filtered.map(opt => this._renderOption(opt, selected.includes(opt.value), color, multi)).join('');
 
       return `
         <div data-dd-popup style="
@@ -226,25 +236,61 @@ if (!customElements.get('granado-dropdown')) {
       `;
     }
 
-    _renderOption(opt, isSelected, color, multi) {
-      const bg = (!multi && isSelected) ? color : 'transparent';
-      const fg = (!multi && isSelected) ? '#fff' : '#103E20';
-      const fontWeight = isSelected ? '700' : '400';
-
-      const indicator = multi ? `
+    // Checkbox visual. estado: 'on' (marcado), 'mixed' (parcial, traco) ou 'off'.
+    _checkbox(estado, color) {
+      const cheio = estado !== 'off';
+      const marca = estado === 'on'
+        ? '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="display:block"><polyline points="20 6 9 17 4 12"/></svg>'
+        : estado === 'mixed'
+          ? '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" style="display:block"><line x1="5" y1="12" x2="19" y2="12"/></svg>'
+          : '';
+      return `
         <span style="
           display:inline-flex;
           align-items:center;
           justify-content:center;
           width:14px;
           height:14px;
-          border:1px solid ${isSelected ? color : '#B5AB85'};
-          background:${isSelected ? color : '#FDFAF1'};
+          border:1px solid ${cheio ? color : '#B5AB85'};
+          background:${cheio ? color : '#FDFAF1'};
           border-radius:3px;
           flex-shrink:0;
           box-sizing:border-box;
-        ">${isSelected ? '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="display:block"><polyline points="20 6 9 17 4 12"/></svg>' : ''}</span>
-      ` : '';
+        ">${marca}</span>
+      `;
+    }
+
+    // Item "Selecionar todos" (multi + select-all), sobre as opcoes visiveis.
+    _renderSelectAll(filtered, selected, color, multi) {
+      if (!multi || this.getAttribute('select-all') !== 'true') return '';
+      const marcadas = filtered.filter(o => selected.includes(o.value)).length;
+      const estado = marcadas === 0 ? 'off' : (marcadas === filtered.length ? 'on' : 'mixed');
+      return `
+        <div data-dd-all role="option" aria-selected="${estado === 'on'}" style="
+          display:flex;
+          align-items:center;
+          gap:8px;
+          padding:8px 12px;
+          font-size:12px;
+          font-weight:700;
+          color:#103E20;
+          background:transparent;
+          border-bottom:1px solid #E5DDC8;
+          cursor:pointer;
+          user-select:none;
+        " onmouseover="this.style.background='#ECE3C2'" onmouseout="this.style.background='transparent'">
+          ${this._checkbox(estado, color)}
+          <span style="flex:1">Selecionar todos</span>
+        </div>
+      `;
+    }
+
+    _renderOption(opt, isSelected, color, multi) {
+      const bg = (!multi && isSelected) ? color : 'transparent';
+      const fg = (!multi && isSelected) ? '#fff' : '#103E20';
+      const fontWeight = isSelected ? '700' : '400';
+
+      const indicator = multi ? this._checkbox(isSelected ? 'on' : 'off', color) : '';
 
       const hoverIn = (!multi && isSelected) ? '' : `this.style.background='#ECE3C2'`;
       const hoverOut = (!multi && isSelected) ? '' : `this.style.background='${bg}'`;
@@ -314,6 +360,29 @@ if (!customElements.get('granado-dropdown')) {
           else this._selectSingle(v, e);
         });
       });
+
+      const all = this.querySelector('[data-dd-all]');
+      if (all) all.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this._toggleAll(e);
+      });
+    }
+
+    // Marca todas as opcoes visiveis (respeitando a busca) ou, se ja estiverem
+    // todas marcadas, desmarca so elas. Selecoes fora da busca sao mantidas.
+    _toggleAll(event) {
+      const search = this._search.toLowerCase();
+      const visiveis = this._parseOptions()
+        .filter(o => this.getAttribute('searchable') !== 'true' || !search
+          || o.label.toLowerCase().includes(search) || o.value.toLowerCase().includes(search))
+        .map(o => o.value);
+      const current = (this.getAttribute('value') || '').split(',').filter(Boolean);
+      const todas = visiveis.every(v => current.includes(v));
+      const novo = todas
+        ? current.filter(v => !visiveis.includes(v))
+        : current.concat(visiveis.filter(v => !current.includes(v)));
+      this.setAttribute('value', novo.join(','));
+      this._fireChange(event);
     }
 
     _selectSingle(value, event) {
