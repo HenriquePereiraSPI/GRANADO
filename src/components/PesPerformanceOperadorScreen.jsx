@@ -4,6 +4,7 @@ import {
   OPERADORES,
   PESAGENS_HOJE,
 } from '../data/pes-perf-operador-data.js';
+import { BotaoCalendario, ehOperacional, TURNOS } from './CalendarioFiltro.jsx';
 
 /**
  * Tela /pes-perf-operador — Performance na Pesagem (Fase A).
@@ -25,7 +26,9 @@ const PERIODO_LABEL = {
   mes:    'Este Mês',
 };
 
-const FILTRO_PADRAO = { operador: OPERADOR_LOGADO_ID, ordem: 'todos', mp: 'todos', dataInicio: '', dataFim: '' };
+// calendario = FilterType (TraditionalCalendar | OperationalCalendar);
+// turno so vale no calendario operacional ("-1" = todos).
+const FILTRO_PADRAO = { calendario: 'TraditionalCalendar', turno: '-1', operador: OPERADOR_LOGADO_ID, ordem: 'todos', mp: 'todos', dataInicio: '', dataFim: '' };
 
 /* ─────────────────────────────────────────────────────────────
    Helpers de UI
@@ -110,7 +113,7 @@ export default function PesPerformanceOperadorScreen() {
 
   const aplicarFiltros = () => setAplicado(rascunho);
   const limparFiltros = () => { setRascunho(FILTRO_PADRAO); setAplicado(FILTRO_PADRAO); };
-  const ehPadrao = (f) => f.operador === OPERADOR_LOGADO_ID && f.ordem === 'todos' && f.mp === 'todos' && !f.dataInicio && !f.dataFim;
+  const ehPadrao = (f) => f.calendario === FILTRO_PADRAO.calendario && f.turno === FILTRO_PADRAO.turno && f.operador === OPERADOR_LOGADO_ID && f.ordem === 'todos' && f.mp === 'todos' && !f.dataInicio && !f.dataFim;
   const podeLimpar = !ehPadrao(rascunho) || !ehPadrao(aplicado);
   const algumFiltroAtivo = !ehPadrao(aplicado);
 
@@ -135,6 +138,32 @@ export default function PesPerformanceOperadorScreen() {
           alignItems: 'flex-end',
         }}
       >
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label className="lbl" htmlFor="perf-op-calendario">Calendário</label>
+          <BotaoCalendario
+            id="perf-op-calendario"
+            valor={rascunho.calendario}
+            onChange={(v) => setRascunho((r) => ({ ...r, calendario: v, turno: ehOperacional(v) ? r.turno : '-1' }))}
+            style={{ width: '100%', padding: '7px 10px', justifyContent: 'space-between', boxSizing: 'border-box' }}
+          />
+        </div>
+
+        {/* Turno só existe no calendário operacional (o dia segue os turnos). */}
+        {ehOperacional(rascunho.calendario) && (
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <label className="lbl" htmlFor="perf-op-turno">Turno</label>
+            <select
+              id="perf-op-turno"
+              className="sel"
+              value={rascunho.turno}
+              onChange={setCampo('turno')}
+              style={{ fontSize: 12, padding: '7px 10px' }}
+            >
+              {TURNOS.map((t) => <option key={t.valor} value={t.valor}>{t.rotulo}</option>)}
+            </select>
+          </div>
+        )}
+
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <label className="lbl">Operador</label>
           <select

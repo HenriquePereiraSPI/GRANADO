@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { PESAGEM_OEE as D } from '../data/pes-oee-data.js';
+import { BotaoCalendario, ehOperacional, TURNOS } from './CalendarioFiltro.jsx';
 
 /**
  * Tela /pes-perf-mp — Performance por Matéria-Prima da Pesagem.
@@ -20,7 +21,9 @@ const STATUS_LABEL = {
 // Status binário da MP: OK quando o tempo real (média) <= padrão, senão FORA.
 const mpOk = (m) => m.real <= m.padrao;
 
-const FILTRO_PADRAO = { ordem: 'todos', mp: 'todos', usuario: 'todos', status: 'todos', sala: 'todos', dataInicio: '', dataFim: '' };
+// calendario = FilterType da GRD_API_OEE_GetOrderWeightItemPerformance;
+// turno so vale no calendario operacional ("-1" = todos).
+const FILTRO_PADRAO = { calendario: 'TraditionalCalendar', turno: '-1', ordem: 'todos', mp: 'todos', usuario: 'todos', status: 'todos', sala: 'todos', dataInicio: '', dataFim: '' };
 
 export default function PesPerformanceMpScreen() {
   // Rascunho (campos) x aplicado (o que filtra a tabela) — só aplica no Filtrar.
@@ -64,7 +67,7 @@ export default function PesPerformanceMpScreen() {
   const limparFiltros = () => { setRascunho(FILTRO_PADRAO); setAplicado(FILTRO_PADRAO); };
 
   const ehPadrao = (f) =>
-    f.ordem === 'todos' && f.mp === 'todos' && f.usuario === 'todos' && f.status === 'todos' && f.sala === 'todos' && !f.dataInicio && !f.dataFim;
+    f.calendario === FILTRO_PADRAO.calendario && f.turno === FILTRO_PADRAO.turno && f.ordem === 'todos' && f.mp === 'todos' && f.usuario === 'todos' && f.status === 'todos' && f.sala === 'todos' && !f.dataInicio && !f.dataFim;
   const podeLimpar = !ehPadrao(rascunho) || !ehPadrao(aplicado);
   const aplicadoAtivo = !ehPadrao(aplicado);
 
@@ -89,6 +92,16 @@ export default function PesPerformanceMpScreen() {
           alignItems: 'flex-end',
         }}
       >
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label className="lbl" htmlFor="perf-mp-calendario">Calendário</label>
+          <BotaoCalendario
+            id="perf-mp-calendario"
+            valor={rascunho.calendario}
+            onChange={(v) => setRascunho((r) => ({ ...r, calendario: v, turno: ehOperacional(v) ? r.turno : '-1' }))}
+            style={{ width: '100%', padding: '7px 10px', justifyContent: 'space-between', boxSizing: 'border-box' }}
+          />
+        </div>
+
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <label className="lbl">Ordem (OP)</label>
           <select
@@ -163,6 +176,22 @@ export default function PesPerformanceMpScreen() {
             ))}
           </select>
         </div>
+
+        {/* Turno só existe no calendário operacional (o dia segue os turnos). */}
+        {ehOperacional(rascunho.calendario) && (
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <label className="lbl" htmlFor="perf-mp-turno">Turno</label>
+            <select
+              id="perf-mp-turno"
+              className="sel"
+              value={rascunho.turno}
+              onChange={setCampo('turno')}
+              style={{ fontSize: 12, padding: '7px 10px' }}
+            >
+              {TURNOS.map((t) => <option key={t.valor} value={t.valor}>{t.rotulo}</option>)}
+            </select>
+          </div>
+        )}
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <label className="lbl">Data início</label>

@@ -4,6 +4,7 @@ import {
   OPERADORES,
   PESAGENS_HOJE,
 } from '../data/pes-perf-operador-data.js';
+import { BotaoCalendario, ehOperacional, TURNOS } from './CalendarioFiltro.jsx';
 
 /**
  * Tela /pes-perf-gestao — Performance & Gestão (visão gerencial).
@@ -26,6 +27,13 @@ const OPERADOR_TURNO = {
 };
 
 export default function PesPerformanceGestaoScreen() {
+  // FilterType (TraditionalCalendar | OperationalCalendar).
+  const [tipoCalendario, setTipoCalendario] = useState('TraditionalCalendar');
+  const [turno, setTurno] = useState('-1'); // so vale no calendario operacional
+  const trocarCalendario = (v) => {
+    setTipoCalendario(v);
+    if (!ehOperacional(v)) setTurno('-1');
+  };
   const [filtroOperador, setFiltroOperador] = useState('todos');
   const [filtroMP, setFiltroMP] = useState('todos');
   const [filtroSala, setFiltroSala] = useState('todos');
@@ -121,6 +129,7 @@ export default function PesPerformanceGestaoScreen() {
           <div className="ph-title">Performance Gestão</div>
         </div>
         <div className="ph-actions" style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          <BotaoCalendario id="perf-gestao-calendario" valor={tipoCalendario} onChange={trocarCalendario} />
           <select className="inp" value={filtroOperador} onChange={(e) => setFiltroOperador(e.target.value)} style={{ width: 'auto', fontSize: 12, padding: '6px 10px' }} title="Operador">
             <option value="todos">Todos os operadores</option>
             {OPERADORES.map((o) => <option key={o.id} value={o.id}>{o.nome} ({o.matricula})</option>)}
@@ -133,6 +142,12 @@ export default function PesPerformanceGestaoScreen() {
             <option value="todos">Todas as salas</option>
             {salasUnicas.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
+          {/* Turno só existe no calendário operacional (o dia segue os turnos). */}
+          {ehOperacional(tipoCalendario) && (
+            <select id="perf-gestao-turno" className="inp" value={turno} onChange={(e) => setTurno(e.target.value)} style={{ width: 'auto', fontSize: 12, padding: '6px 10px' }} title="Filtrar turno" aria-label="Turno">
+              {TURNOS.map((t) => <option key={t.valor} value={t.valor}>{t.rotulo}</option>)}
+            </select>
+          )}
           <select className="inp" value={filtroData} onChange={(e) => setFiltroData(e.target.value)} style={{ width: 'auto', fontSize: 12, padding: '6px 10px' }} title="Período">
             <option value="hoje">Hoje</option>
             <option value="ontem">Ontem</option>
