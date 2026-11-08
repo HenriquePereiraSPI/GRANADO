@@ -2428,6 +2428,76 @@
 <span class="tk-tag">&lt;/granado-calendar&gt;</span></pre>
         </div>
 
+        <!-- ===== Hora opcional (optional-time) ===== -->
+        <h2 class="gd-h2">Hora opcional</h2>
+        <p class="gd-lead">
+          Com <code>optional-time="true"</code>, o popup mostra os campos de hora com um checkbox
+          <strong>Informar hora</strong>. Desmarcado, a hora fica bloqueada e o retorno é só a data
+          (<code>"2026-05-06"</code>); marcado, o retorno é data + hora
+          (<code>"2026-05-06 14:30:00"</code>). Não precisa de <code>mode="datetime"</code>.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-calendar label="Só a data" optional-time="true"
+            value="2026-05-06"
+            onchangeevent="console.log('optional-time:', value, hasTime);">
+          </granado-calendar>
+          <granado-calendar label="Hora pré-preenchida" optional-time="true"
+            value="2026-05-06 14:30:00"
+            format="dd/MM/yyyy HH:mm"
+            onchangeevent="console.log('optional-time:', value, hasTime);">
+          </granado-calendar>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-calendar</span> <span class="tk-attr">label</span>=<span class="tk-str">"Só a data"</span> <span class="tk-attr">optional-time</span>=<span class="tk-str">"true"</span>
+    <span class="tk-attr">value</span>=<span class="tk-str">"2026-05-06"</span>
+    <span class="tk-attr">onchangeevent</span>=<span class="tk-str">"console.log('optional-time:', value, hasTime);"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-calendar&gt;</span>
+
+<span class="tk-tag">&lt;granado-calendar</span> <span class="tk-attr">label</span>=<span class="tk-str">"Hora pré-preenchida"</span> <span class="tk-attr">optional-time</span>=<span class="tk-str">"true"</span>
+    <span class="tk-attr">value</span>=<span class="tk-str">"2026-05-06 14:30:00"</span>
+    <span class="tk-attr">format</span>=<span class="tk-str">"dd/MM/yyyy HH:mm"</span>
+    <span class="tk-attr">onchangeevent</span>=<span class="tk-str">"console.log('optional-time:', value, hasTime);"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-calendar&gt;</span></pre>
+        </div>
+
+        <!-- ===== Lendo o valor via JS ===== -->
+        <h2 class="gd-h2">Lendo o valor via JavaScript</h2>
+        <p class="gd-lead">
+          Além do <code>onchangeevent</code>, o valor atual pode ser lido a qualquer momento pelas
+          propriedades <code>el.value</code> (texto formatado), <code>el.hasTime</code> (se inclui
+          hora) e <code>el.dateObj</code> (<code>Date</code>). Escolha uma data, marque ou não
+          <strong>Informar hora</strong> e clique em <strong>Ler valor</strong>.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-calendar id="dt-cal-js" label="Data da parada" optional-time="true"></granado-calendar>
+          <granado-button label="Ler valor" onclickevent="
+            var cal = document.getElementById('dt-cal-js');
+            document.getElementById('dt-cal-js-out').textContent =
+              'value: ' + JSON.stringify(cal.value) +
+              ' · hasTime: ' + cal.hasTime +
+              ' · dateObj: ' + (cal.dateObj ? cal.dateObj.toLocaleString('pt-BR') : 'null');">
+          </granado-button>
+          <granado-button label="Definir 06/05/2026 14:30" variant="secondary" onclickevent="
+            document.getElementById('dt-cal-js').value = '2026-05-06 14:30:00';">
+          </granado-button>
+          <div id="dt-cal-js-out" style="flex-basis:100%;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#103E20">
+            Clique em "Ler valor".
+          </div>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-calendar</span> <span class="tk-attr">id</span>=<span class="tk-str">"dataParada"</span> <span class="tk-attr">label</span>=<span class="tk-str">"Data da parada"</span> <span class="tk-attr">optional-time</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;&lt;/granado-calendar&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  const cal = document.getElementById('dataParada');
+
+  <span class="tk-comment">// Ler (ex.: ao salvar)</span>
+  cal.value;   <span class="tk-comment">// "2026-05-06" (sem hora) ou "2026-05-06 14:30:00" (com hora); "" sem data</span>
+  cal.hasTime; <span class="tk-comment">// false / true</span>
+  cal.dateObj; <span class="tk-comment">// Date (meia-noite quando sem hora) ou null</span>
+
+  <span class="tk-comment">// Definir</span>
+  cal.value = '2026-05-06 14:30:00';
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+
         <!-- ===== Idioma (lang) ===== -->
         <h2 class="gd-h2">Idioma</h2>
         <p class="gd-lead">
@@ -2558,6 +2628,18 @@
               </td>
             </tr>
             <tr>
+              <td class="col-name">optional-time</td>
+              <td class="col-type">"true" | "false"</td>
+              <td class="col-default">"false"</td>
+              <td class="col-desc">
+                Em <code>"true"</code>, mostra os campos de hora com o checkbox
+                <strong>Informar hora</strong> (dispensa <code>mode="datetime"</code>). Desmarcado,
+                a hora fica bloqueada e o retorno é só a data; marcado, é data + hora. O
+                checkbox começa <strong>sempre desmarcado</strong>, mesmo quando o
+                <code>value</code> traz hora; nesse caso, a hora já aparece preenchida nos campos.
+              </td>
+            </tr>
+            <tr>
               <td class="col-name">format</td>
               <td class="col-type">string (máscara)</td>
               <td class="col-default">
@@ -2567,7 +2649,9 @@
               <td class="col-desc">
                 Máscara do valor formatado. Default depende do <code>mode</code>. Tokens
                 aceitos: <code>yyyy</code>, <code>MM</code>, <code>dd</code>,
-                <code>HH</code> (24h), <code>mm</code>, <code>ss</code>.
+                <code>HH</code> (24h), <code>mm</code>, <code>ss</code>. Com
+                <code>optional-time</code> e a hora desmarcada, a parte de hora é removida da
+                máscara (<code>"dd/MM/yyyy HH:mm"</code> vira <code>"dd/MM/yyyy"</code>).
               </td>
             </tr>
             <tr>
@@ -2604,8 +2688,49 @@
               <td class="col-default">—</td>
               <td class="col-desc">
                 Código JS executado quando o usuário altera o valor. Variáveis disponíveis:
-                <code>value</code> (string formatada conforme <code>format</code>) e
-                <code>dateObj</code> (instância <code>Date</code>).
+                <code>value</code> (string formatada conforme <code>format</code>),
+                <code>dateObj</code> (instância <code>Date</code>) e <code>hasTime</code>
+                (se o valor inclui hora).
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Propriedades JS</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:160px">Propriedade</th>
+              <th style="width:140px">Tipo</th>
+              <th style="width:120px">Acesso</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">value</td>
+              <td class="col-type">string</td>
+              <td class="col-default">get / set</td>
+              <td class="col-desc">
+                Valor atual formatado conforme <code>format</code> (com
+                <code>optional-time</code>, só a data quando a hora está desmarcada).
+                <code>""</code> sem data. O setter equivale a
+                <code>setAttribute('value', ...)</code>.
+              </td>
+            </tr>
+            <tr>
+              <td class="col-name">hasTime</td>
+              <td class="col-type">boolean</td>
+              <td class="col-default">get</td>
+              <td class="col-desc"><code>true</code> quando <code>el.value</code> inclui hora.</td>
+            </tr>
+            <tr>
+              <td class="col-name">dateObj</td>
+              <td class="col-type">Date | null</td>
+              <td class="col-default">get</td>
+              <td class="col-desc">
+                Cópia do <code>Date</code> selecionado, ou <code>null</code> sem data. Quando o valor
+                não inclui hora, vem à meia-noite.
               </td>
             </tr>
           </tbody>
@@ -2630,7 +2755,15 @@
               <td class="col-name">dateObj</td>
               <td class="col-type">Date</td>
               <td class="col-desc">Objeto JavaScript <code>Date</code> nativo — útil para
-                cálculos, comparações e conversões adicionais.</td>
+                cálculos, comparações e conversões adicionais. Com <code>optional-time</code> e a
+                hora desmarcada, vem com a hora zerada (meia-noite).</td>
+            </tr>
+            <tr>
+              <td class="col-name">hasTime</td>
+              <td class="col-type">boolean</td>
+              <td class="col-desc"><code>true</code> quando o <code>value</code> inclui hora:
+                sempre em <code>mode="datetime"</code>; com <code>optional-time</code>, só com o
+                checkbox marcado. <code>false</code> quando não há data selecionada.</td>
             </tr>
           </tbody>
         </table>
@@ -2645,6 +2778,9 @@
             selecionado quanto a visão do mês.</li>
           <li>Em <code>mode="datetime"</code>, ajustar hora/minuto/segundo dispara o
             <code>onchangeevent</code> a cada alteração.</li>
+          <li>Com <code>optional-time</code>, marcar ou desmarcar o checkbox também dispara o
+            <code>onchangeevent</code>, porque o formato do valor muda. <strong>Limpar</strong>
+            desmarca o checkbox.</li>
         </ul>
       </section>
 

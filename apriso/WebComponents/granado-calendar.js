@@ -9,16 +9,29 @@
      lang          - "pt-br" (default) ou "en". Define meses/dias/labels.
      mode          - "date" (default) ou "datetime". Em datetime exibe
                      campos de hora/minuto/segundo abaixo da grade.
+     optional-time - "true" exibe os campos de hora com um checkbox "Informar
+                     hora", que comeca sempre desmarcado. Desmarcado, a hora fica
+                     bloqueada e o retorno e so a data; marcado, o retorno e
+                     data + hora. Dispensa mode="datetime".
      format        - mascara de retorno. Default:
                        mode="date"     -> "yyyy-MM-dd"
                        mode="datetime" -> "yyyy-MM-dd HH:mm:ss"
                      Tokens: yyyy, MM, dd, HH, mm, ss
+                     Com optional-time e a hora desmarcada, a parte de hora
+                     (" HH:mm:ss", " HH:mm"...) e removida da mascara.
      value         - valor inicial. Aceita qualquer string parseavel por
                      `new Date(...)` (ex: "2026-05-06" ou ISO completo).
      color         - cor de destaque (selecionado/hoje/setas). Default: "#1C5C31".
      placeholder   - texto quando nada selecionado. Default por idioma.
      onchangeevent - JS executado quando o usuario altera o valor.
-                     Variaveis disponiveis: value (string formatada), dateObj (Date).
+                     Variaveis disponiveis: value (string formatada), dateObj (Date),
+                     hasTime (true quando o valor inclui hora).
+
+   Propriedades JS:
+     el.value   - (get/set) valor atual formatado; "" sem data. O setter
+                  equivale a setAttribute('value', ...).
+     el.hasTime - (get) true quando el.value inclui hora.
+     el.dateObj - (get) Date selecionado (copia) ou null. Sem hora, a meia-noite.
 
    Exemplo:
 
@@ -36,24 +49,62 @@
        value="2026-05-06 14:30:00"
        onchangeevent="document.getElementById('out').textContent = value">
    </granado-calendar>
+
+   <granado-calendar
+       optional-time="true"
+       onchangeevent="console.log(value, hasTime)">
+   </granado-calendar>
+
+   const cal = document.querySelector('granado-calendar');
+   console.log(cal.value, cal.hasTime, cal.dateObj);
    ============================================================ */
 
 /* __granado_guard__ */
 if (!customElements.get('granado-calendar')) {
   class GranadoCalendar extends HTMLElement {
     static get observedAttributes() {
-      return ['label', 'lang', 'mode', 'format', 'value', 'color', 'placeholder', 'onchangeevent'];
+      return ['label', 'lang', 'mode', 'optional-time', 'format', 'value', 'color', 'placeholder', 'onchangeevent'];
     }
 
     constructor() {
       super();
       this._open = false;
       this._selected = null;
+      this._timeEnabled = false; // checkbox "Informar hora" (so com optional-time)
       this._viewMonth = new Date();
       this._docClickHandler = null;
     }
 
+    // ------------------------------------------------------------
+    // Public JS API
+    // ------------------------------------------------------------
+    get value() {
+      return this._selected ? this._formatDate(this._selected, this._currentFormat()) : '';
+    }
+
+    set value(v) {
+      this.setAttribute('value', v == null ? '' : String(v));
+    }
+
+    get hasTime() {
+      return !!this._selected && this._hasTime();
+    }
+
+    get dateObj() {
+      if (!this._selected) return null;
+      const d = new Date(this._selected);
+      // Sem hora, o Date entregue fica a meia-noite (coerente com o valor so de data).
+      if (!this._hasTime()) d.setHours(0, 0, 0, 0);
+      return d;
+    }
+
     connectedCallback() {
+      // lazy-props: el.value definido antes do script carregar.
+      if (Object.prototype.hasOwnProperty.call(this, 'value')) {
+        const v = this.value;
+        delete this.value;
+        this.value = v;
+      }
       if (!this._initialized) {
         const initial = this.getAttribute('value');
         if (initial) {
@@ -77,6 +128,7 @@ if (!customElements.get('granado-calendar')) {
         const v = this.getAttribute('value');
         this._selected = v ? this._parseValue(v) : null;
         if (this._selected) this._viewMonth = new Date(this._selected);
+        this._timeEnabled = false; // checkbox sempre comeca desmarcado
       }
       if (this.isConnected) this.render();
     }
@@ -92,11 +144,11 @@ if (!customElements.get('granado-calendar')) {
       this.style.display = this.style.display || 'block';
 
       const lang = (this.getAttribute('lang') || 'pt-br').toLowerCase();
-      const mode = this.getAttribute('mode') === 'datetime' ? 'datetime' : 'date';
+      const mode = this._mode();
       const color = this.getAttribute('color') || '#1C5C31';
       const i18n = this._i18n(lang);
       const placeholder = this.getAttribute('placeholder') || i18n.placeholder;
-      const fmt = this._format(mode);
+      const fmt = this._currentFormat();
       const formatted = this._selected ? this._formatDate(this._selected, fmt) : '';
 
       const btnBorder = this._open ? color : '#E5DDC8';
@@ -224,7 +276,7 @@ if (!customElements.get('granado-calendar')) {
             ${weekdayHeaders}
             ${cells}
           </div>
-          ${mode === 'datetime' ? this._renderTimeControls(color) : ''}
+          ${mode === 'datetime' ? this._renderTimeControls(color, i18n) : ''}
           <div style="display:flex;justify-content:space-between;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #E5DDC8">
             <button data-cal-clear type="button" style="height:auto !important;min-height:0 !important;font-size:11px;padding:5px 10px;height:auto;border:1px solid #D6CDA4;background:#FDFAF1;color:#5A6B5E;border-radius:4px;cursor:pointer;font-family:inherit">${i18n.clear}</button>
             ${mode === 'datetime'
@@ -273,20 +325,33 @@ if (!customElements.get('granado-calendar')) {
       " onmouseover="${hoverIn}" onmouseout="${hoverOut}">${date.getDate()}</button>`;
     }
 
-    _renderTimeControls(color) {
+    _renderTimeControls(color, i18n) {
       const sel = this._selected || new Date();
       const hh = String(sel.getHours()).padStart(2, '0');
       const mm = String(sel.getMinutes()).padStart(2, '0');
       const ss = String(sel.getSeconds()).padStart(2, '0');
-      const inputStyle = "width:42px;font-size:12px;padding:5px;text-align:center;border:1px solid #E5DDC8;border-radius:4px;background:#FDFAF1;font-family:Arial,'DejaVu Sans',Helvetica,sans-serif;color:#103E20";
+      const optional = this._optionalTime();
+      const locked = optional && !this._timeEnabled;
+      const dis = locked ? ' disabled' : '';
+      const inputStyle = `width:42px;font-size:12px;padding:5px;text-align:center;border:1px solid #E5DDC8;border-radius:4px;background:${locked ? '#F4EED9' : '#FDFAF1'};font-family:Arial,'DejaVu Sans',Helvetica,sans-serif;color:#103E20;${locked ? 'opacity:.5;cursor:not-allowed;' : ''}`;
+      const sepStyle = `font-weight:700;color:${color};${locked ? 'opacity:.5;' : ''}`;
+
+      const checkbox = optional ? `
+          <label style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:8px;font-size:11px;font-weight:600;color:#103E20;cursor:pointer;user-select:none">
+            <input data-cal-time-toggle type="checkbox"${this._timeEnabled ? ' checked' : ''} style="margin:0;width:14px;height:14px;accent-color:${color};cursor:pointer">
+            ${i18n.setTime}
+          </label>` : '';
 
       return `
-        <div style="display:flex;align-items:center;gap:6px;justify-content:center;margin-top:10px;padding-top:10px;border-top:1px solid #E5DDC8">
-          <input data-cal-hour type="text" inputmode="numeric" maxlength="2" value="${hh}" style="${inputStyle}">
-          <span style="font-weight:700;color:${color}">:</span>
-          <input data-cal-minute type="text" inputmode="numeric" maxlength="2" value="${mm}" style="${inputStyle}">
-          <span style="font-weight:700;color:${color}">:</span>
-          <input data-cal-second type="text" inputmode="numeric" maxlength="2" value="${ss}" style="${inputStyle}">
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid #E5DDC8">
+          ${checkbox}
+          <div style="display:flex;align-items:center;gap:6px;justify-content:center">
+            <input data-cal-hour type="text" inputmode="numeric" maxlength="2" value="${hh}"${dis} style="${inputStyle}">
+            <span style="${sepStyle}">:</span>
+            <input data-cal-minute type="text" inputmode="numeric" maxlength="2" value="${mm}"${dis} style="${inputStyle}">
+            <span style="${sepStyle}">:</span>
+            <input data-cal-second type="text" inputmode="numeric" maxlength="2" value="${ss}"${dis} style="${inputStyle}">
+          </div>
         </div>
       `;
     }
@@ -346,10 +411,35 @@ if (!customElements.get('granado-calendar')) {
 
       if (mode === 'datetime') this._wireTimeInputs(fmt);
 
+      // optional-time: o checkbox libera/bloqueia a hora e muda o formato do retorno.
+      const timeToggle = this.querySelector('[data-cal-time-toggle]');
+      if (timeToggle) {
+        timeToggle.addEventListener('click', e => e.stopPropagation());
+        timeToggle.addEventListener('change', () => {
+          this._timeEnabled = timeToggle.checked;
+          // Sem data escolhida, so libera os campos (nao cria data sozinho).
+          if (this._timeEnabled && this._selected) {
+            // Aplica a hora exibida nos campos.
+            const date = new Date(this._selected);
+            const read = (sel) => parseInt((this.querySelector(sel) || {}).value, 10) || 0;
+            date.setHours(
+              Math.min(23, read('[data-cal-hour]')),
+              Math.min(59, read('[data-cal-minute]')),
+              Math.min(59, read('[data-cal-second]')),
+              0
+            );
+            this._selected = date;
+          }
+          if (this._selected) this._fireChange();
+          this.render();
+        });
+      }
+
       const clear = this.querySelector('[data-cal-clear]');
       if (clear) clear.addEventListener('click', (e) => {
         e.stopPropagation();
         this._selected = null;
+        this._timeEnabled = false;
         this._fireChange();
         this.render();
       });
@@ -450,14 +540,35 @@ if (!customElements.get('granado-calendar')) {
     _fireChange() {
       const handler = this.getAttribute('onchangeevent');
       if (!handler) return;
-      const fmt = this._format(this.getAttribute('mode') === 'datetime' ? 'datetime' : 'date');
-      const value = this._selected ? this._formatDate(this._selected, fmt) : '';
-      new Function('value', 'dateObj', handler).call(this, value, this._selected);
+      new Function('value', 'dateObj', 'hasTime', handler).call(this, this.value, this.dateObj, this.hasTime);
+    }
+
+    _optionalTime() {
+      return this.getAttribute('optional-time') === 'true';
+    }
+
+    // optional-time sempre exibe os campos de hora (como o datetime).
+    _mode() {
+      return this._optionalTime() || this.getAttribute('mode') === 'datetime' ? 'datetime' : 'date';
+    }
+
+    // true quando o valor retornado inclui hora.
+    _hasTime() {
+      if (this._optionalTime()) return this._timeEnabled;
+      return this._mode() === 'datetime';
     }
 
     _format(mode) {
       return this.getAttribute('format') || (mode === 'datetime' ? 'yyyy-MM-dd HH:mm:ss' : 'yyyy-MM-dd');
     }
+
+    // Mascara efetiva: com optional-time e a hora desmarcada, tira a parte de hora.
+    _currentFormat() {
+      const fmt = this._format(this._mode());
+      if (!this._optionalTime() || this._timeEnabled) return fmt;
+      return fmt.replace(/[\sT]*HH(:mm)?(:ss)?/, '').trim() || 'yyyy-MM-dd';
+    }
+
 
     _formatDate(date, fmt) {
       const pad = (n, w = 2) => String(n).padStart(w, '0');
@@ -471,14 +582,14 @@ if (!customElements.get('granado-calendar')) {
     }
 
     _parseValue(str) {
-      const d = new Date(str);
-      if (!isNaN(d.getTime())) return d;
-      // Try "yyyy-MM-dd HH:mm:ss" with space (some browsers fail)
+      // "yyyy-MM-dd" e "yyyy-MM-dd HH:mm:ss" sao lidos no fuso LOCAL. O new Date
+      // le "yyyy-MM-dd" como UTC, o que no Brasil (UTC-3) volta um dia.
       const m = String(str).match(/^(\d{4})-(\d{2})-(\d{2})(?:[\sT](\d{2}):(\d{2})(?::(\d{2}))?)?$/);
       if (m) {
         return new Date(+m[1], +m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0), +(m[6] || 0));
       }
-      return null;
+      const d = new Date(str);
+      return isNaN(d.getTime()) ? null : d;
     }
 
     _sameDay(a, b) {
@@ -495,6 +606,7 @@ if (!customElements.get('granado-calendar')) {
           today: 'Today',
           apply: 'Apply',
           clear: 'Clear',
+          setTime: 'Set time',
           placeholder: 'Select date'
         };
       }
@@ -504,6 +616,7 @@ if (!customElements.get('granado-calendar')) {
         today: 'Hoje',
         apply: 'Aplicar',
         clear: 'Limpar',
+        setTime: 'Informar hora',
         placeholder: 'Selecionar data'
       };
     }
