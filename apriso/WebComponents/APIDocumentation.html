@@ -7254,8 +7254,8 @@ poppins-700.woff2
   <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000010"</span><span class="tk-punc">,</span>
   <span class="tk-key">"Shift"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
   <span class="tk-key">"FilterType"</span><span class="tk-punc">:</span> <span class="tk-str">"TraditionalCalendar | OperationalCalendar"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-01-01"</span><span class="tk-punc">,</span>
-  <span class="tk-key">"EndDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-12-30"</span>
+  <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-01-01 00:00:00"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"EndDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-12-30 23:59:59"</span>
 }</pre>
 
         <h3 class="gd-h3">Campos de entrada</h3>
@@ -7313,15 +7313,15 @@ poppins-700.woff2
             </tr>
             <tr>
               <td class="col-name">StartDate</td>
-              <td class="col-type">string (data)</td>
+              <td class="col-type">string (data/hora)</td>
               <td class="col-req">Sim</td>
-              <td class="col-desc">Início do período (ex.: <code>"2026-01-01"</code>).</td>
+              <td class="col-desc">Início do período, com hora, no formato <code>yyyy-MM-dd HH:mm:ss</code> (ex.: <code>"2026-01-01 00:00:00"</code>).</td>
             </tr>
             <tr>
               <td class="col-name">EndDate</td>
-              <td class="col-type">string (data)</td>
+              <td class="col-type">string (data/hora)</td>
               <td class="col-req">Sim</td>
-              <td class="col-desc">Fim do período (ex.: <code>"2026-12-30"</code>).</td>
+              <td class="col-desc">Fim do período, com hora, no formato <code>yyyy-MM-dd HH:mm:ss</code> (ex.: <code>"2026-12-30 23:59:59"</code>).</td>
             </tr>
           </tbody>
         </table>
