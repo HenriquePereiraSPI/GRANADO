@@ -5498,6 +5498,47 @@ tg.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tr
 <span class="tk-tag">&lt;/div&gt;</span></pre>
         </div>
 
+        <!-- ===== Cores personalizadas ===== -->
+        <h2 class="gd-h2">Cores personalizadas</h2>
+        <p class="gd-lead">
+          Para sair das cores do <code>variant</code>, informe fundo, borda e texto de cada estado:
+          <code>background</code> / <code>border-color</code> / <code>text-color</code> (normal),
+          <code>hover-*</code> (mouse em cima) e <code>press-*</code> (enquanto pressiona).
+          Cada atributo sobrescreve <strong>só aquela parte</strong> — o que não for informado continua
+          vindo do <code>variant</code>/<code>color</code>. Sem <code>hover-background</code>, um
+          <code>background</code> em hex é escurecido 12% no hover; sem <code>press-*</code>, o
+          pressionado usa as cores do hover.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-button label="Todos os estados" icon="alert-triangle"
+            background="#FFF4D6" border-color="#9A7520" text-color="#5C4410"
+            hover-background="#FBE7B0" hover-border-color="#7A5C15"
+            press-background="#F2D27A" press-text-color="#3D2D08">
+          </granado-button>
+          <granado-button label="Só o fundo" background="#1A4A8C"></granado-button>
+          <granado-button label="Texto escuro" icon="check" background="#D7EBDD" text-color="#1C5C31" border-color="#1C5C31"></granado-button>
+          <granado-button label="Contorno preto" background="transparent" border-color="#000000" text-color="#000000"
+            hover-background="#F0F0F0" press-background="#E0E0E0"></granado-button>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- normal, hover e pressionado --&gt;</span>
+<span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">label</span>=<span class="tk-str">"Todos os estados"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"alert-triangle"</span>
+    <span class="tk-attr">background</span>=<span class="tk-str">"#FFF4D6"</span> <span class="tk-attr">border-color</span>=<span class="tk-str">"#9A7520"</span> <span class="tk-attr">text-color</span>=<span class="tk-str">"#5C4410"</span>
+    <span class="tk-attr">hover-background</span>=<span class="tk-str">"#FBE7B0"</span> <span class="tk-attr">hover-border-color</span>=<span class="tk-str">"#7A5C15"</span>
+    <span class="tk-attr">press-background</span>=<span class="tk-str">"#F2D27A"</span> <span class="tk-attr">press-text-color</span>=<span class="tk-str">"#3D2D08"</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-button&gt;</span>
+
+<span class="tk-comment">&lt;!-- só o fundo: borda acompanha (primary) e o hover escurece 12% --&gt;</span>
+<span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">label</span>=<span class="tk-str">"Só o fundo"</span> <span class="tk-attr">background</span>=<span class="tk-str">"#1A4A8C"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span>
+
+<span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">label</span>=<span class="tk-str">"Texto escuro"</span> <span class="tk-attr">icon</span>=<span class="tk-str">"check"</span>
+    <span class="tk-attr">background</span>=<span class="tk-str">"#D7EBDD"</span> <span class="tk-attr">text-color</span>=<span class="tk-str">"#1C5C31"</span> <span class="tk-attr">border-color</span>=<span class="tk-str">"#1C5C31"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span>
+
+<span class="tk-comment">&lt;!-- fundo transparente + borda preta (informe text-color: no primary o texto padrão é branco) --&gt;</span>
+<span class="tk-tag">&lt;granado-button</span> <span class="tk-attr">label</span>=<span class="tk-str">"Contorno preto"</span>
+    <span class="tk-attr">background</span>=<span class="tk-str">"transparent"</span> <span class="tk-attr">border-color</span>=<span class="tk-str">"#000000"</span> <span class="tk-attr">text-color</span>=<span class="tk-str">"#000000"</span>
+    <span class="tk-attr">hover-background</span>=<span class="tk-str">"#F0F0F0"</span> <span class="tk-attr">press-background</span>=<span class="tk-str">"#E0E0E0"</span><span class="tk-tag">&gt;&lt;/granado-button&gt;</span></pre>
+        </div>
+
         <!-- ===== Desabilitado ===== -->
         <h2 class="gd-h2">Desabilitado</h2>
         <p class="gd-lead">
@@ -5591,6 +5632,60 @@ tg.setAttribute(<span class="tk-str">'disabled'</span>, <span class="tk-str">'tr
                 <code>secondary</code>/<code>ghost</code> pinta a borda e o texto. Use
                 <code>#8C1A1A</code> para ações destrutivas.
               </td>
+            </tr>
+            <tr>
+              <td class="col-name">background</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Fundo no estado normal. Em <code>primary</code>, a borda acompanha quando <code>border-color</code> não é informado.</td>
+            </tr>
+            <tr>
+              <td class="col-name">border-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Borda no estado normal (vale também no hover se <code>hover-border-color</code> não for informado).</td>
+            </tr>
+            <tr>
+              <td class="col-name">text-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Texto e ícone no estado normal (vale também no hover se <code>hover-text-color</code> não for informado).</td>
+            </tr>
+            <tr>
+              <td class="col-name">hover-background</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Fundo com o mouse em cima. Sem ele, um <code>background</code> em hex é escurecido 12%.</td>
+            </tr>
+            <tr>
+              <td class="col-name">hover-border-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Borda com o mouse em cima.</td>
+            </tr>
+            <tr>
+              <td class="col-name">hover-text-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Texto e ícone com o mouse em cima.</td>
+            </tr>
+            <tr>
+              <td class="col-name">press-background</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Fundo enquanto o botão está pressionado (mouse ou toque). Sem ele, usa o fundo do hover.</td>
+            </tr>
+            <tr>
+              <td class="col-name">press-border-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Borda enquanto pressionado.</td>
+            </tr>
+            <tr>
+              <td class="col-name">press-text-color</td>
+              <td class="col-type">string (cor CSS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Texto e ícone enquanto pressionado.</td>
             </tr>
             <tr>
               <td class="col-name">disabled</td>

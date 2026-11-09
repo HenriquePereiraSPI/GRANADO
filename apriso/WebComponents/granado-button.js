@@ -29,6 +29,17 @@
      disabled       - "true" desabilita interacao.
      onclickevent   - JS executado no click. Var: event.
 
+     Cores por estado (opcionais; cada uma sobrescreve so aquela parte do
+     variant/color — o que nao for informado continua igual):
+     background / border-color / text-color
+                    - estado normal.
+     hover-background / hover-border-color / hover-text-color
+                    - mouse em cima. Sem hover-background, um background
+                      custom (hex) e escurecido 12% no hover.
+     press-background / press-border-color / press-text-color
+                    - enquanto o botao esta pressionado (mouse/toque).
+                      Sem eles, usa as cores de hover.
+
    Exemplo:
 
    <script src="assets/WebComponents/granado-button.js"></script>
@@ -39,13 +50,17 @@
    <granado-button label="Voltar" variant="ghost" icon="arrow-left"></granado-button>
    <granado-button label="Avancar" icon="arrow-right" iconposition="right"></granado-button>
    <granado-button label="Adicionar" icon="plus" size="sm"></granado-button>
-   ============================================================ */
+   <granado-button label="Custom" background="#FFF4D6" border-color="#9A7520"
+     text-color="#5C4410" hover-background="#FBE7B0" press-background="#F2D27A"></granado-button>   ============================================================ */
 
 /* __granado_guard__ */
 if (!customElements.get('granado-button')) {
   class GranadoButton extends HTMLElement {
     static get observedAttributes() {
-      return ['label', 'icon', 'iconposition', 'variant', 'size', 'color', 'disabled', 'onclickevent'];
+      return ['label', 'icon', 'iconposition', 'variant', 'size', 'color', 'disabled', 'onclickevent',
+        'background', 'border-color', 'text-color',
+        'hover-background', 'hover-border-color', 'hover-text-color',
+        'press-background', 'press-border-color', 'press-text-color'];
     }
 
     connectedCallback() {
@@ -65,7 +80,6 @@ if (!customElements.get('granado-button')) {
     }
 
     get disabled() { return this.getAttribute('disabled') === 'true'; }
-
     _build() {
       this.style.display = this.style.display || 'inline-block';
 
@@ -92,23 +106,33 @@ if (!customElements.get('granado-button')) {
         if (handler) new Function('event', handler).call(this, e);
       });
 
+      this._hover = false;
+      this._press = false;
+
       btn.addEventListener('mouseenter', () => {
         if (this.disabled) return;
-        this._applyVariantStyles(true);
+        this._hover = true;
+        this._applyVariantStyles();
       });
       btn.addEventListener('mouseleave', () => {
         if (this.disabled) return;
         btn.style.transform = '';
-        this._applyVariantStyles(false);
+        this._hover = false;
+        this._press = false;
+        this._applyVariantStyles();
       });
 
       const press = () => {
         if (this.disabled) return;
         btn.style.transform = 'scale(0.96)';
+        this._press = true;
+        this._applyVariantStyles();
       };
       const release = () => {
         if (this.disabled) return;
         btn.style.transform = '';
+        this._press = false;
+        this._applyVariantStyles();
       };
       btn.addEventListener('mousedown', press);
       btn.addEventListener('mouseup', release);
@@ -132,8 +156,8 @@ if (!customElements.get('granado-button')) {
       const size = Math.max(rect.width, rect.height);
 
       const variant = this.getAttribute('variant') || 'primary';
-      const color = this.getAttribute('color') || '#1C5C31';
-      const rippleBg = variant === 'primary' ? '#fff' : color;
+      // Cor do texto atual (branco no primary padrao; a cor/text-color nas demais).
+      const rippleBg = this._currentColors().text;
       const startOpacity = variant === 'primary' ? 0.45 : 0.22;
 
       const ripple = document.createElement('span');
@@ -173,7 +197,7 @@ if (!customElements.get('granado-button')) {
       }
       btn.style.fontSize = fontSize;
       btn.disabled = this.disabled;
-      btn.style.cursor = this.disabled ? 'not-allowed' : 'pointer';
+      if (this.disabled) { this._hover = false; this._press = false; btn.style.transform = ''; }      btn.style.cursor = this.disabled ? 'not-allowed' : 'pointer';
       btn.style.opacity = this.disabled ? '0.55' : '1';
 
       const labelEl = this.querySelector('[data-btn-label]');
@@ -183,30 +207,76 @@ if (!customElements.get('granado-button')) {
         labelEl.style.display = label ? '' : 'none';
       }
 
-      this._applyVariantStyles(false);
+      this._applyVariantStyles();
     }
 
-    _applyVariantStyles(hover) {
-      const btn = this.querySelector('[data-btn-root]');
-      if (!btn) return;
+    // Cores do variant/color para um estado: 'normal' | 'hover'.
+    _variantColors(estado) {
       const variant = this.getAttribute('variant') || 'primary';
       const color = this.getAttribute('color') || '#1C5C31';
+      const hover = estado === 'hover';
 
       if (variant === 'secondary') {
-        btn.style.background = hover ? '#F5EFD9' : '#FDFAF1';
-        btn.style.color = color;
-        btn.style.borderColor = color;
-      } else if (variant === 'ghost') {
-        btn.style.background = hover ? '#ECE3C2' : 'transparent';
-        btn.style.color = color;
-        btn.style.borderColor = 'transparent';
-      } else {
-        // primary (default)
-        const bg = hover ? this._darken(color, 0.12) : color;
-        btn.style.background = bg;
-        btn.style.color = '#fff';
-        btn.style.borderColor = bg;
+        return { bg: hover ? '#F5EFD9' : '#FDFAF1', border: color, text: color };
       }
+      if (variant === 'ghost') {
+        return { bg: hover ? '#ECE3C2' : 'transparent', border: 'transparent', text: color };
+      }
+      // primary (default)
+      const bg = hover ? this._darken(color, 0.12) : color;
+      return { bg, border: bg, text: '#fff' };
+    }
+
+    // Le os atributos de cor de um prefixo ('' | 'hover-' | 'press-').
+    _attrColors(prefixo) {
+      const ler = (nome) => {
+        const v = this.getAttribute(prefixo + nome);
+        return v && v.trim() ? v.trim() : null;
+      };
+      return { bg: ler('background'), border: ler('border-color'), text: ler('text-color') };
+    }
+
+    // Cores finais do estado atual. Prioridade: press > hover > normal.
+    // Cada parte (fundo/borda/texto) cai para o estado de baixo quando nao informada.
+    _currentColors() {
+      const variant = this.getAttribute('variant') || 'primary';
+      const base = this._attrColors('');
+
+      const normalV = this._variantColors('normal');
+      const normal = {
+        bg: base.bg || normalV.bg,
+        // primary: a borda acompanha o fundo custom.
+        border: base.border || (variant === 'primary' && base.bg ? base.bg : normalV.border),
+        text: base.text || normalV.text,
+      };
+
+      const hoverV = this._variantColors('hover');
+      const hoverAttr = this._attrColors('hover-');
+      const hoverBgAuto = base.bg ? this._darken(base.bg, 0.12) : hoverV.bg;
+      const hoverBg = hoverAttr.bg || hoverBgAuto;
+      const hover = {
+        bg: hoverBg,
+        border: hoverAttr.border || base.border
+          || (variant === 'primary' ? (hoverAttr.bg || hoverBgAuto) : hoverV.border),
+        text: hoverAttr.text || normal.text,
+      };
+
+      let atual = this._hover || this._press ? hover : normal;
+
+      if (this._press) {
+        const p = this._attrColors('press-');
+        atual = { bg: p.bg || atual.bg, border: p.border || atual.border, text: p.text || atual.text };
+      }
+      return atual;
+    }
+
+    _applyVariantStyles() {
+      const btn = this.querySelector('[data-btn-root]');
+      if (!btn) return;
+      const c = this._currentColors();
+      btn.style.background = c.bg;
+      btn.style.color = c.text;
+      btn.style.borderColor = c.border;
     }
 
     _darken(hex, amount) {
