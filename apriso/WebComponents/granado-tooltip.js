@@ -181,24 +181,48 @@ if (!customElements.get('granado-tooltip')) {
       window.removeEventListener('resize', this._onMudancaTela);
     }
 
-    // Acima do texto; se nao couber, abaixo. Nunca passa das bordas laterais.
+    // Acima do texto; se nao couber, abaixo. Texto grande que nao cabe em nenhum lado:
+    // alarga o cartao (ate 420px) e, se ainda assim nao couber, sobe o quanto precisar
+    // para ficar inteiro na tela. Nunca passa das bordas.
     _posicionar() {
       const MARGEM = 8;
       const DISTANCIA = 8;
       const alvo = this.getBoundingClientRect();
+      const espacoAcima = alvo.top - DISTANCIA - MARGEM;
+      const espacoAbaixo = window.innerHeight - alvo.bottom - DISTANCIA - MARGEM;
+      const cabe = (h) => h <= espacoAcima || h <= espacoAbaixo;
+
+      this._panel.style.width = '240px';
+      let altura = this._panel.offsetHeight;
+      const maxLargura = Math.min(420, window.innerWidth - MARGEM * 2);
+      for (let w = 300; !cabe(altura) && w <= maxLargura; w += 60) {
+        this._panel.style.width = `${w}px`;
+        altura = this._panel.offsetHeight;
+      }
+
       const largura = this._panel.offsetWidth;
-      const altura = this._panel.offsetHeight;
       const centro = alvo.left + alvo.width / 2;
       const left = Math.max(MARGEM, Math.min(centro - largura / 2, window.innerWidth - largura - MARGEM));
-      const acima = alvo.top - altura - DISTANCIA >= MARGEM;
+
+      let top;
+      let lado = null;
+      if (altura <= espacoAcima) {
+        top = alvo.top - altura - DISTANCIA;
+        lado = 'bottom:-6px;background:#FDFAF1;border-right:1px solid #D6CDA4;border-bottom:1px solid #D6CDA4';
+      } else if (altura <= espacoAbaixo) {
+        top = alvo.bottom + DISTANCIA;
+        lado = 'top:-7px;background:#1C5C31';
+      } else {
+        // Nao cabe colado ao badge: abre abaixo e sobe o necessario para caber inteiro.
+        top = Math.max(MARGEM, Math.min(alvo.bottom + DISTANCIA, window.innerHeight - altura - MARGEM));
+      }
 
       this._panel.style.left = `${left}px`;
-      this._panel.style.top = `${acima ? alvo.top - altura - DISTANCIA : alvo.bottom + DISTANCIA}px`;
+      this._panel.style.top = `${top}px`;
 
-      const lado = acima
-        ? 'bottom:-6px;background:#FDFAF1;border-right:1px solid #D6CDA4;border-bottom:1px solid #D6CDA4'
-        : 'top:-7px;background:#1C5C31';
-      this._seta.style.cssText = `position:absolute;left:${centro - left - 5}px;width:10px;height:10px;transform:rotate(45deg);${lado}`;
+      if (!lado) { this._seta.style.cssText = 'display:none'; return; }
+      const setaLeft = Math.max(8, Math.min(centro - left - 5, largura - 18));
+      this._seta.style.cssText = `position:absolute;left:${setaLeft}px;width:10px;height:10px;transform:rotate(45deg);${lado}`;
     }
   }
 

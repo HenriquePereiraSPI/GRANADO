@@ -14709,10 +14709,10 @@ g.data = [
         <h2 class="gd-h2">Tooltip com texto</h2>
         <div class="gd-demo">
           <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
-          <granado-tooltip content="Passe o mouse aqui" tooltip="OEE = Disponibilidade x Performance x Qualidade"></granado-tooltip>
+          <granado-tooltip content="Passe o mouse aqui" tooltip="O OEE (Overall Equipment Effectiveness) mede a eficiência global do equipamento e é calculado multiplicando três indicadores: Disponibilidade, Performance e Qualidade. A Disponibilidade considera o tempo em que a linha ficou produzindo em relação ao tempo planejado, descontando paradas como setup, manutenção e falta de material. A Performance compara a velocidade real com a velocidade nominal da máquina. A Qualidade indica a proporção de peças boas em relação ao total produzido, desconsiderando refugos e retrabalhos. Um OEE acima de 85% é considerado de classe mundial."></granado-tooltip>
           <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-tooltip</span>
   <span class="tk-attr">content</span>=<span class="tk-str">"Passe o mouse aqui"</span>
-  <span class="tk-attr">tooltip</span>=<span class="tk-str">"OEE = Disponibilidade x Performance x Qualidade"</span><span class="tk-tag">&gt;&lt;/granado-tooltip&gt;</span></pre>
+  <span class="tk-attr">tooltip</span>=<span class="tk-str">"O OEE (Overall Equipment Effectiveness) mede a eficiência global do equipamento e é calculado multiplicando três indicadores: Disponibilidade, Performance e Qualidade. A Disponibilidade considera o tempo em que a linha ficou produzindo em relação ao tempo planejado, descontando paradas como setup, manutenção e falta de material. A Performance compara a velocidade real com a velocidade nominal da máquina. A Qualidade indica a proporção de peças boas em relação ao total produzido, desconsiderando refugos e retrabalhos. Um OEE acima de 85% é considerado de classe mundial."</span><span class="tk-tag">&gt;&lt;/granado-tooltip&gt;</span></pre>
         </div>
 
         <h2 class="gd-h2">Tooltip com HTML</h2>
@@ -14738,6 +14738,28 @@ g.data = [
       Afetou &lt;strong style='font-family:Arial;font-size:14px;color:#1C5C31'&gt;12.5%&lt;/strong&gt; do tempo total
     &lt;/div&gt;
   "</span><span class="tk-tag">&gt;&lt;/granado-tooltip&gt;</span></pre>
+        </div>
+
+        <h2 class="gd-h2">Dentro de um popup</h2>
+        <p class="gd-lead">
+          O cartão é montado no <code>body</code> e fica por cima do popup, então pode ser usado dentro de
+          um <code>&lt;granado-empty-popup&gt;</code> sem ser cortado.
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <button type="button" onclick="document.getElementById('doc-tooltip-popup').open()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1C5C31;border-radius:7px;background:#1C5C31;color:#fff;cursor:pointer">Abrir popup</button>
+          <granado-empty-popup id="doc-tooltip-popup" open="false" title="Indicadores da linha" width="480px" close-on-backdrop="true">
+            <p style="margin:0 0 12px;font-size:13px;color:#4A6250">Passe o mouse no badge para ver a explicação completa.</p>
+            <granado-tooltip content="Como o OEE é calculado" tooltip="O OEE (Overall Equipment Effectiveness) mede a eficiência global do equipamento e é calculado multiplicando três indicadores: Disponibilidade, Performance e Qualidade. A Disponibilidade considera o tempo em que a linha ficou produzindo em relação ao tempo planejado, descontando paradas como setup, manutenção, limpeza e falta de material. A Performance compara a velocidade real de produção com a velocidade nominal da máquina, refletindo microparadas e operação abaixo do ritmo ideal. A Qualidade indica a proporção de peças boas em relação ao total produzido, desconsiderando refugos e retrabalhos. Um OEE acima de 85% é considerado de classe mundial; entre 60% e 85% é típico de operações que ainda têm espaço para melhoria; abaixo de 60% indica perdas relevantes que devem ser investigadas junto à manutenção e à produção."></granado-tooltip>
+          </granado-empty-popup>
+          <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-empty-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"indicadores"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Indicadores da linha"</span> <span class="tk-attr">width</span>=<span class="tk-str">"480px"</span> <span class="tk-attr">close-on-backdrop</span>=<span class="tk-str">"true"</span><span class="tk-tag">&gt;</span>
+  <span class="tk-tag">&lt;p&gt;</span>Passe o mouse no badge para ver a explicação completa.<span class="tk-tag">&lt;/p&gt;</span>
+  <span class="tk-tag">&lt;granado-tooltip</span>
+    <span class="tk-attr">content</span>=<span class="tk-str">"Como o OEE é calculado"</span>
+    <span class="tk-attr">tooltip</span>=<span class="tk-str">"O OEE (Overall Equipment Effectiveness) mede a eficiência global do equipamento e é calculado multiplicando três indicadores: Disponibilidade, Performance e Qualidade. A Disponibilidade considera o tempo em que a linha ficou produzindo em relação ao tempo planejado, descontando paradas como setup, manutenção, limpeza e falta de material. A Performance compara a velocidade real de produção com a velocidade nominal da máquina, refletindo microparadas e operação abaixo do ritmo ideal. A Qualidade indica a proporção de peças boas em relação ao total produzido, desconsiderando refugos e retrabalhos. Um OEE acima de 85% é considerado de classe mundial; entre 60% e 85% é típico de operações que ainda têm espaço para melhoria; abaixo de 60% indica perdas relevantes que devem ser investigadas junto à manutenção e à produção."</span><span class="tk-tag">&gt;&lt;/granado-tooltip&gt;</span>
+<span class="tk-tag">&lt;/granado-empty-popup&gt;</span>
+
+<span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-str">"document.getElementById('indicadores').open()"</span><span class="tk-tag">&gt;</span>Abrir<span class="tk-tag">&lt;/button&gt;</span></pre>
         </div>
 
         <h2 class="gd-h2">Definindo por JavaScript</h2>
@@ -14790,7 +14812,7 @@ g.data = [
           <li><strong>Texto com <code>&lt;</code>:</strong> como o valor é lido como HTML, escreva <code>&amp;lt;</code> para exibir esse caractere.</li>
           <li><strong>Cores:</strong> o badge é neutro e a faixa do cartão é sempre verde. Dentro do HTML do <code>tooltip</code> as cores são livres.</li>
           <li><strong>Só leitura:</strong> o cartão não recebe clique nem foco, então links e botões dentro dele não funcionam.</li>
-          <li><strong>Posição:</strong> abre acima do texto e, se não couber, abaixo. Fica no <code>body</code> com <code>position:fixed</code>, então não é cortado por <code>overflow:hidden</code>.</li>
+          <li><strong>Posição:</strong> abre acima do texto e, se não couber, abaixo. Com texto grande que não cabe em nenhum dos lados, o cartão se alarga (de 240px até 420px) e, se ainda assim não couber, sobe o necessário para aparecer inteiro na tela. Fica no <code>body</code> com <code>position:fixed</code>, então não é cortado por <code>overflow:hidden</code>.</li>
           <li><strong>Fechamento:</strong> fecha ao tirar o mouse, ao tocar de novo ou fora, com <code>Esc</code>, ao perder o foco e ao rolar ou redimensionar a tela.</li>
         </ul>
       </section>
