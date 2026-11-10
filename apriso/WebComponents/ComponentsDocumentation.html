@@ -1763,6 +1763,9 @@ detail.filters.forEach(f =&gt; { params[f.filterKey] = f.filterValue; });
           A exportação <strong>sempre</strong> usa <em>todas</em> as linhas (ignora paginação).
           Células com <strong>HTML/CSS inline</strong> (ex.: um <code>&lt;span&gt;</code> estilizado)
           são exportadas <strong>apenas com o texto</strong> (as tags/estilos são removidos).
+          Cada célula sai em <strong>uma linha só</strong>: quebras de linha, tab e espaço não separável viram
+          espaço, caracteres de controle e invisíveis são removidos e espaços repetidos viram um só. Assim um
+          texto digitado com Enter não quebra o CSV.
           Para <strong>remover uma coluna</strong> do CSV/PDF, use <code>allowExport: false</code> no
           objeto da coluna. Use <code>exportfilename</code> para fixar o nome base do arquivo.
         </p>

@@ -136,6 +136,9 @@
      - Sempre exporta TODAS as linhas (ignora paginacao).
      - Celulas com HTML/CSS inline (ex.: um <span> estilizado) sao exportadas
        apenas com o TEXTO (as tags/estilos sao removidos) — no CSV e no PDF.
+     - Cada celula sai em UMA linha: quebras de linha, tab e NBSP viram espaco;
+       caracteres de controle e invisiveis sao removidos; espacos repetidos
+       viram um so. Assim um texto com Enter nao quebra o CSV.
      - CSV inclui BOM UTF-8 para abrir corretamente no Excel.
 
    Observacoes:
@@ -189,6 +192,13 @@ if (!customElements.get('granado-table')) {
       ['onAdvancedFilterClick', 'onAdvancedFilterClear'].forEach(p => {
         if (Object.prototype.hasOwnProperty.call(this, p)) { const v = this[p]; delete this[p]; this[p] = v; }
       });
+      // No Apriso a tela inteira fica dentro de um <form>: Enter num input da tabela
+      // enviaria o form e recarregaria a pagina. Os filtros aplicam ao digitar, entao
+      // o Enter nao tem funcao aqui.
+      if (!this._enterGuard) {
+        this._enterGuard = e => { if (e.key === 'Enter' && e.target && e.target.tagName === 'INPUT') e.preventDefault(); };
+        this.addEventListener('keydown', this._enterGuard);
+      }
       this.render();
     }
 
@@ -438,7 +448,7 @@ if (!customElements.get('granado-table')) {
       const ICON_PDF = `<svg ${iconBase}>${fileShape}${label('PDF')}</svg>`;
 
       const btn = (icon, action, title) => `
-        <button data-export-action="${action}" title="${title}" aria-label="${title}" style="width:30px !important;
+        <button type="button" data-export-action="${action}" title="${title}" aria-label="${title}" style="width:30px !important;
           height:30px !important;
           display:inline-flex;
           align-items:center;
@@ -480,14 +490,26 @@ if (!customElements.get('granado-table')) {
       return `export_${dd}${MM}${HH}${hh}${mm}${ss}`;
     }
 
-    // Extrai apenas o TEXTO de um valor de célula (que pode conter HTML/CSS
-    // inline, ex.: um <span> com estilo). Na exportação queremos só o texto.
+    // Extrai apenas o TEXTO de um valor de célula para a exportação (CSV e PDF),
+    // sempre em UMA linha limpa:
+    //   - HTML/entidades viram texto (<br> e fim de bloco viram espaco);
+    //   - quebras de linha (\r \n \u2028 \u2029), tab e NBSP viram espaco;
+    //   - caracteres de controle e invisiveis (zero-width, BOM) sao removidos;
+    //   - espacos repetidos viram um so, e as pontas sao aparadas.
     _cellText(v) {
-      const s = v == null ? '' : String(v);
-      if (s.indexOf('<') === -1 && s.indexOf('&') === -1) return s;  // sem HTML/entidades
-      const tmp = document.createElement('div');
-      tmp.innerHTML = s;
-      return (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
+      let s = v == null ? '' : String(v);
+      if (s.indexOf('<') !== -1 || s.indexOf('&') !== -1) {
+        // <br> e blocos (p/div/li/tr/td/th/h1-h6) separam texto: sem isso "a<br>b" viraria "ab".
+        s = s.replace(/<br\s*\/?>/gi, ' ').replace(/<\/?(p|div|li|tr|td|th|h[1-6])\b[^>]*>/gi, ' $&');
+        // DOMParser e inerte: nao carrega imagens nem roda handlers do conteudo.
+        const doc = new DOMParser().parseFromString('<!doctype html><body>' + s, 'text/html');
+        s = doc.body ? (doc.body.textContent || '') : s;
+      }
+      return s
+        .replace(/[\r\n\t\f\v\u0085\u2028\u2029\u00A0]/g, ' ')
+        .replace(/[\u0000-\u001F\u007F-\u009F\u200B-\u200D\u2060\uFEFF]/g, '')
+        .replace(/ {2,}/g, ' ')
+        .trim();
     }
 
     _exportCsv(rows, columns, filename) {
@@ -496,7 +518,7 @@ if (!customElements.get('granado-table')) {
         const s = v == null ? '' : String(v);
         return /["\n\r,;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
       };
-      const headerLine = cols.map(c => escape(c.label || c.key)).join(',');
+      const headerLine = cols.map(c => escape(this._cellText(c.label) || c.key)).join(',');
       const dataLines = rows.map(row => cols.map(c => escape(this._cellText(row[c.key]))).join(','));
       const csv = [headerLine, ...dataLines].join('\r\n');
       const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
@@ -595,7 +617,7 @@ if (!customElements.get('granado-table')) {
         const isFirst = currentPage === 0;
         const isLast = currentPage >= totalPages - 1;
         const btn = (label, action, disabled) => `
-          <button data-page-action="${action}" ${disabled ? 'disabled' : ''} style="height:auto !important;min-height:0 !important;
+          <button type="button" data-page-action="${action}" ${disabled ? 'disabled' : ''} style="height:auto !important;min-height:0 !important;
             font-size:11px;
             font-weight:700;
             padding:5px 10px;
