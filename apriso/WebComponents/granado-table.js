@@ -16,7 +16,7 @@
 
    Atributos:
      columns             - JSON array. Cada coluna:
-                           { key, label, mono?, cellStyle?, width?, align?, filterable?, allowExport? }
+                           { key, label, mono?, cellStyle?, width?, align?, filterable?, sortable?, allowExport?, hidden? }
                            - width: CSS valido (ex: "120px", "18%", "10ch").
                            - align: "left" | "center" | "right" (aplica em th+td).
                            - filterable: false desabilita o filtro nesta coluna
@@ -25,6 +25,10 @@
                              (default: true quando isenablesort ativo).
                            - allowExport: false remove esta coluna do CSV/PDF
                              (default: true). Nao afeta a exibicao na tabela.
+                           - hidden: true esconde a coluna da tabela (cabecalho,
+                             celulas, filtro por coluna e filtro global), mas ela
+                             continua no CSV/PDF — a menos que allowExport seja
+                             false (default: false).
      rows                - JSON array. Cada linha: objeto com chaves = key das colunas.
                            Linha pode ter "_bg" para sobrepor a cor de fundo
                            padrao (ex: destacar uma linha especifica).
@@ -198,7 +202,10 @@ if (!customElements.get('granado-table')) {
     }
 
     render() {
-      const columns = JSON.parse(this.getAttribute('columns') || '[]');
+      const allColumns = JSON.parse(this.getAttribute('columns') || '[]');
+      // hidden:true -> fora da tela (cabecalho, celulas, filtros), mas continua no
+      // CSV/PDF (respeitando allowExport). O export recebe allColumns.
+      const columns = allColumns.filter(c => c && c.hidden !== true && c.hidden !== 'true');
       const allRows = JSON.parse(this.getAttribute('rows') || '[]');
       // Índice estável por linha (sobrevive a filtro/ordenação/paginação) —
       // usado como chave do estado de expansão dos "children".
@@ -369,7 +376,7 @@ if (!customElements.get('granado-table')) {
               </div>
           `;
 
-      if (hasExports) this._wireExports(sortedRows, columns, color);
+      if (hasExports) this._wireExports(sortedRows, allColumns, color);
       if (isPaginated) this._wireFooter(totalPages);
       if (interactive) this._wireRowEvents(sortedRows, pageStart, hasClick, hasDblClick, onClickAttr, onDblClickAttr);
       if (isFilterEnabled) {

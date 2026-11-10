@@ -1374,7 +1374,7 @@
               <td class="col-name">mono</td>
               <td class="col-type">boolean</td>
               <td class="col-default">false</td>
-              <td class="col-desc">Quando <code>true</code>, aplica fonte mono (códigos, números, IDs).</td>
+              <td class="col-desc">Quando <code>true</code>, as células usam Arial (códigos, números, IDs).</td>
             </tr>
             <tr>
               <td class="col-name">filterable</td>
@@ -1393,6 +1393,12 @@
               <td class="col-type">boolean</td>
               <td class="col-default">true</td>
               <td class="col-desc">Quando <code>false</code>, a coluna é <strong>removida do CSV e do PDF</strong>. Não afeta a exibição na tabela.</td>
+            </tr>
+            <tr>
+              <td class="col-name">hidden</td>
+              <td class="col-type">boolean</td>
+              <td class="col-default">false</td>
+              <td class="col-desc">Quando <code>true</code>, a coluna <strong>não aparece na tabela</strong>, mas sai no CSV e no PDF (respeitando <code>allowExport</code>). Veja <em>Colunas só na exportação</em>.</td>
             </tr>
             <tr>
               <td class="col-name">cellStyle</td>
@@ -1804,6 +1810,43 @@
     <span class="tk-attr">isenableexportcsv</span>=<span class="tk-str">"false"</span>
     <span class="tk-attr">isenableexportpdf</span>=<span class="tk-str">"false"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span></pre>
 
+        <!-- ===== Colunas só na exportação (hidden) ===== -->
+        <h2 class="gd-h2">Colunas só na exportação (hidden)</h2>
+        <p class="gd-lead">
+          Com <code>hidden: true</code> a coluna não aparece na tabela (nem no filtro por coluna ou no
+          filtro global), mas sai no CSV e no PDF. O <code>allowExport</code> continua valendo: uma coluna com
+          <code>hidden: true</code> e <code>allowExport: false</code> não aparece em lugar nenhum.
+          No exemplo, a tela mostra 3 colunas e a exportação traz 5: <em>Lote</em> e <em>Validade</em> ficam
+          escondidas e são exportadas, e <em>ID interno</em> não sai nem na exportação.
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-table id="dt-hidden"
+            tabletitle="Pesagens (lote e validade só no CSV/PDF)"
+            exportfilename="pesagens_com_lote"
+            columns='[{"key":"cod","label":"Código","mono":true,"width":"110px"},{"key":"mat","label":"Material"},{"key":"lote","label":"Lote","mono":true,"hidden":true},{"key":"validade","label":"Validade","mono":true,"hidden":true},{"key":"pesado","label":"Pesado (kg)","mono":true,"align":"right","width":"110px"},{"key":"idInterno","label":"ID interno","hidden":true,"allowExport":false}]'
+            rows='[{"cod":"MP-01001","mat":"Glicerina USP","lote":"L2611-045","validade":"30/05/2027","pesado":"44983,21","idInterno":"98121"},{"cod":"MP-01002","mat":"Fenoxietanol","lote":"L2611-051","validade":"12/08/2027","pesado":"3028,50","idInterno":"98122"},{"cod":"MP-01003","mat":"Ácido Cítrico","lote":"L2610-998","validade":"01/02/2027","pesado":"12450,00","idInterno":"98123"}]'></granado-table>
+        </div>
+        <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">id</span>=<span class="tk-str">"tbl"</span>
+    <span class="tk-attr">tabletitle</span>=<span class="tk-str">"Pesagens (lote e validade só no CSV/PDF)"</span>
+    <span class="tk-attr">exportfilename</span>=<span class="tk-str">"pesagens_com_lote"</span>
+    <span class="tk-attr">columns</span>=<span class="tk-str">'[
+      {"key":"cod","label":"Código","mono":true,"width":"110px"},
+      {"key":"mat","label":"Material"},
+      {"key":"lote","label":"Lote","mono":true,"hidden":true},
+      {"key":"validade","label":"Validade","mono":true,"hidden":true},
+      {"key":"pesado","label":"Pesado (kg)","mono":true,"align":"right","width":"110px"},
+      {"key":"idInterno","label":"ID interno","hidden":true,"allowExport":false}
+    ]'</span>
+    <span class="tk-attr">rows</span>=<span class="tk-str">'[
+      {"cod":"MP-01001","mat":"Glicerina USP","lote":"L2611-045","validade":"30/05/2027","pesado":"44983,21","idInterno":"98121"},
+      {"cod":"MP-01002","mat":"Fenoxietanol","lote":"L2611-051","validade":"12/08/2027","pesado":"3028,50","idInterno":"98122"},
+      {"cod":"MP-01003","mat":"Ácido Cítrico","lote":"L2610-998","validade":"01/02/2027","pesado":"12450,00","idInterno":"98123"}
+    ]'</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
+
+<span class="tk-comment">&lt;!-- Na tela:    Código | Material | Pesado (kg)
+     No CSV/PDF: Código | Material | Lote | Validade | Pesado (kg) --&gt;</span></pre>
+
         <!-- ===== Visual customizado ===== -->
         <h2 class="gd-h2">Visual customizado</h2>
         <p class="gd-lead">
@@ -2015,7 +2058,7 @@
               <td class="col-name">columns</td>
               <td class="col-type">JSON array</td>
               <td class="col-default">[]</td>
-              <td class="col-desc">Definição das colunas. Veja <strong>Configuração de colunas</strong> acima para o schema do objeto.</td>
+              <td class="col-desc">Definição das colunas. Veja <strong>Propriedades de columns</strong> abaixo para o schema do objeto.</td>
             </tr>
             <tr>
               <td class="col-name">rows</td>
@@ -2175,6 +2218,90 @@
             </tr>
           </tbody>
         </table>
+
+        <h3 class="gd-h3">Propriedades de columns</h3>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575">
+          Cada item do array <code>columns</code> é um objeto com as propriedades abaixo. Só <code>key</code> é obrigatória.
+          As colunas aparecem na tabela e na exportação na ordem do array.
+        </p>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Propriedade</th>
+              <th style="width:130px">Tipo</th>
+              <th style="width:120px">Default</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">key</td>
+              <td class="col-type">string</td>
+              <td class="col-default">— (obrig.)</td>
+              <td class="col-desc">Nome do campo em cada objeto de <code>rows</code> cujo valor aparece na coluna. Também identifica a coluna no filtro e na ordenação.</td>
+            </tr>
+            <tr>
+              <td class="col-name">label</td>
+              <td class="col-type">string (texto ou HTML)</td>
+              <td class="col-default">""</td>
+              <td class="col-desc">Texto do cabeçalho, exibido em maiúsculas. É inserido como HTML na tela. No CSV, sem <code>label</code> usa a <code>key</code>; no PDF fica vazio.</td>
+            </tr>
+            <tr>
+              <td class="col-name">width</td>
+              <td class="col-type">string (CSS)</td>
+              <td class="col-default">auto</td>
+              <td class="col-desc">Largura da coluna (<code>"120px"</code>, <code>"18%"</code>, <code>"10ch"</code>). Com largura definida, o texto que não cabe é cortado com reticências (<code>…</code>) em vez de quebrar linha. Também vale no PDF.</td>
+            </tr>
+            <tr>
+              <td class="col-name">align</td>
+              <td class="col-type">"left" | "center" | "right"</td>
+              <td class="col-default">"left"</td>
+              <td class="col-desc">Alinhamento do cabeçalho e das células. Também vale no PDF.</td>
+            </tr>
+            <tr>
+              <td class="col-name">mono</td>
+              <td class="col-type">boolean</td>
+              <td class="col-default">false</td>
+              <td class="col-desc">Quando <code>true</code>, as células usam Arial, para números, códigos e IDs. Também vale no PDF.</td>
+            </tr>
+            <tr>
+              <td class="col-name">cellStyle</td>
+              <td class="col-type">string (CSS inline)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">CSS extra aplicado em cada célula da coluna (ex.: <code>"font-weight:700;color:#8C1A1A"</code>). Entra por último, então sobrepõe os estilos padrão. Não afeta o cabeçalho nem o PDF.</td>
+            </tr>
+            <tr>
+              <td class="col-name">filterable</td>
+              <td class="col-type">boolean</td>
+              <td class="col-default">true</td>
+              <td class="col-desc">Quando <code>false</code>, a coluna fica sem o ícone de filtro. Só tem efeito com <code>isenablefilter</code> ativo.</td>
+            </tr>
+            <tr>
+              <td class="col-name">sortable</td>
+              <td class="col-type">boolean</td>
+              <td class="col-default">true</td>
+              <td class="col-desc">Quando <code>false</code>, o cabeçalho não é clicável para ordenar. Só tem efeito com <code>isenablesort</code> ativo.</td>
+            </tr>
+            <tr>
+              <td class="col-name">allowExport</td>
+              <td class="col-type">boolean</td>
+              <td class="col-default">true</td>
+              <td class="col-desc">Quando <code>false</code>, a coluna continua na tabela, mas sai do CSV e do PDF.</td>
+            </tr>
+            <tr>
+              <td class="col-name">hidden</td>
+              <td class="col-type">boolean</td>
+              <td class="col-default">false</td>
+              <td class="col-desc">Quando <code>true</code>, a coluna não aparece na tabela nem entra no filtro por coluna ou no filtro global, mas continua no CSV e no PDF. Respeita <code>allowExport</code>: com <code>allowExport: false</code> ela também fica fora da exportação.</td>
+            </tr>
+          </tbody>
+        </table>
+        <pre class="gd-code"><span class="tk-kw">const</span> columns = [
+  { key: <span class="tk-str">'cod'</span>,    label: <span class="tk-str">'Código'</span>,      mono: <span class="tk-keyword">true</span>, width: <span class="tk-str">'110px'</span> },
+  { key: <span class="tk-str">'mat'</span>,    label: <span class="tk-str">'Material'</span>,    width: <span class="tk-str">'170px'</span>, sortable: <span class="tk-keyword">false</span> },
+  { key: <span class="tk-str">'pesado'</span>, label: <span class="tk-str">'Pesado (kg)'</span>, mono: <span class="tk-keyword">true</span>, align: <span class="tk-str">'right'</span>, cellStyle: <span class="tk-str">'font-weight:700'</span> },
+  { key: <span class="tk-str">'acao'</span>,   label: <span class="tk-str">'Ações'</span>,       align: <span class="tk-str">'center'</span>, filterable: <span class="tk-keyword">false</span>, sortable: <span class="tk-keyword">false</span>, allowExport: <span class="tk-keyword">false</span> }
+];</pre>
 
         <h3 class="gd-h3">Variáveis nos handlers</h3>
         <table class="gd-api">
