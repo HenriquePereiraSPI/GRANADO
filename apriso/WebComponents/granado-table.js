@@ -115,10 +115,9 @@
                            com setAttribute('rows', ...) no retorno.
      advancedfilterdata  - JSON array com os campos do painel. Cada campo:
                            { filterKey?, filterName, filterType, filterDefaultDropdownValues? }
-                           - filterName: rotulo do campo e chave em detail.values.
                            - filterKey: identificador tecnico do campo (ex.: nome do
-                             parametro na API). Volta em cada item de detail.filters.
-                             Default: "".
+                             parametro na API). Default: "".
+                           - filterName: rotulo do campo no painel.
                            - filterType: "text", "dropdown", "number" ou "date"
                              (o valor vem como yyyy-MM-dd). Outro valor vira "text".
                            - filterDefaultDropdownValues: opcoes do dropdown.
@@ -128,10 +127,10 @@
                            propriedade com funcao (detail, event) ou os CustomEvents
                            "advanced-filter-click" / "advanced-filter-clear".
                            detail = {
-                             values:  { "<filterName>": "valor" },
                              filters: [{ filterKey, filterName, filterType, filterValue }]
                            }
-                           Todos os campos vem no detail; vazio vem como "".
+                           Um item por campo, na ordem de advancedfilterdata;
+                           valor vazio vem como "".
 
    Exportacao:
      - Sempre exporta TODAS as linhas (ignora paginacao).
@@ -1090,9 +1089,7 @@ if (!customElements.get('granado-table')) {
         filterType: d.type,
         filterValue: String(this._advValues[d.name] || '').trim(),
       }));
-      const values = {};
-      filters.forEach(f => { values[f.filterName] = f.filterValue; });
-      return { values, filters };
+      return { filters };
     }
 
     _fireAdvanced(evName, cbName, ev) {
