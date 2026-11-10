@@ -114,8 +114,11 @@
                            eventos abaixo. Quem filtra e o servidor; atualize a tabela
                            com setAttribute('rows', ...) no retorno.
      advancedfilterdata  - JSON array com os campos do painel. Cada campo:
-                           { filterName, filterType, filterDefaultDropdownValues? }
+                           { filterKey?, filterName, filterType, filterDefaultDropdownValues? }
                            - filterName: rotulo do campo e chave em detail.values.
+                           - filterKey: identificador tecnico do campo (ex.: nome do
+                             parametro na API). Volta em cada item de detail.filters.
+                             Default: "".
                            - filterType: "text", "dropdown", "number" ou "date"
                              (o valor vem como yyyy-MM-dd). Outro valor vira "text".
                            - filterDefaultDropdownValues: opcoes do dropdown.
@@ -126,7 +129,7 @@
                            "advanced-filter-click" / "advanced-filter-clear".
                            detail = {
                              values:  { "<filterName>": "valor" },
-                             filters: [{ filterName, filterType, filterValue }]
+                             filters: [{ filterKey, filterName, filterType, filterValue }]
                            }
                            Todos os campos vem no detail; vazio vem como "".
 
@@ -1072,6 +1075,7 @@ if (!customElements.get('granado-table')) {
         const preset = f.filterDefaultDropdownValues;
         return {
           name: String(f.filterName),
+          key: f.filterKey == null ? '' : String(f.filterKey),
           type: ['text', 'dropdown', 'number', 'date'].includes(rawType) ? rawType : 'text',
           options: Array.isArray(preset) ? preset.map(String) : [],
         };
@@ -1081,6 +1085,7 @@ if (!customElements.get('granado-table')) {
 
     _advancedDetail() {
       const filters = this._advancedFilterDefs().map(d => ({
+        filterKey: d.key,
         filterName: d.name,
         filterType: d.type,
         filterValue: String(this._advValues[d.name] || '').trim(),

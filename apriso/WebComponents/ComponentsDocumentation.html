@@ -1600,13 +1600,13 @@
           <granado-table
             tabletitle="Pesagens · filtro avançado"
             isenableadvancedfilter="true"
-            onadvancedfilterclick="document.getElementById('dt-adv-result').textContent = 'onAdvancedFilterClick: ' + JSON.stringify(detail.values);"
-            onadvancedfilterclear="document.getElementById('dt-adv-result').textContent = 'onAdvancedFilterClear: ' + JSON.stringify(detail.values);"
+            onadvancedfilterclick="document.getElementById('dt-adv-result').textContent = 'onAdvancedFilterClick: ' + JSON.stringify(detail.filters);"
+            onadvancedfilterclear="document.getElementById('dt-adv-result').textContent = 'onAdvancedFilterClear: ' + JSON.stringify(detail.filters);"
             advancedfilterdata='[
-              { "filterName": "Material", "filterType": "text" },
-              { "filterName": "Status", "filterType": "dropdown", "filterDefaultDropdownValues": ["OK", "Desvio", "Pendente"] },
-              { "filterName": "Pesado (kg)", "filterType": "number" },
-              { "filterName": "Data", "filterType": "date" }
+              { "filterKey": "MaterialName", "filterName": "Material", "filterType": "text" },
+              { "filterKey": "Status", "filterName": "Status", "filterType": "dropdown", "filterDefaultDropdownValues": ["OK", "Desvio", "Pendente"] },
+              { "filterKey": "WeightKg", "filterName": "Pesado (kg)", "filterType": "number" },
+              { "filterKey": "WeightDate", "filterName": "Data", "filterType": "date" }
             ]'
             columns='[
               { "key": "cod", "label": "Código", "mono": true },
@@ -1627,10 +1627,10 @@
     <span class="tk-attr">onadvancedfilterclick</span>=<span class="tk-str">"pesquisar(detail.values)"</span>
     <span class="tk-attr">onadvancedfilterclear</span>=<span class="tk-str">"pesquisar(detail.values)"</span>
     <span class="tk-attr">advancedfilterdata</span>=<span class="tk-str">'[
-      { "filterName": "Material", "filterType": "text" },
-      { "filterName": "Status", "filterType": "dropdown", "filterDefaultDropdownValues": ["OK", "Desvio", "Pendente"] },
-      { "filterName": "Pesado (kg)", "filterType": "number" },
-      { "filterName": "Data", "filterType": "date" }
+      { "filterKey": "MaterialName", "filterName": "Material", "filterType": "text" },
+      { "filterKey": "Status", "filterName": "Status", "filterType": "dropdown", "filterDefaultDropdownValues": ["OK", "Desvio", "Pendente"] },
+      { "filterKey": "WeightKg", "filterName": "Pesado (kg)", "filterType": "number" },
+      { "filterKey": "WeightDate", "filterName": "Data", "filterType": "date" }
     ]'</span>
     <span class="tk-attr">columns</span>=<span class="tk-str">'[ ... ]'</span>
     <span class="tk-attr">rows</span>=<span class="tk-str">'[ ... ]'</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
@@ -1663,6 +1663,7 @@
             </tr>
           </thead>
           <tbody>
+            <tr><td class="col-name">filterKey</td><td class="col-type">string (opcional)</td><td class="col-desc">Identificador técnico do campo, por exemplo o nome do parâmetro na API. Não aparece no painel; volta em cada item de <code>detail.filters</code>. Sem valor, vem como <code>""</code>.</td></tr>
             <tr><td class="col-name">filterName</td><td class="col-type">string</td><td class="col-desc">Rótulo do campo no painel e chave em <code>detail.values</code>.</td></tr>
             <tr><td class="col-name">filterType</td><td class="col-type">string</td><td class="col-desc"><code>"text"</code>, <code>"dropdown"</code>, <code>"number"</code> ou <code>"date"</code> (o valor vem como <code>yyyy-MM-dd</code>). Outro valor é tratado como <code>"text"</code>.</td></tr>
             <tr><td class="col-name">filterDefaultDropdownValues</td><td class="col-type">array de string</td><td class="col-desc">Opções do <code>dropdown</code>. A opção "Todos" é adicionada automaticamente e envia valor vazio.</td></tr>
@@ -1692,10 +1693,16 @@
         <pre class="gd-code">{
   values:  { <span class="tk-str">"Material"</span>: <span class="tk-str">"gli"</span>, <span class="tk-str">"Status"</span>: <span class="tk-str">"OK"</span>, <span class="tk-str">"Pesado (kg)"</span>: <span class="tk-str">""</span>, <span class="tk-str">"Data"</span>: <span class="tk-str">"2026-03-18"</span> },
   filters: [
-    { filterName: <span class="tk-str">"Material"</span>, filterType: <span class="tk-str">"text"</span>, filterValue: <span class="tk-str">"gli"</span> },
+    { filterKey: <span class="tk-str">"MaterialName"</span>, filterName: <span class="tk-str">"Material"</span>, filterType: <span class="tk-str">"text"</span>, filterValue: <span class="tk-str">"gli"</span> },
     <span class="tk-comment">// ... um item por campo, na ordem de advancedfilterdata</span>
   ]
 }</pre>
+        <p class="gd-lead">
+          Para montar os parâmetros da API pelo <code>filterKey</code>:
+        </p>
+        <pre class="gd-code"><span class="tk-kw">const</span> params = {};
+detail.filters.forEach(f =&gt; { params[f.filterKey] = f.filterValue; });
+<span class="tk-comment">// { MaterialName: "gli", Status: "OK", WeightKg: "", WeightDate: "2026-03-18" }</span></pre>
 
         <!-- ===== Eventos de clique ===== -->
         <h2 class="gd-h2">Eventos de clique</h2>
@@ -2196,7 +2203,7 @@
               <td class="col-name">advancedfilterdata</td>
               <td class="col-type">JSON array</td>
               <td class="col-default">[]</td>
-              <td class="col-desc">Campos do filtro avançado: <code>filterName</code>, <code>filterType</code> e <code>filterDefaultDropdownValues</code>. Veja a seção Filtro avançado.</td>
+              <td class="col-desc">Campos do filtro avançado: <code>filterName</code>, <code>filterKey</code>, <code>filterType</code> e <code>filterDefaultDropdownValues</code>. Veja a seção Filtro avançado.</td>
             </tr>
             <tr>
               <td class="col-name">onadvancedfilterclick</td>
