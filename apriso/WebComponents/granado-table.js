@@ -80,6 +80,16 @@
                            PDF abre janela com a tabela e dispara dialogo de impressao
                            (usuario escolhe "Salvar como PDF").
      exportfilename      - nome base do arquivo exportado (sem extensao).
+     onExport            - dispara ao clicar em Exportar CSV/PDF, ANTES de gerar o
+                           arquivo. Permite definir o nome e o titulo na hora:
+                           detail = { type: "csv"|"pdf", filename, title, rowCount }
+                           - altere detail.filename (sem extensao) e/ou detail.title
+                             (titulo do PDF; vazio usa o filename);
+                           - return false (ou event.preventDefault() no CustomEvent)
+                             cancela a exportacao.
+                           Aceita atributo com JS (variaveis: event, detail),
+                           propriedade com funcao (detail, event) ou o CustomEvent
+                           "table-export" (cancelavel).
                            Default: "export_ddMMHHhhmmss" gerado no momento do clique.
      tabletitle          - titulo opcional. Renderizado acima da tabela e
                            usado como cabecalho do PDF exportado.
@@ -189,7 +199,7 @@ if (!customElements.get('granado-table')) {
 
     connectedCallback() {
       // Lazy-props: funcao atribuida antes do upgrade do elemento (Apriso).
-      ['onAdvancedFilterClick', 'onAdvancedFilterClear'].forEach(p => {
+      ['onAdvancedFilterClick', 'onAdvancedFilterClear', 'onExport'].forEach(p => {
         if (Object.prototype.hasOwnProperty.call(this, p)) { const v = this[p]; delete this[p]; this[p] = v; }
       });
       // No Apriso a tela inteira fica dentro de um <form>: Enter num input da tabela
@@ -467,13 +477,53 @@ if (!customElements.get('granado-table')) {
 
     _wireExports(allRows, columns, color) {
       this.querySelectorAll('[data-export-action]').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
           const action = btn.getAttribute('data-export-action');
-          const filename = this._buildFilename();
-          if (action === 'csv') this._exportCsv(allRows, columns, filename);
-          if (action === 'pdf') this._exportPdf(allRows, columns, filename, color);
+          const exp = this._fireExport(action, allRows, e);
+          if (!exp) return;   // cancelado no onExport
+          if (action === 'csv') this._exportCsv(allRows, columns, exp.filename);
+          if (action === 'pdf') this._exportPdf(allRows, columns, exp.filename, color, exp.title);
         });
       });
+    }
+
+    get onExport() { return this._onExportFn || null; }
+    set onExport(fn) { this._onExportFn = typeof fn === 'function' ? fn : null; }
+
+    // Dispara antes de gerar o arquivo. Quem escuta pode trocar detail.filename e
+    // detail.title, ou cancelar (return false / event.preventDefault()).
+    // Ordem: CustomEvent "table-export" -> propriedade onExport -> atributo onexport.
+    _fireExport(type, rows, ev) {
+      const detail = {
+        type,                                           // "csv" | "pdf"
+        filename: this._buildFilename(),                // sem extensao
+        title: this.getAttribute('tabletitle') || '',   // so usado no PDF
+        rowCount: rows.length,
+      };
+      let cancel = false;
+      const run = (fn, args) => {
+        try { if (fn.apply(this, args) === false) cancel = true; }
+        catch (err) { console.error('[granado-table] onexport error:', err); }
+      };
+      const ce = new CustomEvent('table-export', { bubbles: true, composed: true, cancelable: true, detail });
+      if (!this.dispatchEvent(ce)) cancel = true;
+      if (this._onExportFn) run(this._onExportFn, [detail, ev]);
+      const h = this.getAttribute('onexport');
+      if (h) run(new Function('event', 'detail', h), [ev, detail]);
+      if (cancel) return null;
+
+      const filename = this._cleanFilename(detail.filename) || this._buildFilename();
+      const title = String(detail.title == null ? '' : detail.title).trim() || filename;
+      return { filename, title };
+    }
+
+    // Nome de arquivo seguro: sem extensao repetida e sem caracteres invalidos no Windows.
+    _cleanFilename(v) {
+      return String(v == null ? '' : v)
+        .trim()
+        .replace(/\.(csv|pdf)$/i, '')
+        .replace(/[\\/:*?"<>|\u0000-\u001F]/g, '_')
+        .trim();
     }
 
     _buildFilename() {
@@ -536,10 +586,10 @@ if (!customElements.get('granado-table')) {
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
-    _exportPdf(rows, columns, filename, color) {
+    _exportPdf(rows, columns, filename, color, title) {
       const cols = columns.filter(c => c.allowExport !== false);   // allowExport:false -> fora do export
       const escapeHtml = s => String(s == null ? '' : s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-      const heading = this.getAttribute('tabletitle') || filename;
+      const heading = title || this.getAttribute('tabletitle') || filename;
       const rowAltAttr = this.getAttribute('rowaltcolor');
       const rowAltColor = (rowAltAttr === 'none' || rowAltAttr === '') ? '' : (rowAltAttr || '#FEF0CC');
 

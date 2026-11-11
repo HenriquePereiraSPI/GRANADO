@@ -1825,6 +1825,66 @@ detail.filters.forEach(f =&gt; { params[f.filterKey] = f.filterValue; });
     <span class="tk-attr">isenableexportcsv</span>=<span class="tk-str">"false"</span>
     <span class="tk-attr">isenableexportpdf</span>=<span class="tk-str">"false"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span></pre>
 
+        <!-- ===== onExport ===== -->
+        <h2 class="gd-h2">Nome e título na hora de exportar (onExport)</h2>
+        <p class="gd-lead">
+          O <code>onExport</code> dispara ao clicar em <em>Exportar CSV</em> ou <em>Exportar PDF</em>,
+          <strong>antes</strong> de o arquivo ser gerado. Altere <code>detail.filename</code> (nome do arquivo,
+          sem extensão) e <code>detail.title</code> (título no topo do PDF) para defini-los no momento da
+          exportação, por exemplo com a data ou o filtro atual. <code>return false</code> cancela a exportação.
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-table
+            tabletitle="Pesagens do turno"
+            onexport="var hoje = new Date().toLocaleDateString('pt-BR'); detail.filename = 'pesagens_' + hoje.split('/').reverse().join('-'); detail.title = 'Pesagens do turno — ' + hoje + ' (' + detail.rowCount + ' registros)';"
+            columns='[{"key":"cod","label":"Código","mono":true,"width":"110px"},{"key":"mat","label":"Material"},{"key":"pesado","label":"Pesado (kg)","mono":true,"align":"right","width":"110px"}]'
+            rows='[{"cod":"MP-01001","mat":"Glicerina USP","pesado":"44983,21"},{"cod":"MP-01002","mat":"Fenoxietanol","pesado":"3028,50"},{"cod":"MP-01003","mat":"Ácido Cítrico","pesado":"12450,00"}]'></granado-table>
+        </div>
+        <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Opção 1: direto no HTML (variáveis: event, detail) --&gt;</span>
+<span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">id</span>=<span class="tk-str">"tbl"</span>
+    <span class="tk-attr">tabletitle</span>=<span class="tk-str">"Pesagens do turno"</span>
+    <span class="tk-attr">onexport</span>=<span class="tk-str">"var hoje = new Date().toLocaleDateString('pt-BR');
+              detail.filename = 'pesagens_' + hoje.split('/').reverse().join('-');
+              detail.title = 'Pesagens do turno — ' + hoje + ' (' + detail.rowCount + ' registros)';"</span>
+    <span class="tk-attr">columns</span>=<span class="tk-str">'[ ... ]'</span>
+    <span class="tk-attr">rows</span>=<span class="tk-str">'[ ... ]'</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
+
+<span class="tk-comment">&lt;!-- Opção 2: via JS --&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">const</span> tbl = document.getElementById(<span class="tk-str">'tbl'</span>);
+  tbl.onExport = (detail) =&gt; {
+    <span class="tk-comment">// detail = { type: "csv" | "pdf", filename, title, rowCount }</span>
+    <span class="tk-kw">if</span> (detail.rowCount === 0) { alert(<span class="tk-str">'Nada para exportar.'</span>); <span class="tk-kw">return false</span>; }  <span class="tk-comment">// cancela</span>
+    detail.filename = <span class="tk-str">'pesagens_OP_'</span> + ordemAtual;
+    detail.title    = <span class="tk-str">'Pesagens da OP '</span> + ordemAtual;
+  };
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h3 class="gd-h3">detail do onExport</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:170px">Campo</th>
+              <th style="width:130px">Tipo</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">type</td><td class="col-type">"csv" | "pdf"</td><td class="col-desc">Qual botão foi clicado. Só leitura.</td></tr>
+            <tr><td class="col-name">filename</td><td class="col-type">string</td><td class="col-desc">Nome do arquivo, sem extensão. Vem do <code>exportfilename</code> (ou do nome padrão) e pode ser trocado. Uma extensão <code>.csv</code>/<code>.pdf</code> no fim é removida e caracteres inválidos no Windows (<code>\ / : * ? " &lt; &gt; |</code>) viram <code>_</code>. Vazio volta ao nome padrão.</td></tr>
+            <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-desc">Título no topo do PDF. Vem do <code>tabletitle</code> e pode ser trocado; vazio usa o <code>filename</code>. Não tem efeito no CSV.</td></tr>
+            <tr><td class="col-name">rowCount</td><td class="col-type">number</td><td class="col-desc">Quantas linhas serão exportadas (já com os filtros aplicados). Só leitura.</td></tr>
+          </tbody>
+        </table>
+        <p class="gd-lead">
+          Os três jeitos de escutar recebem o mesmo <code>detail</code>: o atributo <code>onexport</code>, a
+          propriedade <code>tbl.onExport</code> e o CustomEvent <code>table-export</code>
+          (<code>tbl.addEventListener('table-export', e =&gt; { e.detail.filename = '...'; })</code>; nele,
+          <code>e.preventDefault()</code> cancela). O handler precisa ser síncrono: alterações feitas depois de um
+          <code>await</code> chegam tarde.
+        </p>
+
         <!-- ===== Colunas só na exportação (hidden) ===== -->
         <h2 class="gd-h2">Colunas só na exportação (hidden)</h2>
         <p class="gd-lead">
@@ -2170,6 +2230,12 @@ detail.filters.forEach(f =&gt; { params[f.filterKey] = f.filterValue; });
               <td class="col-type">string</td>
               <td class="col-default">"export_..."</td>
               <td class="col-desc">Nome base do arquivo exportado (sem extensão). Default gera <code>export_ddMMyyyy_HHmmss</code> no momento do clique.</td>
+            </tr>
+            <tr>
+              <td class="col-name">onexport</td>
+              <td class="col-type">string (JS)</td>
+              <td class="col-default">—</td>
+              <td class="col-desc">Roda ao clicar em Exportar CSV/PDF, <strong>antes</strong> de gerar o arquivo. Variáveis <code>event</code> e <code>detail</code> (<code>type</code>, <code>filename</code>, <code>title</code>, <code>rowCount</code>). Altere <code>detail.filename</code>/<code>detail.title</code> para definir o nome e o título na hora; <code>return false</code> cancela. Também como propriedade <code>tbl.onExport = (detail, event) =&gt; ...</code> ou CustomEvent <code>table-export</code>. Veja <em>Nome e título na hora de exportar</em>.</td>
             </tr>
             <tr>
               <td class="col-name">rowaltcolor</td>
