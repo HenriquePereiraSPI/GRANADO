@@ -1757,17 +1757,27 @@ detail.filters.forEach(f =&gt; { params[f.filterKey] = f.filterValue; });
         <!-- ===== Coluna de ação (Detalhes) ===== -->
         <h2 class="gd-h2">Coluna de ação (botão Detalhes)</h2>
         <p class="gd-lead">
-          Para uma coluna com um botão por linha (ex.: <em>DETALHES</em>), coloque o HTML do botão no valor da
-          linha e declare a coluna com <code>filterable: false</code>, <code>sortable: false</code> e
-          <code>allowExport: false</code>. Sem isso o HTML do botão entra na busca global (digitar <code>6</code>,
-          <code>px</code> ou <code>detalhes</code> traz todas as linhas, porque o texto existe no estilo do botão),
-          a coluna ganha funil e ordenação sem sentido e o CSV/PDF sai com uma coluna cheia de "DETALHES".
+          Para uma coluna com um botão por linha (ex.: <em>DETALHES</em>), deixe as <code>rows</code> só com os dados
+          e monte o botão no <code>onrender</code>: ele roda para cada célula e recebe <code>cell</code>,
+          <code>col</code>, <code>row</code> (a linha inteira, inclusive campos sem coluna, como o id) e
+          <code>rowIndex</code>. Na coluna de ação, devolva o HTML do botão com o id da linha no <code>onclick</code>;
+          nas outras, devolva <code>cell</code>.
+        </p>
+        <p class="gd-lead">
+          Declare a coluna com <code>filterable: false</code>, <code>sortable: false</code> e
+          <code>allowExport: false</code>: ela fica sem funil e sem ordenação, fora da busca global e fora do CSV/PDF.
+          Como o HTML só existe na hora de desenhar, filtro, ordenação, exportação e o <code>row</code> dos eventos
+          trabalham com os valores reais da linha.
         </p>
         <ul class="gd-lead" style="padding-left:18px;margin-top:0">
           <li><strong><code>type="button"</code> é obrigatório</strong> no botão: no Apriso a tela fica dentro de um
             <code>&lt;form&gt;</code> e, sem ele, o clique envia o form e recarrega a página.</li>
-          <li>O <code>onclick</code> do botão chama uma <strong>função global</strong> passando o id da linha; a função
-            busca os dados e abre o detalhe.</li>
+          <li><strong>Barra dupla nas aspas do id:</strong> o código do <code>onrender</code> fica entre crases e é lido
+            duas vezes, então as aspas em volta do id levam <code>\\'</code>. Com uma barra só, a tabela dá erro e não
+            aparece.</li>
+          <li><strong><code>return cell;</code> no fim</strong> é obrigatório: sem ele as outras colunas ficam vazias.</li>
+          <li>O <code>onclick</code> chama uma <strong>função global</strong> com o id; a função busca os dados e abre o
+            detalhe.</li>
           <li>Se a tabela também tiver <code>onclickevent</code>, o clique no botão dispara o clique da linha. Ignore-o
             no início do handler: <code>if (event.target.closest('.table-button')) return;</code></li>
         </ul>
@@ -1783,29 +1793,12 @@ detail.filters.forEach(f =&gt; { params[f.filterKey] = f.filterValue; });
                 { key: 'acao', label: 'Ação', align: 'center', width: '110px', filterable: false, sortable: false, allowExport: false }
               ];
 
-              // Dados vindos da consulta (mock)
-              var pesagens = [
+              // Só dados (como vêm da consulta): nenhum HTML e nenhum campo "acao".
+              var ROWS = [
                 { weighLineDetailId: 'WLD-1001', op: 'OP-2026-0416', mat: 'Glicerina USP', pesado: '44,983', operador: 'Kaic Lima', balanca: 'B-01' },
                 { weighLineDetailId: 'WLD-1002', op: 'OP-2026-0416', mat: 'Fenoxietanol', pesado: '3,028', operador: 'Kaic Lima', balanca: 'B-02' },
                 { weighLineDetailId: 'WLD-1003', op: 'OP-2026-0417', mat: 'Ácido Cítrico', pesado: '12,450', operador: 'Ana Souza', balanca: 'B-01' }
               ];
-
-              // ROWS montadas dinamicamente: cada linha ganha o botão com o seu id no onclick.
-              var ROWS = pesagens.map(function (p) {
-                var weighLineDetailId = p.weighLineDetailId;
-                var acao =
-                  '<button type="button" class="table-button" onclick="abrirDetalhePesagem(\'' + weighLineDetailId + '\')" ' +
-                  'style="border-color:#D6CDA4;background:#FDFAF1;color:#5A6B5E;font-weight:800;font-size:10px;letter-spacing:.06em;padding:6px 12px;border-radius:6px;cursor:pointer">DETALHES</button>';
-                return {
-                  weighLineDetailId: p.weighLineDetailId,
-                  op: p.op,
-                  mat: p.mat,
-                  pesado: p.pesado,
-                  operador: p.operador,
-                  balanca: p.balanca,
-                  acao: acao
-                };
-              });
 
               // Função global chamada pelo onclick do botão.
               window.abrirDetalhePesagem = function (id) {
@@ -1820,6 +1813,13 @@ detail.filters.forEach(f =&gt; { params[f.filterKey] = f.filterValue; });
               if (!t) return;
               t.setAttribute('columns', JSON.stringify(COLS));
               t.setAttribute('rows', JSON.stringify(ROWS));
+              t.setAttribute('onrender', `
+                if (col.key === 'acao') {
+                  return '<button type="button" class="table-button" onclick="abrirDetalhePesagem(\\'' + row.weighLineDetailId + '\\')" ' +
+                    'style="border-color:#D6CDA4;background:#FDFAF1;color:#5A6B5E;font-weight:800;font-size:10px;letter-spacing:.06em;padding:6px 12px;border-radius:6px;cursor:pointer">DETALHES</button>';
+                }
+                return cell;
+              `);
             })();
           </script>
         </div>
@@ -1835,31 +1835,13 @@ detail.filters.forEach(f =&gt; { params[f.filterKey] = f.filterValue; });
       filterable: <span class="tk-keyword">false</span>, sortable: <span class="tk-keyword">false</span>, allowExport: <span class="tk-keyword">false</span> }
   ];
 
-  <span class="tk-comment">// Dados vindos da consulta (mock)</span>
-  <span class="tk-kw">const</span> pesagens = [
+  <span class="tk-comment">// Só dados (como vêm da consulta): nenhum HTML e nenhum campo "acao".</span>
+  <span class="tk-comment">// weighLineDetailId, operador e balanca não têm coluna: chegam no row e servem para o detalhe.</span>
+  <span class="tk-kw">const</span> ROWS = [
     { weighLineDetailId: <span class="tk-str">'WLD-1001'</span>, op: <span class="tk-str">'OP-2026-0416'</span>, mat: <span class="tk-str">'Glicerina USP'</span>, pesado: <span class="tk-str">'44,983'</span>, operador: <span class="tk-str">'Kaic Lima'</span>, balanca: <span class="tk-str">'B-01'</span> },
     { weighLineDetailId: <span class="tk-str">'WLD-1002'</span>, op: <span class="tk-str">'OP-2026-0416'</span>, mat: <span class="tk-str">'Fenoxietanol'</span>,  pesado: <span class="tk-str">'3,028'</span>,  operador: <span class="tk-str">'Kaic Lima'</span>, balanca: <span class="tk-str">'B-02'</span> },
     { weighLineDetailId: <span class="tk-str">'WLD-1003'</span>, op: <span class="tk-str">'OP-2026-0417'</span>, mat: <span class="tk-str">'Ácido Cítrico'</span>, pesado: <span class="tk-str">'12,450'</span>, operador: <span class="tk-str">'Ana Souza'</span>, balanca: <span class="tk-str">'B-01'</span> }
   ];
-
-  <span class="tk-comment">// ROWS montadas dinamicamente: cada linha ganha o botão com o seu id no onclick.</span>
-  <span class="tk-comment">// type="button" evita recarregar a tela no Apriso (a página fica dentro de um &lt;form&gt;).</span>
-  <span class="tk-kw">const</span> ROWS = pesagens.map(p =&gt; {
-    <span class="tk-kw">const</span> weighLineDetailId = p.weighLineDetailId;
-    <span class="tk-kw">const</span> acao =
-      <span class="tk-str">'&lt;button type="button" class="table-button" onclick="abrirDetalhePesagem(\''</span> + weighLineDetailId + <span class="tk-str">'\')" '</span> +
-      <span class="tk-str">'style="border-color:#D6CDA4;background:#FDFAF1;color:#5A6B5E;font-weight:800;font-size:10px;letter-spacing:.06em;padding:6px 12px;border-radius:6px;cursor:pointer"&gt;DETALHES&lt;/button&gt;'</span>;
-
-    <span class="tk-kw">return</span> {
-      weighLineDetailId: p.weighLineDetailId,   <span class="tk-comment">// sem coluna: usado no detalhe</span>
-      op: p.op,
-      mat: p.mat,
-      pesado: p.pesado,
-      operador: p.operador,                     <span class="tk-comment">// sem coluna: usado no detalhe</span>
-      balanca: p.balanca,                       <span class="tk-comment">// sem coluna: usado no detalhe</span>
-      acao: acao                                <span class="tk-comment">// HTML do botão na coluna de ação</span>
-    };
-  });
 
   <span class="tk-comment">// Função GLOBAL: o onclick do botão precisa encontrá-la</span>
   <span class="tk-kw">function</span> abrirDetalhePesagem(id) {
@@ -1872,6 +1854,18 @@ detail.filters.forEach(f =&gt; { params[f.filterKey] = f.filterValue; });
   <span class="tk-kw">const</span> tbl = document.getElementById(<span class="tk-str">'tbl'</span>);
   tbl.setAttribute(<span class="tk-str">'columns'</span>, JSON.stringify(COLS));
   tbl.setAttribute(<span class="tk-str">'rows'</span>, JSON.stringify(ROWS));
+
+  <span class="tk-comment">// Roda para cada célula. Na coluna "acao" devolve o botão com o id da linha;</span>
+  <span class="tk-comment">// nas outras devolve o valor normal (return cell é obrigatório).</span>
+  <span class="tk-comment">// Atenção: \\' (barra dupla) nas aspas do id, porque o código fica entre crases.</span>
+  <span class="tk-comment">// type="button" evita recarregar a tela no Apriso (a página fica dentro de um &lt;form&gt;).</span>
+  tbl.setAttribute(<span class="tk-str">'onrender'</span>, <span class="tk-str">`
+    if (col.key === 'acao') {
+      return '&lt;button type="button" class="table-button" onclick="abrirDetalhePesagem(\\'' + row.weighLineDetailId + '\\')" ' +
+        'style="border-color:#D6CDA4;background:#FDFAF1;color:#5A6B5E;font-weight:800;font-size:10px;letter-spacing:.06em;padding:6px 12px;border-radius:6px;cursor:pointer"&gt;DETALHES&lt;/button&gt;';
+    }
+    return cell;
+  `</span>);
 <span class="tk-tag">&lt;/script&gt;</span></pre>
         <p class="gd-lead" style="font-size:12px;color:#8A8575">
           O id vai entre aspas simples dentro do <code>onclick</code>: funciona para GUIDs e números. Se o id puder
