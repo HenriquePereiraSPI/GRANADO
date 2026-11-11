@@ -1754,6 +1754,130 @@ detail.filters.forEach(f =&gt; { params[f.filterKey] = f.filterValue; });
     <span class="tk-str">"alert('Abrir detalhes de ' + row.cod);"</span>);
 <span class="tk-tag">&lt;/script&gt;</span></pre>
 
+        <!-- ===== Coluna de ação (Detalhes) ===== -->
+        <h2 class="gd-h2">Coluna de ação (botão Detalhes)</h2>
+        <p class="gd-lead">
+          Para uma coluna com um botão por linha (ex.: <em>DETALHES</em>), coloque o HTML do botão no valor da
+          linha e declare a coluna com <code>filterable: false</code>, <code>sortable: false</code> e
+          <code>allowExport: false</code>. Sem isso o HTML do botão entra na busca global (digitar <code>6</code>,
+          <code>px</code> ou <code>detalhes</code> traz todas as linhas, porque o texto existe no estilo do botão),
+          a coluna ganha funil e ordenação sem sentido e o CSV/PDF sai com uma coluna cheia de "DETALHES".
+        </p>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong><code>type="button"</code> é obrigatório</strong> no botão: no Apriso a tela fica dentro de um
+            <code>&lt;form&gt;</code> e, sem ele, o clique envia o form e recarrega a página.</li>
+          <li>O <code>onclick</code> do botão chama uma <strong>função global</strong> passando o id da linha; a função
+            busca os dados e abre o detalhe.</li>
+          <li>Se a tabela também tiver <code>onclickevent</code>, o clique no botão dispara o clique da linha. Ignore-o
+            no início do handler: <code>if (event.target.closest('.table-button')) return;</code></li>
+        </ul>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-table id="dt-acao" tabletitle="Pesagens · coluna de ação"></granado-table>
+          <script>
+            (function () {
+              var COLS = [
+                { key: 'op', label: 'OP', mono: true, width: '110px' },
+                { key: 'mat', label: 'Material' },
+                { key: 'pesado', label: 'Pesado (kg)', mono: true, align: 'right', width: '110px' },
+                { key: 'acao', label: 'Ação', align: 'center', width: '110px', filterable: false, sortable: false, allowExport: false }
+              ];
+
+              // Dados vindos da consulta (mock)
+              var pesagens = [
+                { weighLineDetailId: 'WLD-1001', op: 'OP-2026-0416', mat: 'Glicerina USP', pesado: '44,983', operador: 'Kaic Lima', balanca: 'B-01' },
+                { weighLineDetailId: 'WLD-1002', op: 'OP-2026-0416', mat: 'Fenoxietanol', pesado: '3,028', operador: 'Kaic Lima', balanca: 'B-02' },
+                { weighLineDetailId: 'WLD-1003', op: 'OP-2026-0417', mat: 'Ácido Cítrico', pesado: '12,450', operador: 'Ana Souza', balanca: 'B-01' }
+              ];
+
+              // ROWS montadas dinamicamente: cada linha ganha o botão com o seu id no onclick.
+              var ROWS = pesagens.map(function (p) {
+                var weighLineDetailId = p.weighLineDetailId;
+                var acao =
+                  '<button type="button" class="table-button" onclick="abrirDetalhePesagem(\'' + weighLineDetailId + '\')" ' +
+                  'style="border-color:#D6CDA4;background:#FDFAF1;color:#5A6B5E;font-weight:800;font-size:10px;letter-spacing:.06em;padding:6px 12px;border-radius:6px;cursor:pointer">DETALHES</button>';
+                return {
+                  weighLineDetailId: p.weighLineDetailId,
+                  op: p.op,
+                  mat: p.mat,
+                  pesado: p.pesado,
+                  operador: p.operador,
+                  balanca: p.balanca,
+                  acao: acao
+                };
+              });
+
+              // Função global chamada pelo onclick do botão.
+              window.abrirDetalhePesagem = function (id) {
+                var p = ROWS.filter(function (x) { return x.weighLineDetailId === id; })[0];
+                if (!p) return;
+                alert('Detalhe da pesagem ' + p.weighLineDetailId +
+                  '\nOP: ' + p.op + '\nMaterial: ' + p.mat + '\nPesado: ' + p.pesado + ' kg' +
+                  '\nOperador: ' + p.operador + '\nBalança: ' + p.balanca);
+              };
+
+              var t = document.getElementById('dt-acao');
+              if (!t) return;
+              t.setAttribute('columns', JSON.stringify(COLS));
+              t.setAttribute('rows', JSON.stringify(ROWS));
+            })();
+          </script>
+        </div>
+        <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-table</span> <span class="tk-attr">id</span>=<span class="tk-str">"tbl"</span> <span class="tk-attr">tabletitle</span>=<span class="tk-str">"Pesagens"</span><span class="tk-tag">&gt;&lt;/granado-table&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">const</span> COLS = [
+    { key: <span class="tk-str">'op'</span>,     label: <span class="tk-str">'OP'</span>,          mono: <span class="tk-keyword">true</span>, width: <span class="tk-str">'110px'</span> },
+    { key: <span class="tk-str">'mat'</span>,    label: <span class="tk-str">'Material'</span> },
+    { key: <span class="tk-str">'pesado'</span>, label: <span class="tk-str">'Pesado (kg)'</span>, mono: <span class="tk-keyword">true</span>, align: <span class="tk-str">'right'</span>, width: <span class="tk-str">'110px'</span> },
+    <span class="tk-comment">// coluna de ação: fora da busca, da ordenação e da exportação</span>
+    { key: <span class="tk-str">'acao'</span>,   label: <span class="tk-str">'Ação'</span>, align: <span class="tk-str">'center'</span>, width: <span class="tk-str">'110px'</span>,
+      filterable: <span class="tk-keyword">false</span>, sortable: <span class="tk-keyword">false</span>, allowExport: <span class="tk-keyword">false</span> }
+  ];
+
+  <span class="tk-comment">// Dados vindos da consulta (mock)</span>
+  <span class="tk-kw">const</span> pesagens = [
+    { weighLineDetailId: <span class="tk-str">'WLD-1001'</span>, op: <span class="tk-str">'OP-2026-0416'</span>, mat: <span class="tk-str">'Glicerina USP'</span>, pesado: <span class="tk-str">'44,983'</span>, operador: <span class="tk-str">'Kaic Lima'</span>, balanca: <span class="tk-str">'B-01'</span> },
+    { weighLineDetailId: <span class="tk-str">'WLD-1002'</span>, op: <span class="tk-str">'OP-2026-0416'</span>, mat: <span class="tk-str">'Fenoxietanol'</span>,  pesado: <span class="tk-str">'3,028'</span>,  operador: <span class="tk-str">'Kaic Lima'</span>, balanca: <span class="tk-str">'B-02'</span> },
+    { weighLineDetailId: <span class="tk-str">'WLD-1003'</span>, op: <span class="tk-str">'OP-2026-0417'</span>, mat: <span class="tk-str">'Ácido Cítrico'</span>, pesado: <span class="tk-str">'12,450'</span>, operador: <span class="tk-str">'Ana Souza'</span>, balanca: <span class="tk-str">'B-01'</span> }
+  ];
+
+  <span class="tk-comment">// ROWS montadas dinamicamente: cada linha ganha o botão com o seu id no onclick.</span>
+  <span class="tk-comment">// type="button" evita recarregar a tela no Apriso (a página fica dentro de um &lt;form&gt;).</span>
+  <span class="tk-kw">const</span> ROWS = pesagens.map(p =&gt; {
+    <span class="tk-kw">const</span> weighLineDetailId = p.weighLineDetailId;
+    <span class="tk-kw">const</span> acao =
+      <span class="tk-str">'&lt;button type="button" class="table-button" onclick="abrirDetalhePesagem(\''</span> + weighLineDetailId + <span class="tk-str">'\')" '</span> +
+      <span class="tk-str">'style="border-color:#D6CDA4;background:#FDFAF1;color:#5A6B5E;font-weight:800;font-size:10px;letter-spacing:.06em;padding:6px 12px;border-radius:6px;cursor:pointer"&gt;DETALHES&lt;/button&gt;'</span>;
+
+    <span class="tk-kw">return</span> {
+      weighLineDetailId: p.weighLineDetailId,   <span class="tk-comment">// sem coluna: usado no detalhe</span>
+      op: p.op,
+      mat: p.mat,
+      pesado: p.pesado,
+      operador: p.operador,                     <span class="tk-comment">// sem coluna: usado no detalhe</span>
+      balanca: p.balanca,                       <span class="tk-comment">// sem coluna: usado no detalhe</span>
+      acao: acao                                <span class="tk-comment">// HTML do botão na coluna de ação</span>
+    };
+  });
+
+  <span class="tk-comment">// Função GLOBAL: o onclick do botão precisa encontrá-la</span>
+  <span class="tk-kw">function</span> abrirDetalhePesagem(id) {
+    <span class="tk-kw">const</span> p = ROWS.find(x =&gt; x.weighLineDetailId === id);
+    <span class="tk-kw">if</span> (!p) <span class="tk-kw">return</span>;
+    alert(<span class="tk-str">'OP: '</span> + p.op + <span class="tk-str">'\nMaterial: '</span> + p.mat + <span class="tk-str">'\nPesado: '</span> + p.pesado + <span class="tk-str">' kg'</span> +
+          <span class="tk-str">'\nOperador: '</span> + p.operador + <span class="tk-str">'\nBalança: '</span> + p.balanca);
+  }
+
+  <span class="tk-kw">const</span> tbl = document.getElementById(<span class="tk-str">'tbl'</span>);
+  tbl.setAttribute(<span class="tk-str">'columns'</span>, JSON.stringify(COLS));
+  tbl.setAttribute(<span class="tk-str">'rows'</span>, JSON.stringify(ROWS));
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        <p class="gd-lead" style="font-size:12px;color:#8A8575">
+          O id vai entre aspas simples dentro do <code>onclick</code>: funciona para GUIDs e números. Se o id puder
+          conter <code>'</code>, ele precisa ser escapado antes de montar o botão.
+        </p>
+
         <!-- ===== Exportação ===== -->
         <h2 class="gd-h2">Exportação CSV / PDF</h2>
         <p class="gd-lead">
@@ -14286,6 +14410,79 @@ g.data = [
 
 <span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-str">"document.getElementById('tbl').open()"</span><span class="tk-tag">&gt;</span>Ver itens<span class="tk-tag">&lt;/button&gt;</span></pre>
 
+        <h2 class="gd-h2">Nome e título na hora de exportar (onExport)</h2>
+        <p class="gd-lead">
+          O <code>onExport</code> funciona igual ao do <a class="gd-link" href="#granado-table">granado-table</a>:
+          dispara ao clicar em <em>Exportar CSV/PDF</em>, antes de gerar o arquivo, e deixa definir
+          <code>detail.filename</code> (nome do arquivo) e <code>detail.title</code> (título do PDF). <code>return false</code>
+          cancela. Use o atributo <code>onexport</code>, a propriedade <code>popup.onExport</code> ou a opção
+          <code>onExport</code> do <code>show()</code>.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <button type="button" onclick="document.getElementById('doc-tbl-export').open()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #1F7A3D;border-radius:7px;background:#1F7A3D;color:#fff;cursor:pointer">Abrir e exportar</button>
+          <button type="button" onclick="docTablePopupExport()" style="font:700 13px/1.4 'Poppins',system-ui,Arial,sans-serif;padding:9px 16px;border:1px solid #9A7520;border-radius:7px;background:#9A7520;color:#fff;cursor:pointer">Abrir via show()</button>
+          <granado-table-popup id="doc-tbl-export" open="false"
+            title="Itens da Ordem OP-2026-0416" subtitle="Clique em Exportar CSV ou PDF"
+            tabletitle="Itens da ordem"
+            onexport="detail.filename = 'itens_OP-2026-0416'; detail.title = 'Itens da Ordem OP-2026-0416 — ' + new Date().toLocaleDateString('pt-BR');"
+            columns='[{"key":"cod","label":"Código","mono":true},{"key":"mp","label":"Matéria-Prima"},{"key":"kg","label":"Pesado (kg)","mono":true,"align":"right"}]'
+            rows='[{"cod":"MP-001","mp":"Água Purificada","kg":"120,500"},{"cod":"MP-002","mp":"Álcool Etílico","kg":"18,000"},{"cod":"MP-003","mp":"Essência Rosa","kg":"2,350"}]'></granado-table-popup>
+        </div>
+        <script>
+          function docTablePopupExport() {
+            var op = 'OP-2026-0417';
+            GranadoTablePopup.show({
+              title: 'Itens da Ordem ' + op, subtitle: 'Exportação com nome e título definidos no onExport',
+              columns: [
+                { key: 'cod', label: 'Código', mono: true },
+                { key: 'mp', label: 'Matéria-Prima' },
+                { key: 'kg', label: 'Pesado (kg)', mono: true, align: 'right' }
+              ],
+              rows: [
+                { cod: 'MP-010', mp: 'Glicerina USP', kg: '44,983' },
+                { cod: 'MP-011', mp: 'Fenoxietanol', kg: '3,028' }
+              ],
+              onExport: function (detail) {
+                detail.filename = 'itens_' + op + (detail.type === 'pdf' ? '_impressao' : '');
+                detail.title = 'Itens da Ordem ' + op + ' (' + detail.rowCount + ' itens)';
+              }
+            });
+          }
+        </script>
+        <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Opção 1: declarativo (variáveis: event, detail) --&gt;</span>
+<span class="tk-tag">&lt;granado-table-popup</span> <span class="tk-attr">id</span>=<span class="tk-str">"tbl"</span> <span class="tk-attr">open</span>=<span class="tk-str">"false"</span>
+  <span class="tk-attr">title</span>=<span class="tk-str">"Itens da Ordem OP-2026-0416"</span>
+  <span class="tk-attr">tabletitle</span>=<span class="tk-str">"Itens da ordem"</span>
+  <span class="tk-attr">onexport</span>=<span class="tk-str">"detail.filename = 'itens_OP-2026-0416';
+            detail.title = 'Itens da Ordem OP-2026-0416 — ' + new Date().toLocaleDateString('pt-BR');"</span>
+  <span class="tk-attr">columns</span>=<span class="tk-str">'[{"key":"cod","label":"Código","mono":true},{"key":"mp","label":"Matéria-Prima"},{"key":"kg","label":"Pesado (kg)","mono":true,"align":"right"}]'</span>
+  <span class="tk-attr">rows</span>=<span class="tk-str">'[{"cod":"MP-001","mp":"Água Purificada","kg":"120,500"},{"cod":"MP-002","mp":"Álcool Etílico","kg":"18,000"}]'</span><span class="tk-tag">&gt;&lt;/granado-table-popup&gt;</span>
+
+<span class="tk-tag">&lt;button</span> <span class="tk-attr">onclick</span>=<span class="tk-str">"document.getElementById('tbl').open()"</span><span class="tk-tag">&gt;</span>Ver itens<span class="tk-tag">&lt;/button&gt;</span>
+
+<span class="tk-comment">&lt;!-- Opção 2: show() com função --&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">const</span> op = <span class="tk-str">'OP-2026-0417'</span>;
+  GranadoTablePopup.<span class="tk-attr">show</span>({
+    title: <span class="tk-str">'Itens da Ordem '</span> + op,
+    columns: [ ... ],
+    rows: [ ... ],
+    onExport: (detail) =&gt; {
+      <span class="tk-comment">// detail = { type: "csv" | "pdf", filename, title, rowCount }</span>
+      detail.filename = <span class="tk-str">'itens_'</span> + op + (detail.type === <span class="tk-str">'pdf'</span> ? <span class="tk-str">'_impressao'</span> : <span class="tk-str">''</span>);
+      detail.title    = <span class="tk-str">'Itens da Ordem '</span> + op + <span class="tk-str">' ('</span> + detail.rowCount + <span class="tk-str">' itens)'</span>;
+    }
+  });
+<span class="tk-tag">&lt;/script&gt;</span>
+
+<span class="tk-comment">&lt;!-- Opção 3: propriedade ou evento no popup já criado --&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-kw">const</span> popup = document.getElementById(<span class="tk-str">'tbl'</span>);
+  popup.onExport = (detail) =&gt; { detail.filename = <span class="tk-str">'itens_'</span> + op; };
+  <span class="tk-comment">// ou: popup.addEventListener('table-export', (e) =&gt; { e.detail.filename = '...'; });</span>
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
         <h2 class="gd-h2">API</h2>
 
         <h3 class="gd-h3">Atributos / propriedades</h3>
@@ -14311,6 +14508,7 @@ g.data = [
             <tr><td class="col-name">onadvancedfilterclick · onadvancedfilterclear / <em>onAdvancedFilterClick · onAdvancedFilterClear</em></td><td class="col-type">string (JS) / função</td><td class="col-desc">Eventos de <em>Filtrar</em> e <em>Limpar</em>. Para atualizar a tabela, use <code>popup.rows = dados</code>: o que foi preenchido no filtro é mantido.</td></tr>
             <tr><td class="col-name">isenablesort / <em>isEnableSort</em></td><td class="col-type">boolean</td><td class="col-desc">Ordenação por coluna.</td></tr>
             <tr><td class="col-name">isenableexportcsv / isenableexportpdf</td><td class="col-type">boolean</td><td class="col-desc">Botões de exportar CSV / PDF.</td></tr>
+            <tr><td class="col-name">onexport / <em>onExport</em></td><td class="col-type">string (JS) / função</td><td class="col-desc">Dispara ao exportar, antes de gerar o arquivo; permite trocar <code>detail.filename</code> e <code>detail.title</code> ou cancelar com <code>return false</code>. Também via CustomEvent <code>table-export</code> no popup. Veja <em>Nome e título na hora de exportar</em> acima.</td></tr>
             <tr><td class="col-name">onrender / onclickevent / ondoubleclickevent</td><td class="col-type">string (JS)</td><td class="col-desc">Render por célula / clique / duplo-clique na linha.</td></tr>
             <tr><td class="col-name">onrenderrow / <em>onRenderRow</em></td><td class="col-type">string (JS) / função</td><td class="col-desc">Cor da linha + pulse de alerta. Aceita <strong>função</strong> via propriedade (<code>popup.onRenderRow = fn</code>) ou opção <code>onRenderRow</code> no <code>show()</code>. Repassado ao <a class="gd-link" href="#granado-table">granado-table</a>.</td></tr>
             <tr><td class="col-name">gross-border-color · title-color · soft-border-color · expandedrowcolor · childrowcolor</td><td class="col-type">string (cor)</td><td class="col-desc">Faixa grossa · título · bordas finas · destaque do grupo expandido (pai + filhos) · cor fixa das linhas-filhas (veja <a class="gd-link" href="#granado-table">granado-table</a>).</td></tr>

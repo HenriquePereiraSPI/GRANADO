@@ -13,11 +13,10 @@ async function callDFCAsync(context, dfc, inputs, revisao = '') {
         };
 
     } catch (ex) {
-
         return {
-            responseHTTPStatus: ex.status || ex.httpStatus || 500,
-            responseHTTPMessage: ex.message,
-            responseResultData: null
+            responseHTTPStatus:  ex.status || ex.httpStatus || 500,
+            responseHTTPMessage: ex.message || String(ex),
+            responseResultData:  null
         };
     }
 }

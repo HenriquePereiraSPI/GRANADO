@@ -20,11 +20,16 @@
        color, gross-border-color, title-color, soft-border-color,
        onrender, onrenderrow, onclickevent, ondoubleclickevent,
        isenablepagination, pagesize, tablelayout, isenableexportcsv,
-       isenableexportpdf, exportfilename, tabletitle, rowaltcolor,
+       isenableexportpdf, exportfilename, onexport, tabletitle, rowaltcolor,
        childrowcolor, expandedrowcolor, rowheight, isenablefilter, isenablesort,
        isenableadvancedfilter, advancedfilterdata,
        onadvancedfilterclick, onadvancedfilterclear
      (veja a doc do <granado-table> para o significado de cada uma.)
+
+     onExport: além do atributo onexport (string JS), aceita FUNÇÃO via
+       propriedade (popup.onExport = (detail, event) => ...) ou opção onExport
+       no show(). Repassado ao <granado-table> interno. O CustomEvent
+       "table-export" sobe da tabela e pode ser escutado no próprio popup.
 
      onRenderRow: além do atributo (string JS), aceita FUNÇÃO via propriedade
        (popup.onRenderRow = (row, rowIndex) => ...) ou opção onRenderRow no
@@ -41,7 +46,7 @@
        isEnableExportPdf, exportFilename, tableTitle, rowAltColor,
        childRowColor, rowHeight, isEnableFilter, isEnableSort,
        isEnableAdvancedFilter, advancedFilterData (array ou string JSON),
-       onAdvancedFilterClick, onAdvancedFilterClear (função ou string JS)
+       onAdvancedFilterClick, onAdvancedFilterClear, onExport (função ou string JS)
      })
 
    ── Exemplo
@@ -79,7 +84,7 @@ if (!customElements.get('granado-table-popup')) {
 
   // Atributos repassados 1:1 ao <granado-table> (exceto columns/rows,
   // tratados à parte pelos getters .columns / .rows).
-  const TABLE_ATTRS = ['color', 'gross-border-color', 'title-color', 'soft-border-color', 'onrender', 'onrenderrow', 'onclickevent', 'ondoubleclickevent', 'isenablepagination', 'pagesize', 'tablelayout', 'isenableexportcsv', 'isenableexportpdf', 'exportfilename', 'tabletitle', 'rowaltcolor', 'childrowcolor', 'expandedrowcolor', 'rowheight', 'isenablefilter', 'isenablesort', 'isenableadvancedfilter', 'advancedfilterdata', 'onadvancedfilterclick', 'onadvancedfilterclear'];
+  const TABLE_ATTRS = ['color', 'gross-border-color', 'title-color', 'soft-border-color', 'onrender', 'onrenderrow', 'onclickevent', 'ondoubleclickevent', 'isenablepagination', 'pagesize', 'tablelayout', 'isenableexportcsv', 'isenableexportpdf', 'exportfilename', 'onexport', 'tabletitle', 'rowaltcolor', 'childrowcolor', 'expandedrowcolor', 'rowheight', 'isenablefilter', 'isenablesort', 'isenableadvancedfilter', 'advancedfilterdata', 'onadvancedfilterclick', 'onadvancedfilterclear'];
 
   // Mapa das opções camelCase (show) -> atributo kebab da tabela.
   // Obs.: onRenderRow e os eventos do filtro avançado (podem ser função) e
@@ -115,7 +120,7 @@ if (!customElements.get('granado-table-popup')) {
       if (opts.advancedFilterData != null) {
         el.setAttribute('advancedfilterdata', typeof opts.advancedFilterData === 'string' ? opts.advancedFilterData : JSON.stringify(opts.advancedFilterData));
       }
-      ['onAdvancedFilterClick', 'onAdvancedFilterClear'].forEach((k) => {
+      ['onAdvancedFilterClick', 'onAdvancedFilterClear', 'onExport'].forEach((k) => {
         if (typeof opts[k] === 'function') el[k] = opts[k];
         else if (opts[k] != null) el.setAttribute(k.toLowerCase(), String(opts[k]));
       });
@@ -131,7 +136,7 @@ if (!customElements.get('granado-table-popup')) {
     // Ciclo de vida
     // ------------------------------------------------------------
     connectedCallback() {
-      ['columns', 'rows', 'onAdvancedFilterClick', 'onAdvancedFilterClear'].forEach((p) => {
+      ['columns', 'rows', 'onAdvancedFilterClick', 'onAdvancedFilterClear', 'onExport'].forEach((p) => {
         if (Object.prototype.hasOwnProperty.call(this, p)) { const v = this[p]; delete this[p]; this[p] = v; }
       });
       if (this.getAttribute('open') === 'false') this.style.display = 'none';
@@ -195,6 +200,12 @@ if (!customElements.get('granado-table-popup')) {
       const t = this.querySelector('granado-table');
       if (t) t.onAdvancedFilterClear = this._onAdvClear;
     }
+    get onExport() { return this._onExport || null; }
+    set onExport(fn) {
+      this._onExport = typeof fn === 'function' ? fn : null;
+      const t = this.querySelector('granado-table');
+      if (t) t.onExport = this._onExport;
+    }
 
     open() { this.removeAttribute('open'); this.style.display = ''; if (this.isConnected) this._render(); }
     close() { this.style.display = 'none'; if (this._autoRemove) this.remove(); }
@@ -249,6 +260,7 @@ if (!customElements.get('granado-table-popup')) {
       if (this._onRenderRowFn) t.onRenderRow = this._onRenderRowFn;
       if (this._onAdvClick) t.onAdvancedFilterClick = this._onAdvClick;
       if (this._onAdvClear) t.onAdvancedFilterClear = this._onAdvClear;
+      if (this._onExport) t.onExport = this._onExport;
       // popup.rows = resposta do fetch recria a tabela: mantém o que foi preenchido no filtro.
       if (prevTable) { t._advValues = prevTable._advValues; t._advApplied = prevTable._advApplied; }
       // columns/rows sempre via atributo JSON (aceita array ou string)
