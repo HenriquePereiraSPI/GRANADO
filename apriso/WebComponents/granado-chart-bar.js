@@ -58,9 +58,19 @@
      na mesma barra volta tudo ao normal (toggle).
 
    ── Exportação (métodos JS)
-     el.exportPNG(filename?, scale?)   // imagem .png (scale default 2)
-     el.exportCSV(filename?)           // dados em tabela (.csv, ; + BOM)
+     el.exportPNG(filename?, scale?, title?)   // imagem .png (scale default 2)
+     el.exportCSV(filename?)                   // dados em tabela (.csv, ; + BOM)
      (PNG leva título + legenda; CSV exporta os dados)
+
+   ── onExport (igual ao granado-table)
+     Dispara ao clicar nos botões PNG/CSV, ANTES de gerar o arquivo:
+       detail = { type: "png"|"csv", filename, title, rowCount }
+       - altere detail.filename (sem extensão) e/ou detail.title (título na
+         imagem; vazio = sem título; não afeta o CSV);
+       - return false (ou event.preventDefault() no CustomEvent) cancela.
+     Aceita atributo onexport (JS; variáveis event, detail), propriedade
+     el.onExport = (detail, event) => ... ou o CustomEvent "chart-export".
+     Chamadas diretas a exportPNG/exportCSV não disparam o onExport.
 
    ── Exemplo
    <script src="[AprisoScripts]/WebComponents/granado-chart-bar.js"></script>
@@ -99,7 +109,7 @@ if (!customElements.get('granado-chart-bar')) {
     // Ciclo de vida
     // ------------------------------------------------------------
     connectedCallback() {
-      ['data', 'yFields'].forEach((p) => {
+      ['data', 'yFields', 'onExport'].forEach((p) => {
         if (Object.prototype.hasOwnProperty.call(this, p)) { const v = this[p]; delete this[p]; this[p] = v; }
       });
       if (typeof ResizeObserver !== 'undefined') {
@@ -579,12 +589,7 @@ if (!customElements.get('granado-chart-bar')) {
       const self = this;
       const plot = this.querySelector('[data-role="plot"]');
       this.querySelectorAll('[data-exp]').forEach((b) => {
-        b.addEventListener('click', function () {
-          const base = (self.getAttribute('title') || 'grafico').replace(/[^\w\-]+/g, '_').slice(0, 60) || 'grafico';
-          const kind = b.getAttribute('data-exp');
-          if (kind === 'png') self.exportPNG(base);
-          else if (kind === 'csv') self.exportCSV(base);
-        });
+        b.addEventListener('click', function (ev) { self._onExportClick(b.getAttribute('data-exp'), ev); });
       });
       this.querySelectorAll('[data-role="bar"]').forEach((el) => {
         el.style.cursor = 'pointer';
@@ -640,12 +645,12 @@ if (!customElements.get('granado-chart-bar')) {
     // ------------------------------------------------------------
     // Exportação (PNG / SVG) — inclui título e legenda na imagem
     // ------------------------------------------------------------
-    _buildExportSVG() {
+    _buildExportSVG(titleOverride) {
       const svg = this.querySelector('svg[data-role="svg"]');
       if (!svg) return null;
       const W = parseFloat(svg.getAttribute('width')) || 640;
       const H = parseFloat(svg.getAttribute('height')) || 320;
-      const title = this.getAttribute('title') || '';
+      const title = titleOverride != null ? String(titleOverride) : (this.getAttribute('title') || '');
       const model = this._model();
       const series = model.series || [];
       const legend = (this.showLegend && series.length > 1) ? series : [];
@@ -684,8 +689,62 @@ if (!customElements.get('granado-chart-bar')) {
       setTimeout(function () { if (a.parentNode) a.parentNode.removeChild(a); if (revoke) URL.revokeObjectURL(url); }, 0);
     }
 
-    exportPNG(filename, scale) {
-      const built = this._buildExportSVG(); if (!built) return;
+    // ── onExport: dispara ao clicar nos botões PNG/CSV, ANTES de gerar o arquivo
+    // (igual ao granado-table). Quem escuta pode trocar detail.filename e
+    // detail.title ou cancelar (return false / event.preventDefault()).
+    // Ordem: CustomEvent "chart-export" -> propriedade onExport -> atributo onexport.
+    get onExport() { return this._onExportFn || null; }
+    set onExport(fn) { this._onExportFn = typeof fn === 'function' ? fn : null; }
+
+    _defaultExportName() {
+      return (this.getAttribute('title') || 'grafico').replace(/[^\w\-]+/g, '_').slice(0, 60) || 'grafico';
+    }
+
+    // Nome de arquivo seguro: sem extensão repetida e sem caracteres inválidos no Windows.
+    _cleanFilename(v) {
+      return String(v == null ? '' : v)
+        .trim()
+        .replace(/\.(png|csv)$/i, '')
+        .replace(/[\\/:*?"<>|]/g, '_')
+        .split('').filter((ch) => ch.charCodeAt(0) > 31).join('')
+        .trim();
+    }
+
+    _fireExport(type, ev) {
+      let rowCount = 0;
+      try { rowCount = this._tableModel().rows.length; } catch (e) { /* sem dados */ }
+      const detail = {
+        type,                                   // "png" | "csv"
+        filename: this._defaultExportName(),    // sem extensão
+        title: this.getAttribute('title') || '',// título na imagem (só PNG)
+        rowCount,                               // categorias exportadas
+      };
+      let cancel = false;
+      const run = (fn, args) => {
+        try { if (fn.apply(this, args) === false) cancel = true; }
+        catch (err) { console.error('[granado-chart] onexport error:', err); }
+      };
+      const ce = new CustomEvent('chart-export', { bubbles: true, composed: true, cancelable: true, detail });
+      if (!this.dispatchEvent(ce)) cancel = true;
+      if (this._onExportFn) run(this._onExportFn, [detail, ev]);
+      const h = this.getAttribute('onexport');
+      if (h) run(new Function('event', 'detail', h), [ev, detail]);
+      if (cancel) return null;
+      return {
+        filename: this._cleanFilename(detail.filename) || this._defaultExportName(),
+        title: detail.title == null ? '' : String(detail.title),
+      };
+    }
+
+    _onExportClick(kind, ev) {
+      const exp = this._fireExport(kind, ev);
+      if (!exp) return;   // cancelado no onExport
+      if (kind === 'png') this.exportPNG(exp.filename, undefined, exp.title);
+      else if (kind === 'csv') this.exportCSV(exp.filename);
+    }
+
+    exportPNG(filename, scale, title) {
+      const built = this._buildExportSVG(title); if (!built) return;
       scale = scale || 2;
       const self = this;
       const src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(built.svg)));

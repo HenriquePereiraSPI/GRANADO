@@ -375,6 +375,68 @@
 <span class="tk-tag">&lt;/script</span><span class="tk-tag">&gt;</span></pre>
         </div>
 
+        <!-- onExport -->
+        <h2 class="gd-h2" id="chart-onexport">Nome e título na hora de exportar — <code>onExport</code></h2>
+        <p class="gd-lead">
+          Igual ao <code>granado-table</code>: o <code>onExport</code> dispara ao clicar em <strong>⬇ PNG</strong> ou
+          <strong>⬇ CSV</strong>, <strong>antes</strong> de gerar o arquivo. Altere <code>detail.filename</code> (nome do
+          arquivo, sem extensão) e <code>detail.title</code> (título desenhado na imagem PNG) para defini-los no momento
+          da exportação. <code>return false</code> cancela. Vale para os três gráficos (barra, linha e pizza).
+        </p>
+        <div class="gd-demo">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-chart-bar id="d-onexport" type="grouped" title="Pesagens por mês"
+            x-field="month"
+            y-fields='[{ "field": "kg", "label": "Pesado (kg)" }]'
+            data='[{ "month": "Ago", "kg": 1240 }, { "month": "Set", "kg": 1385 }, { "month": "Out", "kg": 1190 }, { "month": "Nov", "kg": 1452 }]'></granado-chart-bar>
+          <script>
+            (function () {
+              var linhaAtual = 'L1';
+              var c = document.getElementById('d-onexport');
+              c.onExport = function (detail) {
+                // detail = { type: "png" | "csv", filename, title, rowCount }
+                if (detail.rowCount === 0) { alert('Nada para exportar.'); return false; }  // cancela
+                detail.filename = 'pesagens_linha_' + linhaAtual;
+                detail.title    = 'Pesagens — Linha ' + linhaAtual;     // só aparece no PNG
+              };
+            })();
+          </script>
+          <pre class="gd-code gd-snip"><span class="tk-comment">&lt;!-- Opção 1: direto no HTML (variáveis: event, detail) --&gt;</span>
+<span class="tk-tag">&lt;granado-chart-bar</span> <span class="tk-attr">id</span>=<span class="tk-str">"grafico"</span> <span class="tk-attr">type</span>=<span class="tk-str">"grouped"</span> <span class="tk-attr">title</span>=<span class="tk-str">"Pesagens por mês"</span>
+  <span class="tk-attr">x-field</span>=<span class="tk-str">"month"</span>
+  <span class="tk-attr">y-fields</span>=<span class="tk-str">'[{ "field": "kg", "label": "Pesado (kg)" }]'</span>
+  <span class="tk-attr">data</span>=<span class="tk-str">'[{ "month": "Ago", "kg": 1240 }, { "month": "Set", "kg": 1385 }, { "month": "Out", "kg": 1190 }, { "month": "Nov", "kg": 1452 }]'</span>
+  <span class="tk-attr">onexport</span>=<span class="tk-str">"var hoje = new Date().toLocaleDateString('pt-BR');
+            detail.filename = 'pesagens_' + hoje.split('/').reverse().join('-');
+            if (detail.type === 'png') detail.title = 'Pesagens por mês — ' + hoje + ' (' + detail.rowCount + ' meses)';"</span><span class="tk-tag">&gt;&lt;/granado-chart-bar&gt;</span>
+
+<span class="tk-comment">&lt;!-- Opção 2: via JS (funciona igual em granado-chart-line e granado-chart-pie) --&gt;</span>
+<span class="tk-tag">&lt;script&gt;</span>
+  <span class="tk-key">var</span> c = document.getElementById(<span class="tk-str">'grafico'</span>);
+  c.onExport = <span class="tk-key">function</span> (detail) {
+    <span class="tk-comment">// detail = { type: "png" | "csv", filename, title, rowCount }</span>
+    <span class="tk-key">if</span> (detail.rowCount === <span class="tk-num">0</span>) { alert(<span class="tk-str">'Nada para exportar.'</span>); <span class="tk-key">return false</span>; }  <span class="tk-comment">// cancela</span>
+    detail.filename = <span class="tk-str">'pesagens_linha_'</span> + linhaAtual;
+    detail.title    = <span class="tk-str">'Pesagens — Linha '</span> + linhaAtual;     <span class="tk-comment">// só aparece no PNG</span>
+  };
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+        </div>
+        <table class="gd-api">
+          <thead><tr><th style="width:170px">Campo do detail</th><th style="width:120px">Tipo</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td class="col-name">type</td><td class="col-type">"png" | "csv"</td><td class="col-desc">Qual botão foi clicado. Só leitura.</td></tr>
+            <tr><td class="col-name">filename</td><td class="col-type">string</td><td class="col-desc">Nome do arquivo, sem extensão. Vem do <code>title</code> do gráfico (ou <code>grafico</code>) e pode ser trocado. Uma extensão <code>.png</code>/<code>.csv</code> no fim é removida e caracteres inválidos no Windows (<code>\ / : * ? " &lt; &gt; |</code>) viram <code>_</code>. Vazio volta ao nome padrão.</td></tr>
+            <tr><td class="col-name">title</td><td class="col-type">string</td><td class="col-desc">Título desenhado no topo da imagem PNG. Vem do <code>title</code> do gráfico e pode ser trocado; vazio gera a imagem <strong>sem</strong> título. Não afeta o CSV nem o título exibido na tela.</td></tr>
+            <tr><td class="col-name">rowCount</td><td class="col-type">number</td><td class="col-desc">Quantas linhas o CSV terá (categorias; na pizza, fatias). Só leitura.</td></tr>
+          </tbody>
+        </table>
+        <p class="gd-lead">
+          Os três jeitos de escutar recebem o mesmo <code>detail</code>: o atributo <code>onexport</code>, a propriedade
+          <code>el.onExport</code> (pode ser definida antes de o script carregar) e o CustomEvent <code>chart-export</code>.
+          O handler precisa ser síncrono. Chamadas diretas a <code>exportPNG()</code>/<code>exportCSV()</code> não disparam
+          o <code>onExport</code>; para passar um título por código use <code>exportPNG(nome, escala, titulo)</code>.
+        </p>
+
         <!-- Clique & seleção -->
         <h2 class="gd-h2">Clique &amp; seleção — <code>bar-click</code></h2>
         <p class="gd-lead">
@@ -459,7 +521,8 @@
           <thead><tr><th style="width:200px">Nome</th><th>Descrição</th></tr></thead>
           <tbody>
             <tr><td class="col-name">bar-click</td><td class="col-desc">Evento no clique de uma barra. <code>detail</code>: { category, series, field, value, index }.</td></tr>
-            <tr><td class="col-name">.exportPNG(nome?, escala?)</td><td class="col-desc">Baixa a imagem .png (escala default 2). Inclui título + legenda.</td></tr>
+            <tr><td class="col-name">onexport / .onExport · chart-export</td><td class="col-desc">Dispara ao clicar em ⬇ PNG / ⬇ CSV, antes de gerar o arquivo. Troque <code>detail.filename</code> e <code>detail.title</code> ou cancele com <code>return false</code>. Veja <a class="gd-link" href="#chart-onexport">onExport</a>.</td></tr>
+            <tr><td class="col-name">.exportPNG(nome?, escala?, titulo?)</td><td class="col-desc">Baixa a imagem .png (escala default 2). Inclui título + legenda; <code>titulo</code> substitui o título na imagem.</td></tr>
             <tr><td class="col-name">.exportCSV(nome?)</td><td class="col-desc">Baixa os dados como tabela .csv (separador <code>;</code> + BOM UTF-8).</td></tr>
           </tbody>
         </table>
@@ -626,7 +689,8 @@
           <thead><tr><th style="width:200px">Nome</th><th>Descrição</th></tr></thead>
           <tbody>
             <tr><td class="col-name">point-click</td><td class="col-desc"><code>detail</code>: { index, category, series, field, value, color, categoryValues, selected }.</td></tr>
-            <tr><td class="col-name">.exportPNG(nome?, escala?)</td><td class="col-desc">Imagem .png (título + legenda).</td></tr>
+            <tr><td class="col-name">onexport / .onExport · chart-export</td><td class="col-desc">Dispara ao clicar em ⬇ PNG / ⬇ CSV, antes de gerar o arquivo; permite trocar <code>detail.filename</code> e <code>detail.title</code> ou cancelar. Igual ao gráfico de barras: veja <a class="gd-link" href="#chart-onexport">onExport</a>.</td></tr>
+            <tr><td class="col-name">.exportPNG(nome?, escala?, titulo?)</td><td class="col-desc">Imagem .png (título + legenda); <code>titulo</code> substitui o título na imagem.</td></tr>
             <tr><td class="col-name">.exportCSV(nome?)</td><td class="col-desc">Dados em tabela .csv (<code>;</code> + BOM).</td></tr>
           </tbody>
         </table>
@@ -760,7 +824,8 @@
           <thead><tr><th style="width:200px">Nome</th><th>Descrição</th></tr></thead>
           <tbody>
             <tr><td class="col-name">slice-click</td><td class="col-desc"><code>detail</code>: { index, label, value, percent, color, selected }.</td></tr>
-            <tr><td class="col-name">.exportPNG(nome?, escala?)</td><td class="col-desc">Imagem .png (título + legenda).</td></tr>
+            <tr><td class="col-name">onexport / .onExport · chart-export</td><td class="col-desc">Dispara ao clicar em ⬇ PNG / ⬇ CSV, antes de gerar o arquivo; permite trocar <code>detail.filename</code> e <code>detail.title</code> ou cancelar. <code>rowCount</code> = número de fatias. Igual ao gráfico de barras: veja <a class="gd-link" href="#chart-onexport">onExport</a>.</td></tr>
+            <tr><td class="col-name">.exportPNG(nome?, escala?, titulo?)</td><td class="col-desc">Imagem .png (título + legenda); <code>titulo</code> substitui o título na imagem.</td></tr>
             <tr><td class="col-name">.exportCSV(nome?)</td><td class="col-desc">Dados em tabela .csv (rótulo/valor/%).</td></tr>
           </tbody>
         </table>
