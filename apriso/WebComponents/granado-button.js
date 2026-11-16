@@ -188,12 +188,12 @@ if (!customElements.get('granado-button')) {
       const fontSize = size === 'sm' ? '11px' : (size === 'lg' || size === 'xl') ? '14px' : '13px';
 
       if (isPreset) {
-        btn.style.padding = PRESET_PAD[size];
+        btn.style.setProperty('padding', PRESET_PAD[size], 'important');
         btn.style.removeProperty('height');   // altura pelo conteúdo (padrão)
       } else {
         const h = /^[0-9.]+$/.test(size) ? size + 'px' : size;   // "30" -> "30px"
         btn.style.setProperty('height', h, 'important');          // vence o height:auto !important do root
-        btn.style.padding = '0 14px';                             // só horizontal; a altura controla o vertical
+        btn.style.setProperty('padding', '0 14px', 'important');  // só horizontal; a altura controla o vertical
       }
       btn.style.fontSize = fontSize;
       btn.disabled = this.disabled;
