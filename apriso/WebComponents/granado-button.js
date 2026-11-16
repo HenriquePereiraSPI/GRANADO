@@ -89,13 +89,13 @@ if (!customElements.get('granado-button')) {
       const iconSize = size === 'sm' ? 12 : (size === 'lg' || size === 'xl') ? 16 : 14;
       const iconHtml = iconAttr ? this._resolveIcon(iconAttr, iconSize) : '';
 
-      const labelSpan = `<span data-btn-label></span>`;
+      const labelSpan = `<span data-btn-label style="line-height:1.4 !important"></span>`;
       const iconSpan = iconHtml
         ? `<span data-btn-icon style="display:inline-flex;align-items:center;line-height:0">${iconHtml}</span>`
         : '';
       const order = iconPos === 'right' ? `${labelSpan}${iconSpan}` : `${iconSpan}${labelSpan}`;
 
-      this.innerHTML = `<button data-btn-root type="button" style="height:auto !important;min-height:0 !important;position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid;border-radius:6px;cursor:pointer;font-family:'Poppins','DejaVu Sans',Arial,sans-serif;font-weight:600;outline:none;transition:background 0.15s,border-color 0.15s,color 0.15s,transform 0.1s;height:auto;box-sizing:border-box">${order}</button>`;
+      this.innerHTML = `<button data-btn-root type="button" style="height:auto !important;min-height:0 !important;line-height:1.4 !important;position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid;border-radius:6px;cursor:pointer;font-family:'Poppins','DejaVu Sans',Arial,sans-serif;font-weight:600;outline:none;transition:background 0.15s,border-color 0.15s,color 0.15s,transform 0.1s;height:auto;box-sizing:border-box">${order}</button>`;
 
       const btn = this.querySelector('[data-btn-root]');
 
