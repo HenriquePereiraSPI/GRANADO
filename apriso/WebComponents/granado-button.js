@@ -189,7 +189,7 @@ if (!customElements.get('granado-button')) {
 
       if (isPreset) {
         btn.style.setProperty('padding', PRESET_PAD[size], 'important');
-        btn.style.removeProperty('height');   // altura pelo conteúdo (padrão)
+        btn.style.setProperty('height', 'auto', 'important');   // altura pelo conteúdo; vence o height fixo do apriso.css
       } else {
         const h = /^[0-9.]+$/.test(size) ? size + 'px' : size;   // "30" -> "30px"
         btn.style.setProperty('height', h, 'important');          // vence o height:auto !important do root
