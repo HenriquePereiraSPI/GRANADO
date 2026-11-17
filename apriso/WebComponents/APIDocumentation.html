@@ -410,6 +410,8 @@
           <a class="gd-link" href="#GRD_API_DeleteEquipmentIntegrationTraction">GRD_API_DeleteEquipmentIntegrationTraction</a>
           <a class="gd-link" href="#GRD_API_GetEquipmentIntegrationTractian">GRD_API_GetEquipmentIntegrationTractian</a>
           <a class="gd-link" href="#GRD_API_JDE_GetEnabledDocuments">GRD_API_JDE_GetEnabledDocuments</a>
+          <a class="gd-link" href="#GRD_API_GetAllOrderLinkedResourceName">GRD_API_GetAllOrderLinkedResourceName</a>
+          <a class="gd-link" href="#GRD_API_CloseAllDowntimeOrderEvent">GRD_API_CloseAllDowntimeOrderEvent</a>
         </div>
       </div>
 
@@ -4645,6 +4647,159 @@ poppins-700.woff2
             <tr><td class="col-name">DocumentID</td><td class="col-type">string</td><td class="col-desc">Identificador do documento, no formato <code>&lt;código&gt;/&lt;revisão&gt;</code> (ex.: <code>"BOL-CQE-0001/01"</code>).</td></tr>
           </tbody>
         </table>
+      </section>
+
+      <!-- ==================================================================
+           GRD_API_GetAllOrderLinkedResourceName
+           ================================================================== -->
+      <section id="GRD_API_GetAllOrderLinkedResourceName">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_GetAllOrderLinkedResourceName</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera todas as ordens vinculadas a um ResourceName</strong> — devolve os números
+          das ordens (<code>WipOrderNo</code>) associadas ao centro de trabalho informado.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_GetAllOrderLinkedResourceName</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido da lista <code>LinkedOrders</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000032"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:210px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">WorkcenterResourceName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ResourceName do centro de trabalho cujas ordens vinculadas serão recuperadas.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"..."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"LinkedOrders"</span><span class="tk-punc">:</span> [
+    { <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"619332"</span> }
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:160px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se a consulta foi realizada com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">LinkedOrders</td><td class="col-type">array&lt;object&gt;</td><td class="col-desc">Lista de ordens vinculadas ao ResourceName (campos abaixo).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Itens de <code>LinkedOrders[]</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:160px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">WipOrderNo</td><td class="col-type">string</td><td class="col-desc">Número da ordem (WIP Order) vinculada ao centro de trabalho.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ==================================================================
+           GRD_API_CloseAllDowntimeOrderEvent
+           ================================================================== -->
+      <section id="GRD_API_CloseAllDowntimeOrderEvent">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_CloseAllDowntimeOrderEvent</code></h1>
+        <p class="gd-lead">
+          <strong>Desvincula todas as ordens ligadas a um ResourceName</strong> — encerra os vínculos
+          de ordens do centro de trabalho informado.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_CloseAllDowntimeOrderEvent</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>).
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">Corpo da requisição (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000032"</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de entrada</h3>
+        <table class="gd-api">
+          <thead>
+            <tr>
+              <th style="width:210px">Campo</th>
+              <th style="width:120px">Tipo</th>
+              <th style="width:90px">Obrigatório</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="col-name">WorkcenterResourceName</td>
+              <td class="col-type">string</td>
+              <td class="col-req">Sim</td>
+              <td class="col-desc">ResourceName do centro de trabalho cujas ordens vinculadas serão desvinculadas.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON):</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"..."</span>
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:160px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se as ordens foram desvinculadas com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+          </tbody>
+        </table>
+
+        <ul class="gd-list">
+          <li>Use <a class="gd-link" href="#GRD_API_GetAllOrderLinkedResourceName">GRD_API_GetAllOrderLinkedResourceName</a>
+            para consultar quais ordens estão vinculadas antes de desvincular.</li>
+        </ul>
       </section>
 
       <!-- ============================================================
