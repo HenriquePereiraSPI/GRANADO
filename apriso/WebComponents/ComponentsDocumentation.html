@@ -53,6 +53,7 @@
   <script src="./granado-timeline.js"></script>
   <script src="./granado-empty-popup.js"></script>
   <script src="./granado-button-save-page.js"></script>
+  <script src="./granado-button-download.js"></script>
   <script src="./granado-filter.js"></script>
   <script src="./granado-scan.js"></script>
   <script src="./granado-select-popup.js"></script>
@@ -326,6 +327,7 @@
       <a class="gd-link" href="#granado-timeline">granado-timeline</a>
       <a class="gd-link" href="#granado-empty-popup">granado-empty-popup</a>
       <a class="gd-link" href="#granado-button-save-page">granado-button-save-page</a>
+      <a class="gd-link" href="#granado-button-download">granado-button-download</a>
       <a class="gd-link" href="#granado-filter">granado-filter</a>
       <a class="gd-link" href="#granado-scan">granado-scan</a>
       <a class="gd-link" href="#granado-tooltip">granado-tooltip</a>
@@ -14883,6 +14885,121 @@ g.data = [
           <li><strong>HTML da página inteira:</strong> salva o <code>outerHTML</code> atual (inclui o estado dinâmico). CSS/JS externos referenciados por <code>&lt;link&gt;</code>/<code>&lt;script&gt;</code> continuam apontando para a origem — ao abrir o arquivo fora do servidor, esses recursos podem não resolver.</li>
           <li><strong>Dica p/ PDF limpo:</strong> aponte <code>target</code> para o container do relatório para não imprimir menus/cabeçalhos do app.</li>
           <li><strong>Light DOM + inline:</strong> sem Shadow DOM e sem stylesheet injetado; cores default hardcoded (paleta Granado).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           granado-button-download
+           ============================================================ -->
+      <section id="granado-button-download" style="margin-top:48px;border-top:1px solid #E5DDC8;padding-top:32px">
+        <h1 class="gd-h1"><code>&lt;granado-button-download&gt;</code></h1>
+        <p class="gd-lead">
+          Botão que <strong>exporta um JSON para CSV</strong>. Recebe uma lista de objetos: cada objeto vira uma linha e
+          as chaves viram o cabeçalho.
+        </p>
+
+        <h2 class="gd-h2">Import</h2>
+        <pre class="gd-code"><span class="tk-comment">&lt;!-- Inclua o script no &lt;head&gt; (padrão Apriso) --&gt;</span>
+<span class="tk-tag">&lt;script</span> <span class="tk-attr">src</span>=<span class="tk-str">"[AprisoScripts]/WebComponents/granado-button-download.js"</span><span class="tk-tag">&gt;&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Uso — JSON direto no atributo</h2>
+        <p class="gd-lead">
+          O nome do arquivo vem do atributo <code>filename</code>. As colunas do CSV são as chaves dos objetos, na ordem em que aparecem.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-button-download filename="pesagens"
+            data='[{"Ordem":"671697","Material":"M567","Lote":"1016825","Peso (kg)":"1.0","Operador":"Kaic Lima"},{"Ordem":"671697","Material":"M890","Lote":"1016900","Peso (kg)":"2.5","Operador":"Ana Souza"}]'>
+          </granado-button-download>
+        </div>
+        <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-button-download</span> <span class="tk-attr">filename</span>=<span class="tk-str">"pesagens"</span>
+  <span class="tk-attr">data</span>=<span class="tk-str">'[{"Ordem":"671697","Material":"M567","Lote":"1016825","Peso (kg)":"1.0","Operador":"Kaic Lima"},
+         {"Ordem":"671697","Material":"M890","Lote":"1016900","Peso (kg)":"2.5","Operador":"Ana Souza"}]'</span><span class="tk-tag">&gt;</span>
+<span class="tk-tag">&lt;/granado-button-download&gt;</span></pre>
+
+        <h2 class="gd-h2">Dados e nome via JavaScript</h2>
+        <p class="gd-lead">
+          Para dados que vêm de uma API, passe o JSON e o nome pelo JavaScript. O nome pode ser trocado a qualquer momento
+          (ex.: com a linha ou a data atual) e vale no próximo clique.
+        </p>
+        <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-button-download id="doc-dl-js" label="Baixar pesagens" variant="secondary"></granado-button-download>
+          <script>
+            (function () {
+              var b = document.getElementById('doc-dl-js');
+              var linhaAtual = 'L1';
+              b.setAttribute('filename', 'pesagens_linha_' + linhaAtual);
+              b.setAttribute('data', JSON.stringify([
+                { OrderNo: '671697', ItemProductNo: 'M567', NetWeight: '1.0000000000', Operator: 'Kaic Lima', LabelNo: '0002526' },
+                { OrderNo: '671697', ItemProductNo: 'M567', NetWeight: '1.0000000000', Operator: 'Kaic Lima', LabelNo: '0002527' }
+              ]));
+            })();
+          </script>
+        </div>
+        <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-button-download</span> <span class="tk-attr">id</span>=<span class="tk-str">"btnPesagens"</span> <span class="tk-attr">label</span>=<span class="tk-str">"Baixar pesagens"</span> <span class="tk-attr">variant</span>=<span class="tk-str">"secondary"</span><span class="tk-tag">&gt;&lt;/granado-button-download&gt;</span>
+
+<span class="tk-tag">&lt;script&gt;</span>
+  var b = document.getElementById(<span class="tk-str">'btnPesagens'</span>);
+  b.setAttribute(<span class="tk-str">'filename'</span>, <span class="tk-str">'pesagens_linha_'</span> + linhaAtual);
+  <span class="tk-comment">// ex.: a lista que veio da API (GRD_API_OEE_GetOrderWeightItemPerformanceDownload)</span>
+  b.setAttribute(<span class="tk-str">'data'</span>, JSON.stringify(resposta.PerformanceDownload));
+<span class="tk-tag">&lt;/script&gt;</span></pre>
+
+        <h2 class="gd-h2">Visual</h2>
+        <p class="gd-lead">Mesmos atributos visuais do granado-button.</p>
+        <div class="gd-demo" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <button class="gd-codebtn" type="button" aria-label="Ver código" title="Ver código" onclick="gdOpenSnip(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></button>
+          <granado-button-download data='[{"A":"1"}]' filename="exemplo"></granado-button-download>
+          <granado-button-download data='[{"A":"1"}]' filename="exemplo" variant="secondary" label="Secondary"></granado-button-download>
+          <granado-button-download data='[{"A":"1"}]' filename="exemplo" variant="ghost" label="Ghost"></granado-button-download>
+          <granado-button-download data='[{"A":"1"}]' filename="exemplo" size="sm" label="Pequeno"></granado-button-download>
+          <granado-button-download data='[{"A":"1"}]' filename="exemplo" color="#9A7520" iconposition="right" label="Ícone à direita"></granado-button-download>
+          <granado-button-download data='[{"A":"1"}]' filename="exemplo" disabled="true" label="Desabilitado"></granado-button-download>
+        </div>
+        <pre class="gd-code gd-snip"><span class="tk-tag">&lt;granado-button-download</span> <span class="tk-attr">data</span>=<span class="tk-str">'[...]'</span><span class="tk-tag">&gt;&lt;/granado-button-download&gt;</span>
+<span class="tk-tag">&lt;granado-button-download</span> <span class="tk-attr">data</span>=<span class="tk-str">'[...]'</span> <span class="tk-attr">variant</span>=<span class="tk-str">"secondary"</span> <span class="tk-attr">label</span>=<span class="tk-str">"Secondary"</span><span class="tk-tag">&gt;&lt;/granado-button-download&gt;</span>
+<span class="tk-tag">&lt;granado-button-download</span> <span class="tk-attr">data</span>=<span class="tk-str">'[...]'</span> <span class="tk-attr">variant</span>=<span class="tk-str">"ghost"</span> <span class="tk-attr">label</span>=<span class="tk-str">"Ghost"</span><span class="tk-tag">&gt;&lt;/granado-button-download&gt;</span>
+<span class="tk-tag">&lt;granado-button-download</span> <span class="tk-attr">data</span>=<span class="tk-str">'[...]'</span> <span class="tk-attr">size</span>=<span class="tk-str">"sm"</span> <span class="tk-attr">label</span>=<span class="tk-str">"Pequeno"</span><span class="tk-tag">&gt;&lt;/granado-button-download&gt;</span>
+<span class="tk-tag">&lt;granado-button-download</span> <span class="tk-attr">data</span>=<span class="tk-str">'[...]'</span> <span class="tk-attr">color</span>=<span class="tk-str">"#9A7520"</span> <span class="tk-attr">iconposition</span>=<span class="tk-str">"right"</span> <span class="tk-attr">label</span>=<span class="tk-str">"Ícone à direita"</span><span class="tk-tag">&gt;&lt;/granado-button-download&gt;</span>
+<span class="tk-tag">&lt;granado-button-download</span> <span class="tk-attr">data</span>=<span class="tk-str">'[...]'</span> <span class="tk-attr">disabled</span>=<span class="tk-str">"true"</span> <span class="tk-attr">label</span>=<span class="tk-str">"Desabilitado"</span><span class="tk-tag">&gt;&lt;/granado-button-download&gt;</span></pre>
+
+        <h2 class="gd-h2">API</h2>
+        <h3 class="gd-h3">Atributos / propriedades</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:150px">Nome</th><th style="width:170px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">data</td><td class="col-type">JSON array&lt;object&gt;</td><td class="col-desc">Dados a exportar. Cada objeto vira uma linha; as chaves viram o cabeçalho, na ordem em que aparecem. Um objeto único vira 1 linha. Também via propriedade <code>el.data = [...]</code>.</td></tr>
+            <tr><td class="col-name">filename</td><td class="col-type">string</td><td class="col-desc">Nome do arquivo, sem extensão (<code>.csv</code> no final é aceito). Caracteres inválidos no Windows (<code>\ / : * ? " &lt; &gt; |</code>) viram <code>_</code>. Default <code>"export_ddMMyyyy_HHmmss"</code>.</td></tr>
+            <tr><td class="col-name">label</td><td class="col-type">string</td><td class="col-desc">Texto do botão. Default <code>"Exportar CSV"</code>.</td></tr>
+            <tr><td class="col-name">icon</td><td class="col-type">string</td><td class="col-desc">Ícone (mesmos presets do granado-button, ou texto/emoji/SVG). Default <code>"download"</code>.</td></tr>
+            <tr><td class="col-name">iconposition</td><td class="col-type">"left" | "right"</td><td class="col-desc">Lado do ícone. Default <code>"left"</code>.</td></tr>
+            <tr><td class="col-name">variant</td><td class="col-type">"primary" | "secondary" | "ghost"</td><td class="col-desc">Igual ao granado-button. Default <code>"primary"</code>.</td></tr>
+            <tr><td class="col-name">size</td><td class="col-type">"sm" | "md" | "lg" | "xl" | altura</td><td class="col-desc">Igual ao granado-button. Default <code>"md"</code> (mesma altura dos inputs).</td></tr>
+            <tr><td class="col-name">color</td><td class="col-type">CSS color</td><td class="col-desc">Cor base. Default <code>#1C5C31</code>.</td></tr>
+            <tr><td class="col-name">disabled</td><td class="col-type">boolean</td><td class="col-desc"><code>"true"</code> desabilita o botão.</td></tr>
+            <tr><td class="col-name">background, border-color, text-color, hover-*, press-*</td><td class="col-type">CSS color</td><td class="col-desc">Cores por estado, iguais às do granado-button.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Métodos JS</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Método</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">el.exportCsv(nome?)</td><td class="col-desc">Exporta sem clique. Sem <code>nome</code>, usa o atributo <code>filename</code> (ou o default).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Mesmo CSV do granado-table:</strong> separador <code>,</code>, campos com vírgula/aspas/ponto e vírgula entre aspas, BOM UTF-8 e cada célula em uma linha só (HTML, quebras de linha e caracteres invisíveis removidos).</li>
+          <li><strong>Valores que são objetos/arrays</strong> (ex.: <code>{"x":1}</code>) entram no CSV como texto JSON.</li>
+          <li><strong>Sem refresh no Apriso:</strong> o botão é <code>type="button"</code>, então não submete o <code>&lt;form&gt;</code> da página.</li>
+          <li><strong>Light DOM + inline:</strong> sem Shadow DOM, sem stylesheet injetado e sem dependência de outros componentes.</li>
         </ul>
       </section>
 

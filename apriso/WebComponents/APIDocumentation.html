@@ -459,6 +459,7 @@
           <a class="gd-link" href="#GRD_API_OEE_GetResourceAvailability">GRD_API_OEE_GetResourceAvailability</a>
           <a class="gd-link" href="#GRD_API_OEE_GetOrderWeightPerformance">GRD_API_OEE_GetOrderWeightPerformance</a>
           <a class="gd-link" href="#GRD_API_OEE_GetOrderWeightItemPerformance">GRD_API_OEE_GetOrderWeightItemPerformance</a>
+          <a class="gd-link" href="#GRD_API_OEE_GetOrderWeightItemPerformanceDownload">GRD_API_OEE_GetOrderWeightItemPerformanceDownload</a>
         </div>
       </div>
 
@@ -7669,6 +7670,131 @@ poppins-700.woff2
           <li><strong><code>Overall</code>, <code>GroupedResource</code>, <code>OverallDay</code> e <code>RankedByUser</code>:</strong> além do detalhe por pesagem,
             o retorno traz a média geral do período (<code>Overall</code>), a média por recurso do centro de trabalho
             (<code>GroupedResource</code>, um item por <code>WorkcenterResourceName</code> — inclui <code>""</code> e <code>"STOPPED"</code>), a performance por dia (<code>OverallDay</code>) e o agregado por usuário (<code>RankedByUser</code>).</li>
+          <li><strong>Dados brutos:</strong> para baixar as pesagens usadas no cálculo, use
+            <a class="gd-link" href="#GRD_API_OEE_GetOrderWeightItemPerformanceDownload">GRD_API_OEE_GetOrderWeightItemPerformanceDownload</a> (mesmos inputs).</li>
+        </ul>
+      </section>
+
+      <!-- ============================================================
+           GRD_API_OEE_GetOrderWeightItemPerformanceDownload
+           ============================================================ -->
+      <section id="GRD_API_OEE_GetOrderWeightItemPerformanceDownload">
+        <h1 class="gd-h1" style="margin-top:24px"><code>GRD_API_OEE_GetOrderWeightItemPerformanceDownload</code></h1>
+        <p class="gd-lead">
+          <strong>Recupera os dados utilizados no cálculo de performance</strong> — devolve as pesagens
+          (uma linha por etiqueta pesada) com os dados da ordem, do item, da sala/recurso, tempos e pesos,
+          em <code>PerformanceDownload</code>. Ideal para exportação (CSV/Excel) e auditoria do cálculo.
+        </p>
+
+        <h2 class="gd-h2">Chamada</h2>
+        <div class="gd-endpoint">
+          <span class="gd-method">API</span>
+          <span class="gd-path">GRD_API_OEE_GetOrderWeightItemPerformanceDownload</span>
+        </div>
+        <p class="gd-lead">
+          Operação de servidor invocada com um corpo JSON. Retorna o envelope padrão
+          (<code>Success</code> / <code>Message</code>) acrescido da lista <code>PerformanceDownload</code>.
+        </p>
+
+        <!-- ===== Inputs ===== -->
+        <h2 class="gd-h2">Inputs</h2>
+        <p class="gd-lead">
+          Os <strong>mesmos</strong> de
+          <a class="gd-link" href="#GRD_API_OEE_GetOrderWeightItemPerformance">GRD_API_OEE_GetOrderWeightItemPerformance</a>
+          (veja lá a descrição de cada campo):
+        </p>
+        <pre class="gd-code">{
+  <span class="tk-key">"WipOrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"ProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"PerformanceStatus"</span><span class="tk-punc">:</span> <span class="tk-str">"OK | FORA | -1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"CreatedBy"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000010"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Shift"</span><span class="tk-punc">:</span> <span class="tk-str">"-1"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"FilterType"</span><span class="tk-punc">:</span> <span class="tk-str">"TraditionalCalendar | OperationalCalendar"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"StartDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-01-01 00:00:00"</span><span class="tk-punc">,</span>
+  <span class="tk-key">"EndDate"</span><span class="tk-punc">:</span> <span class="tk-str">"2026-12-30 23:59:59"</span>
+}</pre>
+
+        <!-- ===== Outputs ===== -->
+        <h2 class="gd-h2">Outputs</h2>
+        <p class="gd-lead">Envelope de resposta (JSON) — <code>PerformanceDownload</code> truncado a 2 itens para leitura; os demais seguem o mesmo formato:</p>
+        <pre class="gd-code">{
+  <span class="tk-key">"Success"</span><span class="tk-punc">:</span> <span class="tk-bool">true</span><span class="tk-punc">,</span>
+  <span class="tk-key">"Message"</span><span class="tk-punc">:</span> <span class="tk-str">"..."</span><span class="tk-punc">,</span>
+  <span class="tk-key">"PerformanceDownload"</span><span class="tk-punc">:</span> [
+    {
+      <span class="tk-key">"OrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"671697"</span><span class="tk-punc">,</span> <span class="tk-key">"GranelProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"S463E"</span><span class="tk-punc">,</span> <span class="tk-key">"OrderCompletedDate"</span><span class="tk-punc">:</span> <span class="tk-str">"11/13/2026 12:36:00 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"OrderCycleTime"</span><span class="tk-punc">:</span> <span class="tk-str">"10800"</span><span class="tk-punc">,</span> <span class="tk-key">"OrderTotalItems"</span><span class="tk-punc">:</span> <span class="tk-str">"13"</span><span class="tk-punc">,</span> <span class="tk-key">"OrderGrossTimeSeconds"</span><span class="tk-punc">:</span> <span class="tk-str">"2168"</span><span class="tk-punc">,</span> <span class="tk-key">"OrderStopTimeSeconds"</span><span class="tk-punc">:</span> <span class="tk-str">"88"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ItemID"</span><span class="tk-punc">:</span> <span class="tk-str">"127731"</span><span class="tk-punc">,</span> <span class="tk-key">"ItemProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"M567"</span><span class="tk-punc">,</span> <span class="tk-key">"ItemLotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1016825"</span><span class="tk-punc">,</span> <span class="tk-key">"ItemUomCode"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD2_SALA1"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000014"</span><span class="tk-punc">,</span> <span class="tk-key">"Shift"</span><span class="tk-punc">:</span> <span class="tk-str">"MANHA"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"WeighStart"</span><span class="tk-punc">:</span> <span class="tk-str">"11/13/2026 3:37:05 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighEnd"</span><span class="tk-punc">:</span> <span class="tk-str">"11/13/2026 3:46:05 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"WeightDurationInSeconds"</span><span class="tk-punc">:</span> <span class="tk-str">"540"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TareWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"0.1000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"GrossWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"1.1000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"NetWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"1.0000000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"LabelNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0002526"</span><span class="tk-punc">,</span> <span class="tk-key">"LabelNoOrigin"</span><span class="tk-punc">:</span> <span class="tk-str">"7289729"</span><span class="tk-punc">,</span> <span class="tk-key">"IsManualWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span><span class="tk-punc">,</span> <span class="tk-key">"Operator"</span><span class="tk-punc">:</span> <span class="tk-str">"Kaic Lima"</span>
+    }<span class="tk-punc">,</span>
+    {
+      <span class="tk-key">"OrderNo"</span><span class="tk-punc">:</span> <span class="tk-str">"671697"</span><span class="tk-punc">,</span> <span class="tk-key">"GranelProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"S463E"</span><span class="tk-punc">,</span> <span class="tk-key">"OrderCompletedDate"</span><span class="tk-punc">:</span> <span class="tk-str">"11/13/2026 12:36:00 PM"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"OrderCycleTime"</span><span class="tk-punc">:</span> <span class="tk-str">"10800"</span><span class="tk-punc">,</span> <span class="tk-key">"OrderTotalItems"</span><span class="tk-punc">:</span> <span class="tk-str">"13"</span><span class="tk-punc">,</span> <span class="tk-key">"OrderGrossTimeSeconds"</span><span class="tk-punc">:</span> <span class="tk-str">"2168"</span><span class="tk-punc">,</span> <span class="tk-key">"OrderStopTimeSeconds"</span><span class="tk-punc">:</span> <span class="tk-str">"88"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"ItemID"</span><span class="tk-punc">:</span> <span class="tk-str">"127731"</span><span class="tk-punc">,</span> <span class="tk-key">"ItemProductNo"</span><span class="tk-punc">:</span> <span class="tk-str">"M567"</span><span class="tk-punc">,</span> <span class="tk-key">"ItemLotNo"</span><span class="tk-punc">:</span> <span class="tk-str">"1016825"</span><span class="tk-punc">,</span> <span class="tk-key">"ItemUomCode"</span><span class="tk-punc">:</span> <span class="tk-str">"KG"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"Workcenter"</span><span class="tk-punc">:</span> <span class="tk-str">"MD2_SALA2"</span><span class="tk-punc">,</span> <span class="tk-key">"WorkcenterResourceName"</span><span class="tk-punc">:</span> <span class="tk-str">"100000016"</span><span class="tk-punc">,</span> <span class="tk-key">"Shift"</span><span class="tk-punc">:</span> <span class="tk-str">"MANHA"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"WeighStart"</span><span class="tk-punc">:</span> <span class="tk-str">"11/13/2026 3:35:06 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"WeighEnd"</span><span class="tk-punc">:</span> <span class="tk-str">"11/13/2026 3:47:06 PM"</span><span class="tk-punc">,</span> <span class="tk-key">"WeightDurationInSeconds"</span><span class="tk-punc">:</span> <span class="tk-str">"720"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"TareWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"0.1000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"GrossWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"1.1000000000"</span><span class="tk-punc">,</span> <span class="tk-key">"NetWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"1.0000000000"</span><span class="tk-punc">,</span>
+      <span class="tk-key">"LabelNo"</span><span class="tk-punc">:</span> <span class="tk-str">"0002528"</span><span class="tk-punc">,</span> <span class="tk-key">"LabelNoOrigin"</span><span class="tk-punc">:</span> <span class="tk-str">"7289729"</span><span class="tk-punc">,</span> <span class="tk-key">"IsManualWeight"</span><span class="tk-punc">:</span> <span class="tk-str">"True"</span><span class="tk-punc">,</span> <span class="tk-key">"Operator"</span><span class="tk-punc">:</span> <span class="tk-str">"Kaic Lima"</span>
+    }
+    <span class="tk-comment">// … uma linha por pesagem (etiqueta)</span>
+  ]
+}</pre>
+
+        <h3 class="gd-h3">Campos de saída</h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:190px">Campo</th><th style="width:160px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">Success</td><td class="col-type">boolean</td><td class="col-desc">Indica se a consulta foi realizada com sucesso.</td></tr>
+            <tr><td class="col-name">Message</td><td class="col-type">string</td><td class="col-desc">Mensagem de retorno.</td></tr>
+            <tr><td class="col-name">PerformanceDownload</td><td class="col-type">array&lt;object&gt;</td><td class="col-desc">Lista de pesagens usadas no cálculo de performance (campos abaixo).</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Itens de <code>PerformanceDownload[]</code></h3>
+        <table class="gd-api">
+          <thead>
+            <tr><th style="width:240px">Campo</th><th style="width:130px">Tipo</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-name">OrderNo</td><td class="col-type">string (número)</td><td class="col-desc">Número da ordem de pesagem.</td></tr>
+            <tr><td class="col-name">GranelProductNo</td><td class="col-type">string</td><td class="col-desc">Código do produto granel da ordem.</td></tr>
+            <tr><td class="col-name">OrderCompletedDate</td><td class="col-type">string (data)</td><td class="col-desc">Data/hora de conclusão da ordem.</td></tr>
+            <tr><td class="col-name">OrderCycleTime</td><td class="col-type">string (número)</td><td class="col-desc">Tempo de ciclo padrão da ordem, em segundos.</td></tr>
+            <tr><td class="col-name">OrderTotalItems</td><td class="col-type">string (número)</td><td class="col-desc">Total de itens (matérias-primas) da ordem.</td></tr>
+            <tr><td class="col-name">OrderGrossTimeSeconds</td><td class="col-type">string (número)</td><td class="col-desc">Tempo bruto da ordem, em segundos.</td></tr>
+            <tr><td class="col-name">OrderStopTimeSeconds</td><td class="col-type">string (número)</td><td class="col-desc">Tempo de parada da ordem, em segundos.</td></tr>
+            <tr><td class="col-name">ItemID</td><td class="col-type">string (número)</td><td class="col-desc">ID do item (linha de pesagem) da ordem.</td></tr>
+            <tr><td class="col-name">ItemProductNo</td><td class="col-type">string</td><td class="col-desc">Código da matéria-prima pesada.</td></tr>
+            <tr><td class="col-name">ItemLotNo</td><td class="col-type">string</td><td class="col-desc">Lote da matéria-prima.</td></tr>
+            <tr><td class="col-name">ItemUomCode</td><td class="col-type">string</td><td class="col-desc">Unidade de medida (ex.: <code>"KG"</code>).</td></tr>
+            <tr><td class="col-name">Workcenter</td><td class="col-type">string</td><td class="col-desc">Centro de trabalho/sala onde a pesagem foi feita (ex.: <code>"MD2_SALA1"</code>).</td></tr>
+            <tr><td class="col-name">WorkcenterResourceName</td><td class="col-type">string</td><td class="col-desc">Nome/ID do recurso do centro de trabalho.</td></tr>
+            <tr><td class="col-name">Shift</td><td class="col-type">string</td><td class="col-desc">Turno em que a pesagem aconteceu.</td></tr>
+            <tr><td class="col-name">WeighStart</td><td class="col-type">string (data)</td><td class="col-desc">Data/hora de início da pesagem.</td></tr>
+            <tr><td class="col-name">WeighEnd</td><td class="col-type">string (data)</td><td class="col-desc">Data/hora de fim da pesagem.</td></tr>
+            <tr><td class="col-name">WeightDurationInSeconds</td><td class="col-type">string (número)</td><td class="col-desc">Duração da pesagem, em segundos (<code>WeighEnd</code> − <code>WeighStart</code>).</td></tr>
+            <tr><td class="col-name">TareWeight</td><td class="col-type">string (número)</td><td class="col-desc">Peso da tara.</td></tr>
+            <tr><td class="col-name">GrossWeight</td><td class="col-type">string (número)</td><td class="col-desc">Peso bruto.</td></tr>
+            <tr><td class="col-name">NetWeight</td><td class="col-type">string (número)</td><td class="col-desc">Peso líquido (<code>GrossWeight</code> − <code>TareWeight</code>).</td></tr>
+            <tr><td class="col-name">LabelNo</td><td class="col-type">string</td><td class="col-desc">Número da etiqueta gerada na pesagem.</td></tr>
+            <tr><td class="col-name">LabelNoOrigin</td><td class="col-type">string</td><td class="col-desc">Número da etiqueta de origem (material de onde saiu a pesagem).</td></tr>
+            <tr><td class="col-name">IsManualWeight</td><td class="col-type">string (bool)</td><td class="col-desc"><code>"True"</code> = peso informado manualmente · <code>"False"</code> = lido da balança.</td></tr>
+            <tr><td class="col-name">Operator</td><td class="col-type">string</td><td class="col-desc">Usuário que realizou a pesagem.</td></tr>
+          </tbody>
+        </table>
+
+        <h3 class="gd-h3">Notas</h3>
+        <ul class="gd-lead" style="padding-left:18px;margin-top:0">
+          <li><strong>Granularidade:</strong> uma linha por <strong>pesagem/etiqueta</strong>; os campos <code>Order*</code>
+            se repetem em todas as linhas da mesma ordem.</li>
+          <li><strong>Relação com <a class="gd-link" href="#GRD_API_OEE_GetOrderWeightItemPerformance">GRD_API_OEE_GetOrderWeightItemPerformance</a>:</strong>
+            aquela devolve a performance já calculada e agregada; esta devolve os dados brutos usados no cálculo, para download/conferência.</li>
         </ul>
       </section>
 
